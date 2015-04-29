@@ -1,12 +1,13 @@
-﻿using NHibernate.Mapping.Attributes;
+﻿using Inforoom2.validators;
+using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
 	[Class(0, Table = "address", NameType = typeof(Address))]
 	public class Address : BaseModel
-	{
-		[ManyToOne(Column = "house", Cascade = "save-update")]
+	{ 
+		[ManyToOne(Column = "house", Cascade = "save-update"),ValidatorNotEmpty]
 		public virtual House House { get; set; }
 
 		[Property]

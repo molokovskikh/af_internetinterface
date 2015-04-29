@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Components;
-using Inforoom2.Helpers;
 using Inforoom2.Models;
-using InternetInterface.Models;
+using Inforoom2.Models.Services;
 using NHibernate.Linq;
 using Client = Inforoom2.Models.Client;
+using ClientService = Inforoom2.Models.ClientService;
 using Contact = Inforoom2.Models.Contact;
 using House = Inforoom2.Models.House;
 using PhysicalClient = Inforoom2.Models.PhysicalClient;
@@ -30,7 +30,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "Клиенты";
 		}
 
-		public ActionResult ClientList()
+		public ActionResult List()
 		{
 			var pager = new ModelFilter<Client>(this);
 			var clients = pager.GetCriteria(i => i.PhysicalClient != null).List<Client>();
@@ -43,13 +43,13 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.Page = pager;
 			ViewBag.ModelsPerPage = pager.ItemsPerPage;
 			ViewBag.ModelsCount = DbSession.QueryOver<Client>().Where(i => i.PhysicalClient != null).RowCount();
-			return View("ClientList");
+			return View("List");
 		}
 
-		public ActionResult ClientInfo(int clientId)
+		public ActionResult Info(int id)
 		{
 			// Find Client 
-			var client = DbSession.Query<Client>().FirstOrDefault(i => i.PhysicalClient != null && i.Id == clientId);
+			var client = DbSession.Query<Client>().FirstOrDefault(i => i.PhysicalClient != null && i.Id == id);
 			ViewBag.Client = client;
 
 			if (client.Status != null && client.Status.Type == StatusType.BlockedAndConnected) {
@@ -66,7 +66,7 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult ClientInfo([EntityBinder] Client client)
+		public ActionResult Info([EntityBinder] Client client)
 		{
 			DbSession.Update(client);
 			return View();
@@ -75,14 +75,14 @@ namespace InforoomControlPanel.Controllers
 		/// <summary>
 		/// Отображает форму новой заявки
 		/// </summary>
-		public ActionResult ClientRequest()
+		public ActionResult Request()
 		{
 			InitClientRequest();
 			return View();
 		}
 
 		[HttpPost]
-		public ActionResult ClientRequest([EntityBinder] ClientRequest clientRequest)
+		public ActionResult Request([EntityBinder] ClientRequest clientRequest)
 		{
 			var tariff = InitRequestPlans().FirstOrDefault(k => k.Id == clientRequest.Plan.Id);
 			clientRequest.Plan = tariff;
@@ -99,7 +99,7 @@ namespace InforoomControlPanel.Controllers
 				clientRequest.Address = GetAddressByYandexData(clientRequest);
 				DbSession.Save(clientRequest);
 				SuccessMessage(string.Format("Спасибо, Ваша заявка создана. Номер заявки {0}", clientRequest.Id));
-				return RedirectToAction("ClientRequest");
+				return RedirectToAction("Request");
 			}
 			// Пока используется IsContractAccepted=true, закомментированные строки кода не нужны
 			//if (!clientRequest.IsContractAccepted) {
@@ -205,7 +205,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		/// <param name="ClientRequest"></param>
 		/// <returns></returns>
-		public ActionResult ClientRequestsList()
+		public ActionResult RequestsList()
 		{
 			var clientRequests = DbSession.Query<ClientRequest>().OrderByDescending(i => i.Id).ToList();
 			ViewBag.ClientRequests = clientRequests;
@@ -214,16 +214,16 @@ namespace InforoomControlPanel.Controllers
 
 		/// <summary>
 		/// Создание заявки на подключение
-		/// </summary>
-		/// <param name="clientId"></param>
+		/// </summary> 
+		/// <param name="id"></param>
 		/// <returns></returns>
-		public ActionResult ServiceRequest(int clientId)
+		public ActionResult ServiceRequest(int id)
 		{
-			var client = DbSession.Get<Client>(clientId);
-			var ServiceRequest = new ServiceRequest(client);
+			var client = DbSession.Get<Client>(id);
+			var serviceRequest = new ServiceRequest(client);
 			var servicemen = DbSession.Query<ServiceMan>().ToList();
 			ViewBag.Client = client;
-			ViewBag.ServiceRequest = ServiceRequest;
+			ViewBag.ServiceRequest = serviceRequest;
 			ViewBag.Servicemen = servicemen;
 			ViewBag.ServicemenDate = DateTime.Today;
 			return View();
@@ -254,14 +254,14 @@ namespace InforoomControlPanel.Controllers
 		/// <summary>
 		///  Форма регистрации клиента по заявке
 		/// </summary>
-		/// <param name="requestId">Id заявки</param>
+		/// <param name="id">Id заявки</param>
 		/// <returns></returns>
-		public ActionResult ClientRequestRegistration(int requestId)
+		public ActionResult RequestRegistration(int id)
 		{
 			// Создаем клиента
 			var client = new Client();
 			// запрос клиента
-			ClientRequest clientRequest = DbSession.Query<ClientRequest>().First(s => s.Id == requestId);
+			ClientRequest clientRequest = DbSession.Query<ClientRequest>().First(s => s.Id == id);
 			// Создаем физ.клиента
 			client.PhysicalClient = new PhysicalClient();
 			// ФИО по запросу
@@ -286,33 +286,33 @@ namespace InforoomControlPanel.Controllers
 			};
 			// списки улиц и домов
 			ViewBag.CurrentStreet = currentStreet;
-			ViewBag.CurrentStreetList = currentStreet == null ? new List<Street>() : DbSession.Query<Street>().Where(s => s.Region.Id == currentStreet.Region.Id).ToList();
+			ViewBag.CurrentStreetList = currentRegion == null ? new List<Street>() : DbSession.Query<Street>().Where(s => s.Region.Id == currentRegion.Id).ToList();
 			ViewBag.CurrentHouseList = currentStreet == null ? new List<House>() : DbSession.Query<House>().Where(s => s.Street.Id == currentStreet.Id).ToList();
 
 			// тариф по запросу
 			client.PhysicalClient.Plan = clientRequest.Plan;
 
 			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
-			var RegionList = DbSession.Query<Region>().ToList();
-			var PlanList = DbSession.Query<Plan>().ToList();
-			if (RegionList.Count > 0) {
-				PlanList = PlanList.Where(s => s.RegionPlans.Any(d => d.Region == currentRegion)).ToList();
+			var regionList = DbSession.Query<Region>().ToList();
+			var planList = DbSession.Query<Plan>().ToList();
+			if (regionList.Count > 0) {
+				planList = planList.Where(s => s.RegionPlans.Any(d => d.Region == currentRegion)).ToList();
 			}
 			ViewBag.CurrentRegion = currentRegion;
-			ViewBag.RegionList = RegionList;
-			ViewBag.PlanList = PlanList;
+			ViewBag.RegionList = regionList;
+			ViewBag.PlanList = planList;
 
 			client.PhysicalClient.CertificateType = CertificateType.Passport;
 			client.StatusChangedOn = DateTime.Now;
 
 			// список типов документа
-			var CertificateTypeDic = new Dictionary<int, CertificateType>();
-			CertificateTypeDic.Add(0, CertificateType.Passport);
-			CertificateTypeDic.Add(1, CertificateType.Other);
-			ViewBag.CertificateTypeDic = CertificateTypeDic;
+			var certificateTypeDic = new Dictionary<int, CertificateType>();
+			certificateTypeDic.Add(0, CertificateType.Passport);
+			certificateTypeDic.Add(1, CertificateType.Other);
+			ViewBag.CertificateTypeDic = certificateTypeDic;
 
 
-			ViewBag.requestId = requestId;
+			ViewBag.requestId = id;
 			ViewBag.Client = client;
 			return View();
 		}
@@ -321,21 +321,40 @@ namespace InforoomControlPanel.Controllers
 		///  Форма регистрации клиента по заявке POST
 		/// </summary> 
 		[HttpPost]
-		public ActionResult ClientRequestRegistration([EntityBinder] Client client, int requestId)
+		public ActionResult RequestRegistration([EntityBinder] Client client, int requestId)
 		{
-			// удаление неиспользованного контакта (цикл не целесообразен) 
-			// контакт - 1 
+			// удаление неиспользованного контакта *иначе в БД лишняя запись
+			// контакт 
 			if (client.Contacts.Any(s => s.ContactString == string.Empty)) {
 				client.Contacts.Remove(client.Contacts.First(s => s.ContactString == string.Empty));
 			}
-			// контакт - 2 
-			if (client.Contacts.Any(s => s.ContactString == string.Empty)) {
-				client.Contacts.Remove(client.Contacts.First(s => s.ContactString == string.Empty));
-			}
-
+			// указываем статус
+			client.Status = Inforoom2.Models.Status.Get(StatusType.BlockedAndNoConnected, DbSession);
+			client.WhoRegistered = GetCurrentEmployee();
 			// добавление клиента
 			var errors = ValidationRunner.ValidateDeep(client);
+			// убираем из списка ошибок те, которые допустимы в данном случае
+			errors.RemoveErrors(new List<string>() {
+				"Inforoom2.Models.PhysicalClient.PassportDate",
+				"Inforoom2.Models.PhysicalClient.CertificateName"
+			});
 			if (errors.Length == 0) {
+				// указываем имя лица, которое проводит регистрирацию
+				client.WhoRegisteredName = client.WhoRegistered.Name;
+				// генерируем пароль и его хыш сохраняем в модель физ.клиента
+				PhysicalClient.GeneratePassword(client.PhysicalClient);
+				// указываем полное имя клиента
+				client._Name = client.PhysicalClient.FullName;
+				// добавляем клиенту стандартные сервисы 
+				var services = DbSession.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet").ToList();
+				IList<ClientService> csList = services.Select(service => new ClientService {
+					Service = service,
+					Client = client,
+					BeginDate = DateTime.Now,
+					IsActivated = false,
+					ActivatedByUser = (service.Name == "Internet")
+				}).ToList();
+				client.ClientServices = csList;
 				DbSession.Save(client);
 				ClientRequest clientRequest = DbSession.Query<ClientRequest>().First(s => s.Id == requestId);
 				// отправление запроса на регистрацию в архив
@@ -344,20 +363,23 @@ namespace InforoomControlPanel.Controllers
 					DbSession.Save(clientRequest);
 				}
 				SuccessMessage("Клиент успешно зарегистрирован!");
-				return RedirectToAction("ClientList");
+				// переходим к информации о клиенте *в старой админке
+				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
+				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
+				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
+				                "UserInfo/ShowPhysicalClient?filter.ClientCode=" + client.Id);
 			}
-
 			// адресные данные по запросу 
 			Street currentStreet = null;
 			House currentHouse = null;
 			Region currentRegion = null;
-
-			var planList = new List<Plan>(); 
+			// пустой список тарифов
+			var planList = new List<Plan>();
 
 			if (client.Address.House != null) {
 				currentRegion = client.Address.House.Street.Region;
 				currentStreet = client.Address.House.Street;
-				 currentHouse = client.Address.House;
+				currentHouse = client.Address.House;
 				client.PhysicalClient.Address = new Address() {
 					House = currentHouse,
 					Floor = client.Address.Floor,
@@ -367,7 +389,7 @@ namespace InforoomControlPanel.Controllers
 				// списки улиц и домов
 				ViewBag.CurrentStreetList = DbSession.Query<Street>().
 					Where(s => s.Region.Id == currentStreet.Region.Id).ToList();
-				ViewBag.curHouseList = DbSession.Query<House>().Where(s => s.Street.Id == currentStreet.Id).ToList();
+				ViewBag.currentHouseList = DbSession.Query<House>().Where(s => s.Street.Id == currentStreet.Id).ToList();
 			}
 			else {
 				//если адрес пустой создаем новый дом ( not null )
@@ -376,32 +398,28 @@ namespace InforoomControlPanel.Controllers
 					Floor = 0,
 					Entrance = "",
 					Apartment = ""
-				}; 
+				};
 				ViewBag.CurrentStreetList = new List<Street>();
 				ViewBag.CurrentHouseList = new List<House>();
 			}
 
-
-
-
 			// список типов документа
-			var CertificateTypeDic = new Dictionary<int, CertificateType>();
-			CertificateTypeDic.Add(0, CertificateType.Passport);
-			CertificateTypeDic.Add(1, CertificateType.Other);
-			ViewBag.CertificateTypeDic = CertificateTypeDic;
+			var certificateTypeDic = new Dictionary<int, CertificateType>();
+			certificateTypeDic.Add(0, CertificateType.Passport);
+			certificateTypeDic.Add(1, CertificateType.Other);
+			ViewBag.CertificateTypeDic = certificateTypeDic;
 
 			// получаем списки регионов и тарифов по выбранному выбранному региону (городу) 
-			var RegionList = DbSession.Query<Region>().ToList();
-			if (currentRegion != null)
-			{
+			var regionList = DbSession.Query<Region>().ToList();
+			if (currentRegion != null) {
 				planList = DbSession.Query<Plan>().Where(s => s.RegionPlans.Any(d => d.Region == (currentRegion))).ToList();
 			}
 
 			ViewBag.CurrentRegion = currentRegion;
 			ViewBag.CurrentStreet = currentStreet;
-			ViewBag.CurrentHouse = currentHouse; 
+			ViewBag.CurrentHouse = currentHouse;
 
-			ViewBag.RegionList = RegionList;
+			ViewBag.RegionList = regionList;
 			ViewBag.PlanList = planList;
 
 			ViewBag.requestId = requestId;
@@ -412,7 +430,7 @@ namespace InforoomControlPanel.Controllers
 		/// <summary>
 		/// Форма регистрации клиента 
 		/// </summary> 
-		public ActionResult ClientRegistration()
+		public ActionResult Registration()
 		{
 			// Создание клиента
 			var client = new Client();
@@ -431,23 +449,22 @@ namespace InforoomControlPanel.Controllers
 				Apartment = ""
 			};
 			// список типов документа
-			var CertificateTypeDic = new Dictionary<int, CertificateType>();
-			CertificateTypeDic.Add(0, CertificateType.Passport);
-			CertificateTypeDic.Add(1, CertificateType.Other);
-			ViewBag.CertificateTypeDic = CertificateTypeDic;
+			var certificateTypeDic = new Dictionary<int, CertificateType>();
+			certificateTypeDic.Add(0, CertificateType.Passport);
+			certificateTypeDic.Add(1, CertificateType.Other);
+			ViewBag.CertificateTypeDic = certificateTypeDic;
 
 			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
-			var RegionList = DbSession.Query<Region>().ToList();
-			var PlanList = DbSession.Query<Plan>().ToList();
-			if (RegionList.Count > 0) {
-				PlanList = PlanList.Where(s => s.RegionPlans.Any(d => d.Region == RegionList[0])).ToList();
-			}
+			var regionList = DbSession.Query<Region>().ToList();
+
 			ViewBag.CurrentStreet = null;
 			ViewBag.CurrentHouse = null;
-			ViewBag.Dealers = DbSession.Query<Dealer>().ToList();
-			ViewBag.RegionList = RegionList;
-			ViewBag.PlanList = PlanList;
-			ViewBag.RedirectToCard = false;
+			ViewBag.Dealers = DbSession.Query<Dealer>().Select(s => s.Employee).ToList();
+			ViewBag.RegionList = regionList;
+			ViewBag.CurrentStreetList = new List<Street>();
+			ViewBag.CurrentHouseList = new List<House>();
+			ViewBag.PlanList = new List<Plan>();
+			ViewBag.RedirectToCard = true;
 			ViewBag.Client = client;
 			return View();
 		}
@@ -456,31 +473,59 @@ namespace InforoomControlPanel.Controllers
 		///  Форма регистрации клиента POST
 		/// </summary> 
 		[HttpPost]
-		public ActionResult ClientRegistration([EntityBinder] Client client, bool redirectToCard)
+		public ActionResult Registration([EntityBinder] Client client, bool redirectToCard)
 		{
-			// удаление неиспользованного контакта (цикл не целесообразен) 
-			// контакт - 1 
+			// удаление неиспользованного контакта *иначе в БД лишняя запись 
+			// контакт
 			if (client.Contacts.Any(s => s.ContactString == string.Empty)) {
 				client.Contacts.Remove(client.Contacts.First(s => s.ContactString == string.Empty));
 			}
-			// контакт - 2 
-			if (client.Contacts.Any(s => s.ContactString == string.Empty)) {
-				client.Contacts.Remove(client.Contacts.First(s => s.ContactString == string.Empty));
-			}
+			// указываем статус
+			client.Status = Inforoom2.Models.Status.Get(StatusType.BlockedAndNoConnected, DbSession);
+			// указываем, кто проводит регистрирацию
 			client.WhoRegistered = GetCurrentEmployee();
+
+			// проводим валидацию модели клиента
 			var errors = ValidationRunner.ValidateDeep(client);
-			if (errors.Length == 0 && client.Dealer!=null)
-			{
+			// убираем из списка ошибок те, которые допустимы в данном случае
+			errors.RemoveErrors(new List<string>()
+			{ "Inforoom2.Models.PhysicalClient.PassportDate", "Inforoom2.Models.PhysicalClient.CertificateName" });
+			// если нет ошибок и регистрирующее лицо указано
+			if (errors.Length == 0 && client.Dealer != null) {
+				// указываем имя лица, которое проводит регистрирацию
+				client.WhoRegisteredName = client.WhoRegistered.Name;
+				// генерируем пароль и его хыш сохраняем в модель физ.клиента
+				PhysicalClient.GeneratePassword(client.PhysicalClient);
+				// указываем полное имя клиента
+				client._Name = client.PhysicalClient.FullName;
+				// добавляем клиенту стандартные сервисы 
+				var services = DbSession.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet").ToList();
+				IList<ClientService> csList = services.Select(service => new ClientService {
+					Service = service, Client = client,
+					BeginDate = DateTime.Now,
+					IsActivated = false,
+					ActivatedByUser = (service.Name == "Internet")
+				}).ToList();
+				client.ClientServices = csList;
+				// сохраняем модель
 				DbSession.Save(client);
 				SuccessMessage("Клиент успешно зарегистрирован!");
-				if (redirectToCard)
-				{
+
+				// предварительно вызывая процедуру (старой админки) которая делает необходимые поправки в записях клиента и физ.клиента
+				// переходим к карте клиента *в старой админке, если выбран пункт "Показывать наряд на подключение"
+				if (redirectToCard) {
 					return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
+					                "Clients/UpdateAddressByClient?clientId=" + client.Id +
+					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 					                "UserInfo/PassAndShowCard?ClientID=" + client.Id);
 				}
-				return RedirectToAction("ClientList");
+				// иначе переходим к информации о клиенте *в старой админке
+				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
+				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
+				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
+				                "UserInfo/ShowPhysicalClient?filter.ClientCode=" + client.Id);
 			}
-
+			// заполняем список типов документа
 			var CertificateTypeDic = new Dictionary<int, CertificateType>();
 			CertificateTypeDic.Add(0, CertificateType.Passport);
 			CertificateTypeDic.Add(1, CertificateType.Other);
@@ -488,35 +533,29 @@ namespace InforoomControlPanel.Controllers
 
 
 			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
-
 			Street currentStreet = null;
 			House currentHouse = null;
 			Region currentRegion = null;
 			var planList = new List<Plan>();
-			if (client.Address != null && client.Address.House != null)
-			{
+			if (client.Address != null && client.Address.House != null) {
 				currentHouse = client.Address.House;
 				currentStreet = client.Address.House.Street;
 				currentRegion = client.Address.House.Street.Region;
 			}
-
-			var RegionList = DbSession.Query<Region>().ToList();
-			if (currentRegion!=null)
-			{
+			var regionList = DbSession.Query<Region>().ToList();
+			if (currentRegion != null) {
 				planList = DbSession.Query<Plan>().Where(s => s.RegionPlans.Any(d => d.Region == (currentRegion))).ToList();
 			}
-			 
-			
-
 			// списки улиц и домов
 			ViewBag.CurrentStreet = currentStreet;
-			ViewBag.CurrentStreetList = currentStreet == null ? new List<Street>() : DbSession.Query<Street>().Where(s => s.Region.Id == currentStreet.Region.Id).ToList();
+			ViewBag.CurrentStreetList = currentRegion == null ? new List<Street>() : DbSession.Query<Street>().Where(s => s.Region.Id == currentRegion.Id).ToList();
 			ViewBag.CurrentHouseList = currentStreet == null ? new List<House>() : DbSession.Query<House>().Where(s => s.Street.Id == currentStreet.Id).ToList();
 			ViewBag.CurrentRegion = currentRegion;
 			ViewBag.CurrentStreet = currentStreet;
-			ViewBag.CurrentHouse = currentHouse; 
-			ViewBag.Dealers = DbSession.Query<Dealer>().ToList();
-			ViewBag.RegionList = RegionList;
+			ViewBag.CurrentHouse = currentHouse;
+			// получаем всех диллеров (работников)
+			ViewBag.Dealers = DbSession.Query<Dealer>().Select(s => s.Employee).ToList();
+			ViewBag.RegionList = regionList;
 			ViewBag.PlanList = planList;
 			ViewBag.RedirectToCard = redirectToCard;
 			ViewBag.Client = client;
@@ -527,31 +566,37 @@ namespace InforoomControlPanel.Controllers
 
 		/// <summary>
 		/// Форма редактирования клиента 
-		/// </summary>
-		/// <param name="ClientRegistration"></param>
+		/// </summary> 
+		/// <param name="id"></param>
 		/// <returns></returns>
-		public ActionResult ClientEditor(int clientId)
+		public ActionResult Edit(int id)
 		{
-			var client = DbSession.Query<Client>().First(s => s.Id == clientId);
+			var client = DbSession.Query<Client>().First(s => s.Id == id);
 
 			// список типов документа
-			var CertificateTypeDic = new Dictionary<int, CertificateType>();
-			CertificateTypeDic.Add(0, CertificateType.Passport);
-			CertificateTypeDic.Add(1, CertificateType.Other);
-			ViewBag.CertificateTypeDic = CertificateTypeDic;
+			var certificateTypeDic = new Dictionary<int, CertificateType>();
+			certificateTypeDic.Add(0, CertificateType.Passport);
+			certificateTypeDic.Add(1, CertificateType.Other);
+			ViewBag.CertificateTypeDic = certificateTypeDic;
 
 			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
-			var RegionList = DbSession.Query<Region>().ToList();
-			var PlanList = DbSession.Query<Plan>().ToList();
-			if (RegionList.Count > 0) {
-				PlanList = PlanList.Where(s => s.RegionPlans.Any(d => d.Region == RegionList[0])).ToList();
+			Street currentStreet = null;
+			House currentHouse = null;
+			Region currentRegion = null;
+			if (client.Address != null && client.Address.House != null) {
+				currentHouse = client.Address.House;
+				currentStreet = client.Address.House.Street;
+				currentRegion = client.Address.House.Street.Region;
 			}
-			ViewBag.StreetList = DbSession.Query<Street>().
-				Where(s => s.Region.Id == client.Address.House.Street.Region.Id).ToList();
-			ViewBag.HouseList = DbSession.Query<House>().
-				Where(s => s.Street.Id == client.Address.House.Street.Id).ToList();
-			ViewBag.RegionList = RegionList;
-			ViewBag.PlanList = PlanList;
+			var regionList = DbSession.Query<Region>().ToList();
+			// списки улиц и домов
+			ViewBag.CurrentStreet = currentStreet;
+			ViewBag.CurrentStreetList = currentStreet == null ? new List<Street>() : DbSession.Query<Street>().Where(s => s.Region.Id == currentStreet.Region.Id).ToList();
+			ViewBag.CurrentHouseList = currentStreet == null ? new List<House>() : DbSession.Query<House>().Where(s => s.Street.Id == currentStreet.Id).ToList();
+			ViewBag.CurrentRegion = currentRegion;
+			ViewBag.CurrentStreet = currentStreet;
+			ViewBag.CurrentHouse = currentHouse;
+			ViewBag.RegionList = regionList;
 
 			ViewBag.Client = client;
 			return View();
@@ -563,42 +608,53 @@ namespace InforoomControlPanel.Controllers
 		/// <param name="ClientRegistration"></param>
 		/// <returns></returns>
 		[HttpPost]
-		public ActionResult ClientEditor([EntityBinder] Client client)
+		public ActionResult Edit([EntityBinder] Client client)
 		{
-			// удаление неиспользованного контакта (цикл не целесообразен) 
-			// контакт - 1 
-			if (client.Contacts.Any(s => s.ContactString == string.Empty)) {
-				client.Contacts.Remove(client.Contacts.First(s => s.ContactString == string.Empty));
-			}
-			// контакт - 2 
+			//// удаление неиспользованного контакта *иначе в БД лишняя запись 
 			if (client.Contacts.Any(s => s.ContactString == string.Empty)) {
 				client.Contacts.Remove(client.Contacts.First(s => s.ContactString == string.Empty));
 			}
 
 			var errors = ValidationRunner.ValidateDeep(client);
+			errors.RemoveErrors(new List<string>() {
+				"Inforoom2.Models.PhysicalClient.PassportDate",
+				"Inforoom2.Models.PhysicalClient.CertificateName"
+			});
 			if (errors.Length == 0) {
 				DbSession.Update(client);
 				SuccessMessage("Клиент успешно изменен!");
-				return RedirectToAction("ClientList");
 			}
-
+			else {
+				DbSession.Clear();
+			}
 			// список типов документа
-			var CertificateTypeDic = new Dictionary<int, CertificateType>();
-			CertificateTypeDic.Add(0, CertificateType.Passport);
-			CertificateTypeDic.Add(1, CertificateType.Other);
-			ViewBag.CertificateTypeDic = CertificateTypeDic;
+			var certificateTypeDic = new Dictionary<int, CertificateType>();
+			certificateTypeDic.Add(0, CertificateType.Passport);
+			certificateTypeDic.Add(1, CertificateType.Other);
+			ViewBag.CertificateTypeDic = certificateTypeDic;
+
 
 			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
+			Street currentStreet = null;
+			House currentHouse = null;
+			Region currentRegion = null;
+			var planList = new List<Plan>();
+			if (client.Address != null && client.Address.House != null) {
+				currentHouse = client.Address.House;
+				currentStreet = client.Address.House.Street;
+				currentRegion = client.Address.House.Street.Region;
+			}
 			var RegionList = DbSession.Query<Region>().ToList();
-			var PlanList = DbSession.Query<Plan>().Where(s => s.RegionPlans.Any(d => d.Region ==
-			                                                                         (client.Address.House.Id != 0 ? client.Address.House.Street.Region : RegionList[0]))).ToList();
+			// списки улиц и домов
+			ViewBag.CurrentStreet = currentStreet;
+			ViewBag.CurrentStreetList = currentStreet == null ? new List<Street>() : DbSession.Query<Street>().Where(s => s.Region.Id == currentRegion.Id).ToList();
+			ViewBag.CurrentHouseList = currentStreet == null ? new List<House>() : DbSession.Query<House>().Where(s => s.Street.Id == currentStreet.Id).ToList();
+			ViewBag.CurrentRegion = currentRegion;
+			ViewBag.CurrentStreet = currentStreet;
+			ViewBag.CurrentHouse = currentHouse;
 
-			ViewBag.StreetList = DbSession.Query<Street>().
-				Where(s => s.Region.Id == client.Address.House.Street.Region.Id).ToList();
-			ViewBag.HouseList = DbSession.Query<House>().
-				Where(s => s.Street.Id == client.Address.House.Street.Id).ToList();
 			ViewBag.RegionList = RegionList;
-			ViewBag.PlanList = PlanList;
+			ViewBag.PlanList = planList;
 
 			ViewBag.Client = client;
 			return View();

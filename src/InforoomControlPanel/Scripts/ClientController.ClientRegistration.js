@@ -4,14 +4,18 @@ $(function () {
 
 	// при изменении значения региона
 	$("#RegionDropDown").change(function () {
-		if ($(this).val() != null && $(this).val() != "") { 
+		
+		$("#StreetDropDown").html("<option selected='selected'></option>");
+		$("#HouseDropDown").html("<option selected='selected'></option>");
+		$("#PlanDropDown").html("<option selected='selected'></option>");
+
+		$("#HouseDropDown select").val($("#HouseDropDown option:first"));
+		$("#StreetDropDown select").val($("#StreetDropDown option:first"));
+		$("#PlanDropDown select").val($("#PlanDropDown option:first"));
+
+		if ($(this).val() != null && $(this).val() != "") {
 			getPlansList($(this).val(), getPlansFuncAfter);
 			getStreetList($(this).val(), getStreetFuncAfter);
-		} else {
-
-			$("#StreetDropDown").html("<option selected='selected'></option>");
-			$("#HouseDropDown").html("<option selected='selected'></option>");
-			$("#PlanDropDown").html("<option selected='selected'></option>");
 		}
 	});
 	// при изменении значения улицы

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
+using System.Text;
 using Common.Tools;
 using Inforoom2.validators;
 using NHibernate.Mapping.Attributes;
@@ -27,7 +29,7 @@ namespace Inforoom2.Models
 		[Property(Column = "_LastTimePlanChanged")]
 		public virtual DateTime LastTimePlanChanged { get; set; }
 
-		[Property, NotNull(Message = "Введите сумму")]
+		[Property]
 		public virtual decimal Balance { get; set; }
 
 		[Property]
@@ -45,26 +47,29 @@ namespace Inforoom2.Models
 		[Property(Column = "IdDocType"), Description("Документ, удостоверяющий личность")]
 		public virtual CertificateType CertificateType { get; set; }
 
-		[Property(Column = "IdDocName"), NotNullNotEmpty(Message = "Введите название"), Description("Название документа, удостоверяющего личность")]
+		[Property(Column = "IdDocName"), NotNullNotEmpty(Message = "Введите название"), Description("Название документа, удостоверяющего личность")]  
 		public virtual string CertificateName { get; set; }
 
-		[Property, NotNullNotEmpty(Message = "Введите номер паспорта")]
+		[Property]  
 		public virtual string PassportNumber { get; set; }
 
-		[Property, NotNullNotEmpty(Message = "Введите серию паспорта")]
+		[Property]  
 		public virtual string PassportSeries { get; set; }
 
 		[DataType(DataType.Date)]
-		[Property, DateTimeNotEmpty]
+		[Property, ValidatorNotEmpty]
 		public virtual DateTime PassportDate { get; set; }
 
-		[Property(Column = "RegistrationAdress"), NotNull(Message = "Введите адрес регистрации")]
+		[Property(Column = "RegistrationAdress")]  
 		public virtual string RegistrationAddress { get; set; }
 
-		[Property(Column = "WhoGivePassport"), NotNullNotEmpty(Message = "Поле не может быть пустым")]
+		[Property(Column = "WhoGivePassport")]  
 		public virtual string PassportResidention { get; set; }
 
-		[Property(Column = "_PhoneNumber", NotNull = true), NHibernate.Validator.Constraints.NotEmpty(Message="Введите номер телефона")]
+		[Property, Description("Номер абонента Ситилайн")]
+		public virtual int? ExternalClientId { get; set; }
+
+		[Property(Column = "_PhoneNumber", NotNull = true), NHibernate.Validator.Constraints.NotEmpty(Message = "Введите номер телефона")]
 		public virtual string PhoneNumber { get; set; }
 
 		[Property(NotNull = true), NotEmpty(Message = "Введите имя")]
@@ -77,7 +82,7 @@ namespace Inforoom2.Models
 		public virtual string Patronymic { get; set; }
 
 		[DataType(DataType.Date)]
-		[Property(Column = "DateOfBirth"), DateTimeNotEmpty]
+		[Property(Column = "DateOfBirth"), ValidatorNotEmpty]
 		public virtual DateTime BirthDate { get; set; }
 
 		[OneToOne(PropertyRef = "PhysicalClient")]
@@ -163,6 +168,40 @@ namespace Inforoom2.Models
 				BeforeWriteOffBalance = Client.Balance
 			};
 		}
+
+
+		///  Генерация пароля для пользователя
+		///  *взято из старой админки////////////////////// 
+		public static string GeneratePassword( PhysicalClient ph )
+		{
+			var availableChars = "23456789qwertyupasdfghjkzxcvbnmQWERTYUPASDFGHJKLZXCVBNM";
+			var password = String.Empty;
+			while (password.Length < 8) {
+				int availableChars_elem = 0;
+
+				var rngCsp = new RNGCryptoServiceProvider();
+				var randomNumber = new byte[1];
+				do {
+					rngCsp.GetBytes(randomNumber);
+				} while (!(randomNumber[0] < (availableChars.Length - 1) * (Byte.MaxValue / (availableChars.Length - 1))));
+
+				availableChars_elem = (randomNumber[0] % (availableChars.Length - 1)) + 1;
+
+				password += availableChars[availableChars_elem];
+			}
+			string hash = string.Empty;
+				if (password != null) {
+				byte[] bytes = Encoding.Unicode.GetBytes(password);
+				var CSP = new MD5CryptoServiceProvider();
+				byte[] byteHash = CSP.ComputeHash(bytes);
+				foreach (byte b in byteHash)
+					hash += string.Format("{0:x2}", b);
+			}
+			ph.Password = hash;
+			return password;
+		}
+
+		//////////////////////////////////////////////////
 	}
 
 	public enum CertificateType

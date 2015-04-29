@@ -125,7 +125,7 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		public object MapModel(NameValueCollection values, Type entityType)
 		{
-			var instance = GenerateInstance(values, entityType);
+			var instance = GenerateInstance(values, entityType); 
 
 			if (instance==null)
 				return null;
@@ -141,6 +141,12 @@ namespace Inforoom2.Components
 
 				if (property.PropertyType.IsSubclassOf(typeof(BaseModel))) {
 					//Если это модель то мапим модель
+					var oldValue = property.GetValue(instance, new object[]{}) as BaseModel;
+					var idKey = property.Name + ".Id";
+					//Если нет идентификатора вложенной модели, то мы его создаем в параметрах
+					//То есть если не было дано никаких специальных указаний, что модель надо затереть или подгрузить другую
+					if (oldValue != null && values[idKey] == null)
+						values[idKey] = oldValue.Id.ToString();
 					var subvalues = SliceValues(values, property.Name);
 					newValue = MapModel(subvalues, property.PropertyType);
 					property.SetValue(instance, newValue, new object[] { });
@@ -303,10 +309,16 @@ namespace Inforoom2.Components
 				//Значения перечислений задаются через их строчное обозначение
 				propertyVal = Enum.Parse(targetType, propertyVal.ToString());
 			}
+
+			if (IsNullableType(propertyInfo.PropertyType) && targetType != typeof(String) && propertyVal == "")
+			{
+				propertyVal = null;
+			}
+
 			try
 			{
-				//
-				propertyVal = Convert.ChangeType(propertyVal, targetType);
+				if(propertyVal != null)
+					propertyVal = Convert.ChangeType(propertyVal, targetType);
 				propertyInfo.SetValue(inputObject, propertyVal, null);
 			}
 			catch (Exception e)

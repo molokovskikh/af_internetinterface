@@ -109,14 +109,14 @@ namespace InternetInterface.Models
 		public virtual string Additional { get; set; }
 
 		[Property, ValidateNonEmpty("Введите номер подъезда"), ValidateInteger("Должно быть введено число"),
-		Auditable("Номер подъезда")]
+		 Auditable("Номер подъезда")]
 		public virtual int? Entrance { get; set; }
 
 		[Property, ValidateNonEmpty("Введите номер этажа"), ValidateInteger("Должно быть введено число"), Auditable("Этаж")]
 		public virtual int? Floor { get; set; }
 
 		[ValidateNonEmpty(RunWhen = RunWhen.Insert),
-		ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера: мобильный телефон (000-0000000)")]
+		 ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера: мобильный телефон (000-0000000)")]
 		public virtual string PhoneNumber { get; set; }
 
 		[ValidateRegExp(@"^((\d{3})-(\d{7}))", "Ошибка формата телефонного номера (***-*******)")]
@@ -135,7 +135,7 @@ namespace InternetInterface.Models
 		public virtual string PassportNumber { get; set; }
 
 		[Property, UserValidateNonEmpty("Введите дату выдачи паспорта"), ValidateDate("Ошибка формата даты **-**-****"),
-		Auditable("Дата выдачи паспорта")]
+		 Auditable("Дата выдачи паспорта")]
 		public virtual DateTime? PassportDate { get; set; }
 
 		[Property, UserValidateNonEmpty("Заполните поле 'Кем выдан паспорт'"), Auditable("Кем выдан паспорт")]
@@ -204,13 +204,16 @@ namespace InternetInterface.Models
 			if (ExternalClientIdRequired && ExternalClientId == null) {
 				errors.RegisterErrorMessage("ExternalClientId", "Нужно указать номер абонента");
 			}
-
+			//  **связано с переходом на новую админку** //В новой админке не используется 
+			/*
 			if (Client.Status.Type != StatusType.Dissolved
 				&& (Client.AdditionalStatus == null || Client.AdditionalStatus.Id != (uint)AdditionalStatusType.Refused)) {
+
+			
 				if (HouseObj == null)
 					errors.RegisterErrorMessage("HouseObj", "Нужно выбрать дом");
 			}
-
+			*/
 			if (IdDocType == IdDocType.LocalId) {
 				if (!new RegularExpressionValidator(@"^(\d{6})?$").IsValid(this, PassportNumber)) {
 					errors.RegisterErrorMessage("PassportNumber", "Неправильный формат номера паспорта (6 цифр)");
@@ -367,8 +370,8 @@ namespace InternetInterface.Models
 				return;
 
 			if (HouseObj.Region != null
-				&& HouseObj.Region.IsExternalClientIdMandatory
-				&& ExternalClientId == null) {
+			    && HouseObj.Region.IsExternalClientIdMandatory
+			    && ExternalClientId == null) {
 				ExternalClientId = (int?)Client.Id;
 			}
 		}

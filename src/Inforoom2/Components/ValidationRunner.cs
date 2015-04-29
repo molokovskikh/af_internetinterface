@@ -107,15 +107,13 @@ namespace Inforoom2.Components
 		}
 
 		public ValidationErrors ValidateDeep(object obj, IList validatedObjects = null)
-		{
-			ValidatedObjectList.Add(obj);
+		{ 
 
 			if (validatedObjects == null)
 				validatedObjects = new ArrayList();
 
 			var summary = Validate(obj);
-			if (summary.Length != 0)
-				return summary;
+
 			validatedObjects.Add(obj);
 
 			var allprops = obj.GetType().GetProperties();
@@ -131,7 +129,7 @@ namespace Inforoom2.Components
 						continue;
 					var errors = ValidateDeep(o, validatedObjects);
 					if (errors.Length > 0)
-						return errors;
+						summary.AddRange(errors);
 				}
 			}
 
@@ -146,7 +144,7 @@ namespace Inforoom2.Components
 					continue;
 				var errors = ValidateDeep(value, validatedObjects);
 				if (errors.Length > 0)
-					return errors;
+					summary.AddRange(errors);
 			}
 
 			props = allprops.Where(prop => Attribute.IsDefined(prop, typeof(ManyToOneAttribute)));
@@ -156,7 +154,7 @@ namespace Inforoom2.Components
 					continue;
 				var errors = ValidateDeep(value, validatedObjects);
 				if (errors.Length > 0)
-					return errors;
+					summary.AddRange(errors);
 			}
 
 			return summary;
