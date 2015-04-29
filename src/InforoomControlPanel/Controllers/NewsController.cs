@@ -9,6 +9,16 @@ namespace InforoomControlPanel.Controllers
 {
 	public class NewsController : AdminController
 	{
+		public NewsController()
+		{
+			ViewBag.BreadCrumb = "Новости";
+		}
+
+		public  ActionResult Index()
+		{
+			return NewsIndex();
+		}
+
 		public ActionResult NewsIndex()
 		{
 			var newsBlocks = DbSession.Query<NewsBlock>().OrderBy(k => k.Priority).ToList();
@@ -17,7 +27,7 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			ViewBag.NewsBlocks = newsBlocks;
-			return View();
+			return View("NewsIndex");
 		}
 
 		public ActionResult EditNewsBlock(int? newsBlockId)

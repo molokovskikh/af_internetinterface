@@ -260,6 +260,7 @@
   <ItemGroup>
     <Compile Include="Components\EmailSender.cs" />
     <Compile Include="Components\EntityBinder.cs" />
+    <Compile Include="Components\ModelFilter.cs" />
     <Compile Include="Components\YandexParser.cs" />
     <Compile Include="Components\HtmlTag.cs" />
     <Compile Include="Components\ValidationRunner.cs" />
@@ -283,6 +284,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ActiveDirectoryHelper.cs" />
     <Compile Include="Helpers\AddressHelper.cs" />
     <Compile Include="Helpers\AuthorizeUserAttribute.cs">
       <SubType>Code</SubType>
@@ -300,6 +302,8 @@
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Administrator.cs" />
     <Compile Include="Models\BillingHistory.cs" />
+    <Compile Include="Models\Banner.cs" />
+    <Compile Include="Models\Slide.cs" />
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientEndPoint.cs" />
     <Compile Include="Models\ClientRequest.cs" />

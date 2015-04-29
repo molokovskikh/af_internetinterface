@@ -10,13 +10,23 @@ namespace InforoomControlPanel.Controllers
 	/// <summary>
 	/// Страница управления вопросами от пользователя
 	/// </summary>
-	public class TicketController : AdminController
+	public class TicketController : ControlPanelController
 	{
+		public TicketController()
+		{
+			ViewBag.BreadCrumb = "Запросы пользователей";
+		}
+
+		public  ActionResult Index()
+		{
+			return TicketIndex();
+		}
+
 		public ActionResult TicketIndex()
 		{
 			var tickets = DbSession.Query<Ticket>().OrderByDescending(i => i.CreationDate).ToList();
 			ViewBag.Tickets = tickets;
-			return View();
+			return View("TicketIndex");
 		}
 
 		public ActionResult CallMeBackTicketIndex()

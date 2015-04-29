@@ -1,7 +1,8 @@
 ﻿using System.Linq;
 using Inforoom2.Models;
-using Inforoom2.Test.Functional.infrastructure;
-using Inforoom2.Test.Functional.infrastructure.Helpers;
+using Inforoom2.Test.Infrastructure;
+using Inforoom2.Test.Infrastructure.Helpers;
+using NHibernate.Criterion;
 using NHibernate.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -74,6 +75,36 @@ namespace Inforoom2.Test.Functional.Personal
 			var row = targetPlan.FindElement(By.XPath(".."));
 			var planRegion = row.FindElement(By.CssSelector(".tariffscost")).Text;
 			Assert.That(planRegion, Is.EqualTo(plan.Name), "Клиенту должен отображаться региональный план 50 на 50");
+			AssertNoText("Старт");
+		}
+
+
+		[Test(Description = "Отображение тарифов по региону дома")]
+		public void PlanRegionHouse()
+		{
+			//клиент у которого регион дома и улицы разный
+			var Client = DbSession.Query<Client>().First(i => i.Comment == ClientCreateHelper.ClientMark.clientWithDifferentRegionHouse.GetDescription());
+			LoginForClient(Client);
+			Open("Personal/Plans");
+			//видит тариф региона дома
+			AssertText("Старт");
+			//не видит тариф региона улицы
+			AssertNoText("50 на 50");
+			var regionStreet = Client.PhysicalClient.Address.House.Street.Region;
+			var regionHouse = Client.PhysicalClient.Address.House.Region;
+			Assert.That(regionStreet, Is.Not.EqualTo(regionHouse),  "Регион дома не дожен соответствовать региону улицы");
+			//клиент без региона дома
+			Client.PhysicalClient.Address.House.Region = null;
+			DbSession.Save(Client.PhysicalClient.Address.House);
+			DbSession.Flush();
+			Open("Personal/Plans");
+			//видит тариф региона улицы
+			AssertText("50 на 50");
+			//не видит тариф региона дома
+			AssertNoText("Старт");
+			regionStreet = Client.PhysicalClient.Address.House.Street.Region;
+			regionHouse = Client.PhysicalClient.Address.House.Region;
+			Assert.That(regionStreet, Is.Not.EqualTo(regionHouse), "Регион дома не дожен соответствовать региону улицы");
 		}
 
 

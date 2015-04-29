@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Linq;
+using Inforoom2.Test.Infrastructure;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.Selenium;
 using Client = Inforoom2.Models.Client;
 
-namespace Inforoom2.Test.Functional.infrastructure
+namespace Inforoom2.Test.Functional.Billing
 {
-	[TestFixture]
+
 	public class BillingFixture : BaseFixture
 	{
 		[Test, Description("Проверка учета скидки по факту списания у клиента 'c тарифом, игнорирующим скидку' ")]

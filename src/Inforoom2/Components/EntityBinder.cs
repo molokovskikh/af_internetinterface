@@ -27,6 +27,9 @@ namespace Inforoom2.Components
 		}
 	}
 
+	//TODO:подумать над обработкой ошибок, вызванных некорректным HTML
+
+	//TODO:подумать, как избежать инъекции лишних значений в Байндер
 	/// <summary>
 	/// Объект, который натягивает данные из форм на объекты
 	/// </summary>
@@ -54,7 +57,7 @@ namespace Inforoom2.Components
 		{
 			var modelName = bindingContext.ModelName;
 			var type = bindingContext.ModelType;
-			
+
 			//Так как мы удаляем использованные элементы из коллекции, во время байндинга
 			//Форму необходимо скопировать
 			var collection = new NameValueCollection(controllerContext.HttpContext.Request.Form);
@@ -74,19 +77,45 @@ namespace Inforoom2.Components
 			var form = request.Form;
 			var keys = form.AllKeys;
 			string name = null;
-			foreach (var key in keys) {
+			foreach (var key in keys)
+			{
 				var split = key.Split('.');
-				if (split.Length > 1) {
+				if (split.Length > 1)
+				{
 					name = split.First();
 					break;
 				}
 			}
-			if(name == null)
+			if (name == null)
 				throw new Exception("Не удалось выяснить имя модели");
 
 			var values = SliceValues(new NameValueCollection(request.Form), name);
 			var ret = MapModel(values, type);
 			return ret;
+		}
+		/// <summary>
+		///  Генерирование переменной на основе полученных типа и значения
+		/// </summary>
+		/// <param name="values">Коллекция свойств для модели</param>
+		/// <param name="entityType">Тип модели</param> 
+		/// <returns>модель</returns>
+		protected object GenerateInstance(NameValueCollection values, Type entityType)
+		{
+			// данное значение возможно при использовании
+			// Inforoom2.Helpers.ViewHelper.DropDownListExtendedFor
+			// в пустом значении списка
+			if (values["id"] == "") return null;
+
+			if (values["id"] == null || int.Parse(values["id"]) == 0)
+			{
+				// создание пустой переменной указанного типа
+				return Activator.CreateInstance(entityType);
+			}
+			else
+			{
+				// создание переменной указанного типа с переданным значением
+				return Session.Get(entityType, int.Parse(values["id"]));
+			}
 		}
 
 		/// <summary>
@@ -98,22 +127,30 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		public object MapModel(NameValueCollection values, Type entityType)
 		{
-			var instance = values["id"] == null || int.Parse(values["id"]) == 0 ? Activator.CreateInstance(entityType) : Session.Get(entityType, int.Parse(values["id"]));
-			while(values.HasKeys()) {
+			var instance = GenerateInstance(values, entityType);
+
+			if (instance == null)
+				return null;
+
+			while (values.HasKeys())
+			{
 				var key = values.Keys.First() as string;
 				object newValue;
 				//Получаем имя поля из параметров
 				var propName = GetPropertyNameFromKey(key);
 				//Получаем поле
 				var property = instance.GetType().GetProperty(propName);
-				
-				if (property.PropertyType.IsSubclassOf(typeof(BaseModel))) {
+
+				if (property.PropertyType.IsSubclassOf(typeof(BaseModel)))
+				{
 					//Если это модель то мапим модель
 					var subvalues = SliceValues(values, property.Name);
 					newValue = MapModel(subvalues, property.PropertyType);
-					property.SetValue(instance, newValue, new object[]{});
+					property.SetValue(instance, newValue, new object[] { });
+					if (values[key] != null) throw new Exception("Не удается назначить поле! \n Вероятная причина: значени в свойстве name тэга обрабатываемого представления *view* указывает на объект ( на модель '" + key + "' ), а не на его поле!");
 				}
-				else if (property.PropertyType.IsGenericType && property.PropertyType.GetInterfaces().Contains(typeof(IEnumerable))){
+				else if (property.PropertyType.IsGenericType && property.PropertyType.GetInterfaces().Contains(typeof(IEnumerable)))
+				{
 					//Если поле это коллекция, то получаем набор параметров для каждого элемента и закидываем их в список
 					//Получаем тип элемента коллекции
 					var subType = property.PropertyType.GetGenericArguments().FirstOrDefault();
@@ -124,17 +161,19 @@ namespace Inforoom2.Components
 
 					//Есть 2 варианта использования байндера: изменение коллекции или добавления элемента
 					if (subCollections.ContainsKey("-1"))
-						AppendToCollection(collection, subType,subCollections["-1"]);
+						AppendToCollection(collection, subType, subCollections["-1"]);
 					else
-						ChangeCollection(collection,subType, subCollections);
+						ChangeCollection(collection, subType, subCollections);
 				}
-				else {
-					 //Если это простое поле, то просто присваиваем его специальной функцией
-					 //Которая хорошо конвертирует строки в значения полей модели
-					 newValue = values[key];
-					 values.Remove(key);
-					 SetValue(instance, property, newValue);
+				else
+				{
+					//Если это простое поле, то просто присваиваем его специальной функцией
+					//Которая хорошо конвертирует строки в значения полей модели
+					newValue = values[key];
+					values.Remove(key);
+					SetValue(instance, property, newValue);
 				}
+
 			}
 			return instance;
 		}
@@ -182,7 +221,7 @@ namespace Inforoom2.Components
 		{
 			var key = str.Split('.').First();
 			if (key.IndexOf('[') != -1)
-				key = key.Substring(0,key.IndexOf('['));
+				key = key.Substring(0, key.IndexOf('['));
 			return key;
 		}
 
@@ -199,14 +238,15 @@ namespace Inforoom2.Components
 		/// </returns>
 		private Dictionary<string, NameValueCollection> SliceMultipleValues(NameValueCollection values, string name)
 		{
-			var dictionary = new Dictionary<string,NameValueCollection>();
-			while (values.AllKeys.Any(i => i.Contains(name))) {
+			var dictionary = new Dictionary<string, NameValueCollection>();
+			while (values.AllKeys.Any(i => i.Contains(name)))
+			{
 				var key = values.AllKeys.First(i => i.Contains(name));
 				var index = key[name.Length + 1];
 				int indexVal;
 				var isRealIndex = int.TryParse(index.ToString(), out indexVal);
 				var subname = isRealIndex ? name + "[" + index + "]" : name + "[]";
-				var subcollection = SliceValues(values,subname );
+				var subcollection = SliceValues(values, subname);
 				indexVal = isRealIndex ? indexVal : -1;
 				dictionary.Add(indexVal.ToString(), subcollection);
 			}
@@ -224,10 +264,14 @@ namespace Inforoom2.Components
 			name = name.ToLower();
 			var collection = new NameValueCollection();
 			foreach (var key in values.AllKeys)
-				if (key.ToLower().Contains(name)) {
+			{
+				//Проверяем, является ли ключ объектом с полями
+				if (key.ToLower().IndexOf(name + ".") == 0)
+				{
 					collection.Add(key.Substring(name.Length + 1), values[key]);
 					values.Remove(key);
 				}
+			}
 
 			return collection;
 		}
@@ -264,15 +308,17 @@ namespace Inforoom2.Components
 				//Значения перечислений задаются через их строчное обозначение
 				propertyVal = Enum.Parse(targetType, propertyVal.ToString());
 			}
-			try {
+			try
+			{
 				//
 				propertyVal = Convert.ChangeType(propertyVal, targetType);
 				propertyInfo.SetValue(inputObject, propertyVal, null);
 			}
-			catch (Exception e) {
-				
+			catch (Exception e)
+			{
+
 			}
-			
+
 		}
 
 		/// <summary>
