@@ -203,6 +203,7 @@ namespace Inforoom2.Test.Infrastructure
 				newChannel.Name = channels[i];
 				newChannel.Port = int.Parse(ports[i]);
 				newChannel.Url = urls[i];
+				newChannel.Enabled = true;
 				newChannel.TvProtocol = DbSession.Query<TvProtocol>().First(j=>j.Name == protocols[i]);
 				DbSession.Save(newChannel);
 			}
