@@ -3,7 +3,7 @@
 		<thead>
 			<tr class="menuItem">
 				<% if MapPartner.AccesPartner("RC"): %>
-				<th>${App.LinkTo("Регистрация абонента", @Register, @RegisterClient)}</th>
+				<th><a href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/Registration">Регистрация абонента</a> </th>
 				<% end %>
 				<% if MapPartner.AccesPartner("RC"): %>
 				<th>${App.LinkTo("Регистрация ЮрЛица", @Register, @RegisterLegalPerson)}</th>
@@ -46,7 +46,7 @@
 			</tr>
 			<tr class="submenu">
 				<% if MapPartner.AccesPartner("RC"): %>
-				<th><a href="http://test2.analit.net/controlpanel">Перейти в Inforoom2<a/>
+				<th><a href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}">Перейти в Inforoom2<a/>
 				</th>
 				<% end %>
 				<% if MapPartner.AccesPartner("RC"): %>

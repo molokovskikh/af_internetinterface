@@ -9,7 +9,9 @@
 	List<SwitchAddress> networkNodeList = ViewBag.networkNodeList;
 	;
 }
-
+<div class="form-group">
+	<a href="@Url.Action("Edit", new { @id = client.Id })" class="btn btn-green">Редактировать</a>
+</div>
 <div class="panel panel-primary col-md-12">
 	<div class="panel-body col-md-6">
 		@using (@Html.BeginForm(action, controller, null, FormMethod.Post, new { @id = "ClientInfoForm", @class = "form-horizontal form-groups-bordered" })) {
@@ -41,7 +43,8 @@
 	</div>
 
 	<div class="panel-body col-md-6">
-		@if (networkNodeList.Count > 0) {
+		@if (networkNodeList!=null && networkNodeList.Count > 0)
+		{
 			foreach (var node in networkNodeList) {
 				<div class="form-group">
 					<div class="col-sm-10">
@@ -78,3 +81,4 @@
 
 	</div>
 </div>
+<div style="clear:both;"></div>

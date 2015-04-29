@@ -1,0 +1,309 @@
+﻿@section JavaScript{<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js")"></script>} 
+@using Inforoom2.Helpers
+@using Inforoom2.Models 
+@using InternetInterface.Models
+@using Client = Inforoom2.Models.Client
+@using House = Inforoom2.Models.House
+@using Street = Inforoom2.Models.Street
+
+@{
+	Client client = ViewBag.Client;
+	ViewBag.Title = "Регистрация нового клиента " + client.PhysicalClient.FullName + " по заявке";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	string action = ViewBag.ActionName;
+	string controller = ViewBag.ControllerName;
+	List<Region> regionList = ViewBag.RegionList;
+	List<Plan> planList = ViewBag.PlanList;
+	Dictionary<int, CertificateType> certificateTypeDic = ViewBag.CertificateTypeDic;
+	Region currentRegion = ViewBag.CurrentRegion;
+	Street currentStreet = ViewBag.CurrentStreet;
+	House currentHouse = ViewBag.CurrentHouse;
+	List<Street> currentStreetList = ViewBag.CurrentStreetList;
+	List<House> currentHouseList = ViewBag.CurrentHouseList;
+	int houseExist = client.PhysicalClient.Address.House == null ? 0 : client.PhysicalClient.Address.House.Id;
+	int requestId = ViewBag.requestId;
+}
+
+<div class="panel panel-primary col-md-12">
+	<div class="panel-body">
+		@using (@Html.BeginForm(action, controller, null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-md-6">
+						@Html.HiddenFor(s => requestId);
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Личная информация</h3>
+							</div>
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-lg-8">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Фамилия:</label>
+											<div class="col-sm-4">
+												@Html.TextBoxFor(o => client.PhysicalClient.Surname, new { @class = "form-control" })
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Имя:</label>
+											<div class="col-sm-4">
+												@Html.TextBoxFor(o => client.PhysicalClient.Name, new { @class = "form-control" })
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Отчество:</label>
+											<div class="col-sm-4">
+												@Html.TextBoxFor(o => client.PhysicalClient.Patronymic, new { @class = "form-control" })
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Дата рождения:</label>
+											<div class="col-sm-4 date-picker-box">
+												@Html.TextBoxFor(o => client.PhysicalClient.BirthDate, new { @data_format = "dd.mm.yyyy", @class = "form-control datepicker" })
+											</div>
+
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Мобильный телефон:</label>
+											<div class="col-sm-4">
+												@Html.TextBoxFor(o => client.PhysicalClient.PhoneNumber, new { @class = "form-control" })
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Домашний телефон:</label>
+											<div class="col-sm-4">
+												@if (client.Contacts != null && client.Contacts.Count > 0) {
+													@Html.TextBoxFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).ContactString, new { @Name = "client.Contacts[0].ContactString", @Id = "ContactString_1", @class = "form-control" })
+													@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).Type, new { @Name = "client.Contacts[0].Type" })
+													@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone).Date, new { @Name = "client.Contacts[0].Date" })
+												}
+												else {
+													<input id="ContactString_1" name="client.Contacts[0].ContactString" class="form-control" type="text" value="">
+													<input name="client.Contacts[0].Type" id="Type" type="hidden" value="HousePhone">
+													<input name="client.Contacts[0].Date" id="Date" type="hidden" value="@DateTime.Now">
+												}
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">email:</label>
+											<div class="col-sm-4">
+												@Html.TextBoxFor(o => client.PhysicalClient.Email, new { @class = "form-control" })
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Номер абонента Ситилайн:</label>
+											<div class="col-sm-4">
+												@Html.TextBoxFor(o => client.PhysicalClient.ExternalClientId, new { @class = "form-control" })
+												@ViewBag.Validation.GetError(client.PhysicalClient, "ExternalClientId")
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label c-pointer" for="clientToBeChecked">Проверен:</label>
+											<div class="col-sm-4">
+												@Html.CheckBoxFor(o => client.PhysicalClient.Checked, new { @Id = "clientToBeChecked", @class = "c-pointer" })
+											</div>
+										</div>
+									</div><!-- /.col-lg-6 -->
+								</div><!-- /.row -->
+
+							</div>
+						</div>
+						
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Тариф</h3>
+							</div>
+							<div class="panel-body">
+
+								<div class="row">
+									<div class="col-lg-8">
+										<div class="form-group error">
+											<label class="col-sm-4 control-label @(client.PhysicalClient.Plan == null ? " bold msg" : "")">Тариф:</label>
+											<div class="col-sm-6">
+												@if (client.PhysicalClient.Plan != null) {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Plan, planList, obj => obj.Name, null, new { @class = "form-control", @Id = "PlanDropDown" }, client.PhysicalClient.Plan.Id, true)
+													@ViewBag.Validation.GetError(client.PhysicalClient, "Plan")
+												}
+												else {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Plan, planList, obj => obj.Name, null, new { @class = "form-control", @Id = "PlanDropDown" }, true)
+													@ViewBag.Validation.GetError(client.PhysicalClient, "Plan")
+												}
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Сумма за подключение:</label>
+											<div class="col-sm-6">
+												@Html.TextBoxFor(o => client.PhysicalClient.ConnectSum, new { @class = "form-control" })
+												@ViewBag.Validation.GetError(client.PhysicalClient, "ConnectSum")
+											</div>
+										</div>
+										<div class="form-group"> 
+											<div class="col-sm-4">
+												<input type="submit" class="btn btn-green" value="Зарегистрировать" />
+											</div>
+										</div>
+									</div>
+								</div><!-- /.row -->
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Адрес</h3>
+							</div>
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-lg-8">
+										<div class="form-group error">
+											<label class="col-sm-2 control-label@(currentRegion == null ? " bold msg" : "")">Регион:</label>
+											<div class="col-sm-6"> 
+												@if (currentRegion != null) {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street.Region, regionList, obj => obj.Name, null,
+														new { @class = "form-control", @Id = "RegionDropDown", @Name = "client.PhysicalClient.Address.House.Street.Region.Id" }, currentRegion.Id, true)
+												}
+												else {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street.Region, regionList, obj => obj.Name, null,
+														new { @class = "form-control", @Id = "RegionDropDown", @Name = "client.PhysicalClient.Address.House.Street.Region.Id" }, true)
+												}  
+												@Html.HiddenFor(s => currentRegion.Id, new { Id = "regionError" })
+											</div>
+										</div>
+										<div class="form-group error">
+											<label class="col-sm-2 control-label@(currentStreet == null ? " bold msg" : "")">Улица:</label>
+											<div class="col-sm-6">
+												@if (currentStreet != null) {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
+														new { @class = "form-control", @Id = "StreetDropDown", @Name = "client.PhysicalClient.Address.House.Street.Id" }, currentStreet.Id, true)
+												}
+												else {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
+														new { @class = "form-control", @Id = "StreetDropDown", @Name = "client.PhysicalClient.Address.House.Street.Id" }, true)
+												}
+											
+												@Html.HiddenFor(s => currentStreet.Id, new { Id = "streetError" })
+											</div>
+										</div>
+										<div class="form-group error">
+											<label class="col-sm-2 control-label@(currentHouse == null ? " bold msg" : "")">Дом:</label>
+											<div class="col-sm-6">
+												@if (currentHouse != null ) {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House, currentHouseList, obj => obj.Number, null, new {
+														@class = "form-control",
+														@Id = "HouseDropDown",
+														@Name = "client.PhysicalClient.Address.House.Id"
+													}, currentHouse.Id, true)
+												}
+												else {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House, currentHouseList, obj => obj.Number, null, new
+		{
+														@class = "form-control",
+														@Id = "HouseDropDown",
+														@Name = "client.PhysicalClient.Address.House.Id"
+													}, true)
+												}
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="col-sm-2 control-label">Подъезд:</label>
+											<div class="col-sm-2">
+												@Html.TextBoxFor(o => client.PhysicalClient.Address.Entrance, new { @class = "form-control", @id = "entrance_id" }) 
+											</div>
+											<label class="col-sm-1 control-label">Этаж:</label>
+											<div class="col-sm-2">
+												@Html.TextBoxFor(o => client.PhysicalClient.Address.Floor, new { @class = "form-control", @id = "floor_id" }) 
+											</div>
+											<label class="col-sm-2 control-label">Квартира:</label>
+											<div class="col-sm-2">
+												@Html.TextBoxFor(o => client.PhysicalClient.Address.Apartment, new { @class = "form-control", @id = "apartment_id" }) 
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-lg-8">
+										<div class="form-group">
+											<div class="col-sm-2">
+											</div>
+											<div class="col-sm-3">
+												<a href="@Url.Action("CreateStreet", "Address")" class="btn btn-green">Добавить улицу</a>
+											</div>
+											<div class="col-sm-3">
+												<a href="@Url.Action("CreateHouse", "Address")" class="btn btn-green">Добавить дом</a>
+											</div>
+										</div>
+									</div>
+								</div><!-- /.row -->
+
+							</div>
+						</div>
+
+
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Паспортные данные</h3>
+							</div>
+							<div class="panel-body">
+
+								<div class="row">
+									<div class="col-lg-8">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Название документа удостоверяющего личность:</label>
+											<div class="col-sm-4"> 
+												<select name="client.PhysicalClient.CertificateType" class="form-control">
+													@foreach (var region in certificateTypeDic) {
+														<option value="@region.Key" @(client.PhysicalClient.CertificateType == region.Value ?
+															                              "selected=selected" : "")>@region.Value.GetDescription()</option>
+													}
+												</select>
+												
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Название документа удостоверяющего личность:</label>
+											<div class="col-sm-4">
+												@Html.TextBoxFor(o => client.PhysicalClient.CertificateName, new { @class = "form-control" })
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Серия паспорта:</label>
+											<div class="col-sm-4">
+												@Html.TextBoxFor(o => client.PhysicalClient.PassportSeries, new { @class = "form-control" })
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Номер паспорта:</label>
+											<div class="col-sm-4">
+												@Html.TextBoxFor(o => client.PhysicalClient.PassportNumber, new { @class = "form-control" })
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Дата выдачи паспорта:</label>
+											<div class="col-sm-4 date-picker-box">
+												@Html.TextBoxFor(o => client.PhysicalClient.PassportDate, new { @data_format = "dd.mm.yyyy", @class = "form-control datepicker" })
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Кем выдан:</label>
+											<div class="col-sm-4">
+												@Html.TextBoxFor(o => client.PhysicalClient.PassportResidention, new { @class = "form-control" })
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Адрес регистрации:</label>
+											<div class="col-sm-4">
+												@Html.TextBoxFor(o => client.PhysicalClient.RegistrationAddress, new { @class = "form-control" })
+											</div>
+										</div>
+									</div><!-- /.col-lg-6 -->
+								</div><!-- /.row -->
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		}
+	</div></div>

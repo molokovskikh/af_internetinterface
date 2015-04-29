@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Text;
 using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Components;
@@ -307,6 +308,65 @@ namespace InforoomControlPanel.Controllers
 			EditHouse(House.Id);
 			ViewBag.House = House;
 			return View("CreateHouse");
+		}
+
+		/// <summary>
+		/// Возвращение списка улиц по региону.
+		/// </summary>
+		/// <param name="regionId">Id региона</param>
+		/// <returns>Json* Список в форме: Id, Name, Geomark, Confirmed, Region (Id), Houses (кол-во)</returns>
+		[HttpPost]
+		public JsonResult GetStreetList(int regionId)
+		{
+			var streets = DbSession.Query<Street>().
+				Where(s => s.Region.Id == regionId).
+				Select(s => new {
+					Id = s.Id,
+					Name = s.Name,
+					Geomark = s.Geomark,
+					Confirmed = s.Confirmed, Region = s.Region.Id, Houses = s.Houses.Count
+				}).ToList();
+			return Json(streets, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Возвращение списка домов по улице.
+		/// </summary>
+		/// <param name="streetId">Id улицы</param>
+		/// <returns>Json* Список в форме: Id, Number, Geomark, Confirmed, Street (Id), EntranceAmount ,ApartmentAmount</returns>
+		[HttpPost]
+		public JsonResult GetHouseList(int streetId)
+		{
+			var houses = DbSession.Query<House>().
+				Where(s => s.Street.Id == streetId).
+				Select(s => new {
+					Id = s.Id,
+					Number = s.Number,
+					Geomark = s.Geomark,
+					Confirmed = s.Confirmed,
+					Street = s.Street.Id,
+					EntranceAmount = s.EntranceAmount,
+					ApartmentAmount = s.ApartmentAmount
+				}).ToList();
+			return Json(houses, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Получение тарифов по региону
+		/// </summary>
+		/// <param name="regionId">Id региона</param>
+		/// <returns>Json* Список в форме: Id, Name, Price</returns>
+		[HttpPost]
+		public JsonResult GetPlansListForRegion(int regionId)
+		{
+			var planList = DbSession.Query<Plan>()
+				.Where(s => s.RegionPlans.Any(d => d.Region.Id == regionId))
+				.Select(d => new {
+					Id = d.Id,
+					Name = d.Name,
+					Price = d.Price
+				}).ToList();
+			return Json(planList, JsonRequestBehavior.AllowGet);
 		}
 	}
 }

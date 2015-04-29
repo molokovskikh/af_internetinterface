@@ -17,7 +17,7 @@
 
 <div class="panel panel-primary col-md-12">
 	<div class="panel-body">
-		@using (@Html.BeginForm(action, controller, new { clientId = client.Id}, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+		@using (@Html.BeginForm(action, controller, new { id = client.Id}, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
 		{
 			 @Html.HiddenFor(i => ServiceRequest.Client.Id);
 			<div class="form-group">

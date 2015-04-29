@@ -1491,6 +1491,7 @@
     <Content Include="Css\style.css" />
     <Content Include="Images\map.png" />
     <Content Include="Images\tick.png" />
+    <Content Include="Scripts\ClientController.ClientRegistration.js" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\AddressController.CreateStreet.js" />
     <Content Include="Scripts\AddressController.CreateHouse.js" />
@@ -1796,7 +1797,7 @@
     <Content Include="assets\js\zurb-responsive-tables\javascripts\app.js.orig" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Client\ClientList.cshtml" />
+    <Content Include="Views\Client\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Client\ServiceRequest.cshtml" />
@@ -1811,13 +1812,13 @@
     <Content Include="Views\ConnectionTeam\AttachServiceRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Client\ClientRequestsList.cshtml" />
+    <Content Include="Views\Client\RequestsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\ConnectionTeam\AttachConnectionRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Client\ClientRequest.cshtml" />
+    <Content Include="Views\Client\Request.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Admin\Admins.cshtml" />
@@ -1835,7 +1836,7 @@
     <Content Include="Views\Ticket\EditCallMeBackTicket.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Client\ClientInfo.cshtml" />
+    <Content Include="Views\Client\Info.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Plans\EditPlan.cshtml" />
@@ -1876,6 +1877,9 @@
   <ItemGroup>
     <Content Include="Views\Plans\CreatePlan.cshtml" />
     <Content Include="Views\ConnectionTeam\UnpluggedClientList.cshtml" />
+    <Content Include="Views\Client\Registration.cshtml" />
+    <Content Include="Views\Client\Edit.cshtml" />
+    <Content Include="Views\Client\RequestRegistration.cshtml" />
     <Content Include="Views\Plans\CreateTvProtocol.cshtml" />
     <Content Include="Views\Plans\TvProtocolList.cshtml" />
     <Content Include="Views\Plans\TvChannelList.cshtml" />

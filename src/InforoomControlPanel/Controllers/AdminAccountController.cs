@@ -9,6 +9,7 @@ using Inforoom2.Controllers;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
+using System.Security.Cryptography;
 
 namespace InforoomControlPanel.Controllers
 {
@@ -25,8 +26,8 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult Index()
 		{
-			if (Request.IsAuthenticated)
-				return RedirectToAction("Statistic", "Admin");
+			if (Request.IsAuthenticated)  
+				return RedirectToAction("Statistic", "Admin"); 
 			return View();
 		}
 
@@ -42,9 +43,9 @@ namespace InforoomControlPanel.Controllers
 				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient);
 			}
 #endif
-			if (ActiveDirectoryHelper.IsAuthenticated(username, password) && employee != null) {
+			if (ActiveDirectoryHelper.IsAuthenticated(username, password) && employee != null) { 
 				Session.Add("employee", employee.Id);
-				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient);
+				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient); 
 			}
 			ErrorMessage("Неправильный логин или пароль");
 			return Redirect(returnUrl);

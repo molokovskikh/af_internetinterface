@@ -20,6 +20,14 @@ namespace Inforoom2.Models
 		[Property(NotNull = true, Unique = true), NotEmpty]
 		public virtual string Name { get; set; }
 
+		public Plan()
+		{
+			Regions = new List<Region>();
+			PlanTransfers = new List<PlanTransfer>();
+			RegionPlans = new List<RegionPlan>();
+			TvChannelGroups = new List<TvChannelGroup>();
+		}
+
 		public virtual float Speed
 		{
 			get { return PackageSpeed.GetSpeed(); }
@@ -59,7 +67,7 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "PackageId", PropertyRef = "PackageId")]
 		public virtual PackageSpeed PackageSpeed { get; set; }
 
-		[Bag(0, Table = "PlanTvChannelGroups",Cascade = "All")]
+		[Bag(0, Table = "PlanTvChannelGroups", Cascade = "All")]
 		[Key(1, Column = "Plan", NotNull = false)]
 		[ManyToMany(2, Column = "TvChannelGroup", ClassType = typeof(TvChannelGroup))]
 		public virtual IList<TvChannelGroup> TvChannelGroups { get; set; }
@@ -71,14 +79,6 @@ namespace Inforoom2.Models
 		public virtual bool Hidden { get; set; }
 
 		public virtual decimal SwitchPrice { get; set; }
-
-		public Plan()
-		{
-			Regions = new List<Region>();
-			PlanTransfers = new List<PlanTransfer>();
-			RegionPlans = new List<RegionPlan>();
-			TvChannelGroups = new List<TvChannelGroup>();
-		}
 
 
 		/// <summary>
@@ -102,7 +102,7 @@ namespace Inforoom2.Models
 			var list = new List<TvChannel>();
 			foreach (var group in TvChannelGroups)
 				list.AddRange(group.TvChannels);
-			return list.Distinct().Where(i=>i.Enabled).OrderByDescending(i=>i.Priority).ToList();
+			return list.Distinct().Where(i => i.Enabled).OrderByDescending(i => i.Priority).ToList();
 		}
 
 		/// <summary>

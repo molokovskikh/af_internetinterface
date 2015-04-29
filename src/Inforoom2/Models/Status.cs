@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using NHibernate;
 using NHibernate.Mapping.Attributes;
@@ -36,6 +37,7 @@ namespace Inforoom2.Models
 			return true;
 		}
 
+		[Description("Получение статуса клиента из БД по перечислению")]
 		public static Status Get(StatusType type, ISession session)
 		{
 			return session.QueryOver<Status>().List().FirstOrDefault(status => status.Type == type);
