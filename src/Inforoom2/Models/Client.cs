@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Common.Tools;
 using Inforoom2.Models.Services;
+using Inforoom2.validators;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate;
@@ -112,7 +113,7 @@ namespace Inforoom2.Models
 		[ManyToOne(Cascade = "save-update")]
 		public virtual Status Status { get; set; }
 
-		[ManyToOne(Column = "PhysicalClient", Cascade = "save-update")]
+		[ManyToOne(Column = "PhysicalClient", Cascade = "save-update"), ValidatorPhysicalClient]
 		public virtual PhysicalClient PhysicalClient { get; set; }
 
 		[ManyToOne(Column = "LawyerPerson", Cascade = "save-update")]
@@ -136,7 +137,7 @@ namespace Inforoom2.Models
 
 		[Bag(0, Table = "Contacts", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "client")]
-		[OneToMany(2, ClassType = typeof(Contact))]
+		[OneToMany(2, ClassType = typeof(Contact)), ValidatorContacts]
 		public virtual IList<Contact> Contacts { get; set; }
 
 		[Bag(0, Table = "UserWriteOffs", Cascade = "all-delete-orphan")]
@@ -315,13 +316,15 @@ namespace Inforoom2.Models
 		public virtual string PhoneNumber
 		{
 			get { return PhysicalClient != null ? PhysicalClient.PhoneNumber : null; }
-			set { PhysicalClient.PhoneNumber = value; }
+			// Контакты находятся в отдельной таблице
+			//set { PhysicalClient.PhoneNumber = value; }
 		}
 
 		public virtual string Email
 		{
 			get { return PhysicalClient != null ? PhysicalClient.Email : null; }
-			set { PhysicalClient.Email = value; }
+			// Контакты находятся в отдельной таблице
+			//set { PhysicalClient.Email = value; }
 		}
 		// TODO: нужно ли оно ???
 		[Property(Column = "Name")]

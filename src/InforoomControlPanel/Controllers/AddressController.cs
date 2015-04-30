@@ -325,7 +325,7 @@ namespace InforoomControlPanel.Controllers
 					Name = s.Name,
 					Geomark = s.Geomark,
 					Confirmed = s.Confirmed, Region = s.Region.Id, Houses = s.Houses.Count
-				}).ToList();
+				}).OrderBy(s=>s.Name).ToList();
 			return Json(streets, JsonRequestBehavior.AllowGet);
 		}
 
@@ -347,7 +347,7 @@ namespace InforoomControlPanel.Controllers
 					Street = s.Street.Id,
 					EntranceAmount = s.EntranceAmount,
 					ApartmentAmount = s.ApartmentAmount
-				}).ToList();
+				}).OrderBy(s => s.Number).ToList();
 			return Json(houses, JsonRequestBehavior.AllowGet);
 		}
 
@@ -365,7 +365,7 @@ namespace InforoomControlPanel.Controllers
 					Id = d.Id,
 					Name = d.Name,
 					Price = d.Price
-				}).ToList();
+				}).OrderBy(s => s.Name).ToList();
 			return Json(planList, JsonRequestBehavior.AllowGet);
 		}
 	}
