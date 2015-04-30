@@ -77,7 +77,7 @@
 				<% end %>
 				<tr>
 					<td>
-						<a href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/ClientRequestRegistration?requestId=${request.Id}" class="button">Зарегистрировать</a>
+						<a  style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/RequestRegistration/${request.Id}" class="button">Зарегистрировать</a>
 					</td>
 					<td>
 						<% if not request.Archive: %>

@@ -64,9 +64,6 @@ namespace Inforoom2.Controllers
 			}
 			ViewBag.Title = "Инфорум";
 			ViewBag.Cities = new[] { "Борисоглебск", "Белгород" };
-			ViewBag.JavascriptParams["baseurl"] = String.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, UrlHelper.GenerateContentUrl("~/", HttpContext));
-			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
-			ViewBag.ControllerName = GetType().Name.Replace("Controller", "");
 			//todo куда это девать?
 			var newCallMeBackTicket = new CallMeBackTicket() {
 				Name = (CurrentClient == null) ? "" : CurrentClient.Name,

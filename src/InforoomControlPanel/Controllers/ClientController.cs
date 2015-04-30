@@ -25,7 +25,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "Клиенты";
 		}
 
-		public  ActionResult Index()
+		public ActionResult Index()
 		{
 			return List();
 		}
@@ -220,7 +220,7 @@ namespace InforoomControlPanel.Controllers
 			var pager = new ModelFilter<ClientRequest>(this);
 			var clientRequests = pager.GetCriteria().List<ClientRequest>();
 
-			ViewBag.Pager = pager; 
+			ViewBag.Pager = pager;
 			ViewBag.ClientRequests = clientRequests;
 			return View();
 		}
@@ -337,7 +337,7 @@ namespace InforoomControlPanel.Controllers
 		///  Форма регистрации клиента по заявке POST
 		/// </summary> 
 		[HttpPost]
-		public ActionResult RequestRegistration([EntityBinder] Client client, int requestId,bool redirectToCard)
+		public ActionResult RequestRegistration([EntityBinder] Client client, int requestId, bool redirectToCard)
 		{
 			// удаление неиспользованного контакта *иначе в БД лишняя запись
 			client.Contacts = client.Contacts.Where(s => s.ContactString != string.Empty).ToList();
@@ -374,16 +374,15 @@ namespace InforoomControlPanel.Controllers
 				if (clientRequest != null) {
 					clientRequest.Archived = true;
 					DbSession.Save(clientRequest);
-				} 
+				}
 
 				// предварительно вызывая процедуру (старой админки) которая делает необходимые поправки в записях клиента и физ.клиента
 				// переходим к карте клиента *в старой админке, если выбран пункт "Показывать наряд на подключение"
-				if (redirectToCard)
-				{
+				if (redirectToCard) {
 					return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-									"Clients/UpdateAddressByClient?clientId=" + client.Id +
-									"&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-									"UserInfo/PassAndShowCard?ClientID=" + client.Id);
+					                "Clients/UpdateAddressByClient?clientId=" + client.Id +
+					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
+					                "UserInfo/PassAndShowCard?ClientID=" + client.Id);
 				}
 				// переходим к информации о клиенте *в старой админке
 				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
@@ -472,7 +471,7 @@ namespace InforoomControlPanel.Controllers
 				Entrance = "",
 				Apartment = ""
 			};
-		//	client.Contacts.Add();
+			//	client.Contacts.Add();
 
 			// список типов документа
 			var certificateTypeDic = new Dictionary<int, CertificateType>();
@@ -531,7 +530,9 @@ namespace InforoomControlPanel.Controllers
 				}).ToList();
 				client.ClientServices = csList;
 				// сохраняем модель
-				DbSession.Save(client); 
+				DbSession.Save(client);
+				//@Todo раскомментировать когда закончится интеграция со старой админкой
+				//SuccessMessage("Клиент успешно зарегистрирован!"); 
 				// предварительно вызывая процедуру (старой админки) которая делает необходимые поправки в записях клиента и физ.клиента
 				// переходим к карте клиента *в старой админке, если выбран пункт "Показывать наряд на подключение"
 				if (redirectToCard) {
@@ -630,16 +631,16 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		[HttpPost]
 		public ActionResult Edit([EntityBinder] Client client)
-		{ 
-
+		{
 			var errors = ValidationRunner.ValidateDeep(client);
 			errors.RemoveErrors(new List<string>() {
 				"Inforoom2.Models.PhysicalClient.PassportDate",
 				"Inforoom2.Models.PhysicalClient.CertificateName"
 			});
 			if (errors.Length == 0) {
-				DbSession.Update(client); 
-
+				DbSession.Update(client);
+				//@Todo раскомментировать когда закончится интеграция со старой админкой 
+				//SuccessMessage("Клиент успешно изменен!");  
 				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
 				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +

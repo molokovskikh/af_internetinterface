@@ -62,7 +62,7 @@ $(function () {
 // AJAX-Ззапросы
 getStreetList = function (regionId, funcAfter) {
 	$.ajax({
-		url: "/Address/GetStreetList?regionId=" + regionId,
+		url: cli.getParam("baseurl") + "/Address/GetStreetList?regionId=" + regionId,
 		type: 'POST',
 		dataType: "json",
 		success: function (data) {
@@ -75,7 +75,7 @@ getStreetList = function (regionId, funcAfter) {
 }
 getHouseList = function (streetId, funcAfter) { 
 	$.ajax({
-		url: "/Address/GetHouseList?streetId=" + streetId,
+		url: cli.getParam("baseurl") + "/Address/GetHouseList?streetId=" + streetId,
 		type: 'POST',
 		dataType: "json",
 		success: function (data) {
@@ -88,7 +88,7 @@ getHouseList = function (streetId, funcAfter) {
 }
 getPlansList = function (regionId, funcAfter) {
 	$.ajax({
-		url: "/Address/GetPlansListForRegion?regionId=" + regionId,
+		url: cli.getParam("baseurl")+"/Address/GetPlansListForRegion?regionId=" + regionId,
 		type: 'POST',
 		dataType: "json",
 		success: function (data) {

@@ -14,7 +14,7 @@ function ControlPanel() {
 	this.templates = {};
 
 	/**
-     * Контсруктор
+     * Конструктор
      */
 	this.initialize = function() {
 		window.cli = this;
