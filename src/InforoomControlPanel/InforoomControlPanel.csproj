@@ -1537,7 +1537,6 @@
     <Content Include="Views\Question\EditQuestion.cshtml" />
     <Content Include="Views\Ticket\TicketIndex.cshtml" />
     <Content Include="Views\Ticket\EditTicket.cshtml" />
-    <Content Include="Views\Shared\AdminPanel.cshtml" />
     <Content Include="Views\AdminAccount\Index.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Web.test2.config">

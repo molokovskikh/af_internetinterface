@@ -13,7 +13,6 @@ namespace InforoomControlPanel.Controllers
 	/// <summary>
 	/// Базовый контролер администратора
 	/// </summary>
-	[AuthorizeUser(Roles = "Admin")]
 	public class AdminController : ControlPanelController
 	{
 		public AdminController()
