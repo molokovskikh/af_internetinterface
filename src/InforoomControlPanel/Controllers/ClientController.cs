@@ -532,7 +532,9 @@ namespace InforoomControlPanel.Controllers
 				// сохраняем модель
 				DbSession.Save(client);
 				//@Todo раскомментировать когда закончится интеграция со старой админкой
+
 				//SuccessMessage("Клиент успешно зарегистрирован!"); 
+
 				// предварительно вызывая процедуру (старой админки) которая делает необходимые поправки в записях клиента и физ.клиента
 				// переходим к карте клиента *в старой админке, если выбран пункт "Показывать наряд на подключение"
 				if (redirectToCard) {
@@ -639,8 +641,10 @@ namespace InforoomControlPanel.Controllers
 			});
 			if (errors.Length == 0) {
 				DbSession.Update(client);
+
 				//@Todo раскомментировать когда закончится интеграция со старой админкой 
 				//SuccessMessage("Клиент успешно изменен!");  
+
 				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
 				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
