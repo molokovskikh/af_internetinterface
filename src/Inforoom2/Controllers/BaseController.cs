@@ -53,6 +53,14 @@ namespace Inforoom2.Controllers
 			AddJavascriptParam("Timestamp", currentDate.ToString());
 		}
 
+		protected override void OnActionExecuting(ActionExecutingContext filterContext)
+		{
+			base.OnActionExecuting(filterContext);
+			ViewBag.JavascriptParams["baseurl"] = String.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, UrlHelper.GenerateContentUrl("~/", HttpContext));
+			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
+			ViewBag.ControllerName = GetType().Name.Replace("Controller", "");
+		}
+
 		public void AddJavascriptParam(string name, string value)
 		{
 			ViewBag.JavascriptParams[name] = value;
