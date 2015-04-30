@@ -195,8 +195,6 @@
     <Compile Include="Functional\Personal\PersonalPlansFixture.cs" />
     <Compile Include="Functional\Personal\PersonalFixture.cs" />
     <Compile Include="Functional\Faq\FaqFixture.cs" />
-    <Compile Include="Functional\Home\CallMeBackFixture.cs" />
-    <Compile Include="Functional\Home\HomeFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Functional\Personal\DeferredPaymentFixture.cs" />
     <Compile Include="Functional\Personal\VoluntaryBlockingFixture.cs" />

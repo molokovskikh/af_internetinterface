@@ -5,7 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using Billing;
+using Common.Tools;
 using Inforoom2.Components;
+using Inforoom2.Controllers;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
@@ -90,14 +92,29 @@ namespace Inforoom2.Test.Infrastructure
 			return body.Contains(text);
 		}
 
+		/// <summary>
+		/// Назначает куки. Если значение будет null, то будет произведено удаление
+		/// </summary>
+		/// <param name="name">Имя куки</param>
+		/// <param name="value">Значение куки</param>
 		public void SetCookie(string name, string value)
 		{
-			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(value);
-			var text = System.Convert.ToBase64String(plainTextBytes);
-			var cookie = new Cookie(name, text);
+			var text = "";
+			var time = SystemTime.Now().AddMonths(1);
+			//Если значение null, то убираем куку, не назначая ей значения и ставля текущую дату
+			if (value != null)
+				text = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(value));
+			else
+				time = SystemTime.Now();
+			var cookie = new Cookie(name, text,null,time);
 			browser.Manage().Cookies.AddCookie(cookie);
 		}
 
+		/// <summary>
+		/// Получет куки по имени
+		/// </summary>
+		/// <param name="cookieName">Имя куки</param>
+		/// <returns>Значение куки или пустая строка</returns>
 		protected string GetCookie(string cookieName)
 		{
 			var cookie = browser.Manage().Cookies.GetCookieNamed(cookieName);
