@@ -1,10 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Common.Tools;
 using Inforoom2.validators;
+using InternetInterface.Models;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Util;
 using NHibernate.Validator.Constraints;
@@ -20,8 +22,27 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "_Address", Cascade = "save-update"), NotNull(Message = "Адрес указан не полностью!")]
 		public virtual Address Address { get; set; }
 
-		[Property(Column = "_Email", NotNull = true), Email(Message = "Неверная форма email")]
-		public virtual string Email { get; set; }
+		[Property(Column = "_Email", NotNull = true)]
+		public virtual string Email
+		{
+			get
+			{
+				if (Client != null && Client.Contacts != null) {
+					var contactMail = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.Email);
+					return contactMail != null ? contactMail.ContactString : "";
+				}
+				return "";
+			}
+			set
+			{
+				if (Client != null && Client.Contacts != null) {
+					var contactMail = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.Email);
+					if (contactMail != null) {
+						contactMail.ContactString = value;
+					}
+				}
+			}
+		}
 
 		[ManyToOne(Column = "Tariff"), NotNull(Message = "Выберите тариф")]
 		public virtual Plan Plan { get; set; }
@@ -47,30 +68,49 @@ namespace Inforoom2.Models
 		[Property(Column = "IdDocType"), Description("Документ, удостоверяющий личность")]
 		public virtual CertificateType CertificateType { get; set; }
 
-		[Property(Column = "IdDocName"), NotNullNotEmpty(Message = "Введите название"), Description("Название документа, удостоверяющего личность")]  
+		[Property(Column = "IdDocName"), Description("Название документа, удостоверяющего личность")]
 		public virtual string CertificateName { get; set; }
 
-		[Property]  
+		[Property]
 		public virtual string PassportNumber { get; set; }
 
-		[Property]  
+		[Property]
 		public virtual string PassportSeries { get; set; }
 
 		[DataType(DataType.Date)]
-		[Property, ValidatorNotEmpty]
+		[Property]
 		public virtual DateTime PassportDate { get; set; }
 
-		[Property(Column = "RegistrationAdress")]  
+		[Property(Column = "RegistrationAdress")]
 		public virtual string RegistrationAddress { get; set; }
 
-		[Property(Column = "WhoGivePassport")]  
+		[Property(Column = "WhoGivePassport")]
 		public virtual string PassportResidention { get; set; }
 
 		[Property, Description("Номер абонента Ситилайн")]
 		public virtual int? ExternalClientId { get; set; }
 
-		[Property(Column = "_PhoneNumber", NotNull = true), NHibernate.Validator.Constraints.NotEmpty(Message = "Введите номер телефона")]
-		public virtual string PhoneNumber { get; set; }
+		[Property(Column = "_PhoneNumber", NotNull = true)]
+		public virtual string PhoneNumber
+		{
+			get
+			{
+				if (Client != null && Client.Contacts != null) {
+					var contactPhone = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
+					return contactPhone != null ? contactPhone.ContactString : "";
+				}
+				return "";
+			}
+			set
+			{
+				if (Client != null && Client.Contacts != null) {
+					var contactPhone = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
+					if (contactPhone != null) {
+						contactPhone.ContactString = value;
+					}
+				}
+			}
+		}
 
 		[Property(NotNull = true), NotEmpty(Message = "Введите имя")]
 		public virtual string Name { get; set; }
@@ -82,7 +122,7 @@ namespace Inforoom2.Models
 		public virtual string Patronymic { get; set; }
 
 		[DataType(DataType.Date)]
-		[Property(Column = "DateOfBirth"), ValidatorNotEmpty]
+		[Property(Column = "DateOfBirth")]
 		public virtual DateTime BirthDate { get; set; }
 
 		[OneToOne(PropertyRef = "PhysicalClient")]
@@ -172,7 +212,7 @@ namespace Inforoom2.Models
 
 		///  Генерация пароля для пользователя
 		///  *взято из старой админки////////////////////// 
-		public static string GeneratePassword( PhysicalClient ph )
+		public static string GeneratePassword(PhysicalClient ph)
 		{
 			var availableChars = "23456789qwertyupasdfghjkzxcvbnmQWERTYUPASDFGHJKLZXCVBNM";
 			var password = String.Empty;
@@ -190,7 +230,7 @@ namespace Inforoom2.Models
 				password += availableChars[availableChars_elem];
 			}
 			string hash = string.Empty;
-				if (password != null) {
+			if (password != null) {
 				byte[] bytes = Encoding.Unicode.GetBytes(password);
 				var CSP = new MD5CryptoServiceProvider();
 				byte[] byteHash = CSP.ComputeHash(bytes);

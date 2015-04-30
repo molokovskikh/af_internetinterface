@@ -78,8 +78,7 @@ namespace InforoomControlPanel.Controllers
 				ticket.Employee = GetCurrentEmployee();
 				ticket.IsNotified = true;
 				try {
-					EmailSender.SendEmail(new PhysicalClient { Email = ticket.Email },
-						"Ответ на ваш запрос в техподдержку компании Инфорум", ticket.Answer);
+					EmailSender.SendEmail(ticket.Email,"Ответ на ваш запрос в техподдержку компании Инфорум", ticket.Answer);
 				}
 				catch (System.Net.Mail.SmtpException) {
 					ErrorMessage("Указанный e-mail клиента не может быть обработан!");
