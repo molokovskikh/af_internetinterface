@@ -123,7 +123,7 @@ namespace Inforoom2.Test.Infrastructure
 
 			//Приоритет удаления данных
 			var order = "lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
-						+ "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,regions";
+						+ "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,connectbrigads,regions";
 
 			var parts = order.Split(',');
 			foreach (var part in parts) {

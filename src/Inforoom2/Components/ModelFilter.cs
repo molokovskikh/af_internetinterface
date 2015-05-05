@@ -140,7 +140,8 @@ namespace Inforoom2.Components
 		/// </remarks>
 		/// <param name="controller">Текущий контроллер ( на основе которого будут формироваться url-адреса )</param>
 		/// <param name="itemsPerPage">Количесто записей на страницу ( по умолчанию 10 )</param>
-		public ModelFilter(Controller controller, int itemsPerPage = 10)
+		/// <param name="urlBasePrefix">Префикс url, по умолчанию пустой (url начинается с контроллера), </param>
+		public ModelFilter(Controller controller, int itemsPerPage = 10, string urlBasePrefix = "")
 		{ 
 			// получение наименования контроллера, при его наличии
 			var controllerName = controller.Url.RequestContext.RouteData.Values.ContainsKey(urlController) 
@@ -199,9 +200,9 @@ namespace Inforoom2.Components
 					UrlBase += (UrlBase == "" ? "?" : "&") + controller.Request.QueryString.AllKeys[i] + "=" + controller.Request.QueryString[i];
 				}
 			}
-			UrlForColumns = "/" + controllerName + "/" + actionName;	   // получаем основной адрес
-			UrlBase = UrlForColumns + UrlBase;							   // добавляем основной адрес к полученным для листалки параметрам
-			UrlForColumns += url_params;								   // формируем адрес для колонок таблицы из основного адреса и параметров по умолчанию
+			UrlForColumns = (urlBasePrefix != "" ? "" : "/") + controllerName + "/" + actionName; // получаем основной адрес
+			UrlBase = urlBasePrefix + UrlForColumns + UrlBase;									  // добавляем основной адрес к полученным для листалки параметрам
+			UrlForColumns += url_params;								      // формируем адрес для колонок таблицы из основного адреса и параметров по умолчанию
 		}
 
 		/// <summary>

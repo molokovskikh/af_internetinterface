@@ -66,16 +66,25 @@ function findAddressOnMap(searchQuery) {
 
 var typeWatcher = function() {
 	var timer = 0;
-	console.log('tick');
+	console.log('tick'); 
 	return function(ms) {
 		var callback = function showAddressOnMap() {
-			userCity = document.getElementById('clientRequest_City').value.toLowerCase();
-			userStreet = document.getElementById('clientRequest_Street').value.toLowerCase();
-			userHouse = document.getElementById('clientRequest_HouseNumber').value.toLowerCase();
+			
+			var skillsSelect = document.getElementById("RegionDropDown"); 
+			var selectedText = skillsSelect.options[skillsSelect.selectedIndex].text;
+			userCity = selectedText.toLowerCase();
+			skillsSelect = document.getElementById("StreetDropDown");
+			selectedText = skillsSelect.options[skillsSelect.selectedIndex].text;
+			userStreet = selectedText.toLowerCase();
+			skillsSelect = document.getElementById("HouseDropDown");
+			selectedText = skillsSelect.options[skillsSelect.selectedIndex].text;
+			userHouse = selectedText.toLowerCase();
 			userHousing = document.getElementById('clientRequest_Housing').value.toLowerCase();
-
-			var address = userCity + " " + userStreet + " " + userHouse + " " + userHousing;
-			findAddressOnMap(address);
+			var address = userCity + " " + userStreet + " " + userHouse + " " + userHousing;	 
+			if(address!=null && userCity+userStreet+userHouse+userHousing!=""){ 
+				findAddressOnMap(address);
+			}
+			
 			
 		}
 		clearTimeout(timer);

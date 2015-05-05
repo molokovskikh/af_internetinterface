@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using NHibernate.Linq;
+using NHibernate.Util;
 using Client = Inforoom2.Models.Client;
 using ClientService = Inforoom2.Models.ClientService;
 using Contact = Inforoom2.Models.Contact;
@@ -42,7 +44,7 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult List()
 		{
-			var pager = new ModelFilter<Client>(this);
+			var pager = new ModelFilter<Client>(this, urlBasePrefix: System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]);
 			var clients = pager.GetCriteria(i => i.PhysicalClient != null).List<Client>();
 
 			ViewBag.Pager = pager;
@@ -94,19 +96,43 @@ namespace InforoomControlPanel.Controllers
 		[HttpPost]
 		public ActionResult Request([EntityBinder] ClientRequest clientRequest)
 		{
-			var tariff = InitRequestPlans().FirstOrDefault(k => k.Id == clientRequest.Plan.Id);
-			clientRequest.Plan = tariff;
+			// TODO: добавил связь между тарифом и регионом
+			//		var tariff = InitRequestPlans().FirstOrDefault(k => k.Id == clientRequest.Plan.Id);
+			//		clientRequest.Plan = tariff;
 			clientRequest.ActionDate = clientRequest.RegDate = DateTime.Now;
 			Employee reqAuthor = null;
+			// TODO: Заявка от оператора по умочанию // удалить лишнее 
+			clientRequest.RequestSource = RequestType.FromOperator;
+			/* ==>> лишнее
 			if (clientRequest.RequestSource != RequestType.FromClient) {
 				reqAuthor = DbSession.Query<Employee>().ToList()
 					.FirstOrDefault(e => e.Id == clientRequest.RequestAuthor.Id);
 			}
 			clientRequest.RequestAuthor = reqAuthor;
+			*/
+			// Сохранение адреса 
+			// TODO: Разбиение номера дома заменить чем-то адекватным, т.к. смешанные значения приведут к ошибке
+			if (clientRequest.Address != null && clientRequest.Address.House != null) {
+				// региона
+				clientRequest.City = clientRequest.Address.House.Street.Region.Name;
+				// улицы
+				clientRequest.Street = clientRequest.Address.House.Street.Name;
+				// отделение цифровой части от "Номера дома"
+				string houseNumber = Regex.Replace(clientRequest.Address.House.Number, @"[^\d]", "");
+				houseNumber = houseNumber == string.Empty ? "0" : houseNumber;
+				clientRequest.HouseNumber = Convert.ToInt32(houseNumber);
+				// отделение буквенной части от "Номера дома"
+				var housingPostfix = clientRequest.Address.House.Number.IndexOf(houseNumber);
+				housingPostfix = housingPostfix == -1 ? 0 : housingPostfix + houseNumber.Length;
+				clientRequest.Housing = clientRequest.Address.House.Number.Substring(housingPostfix,
+				clientRequest.Address.House.Number.Length - housingPostfix);
+			}
 
 			var errors = ValidationRunner.ValidateDeep(clientRequest);
 			if (errors.Length == 0 && clientRequest.IsContractAccepted) {
 				clientRequest.Address = GetAddressByYandexData(clientRequest);
+				clientRequest.Address.IsCorrectAddress = true;
+
 				DbSession.Save(clientRequest);
 				SuccessMessage(string.Format("Спасибо, Ваша заявка создана. Номер заявки {0}", clientRequest.Id));
 				return RedirectToAction("Request");
@@ -115,6 +141,34 @@ namespace InforoomControlPanel.Controllers
 			//if (!clientRequest.IsContractAccepted) {
 			//	ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
 			//}
+
+			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
+			Street currentStreet = null;
+			House currentHouse = null;
+			Region currentRegion = null;
+			var planList = new List<Plan>();
+			if (clientRequest.Address != null && clientRequest.Address.House != null) {
+				currentHouse = clientRequest.Address.House;
+				currentStreet = clientRequest.Address.House.Street;
+				currentRegion = clientRequest.Address.House.Street.Region;
+			}
+			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
+			if (currentRegion != null) {
+				planList = DbSession.Query<Plan>().Where(s => s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
+			}
+			// списки улиц и домов
+			ViewBag.CurrentStreet = currentStreet;
+			ViewBag.CurrentStreetList = currentRegion == null ? new List<Street>() : DbSession.Query<Street>().Where(s => s.Region.Id == currentRegion.Id).OrderBy(s => s.Name).ToList();
+			ViewBag.CurrentHouseList = currentStreet == null ? new List<House>() : DbSession.Query<House>().Where(s => s.Street.Id == currentStreet.Id).OrderBy(s => s.Number).ToList();
+			ViewBag.CurrentRegion = currentRegion;
+			ViewBag.CurrentStreet = currentStreet;
+			ViewBag.CurrentHouse = currentHouse;
+			// получаем всех диллеров (работников)
+			ViewBag.Dealers = DbSession.Query<Dealer>().Select(s => s.Employee).OrderBy(s => s.Name).ToList();
+			ViewBag.RegionList = regionList;
+			ViewBag.PlanList = planList;
+
+
 			ViewBag.IsRedirected = false;
 			ViewBag.IsCityValidated = false;
 			ViewBag.IsStreetValidated = false;
@@ -124,7 +178,7 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
-		private void InitClientRequest(Plan plan = null, string city = "", string street = "", string house = "")
+		private void InitClientRequest(Plan plan = null)
 		{
 			ViewBag.IsRedirected = false;
 			ViewBag.IsCityValidated = false;
@@ -134,7 +188,25 @@ namespace InforoomControlPanel.Controllers
 				IsContractAccepted = true,
 				RequestAuthor = GetCurrentEmployee()
 			};
+			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
+			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
+			Street currentStreet = null;
+			House currentHouse = null;
+			Region currentRegion = null;
+			var planList = new List<Plan>();
+			// списки улиц и домов
+			ViewBag.CurrentStreet = currentStreet;
+			ViewBag.CurrentStreetList = currentRegion == null ? new List<Street>() : DbSession.Query<Street>().Where(s => s.Region.Id == currentRegion.Id).OrderBy(s => s.Name).ToList();
+			ViewBag.CurrentHouseList = currentStreet == null ? new List<House>() : DbSession.Query<House>().Where(s => s.Street.Id == currentStreet.Id).OrderBy(s => s.Number).ToList();
+			ViewBag.CurrentRegion = currentRegion;
+			ViewBag.CurrentStreet = currentStreet;
+			ViewBag.CurrentHouse = currentHouse;
+			// получаем всех диллеров (работников)
+			ViewBag.Dealers = DbSession.Query<Dealer>().Select(s => s.Employee).OrderBy(s => s.Name).ToList();
+			ViewBag.RegionList = regionList;
+			ViewBag.PlanList = planList;
 
+			/*
 			if (!string.IsNullOrEmpty(city) && !string.IsNullOrEmpty(street) && !string.IsNullOrEmpty(house)) {
 				clientRequest.Street = street;
 				clientRequest.City = city;
@@ -147,7 +219,7 @@ namespace InforoomControlPanel.Controllers
 					ViewBag.IsHouseValidated = true;
 					clientRequest.HouseNumber = housen;
 				}
-			}
+			}*/
 
 			if (plan != null) {
 				clientRequest.Plan = plan;
@@ -189,13 +261,15 @@ namespace InforoomControlPanel.Controllers
 			if (house == null) {
 				house = new House(clientRequest.YandexHouse);
 			}
-			var address = GetList<Address>().FirstOrDefault(a => a.IsCorrectAddress
-			                                                     && a.House.Equals(house)
+			// закомментировал т.к. не понял, почему в заявке должен быть существующий адрес подключения
+			var address = GetList<Address>().FirstOrDefault(a => a.House.Equals(house)
 			                                                     && a.House.Street.Equals(street)
 			                                                     && a.House.Street.Region.Equals(region)
-			                                                     && a.Entrance == clientRequest.Entrance.ToString()
-			                                                     && a.Floor == clientRequest.Floor
-			                                                     && a.Apartment == clientRequest.Apartment.ToString());
+				//                                                    && a.Entrance == clientRequest.Entrance.ToString()
+				//                                                    && a.Floor == clientRequest.Floor
+				//                                                    && a.Apartment == clientRequest.Apartment.ToString()
+				//													   &&a.IsCorrectAddress
+				);
 
 			//if (address == null) {
 			//	address = new Address();
@@ -217,7 +291,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult RequestsList()
 		{
-			var pager = new ModelFilter<ClientRequest>(this);
+			var pager = new ModelFilter<ClientRequest>(this, urlBasePrefix: System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]);
 			var clientRequests = pager.GetCriteria().List<ClientRequest>();
 
 			ViewBag.Pager = pager;
@@ -292,7 +366,15 @@ namespace InforoomControlPanel.Controllers
 			// адресные данные по запросу
 			var currentRegion = DbSession.Query<Region>().FirstOrDefault(s => s.Name.ToLower() == clientRequest.City.ToLower()) ?? new Region();
 			var currentStreet = DbSession.Query<Street>().FirstOrDefault(s => s.Name.ToLower().Trim() == clientRequest.Street.ToLower().Trim() && s.Region == currentRegion);
-			var houseToFind = DbSession.Query<House>().FirstOrDefault(s => s.Number == (clientRequest.HouseNumber ?? 0).ToString() && s.Street == currentStreet) ?? new House();
+			var houseToFind = DbSession.Query<House>().FirstOrDefault(s => s.Number == (clientRequest.HouseNumber != null ?
+				clientRequest.HouseNumber + clientRequest.Housing : "").ToString() && s.Street == currentStreet);
+			if (houseToFind==null) {
+				houseToFind=new House();
+			}
+			else {
+				// текущий найденный текущий дом 
+				ViewBag.CurrentHouse = houseToFind;
+			}
 			client.PhysicalClient.Address = new Address() {
 				House = houseToFind,
 				Floor = clientRequest.Floor,

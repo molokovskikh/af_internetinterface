@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Inforoom2.validators;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
@@ -27,7 +28,7 @@ namespace Inforoom2.Models
 		[Property, NotNullNotEmpty(Message = "Введите номер телефона"), Pattern(@"^\d{10}$", Message = "Введите номер в десятизначном формате")]
 		public virtual string ApplicantPhoneNumber { get; set; }
 
-		[Property(Column = "ApplicantEmail")]
+		[Property(Column = "ApplicantEmail"), ValidatorEmail]
 		public virtual string Email { get; set; }
 
 		[ManyToOne(Column = "_Address", Cascade = "save-update")]
@@ -56,6 +57,7 @@ namespace Inforoom2.Models
 
 		//Поля старой модели заявки
 
+		// ===========================|~убрать|============================>>>
 		[Property, NotNullNotEmpty(Message = "Введите город")]
 		public virtual string City { get; set; }
 
@@ -67,6 +69,8 @@ namespace Inforoom2.Models
 
 		[Property(Column = "CaseHouse")]
 		public virtual string Housing { get; set; }
+		// <<<================================================================
+
 
 		[Property, NotNull(Message = "Введите номер квартиры"), Digits(3, Message = "Здесь должно быть число")]
 		public virtual int Apartment { get; set; }
@@ -76,7 +80,6 @@ namespace Inforoom2.Models
 
 		[Property, Digits(3, Message = "Здесь должно быть число")]
 		public virtual int Floor { get; set; }
-
 
 		[Property]
 		public virtual DateTime ActionDate { get; set; }

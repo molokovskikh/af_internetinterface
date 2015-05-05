@@ -59,7 +59,7 @@
 					                                                       </li>
 				                                                       }
 				@if (pager.Page < pager.PagesCount) {
-	@* // Ссылка на следующий элемент *@
+				@* // Ссылка на следующий элемент *@
 					<li class="next @nextClass">
 						<a href="@pager.UrlBase@(pager.UrlBase.Contains(" ?") ? "&" : "?" )@(pager.UrlParamPrefix + "." + pager.UrlCurrentPage)=@(pager.Page + 1)">
 							<i class="entypo-right-open"></i>
