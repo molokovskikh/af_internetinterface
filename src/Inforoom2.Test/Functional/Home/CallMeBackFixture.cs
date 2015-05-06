@@ -17,10 +17,10 @@ namespace Inforoom2.Test.Functional.Home
 			var phone = browser.FindElementByCssSelector("input[id=callMeBackTicket_PhoneNumber]");
 			var comment = browser.FindElementByName("callMeBackTicket.Text");
 			name.SendKeys("Иван Петров");
-			phone.SendKeys("855647897");
+			phone.SendKeys("8556478970");
 			comment.SendKeys("my question");
 			browser.FindElementByCssSelector(".contacting").Click();
-			var callMeBackTicket = DbSession.Query<CallMeBackTicket>().FirstOrDefault(c => c.PhoneNumber == "855647897");
+			var callMeBackTicket = DbSession.Query<CallMeBackTicket>().FirstOrDefault(c => c.PhoneNumber == "8556478970");
 			Assert.NotNull(callMeBackTicket);
 			var count = DbSession.Query<CallMeBackTicket>().ToList().Count;
 			Assert.That(count, Is.EqualTo(1), "Создается только одна заявка за раз");

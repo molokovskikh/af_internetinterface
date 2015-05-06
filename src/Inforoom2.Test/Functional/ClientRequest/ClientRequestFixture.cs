@@ -106,11 +106,11 @@ namespace Inforoom2.Test.Functional.ClientRequest
 		public void ClientRequestWrongPhone()
 		{
 			Phone.Clear();
-			SendRequest();
-			//TODO: удалить и раскомментить то, что ниже 
-			AssertText("Введите номер телефона");
-			// временно закомментированно
-			//	AssertText("Введите номер в десятизначном");
+			SendRequest(); 
+			// в списке ошибок появилась еще одна, идущая раньше предыдущей
+			AssertText("Введите номер телефона"); 
+			// поэтому предыдущую не проверяем
+			//AssertText("Введите номер в десятизначном"); 
 			AssertFail();
 		}
 

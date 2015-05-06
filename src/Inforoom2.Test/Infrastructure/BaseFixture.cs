@@ -5,7 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using Billing;
+using Common.Tools;
 using Inforoom2.Components;
+using Inforoom2.Controllers;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
@@ -90,14 +92,29 @@ namespace Inforoom2.Test.Infrastructure
 			return body.Contains(text);
 		}
 
+		/// <summary>
+		/// Назначает куки. Если значение будет null, то будет произведено удаление
+		/// </summary>
+		/// <param name="name">Имя куки</param>
+		/// <param name="value">Значение куки</param>
 		public void SetCookie(string name, string value)
 		{
-			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(value);
-			var text = System.Convert.ToBase64String(plainTextBytes);
-			var cookie = new Cookie(name, text);
+			var text = "";
+			var time = SystemTime.Now().AddMonths(1);
+			//Если значение null, то убираем куку, не назначая ей значения и ставля текущую дату
+			if (value != null)
+				text = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(value));
+			else
+				time = SystemTime.Now();
+			var cookie = new Cookie(name, text,null,time);
 			browser.Manage().Cookies.AddCookie(cookie);
 		}
 
+		/// <summary>
+		/// Получет куки по имени
+		/// </summary>
+		/// <param name="cookieName">Имя куки</param>
+		/// <returns>Значение куки или пустая строка</returns>
 		protected string GetCookie(string cookieName)
 		{
 			var cookie = browser.Manage().Cookies.GetCookieNamed(cookieName);
@@ -123,7 +140,7 @@ namespace Inforoom2.Test.Infrastructure
 
 			//Приоритет удаления данных
 			var order = "lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
-						+ "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,regions";
+						+ "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
 
 			var parts = order.Split(',');
 			foreach (var part in parts) {
@@ -332,6 +349,17 @@ namespace Inforoom2.Test.Infrastructure
 			region.OfficeAddress = "Третьяковская улица д6Б";
 			region.OfficeGeomark = "51.3663252,42.08180200000004";
 			DbSession.Save(region);
+			var parent = region;
+
+			// Добавление дочернего региона 
+			region = new Region();
+			region.Name = "Борисоглебск (частный сектор)";
+			region.RegionOfficePhoneNumber = "8-800-2000-800";
+			region.City = blg;
+			region.Parent = new List<Region>(){parent};
+			region.OfficeAddress = "улица Князя Трубецкого д26";
+			region.OfficeGeomark = "50.592548,36.59665819999998";
+			DbSession.Save(region);
 
 			region = new Region();
 			region.Name = "Белгород";
@@ -339,6 +367,7 @@ namespace Inforoom2.Test.Infrastructure
 			region.City = blg;
 			region.OfficeAddress = "улица Князя Трубецкого д26";
 			region.OfficeGeomark = "50.592548,36.59665819999998";
+
 			DbSession.Save(region);
 		}
 

@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.Web.Security;
 using System.Web.UI.WebControls;
 using Inforoom2.Components;
+using Inforoom2.Controllers;
 using Inforoom2.Models;
 using InternetInterface.Models;
 using NHibernate.Linq;
@@ -17,7 +18,7 @@ namespace InforoomControlPanel.Controllers
 	/// <summary>
 	/// Страница управления баннерами
 	/// </summary>
-	public class BannerController : AdminController
+	public class BannerController : ControlPanelController
 	{
 		/// <summary>
 		/// Список слайдов

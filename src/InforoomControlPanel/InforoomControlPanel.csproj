@@ -1514,11 +1514,11 @@
     <Compile Include="Controllers\AdminAccountController.cs" />
     <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\ConnectionTeamController.cs" />
+    <Compile Include="Controllers\ConnectionTeamController.cs" /> 
     <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\BannerController.cs" />
     <Compile Include="Controllers\SlideController.cs" />
-    <Compile Include="Controllers\ControlPanelController.cs" />
+    <Compile Include="Controllers\ControlPanelController.cs" /> 
     <Compile Include="Controllers\SwitchController.cs" />
     <Compile Include="Controllers\PlansController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
@@ -1883,19 +1883,20 @@
     <Content Include="Views\Plans\TvProtocolList.cshtml" />
     <Content Include="Views\Plans\TvChannelList.cshtml" />
     <Content Include="Views\Plans\CreateTvChannel.cshtml" />
-    <Content Include="Views\Plans\TvChannelGroupList.cshtml" />
+    <Content Include="Views\Plans\TvChannelGroupList.cshtml" /> 
     <Content Include="Views\Plans\CreateTvChannelGroup.cshtml" />
 	<Content Include="Views\Slide\CreateSlide.cshtml" />
 	<Content Include="Views\Slide\EditSlide.cshtml" />
 	<Content Include="Views\Slide\SlideIndex.cshtml" />
 	<Content Include="Views\Banner\CreateBanner.cshtml" />
 	<Content Include="Views\Banner\EditBanner.cshtml" />
-	<Content Include="Views\Banner\BannerIndex.cshtml" />
+	<Content Include="Views\Banner\BannerIndex.cshtml" /> 
+    <Content Include="Views\Plans\CreateTvChannelGroup.cshtml" /> 
     <Content Include="..\global.config">
       <Link>global.config</Link>
       <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory> 
+    </Content> 
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
   </ItemGroup>

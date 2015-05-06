@@ -18,7 +18,7 @@ namespace InforoomControlPanel.Controllers
 	/// <summary>
 	/// Страница управления слайдами
 	/// </summary>
-	public class SlideController : AdminController
+	public class SlideController : ControlPanelController
 	{
 		/// <summary>
 		/// Список слайдов
