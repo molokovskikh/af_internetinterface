@@ -72,8 +72,10 @@ namespace Inforoom2.Test.Infrastructure.Helpers
 			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,1Б");
 			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,2В");
 			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,2Г");
-			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,2Д");
-			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,90");
+			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,2Д"); 
+			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,90"); 
+			addresses.Add("Борисоглебск,Борисоглебск,ул. Ленина,24Б");
+			addresses.Add("Борисоглебск,Борисоглебск,ул. Ленина,23"); 
 		}
 
 		/// <summary>
@@ -83,7 +85,8 @@ namespace Inforoom2.Test.Infrastructure.Helpers
 		public bool GetNextAddress()
 		{
 			Index++;
-			if (addresses.Count > Index) {
+			if (addresses.Count > Index)
+			{
 				return true;
 			}
 			Index = 0;

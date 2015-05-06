@@ -56,11 +56,12 @@ namespace Inforoom2.Test.Infrastructure.Helpers
 
 			[Description("клиент c тарифом, игнорирующим скидку")] ignoreDiscountClient,
 
-			[Description("клиент с тарифным планом, который закреплен за регионом")] clientWithRegionalPlan ,
-
+			[Description("c тарифом, привязанным к региону")] planWithRegionClient, 
 			[Description("новый подключенный клиент,с недавней датой регистрации")] recentClient ,
 
-			[Description("клиент с домом, регион которого отличается от региона улицы")] clientWithDifferentRegionHouse ,
+			[Description("клиент с домом, регион которого отличается от региона улицы")] clientWithDifferentRegionHouse , 
+
+			[Description("клиент с тарифным планом, который закреплен за регионом")] clientWithRegionalPlan
 		}
 
 		public int Index

@@ -260,6 +260,8 @@ namespace InternetInterface.Controllers
 			else {
 				_fio.Take(_fio.Length).ToArray().CopyTo(fio, 0);
 			}
+			/// У многих свойств отсуствует SET , что связано с переходом на новую админку.
+			/*
 			var newPhisClient = new PhysicalClient {
 				Surname = fio[0],
 				Name = fio[1],
@@ -300,6 +302,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["Message"] = Message.Error("Не удалось сопоставить адрес из заявки ! Будет внимательны при заполнении адреса клиента !");
 			}
 			SendRegisterParam(newPhisClient);
+			 */
 		}
 
 		[return: JSONReturnBinder]

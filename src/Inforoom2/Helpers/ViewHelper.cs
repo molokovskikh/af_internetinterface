@@ -25,10 +25,10 @@ namespace Inforoom2.Helpers
 	public abstract class HTMLGenerator
 	{
 	}
+
 	public static class ViewHelper
 	{
-		static HTMLGenerator html;
-
+		private static HTMLGenerator html;
 
 		/// <summary>
 		/// Создает список скрытых полей для списочных моделей, кроме указанного элемента.
@@ -43,14 +43,14 @@ namespace Inforoom2.Helpers
 		/// <param name="skipId">Идентификатор модели, которую необходимо удалить.</param>
 		/// <returns>Верстка для полей</returns>
 		public static HtmlString HiddenForModelList<TModel, TProperty>(this HtmlHelper helper, TModel model, Expression<Func<TModel, TProperty>> expression, int skipId = 0)
-		where TProperty : IEnumerable
+			where TProperty : IEnumerable
 		{
 			string expr = expression.ToString();
 			var func = expression.Compile();
 			var list = func(model) as IList;
 			var builder = new StringBuilder();
-			for (var i = 0; i < list.Count; i++)
-			{
+
+			for (var i = 0; i < list.Count; i++) {
 				var name = expr.After(").") + "[" + i + "].Id";
 				var item = list[i] as BaseModel;
 				if (item.Id == skipId)
@@ -60,6 +60,7 @@ namespace Inforoom2.Helpers
 
 			return new HtmlString(builder.ToString());
 		}
+
 		/// <summary>
 		/// Вывести выподающий список
 		/// </summary>
@@ -86,50 +87,40 @@ namespace Inforoom2.Helpers
 
 			var selectAttributes = new StringBuilder();
 
-			if (selectTagAttributes != null)
-			{
+			if (selectTagAttributes != null) {
 				selectAttributes = GetPropsValues(selectTagAttributes);
 			}
 
 			var options = new StringBuilder();
-			if (firstEmptyElementAdd)
-			{
+			if (firstEmptyElementAdd) {
 				options.AppendFormat("<option selected = selected></option>");
 			}
-			foreach (var model in modelCollection)
-			{
+			foreach (var model in modelCollection) {
 				string value = string.Empty;
-				if (optionValue != null)
-				{
+				if (optionValue != null) {
 					value = optionValue(model);
 				}
 
 				var optionAttributes = new StringBuilder();
-				if (htmlAttributes != null)
-				{
+				if (htmlAttributes != null) {
 					optionAttributes = GetPropsValues(htmlAttributes(model));
 				}
-				if (model.Id == selectedValueId)
-				{
+				if (model.Id == selectedValueId) {
 					options.AppendFormat("<option value={0} selected = selected {1}>{2}</option>", model.Id,
 						optionAttributes.Replace("{", "").Replace("}", ""), value);
 				}
-				else
-				{
+				else {
 					options.AppendFormat("<option value={0} {1}>{2}</option>", model.Id,
 						optionAttributes.Replace("{", "").Replace("}", ""), value);
 				}
 			}
 			string selectId = string.Empty;
-			if (modelCollection.Count > 0)
-			{
+			if (modelCollection.Count > 0) {
 				selectId = modelCollection.FirstOrDefault().GetType().Name + "DropDown";
 			}
-			if (selectTagAttributes != null)
-			{
+			if (selectTagAttributes != null) {
 				var hasOwnId = selectTagAttributes.GetType().GetProperty("Id");
-				if (hasOwnId != null)
-				{
+				if (hasOwnId != null) {
 					selectId = hasOwnId.GetValue(selectTagAttributes, null).ToString();
 				}
 			}
@@ -137,6 +128,7 @@ namespace Inforoom2.Helpers
 				options, selectAttributes, propertyInfo);
 			return new HtmlString(selectString);
 		}
+
 		/// <summary>
 		/// Вывести выподающий список
 		/// </summary>
@@ -184,8 +176,7 @@ namespace Inforoom2.Helpers
 		{
 			var tag = Enum.GetName(typeof(HtmlTag), htmlTag);
 			string type = string.Empty;
-			if (htmlType != HtmlType.none)
-			{
+			if (htmlType != HtmlType.none) {
 				type = Enum.GetName(typeof(HtmlType), htmlType);
 			}
 
@@ -197,15 +188,13 @@ namespace Inforoom2.Helpers
 			var id = objName + "_" + propertyName;
 
 			var attributes = new StringBuilder();
-			if (htmlAttributes != null)
-			{
+			if (htmlAttributes != null) {
 				attributes = GetPropsValues(htmlAttributes);
 			}
 
 
 			string html = string.Empty;
-			switch (htmlTag)
-			{
+			switch (htmlTag) {
 				case HtmlTag.input:
 					//Форматируем дату
 					if (value is DateTime)
@@ -226,8 +215,7 @@ namespace Inforoom2.Helpers
 					break;
 				case HtmlTag.datetime:
 					var dobj = value != null ? (DateTime)value : DateTime.Now;
-					if (dobj == DateTime.MinValue)
-					{
+					if (dobj == DateTime.MinValue) {
 						dobj = DateTime.Now;
 					}
 					var date = dobj.Date.ToString().Split(' ')[0];
@@ -241,8 +229,7 @@ namespace Inforoom2.Helpers
 
 			var error = validation.GetError(obj, propertyName, html, null, isValidated);
 
-			if (string.IsNullOrEmpty(error.ToString()))
-			{
+			if (string.IsNullOrEmpty(error.ToString())) {
 				return new HtmlString(html);
 			}
 
@@ -259,8 +246,7 @@ namespace Inforoom2.Helpers
 			var type = obj.GetType();
 			var sb = new StringBuilder();
 			IList<PropertyInfo> props = new List<PropertyInfo>(type.GetProperties());
-			foreach (PropertyInfo prop in props)
-			{
+			foreach (PropertyInfo prop in props) {
 				var attribute = prop.GetValue(obj, null);
 				sb.AppendFormat(prop.Name + "=" + "\"" + attribute + "\"");
 			}
@@ -270,13 +256,11 @@ namespace Inforoom2.Helpers
 		public static string After(this string value, string a)
 		{
 			int posA = value.LastIndexOf(a);
-			if (posA == -1)
-			{
+			if (posA == -1) {
 				return "";
 			}
 			int adjustedPosA = posA + a.Length;
-			if (adjustedPosA >= value.Length)
-			{
+			if (adjustedPosA >= value.Length) {
 				return "";
 			}
 			return value.Substring(adjustedPosA);
@@ -298,15 +282,14 @@ namespace Inforoom2.Helpers
 		private static IEnumerable<SelectListItem> CreateSelectListForEnum(Type enumType, string selectedItem)
 		{
 			return (from object item in Enum.GetValues(enumType)
-					let fi = enumType.GetField(item.ToString())
-					let attribute = fi.GetCustomAttributes(typeof(DisplayAttribute), true).FirstOrDefault()
-					let title = attribute == null ? item.ToString() : ((DisplayAttribute)attribute).Name
-					select new SelectListItem
-					{
-						Value = item.ToString(),
-						Text = title,
-						Selected = selectedItem == item.ToString()
-					}).ToList();
+				let fi = enumType.GetField(item.ToString())
+				let attribute = fi.GetCustomAttributes(typeof(DisplayAttribute), true).FirstOrDefault()
+				let title = attribute == null ? item.ToString() : ((DisplayAttribute)attribute).Name
+				select new SelectListItem {
+					Value = item.ToString(),
+					Text = title,
+					Selected = selectedItem == item.ToString()
+				}).ToList();
 		}
 
 		public static HtmlString Grid<T>(this HtmlHelper helper, IList<T> list)
@@ -314,6 +297,4 @@ namespace Inforoom2.Helpers
 			return new HtmlString("dsds");
 		}
 	}
-
-
 }

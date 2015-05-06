@@ -89,23 +89,28 @@
 					</a>
 				</li>
 				<li>
-					<a href="@Url.Action("ClientList","Client")">
+					<a href="@Url.Action("List","Client")">
 						<i class="entypo-users"></i>
 						<span class="title">Клиенты</span>
 					</a>
 					<ul class="visible">
 						<li>
-							<a href="@Url.Action("ClientList","Client")">
+							<a href="@Url.Action("List","Client")">
 								<span class="title">Список клиентов</span>
 							</a>
 						</li>
 						<li>
-							<a href="@Url.Action("ClientRequest","Client")">
+							<a href="@Url.Action("Registration","Client")">
+								<span class="title">Зарегистрировать клиента</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("Request","Client")">
 								<span class="title">Создать заявку на подключение</span>
 							</a>
 						</li>
 						<li>
-							<a href="@Url.Action("ClientRequestsList","Client")">
+							<a href="@Url.Action("RequestsList","Client")">
 								<span class="title">Заявки на подключение</span>
 							</a>
 						</li>
@@ -357,5 +362,14 @@
 		<script type="text/javascript" src="~/Scripts/Window.js"></script>
 		<link rel="stylesheet" href="~/Css/style.css"></link>
 		@RenderSection("JavaScript", required: false)
+	@{
+		var IeWaterline = "";
+#if DEBUG
+		IeWaterline = "<div class='IeWaterline'></div>";
+#endif
+		
+	}
+	@Html.Raw(IeWaterline)
+
 	</body>
 </html>

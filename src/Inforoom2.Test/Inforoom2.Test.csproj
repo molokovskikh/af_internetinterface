@@ -181,6 +181,7 @@
   <ItemGroup>
     <Compile Include="Functional\Account\AccountFixture.cs" />
     <Compile Include="Functional\Account\LogoutFixture.cs" />
+    <Compile Include="Functional\Home\HomeFixture.cs" />
     <Compile Include="Functional\Inforoom2\Inforoom2Fixture.cs" />
     <Compile Include="Functional\Billing\BillingFixture.cs" />
     <Compile Include="Functional\ClientRequest\ClientRequestFixture.cs" />

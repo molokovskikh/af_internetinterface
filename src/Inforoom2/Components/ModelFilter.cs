@@ -331,11 +331,11 @@ namespace Inforoom2.Components
 		/// </summary>
 		/// <param name="expression">Простое лямбда выражение (поле пренадлежит модели)</param>
 		/// <returns>Критерий, который можно дополнить или, выполнив запрос, получить список запрашиваемых моделей.</returns>
-		public ICriteria GetCriteria(Expression<Func<TModel, bool>> expression)
+		public ICriteria GetCriteria(Expression<Func<TModel, bool>> expression = null)
 		{
 			string orderByAlias = OrderByColumn;	// получение поля для сортировки у основной модели  
 
-			TotalItems = dbSession.Query<TModel>().Where(expression).Count();
+			TotalItems = expression==null? dbSession.Query<TModel>().Count():dbSession.Query<TModel>().Where(expression).Count();
 
 			// расчет лимитов
 			var skip = ItemsPerPage * (Page - 1);
@@ -343,7 +343,10 @@ namespace Inforoom2.Components
 
 			var criteria = dbSession.CreateCriteria(typeof(TModel));		   // создаем критерий
 
-			criteria.Add(NHibernate.Criterion.Restrictions.Where(expression)); // лямбда выражение 
+			if (expression!=null)
+			{
+				criteria.Add(NHibernate.Criterion.Restrictions.Where(expression)); // лямбда выражение 
+			}
 
 			if (SearchParam == "") {
 				criteria.SetFirstResult(skip)		// сколько записей пропустить
