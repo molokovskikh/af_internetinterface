@@ -179,7 +179,7 @@ namespace Inforoom2.Models
 		/// <returns>Расчётное кол-во дней работы без пополнения баланса</returns>
 		public virtual int GetWorkDays()
 		{
-			var priceInDay = Plan.Price / DateTime.Now.DaysInMonth(); // ToDo Улучшить алгоритм вычисления
+			var priceInDay = Plan.Price / SystemTime.Now().DaysInMonth(); // ToDo Улучшить алгоритм вычисления
 			return (int)Math.Floor(Balance / priceInDay);
 		}
 
@@ -264,7 +264,7 @@ namespace Inforoom2.Models
 			}
 
 			if (Status.Type != status.Type) {
-				StatusChangedOn = DateTime.Now;
+				StatusChangedOn = SystemTime.Now();
 			}
 			Status = status;
 		}

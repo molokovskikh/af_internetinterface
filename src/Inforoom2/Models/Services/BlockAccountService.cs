@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Common.Tools;
 using NHibernate;
 using NHibernate.Mapping.Attributes;
 
@@ -12,16 +13,15 @@ namespace Inforoom2.Models.Services
 		public override void Activate(ClientService assignedService, ISession session)
 		{
 			var client = assignedService.Client;
-			client.RatedPeriodDate = DateTime.Now;
+			client.RatedPeriodDate = SystemTime.Now();
 
-			var now = DateTime.Now;
+			var now = SystemTime.Now();
 			if (!client.PaidDay && now.Hour < 22 && assignedService.BeginDate.Value.Date == now.Date) {
 				client.PaidDay = true;
-				var comment = string.Format("Абонентская плата за {0} из-за добровольной блокировки клиента",
-					DateTime.Now.ToShortDateString());
+				var comment = string.Format("Абонентская плата за {0} из-за добровольной блокировки клиента", now.ToShortDateString());
 				var writeOff = new UserWriteOff {
 					Client = client,
-					Date = DateTime.Now,
+					Date = now,
 					Sum = client.GetSumForRegularWriteOff(),
 					Comment = comment
 				};
@@ -41,7 +41,7 @@ namespace Inforoom2.Models.Services
 				var writeOff = new UserWriteOff {
 					Client = client,
 					Sum = 50m,
-					Date = DateTime.Now,
+					Date = now,
 					Comment = comment
 				};
 				session.Save(writeOff);
@@ -56,7 +56,7 @@ namespace Inforoom2.Models.Services
 			client.SetStatus(client.Balance > 0
 				? Status.Get(StatusType.Worked, session)
 				: Status.Get(StatusType.NoWorked, session));
-			client.RatedPeriodDate = DateTime.Now;
+			client.RatedPeriodDate = SystemTime.Now();
 
 			if (!client.PaidDay && assignedService.IsActivated) {
 				assignedService.IsActivated = false;
@@ -70,7 +70,7 @@ namespace Inforoom2.Models.Services
 				if (sum > 0) {
 					client.PaidDay = true;
 					var comment = string.Format("Абонентская плата за {0} из-за добровольной разблокировки клиента",
-						DateTime.Now.ToShortDateString());
+						SystemTime.Now().ToShortDateString());
 
 					session.Save(new UserWriteOff(client, sum, comment));
 				}

@@ -1,24 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Net.Mime;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
-using System.Web.UI.WebControls;
+using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Models;
-using NHibernate.Criterion;
-using NHibernate.Linq;
-using NHibernate.Linq.Functions;
-using NHibernate.Validator.Cfg.Loquacious;
 
 namespace Inforoom2.Helpers
 {
@@ -203,9 +196,9 @@ namespace Inforoom2.Helpers
 					html = string.Format("<div class=\"input-group\"><input id=\"{0}\" name =\"{2}\" {1} value=\"{3}\" class=\"form-control datepicker\" data-format=\"D, dd MM yyyy\" type=\"text\" /><div class=\"input-group-addon\"><a href=\"#\"><i class=\"entypo-calendar\"></i></a></div></div>", id, attributes, name, value);
 					break;
 				case HtmlTag.datetime:
-					var dobj = value != null ? (DateTime)value : DateTime.Now;
+					var dobj = value != null ? (DateTime)value : SystemTime.Now();
 					if (dobj == DateTime.MinValue) {
-						dobj = DateTime.Now;
+						dobj = SystemTime.Now();
 					}
 					var date = dobj.Date.ToString().Split(' ')[0];
 					var time = dobj.TimeOfDay;

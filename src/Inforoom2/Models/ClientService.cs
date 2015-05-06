@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using Common.Tools;
 using Inforoom2.Models.Services;
 using NHibernate;
 using NHibernate.Mapping.Attributes;
@@ -43,7 +43,7 @@ namespace Inforoom2.Models
 			var message = string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", Service.Name,
 				BeginDate != null
 					? BeginDate.Value.ToShortDateString()
-					: DateTime.Now.ToShortDateString(),
+					: SystemTime.Now().ToShortDateString(),
 				EndDate != null
 					? EndDate.Value.ToShortDateString()
 					: string.Empty);

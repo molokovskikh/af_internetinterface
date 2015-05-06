@@ -103,12 +103,12 @@ namespace Inforoom2.Models
 			var writeOff = new UserWriteOff
 			{
 				Client = Client,
-				Date = DateTime.Now,
+				Date = SystemTime.Now(),
 				Sum = price,
 				Comment = comment,
 				IsProcessedByBilling = true
 			};
-			LastTimePlanChanged = DateTime.Now;
+			LastTimePlanChanged = SystemTime.Now();
 			if (Client.Internet.ActivatedByUser) 
 				Client.Endpoints.ForEach(e => e.PackageId = Plan.PackageSpeed.PackageId); 
 			return writeOff;

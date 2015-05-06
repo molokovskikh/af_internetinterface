@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Security;
+using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -309,7 +309,7 @@ namespace Inforoom2.Controllers
 				builder.Append("Поймали циклическое исключение на попытке получить ip клиента \n ");
 			}
 
-			builder.Append("Дата: " + DateTime.Now + " \n ");
+			builder.Append("Дата: " + SystemTime.Now() + " \n ");
 			builder.Append("Referrer: " + Request.UrlReferrer + " \n ");
 			builder.Append("Query: " + Request.QueryString + " \n ");
 			builder.Append("Ip: " + Request.UserHostAddress + " \n ");

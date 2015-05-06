@@ -8,8 +8,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
+using Common.Tools;
 using Inforoom2.Components;
-using Inforoom2.Helpers;
 using Inforoom2.Models;
 using log4net;
 using NHibernate;
@@ -181,7 +181,7 @@ namespace Inforoom2.Controllers
 		public void SetCookie(string name, string value)
 		{
 			if (value == null) {
-				Response.Cookies.Add(new HttpCookie(name, "false") { Path = "/", Expires = DateTime.Now });
+				Response.Cookies.Add(new HttpCookie(name, "false") { Path = "/", Expires = SystemTime.Now() });
 				return;
 			}
 			var plainTextBytes = Encoding.UTF8.GetBytes(value);
@@ -200,14 +200,14 @@ namespace Inforoom2.Controllers
 			var ticket = new FormsAuthenticationTicket(
 				1,
 				username,
-				DateTime.Now,
-				DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes),
+				SystemTime.Now(),
+				SystemTime.Now().AddMinutes(FormsAuthentication.Timeout.TotalMinutes),
 				shouldRemember,
 				userData,
 				FormsAuthentication.FormsCookiePath);
 			var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket));
 			if (shouldRemember)
-				cookie.Expires = DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes);
+				cookie.Expires = SystemTime.Now().AddMinutes(FormsAuthentication.Timeout.TotalMinutes);
 			Response.Cookies.Set(cookie);
 			return RedirectToAction(action, controller,RouteData);
 		}

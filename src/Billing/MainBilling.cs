@@ -386,6 +386,7 @@ set s.LastStartFail = true;")
 		/// <param name="client">Объект клиента</param>
 		private void WriteOffFromPhysicalClient(ISession session, Client client)
 		{
+			//Сброс статуса "Заблокирован - Восстановление работы" у клиента
 			if (_saleSettings.IsRepairExpaired(client)) {
 				client.SetStatus(StatusType.Worked, session);
 			}
@@ -393,25 +394,31 @@ set s.LastStartFail = true;")
 			//Отсылка инфы о просроченных заявках
 			SendExpiredServiceRequestEmails(client);
 
+			//Обновление расчетного периода для подключенного клиента
 			var phisicalClient = client.PhysicalClient;
-			var balance = phisicalClient.Balance;
-			if (balance >= 0 && !client.Disabled && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue) {
+			if (phisicalClient.Balance >= 0 && !client.Disabled && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue) {
 				var dtNow = SystemTime.Now();
+				// Если дата расчетного периода (с поправкой на долговые дни) ровно на 1 месяц позади текущей даты
 				if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).Days == -client.DebtDays) {
 					var dtFrom = client.RatedPeriodDate.Value;
 					var dtTo = dtNow;
+					// Фактически обнулить кол-во долговых дней у клиента
 					client.DebtDays += dtFrom.Day - dtTo.Day;
 					var thisMonth = dtNow.Month;
+					// Задать расчетный период с поправкой на долговые дни и на текущий месяц
 					client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
 					while (client.RatedPeriodDate.Value.Month != thisMonth) {
 						client.RatedPeriodDate = client.RatedPeriodDate.Value.AddDays(-1);
 					}
 				}
 				else if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).TotalDays < -client.DebtDays) {
+					// Задать расчетный период с поправкой на долговые дни
 					client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
 					client.DebtDays = 0;
 				}
 			}
+
+			//Обновление (назначение заново) скидки клиента
 			if (client.StartNoBlock != null) {
 				decimal sale = 0;
 				var monthOnStart = SystemTime.Now().TotalMonth(client.StartNoBlock.Value);
