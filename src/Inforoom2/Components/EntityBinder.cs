@@ -77,9 +77,11 @@ namespace Inforoom2.Components
 			var form = request.Form;
 			var keys = form.AllKeys;
 			string name = null;
-			foreach (var key in keys) {
+			foreach (var key in keys)
+			{
 				var split = key.Split('.');
-				if (split.Length > 1) {
+				if (split.Length > 1)
+				{
 					name = split.First();
 					break;
 				}
@@ -105,16 +107,18 @@ namespace Inforoom2.Components
 			// в пустом значении списка
 			if (values["id"] == "") return null;
 
-			if (values["id"] == null || int.Parse(values["id"]) == 0) {
+			if (values["id"] == null || int.Parse(values["id"]) == 0)
+			{
 				// создание пустой переменной указанного типа
 				return Activator.CreateInstance(entityType);
 			}
-			else {
+			else
+			{
 				// создание переменной указанного типа с переданным значением
 				return Session.Get(entityType, int.Parse(values["id"]));
 			}
 		}
-		 
+
 
 		/// <summary>
 		/// Рекурсивно Натягивает данные из списка на модель. Каждый элемент в списке считается частью модели.
@@ -130,7 +134,8 @@ namespace Inforoom2.Components
 			if (instance == null)
 				return null;
 
-			while (values.HasKeys()) {
+			while (values.HasKeys())
+			{
 				var key = values.Keys.First() as string;
 				object newValue;
 				//Получаем имя поля из параметров
@@ -138,7 +143,8 @@ namespace Inforoom2.Components
 				//Получаем поле
 				var property = instance.GetType().GetProperty(propName);
 
-				if (property.PropertyType.IsSubclassOf(typeof(BaseModel))) {
+				if (property.PropertyType.IsSubclassOf(typeof(BaseModel)))
+				{
 					//Если это модель то мапим модель
 					var oldValue = property.GetValue(instance, new object[] { }) as BaseModel;
 					var idKey = property.Name + ".Id";
@@ -151,7 +157,8 @@ namespace Inforoom2.Components
 					property.SetValue(instance, newValue, new object[] { });
 					if (values[key] != null) throw new Exception("Не удается назначить поле! \n Вероятная причина: значени в свойстве name тэга обрабатываемого представления *view* указывает на объект ( на модель '" + key + "' ), а не на его поле!");
 				}
-				else if (property.PropertyType.IsGenericType && property.PropertyType.GetInterfaces().Contains(typeof(IEnumerable))) {
+				else if (property.PropertyType.IsGenericType && property.PropertyType.GetInterfaces().Contains(typeof(IEnumerable)))
+				{
 					//Если поле это коллекция, то получаем набор параметров для каждого элемента и закидываем их в список
 					//Получаем тип элемента коллекции
 					var subType = property.PropertyType.GetGenericArguments().FirstOrDefault();
@@ -166,7 +173,8 @@ namespace Inforoom2.Components
 					else
 						ChangeCollection(collection, subType, subCollections);
 				}
-				else {
+				else
+				{
 					//Если это простое поле, то просто присваиваем его специальной функцией
 					//Которая хорошо конвертирует строки в значения полей модели
 					newValue = values[key];
@@ -188,7 +196,8 @@ namespace Inforoom2.Components
 		{
 			//Очищаем
 			collection.Clear();
-			foreach (var pair in subCollections) {
+			foreach (var pair in subCollections)
+			{
 				//Получаем индекс элемента
 				var index = pair.Key;
 				//Получаем коллекцию коллекций
@@ -238,7 +247,8 @@ namespace Inforoom2.Components
 		private Dictionary<string, NameValueCollection> SliceMultipleValues(NameValueCollection values, string name)
 		{
 			var dictionary = new Dictionary<string, NameValueCollection>();
-			while (values.AllKeys.Any(i => i.Contains(name))) {
+			while (values.AllKeys.Any(i => i.Contains(name)))
+			{
 				var key = values.AllKeys.First(i => i.Contains(name));
 				var index = key[name.Length + 1];
 				int indexVal;
@@ -261,9 +271,11 @@ namespace Inforoom2.Components
 		{
 			name = name.ToLower();
 			var collection = new NameValueCollection();
-			foreach (var key in values.AllKeys) {
+			foreach (var key in values.AllKeys)
+			{
 				//Проверяем, является ли ключ объектом с полями
-				if (key.ToLower().IndexOf(name + ".") == 0) {
+				if (key.ToLower().IndexOf(name + ".") == 0)
+				{
 					collection.Add(key.Substring(name.Length + 1), values[key]);
 					values.Remove(key);
 				}
@@ -290,28 +302,33 @@ namespace Inforoom2.Components
 			//Для булевых типов, строчное "True" конвертируется в True
 			if (targetType == typeof(Boolean))
 				propertyVal = propertyVal.ToString().ToLower().Contains("true");
-			else if (targetType == typeof(DateTime)) {
+			else if (targetType == typeof(DateTime))
+			{
 				//Пустые даты приводятся в минимальному значению
 				DateTime date;
 				if (!DateTime.TryParse(propertyVal.ToString(), out date))
 					date = DateTime.MinValue;
 				propertyVal = date;
 			}
-			else if (targetType.BaseType == typeof(Enum)) {
+			else if (targetType.BaseType == typeof(Enum))
+			{
 				//Значения перечислений задаются через их строчное обозначение
 				propertyVal = Enum.Parse(targetType, propertyVal.ToString());
 			}
 
-			if (IsNullableType(propertyInfo.PropertyType) && targetType != typeof(String) && propertyVal == "") {
+			if (IsNullableType(propertyInfo.PropertyType) && targetType != typeof(String) && propertyVal == "")
+			{
 				propertyVal = null;
 			}
 
-			try {
+			try
+			{
 				if (propertyVal != null)
 					propertyVal = Convert.ChangeType(propertyVal, targetType);
 				propertyInfo.SetValue(inputObject, propertyVal, null);
 			}
-			catch (Exception e) {
+			catch (Exception e)
+			{
 			}
 		}
 

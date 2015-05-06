@@ -302,6 +302,8 @@
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Administrator.cs" />
     <Compile Include="Models\BillingHistory.cs" />
+    <Compile Include="Models\Banner.cs" />
+    <Compile Include="Models\Slide.cs" />
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientEndPoint.cs" />
     <Compile Include="Models\ClientRequest.cs" />

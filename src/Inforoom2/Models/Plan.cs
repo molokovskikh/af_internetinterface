@@ -80,6 +80,15 @@ namespace Inforoom2.Models
 
 		public virtual decimal SwitchPrice { get; set; }
 
+		[Property]
+		public virtual string Features { get; set; }
+
+		[Property]
+		public virtual bool Published { get; set; }
+
+		[Property]
+		public virtual string Description { get; set; }
+
 
 		/// <summary>
 		/// Получение стоимости перехода на другой тариф

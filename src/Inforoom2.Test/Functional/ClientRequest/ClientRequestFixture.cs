@@ -105,9 +105,9 @@ namespace Inforoom2.Test.Functional.ClientRequest
 		[Test, Description("Не заполнено поле номера телефона")]
 		public void ClientRequestWrongPhone()
 		{
-			Phone.Clear();
+			Phone.Clear(); 
 			SendRequest(); 
-			AssertText("Введите номер в десятизначном");
+			AssertText("Введите номер в десятизначном"); 
 			AssertFail();
 		}
 

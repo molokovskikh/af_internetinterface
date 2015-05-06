@@ -140,7 +140,7 @@ namespace Inforoom2.Test.Infrastructure
 
 			//Приоритет удаления данных
 			var order = "lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
-						+ "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,regions";
+						+ "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
 
 			var parts = order.Split(',');
 			foreach (var part in parts) {
@@ -349,6 +349,17 @@ namespace Inforoom2.Test.Infrastructure
 			region.OfficeAddress = "Третьяковская улица д6Б";
 			region.OfficeGeomark = "51.3663252,42.08180200000004";
 			DbSession.Save(region);
+			var parent = region;
+
+			// Добавление дочернего региона 
+			region = new Region();
+			region.Name = "Борисоглебск (частный сектор)";
+			region.RegionOfficePhoneNumber = "8-800-2000-800";
+			region.City = blg;
+			region.Parent = new List<Region>(){parent};
+			region.OfficeAddress = "улица Князя Трубецкого д26";
+			region.OfficeGeomark = "50.592548,36.59665819999998";
+			DbSession.Save(region);
 
 			region = new Region();
 			region.Name = "Белгород";
@@ -356,6 +367,7 @@ namespace Inforoom2.Test.Infrastructure
 			region.City = blg;
 			region.OfficeAddress = "улица Князя Трубецкого д26";
 			region.OfficeGeomark = "50.592548,36.59665819999998";
+
 			DbSession.Save(region);
 		}
 
