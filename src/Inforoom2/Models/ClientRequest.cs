@@ -69,6 +69,10 @@ namespace Inforoom2.Models
 
 		[Property(Column = "CaseHouse")]
 		public virtual string Housing { get; set; }
+
+		// для привязки клиента к заявке (на нее есть ссылка в информации о клиенте)
+		[ManyToOne(Column = "Client")]
+		public virtual Client Client { get; set; }
 		// <<<================================================================
 
 

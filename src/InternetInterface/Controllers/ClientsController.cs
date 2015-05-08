@@ -38,8 +38,9 @@ namespace InternetInterface.Controllers
 		public void UpdateAddressByClient(int clientId, string path)
 		{
 			var propObj = DbSession.CreateSQLQuery(
-				string.Format(@"SELECT r.Region AS region, s.Name AS street, h.Number AS house,  a.Floor AS floor,  a.Apartment AS apartment, a.Entrance AS entrance, p.Id  
+				string.Format(@"SELECT r.Region AS region, s.Name AS street, h.Number AS house,  a.Floor AS floor,  a.Apartment AS apartment, a.Entrance AS entrance, p.Id, ci.Name  
 								FROM internet.regions AS r  
+								INNER JOIN  internet.inforoom2_city AS ci ON r._City = ci.Id  
 								INNER JOIN  internet.inforoom2_street AS s ON s.Region = r.Id 
 								INNER JOIN  internet.inforoom2_house AS h ON h.Street = s.Id 
 								INNER JOIN  internet.inforoom2_address AS a ON h.Id = a.house 
@@ -75,7 +76,7 @@ namespace InternetInterface.Controllers
 
 				DbSession.CreateSQLQuery(string.Format(" UPDATE internet.physicalclients SET City='{0}',Street='{1}',House='{2}',Floor='{3}',Apartment='{4}', " +
 													   "Entrance='{5}',HouseObj={6}  WHERE Id={7}", 
-													    aList[0], aList[1], newHouse.Number,
+													    aList[7], aList[1], newHouse.Number,
 														aList[3] == "" ? "0" : aList[3],
 														aList[4] == "" ? "0" : aList[4],
 														aList[5] == "" ? "0" : aList[5],

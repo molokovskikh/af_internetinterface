@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
+using InternetInterface.Models;
 using NHibernate.Linq;
 using NHibernate.Util;
 using Client = Inforoom2.Models.Client;
@@ -15,6 +16,7 @@ using House = Inforoom2.Models.House;
 using PhysicalClient = Inforoom2.Models.PhysicalClient;
 using RequestType = Inforoom2.Models.RequestType;
 using ServiceRequest = Inforoom2.Models.ServiceRequest;
+using Status = Inforoom2.Models.Status;
 using StatusType = Inforoom2.Models.StatusType;
 using Street = Inforoom2.Models.Street;
 
@@ -353,15 +355,29 @@ namespace InforoomControlPanel.Controllers
 			client.PhysicalClient = new PhysicalClient();
 			// ФИО по запросу
 			string[] fio = clientRequest.ApplicantName.Trim().Split(' ');
-			client.PhysicalClient.Name = fio.Length > 0 ? fio[0] : "";
-			client.PhysicalClient.Surname = fio.Length > 1 ? fio[1] : "";
+			client.PhysicalClient.Surname = fio.Length > 0 ? fio[0] : "";
+			client.PhysicalClient.Name = fio.Length > 1 ? fio[1] : "";
 			client.PhysicalClient.Patronymic = fio.Length > 2 ? fio[2] : "";
-
-			// контакты по запросу
-
+			// Добавление контактов по запросу
+			client.Contacts = new List<Contact>();
+			if (clientRequest.ApplicantPhoneNumber!=null)
+			{
+				client.Contacts.Add(new Contact() {
+				Type = ContactType.MobilePhone,
+				Date = DateTime.Now,
+				ContactString = clientRequest.ApplicantPhoneNumber.Insert(3,"-")
+			});
+			}
+			if (clientRequest.ApplicantPhoneNumber != null) {
+				client.Contacts.Add(new Contact() {
+					Type = ContactType.Email,
+					Date = DateTime.Now,
+					ContactString = clientRequest.Email.Insert(3, "-")
+				});
+			} 
 			// Контакты находятся в отдельной таблице
 			//client.PhoneNumber = clientRequest.ApplicantPhoneNumber;
-			//client.Email = clientRequest.Email;
+			//client.Email = clientRequest.Email; 
 
 			// адресные данные по запросу
 			var currentRegion = DbSession.Query<Region>().FirstOrDefault(s => s.Name.ToLower() == clientRequest.City.ToLower()) ?? new Region();
@@ -450,10 +466,21 @@ namespace InforoomControlPanel.Controllers
 					ActivatedByUser = (service.Name == "Internet")
 				}).ToList();
 				client.ClientServices = csList;
+				// дублируем моб.номер клиента в смс рассылку
+				var mobilePhone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
+				if (mobilePhone!=null)
+				{
+				mobilePhone.Type = ContactType.SmsSending;
+				client.Contacts.Add(mobilePhone);
+				}
+				// сохраняем модель
 				DbSession.Save(client);
+				// Обновление заявки
 				ClientRequest clientRequest = DbSession.Query<ClientRequest>().First(s => s.Id == requestId);
-				// отправление запроса на регистрацию в архив
 				if (clientRequest != null) {
+				// привязка текущего клиента к поданой им заявке
+				// отправление запроса на регистрацию в архив
+					clientRequest.Client = client;
 					clientRequest.Archived = true;
 					DbSession.Save(clientRequest);
 				}
@@ -611,6 +638,13 @@ namespace InforoomControlPanel.Controllers
 					ActivatedByUser = (service.Name == "Internet")
 				}).ToList();
 				client.ClientServices = csList;
+				// дублируем моб.номер клиента в смс рассылку
+				var mobilePhone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
+				if (mobilePhone != null)
+				{
+					mobilePhone.Type = ContactType.SmsSending;
+					client.Contacts.Add(mobilePhone);
+				}
 				// сохраняем модель
 				DbSession.Save(client);
 				//@Todo раскомментировать когда закончится интеграция со старой админкой
@@ -636,8 +670,6 @@ namespace InforoomControlPanel.Controllers
 			CertificateTypeDic.Add(0, CertificateType.Passport);
 			CertificateTypeDic.Add(1, CertificateType.Other);
 			ViewBag.CertificateTypeDic = CertificateTypeDic;
-
-
 			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
 			Street currentStreet = null;
 			House currentHouse = null;
@@ -722,6 +754,8 @@ namespace InforoomControlPanel.Controllers
 				"Inforoom2.Models.PhysicalClient.CertificateName"
 			});
 			if (errors.Length == 0) {
+				
+				// сохраняем модель
 				DbSession.Update(client);
 
 				//@Todo раскомментировать когда закончится интеграция со старой админкой 
