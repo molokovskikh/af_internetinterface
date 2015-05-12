@@ -75,6 +75,7 @@ namespace Inforoom2.Test.Infrastructure.Helpers
 			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,2Д");
 			addresses.Add("Борисоглебск,Борисоглебск,ул. Ленина,24Б");
 			addresses.Add("Борисоглебск,Борисоглебск,ул. Ленина,23");
+			addresses.Add("Борисоглебск,Борисоглебск,ул. Гагарина,90");
 		}
 
 		/// <summary>
