@@ -30,7 +30,7 @@ namespace Inforoom2.Models
 		[Property]
 		public new virtual string Email { get; set; }
 
-		[Property(Column = "Phone"), NotNullNotEmpty(Message = "Введите номер телефона")]
+		[Property(Column = "Phone"), Pattern(@"^\d{10}$", Message = "Введите номер в десятизначном формате"), NotNullNotEmpty(Message = "Введите номер телефона")]
 		public virtual string PhoneNumber { get; set; }
 
 		[Property, NotNullNotEmpty(Message = "Введите имя")]

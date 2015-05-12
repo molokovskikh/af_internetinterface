@@ -26,8 +26,8 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult Index()
 		{
-			if (Request.IsAuthenticated)  
-				return RedirectToAction("Statistic", "Admin"); 
+			if (User.Identity.IsAuthenticated)
+				return RedirectToAction("Statistic", "Admin");
 			return View();
 		}
 
@@ -54,6 +54,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult AdminLogout()
 		{
 			FormsAuthentication.SignOut();
+			SetCookie(FormsAuthentication.FormsCookieName,null);
 			return RedirectToAction("Index");
 		}
 
