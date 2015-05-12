@@ -366,6 +366,7 @@
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\UserWriteOff.cs" />
     <Compile Include="Models\WriteOff.cs" />
+    <Compile Include="validators\ValidatorEmail.cs" />
     <Compile Include="validators\ValidatorFullNameOriginal.cs" />
     <Compile Include="validators\ValidatorContacts.cs" />
     <Compile Include="validators\ValidatorNumberic.cs" />

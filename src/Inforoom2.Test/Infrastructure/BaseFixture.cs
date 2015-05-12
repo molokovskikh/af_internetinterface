@@ -139,8 +139,8 @@ namespace Inforoom2.Test.Infrastructure
 			var tables = new List<string>();
 
 			//Приоритет удаления данных
-			var order = "lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
-			            + "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
+			var order = "lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels," 
+			            + "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,connectbrigads,banner,slide,regions"; 
 
 			var parts = order.Split(',');
 			foreach (var part in parts) {

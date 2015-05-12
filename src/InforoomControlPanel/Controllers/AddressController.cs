@@ -338,7 +338,7 @@ namespace InforoomControlPanel.Controllers
 		public JsonResult GetHouseList(int streetId)
 		{
 			var houses = DbSession.Query<House>().
-				Where(s => s.Street.Id == streetId).
+				Where(s => s.Street.Id == streetId || s.Region == s.Street.Region).
 				Select(s => new {
 					Id = s.Id,
 					Number = s.Number,

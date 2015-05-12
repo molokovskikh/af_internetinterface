@@ -100,9 +100,8 @@ namespace InforoomControlPanel.Controllers
 		{
 			// TODO: добавил связь между тарифом и регионом
 			//		var tariff = InitRequestPlans().FirstOrDefault(k => k.Id == clientRequest.Plan.Id);
-			//		clientRequest.Plan = tariff;
-
-			InitRequestPlans();
+			//		clientRequest.Plan = tariff; 
+			InitRequestPlans(); 
 			clientRequest.ActionDate = clientRequest.RegDate = DateTime.Now;
 			Employee reqAuthor = null;
 			// TODO: Заявка от оператора по умочанию // удалить лишнее 
@@ -128,17 +127,15 @@ namespace InforoomControlPanel.Controllers
 				// отделение буквенной части от "Номера дома"
 				var housingPostfix = clientRequest.Address.House.Number.IndexOf(houseNumber);
 				housingPostfix = housingPostfix == -1 ? 0 : housingPostfix + houseNumber.Length;
-				clientRequest.Housing = clientRequest.Address.House.Number.Substring(housingPostfix,
-					clientRequest.Address.House.Number.Length - housingPostfix);
+				clientRequest.Housing = clientRequest.Address.House.Number.Substring(housingPostfix, 
+				clientRequest.Address.House.Number.Length - housingPostfix); 
 			}
 
 			var errors = ValidationRunner.ValidateDeep(clientRequest);
 			if (errors.Length == 0 && clientRequest.IsContractAccepted) {
 				// TODO: убрать/поправить GetAddressByYandexData
 				clientRequest.Address = GetAddressByYandexData(clientRequest);
-				clientRequest.Address.IsCorrectAddress = true;
-
-
+				clientRequest.Address.IsCorrectAddress = true; 
 				DbSession.Save(clientRequest);
 				SuccessMessage(string.Format("Спасибо, Ваша заявка создана. Номер заявки {0}", clientRequest.Id));
 				return RedirectToAction("Request");
@@ -198,8 +195,7 @@ namespace InforoomControlPanel.Controllers
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			Street currentStreet = null;
 			House currentHouse = null;
-			Region currentRegion = null;
-			var planList = new List<Plan>();
+			Region currentRegion = null; 
 			// списки улиц и домов
 			ViewBag.CurrentStreet = currentStreet;
 			ViewBag.CurrentStreetList = currentRegion == null ? new List<Street>() : DbSession.Query<Street>().Where(s => s.Region.Id == currentRegion.Id).OrderBy(s => s.Name).ToList();
@@ -209,8 +205,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.CurrentHouse = currentHouse;
 			// получаем всех диллеров (работников)
 			ViewBag.Dealers = DbSession.Query<Dealer>().Select(s => s.Employee).OrderBy(s => s.Name).ToList();
-			ViewBag.RegionList = regionList;
-			ViewBag.PlanList = planList;
+			ViewBag.RegionList = regionList; 
 
 			/*
 			if (!string.IsNullOrEmpty(city) && !string.IsNullOrEmpty(street) && !string.IsNullOrEmpty(house)) {
@@ -266,7 +261,7 @@ namespace InforoomControlPanel.Controllers
 
 			if (house == null) {
 				house = new House(clientRequest.YandexHouse);
-			}
+			} 
 			var houseForAddress = DbSession.Query<House>().FirstOrDefault(a => a.Number == house.Number
 			                                                                   && a.Street.Name.IndexOf(street.Name) != -1
 			                                                                   && a.Street.Region.Name == clientRequest.City);
@@ -279,7 +274,7 @@ namespace InforoomControlPanel.Controllers
 			//                                                    && a.Floor == clientRequest.Floor
 			//                                                    && a.Apartment == clientRequest.Apartment.ToString()
 			//													   &&a.IsCorrectAddress
-
+			 
 
 			//if (address == null) {
 			//	address = new Address();
@@ -365,38 +360,44 @@ namespace InforoomControlPanel.Controllers
 			client.PhysicalClient = new PhysicalClient();
 			// ФИО по запросу
 			string[] fio = clientRequest.ApplicantName.Trim().Split(' ');
-			client.PhysicalClient.Name = fio.Length > 0 ? fio[0] : "";
-			client.PhysicalClient.Surname = fio.Length > 1 ? fio[1] : "";
-			client.PhysicalClient.Patronymic = fio.Length > 2 ? fio[2] : "";
+			client.PhysicalClient.Surname = fio.Length > 0 ? fio[0] : "";
+			client.PhysicalClient.Name = fio.Length > 1 ? fio[1] : "";
+			client.PhysicalClient.Patronymic = fio.Length > 2 ? fio[2] : ""; 
 
 			// контакты по запросу
 			// Контакты находятся в отдельной таблице
 			client.Contacts = new List<Contact>();
-			client.Contacts.Add(new Contact() {
-				Client = client,
-				ContactString = clientRequest.ApplicantPhoneNumber.IndexOf('-') != -1 ? clientRequest.ApplicantPhoneNumber : clientRequest.ApplicantPhoneNumber.Insert(3, "-"),
-				Type = ContactType.MobilePhone,
-				Date = DateTime.Now
-			});
-			client.Contacts.Add(new Contact() {
-				Client = client,
-				ContactString = clientRequest.Email,
-				Type = ContactType.Email,
-				Date = DateTime.Now
-			});
+
+			if (clientRequest.ApplicantPhoneNumber != null) {
+				client.Contacts.Add(new Contact() {
+					Client = client,
+					ContactString = clientRequest.ApplicantPhoneNumber.IndexOf('-') != -1 ? clientRequest.ApplicantPhoneNumber : clientRequest.ApplicantPhoneNumber.Insert(3, "-"),
+					Type = ContactType.MobilePhone,
+					Date = DateTime.Now
+				});
+			}
+			if (clientRequest.ApplicantPhoneNumber != null) {
+				client.Contacts.Add(new Contact() {
+					Client = client,
+					ContactString = clientRequest.Email,
+					Type = ContactType.Email,
+					Date = DateTime.Now
+				});
+			} 
 
 			// адресные данные по запросу
 			var currentRegion = DbSession.Query<Region>().FirstOrDefault(s => s.Name.ToLower() == clientRequest.City.ToLower()) ?? new Region();
 			var currentStreet = DbSession.Query<Street>().FirstOrDefault(s => s.Name.ToLower().Trim() == clientRequest.Street.ToLower().Trim() && s.Region == currentRegion);
 			var houseToFind = DbSession.Query<House>().FirstOrDefault(s => s.Number == (clientRequest.HouseNumber != null ?
 				clientRequest.HouseNumber + clientRequest.Housing : "").ToString() && s.Street == currentStreet);
+ 
 			if (houseToFind == null) {
-				houseToFind = new House();
+				houseToFind = new House(); 
 			}
 			else {
 				// текущий найденный текущий дом 
 				ViewBag.CurrentHouse = houseToFind;
-			}
+			} 
 			if (clientRequest.Address != null) {
 				client.PhysicalClient.Address = clientRequest.Address;
 				client.PhysicalClient.Address.Floor = clientRequest.Floor;
@@ -412,7 +413,7 @@ namespace InforoomControlPanel.Controllers
 					Entrance = clientRequest.Entrance.ToString(),
 					Apartment = clientRequest.Apartment.ToString()
 				};
-			}
+			} 
 			// списки улиц и домов
 			ViewBag.CurrentStreet = currentStreet;
 			ViewBag.CurrentStreetList = currentRegion == null ? new List<Street>() : DbSession.Query<Street>().Where(s => s.Region.Id == currentRegion.Id).OrderBy(s => s.Name).ToList();
@@ -482,10 +483,21 @@ namespace InforoomControlPanel.Controllers
 					ActivatedByUser = (service.Name == "Internet")
 				}).ToList();
 				client.ClientServices = csList;
+				// дублируем моб.номер клиента в смс рассылку
+				var mobilePhone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
+				if (mobilePhone!=null)
+				{
+				mobilePhone.Type = ContactType.SmsSending;
+				client.Contacts.Add(mobilePhone);
+				}
+				// сохраняем модель
 				DbSession.Save(client);
+				// Обновление заявки
 				ClientRequest clientRequest = DbSession.Query<ClientRequest>().First(s => s.Id == requestId);
-				// отправление запроса на регистрацию в архив
 				if (clientRequest != null) {
+				// привязка текущего клиента к поданой им заявке
+				// отправление запроса на регистрацию в архив
+					clientRequest.Client = client;
 					clientRequest.Archived = true;
 					DbSession.Save(clientRequest);
 				}
@@ -643,6 +655,13 @@ namespace InforoomControlPanel.Controllers
 					ActivatedByUser = (service.Name == "Internet")
 				}).ToList();
 				client.ClientServices = csList;
+				// дублируем моб.номер клиента в смс рассылку
+				var mobilePhone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
+				if (mobilePhone != null)
+				{
+					mobilePhone.Type = ContactType.SmsSending;
+					client.Contacts.Add(mobilePhone);
+				}
 				// сохраняем модель
 				DbSession.Save(client);
 				//@Todo раскомментировать когда закончится интеграция со старой админкой
@@ -668,8 +687,6 @@ namespace InforoomControlPanel.Controllers
 			CertificateTypeDic.Add(0, CertificateType.Passport);
 			CertificateTypeDic.Add(1, CertificateType.Other);
 			ViewBag.CertificateTypeDic = CertificateTypeDic;
-
-
 			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
 			Street currentStreet = null;
 			House currentHouse = null;
@@ -754,6 +771,8 @@ namespace InforoomControlPanel.Controllers
 				"Inforoom2.Models.PhysicalClient.CertificateName"
 			});
 			if (errors.Length == 0) {
+				
+				// сохраняем модель
 				DbSession.Update(client);
 
 				//@Todo раскомментировать когда закончится интеграция со старой админкой 

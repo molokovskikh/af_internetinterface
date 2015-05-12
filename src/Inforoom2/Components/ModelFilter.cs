@@ -147,8 +147,7 @@ namespace Inforoom2.Components
 		/// <param name="controller">Текущий контроллер ( на основе которого будут формироваться url-адреса )</param>
 		/// <param name="itemsPerPage">Количесто записей на страницу ( по умолчанию 10 )</param>
 		/// <param name="urlBasePrefix">Префикс url, по умолчанию пустой (url начинается с контроллера), </param>
-		public ModelFilter(Controller controller, int itemsPerPage = 10, string urlBasePrefix = "")
-		{
+		public ModelFilter(Controller controller, int itemsPerPage = 10, string urlBasePrefix = "") {
 			// получение наименования контроллера, при его наличии
 			var controllerName = controller.Url.RequestContext.RouteData.Values.ContainsKey(urlController)
 				? controller.Url.RequestContext.RouteData.Values[urlController].ToString() : "";

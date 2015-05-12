@@ -1,4 +1,7 @@
-﻿@section JavaScript{<script type="text/javascript" src="@Url.Content("~/Scripts/ClientRequest.js")"></script>}
+﻿@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientRequest.js")"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js")"></script>
+} 
 @using Inforoom2.Components
 @using Inforoom2.Helpers
 @using Inforoom2.Models
@@ -17,6 +20,14 @@
 	bool isHouseValidated = ViewBag.IsHouseValidated;
 	string action = ViewBag.ActionName;
 	string controller = ViewBag.ControllerName;
+
+
+	List<Region> regionList = ViewBag.RegionList;
+	List<Street> currentStreetList = ViewBag.CurrentStreetList;
+	List<House> currentHouseList = ViewBag.CurrentHouseList;
+	Region currentRegion = ViewBag.CurrentRegion;
+	Street currentStreet = ViewBag.CurrentStreet;
+	House currentHouse = ViewBag.CurrentHouse;
 }
 
 <link rel="stylesheet" href="~/Css/from_inforoom2.css"/>
@@ -24,8 +35,7 @@
 
 <div class="panel panel-primary col-md-12">
 	<div class="panel-body">
-		@using (@Html.BeginForm(action, controller, FormMethod.Post))
-		{
+		@using (@Html.BeginForm(action, controller, FormMethod.Post)) {
 			<div>
 				<div class="personals">Ф.И.О:</div>
 				@Html.ValidationEditor(validationRunner, clientRequest, "ApplicantName", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
@@ -36,19 +46,82 @@
 			</div>
 			<div>
 				<div class="personals">Электронная почта:</div>
-				@Html.ValidationEditor(validationRunner, clientRequest, "Email", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
+				@Html.ValidationEditor(validationRunner, clientRequest, "Email", new { }, htmlTag: HtmlTag.input, htmlType: HtmlType.text) 
 			</div>
-			<div>
-				<div class="personals">Город:</div>
-				@Html.ValidationEditor(validationRunner, clientRequest, "City", new { @class = "personal", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text, isCityValidated)
-			</div>
-			<div>
-				<div class="personals">Улица:</div>
-				@Html.ValidationEditor(validationRunner, clientRequest, "Street", new { @class = "personal", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text, isStreetValidated)
-			</div>
-			<div class="block">
-				<div class="addon">Дом:</div>
-				@Html.ValidationEditor(validationRunner, clientRequest, "HouseNumber", new { @class = "addons", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text, isHouseValidated)
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-lg-4">
+							<div class="row error">
+								<label class="col-sm-3@(currentRegion == null ? " bold msg" : "")">Город:</label>
+								<div class="col-sm-6">
+									@if (currentRegion != null) {
+										@Html.DropDownListExtendedFor(i => clientRequest.Address.House.Street.Region, regionList, obj => obj.Name, null,
+											new {
+												@class = "form-control", @Id = "RegionDropDown",
+												@Name = "client.PhysicalClient.Address.House.Street.Region.Id",
+												onclick = "typeWatcher(1000)"
+											}, currentRegion.Id, true)
+									}
+									else {
+										@Html.DropDownListExtendedFor(i => clientRequest.Address.House.Street.Region, regionList, obj => obj.Name, null,
+											new {
+												@class = "form-control", @Id = "RegionDropDown",
+												@Name = "client.PhysicalClient.Address.House.Street.Region.Id",
+												onclick = "typeWatcher(1000)"
+											}, true)
+									}
+								</div>
+							</div>
+
+							<div class="row error">
+								<label class="col-sm-3@(currentStreet == null ? " bold msg" : "")">Улица:</label>
+								<div class="col-sm-6">
+									@if (currentStreet != null) {
+										@Html.DropDownListExtendedFor(i => clientRequest.Address.House.Street, currentStreetList, obj => obj.Name, null,
+											new {
+												@class = "form-control", @Id = "StreetDropDown",
+												@Name = "client.PhysicalClient.Address.House.Street.Id",
+												onclick = "typeWatcher(1000)"
+											}, currentStreet.Id, true)
+									}
+									else {
+										@Html.DropDownListExtendedFor(i => clientRequest.Address.House.Street, currentStreetList, obj => obj.Name, null,
+											new {
+												@class = "form-control", @Id = "StreetDropDown",
+												@Name = "client.PhysicalClient.Address.House.Street.Id",
+												onclick = "typeWatcher(1000)"
+											}, true)
+									}
+								</div>
+							</div>
+
+							<div class="row error">
+								<label class="col-sm-3@(currentHouse == null ? " bold msg" : "")">Дом:</label>
+								<div class="col-sm-6">
+									@if (currentHouse != null && currentHouseList != null) {
+										@Html.DropDownListExtendedFor(i => clientRequest.Address.House, currentHouseList, obj => obj.Number, null, new {
+											@class = "form-control",
+											@Id = "HouseDropDown",
+											@Name = "client.PhysicalClient.Address.House.Id",
+											onclick = "typeWatcher(1000)"
+										}, currentHouse.Id, true)
+									}
+									else {
+										@Html.DropDownListExtendedFor(i => clientRequest.Address.House, currentHouseList, obj => obj.Number, null, new {
+											@class = "form-control",
+											@Id = "HouseDropDown",
+											@Name = "client.PhysicalClient.Address.House.Id",
+											onclick = "typeWatcher(1000)"
+										}, true)
+									}
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
 			</div>
 			<div class="block">
 				<div class="addon">Корпус:</div>
@@ -66,35 +139,45 @@
 				<div class="addon">Этаж:</div>
 				@Html.ValidationEditor(validationRunner, clientRequest, "Floor", new { @class = "addons" }, HtmlTag.input, HtmlType.text)
 			</div>
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-lg-4">
+							<div class="row error">
+								<label class="col-sm-3 control-label @(clientRequest.Plan == null ? " bold msg" : "")">Тариф:</label>
+								<div class="col-sm-6">
+									@if (clientRequest.Plan != null) {
+										@Html.DropDownListExtendedFor(i => clientRequest.Plan, plans, obj => obj.Name, null, new { @class = "form-control", @Id = "PlanDropDown" }, clientRequest.Plan.Id, true)
+										@ViewBag.Validation.GetError(clientRequest, "Plan")
+									}
+									else {
+										@Html.DropDownListExtendedFor(i => clientRequest.Plan, plans, obj => obj.Name, null, new { @class = "form-control", @Id = "PlanDropDown" }, true)
+										@ViewBag.Validation.GetError(clientRequest, "Plan")
+									}
+								</div>
+							</div>
+							<div class="row error">
+								<label class="col-sm-3 control-label">Регистрирует:</label>
+								<div class="col-sm-6">
+									@Html.DropDownListExtendedFor(k => clientRequest.RequestAuthor, employees, emp => emp.Name, null, new { @class = "form-control" }, reqAuthor.Id)
+								</div>
+							</div>
+						</div>
+					</div>
+				</div> 
+			</div>
 			<div>
-				@if (isRedirected) {
-				<div class ="success">
-					<div class="personals">Тарифный план:</div>
-					@Html.DropDownListExtendedFor(k => clientRequest.Plan, plans, k => k.Name, null, new { @class = "rounded" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)
-					<div class="icon"></div>
+				<div id="yandexMap" class="map"></div>
+				<div class="contract">
+					@Html.HiddenFor(k => clientRequest.IsContractAccepted)
 				</div>
-				}
-				else {
-					<div class="personals">Тарифный план:</div>
-					@Html.DropDownListExtendedFor(k => clientRequest.Plan, plans, k => k.Name, null, new { @class = "rounded" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)
-				}
+				@Html.HiddenFor(k => clientRequest.YandexCity, new { id = "yandexCityHidden" })
+				@Html.HiddenFor(k => clientRequest.YandexStreet, new { id = "yandexStreetHidden" })
+				@Html.HiddenFor(k => clientRequest.YandexHouse, new { id = "yandexHouseHidden" })
 			</div>
-			<div>
-				<div class="personals">Заявка:</div>
-				@Html.DropDownEnumListFor(k => clientRequest.RequestSource, new { @class = "rounded" })
-			</div>
-			<div>
-				<div class="personals">Регистрирует:</div>
-				@Html.DropDownListExtendedFor(k => clientRequest.RequestAuthor, employees, emp => emp.Name, null, new { @class = "rounded" }, reqAuthor.Id)
-			</div>
-			<div id="yandexMap" class="map"></div>
-			<div class="contract">
-				@Html.HiddenFor(k => clientRequest.IsContractAccepted)
-			</div>
-			@Html.HiddenFor(k => clientRequest.YandexCity, new { id = "yandexCityHidden" })
-			@Html.HiddenFor(k => clientRequest.YandexStreet, new { id = "yandexStreetHidden" })
-			@Html.HiddenFor(k => clientRequest.YandexHouse, new { id = "yandexHouseHidden" })
+
 			<input class="btn btn-green" type="submit" value="Отправить">
 		}
 	</div>
-</div>
+</
+	div >
