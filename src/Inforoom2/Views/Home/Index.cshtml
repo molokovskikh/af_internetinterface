@@ -20,7 +20,7 @@
 				{
 					<div class="offer">
 						<a href="@item.Url">
-							<img src="http://localhost:50394/@item.ImagePath" />
+							<img src="@System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]@item.ImagePath" />
 						</a>
 					</div>
 				}
@@ -36,7 +36,7 @@
 	</div>
 	<div class="main-offer">
 		<a href="@banner.Url">
-			<img src="http://localhost:50394/@banner.ImagePath" />
+			<img src="@System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]@banner.ImagePath" />
 		</a>
 	</div>
 

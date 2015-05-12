@@ -15,7 +15,7 @@ namespace Inforoom2.Models
 	/// Тарифный план
 	/// </summary>
 	[Class(0, Table = "Tariffs", NameType = typeof(Plan))]
-	public class Plan : BaseModel
+	public class Plan : PriorityModel
 	{
 		[Property(NotNull = true, Unique = true), NotEmpty]
 		public virtual string Name { get; set; }

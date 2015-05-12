@@ -9,6 +9,7 @@
 	ClientRequest clientRequest = ViewBag.ClientRequest;
 	var reqAuthor = clientRequest.RequestAuthor ?? new Employee();
 	List<Employee> employees = ViewBag.Employees;
+	List<Plan> plans = ViewBag.Plans;
 	ValidationRunner validationRunner = ViewBag.Validation;
 	bool isRedirected = ViewBag.IsRedirected;
 	bool isCityValidated = ViewBag.IsCityValidated;
@@ -69,13 +70,13 @@
 				@if (isRedirected) {
 				<div class ="success">
 					<div class="personals">Тарифный план:</div>
-					@Html.DropDownListExtendedFor(k => clientRequest.Plan, ViewBag.Plans as List<Plan>, k => k.Name, null, new { @class = "rounded" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)
+					@Html.DropDownListExtendedFor(k => clientRequest.Plan, plans, k => k.Name, null, new { @class = "rounded" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)
 					<div class="icon"></div>
 				</div>
 				}
 				else {
 					<div class="personals">Тарифный план:</div>
-					@Html.DropDownListExtendedFor(k => clientRequest.Plan, ViewBag.Plans as List<Plan>, k => k.Name, null, new { @class = "rounded" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)
+					@Html.DropDownListExtendedFor(k => clientRequest.Plan, plans, k => k.Name, null, new { @class = "rounded" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)
 				}
 			</div>
 			<div>

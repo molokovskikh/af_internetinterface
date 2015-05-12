@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.Web;
@@ -88,6 +90,46 @@ namespace Inforoom2.Components
 			return new ValidationErrors(summary.ToList());
 		}
 
+		/// <summary>
+		/// Валидация по заданному атрибуту
+		/// </summary>
+		/// <typeparam name="T">Тип модели, чей параметр мы проверяем</typeparam>
+		/// <param name="obj">Модель</param>
+		/// <param name="instableProperty">Параметр с вероятной ошибкой (для отображения ошибки)</param>
+		/// <param name="customValidatorAttribute">Атрибут (от CustomValidator), на основе которого проводится валидация</param>
+		/// <returns>Перечень ошибок</returns>
+		public ValidationErrors ForcedValidationByAttribute<T>(object obj, Expression<Func<T, object>> instableProperty, object customValidatorAttribute)
+		{
+			var summary = new List<InvalidValue>();
+
+			var member = instableProperty.Body as MemberExpression;
+			var propertyInfo = member.Member as PropertyInfo;
+			if (propertyInfo != null) {
+				var attribute = customValidatorAttribute as CustomValidator;
+				var errors = attribute.ModelForcedValidation((BaseModel)obj, propertyInfo);
+				summary.AddRange(errors);
+			}
+			return new ValidationErrors(summary.ToList());
+		}
+
+		/// <summary>
+		///  Принудительная валидация по заданному атрибуту
+		/// </summary>
+		/// <param name="obj">Модель</param>
+		/// <param name="instableProperty">Параметр с вероятной ошибкой (для отображения ошибки)</param>
+		/// <param name="customValidatorAttribute">Атрибут (от CustomValidator), на основе которого проводится валидация</param>
+		/// <returns>Перечень ошибок</returns>
+		public ValidationErrors ForcedValidationByAttribute(object obj, PropertyInfo instableProperty, object customValidatorAttribute)
+		{
+			var summary = new List<InvalidValue>();
+			if (instableProperty != null) {
+				var attribute = customValidatorAttribute as CustomValidator;
+				var errors = attribute.ModelForcedValidation((BaseModel)obj, instableProperty);
+				summary.AddRange(errors);
+			}
+			return new ValidationErrors(summary.ToList());
+		}
+
 		public ValidationErrors Validate(object obj)
 		{
 			var summary = new List<InvalidValue>();
@@ -107,8 +149,7 @@ namespace Inforoom2.Components
 		}
 
 		public ValidationErrors ValidateDeep(object obj, IList validatedObjects = null)
-		{ 
-
+		{
 			if (validatedObjects == null)
 				validatedObjects = new ArrayList();
 
@@ -160,7 +201,7 @@ namespace Inforoom2.Components
 			return summary;
 		}
 
-		public HtmlString GetError(object obj, string field, string message = null, string html = "", bool IsValidated = false)
+		public HtmlString GetError(object obj, string field, string message = null, string html = "", bool IsValidated = false, object forcedValidationAttribute = null)
 		{
 			if (IsValidated) {
 				return WrapSuccess(message);
@@ -170,6 +211,10 @@ namespace Inforoom2.Components
 				return new HtmlString(string.Empty);
 
 			var errors = ValidateProperty(obj, obj.GetType().GetProperty(field).Name);
+			// отображение ошибок по переданному валидатору, используется при принудительной проверке свойств
+			if (forcedValidationAttribute != null) {
+				errors.AddRange(((CustomValidator)forcedValidationAttribute).GetCurrentErrors());
+			}
 			if (errors.Length > 0) {
 				var ret = errors.First().Message;
 				if (message != null)

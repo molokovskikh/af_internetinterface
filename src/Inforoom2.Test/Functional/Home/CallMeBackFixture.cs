@@ -42,14 +42,14 @@ namespace Inforoom2.Test.Functional.Home
 			var name = browser.FindElementByCssSelector(".city .name").Text;
 			Assert.That(name, Is.StringContaining(clickedText), "Изначальный город должен поменяться");
 		}
-
+		
 		[Test(Description = "Выбор акционного тарифа")]
 		public void PromotionalPlan()
 		{
 			Open("");
 			browser.FindElementByCssSelector(".main-offer img").Click();
 			AssertText("Заявка на подключение");
-			var selectedValue = browser.FindElementByCssSelector(".rounded option[selected='selected']");
+			var selectedValue = browser.FindElementByCssSelector("#clientRequest_Plan.rounded option[selected='selected']");
 			Assert.That(selectedValue.Text, Is.EqualTo("Народный"), "В поле тариф должен быть выбран акционный тариф");
 			//Должна быть одна зеленая галочка,при поиске одного элемента вероятно выдаст ошибку,в данном случае вернет пустой массив.
 			var greenElements = browser.FindElementsByCssSelector(".success .icon");

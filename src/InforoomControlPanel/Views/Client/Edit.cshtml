@@ -61,7 +61,7 @@
 									<div class="form-group">
 										<label class="col-sm-4 control-label">Дата рождения:</label>
 										<div class="col-sm-4 date-picker-box">
-											@Html.TextBoxFor(o => client.PhysicalClient.BirthDate, new { @data_format = "dd.mm.yyyy", @class = "form-control datepicker", @disabled = "disabled" })
+											@Html.TextBoxFor(o => client.PhysicalClient.BirthDate, client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy"), new { @data_format = "dd.mm.yyyy", @class = "form-control datepicker", @disabled = "disabled" })
 											@ViewBag.Validation.GetError(client.PhysicalClient, "BirthDate")
 										</div>
 
@@ -230,7 +230,7 @@
 									<div class="form-group">
 										<label class="col-sm-4 control-label">Дата выдачи паспорта:</label>
 										<div class="col-sm-4 date-picker-box">
-											@Html.TextBoxFor(o => client.PhysicalClient.PassportDate, new { @data_format = "dd.mm.yyyy", @class = "form-control datepicker", @disabled = "disabled" })
+											@Html.TextBoxFor(o => client.PhysicalClient.PassportDate, client.PhysicalClient.PassportDate.ToString("dd.MM.yyyy"), new { @data_format = "dd.mm.yyyy", @class = "form-control datepicker", @disabled = "disabled" })
 										</div>
 									</div>
 									<div class="form-group">

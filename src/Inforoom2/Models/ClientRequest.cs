@@ -85,11 +85,13 @@ namespace Inforoom2.Models
 		public virtual DateTime RegDate { get; set; }
 
 		public virtual bool IsContractAccepted { get; set; }
-
+		 
 		public virtual string YandexCity { get; set; }
 
+		[Property]
 		public virtual string YandexStreet { get; set; }
 
+		[Property]
 		public virtual string YandexHouse { get; set; }
 
 		public virtual string AddressAsString { get; set; }
