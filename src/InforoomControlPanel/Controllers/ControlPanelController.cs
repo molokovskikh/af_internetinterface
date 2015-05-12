@@ -12,6 +12,22 @@ namespace InforoomControlPanel.Controllers
 {
 	public class ControlPanelController : BaseController
 	{
+		//@todo вынести в SecuredController - общего для информа и админки, а то получается дублирование кода
+		protected override void OnActionExecuting(ActionExecutingContext filterContext)
+		{
+			base.OnActionExecuting(filterContext);
+			if (filterContext == null)
+				throw new ArgumentNullException("filterContext");
+
+			//если клиент был залогинен по сети, то HTTPСontext не будет изменен
+			//в этом случае можно оттолкнуть от переменной CurrentClient
+			if (!filterContext.HttpContext.User.Identity.IsAuthenticated)
+			{
+				string loginUrl = "/AdminAccount/Index"; // Default Login Url 
+				filterContext.Result = new RedirectResult(loginUrl);
+			}
+		}
+
 		public override Employee GetCurrentEmployee()
 		{
 			if (User == null || DbSession == null || !DbSession.IsConnected)
