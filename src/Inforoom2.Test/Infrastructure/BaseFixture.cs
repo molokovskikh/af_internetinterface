@@ -107,7 +107,7 @@ namespace Inforoom2.Test.Infrastructure
 				text = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(value));
 			else
 				time = SystemTime.Now();
-			var cookie = new Cookie(name, text,null,time);
+			var cookie = new Cookie(name, text, null, time);
 			browser.Manage().Cookies.AddCookie(cookie);
 		}
 
@@ -140,8 +140,8 @@ namespace Inforoom2.Test.Infrastructure
 			var tables = new List<string>();
 
 			//Приоритет удаления данных
-			var order = "lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
-						+ "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,regions";
+			var order = "lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels," 
+			            + "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,connectbrigads,banner,slide,regions"; 
 
 			var parts = order.Split(',');
 			foreach (var part in parts) {
@@ -190,6 +190,7 @@ namespace Inforoom2.Test.Infrastructure
 			GenerateTvChannelGroups();
 			GenerateRegions();
 			GenerateAddresses();
+			GenerateSlides();
 			GeneratePlans();
 			GenerateAdmins();
 			GenerateSwitches();
@@ -211,18 +212,18 @@ namespace Inforoom2.Test.Infrastructure
 		}
 
 		private void GenerateTvChannels()
-		{
+		{ 
 			var channels = "НТВ,РТР,СТС,МТВ,ТНТ,Культура,Спорт,ППТ".Split(',');
 			var ports = "1234,1237,31,189,55,123123,1256,1257".Split(',');
 			var urls = "224.0.90.160,112.22.11.32,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.10".Split(',');
 			var protocols = "udp,rtp,udp,rtp,udp,rtp,udp,rtp".Split(',');
-			for(var i = 0; i < channels.Count(); i++) {
+			for(var i = 0; i < channels.Count(); i++) { 
 				var newChannel = new TvChannel();
 				newChannel.Name = channels[i];
 				newChannel.Port = int.Parse(ports[i]);
 				newChannel.Url = urls[i];
 				newChannel.Enabled = true;
-				newChannel.TvProtocol = DbSession.Query<TvProtocol>().First(j=>j.Name == protocols[i]);
+				newChannel.TvProtocol = DbSession.Query<TvProtocol>().First(j => j.Name == protocols[i]);
 				DbSession.Save(newChannel);
 			}
 		}
@@ -231,11 +232,11 @@ namespace Inforoom2.Test.Infrastructure
 		{
 			var TvChannels = DbSession.Query<TvChannel>().ToList();
 			var group = new TvChannelGroup();
-			group.Name = "Все";
+			group.Name = "Все"; 
 			foreach (var channel in TvChannels) {
 				if(channel.Name != "ППТ")
 					group.TvChannels.Add(channel);
-			}
+			} 
 			DbSession.Save(group);
 
 
@@ -352,6 +353,17 @@ namespace Inforoom2.Test.Infrastructure
 			region.OfficeAddress = "Третьяковская улица д6Б";
 			region.OfficeGeomark = "51.3663252,42.08180200000004";
 			DbSession.Save(region);
+			var parent = region;
+
+			// Добавление дочернего региона 
+			region = new Region();
+			region.Name = "Борисоглебск (частный сектор)";
+			region.RegionOfficePhoneNumber = "8-800-2000-800";
+			region.City = blg;
+			region.Parent = new List<Region>() { parent };
+			region.OfficeAddress = "улица Князя Трубецкого д26";
+			region.OfficeGeomark = "50.592548,36.59665819999998";
+			DbSession.Save(region);
 
 			region = new Region();
 			region.Name = "Белгород";
@@ -359,6 +371,7 @@ namespace Inforoom2.Test.Infrastructure
 			region.City = blg;
 			region.OfficeAddress = "улица Князя Трубецкого д26";
 			region.OfficeGeomark = "50.592548,36.59665819999998";
+
 			DbSession.Save(region);
 		}
 
@@ -399,9 +412,9 @@ namespace Inforoom2.Test.Infrastructure
 					PassportSeries = "1234",
 					PassportResidention = "УФМС россии по гор. Воронежу, по райнону Северный",
 					RegistrationAddress = "г. Борисоглебск, ул Ленина, 20",
-					Plan = DbSession.Query<Plan>().First(p => p.Name == "Популярный"), 
+					Plan = DbSession.Query<Plan>().First(p => p.Name == "Популярный"),
 					Balance = 1000,
-					Address = GetUnusedAddress(), 
+					Address = GetUnusedAddress(),
 					LastTimePlanChanged = DateTime.Now.AddMonths(-2)
 				},
 				SendSmsNotification = false,
@@ -423,15 +436,15 @@ namespace Inforoom2.Test.Infrastructure
 
 			var lease = CreateLease(normalClient.Endpoints.First());
 			DbSession.Save(lease);
-		 
+
 			// c тарифом, игнорирующим скидку
 			var ignoreDiscountClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.ignoreDiscountClient);
-			ignoreDiscountClient.PhysicalClient.Plan = DbSession.Query<Plan>().FirstOrDefault(s => s.IgnoreDiscount );
+			ignoreDiscountClient.PhysicalClient.Plan = DbSession.Query<Plan>().FirstOrDefault(s => s.IgnoreDiscount);
 			DbSession.Save(ignoreDiscountClient);
 
 
 			//c тарифом, привязанным к региону
-			var clientWithPlanOfRegion = CloneClient(normalClient, ClientCreateHelper.ClientMark.planWithRegionClient); 
+			var clientWithPlanOfRegion = CloneClient(normalClient, ClientCreateHelper.ClientMark.planWithRegionClient);
 			clientWithPlanOfRegion.PhysicalClient.Plan = DbSession.Query<Plan>().First(p => p.Name == "Тариф с указанным регионом");
 			clientWithPlanOfRegion.Discount = 10;
 			DbSession.Save(clientWithPlanOfRegion);
@@ -684,7 +697,7 @@ namespace Inforoom2.Test.Infrastructure
 			plan.Hidden = false;
 			plan.IsServicePlan = false;
 			plan.PackageSpeed = DbSession.Get<PackageSpeed>(19);
-			plan.TvChannelGroups.Add(TvChannelGroups.First(i=>i.Name == "Основная"));
+			plan.TvChannelGroups.Add(TvChannelGroups.First(i => i.Name == "Основная"));
 			DbSession.Save(plan);
 
 			plan = new Plan();
@@ -726,7 +739,7 @@ namespace Inforoom2.Test.Infrastructure
 			plan.RegionPlans.Add(new RegionPlan() {
 				Plan = plan,
 				Region = DbSession.Query<Region>().FirstOrDefault()
-			}); 
+			});
 			plan.PackageSpeed = DbSession.Get<PackageSpeed>(23);
 			DbSession.Save(plan);
 
@@ -770,7 +783,7 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Flush();
 
 			//todo подумать что с этим делать 
-			plan.ChangeId(85, DbSession); 
+			plan.ChangeId(85, DbSession);
 
 			//Переходы с тарифов
 			var plans = DbSession.Query<Plan>().ToList();
@@ -787,7 +800,7 @@ namespace Inforoom2.Test.Infrastructure
 				}
 			}
 		}
-		
+
 		private void GeneratePaymentsAndWriteoffs()
 		{
 			var client = DbSession.Query<Client>().FirstOrDefault();
@@ -947,6 +960,7 @@ namespace Inforoom2.Test.Infrastructure
 		{
 			Open("/Account/Logout");
 		}
+
 		public Client GetClient(ClientCreateHelper.ClientMark mark)
 		{
 			return DbSession.Query<Client>().First(i => i.Comment == mark.GetDescription());
@@ -968,6 +982,37 @@ namespace Inforoom2.Test.Infrastructure
 			MainBilling.InitActiveRecord();
 			var billing = new MainBilling();
 			return billing;
+		}
+
+		// Добавление слайдов и банеров для каждого региона
+		private void GenerateSlides()
+		{
+			var employee = DbSession.Query<Employee>().FirstOrDefault();
+			var regionList = DbSession.Query<Region>().ToList();
+			for (int i = 0; i < regionList.Count; i++) {
+
+				// слайдер *c изображением на инфорум2
+				Slide slide = new Slide();
+				slide.Url = "/ClientRequest/RequestFromTariff/85";
+				slide.ImagePath = "/Images/slider1.png";
+				slide.LastEdit = DateTime.Now;
+				slide.Enabled = true;
+				slide.Partner = employee;
+				slide.Priority = i;
+				slide.Region = regionList[i];
+				DbSession.Save(slide);
+
+
+				// банер *c изображением на инфорум2 
+				Banner banner = new Banner();
+				banner.Url = "/ClientRequest/RequestFromTariff/85";
+				banner.ImagePath = "/Images/actionfolk.png";
+				banner.LastEdit = DateTime.Now;
+				banner.Enabled = true;
+				banner.Partner = employee;
+				banner.Region = regionList[i];
+				DbSession.Save(banner);
+			} 
 		}
 	}
 }

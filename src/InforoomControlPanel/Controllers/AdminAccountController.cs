@@ -26,7 +26,7 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult Index()
 		{
-			if (User.Identity.IsAuthenticated)
+			if (Request.IsAuthenticated)
 				return RedirectToAction("Statistic", "Admin");
 			return View();
 		}
@@ -43,9 +43,9 @@ namespace InforoomControlPanel.Controllers
 				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient);
 			}
 #endif
-			if (ActiveDirectoryHelper.IsAuthenticated(username, password) && employee != null) { 
+			if (ActiveDirectoryHelper.IsAuthenticated(username, password) && employee != null) {
 				Session.Add("employee", employee.Id);
-				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient); 
+				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient);
 			}
 			ErrorMessage("Неправильный логин или пароль");
 			return Redirect(returnUrl);
@@ -54,7 +54,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult AdminLogout()
 		{
 			FormsAuthentication.SignOut();
-			SetCookie(FormsAuthentication.FormsCookieName,null);
+			SetCookie(FormsAuthentication.FormsCookieName, null);
 			return RedirectToAction("Index");
 		}
 

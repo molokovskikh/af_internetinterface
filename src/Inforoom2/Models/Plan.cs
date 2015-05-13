@@ -15,7 +15,7 @@ namespace Inforoom2.Models
 	/// Тарифный план
 	/// </summary>
 	[Class(0, Table = "Tariffs", NameType = typeof(Plan))]
-	public class Plan : BaseModel
+	public class Plan : PriorityModel
 	{
 		[Property(NotNull = true, Unique = true), NotEmpty]
 		public virtual string Name { get; set; }
@@ -79,6 +79,15 @@ namespace Inforoom2.Models
 		public virtual bool Hidden { get; set; }
 
 		public virtual decimal SwitchPrice { get; set; }
+
+		[Property]
+		public virtual string Features { get; set; }
+
+		[Property]
+		public virtual bool Published { get; set; }
+
+		[Property]
+		public virtual string Description { get; set; }
 
 
 		/// <summary>

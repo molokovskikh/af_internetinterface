@@ -302,6 +302,8 @@
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Administrator.cs" />
     <Compile Include="Models\BillingHistory.cs" />
+    <Compile Include="Models\Banner.cs" />
+    <Compile Include="Models\Slide.cs" />
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientEndPoint.cs" />
     <Compile Include="Models\ClientRequest.cs" />
@@ -364,6 +366,7 @@
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\UserWriteOff.cs" />
     <Compile Include="Models\WriteOff.cs" />
+    <Compile Include="validators\ValidatorEmail.cs" />
     <Compile Include="validators\ValidatorFullNameOriginal.cs" />
     <Compile Include="validators\ValidatorContacts.cs" />
     <Compile Include="validators\ValidatorNumberic.cs" />

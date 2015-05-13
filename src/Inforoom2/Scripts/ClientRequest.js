@@ -88,7 +88,12 @@ var typeWatcher = function() {
 	console.log('tick');
 	return function(ms) {
 		var callback = function showAddressOnMap() {
-			userCity = document.getElementById('clientRequest_City').value.toLowerCase();
+			//Город получаем из списка
+			//userCity = document.getElementById('clientRequest_City').value.toLowerCase();
+			var gatCityObject = document.getElementById("clientRequest_City");
+			var selectedCityText = gatCityObject.options[gatCityObject.selectedIndex].text;
+			userCity = selectedCityText.toLowerCase();
+
 			userStreet = document.getElementById('clientRequest_Street').value.toLowerCase();
 			userHouse = document.getElementById('clientRequest_HouseNumber').value.toLowerCase();
 			userHousing = document.getElementById('clientRequest_Housing').value.toLowerCase();
@@ -100,4 +105,32 @@ var typeWatcher = function() {
 		clearTimeout(timer);
 		timer = setTimeout(callback, ms);
 	};
+
 }();
+
+var updatePlanList = function() {
+	var gatCityObject = document.getElementById("clientRequest_City");
+	var selectedCityText = gatCityObject.options[gatCityObject.selectedIndex].text;
+	userCity = selectedCityText.toLowerCase();
+
+	var gatPlanObject = document.getElementById("clientRequest_Plan");
+	for (var i = 0; i < gatPlanObject.options.length; i++) {
+
+		if (gatPlanObject.options[i].getAttribute("title") != null &&
+			gatPlanObject.options[i].getAttribute("title").length > 0) {
+			var splitedTitle = gatPlanObject.options[i].getAttribute("title").split(",");
+			var showTag = splitedTitle.length > 0 ? false : true;
+			for (var j = 0; j < splitedTitle.length; j++) {
+				if (splitedTitle[j].toLowerCase() == userCity) {
+					showTag = true;
+				}
+			}
+			if (showTag) {
+				gatPlanObject.options[i].removeAttribute("style");
+			} else {
+				gatPlanObject.options[i].setAttribute("style", "display:none;");
+			}
+		}
+	}
+};
+updatePlanList();

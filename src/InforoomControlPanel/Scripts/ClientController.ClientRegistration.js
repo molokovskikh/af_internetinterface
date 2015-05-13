@@ -107,8 +107,8 @@ getStreetFuncAfter = function (data) {
 		$("#StreetDropDown").append("<option value='" + this.Id + "'>" + this.Name + "</option>");
 	}); 
 	// если список не пустой, выбор первого элемента и запрос домов по улице, иначе - очистка списка домов
-	if ($("#StreetDropDown option").length > 0 || ($("#StreetDropDown option").length >= 1 && $("#StreetDropDown option:first").val() == null)) {
-		$("#StreetDropDown select").val($("#StreetDropDown option:first"));
+	if ($("#StreetDropDown").val() != "" && ($("#StreetDropDown option").length > 0 || ($("#StreetDropDown option").length >= 1 && $("#StreetDropDown option:first").val() == null))) {
+		$("#StreetDropDown select").val($("#StreetDropDown option:first")); 
 		getHouseList($("#StreetDropDown").val(), getHouseFuncAfter);
 	} else {
 		$("#HouseDropDown").html("<option></option>");

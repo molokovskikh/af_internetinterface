@@ -77,7 +77,7 @@ namespace Inforoom2.Helpers
 		/// <returns>HTML выподающий список</returns>
 		public static HtmlString DropDownListExtendedFor<TModel, TProperty>(this HtmlHelper helper,
 			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
-			Func<TModel, object> htmlAttributes, object selectTagAttributes, int selectedValueId, bool firstEmptyElementAdd = false)
+			Func<TModel, object> htmlAttributes, object selectTagAttributes, int selectedValueId,bool firstEmptyElementAdd = false)
 			where TModel : BaseModel
 		{
 			string expr = expression.ToString();
@@ -106,11 +106,11 @@ namespace Inforoom2.Helpers
 					optionAttributes = GetPropsValues(htmlAttributes(model));
 				}
 				if (model.Id == selectedValueId) {
-					options.AppendFormat("<option value={0} selected = selected {1}>{2}</option>", model.Id,
+					options.AppendFormat("<option value={0} selected = selected {1} >{2}</option>", model.Id,
 						optionAttributes.Replace("{", "").Replace("}", ""), value);
 				}
 				else {
-					options.AppendFormat("<option value={0} {1}>{2}</option>", model.Id,
+					options.AppendFormat("<option value={0} {1} >{2}</option>", model.Id,
 						optionAttributes.Replace("{", "").Replace("}", ""), value);
 				}
 			}
@@ -141,6 +141,7 @@ namespace Inforoom2.Helpers
 		/// <param name="htmlAttributes">Описание html атрибутов</param>
 		/// <param name="selectTagAttributes">Свойства тэга</param>
 		/// <param name="firstEmptyElementAdd">Добавить первым элементом пустое значение</param>
+		/// <param name="optionAdditionalAttributes">Условное добавление дополнительных атрибутов тэгу option</param>
 		/// <returns>HTML выподающий список</returns>
 		public static HtmlString DropDownListExtendedFor<TModel, TProperty>(this HtmlHelper helper,
 			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
@@ -172,7 +173,7 @@ namespace Inforoom2.Helpers
 		}
 
 
-		public static HtmlString ValidationEditor(this HtmlHelper helper, ValidationRunner validation, object obj, string propertyName, object htmlAttributes, HtmlTag htmlTag, HtmlType htmlType, bool isValidated)
+		public static HtmlString ValidationEditor(this HtmlHelper helper, ValidationRunner validation, object obj, string propertyName, object htmlAttributes, HtmlTag htmlTag, HtmlType htmlType, bool isValidated, object forcedValidationAttribute = null)
 		{
 			var tag = Enum.GetName(typeof(HtmlTag), htmlTag);
 			string type = string.Empty;
@@ -227,7 +228,7 @@ namespace Inforoom2.Helpers
 					throw new NotImplementedException("Html for tag is not implemented");
 			}
 
-			var error = validation.GetError(obj, propertyName, html, null, isValidated);
+			var error = validation.GetError(obj, propertyName, html, null, isValidated, forcedValidationAttribute);
 
 			if (string.IsNullOrEmpty(error.ToString())) {
 				return new HtmlString(html);
@@ -236,9 +237,9 @@ namespace Inforoom2.Helpers
 			return error;
 		}
 
-		public static HtmlString ValidationEditor(this HtmlHelper helper, ValidationRunner validation, object obj, string propertyName, object htmlAttributes, HtmlTag htmlTag, HtmlType htmlType)
+		public static HtmlString ValidationEditor(this HtmlHelper helper, ValidationRunner validation, object obj, string propertyName, object htmlAttributes, HtmlTag htmlTag, HtmlType htmlType, object forcedValidationAttribute = null)
 		{
-			return ValidationEditor(helper, validation, obj, propertyName, htmlAttributes, htmlTag, htmlType, false);
+			return ValidationEditor(helper, validation, obj, propertyName, htmlAttributes, htmlTag, htmlType, false, forcedValidationAttribute);
 		}
 
 		private static StringBuilder GetPropsValues(object obj)

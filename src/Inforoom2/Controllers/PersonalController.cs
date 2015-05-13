@@ -9,6 +9,7 @@ using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
+using Inforoom2.validators;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NHibernate.Util;
@@ -33,14 +34,12 @@ namespace Inforoom2.Controllers
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
 			base.OnActionExecuting(filterContext);
-			if (filterContext == null)
-			{
+			if (filterContext == null) {
 				throw new ArgumentNullException("filterContext");
 			}
 			//если клиент был залогинен по сети, то HTTPСontext не будет изменен
 			//в этом случае можно оттолкнуть от переменной CurrentClient
-			if (CurrentClient == null && !filterContext.HttpContext.User.Identity.IsAuthenticated)
-			{
+			if (CurrentClient == null && !filterContext.HttpContext.User.Identity.IsAuthenticated) {
 				string loginUrl = "/Account/Login"; // Default Login Url 
 				filterContext.Result = new RedirectResult(loginUrl);
 			}
@@ -232,6 +231,11 @@ namespace Inforoom2.Controllers
 				smsContact = new Contact();
 				smsContact.Type = ContactType.SmsSending;
 			}
+			else {
+				// удаления символа "-" при выводе номера пользователю
+				smsContact.ContactString = smsContact.ContactString.Replace("-", "");
+			}
+
 			ViewBag.Contact = smsContact;
 			ViewBag.IsSmsNotificationActive = client.SendSmsNotification;
 			ViewBag.Title = "Уведомления";
@@ -244,6 +248,17 @@ namespace Inforoom2.Controllers
 		{
 			var client = CurrentClient;
 			var errors = ValidationRunner.Validate(contact);
+			//Валидация контакта
+			if (contact.ContactString != null && contact.ContactString.Length == 10) // добавление символа "-" при сохранении номера в БД
+			{
+				contact.ContactString = contact.ContactString.IndexOf('-') != -1 ? contact.ContactString : contact.ContactString.Insert(3, "-");
+			}
+			if (client.SendSmsNotification == false) {
+				var contactValidation = new ValidatorContacts(); // Принудительная валидация модели контактов по атрибуту ValidatorContacts
+				ViewBag.ContactValidation = contactValidation;
+				errors = errors.Length != 0 ? errors : ValidationRunner.ForcedValidationByAttribute<Contact>(contact, s => s.ContactString, contactValidation);
+			}
+
 			if (errors.Length == 0) {
 				var smsContact = client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending);
 				if (smsContact == null) {
@@ -268,7 +283,6 @@ namespace Inforoom2.Controllers
 					DbSession.Save(appeal);
 					SuccessMessage("Вы успешно подписались на смс рассылку");
 				}
-
 				smsContact.ContactString = contact.ContactString;
 				DbSession.Save(client);
 				return RedirectToAction("Notifications");
@@ -347,7 +361,7 @@ namespace Inforoom2.Controllers
 			//если адреса нет, показываем все тарифы
 			if (client.PhysicalClient.Address != null) {
 				//Если у тарифа нет региона, то он доступен во всех регионах
-				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && (!p.RegionPlans.Any() || p.RegionPlans.Any(r =>r.Region == client.PhysicalClient.Address.Region))).ToList();
+				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && (!p.RegionPlans.Any() || p.RegionPlans.Any(r => r.Region == client.PhysicalClient.Address.Region))).ToList();
 			}
 			else {
 				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && !p.RegionPlans.Any()).ToList();
