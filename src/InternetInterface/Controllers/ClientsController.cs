@@ -38,19 +38,21 @@ namespace InternetInterface.Controllers
 		public void UpdateAddressByClient(int clientId, string path)
 		{
 			var propObj = DbSession.CreateSQLQuery(
-				string.Format(@"SELECT r.Region AS region, s.Name AS street, h.Number AS house,  a.Floor AS floor,  a.Apartment AS apartment, a.Entrance AS entrance, p.Id, ci.Name  
+				string.Format(@"SELECT r.Region AS region, s.Name AS street, h.Number AS house,  a.Floor AS floor,
+								a.Apartment AS apartment, a.Entrance AS entrance, p.Id, ci.Name, hr.Region AS houseRegion  
 								FROM internet.regions AS r  
-								INNER JOIN  internet.inforoom2_city AS ci ON r._City = ci.Id  
+								INNER JOIN  internet.inforoom2_city AS ci ON r._City = ci.Id 
 								INNER JOIN  internet.inforoom2_street AS s ON s.Region = r.Id 
 								INNER JOIN  internet.inforoom2_house AS h ON h.Street = s.Id 
 								INNER JOIN  internet.inforoom2_address AS a ON h.Id = a.house 
 								INNER JOIN  internet.physicalclients AS p ON a.Id = p._Address 
 								INNER JOIN  internet.clients AS c ON p.Id = c.PhysicalClient 
+								LEFT JOIN  internet.regions AS hr ON hr.Id = h.Region  
 								WHERE c.Id={0}", clientId)).UniqueResult();
 			if (propObj != null) {
 				var aList = (object[])propObj;
-				var regionExists = DbSession.Query<RegionHouse>().FirstOrDefault(s => s.Name == aList[0]);
-				var streetExists = DbSession.Query<RegionHouse>().FirstOrDefault(s => s.Name == aList[1]);
+				var regionExists = DbSession.Query<RegionHouse>().FirstOrDefault(s => s.Name == (aList[8] ?? aList[0]));
+				var streetExists = DbSession.Query<Street>().FirstOrDefault(s => s.Name == aList[1]);
 				if (streetExists == null) {
 					var newStreet = new Street();
 					newStreet.Name = aList[1].ToString();
@@ -68,10 +70,9 @@ namespace InternetInterface.Controllers
 						break;
 					}
 				}
-
 				newHouse.Number = Convert.ToInt32(strToInt);
 				newHouse.Street = aList[1].ToString();
-				newHouse.Region = regionExists ?? new RegionHouse() { Name = aList[0].ToString() };
+				newHouse.Region = regionExists ?? new RegionHouse() { Name = (aList[8] ?? aList[0]).ToString() };
 				DbSession.Save(newHouse);
 
 				DbSession.CreateSQLQuery(string.Format(" UPDATE internet.physicalclients SET City='{0}',Street='{1}',House='{2}',Floor='{3}',Apartment='{4}', " +
@@ -82,7 +83,7 @@ namespace InternetInterface.Controllers
 														aList[5] == "" ? "0" : aList[5],
 														newHouse.Id, aList[6]) + "; " +
 										 string.Format(" UPDATE internet.clients SET Address='улица {1} дом {2} квартира {4} подъезд {5} этаж {3}' " +
-													   " WHERE Id={6}", aList[0], 
+													   " WHERE Id={6}", (aList[8] ?? aList[0]), 
 													   aList[1], newHouse.Number,
 													   aList[3] == "" ? "0" : aList[3],
 													   aList[4] == "" ? "0" : aList[4],
