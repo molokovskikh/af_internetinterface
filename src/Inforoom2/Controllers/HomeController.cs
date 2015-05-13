@@ -11,6 +11,12 @@ namespace Inforoom2.Controllers
 	{
 		public ActionResult Index()
 		{
+			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
+			if (pathFromConfigUrl == null)
+			{
+				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
+			}
+			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			ViewBag.Message = "HomeController";
 			var news = DbSession.Query<NewsBlock>().Where(k => k.IsPublished && (k.Region == CurrentRegion 
 				|| k.Region == null)).OrderByDescending(n => n.Priority).ToList();
@@ -41,7 +47,7 @@ namespace Inforoom2.Controllers
 				var plan = DbSession.Get<Plan>(id);
 				ViewBag.Plan = plan;
 			}
-			ViewBag.Plans = DbSession.Query<RegionPlan>().Where(s => s.Region == CurrentRegion).
+			ViewBag.Plans = DbSession.Query<RegionPlan>().Where(s => s.Region == CurrentRegion && s.Plan.Published).
 				OrderBy(s=>s.Region).ThenByDescending(s=>s.Plan.Priority).Select(s=>s.Plan).ToList();
 			return View();
 		}
