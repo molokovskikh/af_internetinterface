@@ -26,6 +26,12 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult BannerIndex()
 		{
 			var banner = DbSession.Query<Banner>().OrderBy(s => s.Region.Name).ThenByDescending(s => s.Enabled).ThenByDescending(s => s.Id).ToList();
+			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
+			if (pathFromConfigUrl == null)
+			{
+				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
+			}
+			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			ViewBag.Banner = banner;
 			return View();
 		}
@@ -52,11 +58,21 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult CreateBanner([EntityBinder] Banner banner, HttpPostedFileBase uploadedFile)
 		{
 			string imagePath = "";
+			var pathFromConfig = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadPath"];
+			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
+			if (pathFromConfig == null) {
+				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config!");
+			}
+			if (pathFromConfigUrl == null)
+			{
+				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
+			}
+			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			var ext = uploadedFile == null ? "" : new FileInfo(uploadedFile.FileName).Extension;
 			string NewFileName = System.Guid.NewGuid() + ext;
 			if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
 				try {
-					imagePath = Server.MapPath("~/Images/Uploaded/" + NewFileName);
+					imagePath = pathFromConfig + "Images/" + NewFileName;
 					uploadedFile.SaveAs(imagePath);
 				}
 				catch (Exception) {
@@ -68,7 +84,7 @@ namespace InforoomControlPanel.Controllers
 			banner.Partner = DbSession.Query<Employee>().FirstOrDefault(s => s.Login == User.Identity.Name);
 			var errors = ValidationRunner.Validate(banner);
 			if (errors.Length == 0 && imagePath != "") {
-				banner.ImagePath = "/Images/Uploaded/" + NewFileName;
+				banner.ImagePath = "Images/" + NewFileName;
 				if (banner.Enabled) {
 					var changeEnabled = DbSession.Query<Banner>().Where(s => s.Region == banner.Region).ToList();
 					foreach (var item in changeEnabled) {
@@ -94,13 +110,22 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult EditBanner(int id)
 		{
+			var pathFromConfig = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadPath"];
+			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
+			if (pathFromConfig == null)
+			{
+				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config!");
+			}
+			if (pathFromConfigUrl == null)
+			{
+				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
+			}
+			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			//Создаем слайд
 			var banner = DbSession.Query<Banner>().FirstOrDefault(s => s.Id == id);
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
-
 			ViewBag.Banner = banner;
 			ViewBag.RegionList = regionList;
-
 			return View();
 		}
 
@@ -110,11 +135,21 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult UpdateBanner([EntityBinder] Banner banner, HttpPostedFileBase uploadedFile)
 		{
 			string imagePath = banner.ImagePath ?? "";
+			var pathFromConfig = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadPath"];
+			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
+			if (pathFromConfig == null) {
+				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config!");
+			}
+			if (pathFromConfigUrl == null)
+			{
+				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
+			}
+			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			var ext = uploadedFile == null ? "" : new FileInfo(uploadedFile.FileName).Extension;
 			string NewFileName = System.Guid.NewGuid() + ext;
 			if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
 				try {
-					imagePath = Server.MapPath("~/Images/Uploaded/" + NewFileName);
+					imagePath = pathFromConfig + "Images/" + NewFileName;
 					uploadedFile.SaveAs(imagePath);
 				}
 				catch (Exception) {
@@ -125,10 +160,10 @@ namespace InforoomControlPanel.Controllers
 			var errors = ValidationRunner.Validate(banner);
 			if (errors.Length == 0 && imagePath != "") {
 				if (uploadedFile != null) {
-					if (System.IO.File.Exists(Server.MapPath(banner.ImagePath))) {
-						System.IO.File.Delete(Server.MapPath(banner.ImagePath));
+					if (System.IO.File.Exists(pathFromConfig + banner.ImagePath)) {
+						System.IO.File.Delete(pathFromConfig + banner.ImagePath);
 					}
-					banner.ImagePath = "/Images/Uploaded/" + NewFileName;
+					banner.ImagePath = "Images/" + NewFileName;
 				}
 				if (banner.Enabled) {
 					var changeEnabled = DbSession.Query<Banner>().Where(s => s.Region == banner.Region).ToList();
@@ -143,7 +178,6 @@ namespace InforoomControlPanel.Controllers
 				SuccessMessage("Баннер успешно сохранен");
 				return RedirectToAction("BannerIndex");
 			}
-
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			ViewBag.RegionList = regionList;
 			ViewBag.Banner = banner;
@@ -156,13 +190,16 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult DeleteBanner(int id)
 		{
-			var Banner = DbSession.Query<Banner>().FirstOrDefault(s => s.Id == id);
-
-			if (System.IO.File.Exists(Server.MapPath(Banner.ImagePath))) {
-				System.IO.File.Delete(Server.MapPath(Banner.ImagePath));
+			var banner = DbSession.Query<Banner>().FirstOrDefault(s => s.Id == id);
+			var pathFromConfig = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadPath"];
+			if (pathFromConfig == null) {
+				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config!");
 			}
 
-			DbSession.Delete(Banner);
+			if (System.IO.File.Exists(pathFromConfig + banner.ImagePath)) {
+				System.IO.File.Delete(pathFromConfig + banner.ImagePath);
+			}
+			DbSession.Delete(banner);
 			DbSession.Flush();
 			SuccessMessage("Баннер успешно удален");
 			return RedirectToAction("BannerIndex");

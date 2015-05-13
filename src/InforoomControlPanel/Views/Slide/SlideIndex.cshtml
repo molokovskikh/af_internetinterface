@@ -4,6 +4,7 @@
 	ViewBag.Title = "Список слайдов";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	IList<Slide> slides = ViewBag.Slides;
+	var urlPath = (string)ViewBag.pathFromConfigURL;
 }
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
 	
@@ -30,7 +31,7 @@
 			<tbody>
 				@foreach (var item in slides) {
 					<tr role="row" class="odd">
-						<td class ="col-sm-3 col-md-3"> <img src="@item.ImagePath" style="max-height: 90px;" /> </td>
+						<td class ="col-sm-3 col-md-3"> <img src="@urlPath@item.ImagePath" style="max-height: 90px;" /> </td>
 						<td>@item.Region.Name</td>
 						<td><a href="@item.Url">@item.Url</a></td>
 						<td>@Html.CheckBoxFor(modelItem => item.Enabled, new { @disabled = "disabled", @checked = "checked" })</td>

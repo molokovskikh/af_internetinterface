@@ -9,6 +9,7 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	List<Slide> slideList = ViewBag.SlideList;
 	Banner banner = ViewBag.Banner;
+	var urlPath = (string)ViewBag.pathFromConfigURL;
 }
 
 
@@ -20,7 +21,7 @@
 				{
 					<div class="offer">
 						<a href="@item.Url">
-							<img src="@System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]@item.ImagePath" />
+							<img src="@urlPath@item.ImagePath" />
 						</a>
 					</div>
 				}
@@ -36,7 +37,7 @@
 	</div>
 	<div class="main-offer">
 		<a href="@banner.Url">
-			<img src="@System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]@banner.ImagePath" />
+			<img src="@urlPath@banner.ImagePath" />
 		</a>
 	</div>
 
