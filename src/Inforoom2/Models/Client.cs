@@ -203,9 +203,9 @@ namespace Inforoom2.Models
 		/// <summary>
 		/// Формирует итоговую цену Интернета за месяц по данному тарифному плану
 		/// </summary>
-		public virtual decimal GetTariffPrice()
+		public virtual decimal GetTariffPrice(bool isBlocked = false)
 		{
-			if (WorkingStartDate == null || Disabled || PhysicalClient.Plan == null)
+			if (PhysicalClient.Plan == null || (!isBlocked && (WorkingStartDate == null || Disabled)))
 				return 0;
 
 			var prePrice = AccountDiscounts(PhysicalClient.Plan.Price);
@@ -216,6 +216,22 @@ namespace Inforoom2.Models
 			if (WorkingStartDate != null && WorkingStartDate.Value.AddMonths(PhysicalClient.Plan.FinalPriceInterval) <= SystemTime.Now())
 				return finalPrice;
 			return prePrice;
+		}
+
+		/// <summary>
+		/// Формирует итоговую цену для разблокировки клиента
+		/// </summary>
+		public virtual decimal GetUnlockPrice()
+		{
+			decimal price = 0;
+			if (Internet.ActivatedByUser)
+				price += GetTariffPrice(true);
+
+			var service = FindActiveService<IpTvBoxRent>();
+			if (service != null)
+				price += service.GetPrice();
+
+			return (price - Balance);
 		}
 
 		/// <summary>

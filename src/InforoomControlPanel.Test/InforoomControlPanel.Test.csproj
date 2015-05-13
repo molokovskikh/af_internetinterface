@@ -189,7 +189,6 @@
     <Compile Include="Functional\Plans\EditTVChannelFixture.cs" />
     <Compile Include="Functional\Plans\CreateTVChannelFixture.cs" />
     <Compile Include="Functional\Plans\PlanFixture.cs" />
-    <Compile Include="Functional\Plans\var.cs" />
     <Compile Include="Functional\Setup.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
