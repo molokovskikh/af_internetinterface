@@ -9,6 +9,7 @@
 	Slide slide = ViewBag.Slide;
 	int currentRegion = slide.Region != null ? slide.Region.Id : 0;
 	List<Region> regionList = ViewBag.RegionList;
+	var urlPath = (string)ViewBag.pathFromConfigURL;
 }
 <div class="panel panel-primary">
 	<div class="panel-body">
@@ -24,7 +25,7 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Изображение</label>
 					<div class="col-md-5">
-						<img src="@slide.ImagePath" style="max-height: 90px;" />
+						<img src="@urlPath@slide.ImagePath" style="max-height: 90px;" />
 					</div>
 				</div>
 				<div class="form-group">
