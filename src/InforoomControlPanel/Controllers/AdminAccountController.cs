@@ -38,14 +38,12 @@ namespace InforoomControlPanel.Controllers
 #if DEBUG
 			//Авторизация для тестов, если пароль совпадает с паролем по умолчанию и логин есть в АД, то все ок
 			var defaultPassword = ConfigurationManager.AppSettings["DefaultEmployeePassword"];
-			if (employee != null && password == defaultPassword)
-			{
+			if (employee != null && password == defaultPassword) {
 				Session.Add("employee", employee.Id);
 				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient);
 			}
 #endif
-			if (ActiveDirectoryHelper.IsAuthenticated(username, password) && employee != null)
-			{
+			if (ActiveDirectoryHelper.IsAuthenticated(username, password) && employee != null) {
 				Session.Add("employee", employee.Id);
 				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient);
 			}
@@ -56,6 +54,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult AdminLogout()
 		{
 			FormsAuthentication.SignOut();
+			SetCookie(FormsAuthentication.FormsCookieName, null);
 			return RedirectToAction("Index");
 		}
 

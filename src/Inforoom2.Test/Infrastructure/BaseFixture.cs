@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.Remoting.Channels;
 using Billing;
 using Common.Tools;
 using Inforoom2.Components;
@@ -211,12 +212,12 @@ namespace Inforoom2.Test.Infrastructure
 		}
 
 		private void GenerateTvChannels()
-		{
-			var channels = "НТВ,РТР,СТС,МТВ,ТНТ,Культура,Спорт".Split(',');
-			var ports = "1234,1237,31,189,55,123123,1256".Split(',');
-			var urls = "224.0.90.160,112.22.11.32,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.18".Split(',');
-			var protocols = "udp,rtp,udp,rtp,udp,rtp,udp".Split(',');
-			for (var i = 0; i < channels.Count(); i++) {
+		{ 
+			var channels = "НТВ,РТР,СТС,МТВ,ТНТ,Культура,Спорт,ППТ".Split(',');
+			var ports = "1234,1237,31,189,55,123123,1256,1257".Split(',');
+			var urls = "224.0.90.160,112.22.11.32,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.10".Split(',');
+			var protocols = "udp,rtp,udp,rtp,udp,rtp,udp,rtp".Split(',');
+			for(var i = 0; i < channels.Count(); i++) { 
 				var newChannel = new TvChannel();
 				newChannel.Name = channels[i];
 				newChannel.Port = int.Parse(ports[i]);
@@ -231,9 +232,11 @@ namespace Inforoom2.Test.Infrastructure
 		{
 			var TvChannels = DbSession.Query<TvChannel>().ToList();
 			var group = new TvChannelGroup();
-			group.Name = "Все";
-			foreach (var channel in TvChannels)
-				group.TvChannels.Add(channel);
+			group.Name = "Все"; 
+			foreach (var channel in TvChannels) {
+				if(channel.Name != "ППТ")
+					group.TvChannels.Add(channel);
+			} 
 			DbSession.Save(group);
 
 
