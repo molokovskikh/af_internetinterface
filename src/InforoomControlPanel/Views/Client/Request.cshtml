@@ -12,7 +12,7 @@
 	ClientRequest clientRequest = ViewBag.ClientRequest;
 	var reqAuthor = clientRequest.RequestAuthor ?? new Employee();
 	List<Employee> employees = ViewBag.Employees;
-	List<Plan> plans = ViewBag.Plans;
+	List<Plan> plans = ViewBag.PlanList;
 	ValidationRunner validationRunner = ViewBag.Validation;
 	bool isRedirected = ViewBag.IsRedirected;
 	bool isCityValidated = ViewBag.IsCityValidated;
@@ -122,11 +122,7 @@
 					</div>
 				</div>
 
-			</div>
-			<div class="block">
-				<div class="addon">Корпус:</div>
-				@Html.ValidationEditor(validationRunner, clientRequest, "Housing", new { @class = "addons", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text)
-			</div>
+			</div> 
 			<div class="block">
 				<div class="addon">Квартира:</div>
 				@Html.ValidationEditor(validationRunner, clientRequest, "Apartment", new { @class = "addons" }, HtmlTag.input, HtmlType.text)

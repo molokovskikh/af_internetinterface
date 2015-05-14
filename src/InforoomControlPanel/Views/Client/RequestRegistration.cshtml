@@ -17,7 +17,10 @@
 	Dictionary<int, CertificateType> certificateTypeDic = ViewBag.CertificateTypeDic;
 	Region currentRegion = ViewBag.CurrentRegion;
 	Street currentStreet = ViewBag.CurrentStreet;
-	House currentHouse = ViewBag.CurrentHouse; 
+	House currentHouse = ViewBag.CurrentHouse;
+	string userRequestStreet = ViewBag.UserRequestStreet;
+	string userRequestHouse = ViewBag.UserRequestHouse.ToString();
+	string userRequestHousing = ViewBag.UserRequestHousing;
 	bool redirectToCard = ViewBag.RedirectToCard;
 	List<Street> currentStreetList = ViewBag.CurrentStreetList;
 	List<House> currentHouseList = ViewBag.CurrentHouseList;
@@ -151,55 +154,64 @@
 											@Html.HiddenFor(s => currentRegion.Id, new { Id = "regionError" })
 										</div>
 									</div>
-									<div class="form-group error">
-										<label class="col-sm-4 control-label@(currentStreet == null ? " bold msg" : "")">Улица:</label> 
-										<div class="col-sm-4">
-											@if (currentStreet != null) {
-												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
-													new { @class = "form-control", @Id = "StreetDropDown", @Name = "client.PhysicalClient.Address.House.Street.Id" }, currentStreet.Id, true)
-											}
-											else {
-												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
-													new { @class = "form-control", @Id = "StreetDropDown", @Name = "client.PhysicalClient.Address.House.Street.Id" }, true)
-											}
+									<div class="form-group ">
+										
+									</div>
+										<div class="form-group error">
+											<label class="col-sm-4 control-label@(currentStreet == null ? " bold msg" : "")">Улица:</label>
+											<div class="col-sm-4">
+												<div class="col-sm-8">
+													<span @(currentHouse == null ? Html.Raw(" style=\"color: #FF8D8D;\" ") : Html.Raw(""))><strong>В заявке: </strong>  @userRequestStreet</span>
+												</div>
+												@if (currentStreet != null) {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
+														new { @class = "form-control", @Id = "StreetDropDown", @Name = "client.PhysicalClient.Address.House.Street.Id" }, currentStreet.Id, true)
+												}
+												else {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
+														new { @class = "form-control", @Id = "StreetDropDown", @Name = "client.PhysicalClient.Address.House.Street.Id" }, true)
+												}
 
-											@Html.HiddenFor(s => currentStreet.Id, new { Id = "streetError" })
+												@Html.HiddenFor(s => currentStreet.Id, new { Id = "streetError" })
+											</div>
+										</div>
+										<div class="form-group error">
+											<label class="col-sm-4 control-label@(currentHouse == null ? " bold msg" : "")">Дом:</label>
+											<div class="col-sm-4">
+												<div class="col-sm-8">
+													<span @(currentHouse == null ? Html.Raw(" style=\"color: #FF8D8D;\" ") : Html.Raw(""))><strong>В заявке: </strong> @userRequestHouse @userRequestHousing</span>
+												</div>
+												@if (currentHouse != null) {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House, currentHouseList, obj => obj.Number, null, new {
+														@class = "form-control",
+														@Id = "HouseDropDown",
+														@Name = "client.PhysicalClient.Address.House.Id"
+													}, currentHouse.Id, true)
+												}
+												else {
+													@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House, currentHouseList, obj => obj.Number, null, new {
+														@class = "form-control",
+														@Id = "HouseDropDown",
+														@Name = "client.PhysicalClient.Address.House.Id"
+													}, true)
+												}
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label">Подъезд:</label>
+											<div class="col-sm-2">
+												@Html.TextBoxFor(o => client.PhysicalClient.Address.Entrance, new { @class = "form-control", @id = "entrance_id" })
+											</div>
+											<label class="col-sm-1 control-label">Этаж:</label>
+											<div class="col-sm-2">
+												@Html.TextBoxFor(o => client.PhysicalClient.Address.Floor, new { @class = "form-control", @id = "floor_id" })
+											</div>
+											<label class="col-sm-2 control-label">Квартира:</label>
+											<div class="col-sm-2">
+												@Html.TextBoxFor(o => client.PhysicalClient.Address.Apartment, new { @class = "form-control", @id = "apartment_id" })
+											</div>
 										</div>
 									</div>
-									<div class="form-group error">
-										<label class="col-sm-4 control-label@(currentHouse == null ? " bold msg" : "")">Дом:</label> 
-										<div class="col-sm-4">
-											@if (currentHouse != null) {
-												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House, currentHouseList, obj => obj.Number, null, new {
-													@class = "form-control",
-													@Id = "HouseDropDown",
-													@Name = "client.PhysicalClient.Address.House.Id"
-												}, currentHouse.Id, true)
-											}
-											else {
-												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House, currentHouseList, obj => obj.Number, null, new {
-													@class = "form-control",
-													@Id = "HouseDropDown",
-													@Name = "client.PhysicalClient.Address.House.Id"
-												}, true)
-											}
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-2 control-label">Подъезд:</label>
-										<div class="col-sm-2">
-											@Html.TextBoxFor(o => client.PhysicalClient.Address.Entrance, new { @class = "form-control", @id = "entrance_id" })
-										</div>
-										<label class="col-sm-1 control-label">Этаж:</label>
-										<div class="col-sm-2">
-											@Html.TextBoxFor(o => client.PhysicalClient.Address.Floor, new { @class = "form-control", @id = "floor_id" })
-										</div>
-										<label class="col-sm-2 control-label">Квартира:</label>
-										<div class="col-sm-2">
-											@Html.TextBoxFor(o => client.PhysicalClient.Address.Apartment, new { @class = "form-control", @id = "apartment_id" })
-										</div>
-									</div>
-								</div>
 							</div>
 							<div class="row">
 								<div class="col-lg-8">
