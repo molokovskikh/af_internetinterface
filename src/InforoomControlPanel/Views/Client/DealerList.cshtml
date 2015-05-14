@@ -1,0 +1,56 @@
+﻿@using Inforoom2.Components 
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "Список дилеров";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	string action = ViewBag.ActionName;
+	string controller = ViewBag.ControllerName;
+	var employeeList = (List<Employee>)ViewBag.EmployeeList;
+	var dealerList = (List<Dealer>)ViewBag.DealerList;
+	var adminPanelNew = ViewBag.AdminPanelNew;
+	var dealer = (Dealer)ViewBag.DealerMan;
+}
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+	
+	@using (@Html.BeginForm("DealerAdd", controller, null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
+		<label class="control-label">Соотрудник</label>
+		<div class="form-group">
+			<div class="col-sm-8">
+				@Html.DropDownListExtendedFor(i => dealer.Employee, employeeList, obj => obj.Name, null, new { @class = "form-control" })
+			</div>
+			<div class="col-sm-4">
+				<button class="btn btn-green" type="submit">Добавить</button>
+			</div>
+		</div>
+	}  
+	<br/> 
+	<div class="form-group">
+
+		<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+			<thead>
+				<tr role="row">
+					<th tabindex="0" aria-controls="table-2">Дилер</th>
+					<th tabindex="0" aria-controls="table-2">действие</th>  
+				</tr>
+			</thead>			
+			<tbody>
+				@foreach (Dealer item in dealerList) {
+					<tr>
+						<td class="col-sm-6">
+							<span>@item.Employee.Name</span>
+						</td>
+						<td>
+							<a class="btn btn-red btn-sm btn-icon icon-left" href="@(adminPanelNew)Client/DealerDelete/@item.Id">
+								<i class="entypo-cancel-circled"></i>
+								Удалить
+							</a>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div> 
+</div>

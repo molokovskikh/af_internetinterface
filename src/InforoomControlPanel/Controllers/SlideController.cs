@@ -28,8 +28,7 @@ namespace InforoomControlPanel.Controllers
 			var slides = DbSession.Query<Slide>().OrderBy(s => s.Region.Name).ThenByDescending(s => s.Priority).ToList();
 			ViewBag.Slides = slides;
 			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
-			if (pathFromConfigUrl == null)
-			{
+			if (pathFromConfigUrl == null) {
 				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
 			}
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
@@ -49,6 +48,7 @@ namespace InforoomControlPanel.Controllers
 
 			return View();
 		}
+
 		/// <summary>
 		///		Добавление слайда в базу
 		/// </summary>
@@ -62,12 +62,10 @@ namespace InforoomControlPanel.Controllers
 			string NewFileName = System.Guid.NewGuid() + ext;
 			var pathFromConfig = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadPath"];
 			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
-			if (pathFromConfig == null)
-			{
+			if (pathFromConfig == null) {
 				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config!");
 			}
-			if (pathFromConfigUrl == null)
-			{
+			if (pathFromConfigUrl == null) {
 				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
 			}
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
@@ -122,12 +120,10 @@ namespace InforoomControlPanel.Controllers
 			string imagePath = slide.ImagePath ?? "";
 			var pathFromConfig = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadPath"];
 			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
-			if (pathFromConfig == null)
-			{
+			if (pathFromConfig == null) {
 				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config!");
 			}
-			if (pathFromConfigUrl == null)
-			{
+			if (pathFromConfigUrl == null) {
 				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
 			}
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
@@ -146,8 +142,7 @@ namespace InforoomControlPanel.Controllers
 			var errors = ValidationRunner.Validate(slide);
 			if (errors.Length == 0 && imagePath != "") {
 				if (uploadedFile != null) {
-					if (System.IO.File.Exists(pathFromConfig + slide.ImagePath))
-					{
+					if (System.IO.File.Exists(pathFromConfig + slide.ImagePath)) {
 						System.IO.File.Delete(pathFromConfig + slide.ImagePath);
 					}
 					slide.ImagePath = "Images/" + NewFileName;
@@ -170,7 +165,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult SlidePriorityIncerease(int id)
 		{
 			var slide = DbSession.Get<Slide>(id);
-			slide.IncereasePriority(DbSession); 
+			slide.IncereasePriority(DbSession);
 			return RedirectToAction("SlideIndex");
 		}
 
@@ -180,7 +175,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult SlidePriorityDecrease(int id)
 		{
 			var slide = DbSession.Get<Slide>(id);
-			slide.DecreasePriority(DbSession); 
+			slide.DecreasePriority(DbSession);
 			return RedirectToAction("SlideIndex");
 		}
 
@@ -190,14 +185,13 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult DeleteSlide(int id)
 		{
 			var pathFromConfig = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadPath"];
-			if (pathFromConfig == null)
-			{
+			if (pathFromConfig == null) {
 				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config!");
 			}
 			var slide = DbSession.Query<Slide>().FirstOrDefault(s => s.Id == id);
 
 			if (System.IO.File.Exists(pathFromConfig + slide.ImagePath)) {
-				System.IO.File.Delete(pathFromConfig + slide.ImagePath));
+				System.IO.File.Delete(pathFromConfig + slide.ImagePath);
 			}
 
 			DbSession.Delete(slide);
