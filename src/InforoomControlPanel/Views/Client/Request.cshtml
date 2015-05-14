@@ -155,13 +155,7 @@
 										@ViewBag.Validation.GetError(clientRequest, "Plan")
 									}
 								</div>
-							</div>
-							<div class="row error">
-								<label class="col-sm-3 control-label">Регистрирует:</label>
-								<div class="col-sm-6">
-									@Html.DropDownListExtendedFor(k => clientRequest.RequestAuthor, employees, emp => emp.Name, null, new { @class = "form-control" }, reqAuthor.Id)
-								</div>
-							</div>
+							</div> 
 						</div>
 					</div>
 				</div> 
