@@ -9,7 +9,7 @@ using Contact = Inforoom2.Models.Contact;
 namespace Inforoom2.validators
 {
 	//Валидация Физического клиента
-	internal class ValidatorPhysicalClient : CustomValidator
+	public class ValidatorPhysicalClient : CustomValidator
 	{
 		protected override void Run(object value)
 		{

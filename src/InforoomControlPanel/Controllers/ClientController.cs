@@ -98,10 +98,6 @@ namespace InforoomControlPanel.Controllers
 		[HttpPost]
 		public ActionResult Request([EntityBinder] ClientRequest clientRequest)
 		{
-			// TODO: добавил связь между тарифом и регионом
-			//		var tariff = InitRequestPlans().FirstOrDefault(k => k.Id == clientRequest.Plan.Id);
-			//		clientRequest.Plan = tariff; 
-			InitRequestPlans();
 			clientRequest.ActionDate = clientRequest.RegDate = DateTime.Now;
 			Employee reqAuthor = null;
 			// TODO: Заявка от оператора по умочанию // удалить лишнее 
@@ -124,7 +120,6 @@ namespace InforoomControlPanel.Controllers
 				clientRequest.Housing = clientRequest.Address.House.Number.Substring(housingPostfix,
 					clientRequest.Address.House.Number.Length - housingPostfix);
 			}
-
 			var errors = ValidationRunner.ValidateDeep(clientRequest);
 			if (errors.Length == 0 && clientRequest.IsContractAccepted) {
 				// TODO: убрать/поправить GetAddressByYandexData
@@ -133,7 +128,6 @@ namespace InforoomControlPanel.Controllers
 					clientRequest.Address = tempYandexAddress;
 					clientRequest.Address.IsCorrectAddress = true;
 				}
-
 				DbSession.Save(clientRequest);
 				SuccessMessage(string.Format("Спасибо, Ваша заявка создана. Номер заявки {0}", clientRequest.Id));
 				return RedirectToAction("Request");
@@ -220,8 +214,7 @@ namespace InforoomControlPanel.Controllers
 					clientRequest.HouseNumber = housen;
 				}
 			}*/
-			var planList = new List<Plan>();
-			ViewBag.PlanList = planList;
+			ViewBag.PlanList = new List<Plan>();
 			if (plan != null) {
 				clientRequest.Plan = plan;
 				ViewBag.IsRedirected = true;
@@ -238,6 +231,7 @@ namespace InforoomControlPanel.Controllers
 			return plans;
 		}
 
+		// TODO: поправить процедуру !
 		protected Address GetAddressByYandexData(ClientRequest clientRequest)
 		{
 			var city = GetList<City>().FirstOrDefault(c => c.Name.Equals(clientRequest.YandexCity, StringComparison.InvariantCultureIgnoreCase));
@@ -385,6 +379,8 @@ namespace InforoomControlPanel.Controllers
 					Date = DateTime.Now
 				});
 			}
+			// TODO: В связи с изменением логики указания адресов, дома крепятся к региону, необходимо поправить поиск Улиц и Адресов
+			// TODO: т.к. они могут не находится, даже при их полном совпадении, из-за своей принадлежности
 			// адресные данные по запросу
 			var currentRegion = DbSession.Query<Region>().FirstOrDefault(s => s.Name.ToLower() == clientRequest.City.ToLower()) ?? new Region();
 			var currentStreet = DbSession.Query<Street>().FirstOrDefault(s => s.Name.ToLower().Trim() == clientRequest.Street.ToLower().Trim() && s.Region == currentRegion);
@@ -452,7 +448,7 @@ namespace InforoomControlPanel.Controllers
 		///  Форма регистрации клиента по заявке POST
 		/// </summary> 
 		[HttpPost]
-		public ActionResult RequestRegistration([EntityBinder] Client client, int requestId, bool redirectToCard)
+		public ActionResult RequestRegistration([EntityBinder] Client client, int requestId, bool redirectToCard, bool scapeUserNameDoubling = true)
 		{
 			// удаление неиспользованного контакта *иначе в БД лишняя запись
 			client.Contacts = client.Contacts.Where(s => s.ContactString != string.Empty).ToList();
@@ -462,6 +458,12 @@ namespace InforoomControlPanel.Controllers
 			// добавление клиента
 			var errors = ValidationRunner.ValidateDeep(client);
 			// убираем из списка ошибок те, которые допустимы в данном случае
+			if (scapeUserNameDoubling) {
+				var contactValidation = new Inforoom2.validators.ValidatorPhysicalClient(); // Принудительная валидация модели контактов по атрибуту ValidatorContacts
+				ViewBag.ValidatorFullNameOriginal = contactValidation;
+				errors = errors.Length != 0 ? errors : ValidationRunner.ForcedValidationByAttribute(
+					client, client.GetType().GetProperty("PhysicalClient"), contactValidation, false);
+			}
 			errors.RemoveErrors(new List<string>() {
 				"Inforoom2.Models.PhysicalClient.PassportDate",
 				"Inforoom2.Models.PhysicalClient.CertificateName"
