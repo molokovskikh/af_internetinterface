@@ -17,6 +17,14 @@ namespace InternetInterface.Test.Functional
 		{
 			Open(string.Format("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", Client.Id));
 			AssertText(string.Format("Дата начала расчетного периода: {0}", DateTime.Now.ToShortDateString()));
+			AssertText("Количество бесплатных дней: " + Client.FreeBlockDays);
+			if (Client.YearCycleDate != null) {
+				var yearCycleDate = Client.YearCycleDate.Value.AddYears(1);
+				var lineText = (Client.FreeBlockDays > 0)
+					? "Дата окончания периода использования бесплатных дней: " + yearCycleDate.AddDays(-1).ToShortDateString()
+					: "Новые бесплатные дни станут доступны с " + yearCycleDate.ToShortDateString();
+				AssertText(lineText);
+			}
 			AssertText(string.Format("Дата начала программы скидок: {0}", DateTime.Now.AddMonths(-1).ToShortDateString()));
 		}
 
