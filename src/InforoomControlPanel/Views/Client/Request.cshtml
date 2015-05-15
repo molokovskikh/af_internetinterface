@@ -10,8 +10,7 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	ViewBag.Title = "Заявка на регистрацию";
 	ClientRequest clientRequest = ViewBag.ClientRequest;
-	var reqAuthor = clientRequest.RequestAuthor ?? new Employee();
-	List<Employee> employees = ViewBag.Employees;
+	var reqAuthor = clientRequest.RequestAuthor ?? new Employee(); 
 	List<Plan> plans = ViewBag.PlanList;
 	ValidationRunner validationRunner = ViewBag.Validation;
 	bool isRedirected = ViewBag.IsRedirected;
@@ -46,7 +45,7 @@
 			</div>
 			<div>
 				<div class="personals">Электронная почта:</div>
-				@Html.ValidationEditor(validationRunner, clientRequest, "Email", new { }, htmlTag: HtmlTag.input, htmlType: HtmlType.text) 
+				@Html.ValidationEditor(validationRunner, clientRequest, "Email", new { @class = "personal" }, htmlTag: HtmlTag.input, htmlType: HtmlType.text) 
 			</div>
 			<div class="panel panel-default">
 				<div class="panel-body">
@@ -73,7 +72,6 @@
 									}
 								</div>
 							</div>
-
 							<div class="row error">
 								<label class="col-sm-3@(currentStreet == null ? " bold msg" : "")">Улица:</label>
 								<div class="col-sm-6">
@@ -95,7 +93,6 @@
 									}
 								</div>
 							</div>
-
 							<div class="row error">
 								<label class="col-sm-3@(currentHouse == null ? " bold msg" : "")">Дом:</label>
 								<div class="col-sm-6">

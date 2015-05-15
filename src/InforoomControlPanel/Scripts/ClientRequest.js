@@ -78,9 +78,8 @@ var typeWatcher = function() {
 			userStreet = selectedText.toLowerCase();
 			skillsSelect = document.getElementById("HouseDropDown");
 			selectedText = skillsSelect.options[skillsSelect.selectedIndex].text;
-			userHouse = selectedText.toLowerCase();
-			userHousing = document.getElementById('clientRequest_Housing').value.toLowerCase();
-			var address = userCity + " " + userStreet + " " + userHouse + " " + userHousing;	 
+			userHouse = selectedText.toLowerCase(); 
+			var address = userCity + " " + userStreet + " " + userHouse;	 
 			if(address!=null && userCity+userStreet+userHouse+userHousing!=""){ 
 				findAddressOnMap(address);
 			}
