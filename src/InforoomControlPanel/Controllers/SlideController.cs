@@ -88,7 +88,6 @@ namespace InforoomControlPanel.Controllers
 				SuccessMessage("Слайд успешно добавлен");
 				return RedirectToAction("SlideIndex");
 			}
-
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			ViewBag.RegionList = regionList;
 			ViewBag.Slide = slide;
@@ -99,11 +98,16 @@ namespace InforoomControlPanel.Controllers
 		/// Просмотр слайда
 		/// </summary>
 		public ActionResult EditSlide(int id)
-		{
+		{ 
+			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
+			if (pathFromConfigUrl == null)
+			{
+				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
+			}
+			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			//Создаем слайд
 			var slide = DbSession.Query<Slide>().FirstOrDefault(s => s.Id == id);
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
-
 			ViewBag.Slide = slide;
 			ViewBag.RegionList = regionList;
 
