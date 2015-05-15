@@ -44,6 +44,7 @@ namespace Inforoom2.Models
 		public virtual IList<Street> Streets { get; set; }
 
 		[Description("Выводится ли регион на главной странице сайта")]
+		[Property]
 		public virtual bool ShownOnMainPage { get; set; }
 
 		[Description("Дочерние регионы")]

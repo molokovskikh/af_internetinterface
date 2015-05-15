@@ -34,7 +34,7 @@
 		</div>
 		<div>
 			<div class="personals">Город:</div>
-			@Html.DropDownListExtendedFor(k => clientRequest.City, regions, k => k.Name, null, new { @Id = "clientRequest_City", @class = "rounded", onclick = "typeWatcher(1000);updatePlanList();" }, currentRegion.Id)
+			@Html.DropDownListExtendedFor(k => clientRequest.City, regions, k => k.Name, i => i.HasChildren() ? new { @title = "есть частный сектор" } : new object { }, new { @Id = "clientRequest_City", @class = "rounded", onclick = "typeWatcher(1000);updatePlanList();" }, currentRegion.Id)
 		</div>
 		<div>
 			<div class="personals">Улица:</div>
