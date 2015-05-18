@@ -197,7 +197,7 @@ namespace InforoomControlPanel.Controllers
 			var slide = DbSession.Query<Slide>().FirstOrDefault(s => s.Id == id);
 
 			if (System.IO.File.Exists(pathFromConfig + slide.ImagePath)) {
-				System.IO.File.Delete(pathFromConfig + slide.ImagePath));
+				System.IO.File.Delete(pathFromConfig + slide.ImagePath);
 			}
 
 			DbSession.Delete(slide);

@@ -172,14 +172,23 @@
 					</ul>
 				</li>
 				<li>
-					<a href="@Url.Action("Admins","Admin")">
+					<a href="@Url.Action("EmployeeList","Admin")">
 						<i class="entypo-user"></i>
-						<span class="title">Администраторы</span>
+						<span class="title">Сотрудники</span>
 					</a>
 					<ul class="visible">
 						<li>
-							<a href="@Url.Action("Admins","Admin")">
-								<span class="title">Администраторы</span>
+							<a href="@Url.Action("EmployeeList","Admin")">
+								<span class="title">Сотрудники</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("RoleList","Admin")">
+								<span class="title">Роли</span>
+							</a>
+						</li>						<li>
+							<a href="@Url.Action("PermissionList","Admin")">
+								<span class="title">Права</span>
 							</a>
 						</li>
 					</ul>

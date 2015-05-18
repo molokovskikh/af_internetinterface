@@ -25,7 +25,13 @@ namespace InforoomControlPanel.Controllers
 			{
 				string loginUrl = "/AdminAccount/Index"; // Default Login Url 
 				filterContext.Result = new RedirectResult(loginUrl);
+				return;
 			}
+
+			var employee = GetCurrentEmployee();
+			string access = ViewBag.ControllerName+"Controller_"+ViewBag.ActionName;
+			if (!employee.HasAccess(access) && access != "Admin_AccessDenined")
+				filterContext.Result = new RedirectResult("/Admin/AccessDenined");
 		}
 
 		public override Employee GetCurrentEmployee()

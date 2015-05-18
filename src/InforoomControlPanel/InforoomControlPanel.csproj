@@ -1514,12 +1514,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminAccountController.cs" />
     <Compile Include="Controllers\AddressController.cs" />
-    <Compile Include="Controllers\AdminController.cs" /> 
-    <Compile Include="Controllers\ConnectionTeamController.cs" /> 
+    <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\ConnectionTeamController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\BannerController.cs" />
     <Compile Include="Controllers\SlideController.cs" />
-    <Compile Include="Controllers\ControlPanelController.cs" />  
+    <Compile Include="Controllers\ControlPanelController.cs" />
     <Compile Include="Controllers\SwitchController.cs" />
     <Compile Include="Controllers\PlansController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
@@ -1823,7 +1823,7 @@
     <Content Include="Views\Client\Request.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Admin\Admins.cshtml" />
+    <Content Include="Views\Admin\EmployeeList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\Pagination.cshtml" />
@@ -1877,28 +1877,33 @@
     <Content Include="Views\Switch\NetworkNodeList.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Plans\CreatePlan.cshtml" /> 
+    <Content Include="Views\Plans\CreatePlan.cshtml" />
     <Content Include="Views\ConnectionTeam\UnpluggedClientList.cshtml" />
     <Content Include="Views\Client\Registration.cshtml" />
     <Content Include="Views\Client\Edit.cshtml" />
-    <Content Include="Views\Client\RequestRegistration.cshtml" /> 
+    <Content Include="Views\Client\RequestRegistration.cshtml" />
     <Content Include="Views\Plans\CreateTvProtocol.cshtml" />
     <Content Include="Views\Plans\TvProtocolList.cshtml" />
     <Content Include="Views\Plans\TvChannelList.cshtml" />
-    <Content Include="Views\Plans\CreateTvChannel.cshtml" /> 
-    <Content Include="Views\Plans\TvChannelGroupList.cshtml" />  
-	<Content Include="Views\Slide\CreateSlide.cshtml" />
-	<Content Include="Views\Slide\EditSlide.cshtml" />
-	<Content Include="Views\Slide\SlideIndex.cshtml" />
-	<Content Include="Views\Banner\CreateBanner.cshtml" />
-	<Content Include="Views\Banner\EditBanner.cshtml" />
-	<Content Include="Views\Banner\BannerIndex.cshtml" /> 
-    <Content Include="Views\Plans\CreateTvChannelGroup.cshtml" /> 
+    <Content Include="Views\Plans\CreateTvChannel.cshtml" />
+    <Content Include="Views\Plans\TvChannelGroupList.cshtml" />
+    <Content Include="Views\Slide\CreateSlide.cshtml" />
+    <Content Include="Views\Slide\EditSlide.cshtml" />
+    <Content Include="Views\Slide\SlideIndex.cshtml" />
+    <Content Include="Views\Banner\CreateBanner.cshtml" />
+    <Content Include="Views\Banner\EditBanner.cshtml" />
+    <Content Include="Views\Banner\BannerIndex.cshtml" />
+    <Content Include="Views\Plans\CreateTvChannelGroup.cshtml" />
     <Content Include="..\global.config">
       <Link>global.config</Link>
       <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory> 
-    </Content>  
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Admin\EditEmployee.cshtml" />
+    <Content Include="Views\Admin\AccessDenined.cshtml" />
+    <Content Include="Views\Admin\PermissionList.cshtml" />
+    <Content Include="Views\Admin\RoleList.cshtml" />
+    <Content Include="Views\Admin\EditRole.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
   </ItemGroup>
