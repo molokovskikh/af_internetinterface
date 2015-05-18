@@ -33,28 +33,42 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual bool IsFree { get; set; }
 
+		/// <summary>
+		/// Текстовое сообщение о причине невозможности активировать данную услугу
+		/// </summary>
+		public virtual string CannotActivateMsg { get; set; }
+
+		/// <summary>
+		/// Активировать услугу для клиента currentClient
+		/// </summary>
 		public virtual string ActivateFor(Client currentClient, ISession session)
 		{
-			Service.Activate(this, session);
-			IsActivated = true;												// IsActivated внутри Service.Activate() почему-то не срабатывает
-			currentClient.ClientServices.Add(this);		// Важно добавлять услугу после активации, чтобы она не влияла на списания
-			currentClient.IsNeedRecofiguration = Service.GetType() == typeof(DeferredPayment);
+			string message;
+			if (Service.CanActivate(this)) {
+				Service.Activate(this, session);
+				IsActivated = true;                       // IsActivated внутри Service.Activate() почему-то не срабатывает
+				currentClient.ClientServices.Add(this);   // Важно добавлять услугу после активации, чтобы она не влияла на списания
+				currentClient.IsNeedRecofiguration = Service.GetType() == typeof (DeferredPayment);
 
-			var message = string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", Service.Name,
-				BeginDate != null
-					? BeginDate.Value.ToShortDateString()
-					: DateTime.Now.ToShortDateString(),
-				EndDate != null
-					? EndDate.Value.ToShortDateString()
-					: string.Empty);
+				message = string.Format("Услуга \"{0}\" активирована на период с {1} по {2}",
+					Service.Name,
+					BeginDate != null ? BeginDate.Value.ToShortDateString() : DateTime.Now.ToShortDateString(),
+					EndDate != null ? EndDate.Value.ToShortDateString() : string.Empty);
+			}
+			else {
+				message = CannotActivateMsg;
+			}
 			return message;
 		}
 
+		/// <summary>
+		/// Деактивировать услугу для клиента currentClient
+		/// </summary>
 		public virtual string DeActivateFor(Client currentClient, ISession session)
 		{
 			Service.Deactivate(this, session);
 			currentClient.IsNeedRecofiguration = Service.GetType() == typeof(BlockAccountService);
-			return String.Format("Услуга \"{0}\" деактивирована", Service.Name);
+			return string.Format("Услуга \"{0}\" деактивирована", Service.Name);
 		}
 
 		public virtual bool IsService(Service service)

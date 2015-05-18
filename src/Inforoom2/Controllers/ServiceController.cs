@@ -37,13 +37,15 @@ namespace Inforoom2.Controllers
 					ActivatedByUser = true
 				};
 				ActivateService(clientService, client);
-				var appealText = "Услуга \"{0}\" активирована на период с {1} по {2}. Баланс {3}.";
-				var appeal = new Appeal(string.Format(appealText, service.Name, DateTime.Now.ToShortDateString(),
-					blockingEndDate.Value.ToShortDateString(), client.Balance),
-					client, AppealType.User) {
-						Employee = GetCurrentEmployee()
-					};
-				DbSession.Save(appeal);
+				if (clientService.IsActivated) {
+					var appealText = "Услуга \"{0}\" активирована на период с {1} по {2}. Баланс {3}.";
+					var appeal = new Appeal(string.Format(appealText, service.Name, DateTime.Now.ToShortDateString(),
+						blockingEndDate.Value.ToShortDateString(), client.Balance),
+						client, AppealType.User) {
+							Employee = GetCurrentEmployee()
+						};
+					DbSession.Save(appeal);
+				}
 				return RedirectToAction("Service", "Personal");
 			}
 			ErrorMessage("Не удалось подключить услугу");
@@ -82,12 +84,14 @@ namespace Inforoom2.Controllers
 					Client = client
 				};
 				ActivateService(clientService, client);
-				var appealText = "Услуга \"{0}\" активирована на период с {1} по {2}. Баланс {3}.";
-				var appeal = new Appeal(string.Format(appealText, service.Name, DateTime.Now.ToShortDateString(),
-					DateTime.Now.AddDays(3).ToShortDateString(), client.Balance), client, AppealType.User) {
-						Employee = GetCurrentEmployee()
-					};
-				DbSession.Save(appeal);
+				if (clientService.IsActivated) {
+					var appealText = "Услуга \"{0}\" активирована на период с {1} по {2}. Баланс {3}.";
+					var appeal = new Appeal(string.Format(appealText, service.Name, DateTime.Now.ToShortDateString(),
+						DateTime.Now.AddDays(3).ToShortDateString(), client.Balance), client, AppealType.User) {
+							Employee = GetCurrentEmployee()
+						};
+					DbSession.Save(appeal);
+				}
 				return RedirectToAction("Service", "Personal");
 			}
 			ErrorMessage("Не удалось подключить услугу");
@@ -97,10 +101,15 @@ namespace Inforoom2.Controllers
 
 		private void ActivateService(ClientService clientService, Client client)
 		{
-			SuccessMessage(clientService.ActivateFor(client, DbSession));
-			if (client.IsNeedRecofiguration)
-				SceHelper.UpdatePackageId(DbSession, client);
-			DbSession.Update(client);
+			var msg = clientService.ActivateFor(client, DbSession);
+			if (clientService.IsActivated) {
+				SuccessMessage(msg);
+				if (client.IsNeedRecofiguration)
+					SceHelper.UpdatePackageId(DbSession, client);
+				DbSession.Update(client);
+			}
+			else
+				ErrorMessage(msg);
 			InitServices();
 		}
 	}
