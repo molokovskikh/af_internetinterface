@@ -3,6 +3,7 @@
 Global(
 	Project : "InternetInterface",
 	HumanReadableName : "Интернет интерфейс",
+	ExcludesDeployDirectory : ("Content",),
 	Config: {
 		"db:generate:log": {@Sufix : "Internet"},
 		"db:seed": {@Profile: "Internet"}

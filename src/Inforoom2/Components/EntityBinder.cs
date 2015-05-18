@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using Inforoom2.Helpers;
 using Inforoom2.Models;
 using log4net.Appender;
 using NHibernate;
@@ -167,9 +168,11 @@ namespace Inforoom2.Components
 					//Получаем словарь с коллекциями значений для элементов списка
 					var subCollections = SliceMultipleValues(values, property.Name);
 
-					//Есть 2 варианта использования байндера: изменение коллекции или добавления элемента
-					if (subCollections.ContainsKey("-1"))
-						AppendToCollection(collection, subType, subCollections["-1"]);
+					//Есть 3 варианта использования байндера: изменение коллекции, удаление элементов или добавления элемента в конец
+					if (subCollections.ContainsKey("add"))
+						AppendToCollection(collection, subType, subCollections["add"]);
+					else if (subCollections.Keys.Any(i => int.Parse(i) < 0))
+						RemoveFromCollection(collection, subCollections);
 					else
 						ChangeCollection(collection, subType, subCollections);
 				}
@@ -185,6 +188,24 @@ namespace Inforoom2.Components
 			return instance;
 		}
 
+		private void RemoveFromCollection(IList collection, Dictionary<string, NameValueCollection> subCollections)
+		{
+			
+			foreach (var pair in subCollections)
+			{
+				//Получаем коллекцию из коллекции коллекций
+				var subcollection = pair.Value;
+				//Находим id, модели, которую нужно удалить из коллекции
+				//а затем саму модель
+				var id = int.Parse(subcollection["Id"]);
+				foreach (var model in collection)
+					if ((model as BaseModel).Id == id) {
+						collection.Remove(model);
+						break;
+					}
+			}
+		}
+
 		/// <summary>
 		/// Изменяет списочное поле-коллекцию у модели, заполняет ее новыми значениями.
 		/// Остаются только те значения, которые были переданы.
@@ -198,9 +219,7 @@ namespace Inforoom2.Components
 			collection.Clear();
 			foreach (var pair in subCollections)
 			{
-				//Получаем индекс элемента
-				var index = pair.Key;
-				//Получаем коллекцию коллекций
+				//Получаем коллекцию из коллекции коллекций
 				var subcollection = pair.Value;
 				//Натягиваем параметры
 				var newValue = MapModel(subcollection, type);
@@ -242,7 +261,8 @@ namespace Inforoom2.Components
 		/// <returns>
 		/// Возвращает словарь, элементами, которого являются списки параметров для вложенных моделей.
 		/// Индексом, является порядковый номер модели в списке.
-		/// Элемент у которого в изначальном списке не указан индекс (то есть мы хотели его добавить в конец) получает индекс -1.
+		/// 
+		/// Элемент у которого в изначальном списке не указан индекс (то есть мы хотели его добавить в конец) получает индекс "add".
 		/// </returns>
 		private Dictionary<string, NameValueCollection> SliceMultipleValues(NameValueCollection values, string name)
 		{
@@ -250,13 +270,14 @@ namespace Inforoom2.Components
 			while (values.AllKeys.Any(i => i.Contains(name)))
 			{
 				var key = values.AllKeys.First(i => i.Contains(name));
-				var index = key[name.Length + 1];
+				//получаем значения индекса элемента из верстки
+				var index = key.Split('[')[1].Split(']')[0];
 				int indexVal;
-				var isRealIndex = int.TryParse(index.ToString(), out indexVal);
+				var isRealIndex = int.TryParse(index, out indexVal);
 				var subname = isRealIndex ? name + "[" + index + "]" : name + "[]";
 				var subcollection = SliceValues(values, subname);
-				indexVal = isRealIndex ? indexVal : -1;
-				dictionary.Add(indexVal.ToString(), subcollection);
+				var dictionaryIndex = isRealIndex ? indexVal.ToString() : "add";
+				dictionary.Add(dictionaryIndex, subcollection);
 			}
 			return dictionary;
 		}
