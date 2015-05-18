@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
+using System.Web.Configuration;
 using System.Web.Mvc;
+using System.Web.WebPages;
 using Inforoom2.Components;
+using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
 using NHibernate.Util;
@@ -13,6 +17,16 @@ namespace InforoomControlPanel.Controllers
 	/// </summary>
 	public class PlansController : AdminController
 	{
+
+		public PlansController()
+		{
+			ViewBag.BreadCrumb = "Тарифы";
+		}
+
+		public new ActionResult Index()
+		{
+			return PlanIndex();
+		}
 		/// <summary>
 		/// Список тарифов
 		/// </summary>
@@ -22,7 +36,7 @@ namespace InforoomControlPanel.Controllers
 			var regions = DbSession.Query<Region>().ToList();
 			ViewBag.Plans = plans;
 			ViewBag.Regions = regions;
-			return View();
+			return View("PlanIndex");
 		}
 
 		/// <summary>
@@ -83,12 +97,14 @@ namespace InforoomControlPanel.Controllers
 				regions.Remove(rp.Region);
 			}
 			ViewBag.PackageSpeed = DbSession.Query<PackageSpeed>().OrderBy(s => s.Speed)
-				.GroupBy(s => s.Speed).Select(grp => grp.First()).ToList(); 
-
+				.GroupBy(s => s.Speed).Select(grp => grp.First()).ToList();
+			var channelGroups = DbSession.Query<TvChannelGroup>().ToList();
+			plan.TvChannelGroups.ForEach(i => channelGroups.Remove(i));
 			ViewBag.Plans = plans;
 			ViewBag.Plan = plan;
 			ViewBag.Regions = regions;
 			ViewBag.PlanTransfer = PlanTransfer;
+			ViewBag.TvChannelGroups = channelGroups;
 			ViewBag.RegionPlan = RegionPlan;
 			return View("EditPlan");
 		}
@@ -96,7 +112,8 @@ namespace InforoomControlPanel.Controllers
 		/// <summary>
 		/// Изменение тарифа
 		/// </summary>
-		public ActionResult UpdatePlan([EntityBinder] Plan plan)
+		[HttpPost]
+		public ActionResult EditPlan([EntityBinder] Plan plan)
 		{
 			var errors = ValidationRunner.ValidateDeep(plan);
 			if (errors.Length == 0)
@@ -167,6 +184,313 @@ namespace InforoomControlPanel.Controllers
 			DbSession.Flush();
 			SuccessMessage("Регион успешно удален");
 			return RedirectToAction("EditPlan", new { id = rp.Plan.Id });
+		}
+
+		/// <summary>
+		/// Список ТВ протоколов
+		/// </summary>
+		public ActionResult TvProtocolList()
+		{
+			var protocols = DbSession.Query<TvProtocol>().OrderByDescending(i=>i.Id).ToList();
+			ViewBag.TvProtocols = protocols;
+			return View();
+		}
+
+		/// <summary>
+		/// Создание ТВ протокола
+		/// </summary>
+		public ActionResult CreateTvProtocol()
+		{
+			var protocol = new TvProtocol();
+			ViewBag.TvProtocol = protocol;
+			return View();
+		}
+
+		/// <summary>
+		/// Создание ТВ протокола
+		/// </summary>
+		[HttpPost]
+		public ActionResult CreateTvProtocol([EntityBinder] TvProtocol tvProtocol)
+		{
+			var errors = ValidationRunner.Validate(tvProtocol);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(tvProtocol);
+				SuccessMessage("Протокол успешно добавлен!");
+				return RedirectToAction("TvProtocolList");
+			}
+			CreateTvProtocol();
+			ViewBag.TvProtocol = tvProtocol;
+			return View();
+		}
+
+		/// <summary>
+		/// Измененение ТВ протокола
+		/// </summary>
+		public ActionResult EditTvProtocol(int id)
+		{
+			var tvProtocol = DbSession.Get<TvProtocol>(id);
+			ViewBag.Title = "Редактирование протокола для ТВ";
+			ViewBag.TvProtocol = tvProtocol;
+			return View("CreateTvProtocol");
+		}
+
+		/// <summary>
+		/// Измененение ТВ протокола
+		/// </summary>
+		[HttpPost]
+		public ActionResult EditTvProtocol([EntityBinder] TvProtocol tvProtocol)
+		{
+			var errors = ValidationRunner.Validate(tvProtocol);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(tvProtocol);
+				SuccessMessage("Протокол успешно изменен!");
+				return RedirectToAction("TvProtocolList");
+			}
+			EditTvProtocol(tvProtocol.Id);
+			ViewBag.TvProtocol = tvProtocol;
+			return View("CreateTvProtocol");
+		}
+		/// <summary>
+		/// Удаление ТВ протокола
+		/// </summary>
+		public ActionResult DeleteTvProtocol(int id)
+		{
+			var tvProtocol = DbSession.Get<TvProtocol>(id);
+			if(DbSession.AttemptDelete(tvProtocol))
+				SuccessMessage("Объект успешно удален!");
+			else
+				ErrorMessage("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
+			return RedirectToAction("TvProtocolList");
+		}
+
+		/// <summary>
+		/// Список ТВ каналов
+		/// </summary>
+		public ActionResult TvChannelList()
+		{
+			var tvChannels = DbSession.Query<TvChannel>().OrderByDescending(i=>i.Priority).ThenByDescending(i => i.Id).ToList();
+			ViewBag.TvChannels = tvChannels;
+			return View();
+		}
+
+		/// <summary>
+		/// Увеличивает приоритет канала
+		/// </summary>
+		/// <param name="id">Идентификатор канала</param>
+		/// <returns></returns>
+		public ActionResult IncreaseTvChannelPriority(int id)
+		{
+			var channel = DbSession.Get<TvChannel>(id);
+			channel.IncereasePriority(DbSession);
+			return RedirectToAction("TvChannelList");
+		}
+
+		/// <summary>
+		/// Уменьшает приоритет канала
+		/// </summary>
+		/// <param name="id">Идентификатор канала</param>
+		/// <returns></returns>
+		public ActionResult DecreaseTvChannelPriority(int id)
+		{
+			var channel = DbSession.Get<TvChannel>(id);
+			channel.DecreasePriority(DbSession);
+			return RedirectToAction("TvChannelList");
+		}
+
+		/// <summary>
+		/// Создание ТВ канала
+		/// </summary>
+		public ActionResult CreateTvChannel()
+		{
+			var tvChannel = new TvChannel();
+			var protocols = DbSession.Query<TvProtocol>().ToList();
+			ViewBag.TvChannel = tvChannel;
+			ViewBag.TvProtocols = protocols;
+			return View();
+		}
+
+		/// <summary>
+		/// Создание ТВ канала
+		/// </summary>
+		[HttpPost]
+		public ActionResult CreateTvChannel([EntityBinder] TvChannel TvChannel)
+		{
+			var errors = ValidationRunner.Validate(TvChannel);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(TvChannel);
+				SuccessMessage("Канал успешно добавлен!");
+				return RedirectToAction("TvChannelList");
+			}
+			CreateTvChannel();
+			ViewBag.TvChannel = TvChannel;
+			return View();
+		}
+
+		/// <summary>
+		/// Редактирование ТВ канала
+		/// </summary>
+		public ActionResult EditTvChannel(int id)
+		{
+			var tvChannel = DbSession.Get<TvChannel>(id);
+			CreateTvChannel();
+			ViewBag.Title = "Редактирование ТВ канала";
+			ViewBag.TvChannel = tvChannel;
+			return View("CreateTvChannel");
+		}
+
+		/// <summary>
+		/// Редактирование ТВ канала
+		/// </summary>
+		[HttpPost]
+		public ActionResult EditTvChannel([EntityBinder] TvChannel TvChannel)
+		{
+			var errors = ValidationRunner.Validate(TvChannel);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(TvChannel);
+				SuccessMessage("Канал успешно изменен!");
+				return RedirectToAction("TvChannelList");
+			}
+
+			EditTvChannel(TvChannel.Id);
+			ViewBag.TvChannel = TvChannel;
+			return View("CreateTvChannel");
+		}
+
+		/// <summary>
+		/// Удаление ТВ канала
+		/// </summary>
+		public ActionResult DeleteTvChannel(int id)
+		{
+			var TvChannel = DbSession.Get<TvChannel>(id);
+			if (DbSession.AttemptDelete(TvChannel))
+				SuccessMessage("Объект успешно удален!");
+			else
+				ErrorMessage("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
+			return RedirectToAction("TvChannelList");
+		}
+
+		/// <summary>
+		/// Список групп ТВ каналов
+		/// </summary>
+		public ActionResult TvChannelGroupList()
+		{
+			var tvChannelGroups = DbSession.Query<TvChannelGroup>().OrderByDescending(i => i.Id).ToList();
+			ViewBag.TvChannelGroups = tvChannelGroups;
+			return View();
+		}
+
+		/// <summary>
+		/// Создание группы ТВ каналов
+		/// </summary>
+		public ActionResult CreateTvChannelGroup()
+		{
+			var tvChannelGroup = new TvChannelGroup();
+			ViewBag.TvChannelGroup = tvChannelGroup;
+			return View();
+		}
+
+		/// <summary>
+		/// Создание группы ТВ каналов
+		/// </summary>
+		[HttpPost]
+		public ActionResult CreateTvChannelGroup([EntityBinder] TvChannelGroup tvChannelGroup)
+		{
+			var errors = ValidationRunner.Validate(tvChannelGroup);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(tvChannelGroup);
+				SuccessMessage("Объект успешно добавлен!");
+				return RedirectToAction("TvChannelGroupList");
+			}
+			CreateTvChannelGroup();
+			ViewBag.TvChannelGroup = tvChannelGroup;
+			return View();
+		}
+
+		/// <summary>
+		/// Редактирование группы ТВ каналов
+		/// </summary>
+		public ActionResult EditTvChannelGroup(int id)
+		{
+			var tvChannelGroup = DbSession.Get<TvChannelGroup>(id);
+			CreateTvChannelGroup();
+			//Выбираем каналы, которых нет у группы
+			var channels = DbSession.Query<TvChannel>().ToList();
+			tvChannelGroup.TvChannels.ForEach(i => channels.Remove(i));
+
+			ViewBag.TvChannels = channels;
+			ViewBag.Title = "Редактирование группы ТВ каналов";
+			ViewBag.TvChannelGroup = tvChannelGroup;
+			return View("CreateTvChannelGroup");
+		}
+
+		/// <summary>
+		/// Редактирование группы ТВ каналов
+		/// </summary>
+		[HttpPost]
+		public ActionResult EditTvChannelGroup([EntityBinder] TvChannelGroup tvChannelGroup)
+		{
+			var errors = ValidationRunner.Validate(tvChannelGroup);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(tvChannelGroup);
+				SuccessMessage("Объект успешно изменен!");
+				return RedirectToAction("EditTvChannelGroup",new{id=tvChannelGroup.Id});
+			}
+
+			EditTvChannel(tvChannelGroup.Id);
+			ViewBag.TvChannelGroup = tvChannelGroup;
+			return View("CreateTvChannelGroup");
+		}
+
+		/// <summary>
+		/// Удаление группы ТВ каналов
+		/// </summary>
+		public ActionResult DeleteTvChannelGroup(int id)
+		{
+			var tvChannelGroup = DbSession.Get<TvChannelGroup>(id);
+			if (DbSession.AttemptDelete(tvChannelGroup))
+				SuccessMessage("Объект успешно удален!");
+			else
+				ErrorMessage("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
+			return RedirectToAction("TvChannelGroupList");
+		}
+
+		/// <summary>
+		/// Добавление канала в группу каналов
+		/// </summary>
+		/// <param name="tvChannelGroup">Группа каналов (существующая)</param>
+		/// <returns></returns>
+		public ActionResult AttachTvChannel([EntityBinder] TvChannelGroup tvChannelGroup)
+		{
+			if (ValidationRunner.ValidateDeep(tvChannelGroup).Length == 0) {
+				DbSession.Save(tvChannelGroup);
+				SuccessMessage("Объект успешно прикреплен!");
+			}
+			else
+				ErrorMessage("Объект не удалось прикрепить! Возможно вложеные объекты не являются валидными.");
+			return RedirectToAction("EditTvChannelGroup",new{id = tvChannelGroup.Id});
+		}
+
+		/// <summary>
+		/// Добавление группы каналов к тарифу
+		/// </summary>
+		/// <param name="tvChannelGroup">Тариф (существующий)</param>
+		/// <returns></returns>
+		public ActionResult AttachTvChannelGroup([EntityBinder] Plan plan)
+		{
+			if (ValidationRunner.ValidateDeep(plan).Length == 0)
+			{
+				DbSession.Save(plan);
+				SuccessMessage("Объект успешно прикреплен!");
+			}
+			else
+				ErrorMessage("Объект не удалось прикрепить! Возможно вложеные объекты не являются валидными.");
+			return RedirectToAction("EditPlan", new { id = plan.Id });
 		}
 	}
 }

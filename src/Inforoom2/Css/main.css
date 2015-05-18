@@ -90,7 +90,7 @@ a {text-decoration: none;color: #474747;}
 .error .icon {background: url("../images/crusty.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 14px;width: 16px;}
 .leftpersonal .error input {border:1px solid #920f15;}
 .leftpersonal .success input {border:1px solid #6ec400;}
-.map {width: 442px;height: 445px; background: url("../images/map.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block; position: absolute;
+.map {width: 442px;height: 445px; background: none repeat scroll 0 0 #ffffff;display: inline-block; position: absolute;
     right: 62px;top: 89px;}
 .left-move { position: absolute;left: 65px;right: 0;top: 60px; }
 .contract {margin-left: 100px;margin-top: 36px;width: 925px;font-family: PTSans;font-size: 14px;}

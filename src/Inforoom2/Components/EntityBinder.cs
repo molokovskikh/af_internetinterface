@@ -1,182 +1,246 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO.Ports;
 using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 using Inforoom2.Models;
+using log4net.Appender;
 using NHibernate;
 using NHibernate.Context;
+using NHibernate.Mapping;
+using NHibernate.Util;
 
 namespace Inforoom2.Components
 {
 	/// <summary>
-	/// Converts entity id's to entities
+	/// Аттрибут для натягивания данных форм на модели.
 	/// </summary>
-	public class EntityBinderAttribute : CustomModelBinderAttribute, IModelBinder
+	public class EntityBinderAttribute : CustomModelBinderAttribute
 	{
-		private static ISession session;
-		private readonly string _idName;
-		private readonly Type _entityType;
-		private readonly bool _relaxed;
-
-		public static void SetSession(ISession dbsession)
-		{
-			session = dbsession;
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="idName">Field name</param>
-		/// <param name="entityType">Entity type</param>
-		/// <param name="relaxed">If true and the entity is not found, should return null</param>
-		public EntityBinderAttribute(string idName, Type entityType, bool relaxed = false)
-		{
-			_idName = idName;
-			_entityType = entityType;
-			_relaxed = relaxed;
-		}
-
-		public EntityBinderAttribute(Type entityType, bool relaxed = false) : this("Id", entityType, relaxed)
-		{
-		}
-
-
-		public EntityBinderAttribute(string idName, bool relaxed = false) : this(idName, null, relaxed)
-		{
-		}
-
-		public EntityBinderAttribute(bool relaxed = false) : this("Id", relaxed)
-		{
-		}
-
-		/// <summary>
-		/// Retrieves the associated model binder.
-		/// </summary>
-		/// <returns>
-		/// A reference to an object that implements the <see cref="T:System.Web.Mvc.IModelBinder"/> interface.
-		/// </returns>
 		public override IModelBinder GetBinder()
 		{
-			return this;
+			return new EntityBinder();
+		}
+	}
+
+	/// <summary>
+	/// Объект, который натягивает данные из форм на объекты
+	/// </summary>
+	public class EntityBinder : IModelBinder
+	{
+		protected static ISession Session;
+
+		/// <summary>
+		/// Устанавливает сессию. 
+		/// Так как использование двух сессий является опасным, следует вызывать эту функцию там где создается сессия для контроллеров.
+		/// </summary>
+		/// <param name="dbsession">Сессия Nhibernate</param>
+		public static void SetSession(ISession dbsession)
+		{
+			Session = dbsession;
 		}
 
 		/// <summary>
-		/// Натягивает форму из запроса на модель
+		/// Интерфейс MVC, для кастомного байндинга атрибутов.
 		/// </summary>
-		/// <param name="request"></param>
+		/// <param name="controllerContext">Контекст контроллера</param>
+		/// <param name="bindingContext">Контекст байндинга</param>
 		/// <returns></returns>
-		public object MapModel(HttpRequestBase request)
-		{
-				var entityType = _entityType;
-				object instance = Activator.CreateInstance(entityType);
-				var props = instance.GetType().GetProperties();
-				if (props.Count() != 0)
-				{
-					foreach (var propertyInfo in props)
-					{
-						var propertyName = propertyInfo.Name;
-						var propertyValue = request.Form.Get(entityType.Name.ToLower() + "." + propertyName);
-						if (!string.IsNullOrEmpty(propertyValue))
-						{
-							SetValue(instance, propertyName, propertyValue, propertyInfo,null);
-						}
-					}
-				}
-				return instance;
-		}
-		/// <summary>
-		/// Binds the model to a value by using the specified controller context and binding context.
-		/// </summary>
-		/// <returns>
-		/// The bound value.
-		/// </returns>
-		/// <param name="controllerContext">The controller context.</param><param name="bindingContext">The binding context.</param>
-		/// <exception cref="HttpException"><c>HttpException</c>.</exception>
 		public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
 		{
-			HttpRequestBase request = controllerContext.HttpContext.Request;
-			var fieldName = bindingContext.ModelName + ".Id";
-			var result = bindingContext.ValueProvider.GetValue(fieldName);
-			if (FieldNotFoundOrValueIsEmpty(result))
-				fieldName = _idName;
-			result = bindingContext.ValueProvider.GetValue(fieldName);
-			if (FieldNotFoundOrValueIsEmpty(result)) {
-				/*if (_relaxed)*/
-				//throw new MissingFieldException("Could not find the request parameter: " + fieldName);
-			}
+			var modelName = bindingContext.ModelName;
+			var type = bindingContext.ModelType;
+			
+			//Так как мы удаляем использованные элементы из коллекции, во время байндинга
+			//Форму необходимо скопировать
+			var collection = new NameValueCollection(controllerContext.HttpContext.Request.Form);
+			var values = SliceValues(collection, modelName);
+			var res = MapModel(values, type);
+			return res;
+		}
 
-			var entityType = _entityType ?? bindingContext.ModelType;
-			if (entityType.IsArray) {
-				var realType = entityType.GetElementType();
-				var instances = from idString in (string[])result.RawValue
-					select session.Get(realType, GetId(idString, fieldName));
-				return instances.ToArray();
+		/// <summary>
+		/// Натягивает форму из запроса на модель. Имя модели, отгадывается байндером по именованию.
+		/// </summary>
+		/// <param name="request">Объект HTTP запроса</param>
+		/// <param name="type">Тип модели </param>
+		/// <returns></returns>
+		public object MapModel(HttpRequestBase request, Type type)
+		{
+			var form = request.Form;
+			var keys = form.AllKeys;
+			string name = null;
+			foreach (var key in keys) {
+				var split = key.Split('.');
+				if (split.Length > 1) {
+					name = split.First();
+					break;
+				}
 			}
-			else {
-				var id = 0;
-				if(result != null)
-					id = GetId(result, fieldName);
-				var instance = session.Get(entityType, id) ?? Activator.CreateInstance(entityType);
-				var props = instance.GetType().GetProperties();
-				if (props.Count() != 0) {
-					foreach (var propertyInfo in props) {
-						var propertyName = propertyInfo.Name;
-						var propertyValue = request.Form.Get(entityType.Name.ToLower() + "." + propertyName);
-						var propertyValue2 = request.Form.Get(entityType.Name.ToLower() + "proxy." + propertyName);
-						if (propertyValue != null) {
-							SetValue(instance, propertyName, propertyValue, propertyInfo,session);
-						}
-						else if(propertyValue2 != null)
-						{
-							SetValue(instance, propertyName, propertyValue2, propertyInfo,session);
-						}
-						var objectId = request.Form.Get(entityType.Name.ToLower() + "." + propertyName + ".Id");
-						var objectId2 = request.Form.Get(entityType.Name.ToLower() + "proxy." + propertyName + ".Id");
-						if (!string.IsNullOrEmpty(objectId))
-						{
-							SetValue(instance, propertyName, objectId, propertyInfo, session);
-						}
-						else if(objectId2 != null)
-						{
-							SetValue(instance, propertyName, objectId2, propertyInfo, session);
-						}
-					}
+			if(name == null)
+				throw new Exception("Не удалось выяснить имя модели");
+
+			var values = SliceValues(new NameValueCollection(request.Form), name);
+			var ret = MapModel(values, type);
+			return ret;
+		}
+
+		/// <summary>
+		/// Рекурсивно Натягивает данные из списка на модель. Каждый элемент в списке считается частью модели.
+		/// Если в списке будут поля, которых нет в модели или во вложенных в нее объектах, то произойдет ошибка.
+		/// </summary>
+		/// <param name="values">Коллекция свойств для модели</param>
+		/// <param name="entityType">Тип модели</param>
+		/// <returns></returns>
+		public object MapModel(NameValueCollection values, Type entityType)
+		{
+			var instance = values["id"] == null || int.Parse(values["id"]) == 0 ? Activator.CreateInstance(entityType) : Session.Get(entityType, int.Parse(values["id"]));
+			while(values.HasKeys()) {
+				var key = values.Keys.First() as string;
+				object newValue;
+				//Получаем имя поля из параметров
+				var propName = GetPropertyNameFromKey(key);
+				//Получаем поле
+				var property = instance.GetType().GetProperty(propName);
+				
+				if (property.PropertyType.IsSubclassOf(typeof(BaseModel))) {
+					//Если это модель то мапим модель
+					var subvalues = SliceValues(values, property.Name);
+					newValue = MapModel(subvalues, property.PropertyType);
+					property.SetValue(instance, newValue, new object[]{});
+				}
+				else if (property.PropertyType.IsGenericType && property.PropertyType.GetInterfaces().Contains(typeof(IEnumerable))){
+					//Если поле это коллекция, то получаем набор параметров для каждого элемента и закидываем их в список
+					//Получаем тип элемента коллекции
+					var subType = property.PropertyType.GetGenericArguments().FirstOrDefault();
+					//Получаем поле объекта
+					var collection = (IList)property.GetValue(instance, new object[] { });
+					//Получаем словарь с коллекциями значений для элементов списка
+					var subCollections = SliceMultipleValues(values, property.Name);
+
+					//Есть 2 варианта использования байндера: изменение коллекции или добавления элемента
+					if (subCollections.ContainsKey("-1"))
+						AppendToCollection(collection, subType,subCollections["-1"]);
+					else
+						ChangeCollection(collection,subType, subCollections);
+				}
+				else {
+					 //Если это простое поле, то просто присваиваем его специальной функцией
+					 //Которая хорошо конвертирует строки в значения полей модели
+					 newValue = values[key];
+					 values.Remove(key);
+					 SetValue(instance, property, newValue);
+				}
+			}
+			return instance;
+		}
+		/// <summary>
+		/// Изменяет списочное поле-коллекцию у модели, заполняет ее новыми значениями.
+		/// Остаются только те значения, которые были переданы.
+		/// </summary>
+		/// <param name="collection">Исходная коллекция</param>
+		/// <param name="type">Тип элементов коллекции</param>
+		/// <param name="subCollections">Наборы значений для элементов коллекций</param>
+		private void ChangeCollection(IList collection, Type type, Dictionary<string, NameValueCollection> subCollections)
+		{
+			//Очищаем
+			collection.Clear();
+			foreach (var pair in subCollections)
+			{
+				//Получаем индекс элемента
+				var index = pair.Key;
+				//Получаем коллекцию коллекций
+				var subcollection = pair.Value;
+				//Натягиваем параметры
+				var newValue = MapModel(subcollection, type);
+				collection.Add(newValue);
+			}
+		}
+
+		/// <summary>
+		/// Добавление элемента в коллекцию
+		/// </summary>
+		/// <param name="collection">Исходная коллекция</param>
+		/// <param name="type">Тип элементов коллекции</param>
+		/// <param name="values">Набор значений для нового элемента коллекции</param>
+		private void AppendToCollection(IList collection, Type type, NameValueCollection values)
+		{
+			var newValue = MapModel(values, type);
+			collection.Add(newValue);
+		}
+
+		/// <summary>
+		/// Получает название поля модели из ключа формы.
+		/// Очищает имя ключа от вложенных значений и другой разметки.
+		/// </summary>
+		/// <param name="str">Ключ формы, который хранится в аттрибутте input.name</param>
+		private string GetPropertyNameFromKey(string str)
+		{
+			var key = str.Split('.').First();
+			if (key.IndexOf('[') != -1)
+				key = key.Substring(0,key.IndexOf('['));
+			return key;
+		}
+
+		/// <summary>
+		/// Получает параметры поля модели из списка. Предполагается что поле модели - это список вложенных моделей.
+		/// Параметры, относящиеся к полю, удаляются из изначального списка. 
+		/// </summary>
+		/// <param name="values">Изначальный список</param>
+		/// <param name="name">Имя поля модели</param>
+		/// <returns>
+		/// Возвращает словарь, элементами, которого являются списки параметров для вложенных моделей.
+		/// Индексом, является порядковый номер модели в списке.
+		/// Элемент у которого в изначальном списке не указан индекс (то есть мы хотели его добавить в конец) получает индекс -1.
+		/// </returns>
+		private Dictionary<string, NameValueCollection> SliceMultipleValues(NameValueCollection values, string name)
+		{
+			var dictionary = new Dictionary<string,NameValueCollection>();
+			while (values.AllKeys.Any(i => i.Contains(name))) {
+				var key = values.AllKeys.First(i => i.Contains(name));
+				var index = key[name.Length + 1];
+				int indexVal;
+				var isRealIndex = int.TryParse(index.ToString(), out indexVal);
+				var subname = isRealIndex ? name + "[" + index + "]" : name + "[]";
+				var subcollection = SliceValues(values,subname );
+				indexVal = isRealIndex ? indexVal : -1;
+				dictionary.Add(indexVal.ToString(), subcollection);
+			}
+			return dictionary;
+		}
+
+		/// <summary>
+		/// Получает параметры поля модели из списка. Предполагается что поле модели - это вложенная модель.
+		/// Параметры, относящиеся к полю, удаляются из изначального списка. 
+		/// </summary>
+		/// <param name="values">Изначальный список</param>
+		/// <param name="name">Имя поля модели</param>
+		private NameValueCollection SliceValues(NameValueCollection values, string name)
+		{
+			name = name.ToLower();
+			var collection = new NameValueCollection();
+			foreach (var key in values.AllKeys)
+				if (key.ToLower().Contains(name)) {
+					collection.Add(key.Substring(name.Length + 1), values[key]);
+					values.Remove(key);
 				}
 
-				bindingContext.ModelState.AddModelError("null",
-					new HttpException(404, string.Format("Could not find {0} ({1}: {2}", entityType, fieldName, id)));
-				return instance;
-			}
+			return collection;
 		}
 
-		private int GetId(ValueProviderResult result, string fieldName)
+		/// <summary>
+		/// Конверирует значение в тип поля модели и присваивает его.
+		/// Используется для простых типов данных и стандартных структур.
+		/// </summary>
+		/// <param name="inputObject">Объект модели</param>
+		/// <param name="propertyInfo">Свойство, которое необходимо назначить</param>
+		/// <param name="propertyVal">Значение свойства (как правило строка)</param>
+		public void SetValue(object inputObject, PropertyInfo propertyInfo, object propertyVal)
 		{
-			return GetId(result.AttemptedValue, fieldName);
-		}
-
-		private static int GetId(string attemptedValue, string fieldName)
-		{
-			try {
-				return int.Parse(attemptedValue);
-			}
-			catch (FormatException) {
-				throw new ArgumentException(string.Format("Invalid value for field {0}: {1}", fieldName, attemptedValue));
-			}
-		}
-
-		private bool FieldNotFoundOrValueIsEmpty(ValueProviderResult result)
-		{
-			return result == null || string.IsNullOrEmpty(result.AttemptedValue) ||
-			       result.AttemptedValue == "System.Web.Mvc.UrlParameter";
-		}
-
-		public void SetValue(object inputObject, string propertyName, object propertyVal, PropertyInfo info, ISession session)
-		{
-			//find out the type
-			var type = inputObject.GetType();
-
-			//get the property information based on the type
-			var propertyInfo = type.GetProperty(propertyName);
 
 			//Convert.ChangeType does not handle conversion to nullable types
 			//if the property type is nullable, we need to get the underlying type of the property
@@ -184,40 +248,38 @@ namespace Inforoom2.Components
 				? Nullable.GetUnderlyingType(propertyInfo.PropertyType)
 				: propertyInfo.PropertyType;
 
+			//Для булевых типов, строчное "True" конвертируется в True
 			if (targetType == typeof(Boolean))
-				propertyVal = propertyVal.ToString().Contains("true");
+				propertyVal = propertyVal.ToString().ToLower().Contains("true");
 			else if (targetType == typeof(DateTime))
 			{
+				//Пустые даты приводятся в минимальному значению
 				DateTime date;
-				if(!DateTime.TryParse(propertyVal.ToString(),out date))
+				if (!DateTime.TryParse(propertyVal.ToString(), out date))
 					date = DateTime.MinValue;
 				propertyVal = date;
 			}
-			else if (targetType.BaseType == typeof(Enum)) {
+			else if (targetType.BaseType == typeof(Enum))
+			{
+				//Значения перечислений задаются через их строчное обозначение
 				propertyVal = Enum.Parse(targetType, propertyVal.ToString());
 			}
-
-
-			//Returns an System.Object with the specified System.Type and whose value is
-			//equivalent to the specified object.
 			try {
+				//
 				propertyVal = Convert.ChangeType(propertyVal, targetType);
+				propertyInfo.SetValue(inputObject, propertyVal, null);
 			}
 			catch (Exception e) {
-				if (!targetType.IsInterface && targetType.IsSubclassOf(typeof(BaseModel)))
-				{
-					var id = 0;
-					int.TryParse((string) propertyVal, out id);
-					var instance = session.Get(targetType, id) ?? Activator.CreateInstance(propertyInfo.PropertyType);
-					propertyInfo.SetValue(inputObject, instance, null);
-				}
-				return;
+				
 			}
-
-			//Set the value of the property
-			propertyInfo.SetValue(inputObject, propertyVal, null);
+			
 		}
 
+		/// <summary>
+		/// Проверка, является ли тип Nullable типом
+		/// </summary>
+		/// <param name="type">Тип</param>
+		/// <returns>True, если это Nullable тип</returns>
 		private static bool IsNullableType(Type type)
 		{
 			return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);

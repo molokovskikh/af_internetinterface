@@ -175,7 +175,7 @@ namespace InternetInterface.Controllers
 			var connectErrors = Validation.ValidationConnectInfo(info, true);
 			if (IsValid(person) && !string.IsNullOrEmpty(info.Port) && !DoNotCreateOrder) {
 				var errors = ValidateDeep(order);
-				if(errors.ErrorsCount > 0) {
+				if (errors.ErrorsCount > 0) {
 					Error(errors.ErrorMessages.First());
 					//Ошибки выводятся так, так как Order не поддерживает вывод ошибок в шаблон
 					RedirectToReferrer();
@@ -242,7 +242,9 @@ namespace InternetInterface.Controllers
 			SendRegisterParam(client);
 			PropertyBag["ChHouse"] = new House();
 			PropertyBag["Client"] = client;
-			PropertyBag["dealersList"] = DbSession.Query<Partner>().ToList().OrderBy(p => p.Name).ToList();
+			PropertyBag["dealersList"] = DbSession.Query<Partner>().ToList()
+				.Where(p => p.IsDiller()).ToList()
+				.OrderBy(p => p.Name).ToList();
 		}
 
 		[AccessibleThrough(Verb.Get)]
@@ -285,12 +287,7 @@ namespace InternetInterface.Controllers
 				PropertyBag["reqSourceDesc"] = "";
 			if (newPhisClient.House != null) {
 				var houses =
-					DbSession.Query<House>().Where(
-						h =>
-							h.Street == newPhisClient.Street &&
-								h.Number == newPhisClient.House &&
-								h.Case == newPhisClient.CaseHouse)
-						.ToList();
+					DbSession.Query<House>().Where(h => h.Street == newPhisClient.Street && h.Number == newPhisClient.House && h.Case == newPhisClient.CaseHouse).ToList();
 				if (houses.Count != 0)
 					PropertyBag["ChHouse"] = houses.First();
 				else {
@@ -415,9 +412,7 @@ namespace InternetInterface.Controllers
 
 			BindObjectInstance(physicalClient, "client");
 			var exist = DbSession.Query<PhysicalClient>()
-				.FirstOrDefault(c => c.Surname == physicalClient.Surname
-					&& c.Name == physicalClient.Name
-					&& c.Patronymic == physicalClient.Patronymic);
+				.FirstOrDefault(c => c.Surname == physicalClient.Surname && c.Name == physicalClient.Name && c.Patronymic == physicalClient.Patronymic);
 			if (exist != null) {
 				PropertyBag["client"] = exist.Client;
 			}

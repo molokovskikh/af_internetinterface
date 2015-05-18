@@ -170,11 +170,11 @@ function ControlPanel() {
 	this.showMessages = function() {
 		var msg = this.getCookie("SuccessMessage", true);
 		if (msg) {
-			alert(msg);
+			$('.breadcrumb').prepend('<div class="row col-md-12 alert alert-success">'+ msg +'</div>');
 		} else {
 			msg = this.getCookie("ErrorMessage", true);
 			if(msg)
-				alert(msg);
+				$('.breadcrumb').prepend('<div class="row col-md-12 alert alert-danger">' + msg + '</div>');
 		}
 	}
 

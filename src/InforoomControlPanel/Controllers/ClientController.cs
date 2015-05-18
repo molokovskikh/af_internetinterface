@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Components;
+using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
-using NHibernate.Util;
 using Client = Inforoom2.Models.Client;
 using House = Inforoom2.Models.House;
 using ServiceRequest = Inforoom2.Models.ServiceRequest;
@@ -15,21 +15,28 @@ namespace InforoomControlPanel.Controllers
 {
 	public class ClientController : AdminController
 	{
+		/// <summary>
+		///		Обработка события OnActionExecuting (для каждого Action текущего контроллера) 
+		/// </summary>
+		/// <param name="filterContext"></param>
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
 			base.OnActionExecuting(filterContext);
 			ViewBag.BreadCrumb = "Клиенты";
 		}
-
-		public ActionResult ClientList(int page = 1)
+		 
+		public ActionResult ClientList()
 		{
-			var perpage = 100;
-			var clients = DbSession.Query<Client>().Where(i => i.PhysicalClient != null).Skip((page - 1) * perpage).Take(perpage).ToList();
+			var pager = new ModelFilter<Client>(this);
+			var clients = pager.GetCriteria(i => i.PhysicalClient != null).List<Client>();
+
+			ViewBag.Pager = pager;
 			ViewBag.Clients = clients;
+
 			//Пагинация
 			ViewBag.Models = clients;
-			ViewBag.Page = page;
-			ViewBag.ModelsPerPage = perpage;
+			ViewBag.Page = pager;
+			ViewBag.ModelsPerPage = pager.ItemsPerPage;
 			ViewBag.ModelsCount = DbSession.QueryOver<Client>().Where(i => i.PhysicalClient != null).RowCount();
 			return View("ClientList");
 		}
@@ -37,13 +44,13 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult ClientInfo(int clientId)
 		{
 			// Find Client
-			var Client = DbSession.Query<Client>().FirstOrDefault(i => i.PhysicalClient != null && i.Id == clientId);
-			ViewBag.Client = Client;
-			if (Client.Status.Type == StatusType.BlockedAndConnected) {
+			var client = DbSession.Query<Client>().FirstOrDefault(i => i.PhysicalClient != null && i.Id == clientId);
+			ViewBag.Client = client;
+			if (client.Status.Type == StatusType.BlockedAndConnected) {
 				// Find Switches
 				var networkNodeList = DbSession.QueryOver<SwitchAddress>().Where(s =>
-					s.House == Client.PhysicalClient.Address.House && s.Entrance == Client.PhysicalClient.Address.Entrance ||
-					s.House == Client.PhysicalClient.Address.House && s.Entrance == null).List();
+					s.House == client.PhysicalClient.Address.House && s.Entrance.ToString() == client.PhysicalClient.Address.Entrance ||
+					s.House == client.PhysicalClient.Address.House && s.Entrance == null).List();
 
 				if (networkNodeList.Count > 0) {
 					ViewBag.NetworkNodeList = networkNodeList; //.NetworkNode.Switches.ToList(); 
@@ -97,8 +104,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.IsStreetValidated = false;
 			ViewBag.IsHouseValidated = false;
 			ViewBag.ClientRequest = clientRequest;
-			var dealersList = DbSession.Query<Dealer>().Select(d => d.Employee).ToList();
-			ViewBag.Employees = dealersList.OrderBy(e => e.Name).ToList();
+			ViewBag.Employees = DbSession.Query<Employee>().ToList().OrderBy(e => e.Name).ToList();
 			return View();
 		}
 
@@ -108,10 +114,9 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.IsCityValidated = false;
 			ViewBag.IsStreetValidated = false;
 			ViewBag.IsHouseValidated = false;
-			var curDealer = DbSession.Query<Dealer>().Where(d => d.Employee == GetCurrentEmployee()).ToList();
 			var clientRequest = new ClientRequest {
 				IsContractAccepted = true,
-				RequestAuthor = (curDealer.Count > 0) ? curDealer.FirstOrDefault().Employee : null
+				RequestAuthor = GetCurrentEmployee()
 			};
 
 			if (!string.IsNullOrEmpty(city) && !string.IsNullOrEmpty(street) && !string.IsNullOrEmpty(house)) {
@@ -133,8 +138,7 @@ namespace InforoomControlPanel.Controllers
 				ViewBag.IsRedirected = true;
 			}
 			ViewBag.ClientRequest = clientRequest;
-			var dealersList = DbSession.Query<Dealer>().Select(d => d.Employee).ToList();
-			ViewBag.Employees = dealersList.OrderBy(e => e.Name).ToList();
+			ViewBag.Employees = DbSession.Query<Employee>().ToList().OrderBy(e => e.Name).ToList();
 			InitRequestPlans();
 		}
 
@@ -173,9 +177,9 @@ namespace InforoomControlPanel.Controllers
 			                                                     && a.House.Equals(house)
 			                                                     && a.House.Street.Equals(street)
 			                                                     && a.House.Street.Region.Equals(region)
-			                                                     && a.Entrance == clientRequest.Entrance
+			                                                     && a.Entrance == clientRequest.Entrance.ToString()
 			                                                     && a.Floor == clientRequest.Floor
-			                                                     && a.Apartment == clientRequest.Apartment);
+			                                                     && a.Apartment == clientRequest.Apartment.ToString());
 
 			//if (address == null) {
 			//	address = new Address();
