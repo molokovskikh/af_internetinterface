@@ -9,12 +9,22 @@ using NHibernate.Linq;
 
 namespace InforoomControlPanel.Controllers
 {
-	public class SwitchController : AdminController
+	public class SwitchController : ControlPanelController
 	{
+		public SwitchController()
+		{
+			ViewBag.BreadCrumb = "Коммутаторы";
+		}
+
+		public  ActionResult Index()
+		{
+			return SwitchList();
+		}
+
 		public ActionResult SwitchList()
 		{
 			ViewBag.Switches = DbSession.Query<Switch>().ToList();
-			return View();
+			return View("SwitchList");
 		}
 
 		public ActionResult EditSwitch(int id)

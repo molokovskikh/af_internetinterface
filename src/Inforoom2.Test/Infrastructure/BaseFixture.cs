@@ -4,8 +4,11 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.Remoting.Channels;
 using Billing;
+using Common.Tools;
 using Inforoom2.Components;
+using Inforoom2.Controllers;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
@@ -90,14 +93,29 @@ namespace Inforoom2.Test.Infrastructure
 			return body.Contains(text);
 		}
 
+		/// <summary>
+		/// Назначает куки. Если значение будет null, то будет произведено удаление
+		/// </summary>
+		/// <param name="name">Имя куки</param>
+		/// <param name="value">Значение куки</param>
 		public void SetCookie(string name, string value)
 		{
-			var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(value);
-			var text = System.Convert.ToBase64String(plainTextBytes);
-			var cookie = new Cookie(name, text);
+			var text = "";
+			var time = SystemTime.Now().AddMonths(1);
+			//Если значение null, то убираем куку, не назначая ей значения и ставля текущую дату
+			if (value != null)
+				text = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(value));
+			else
+				time = SystemTime.Now();
+			var cookie = new Cookie(name, text,null,time);
 			browser.Manage().Cookies.AddCookie(cookie);
 		}
 
+		/// <summary>
+		/// Получет куки по имени
+		/// </summary>
+		/// <param name="cookieName">Имя куки</param>
+		/// <returns>Значение куки или пустая строка</returns>
 		protected string GetCookie(string cookieName)
 		{
 			var cookie = browser.Manage().Cookies.GetCookieNamed(cookieName);
@@ -194,15 +212,16 @@ namespace Inforoom2.Test.Infrastructure
 
 		private void GenerateTvChannels()
 		{
-			var channels = "НТВ,РТР,СТС,МТВ,ТНТ,Культура,Спорт".Split(',');
-			var ports = "1234,1237,31,189,55,123123,1256".Split(',');
-			var urls = "224.0.90.160,112.22.11.32,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.18".Split(',');
-			var protocols = "udp,rtp,udp,rtp,udp,rtp,udp".Split(',');
+			var channels = "НТВ,РТР,СТС,МТВ,ТНТ,Культура,Спорт,ППТ".Split(',');
+			var ports = "1234,1237,31,189,55,123123,1256,1257".Split(',');
+			var urls = "224.0.90.160,112.22.11.32,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.10".Split(',');
+			var protocols = "udp,rtp,udp,rtp,udp,rtp,udp,rtp".Split(',');
 			for(var i = 0; i < channels.Count(); i++) {
 				var newChannel = new TvChannel();
 				newChannel.Name = channels[i];
 				newChannel.Port = int.Parse(ports[i]);
 				newChannel.Url = urls[i];
+				newChannel.Enabled = true;
 				newChannel.TvProtocol = DbSession.Query<TvProtocol>().First(j=>j.Name == protocols[i]);
 				DbSession.Save(newChannel);
 			}
@@ -213,8 +232,10 @@ namespace Inforoom2.Test.Infrastructure
 			var TvChannels = DbSession.Query<TvChannel>().ToList();
 			var group = new TvChannelGroup();
 			group.Name = "Все";
-			foreach(var channel in TvChannels)
-				group.TvChannels.Add(channel);
+			foreach (var channel in TvChannels) {
+				if(channel.Name != "ППТ")
+					group.TvChannels.Add(channel);
+			}
 			DbSession.Save(group);
 
 
@@ -479,6 +500,12 @@ namespace Inforoom2.Test.Infrastructure
 			var clientWithRegionalPlan = CloneClient(normalClient, ClientCreateHelper.ClientMark.clientWithRegionalPlan);
 			clientWithRegionalPlan.PhysicalClient.Plan = DbSession.Query<Plan>().First(p => p.Name == "50 на 50");
 			DbSession.Save(clientWithRegionalPlan);
+
+			//Клиент с домом, регион которого отличается от региона улицы
+			var clientWithDifferentRegionHouse = CloneClient(normalClient, ClientCreateHelper.ClientMark.clientWithDifferentRegionHouse);
+			clientWithDifferentRegionHouse.PhysicalClient.Address.House.Region = DbSession.Query<Region>().First(p => p.Name == "Белгород");
+			clientWithDifferentRegionHouse.PhysicalClient.Address.House.Street.Region = DbSession.Query<Region>().First(p => p.Name == "Борисоглебск");
+			DbSession.Save(clientWithDifferentRegionHouse);
 
 			//Новый подключенный клиент,с недавней датой регистрации
 			var recentClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.recentClient);

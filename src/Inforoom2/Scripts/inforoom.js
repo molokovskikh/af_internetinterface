@@ -8,13 +8,16 @@ function Inforoom() {
 	this.windows = [];
 
 	/**
-     * @var Параметры клиента. Пополняются параметрами с сервера.
+     * @var Параметры клиентского приложения. Пополняются параметрами с сервера.
      */
 	this.params = {};
+	/**
+	 * @var Шаблоны клиентского приложения. Присылает сервер.
+	 */
 	this.templates = {};
 
 	/**
-     * Контсруктор
+     * Конструктор
      */
 	this.initialize = function() {
 		window.cli = this;
@@ -44,6 +47,9 @@ function Inforoom() {
 		this.showMessages();
 	}
 
+	/**
+	 * Приводит инпуты на странице к форме, которую задумал дизайнер
+	 */
 	this.initInputs = function() {
 		$(".error .msg").on("mouseover", function () {
 			$(this).fadeOut(800);
@@ -56,16 +62,22 @@ function Inforoom() {
 		});
 		$('input').attr('autocomplete', 'off');
 	}
+
+	/**
+     * Создает окно, в котором отображается создание заявки на обратный звонок
+     * @returns {Window} Объект окна
+     */
 	this.callMeBackWindow = function() {
 		var wnd = this.createWindow("Обратный звонок", this.getTemplate("CallMeBackWindow"));
 		wnd.block();
+		return wnd;
 	}
 	/**
      * Создает окно
      * @returns {Window} Объект окна
      */
 	this.createWindow = function(name, content) {
-		var window = new Window(name, content);
+		var window = new InforoomWindow(name, content);
 		this.windows.push(window);
 		window.render(document.body);
 		return window;
@@ -91,14 +103,13 @@ function Inforoom() {
 		return $(selector).toArray();
 	}
 
-	this.post = function(query, data, callback) {
-
-	}
-
-	this.get = function(query, data, callback) {
-
-	}
-
+	/**
+	 * Создает куки. Кодирует его в Base64 (это баг IE)
+	 *
+	 * @param {String} name Имя куки
+	 * @param {String} value Значение куки
+	 * @param {Object} options Объект, поля которого являются дополнительными параметрами (Например expires, domain)
+	 */
 	this.setCookie = function(name, value, options) {
 		if (value == null) {
 			this.setCookie(name, "", { expires: -1 });
@@ -131,6 +142,13 @@ function Inforoom() {
 		document.cookie = updatedCookie;
 	}
 
+	/**
+     * Получает куку
+     * 
+     * @param {String} name Имя куки
+     * @param {Boolean} eraseFlag Удалять ли куку, после получения
+     * @returns {String} Значение куки или undefined
+     */
 	this.getCookie = function(name, eraseFlag) {
 		var matches = document.cookie.match(new RegExp(
 			"(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
@@ -143,13 +161,35 @@ function Inforoom() {
 		}
 		return ret;
 	}
+
+	/**
+     * Получает HTML шаблон, переданный сервером.
+     * 
+     * @param {String} name Имя шаблона
+     * @returns {String} Код шаблона
+     */
 	this.getTemplate = function(name) {
 		return this.templates[name] ? this.templates[name].toHTML() : null;
 	}
+
+	/**
+     * Получает параметр клиентского приложенияю. Не переносятся на следующую страницу.
+	 * Если необходимо, чтобы параметр жил между страницами, необходимо использовать куки.
+	 *
+     * @param {String} name Имя параметра
+     * @returns {String} Значение параметра
+     */
 	this.getParam = function(name) {
 		return this.params[name];
 	}
 
+	/**
+     * Назначает параметр клиентского приложенияю. Не переносятся на следующую страницу.
+	 * Если необходимо, чтобы параметр жил между страницами, необходимо использовать куки.
+	 *
+     * @param {String} name Имя параметра
+     * @param {String} value Значение
+     */
 	this.setParam = function(name, value) {
 		this.params[name] = value;
 	}
@@ -178,6 +218,9 @@ function Inforoom() {
 		return window;
 	}
 
+	/**
+	* Отображает сообщение переданные сервером клиентскому приложению
+	*/
 	this.showMessages = function() {
 		var msg = this.getCookie("SuccessMessage", true);
 		if (msg)
@@ -188,12 +231,20 @@ function Inforoom() {
 			this.showError(msg2);
 	}
 
+	/**
+	* Отображает сообщение об ошибке
+	* @param {String} msg Текст сообщения
+	*/
 	this.showError = function(msg) {
 		var div = this.showSuccess(msg);
 		$(div).addClass("error");
 		return div;
 	}
 
+	/**
+	* Отображает сообщение об успешном выполнении операции
+	* @param {String} msg Текст сообщения
+	*/
 	this.showSuccess = function (msg) {
 		var div = this.getTemplate("notification");
 		$(div).find(".message").append(msg);
@@ -204,6 +255,9 @@ function Inforoom() {
 		return div;
 	}
 
+	/**
+	* Проверяет состояние пользователя и отображает страницу выбора региона, если это необходимо
+	*/
 	this.checkCity = function () {
 		//показать выбор городов
 		$('.city .name, .city .arrow').on("click", function(e) {
@@ -225,6 +279,9 @@ function Inforoom() {
 			this.showCityWindow();
 	};
 
+	/**
+	* Отображает страницу выбора региона
+	*/
 	this.showCityWindow = function() {
 		var wnd = this.createWindow("Выберите город", this.getTemplate("CityWindow"));
 		wnd.block();
@@ -260,6 +317,9 @@ function Inforoom() {
 		});
 	}
 
+	/**
+	* Получение текущей даты (присылается с сервера)
+	*/
 	this.getCurrentDate = function() {
 		var date = new Date();
 		var timestamp = this.getParam("Timestamp");
@@ -267,114 +327,8 @@ function Inforoom() {
 		return date;
 	};
 
+	//Запускаем конструктор
 	this.initialize();
 }
 
-Date.prototype.getDaysInMonth = function() {
-	return new Date(this.getYear(), this.getMonth()+1, 0).getDate();
-}
-
-var Base64 = {
-	_keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-	//метод для кодировки в base64 на javascript 
-	encode: function (input) {
-		var output = "";
-		var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-		var i = 0
-		input = Base64._utf8_encode(input);
-		while (i < input.length) {
-			chr1 = input.charCodeAt(i++);
-			chr2 = input.charCodeAt(i++);
-			chr3 = input.charCodeAt(i++);
-			enc1 = chr1 >> 2;
-			enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-			enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-			enc4 = chr3 & 63;
-			if (isNaN(chr2)) {
-				enc3 = enc4 = 64;
-			} else if (isNaN(chr3)) {
-				enc4 = 64;
-			}
-			output = output +
-			 this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
-			 this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
-		}
-		return output;
-	},
-
-	//метод для раскодировки из base64 
-	decode: function (input) {
-		var output = "";
-		var chr1, chr2, chr3;
-		var enc1, enc2, enc3, enc4;
-		var i = 0;
-		input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-		while (i < input.length) {
-			enc1 = this._keyStr.indexOf(input.charAt(i++));
-			enc2 = this._keyStr.indexOf(input.charAt(i++));
-			enc3 = this._keyStr.indexOf(input.charAt(i++));
-			enc4 = this._keyStr.indexOf(input.charAt(i++));
-			chr1 = (enc1 << 2) | (enc2 >> 4);
-			chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-			chr3 = ((enc3 & 3) << 6) | enc4;
-			output = output + String.fromCharCode(chr1);
-			if (enc3 != 64) {
-				output = output + String.fromCharCode(chr2);
-			}
-			if (enc4 != 64) {
-				output = output + String.fromCharCode(chr3);
-			}
-		}
-		output = Base64._utf8_decode(output);
-		return output;
-	},
-	// метод для кодировки в utf8 
-	_utf8_encode: function (string) {
-		string = string.replace(/\r\n/g, "\n");
-		var utftext = "";
-		for (var n = 0; n < string.length; n++) {
-			var c = string.charCodeAt(n);
-			if (c < 128) {
-				utftext += String.fromCharCode(c);
-			} else if ((c > 127) && (c < 2048)) {
-				utftext += String.fromCharCode((c >> 6) | 192);
-				utftext += String.fromCharCode((c & 63) | 128);
-			} else {
-				utftext += String.fromCharCode((c >> 12) | 224);
-				utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-				utftext += String.fromCharCode((c & 63) | 128);
-			}
-		}
-		return utftext;
-
-	},
-
-	//метод для раскодировки из urf8 
-	_utf8_decode: function (utftext) {
-		var string = "";
-		var i = 0;
-		var c = c1 = c2 = 0;
-		while (i < utftext.length) {
-			c = utftext.charCodeAt(i);
-			if (c < 128) {
-				string += String.fromCharCode(c);
-				i++;
-			} else if ((c > 191) && (c < 224)) {
-				c2 = utftext.charCodeAt(i + 1);
-				string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
-				i += 2;
-			} else {
-				c2 = utftext.charCodeAt(i + 1);
-				c3 = utftext.charCodeAt(i + 2);
-				string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
-				i += 3;
-			}
-		}
-		return string;
-	}
-}
-
-
-window.onload = function() {
-	cli = new Inforoom();
-}
+cli = new Inforoom();

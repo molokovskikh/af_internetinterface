@@ -16,7 +16,7 @@
 <table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 	<thead>
 		<tr role="row">
-			<th class="sorting" tabindex="0" aria-controls="table-2" >Регион</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" >Регион (Регион улицы)</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Улица</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Номер</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Проверенно яндексом</th>
@@ -26,7 +26,7 @@
 			@foreach (var item in houses)
 			{
 			<tr>
-				<td>@item.Street.Region.Name</td>
+				<td>@(item.Region != null ? item.Region.Name + " ("+item.Street.Region.Name+")" : item.Street.Region.Name)</td>
 				<td>@item.Street.Name</td>
 				<td>@item.Number</td>
 				<td>@Html.DisplayFor(i=>item.Confirmed)</td>
