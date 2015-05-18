@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework;
-using Common.MySql;
 using Common.Web.Ui.ActiveRecordExtentions;
 using NHibernate;
 using NHibernate.Linq;
@@ -28,6 +24,9 @@ namespace InternetInterface.Models
 
 		[Property("Region")]
 		public virtual string Name { get; set; }
+
+		[BelongsTo(Column = "_City", Cascade = CascadeEnum.SaveUpdate)]
+		public virtual City City { get; set; }
 
 		[Property]
 		public virtual bool IsExternalClientIdMandatory { get; set; }
