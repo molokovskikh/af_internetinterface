@@ -97,8 +97,10 @@ namespace Inforoom2.Components
 		/// <param name="obj">Модель</param>
 		/// <param name="instableProperty">Параметр с вероятной ошибкой (для отображения ошибки)</param>
 		/// <param name="customValidatorAttribute">Атрибут (от CustomValidator), на основе которого проводится валидация</param>
+		/// <param name="validateJustModel">валидация только модели модели</param>
 		/// <returns>Перечень ошибок</returns>
-		public ValidationErrors ForcedValidationByAttribute<T>(object obj, Expression<Func<T, object>> instableProperty, object customValidatorAttribute)
+		public ValidationErrors ForcedValidationByAttribute<T>(object obj, Expression<Func<T, object>> instableProperty,
+			object customValidatorAttribute, bool validateJustModel = true)
 		{
 			var summary = new List<InvalidValue>();
 
@@ -106,7 +108,7 @@ namespace Inforoom2.Components
 			var propertyInfo = member.Member as PropertyInfo;
 			if (propertyInfo != null) {
 				var attribute = customValidatorAttribute as CustomValidator;
-				var errors = attribute.ModelForcedValidation((BaseModel)obj, propertyInfo);
+				var errors = attribute.ModelForcedValidation((BaseModel)obj, propertyInfo, validateJustModel);
 				summary.AddRange(errors);
 			}
 			return new ValidationErrors(summary.ToList());
@@ -118,13 +120,15 @@ namespace Inforoom2.Components
 		/// <param name="obj">Модель</param>
 		/// <param name="instableProperty">Параметр с вероятной ошибкой (для отображения ошибки)</param>
 		/// <param name="customValidatorAttribute">Атрибут (от CustomValidator), на основе которого проводится валидация</param>
+		/// <param name="validateJustModel">валидация только модели модели</param>
 		/// <returns>Перечень ошибок</returns>
-		public ValidationErrors ForcedValidationByAttribute(object obj, PropertyInfo instableProperty, object customValidatorAttribute)
+		public ValidationErrors ForcedValidationByAttribute(object obj, PropertyInfo instableProperty,
+			object customValidatorAttribute, bool validateJustModel = true)
 		{
 			var summary = new List<InvalidValue>();
 			if (instableProperty != null) {
 				var attribute = customValidatorAttribute as CustomValidator;
-				var errors = attribute.ModelForcedValidation((BaseModel)obj, instableProperty);
+				var errors = attribute.ModelForcedValidation((BaseModel)obj, instableProperty, validateJustModel);
 				summary.AddRange(errors);
 			}
 			return new ValidationErrors(summary.ToList());

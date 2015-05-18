@@ -109,7 +109,7 @@ namespace Inforoom2.Controllers
 				ViewBag.IsRedirected = true;
 			}
 
-			ViewBag.Regions = DbSession.Query<Region>().ToList();
+			ViewBag.Regions = DbSession.Query<Region>().Where(s=>s.ShownOnMainPage).OrderBy(s => s.Name).ToList();
 			ViewBag.ClientRequest = clientRequest;
 			InitRequestPlans();
 		}

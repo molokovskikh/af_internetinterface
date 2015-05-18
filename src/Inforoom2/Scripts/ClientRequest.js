@@ -112,8 +112,14 @@ var updatePlanList = function() {
 	var gatCityObject = document.getElementById("clientRequest_City");
 	var selectedCityText = gatCityObject.options[gatCityObject.selectedIndex].text;
 	userCity = selectedCityText.toLowerCase();
-
+	// закрываем сообщение  
+	$("#notification .hide").click();
+	if (gatCityObject.options[gatCityObject.selectedIndex].getAttribute("title") != null) {
+		//выводим новое
+	cli.showError("<span id style='font-weight: 400;font-size: 20px;'>Для данного региона существует частный сектор, тарифы которого отличаются!</span>");
+	}
 	var gatPlanObject = document.getElementById("clientRequest_Plan");
+	var firstShown = true;
 	for (var i = 0; i < gatPlanObject.options.length; i++) {
 
 		if (gatPlanObject.options[i].getAttribute("title") != null &&
@@ -126,11 +132,17 @@ var updatePlanList = function() {
 				}
 			}
 			if (showTag) {
+				if (firstShown) {
+					gatPlanObject.options[i].setAttribute("selected", "selected");
+					$("#clientRequest_Plan").val(gatPlanObject.options[i].value);
+					firstShown = false;
+				}
 				gatPlanObject.options[i].removeAttribute("style");
 			} else {
 				gatPlanObject.options[i].setAttribute("style", "display:none;");
 			}
+
 		}
-	}
+	} 
 };
 updatePlanList();

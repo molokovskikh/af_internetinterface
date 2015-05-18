@@ -63,7 +63,8 @@ namespace Inforoom2.Controllers
 				userCity = cookieCity;
 			}
 			ViewBag.Title = "Инфорум";
-			ViewBag.Cities = new[] { "Борисоглебск", "Белгород" };
+			var CityList = DbSession.Query<Region>().Where(s => s.ShownOnMainPage).Select(s=>s.Name).OrderBy(s=>s).ToArray();
+			ViewBag.Cities = CityList;
 			//todo куда это девать?
 			var newCallMeBackTicket = new CallMeBackTicket() {
 				Name = (CurrentClient == null) ? "" : CurrentClient.Name,

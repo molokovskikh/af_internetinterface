@@ -113,7 +113,7 @@ namespace Inforoom2.Models
 		[ManyToOne(Cascade = "save-update")]
 		public virtual Status Status { get; set; }
 
-		[ManyToOne(Column = "PhysicalClient", Cascade = "save-update"), ValidatorPhysicalClient]
+		[ManyToOne(Column = "PhysicalClient", Cascade = "save-update")]
 		public virtual PhysicalClient PhysicalClient { get; set; }
 
 		[ManyToOne(Column = "LawyerPerson", Cascade = "save-update")]

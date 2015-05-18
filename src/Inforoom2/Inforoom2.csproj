@@ -446,6 +446,11 @@
     <Content Include="Views\Shared\Empty.cshtml" />
     <Content Include="Views\Home\ExtraServicesPriceList.cshtml" />
     <Content Include="Views\Personal\ActiveServices.cshtml" />
+    <Content Include="..\global.config">
+      <Link>global.config</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Web.test2.config" />
     <None Include="Web.release.config">
       <SubType>Designer</SubType>

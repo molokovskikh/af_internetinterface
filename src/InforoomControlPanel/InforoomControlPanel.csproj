@@ -1904,6 +1904,7 @@
     <Content Include="Views\Admin\PermissionList.cshtml" />
     <Content Include="Views\Admin\RoleList.cshtml" />
     <Content Include="Views\Admin\EditRole.cshtml" />
+    <Content Include="Views\Client\DealerList.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
   </ItemGroup>

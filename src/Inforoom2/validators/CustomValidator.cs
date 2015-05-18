@@ -8,7 +8,7 @@ using NHibernate.Validator.Engine;
 
 namespace Inforoom2.validators
 {
-	internal abstract class CustomValidator : Attribute
+	public abstract class CustomValidator : Attribute
 	{
 		protected List<InvalidValue> Errors;
 		protected PropertyInfo PropertyInfo;
@@ -33,18 +33,26 @@ namespace Inforoom2.validators
 			Run(value);
 			return Errors.ToArray();
 		}
-		 
+
 		/// <summary>
 		/// для принудительной проверки экземпляра модели по заданному атрибуту
 		/// </summary>
 		/// <param name="obj">Модель</param>
 		/// <param name="instableProperty">Свойство, по которому выводится ошибка</param>
+		/// <param name="validateJustModel">валидация только модели модели</param>
 		/// <returns></returns>
-		public InvalidValue[] ModelForcedValidation(BaseModel obj, PropertyInfo instableProperty)
+		public InvalidValue[] ModelForcedValidation(BaseModel obj, PropertyInfo instableProperty, bool validateJustModel = true)
 		{
 			PropertyInfo = instableProperty;
 			Entity = obj;
-			Run(obj);
+			if (validateJustModel) {
+				Run(obj);
+			}
+			else {
+				var value = PropertyInfo.GetValue(Entity, null);
+				Run(value);
+			}
+
 			return Errors.ToArray();
 		}
 
