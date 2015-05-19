@@ -323,6 +323,4 @@ var Base64 = {
 	}
 }
 
-window.onload = function() {
-	cli = new ControlPanel();
-}
+cli = new ControlPanel();

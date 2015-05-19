@@ -78,56 +78,68 @@ namespace Inforoom2.Helpers
 		/// <returns>HTML выподающий список</returns>
 		public static HtmlString DropDownListExtendedFor<TModel, TProperty>(this HtmlHelper helper,
 			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
-			Func<TModel, object> htmlAttributes, object selectTagAttributes, int selectedValueId,bool firstEmptyElementAdd = false)
+			Func<TModel, object> htmlAttributes, object selectTagAttributes, string selectedValueId, bool firstEmptyElementAdd = false)
 			where TModel : BaseModel
 		{
+			// свойства тэга Select
+			var defaultSelectAttributes = new Dictionary<string, string>() {
+				{ "id", "" },
+				{ "name", "" }
+			};
+			// default <select> attributes
 			string expr = expression.ToString();
-			string propertyInfo = expr.After(").") + ".Id";
+			defaultSelectAttributes["name"] = "name=\"" + expr.After(").") + ".Id\"";
 			if (typeof(TProperty).GetInterfaces().Contains(typeof(IEnumerable)))
-				propertyInfo = expr.After(").") + "[].Id";
+				defaultSelectAttributes["name"] = "name=\"" + expr.After(").") + "[].Id" + ".Id\"";
 
-			var selectAttributes = new StringBuilder();
-
-			if (selectTagAttributes != null) {
-				selectAttributes = GetPropsValues(selectTagAttributes);
+			if (modelCollection.Count > 0) {
+				defaultSelectAttributes["id"] = "id=\"" + modelCollection.FirstOrDefault().GetType().Name + "DropDown\"";
 			}
-
 			var options = new StringBuilder();
 			if (firstEmptyElementAdd) {
 				options.AppendFormat("<option selected = selected></option>");
 			}
+			// userInserted <select> attributes 
+			if (selectTagAttributes != null) {
+				GetPropsValues(selectTagAttributes, defaultSelectAttributes);
+			}
 			foreach (var model in modelCollection) {
-				string value = string.Empty;
+				// свойства тэга Option
+				var defaultOptionAttributes = new Dictionary<string, string>() {
+					{ "value", "value=\"" + model.Id + "\"" },
+					{ "selected", "selected = selected" }
+				};
+				// default <option> attributes
 				if (optionValue != null) {
-					value = optionValue(model);
+					defaultOptionAttributes["text"] = optionValue(model);
+				}
+				// userInserted <option> attributes
+				if (htmlAttributes != null) {
+					GetPropsValues(htmlAttributes(model), defaultOptionAttributes);
 				}
 
-				var optionAttributes = new StringBuilder();
-				if (htmlAttributes != null) {
-					optionAttributes = GetPropsValues(htmlAttributes(model));
-				}
-				if (model.Id == selectedValueId) {
-					options.AppendFormat("<option value={0} selected = selected {1} >{2}</option>", model.Id,
-						optionAttributes.Replace("{", "").Replace("}", ""), value);
+				if (defaultOptionAttributes["value"] == "value=\"" + selectedValueId + "\"") {
+					options.AppendFormat("<option {0} {1} >{2}</option>", defaultOptionAttributes["value"],
+						string.Join(" ", defaultOptionAttributes.Where(s => s.Key != "value" && s.Key != "text").Select(s => s.Value).ToArray()), defaultOptionAttributes["text"]);
 				}
 				else {
-					options.AppendFormat("<option value={0} {1} >{2}</option>", model.Id,
-						optionAttributes.Replace("{", "").Replace("}", ""), value);
+					options.AppendFormat("<option {0} {1} >{2}</option>", defaultOptionAttributes["value"],
+						string.Join(" ", defaultOptionAttributes.Where(s => s.Key != "value" && s.Key != "text" && s.Key != "selected").Select(s => s.Value).ToArray()), defaultOptionAttributes["text"]);
 				}
 			}
-			string selectId = string.Empty;
-			if (modelCollection.Count > 0) {
-				selectId = modelCollection.FirstOrDefault().GetType().Name + "DropDown";
-			}
-			if (selectTagAttributes != null) {
-				var hasOwnId = selectTagAttributes.GetType().GetProperty("Id");
-				if (hasOwnId != null) {
-					selectId = hasOwnId.GetValue(selectTagAttributes, null).ToString();
-				}
-			}
-			var selectString = string.Format("<select id='{0}' name='{3}' {2}>{1}</select>", selectId.Replace("Proxy", ""),
-				options, selectAttributes, propertyInfo);
+			var selectString = string.Format("<select {0} {1} {2}>{3}</select>", defaultSelectAttributes["id"], defaultSelectAttributes["name"],
+				string.Join(" ", defaultSelectAttributes.Where(s => s.Key != "id" && s.Key != "name").Select(s => s.Value).ToArray()), options);
+
 			return new HtmlString(selectString);
+		}
+
+		public static HtmlString DropDownListExtendedFor<TModel, TProperty>(this HtmlHelper helper,
+			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
+			Func<TModel, object> htmlAttributes, object selectTagAttributes, int selectedValueId, bool firstEmptyElementAdd = false)
+			where TModel : BaseModel
+		{
+			return DropDownListExtendedFor(helper, expression, modelCollection, optionValue, htmlAttributes, selectTagAttributes,
+				selectedValueId.ToString(), firstEmptyElementAdd);
 		}
 
 		/// <summary>
@@ -253,6 +265,22 @@ namespace Inforoom2.Helpers
 				sb.AppendFormat(prop.Name + "=" + "\"" + attribute + "\"");
 			}
 			return sb;
+		}
+
+		private static void GetPropsValues(object obj, Dictionary<string, string> currentAttributes)
+		{
+			var type = obj.GetType();
+			var sb = new StringBuilder();
+			IList<PropertyInfo> props = new List<PropertyInfo>(type.GetProperties());
+			foreach (PropertyInfo prop in props) {
+				var attribute = prop.GetValue(obj, null);
+				if (currentAttributes.ContainsKey(prop.Name.ToLower())) {
+					currentAttributes[prop.Name.ToLower()] = prop.Name + "=" + "\"" + attribute + "\"";
+				}
+				else {
+					currentAttributes.Add(prop.Name.ToLower(), prop.Name + "=" + "\"" + attribute + "\"");
+				}
+			}
 		}
 
 		public static string After(this string value, string a)

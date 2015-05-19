@@ -28,6 +28,7 @@ namespace Inforoom2.Components
 		string UrlForColumns { get; }			 // Адрес для колонок
 		string UrlPagePrevious { get; }			 // Адрес предыдущей страницы
 		string UrlPageNext { get; }				 // Адрес следующей страницы
+		string UrlRootBase { get; }				 // Адрес корневой
 
 
 		// Наименование параметров в адресе
@@ -72,6 +73,9 @@ namespace Inforoom2.Components
 
 		[Description("Адрес основной")]
 		public string UrlBase { get; private set; }
+
+		[Description("Адрес корневой")]
+		public string UrlRootBase { get; private set; }
 
 		[Description("Адрес для колонок")]
 		public string UrlForColumns { get; private set; }
@@ -147,7 +151,8 @@ namespace Inforoom2.Components
 		/// <param name="controller">Текущий контроллер ( на основе которого будут формироваться url-адреса )</param>
 		/// <param name="itemsPerPage">Количесто записей на страницу ( по умолчанию 10 )</param>
 		/// <param name="urlBasePrefix">Префикс url, по умолчанию пустой (url начинается с контроллера), </param>
-		public ModelFilter(Controller controller, int itemsPerPage = 10, string urlBasePrefix = "") {
+		public ModelFilter(Controller controller, int itemsPerPage = 10, string urlBasePrefix = "")
+		{
 			// получение наименования контроллера, при его наличии
 			var controllerName = controller.Url.RequestContext.RouteData.Values.ContainsKey(urlController)
 				? controller.Url.RequestContext.RouteData.Values[urlController].ToString() : "";
@@ -160,6 +165,7 @@ namespace Inforoom2.Components
 			SearchParam = "";
 			SearchText = "";
 			UrlBase = "";
+			UrlRootBase = urlBasePrefix;
 			PagesCount = 0;
 			TotalItems = 0;
 			Page = 1; // min 1  

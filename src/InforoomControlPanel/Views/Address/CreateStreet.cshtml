@@ -23,7 +23,7 @@
 						<label class="col-sm-4 control-label">Регион</label>
 						<div class="col-sm-6">
 							<!-- todo исправить i.city.name -->
-							@Html.DropDownListExtendedFor(i=>Street.Region,Regions,i=>i.City != null ? i.City.Name : i.Name,null,new { @class = "form-control" },region.Id)
+							@Html.DropDownListExtendedFor(i=>Street.Region,Regions,i=>i.Name,null,new { @class = "form-control" },region.Id)
 							@ViewBag.Validation.GetError(Street, "Region")
 						</div>
 					</div><div class="form-group">
