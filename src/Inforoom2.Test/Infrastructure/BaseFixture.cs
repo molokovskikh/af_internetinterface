@@ -59,7 +59,8 @@ namespace Inforoom2.Test.Infrastructure
 
 		private Address GetUnusedAddress()
 		{
-			if (UnusedClientAddresses.Count == 0) {
+			if (UnusedClientAddresses.Count == 0)
+			{
 				return null;
 			}
 			var obj = UnusedClientAddresses.First();
@@ -119,7 +120,8 @@ namespace Inforoom2.Test.Infrastructure
 		protected string GetCookie(string cookieName)
 		{
 			var cookie = browser.Manage().Cookies.GetCookieNamed(cookieName);
-			if (cookie == null) {
+			if (cookie == null)
+			{
 				return string.Empty;
 			}
 
@@ -140,20 +142,23 @@ namespace Inforoom2.Test.Infrastructure
 			var tables = new List<string>();
 
 			//Приоритет удаления данных
-			var order = "lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels," 
-			            + "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,connectbrigads,banner,slide,regions"; 
+			var order = "lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
+						+ "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
 
 			var parts = order.Split(',');
-			foreach (var part in parts) {
+			foreach (var part in parts)
+			{
 				var tablename = strategy.TableName(part);
 				tables.Add(tablename);
 			}
 
 			////Собираем остальные таблицы при помощи моделей проекта
 			var types = Assembly.GetAssembly(typeof(BaseModel)).GetTypes().ToList();
-			foreach (var t in types) {
+			foreach (var t in types)
+			{
 				var attribute = Attribute.GetCustomAttribute(t, typeof(ClassAttribute)) as ClassAttribute;
-				if (attribute != null) {
+				if (attribute != null)
+				{
 					var name = strategy.TableName(attribute.Table);
 					tables.Add(name.ToLower());
 				}
@@ -161,15 +166,16 @@ namespace Inforoom2.Test.Infrastructure
 
 			//Удаляем из списка таблицы, которые не надо очищать
 			var exceptions = "partners,services,status,packagespeed,networkzones,accesscategories,NetworkSwitches" +
-			                 "categoriesaccessset,connectbrigads,statuscorrelation,usercategories,additionalstatus," +
-			                 "salesettings,internetsettings";
+							 "categoriesaccessset,connectbrigads,statuscorrelation,usercategories,additionalstatus," +
+							 "salesettings,internetsettings";
 			parts = exceptions.Split(',');
 			foreach (var part in parts)
 				tables.RemoveAll(i => i == strategy.TableName(part));
 
 
 			//Чистим таблицы
-			foreach (var name in tables) {
+			foreach (var name in tables)
+			{
 				var query = "delete from internet." + name;
 				DbSession.CreateSQLQuery(query).ExecuteUpdate();
 				DbSession.Flush();
@@ -203,7 +209,8 @@ namespace Inforoom2.Test.Infrastructure
 		private void GenerateTvProtocols()
 		{
 			var names = "udp,rtp".Split(',');
-			foreach (var name in names) {
+			foreach (var name in names)
+			{
 				var protocol = new TvProtocol();
 				protocol.Name = name;
 				DbSession.Save(protocol);
@@ -212,12 +219,13 @@ namespace Inforoom2.Test.Infrastructure
 		}
 
 		private void GenerateTvChannels()
-		{ 
+		{
 			var channels = "НТВ,РТР,СТС,МТВ,ТНТ,Культура,Спорт,ППТ".Split(',');
 			var ports = "1234,1237,31,189,55,123123,1256,1257".Split(',');
 			var urls = "224.0.90.160,112.22.11.32,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.18,112.32.44.10".Split(',');
 			var protocols = "udp,rtp,udp,rtp,udp,rtp,udp,rtp".Split(',');
-			for(var i = 0; i < channels.Count(); i++) { 
+			for (var i = 0; i < channels.Count(); i++)
+			{
 				var newChannel = new TvChannel();
 				newChannel.Name = channels[i];
 				newChannel.Port = int.Parse(ports[i]);
@@ -232,11 +240,12 @@ namespace Inforoom2.Test.Infrastructure
 		{
 			var TvChannels = DbSession.Query<TvChannel>().ToList();
 			var group = new TvChannelGroup();
-			group.Name = "Все"; 
-			foreach (var channel in TvChannels) {
-				if(channel.Name != "ППТ")
+			group.Name = "Все";
+			foreach (var channel in TvChannels)
+			{
+				if (channel.Name != "ППТ")
 					group.TvChannels.Add(channel);
-			} 
+			}
 			DbSession.Save(group);
 
 
@@ -266,18 +275,21 @@ namespace Inforoom2.Test.Infrastructure
 		{
 			const string regionName = "Борисоглебск";
 			var addressHelper = new AddressCreateHelper();
-			do {
+			do
+			{
 				// Создана ли новая запись в таблице House, есть ли смысл добавлять новый адрес
 				bool newHousesCreated = false;
 
 				// Проверка на наличие в таб. Region необходимого региона
 				var region = DbSession.Query<Region>().FirstOrDefault(s => s.Name == regionName);
-				if (region == null) {
+				if (region == null)
+				{
 					throw new Exception("Заданный регион не найден: " + regionName);
 				}
 				// Проверка на наличие в таб. Street текущей улицы
 				var street = DbSession.Query<Street>().FirstOrDefault(s => s.Name == addressHelper.Street);
-				if (street == null) {
+				if (street == null)
+				{
 					// Если улица в таб. Street отсусствует, создаем новую запись
 					street = new Street();
 					street.Name = addressHelper.Street;
@@ -288,7 +300,8 @@ namespace Inforoom2.Test.Infrastructure
 
 				// Проверка на наличие в таб. House текущего дома
 				var house = DbSession.Query<House>().FirstOrDefault(s => s.Number == addressHelper.House);
-				if (house == null) {
+				if (house == null)
+				{
 					// Если дом в таб. House отсусствует, создаем новую запись
 					house = new House();
 					house.Number = addressHelper.House;
@@ -299,9 +312,11 @@ namespace Inforoom2.Test.Infrastructure
 					newHousesCreated = true;
 				}
 				// Проверка на наличие в таб. Address текущего дома
-				if (newHousesCreated) {
+				if (newHousesCreated)
+				{
 					var address = DbSession.Query<Address>().FirstOrDefault(s => s.House == house);
-					if (address == null) {
+					if (address == null)
+					{
 						// Если дом в таб. Address отсусствует, создаем новую запись
 						address = new Address();
 						address.Entrance = "1";
@@ -352,6 +367,7 @@ namespace Inforoom2.Test.Infrastructure
 			region.City = vrn;
 			region.OfficeAddress = "Третьяковская улица д6Б";
 			region.OfficeGeomark = "51.3663252,42.08180200000004";
+			region.ShownOnMainPage = true;
 			DbSession.Save(region);
 			var parent = region;
 
@@ -363,6 +379,7 @@ namespace Inforoom2.Test.Infrastructure
 			region.Parent = new List<Region>() { parent };
 			region.OfficeAddress = "улица Князя Трубецкого д26";
 			region.OfficeGeomark = "50.592548,36.59665819999998";
+			region.ShownOnMainPage = true;
 			DbSession.Save(region);
 
 			region = new Region();
@@ -371,6 +388,7 @@ namespace Inforoom2.Test.Infrastructure
 			region.City = blg;
 			region.OfficeAddress = "улица Князя Трубецкого д26";
 			region.OfficeGeomark = "50.592548,36.59665819999998";
+			region.ShownOnMainPage = true;
 
 			DbSession.Save(region);
 		}
@@ -386,7 +404,8 @@ namespace Inforoom2.Test.Infrastructure
 			IList<Role> roles = new List<Role>();
 			roles.Add(role);
 			var emp = DbSession.Query<Employee>().FirstOrDefault(e => e.Login == Environment.UserName);
-			if (emp == null) {
+			if (emp == null)
+			{
 				emp = new Employee();
 				emp.Name = Environment.UserName;
 				emp.Login = Environment.UserName;
@@ -398,8 +417,10 @@ namespace Inforoom2.Test.Infrastructure
 
 		private void GenerateClients()
 		{
-			var normalClient = new Client {
-				PhysicalClient = new PhysicalClient {
+			var normalClient = new Client
+			{
+				PhysicalClient = new PhysicalClient
+				{
 					Password = HashedDefaultClientPasword,
 					PhoneNumber = "4951234567",
 					Email = "test@client.ru",
@@ -503,7 +524,8 @@ namespace Inforoom2.Test.Infrastructure
 			var frozenClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.frozenClient);
 			frozenClient.SetStatus(DbSession.Get<Status>((int)StatusType.VoluntaryBlocking));
 			var blockAccountService = DbSession.Query<Service>().Where(s => s.IsActivableFromWeb).OfType<BlockAccountService>().FirstOrDefault();
-			var clientService = new ClientService {
+			var clientService = new ClientService
+			{
 				BeginDate = DateTime.Now,
 				EndDate = DateTime.Now.AddDays(35),
 				Service = blockAccountService,
@@ -534,7 +556,8 @@ namespace Inforoom2.Test.Infrastructure
 
 			//Обновляем адреса клиентов, чтобы из БД видеть какой клиент какой
 			var clients = DbSession.Query<Client>().ToList();
-			foreach (var client in clients) {
+			foreach (var client in clients)
+			{
 				var query = "UPDATE clients SET WhoRegistered =\"" + client.Patronymic + "\" WHERE id =" + client.Id;
 				DbSession.CreateSQLQuery(query).ExecuteUpdate();
 			}
@@ -562,7 +585,8 @@ namespace Inforoom2.Test.Infrastructure
 
 		private ClientService CloneService(ClientService service)
 		{
-			var obj = new ClientService {
+			var obj = new ClientService
+			{
 				Service = service.Service,
 				Client = service.Client,
 				BeginDate = service.BeginDate,
@@ -575,8 +599,10 @@ namespace Inforoom2.Test.Infrastructure
 		// 
 		private Client CloneClient(Client client, ClientCreateHelper.ClientMark mark)
 		{
-			var obj = new Client {
-				PhysicalClient = new PhysicalClient {
+			var obj = new Client
+			{
+				PhysicalClient = new PhysicalClient
+				{
 					Password = HashedDefaultClientPasword,
 					PhoneNumber = client.PhoneNumber,
 					Email = client.Email,
@@ -611,12 +637,14 @@ namespace Inforoom2.Test.Infrastructure
 
 			ClientHelper.MarkClient(obj, mark);
 			ClientHelper.GetNextClient();
-			foreach (var item in client.ClientServices) {
+			foreach (var item in client.ClientServices)
+			{
 				var service = CloneService(item);
 				service.Client = obj;
 				obj.ClientServices.Add(service);
 			}
-			foreach (var item in client.Endpoints) {
+			foreach (var item in client.Endpoints)
+			{
 				var endpoint = AttachEndpoint(obj);
 				endpoint.Switch = item.Switch;
 				endpoint.Client = obj;
@@ -674,7 +702,8 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Save(networkNode);
 
 			//ClientEndpoint adding based on client address
-			var endpoint = new ClientEndpoint {
+			var endpoint = new ClientEndpoint
+			{
 				PackageId = client.Plan.PackageSpeed.PackageId,
 				Client = client,
 				Ip = addr,
@@ -736,7 +765,8 @@ namespace Inforoom2.Test.Infrastructure
 			plan.IsArchived = false;
 			plan.Hidden = false;
 			plan.IsServicePlan = false;
-			plan.RegionPlans.Add(new RegionPlan() {
+			plan.RegionPlans.Add(new RegionPlan()
+			{
 				Plan = plan,
 				Region = DbSession.Query<Region>().FirstOrDefault()
 			});
@@ -789,8 +819,10 @@ namespace Inforoom2.Test.Infrastructure
 			var plans = DbSession.Query<Plan>().ToList();
 			//var popular = plans.First(i => i.Name.Contains("Популярный"));
 			//Переход со всех тарифов
-			foreach (var plan1 in plans) {
-				foreach (var plan2 in plans) {
+			foreach (var plan1 in plans)
+			{
+				foreach (var plan2 in plans)
+				{
 					var transfer = new PlanTransfer();
 					transfer.PlanFrom = plan1;
 					transfer.PlanTo = plan2;
@@ -804,7 +836,8 @@ namespace Inforoom2.Test.Infrastructure
 		private void GeneratePaymentsAndWriteoffs()
 		{
 			var client = DbSession.Query<Client>().FirstOrDefault();
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 10; i++)
+			{
 				var writeof = new WriteOff();
 				writeof.Client = client;
 				writeof.MoneySum = i;
@@ -836,7 +869,7 @@ namespace Inforoom2.Test.Infrastructure
 			var newsBlock = new NewsBlock(0);
 			newsBlock.Title = "Новость";
 			newsBlock.Preview = "Превью новости.С 02.06.2014г. офис интернет провайдера «Инфорум» располагается по новому адресу:г." +
-			                    " Борисоглебск, ул. Третьяковская д.6,напротив магазина «Удачный» ";
+								" Борисоглебск, ул. Третьяковская д.6,напротив магазина «Удачный» ";
 			newsBlock.CreationDate = DateTime.Now;
 			newsBlock.IsPublished = true;
 			DbSession.Save(newsBlock);
@@ -844,12 +877,13 @@ namespace Inforoom2.Test.Infrastructure
 			newsBlock = new NewsBlock(1);
 			newsBlock.Title = "Новость2";
 			newsBlock.Preview = "Превью новости.С 02.06.2014г. офис интернет провайдера «Инфорум» располагается по новому адресу:г." +
-			                    " Борисоглебск, ул. Третьяковская д.6,напротив магазина «Удачный» ";
+								" Борисоглебск, ул. Третьяковская д.6,напротив магазина «Удачный» ";
 			newsBlock.CreationDate = DateTime.Now;
 			newsBlock.IsPublished = true;
 			DbSession.Save(newsBlock);
 
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 3; i++)
+			{
 				var question = new Question(i);
 				question.IsPublished = true;
 				question.Text = "Могу ли я одновременно пользоваться интернетом на нескольких компьютерах, если у меня один кабель?";
@@ -926,11 +960,13 @@ namespace Inforoom2.Test.Infrastructure
 		private void CreateSwitchAddresses(YandexAddress yandexAddress)
 		{
 			SwitchAddress switchAddress = null;
-			if (yandexAddress.House != null) {
+			if (yandexAddress.House != null)
+			{
 				switchAddress = new SwitchAddress();
 				switchAddress.House = yandexAddress.House;
 			}
-			else {
+			else
+			{
 				switchAddress = new SwitchAddress();
 				switchAddress.Street = yandexAddress.Street;
 			}
@@ -989,7 +1025,8 @@ namespace Inforoom2.Test.Infrastructure
 		{
 			var employee = DbSession.Query<Employee>().FirstOrDefault();
 			var regionList = DbSession.Query<Region>().ToList();
-			for (int i = 0; i < regionList.Count; i++) {
+			for (int i = 0; i < regionList.Count; i++)
+			{
 
 				// слайдер *c изображением на инфорум2
 				Slide slide = new Slide();
@@ -1012,7 +1049,7 @@ namespace Inforoom2.Test.Infrastructure
 				banner.Partner = employee;
 				banner.Region = regionList[i];
 				DbSession.Save(banner);
-			} 
+			}
 		}
 	}
 }

@@ -22,6 +22,8 @@
 	House currentHouse = ViewBag.CurrentHouse;
 	List<Street> currentStreetList = ViewBag.CurrentStreetList;
 	List<House> currentHouseList = ViewBag.CurrentHouseList;
+	var validatorFullNameOriginal = ViewBag.ValidatorFullNameOriginal;
+	bool scapeUserNameDoubling = ViewBag.ScapeUserNameDoubling;
 }
 <div class="panel panel-primary col-md-12">
 	<div class="panel-body">
@@ -55,9 +57,15 @@
 										<div class="col-sm-4">
 											@Html.TextBoxFor(o => client.PhysicalClient.Patronymic, new { @class = "form-control" })
 											@ViewBag.Validation.GetError(client.PhysicalClient, "Patronymic")
-											@ViewBag.Validation.GetError(client, "PhysicalClient")
+											@ViewBag.Validation.GetError(client, "PhysicalClient", forcedValidationAttribute: validatorFullNameOriginal)
 										</div>
 									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label c-pointer" for="scapeUserNameDoubling">Запретить дублирование ФИО:</label>
+										<div class="col-sm-4">
+											@Html.CheckBoxFor(o => scapeUserNameDoubling, new { @Name = "scapeUserNameDoubling", @Id = "scapeUserNameDoubling", @class = "c-pointer" })
+										</div>
+									</div>	
 									<div class="form-group">
 										<label class="col-sm-4 control-label">Дата рождения:</label>
 										<div class="col-sm-4 date-picker-box">
