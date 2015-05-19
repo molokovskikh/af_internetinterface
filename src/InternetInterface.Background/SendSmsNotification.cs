@@ -30,7 +30,6 @@ namespace InternetInterface.Background
 
 		public List<SmsMessage> SendMessages()
 		{
-			
 			var messages = Session.Query<SmsMessage>().Where(m =>
 				!m.IsSended
 					&& m.PhoneNumber != null
