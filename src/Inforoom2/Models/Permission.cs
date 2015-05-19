@@ -13,6 +13,9 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual string Name { get; set; }
 
+		[Property]
+		public virtual string Description { get; set; }
+
 		[Bag(0, Table = "perm_role", Lazy = CollectionLazy.False)]
 		[Key(1, Column = "permission", NotNull = false)]
 		[ManyToMany(2, Column = "role", ClassType = typeof(Role))]

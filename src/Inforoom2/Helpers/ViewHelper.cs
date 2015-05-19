@@ -48,15 +48,16 @@ namespace Inforoom2.Helpers
 			string expr = expression.ToString();
 			var func = expression.Compile();
 			var list = func(model) as IList;
+			if(list == null)
+				throw new Exception("При создании скрытогой верстки для списка моделей, был передан вовсе не список");
 			var builder = new StringBuilder();
 
-			for (var i = 0; i < list.Count; i++) {
-				var name = expr.After(").") + "[" + i + "].Id";
-				var item = list[i] as BaseModel;
-				if (item.Id == skipId)
-					continue;
-				builder.Append(string.Format("<input type='hidden' name='{0}' value='{1}' />", name, item.Id));
-			}
+				var field = expr.After(").");
+				if(string.IsNullOrEmpty(field))
+					throw new Exception("При создании скрытогой верстки для списка моделей не удается разыменовать имя поля-списка. Наиболее вероятная ошибка - указание 'i => i.{поле списка}' вместо 'i => {Переменная модели}.{поле списка}'. Сравни свой код с тем, откуда ты копировал.");
+				var name = field + "[-1].Id";
+				
+				builder.Append(string.Format("<input type='hidden' name='{0}' value='{1}' />", name, skipId));
 
 			return new HtmlString(builder.ToString());
 		}

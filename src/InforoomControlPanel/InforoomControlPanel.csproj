@@ -1823,7 +1823,7 @@
     <Content Include="Views\Client\Request.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Admin\Admins.cshtml" />
+    <Content Include="Views\Admin\EmployeeList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\Pagination.cshtml" />
@@ -1899,6 +1899,11 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Views\Admin\EditEmployee.cshtml" />
+    <Content Include="Views\Admin\AccessDenined.cshtml" />
+    <Content Include="Views\Admin\PermissionList.cshtml" />
+    <Content Include="Views\Admin\RoleList.cshtml" />
+    <Content Include="Views\Admin\EditRole.cshtml" />
     <Content Include="Views\Client\DealerList.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
