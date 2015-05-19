@@ -27,7 +27,7 @@
 				@if (pager.Page > 1) {
 					@* // Ссылка на предыдущий элемент *@
 					<li class="next @prevClass">
-						<a href="@pager.UrlBase@(pager.UrlBase.Contains(" ?") ? "&" : "?" )@(pager.UrlParamPrefix + "." + pager.UrlCurrentPage)=@(pager.Page - 1)">
+						<a href="@pager.UrlBase@(pager.UrlBase.Contains("?") ? "&" : "?" )@(pager.UrlParamPrefix + "." + pager.UrlCurrentPage)=@(pager.Page - 1)">
 							<i class="entypo-left-open"></i>
 						</a>
 					</li>
@@ -61,7 +61,7 @@
 				@if (pager.Page < pager.PagesCount) {
 				@* // Ссылка на следующий элемент *@
 					<li class="next @nextClass">
-						<a href="@pager.UrlBase@(pager.UrlBase.Contains(" ?") ? "&" : "?" )@(pager.UrlParamPrefix + "." + pager.UrlCurrentPage)=@(pager.Page + 1)">
+						<a href="@pager.UrlBase@(pager.UrlBase.Contains("?") ? "&" : "?" )@(pager.UrlParamPrefix + "." + pager.UrlCurrentPage)=@(pager.Page + 1)">
 							<i class="entypo-right-open"></i>
 						</a>
 					</li>

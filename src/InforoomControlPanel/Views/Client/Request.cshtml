@@ -1,6 +1,16 @@
 ﻿@section JavaScript{
 	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientRequest.js")"></script>
 	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js")"></script>
+	<script>
+		$(function () { 
+			addressHelper.setRegionIdAttribute("modelid");
+			addressHelper.setRegionValueType("Name");
+			addressHelper.setStreetIdAttribute("modelid");
+			addressHelper.setStreetValueType("Name");
+			addressHelper.setHouseIdAttribute("modelid");
+			addressHelper.setHouseValueType("Number");
+		});
+	</script>
 } 
 @using Inforoom2.Components
 @using Inforoom2.Helpers
@@ -10,7 +20,7 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	ViewBag.Title = "Заявка на регистрацию";
 	ClientRequest clientRequest = ViewBag.ClientRequest;
-	var reqAuthor = clientRequest.RequestAuthor ?? new Employee(); 
+	var reqAuthor = clientRequest.RequestAuthor ?? new Employee();
 	List<Plan> plans = ViewBag.PlanList;
 	ValidationRunner validationRunner = ViewBag.Validation;
 	bool isRedirected = ViewBag.IsRedirected;
@@ -55,7 +65,7 @@
 								<label class="col-sm-3@(currentRegion == null ? " bold msg" : "")">Город:</label>
 								<div class="col-sm-6">
 									@if (currentRegion != null) {
-										@Html.DropDownListExtendedFor(i => clientRequest.Address.House.Street.Region, regionList, obj => obj.Name, null,
+										@Html.DropDownListExtendedFor(i => clientRequest.City, regionList, obj => obj.Name, s => new { @value = s.Name, @modelId = s.Id },
 											new {
 												@class = "form-control", @Id = "RegionDropDown",
 												@Name = "client.PhysicalClient.Address.House.Street.Region.Id",
@@ -63,7 +73,7 @@
 											}, currentRegion.Id, true)
 									}
 									else {
-										@Html.DropDownListExtendedFor(i => clientRequest.Address.House.Street.Region, regionList, obj => obj.Name, null,
+										@Html.DropDownListExtendedFor(i => clientRequest.City, regionList, obj => obj.Name, s => new { @value = s.Name, @modelId = s.Id },
 											new {
 												@class = "form-control", @Id = "RegionDropDown",
 												@Name = "client.PhysicalClient.Address.House.Street.Region.Id",
@@ -76,7 +86,7 @@
 								<label class="col-sm-3@(currentStreet == null ? " bold msg" : "")">Улица:</label>
 								<div class="col-sm-6">
 									@if (currentStreet != null) {
-										@Html.DropDownListExtendedFor(i => clientRequest.Address.House.Street, currentStreetList, obj => obj.Name, null,
+										@Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.Name, s => new { @value = s.Name, @modelId = s.Id },
 											new {
 												@class = "form-control", @Id = "StreetDropDown",
 												@Name = "client.PhysicalClient.Address.House.Street.Id",
@@ -84,7 +94,7 @@
 											}, currentStreet.Id, true)
 									}
 									else {
-										@Html.DropDownListExtendedFor(i => clientRequest.Address.House.Street, currentStreetList, obj => obj.Name, null,
+										@Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.Name, s => new { @value = s.Name, @modelId = s.Id },
 											new {
 												@class = "form-control", @Id = "StreetDropDown",
 												@Name = "client.PhysicalClient.Address.House.Street.Id",
@@ -97,7 +107,7 @@
 								<label class="col-sm-3@(currentHouse == null ? " bold msg" : "")">Дом:</label>
 								<div class="col-sm-6">
 									@if (currentHouse != null && currentHouseList != null) {
-										@Html.DropDownListExtendedFor(i => clientRequest.Address.House, currentHouseList, obj => obj.Number, null, new {
+										@Html.DropDownListExtendedFor(i => clientRequest.HouseNumber, currentHouseList, obj => obj.Number, s => new { @value = s.Number, @modelId = s.Id }, new {
 											@class = "form-control",
 											@Id = "HouseDropDown",
 											@Name = "client.PhysicalClient.Address.House.Id",
@@ -105,7 +115,7 @@
 										}, currentHouse.Id, true)
 									}
 									else {
-										@Html.DropDownListExtendedFor(i => clientRequest.Address.House, currentHouseList, obj => obj.Number, null, new {
+										@Html.DropDownListExtendedFor(i => clientRequest.Address.House, currentHouseList, obj => obj.Number, s => new { @value = s.Number, @modelId = s.Id }, new {
 											@class = "form-control",
 											@Id = "HouseDropDown",
 											@Name = "client.PhysicalClient.Address.House.Id",
@@ -119,7 +129,7 @@
 					</div>
 				</div>
 
-			</div> 
+			</div>
 			<div class="block">
 				<div class="addon">Квартира:</div>
 				@Html.ValidationEditor(validationRunner, clientRequest, "Apartment", new { @class = "addons" }, HtmlTag.input, HtmlType.text)
@@ -162,7 +172,6 @@
 				@Html.HiddenFor(k => clientRequest.YandexStreet, new { id = "yandexStreetHidden" })
 				@Html.HiddenFor(k => clientRequest.YandexHouse, new { id = "yandexHouseHidden" })
 			</div>
-
 			<input class="btn btn-green" type="submit" value="Отправить">
 		}
 	</div>
