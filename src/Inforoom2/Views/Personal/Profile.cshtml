@@ -1,4 +1,6 @@
 ﻿@using Inforoom2.Models
+@using NPOI.POIFS.FileSystem
+@using NPOI.SS.Formula.Functions
 @{
 	ViewBag.Title = "Личный кабинет: Профиль";
 	PhysicalClient client = ViewBag.CurrentClient.PhysicalClient;
@@ -55,12 +57,13 @@
 
 
 @if (client.Client.Status.Type == StatusType.NoWorked) {
+	var unlockPrice = client.Client.GetUnlockPrice();
 	<div class="noworked_client">
 		@if (client.Client.Payments.Count == 0) {
-			<span>Для начала работы внесите первый платеж @client.Plan.Price руб.</span>
+			<span>Для начала работы внесите первый платеж @client.Plan.Price.ToString("F2") руб.</span>
 		}
-		else {
-			<span>Ваш лицевой счет заблокирован за неуплату, для разблокировки необходимо внести @(client.Plan.Price - client.Balance) руб.</span>
+		else if (unlockPrice > 0) {
+			<span>Ваш лицевой счет заблокирован за неуплату, для разблокировки необходимо внести @unlockPrice.ToString("F2") руб.</span>
 		}
 	</div>
 }
