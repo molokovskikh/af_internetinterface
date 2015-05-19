@@ -33,8 +33,8 @@ namespace Inforoom2.Test.Functional.Inforoom2
 			SetCookie("userCity", null);
 			Open();
 			AssertText("ВЫБЕРИТЕ ГОРОД");
-			var link = browser.FindElementByCssSelector("#CityWindow .cities a");
-			link.Click();
+			var links = browser.FindElementsByCssSelector("#CityWindow .cities a");
+			links[1].Click();
 			var userCity = GetCookie("userCity");
 			Assert.That(userCity, Is.EqualTo("Борисоглебск"));
 		}

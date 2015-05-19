@@ -27,15 +27,15 @@ namespace Inforoom2.Controllers
 			clientRequest.ActionDate = clientRequest.RegDate = DateTime.Now;
 			var errors = ValidationRunner.ValidateDeep(clientRequest);
 
+			if (!clientRequest.IsContractAccepted) {
+				ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
+			} 
 			if (errors.Length == 0 && clientRequest.IsContractAccepted) {
 				clientRequest.City = (DbSession.Query<Region>().FirstOrDefault(s => s.Id == Convert.ToInt32(clientRequest.City)) ?? new Region()).Name;
 				clientRequest.Address = GetAddressByYandexData(clientRequest);
 				DbSession.Save(clientRequest);
 				SuccessMessage(string.Format("Спасибо, Ваша заявка принята. Номер заявки {0}", clientRequest.Id));
 				return RedirectToAction("Index", "Home");
-			}
-			if (!clientRequest.IsContractAccepted) {
-				ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
 			}
 			ViewBag.IsRedirected = false;
 			ViewBag.IsCityValidated = false;

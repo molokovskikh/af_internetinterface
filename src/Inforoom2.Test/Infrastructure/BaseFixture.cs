@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.Remoting.Channels;
+using System.Web.Mvc;
 using Billing;
 using Common.Tools;
 using Inforoom2.Components;
@@ -16,6 +17,7 @@ using Inforoom2.Test.Infrastructure.Helpers;
 using Inforoom2.Test.Infrastructure.Helpers;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using MvcContrib;
 using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Mapping.Attributes;
@@ -392,13 +394,14 @@ namespace Inforoom2.Test.Infrastructure
 
 			DbSession.Save(region);
 		}
+		 
 
 		private void GenerateAdmins()
 		{
-			Permission permission = new Permission { Name = "TestPermission" };
+			var permission = new Permission { Name = "TestPermission", Description = "tempPermissionDescription" }; 
 			DbSession.Save(permission);
 
-			Role role = new Role { Name = "Admin" };
+			var role = new Role { Name = "Admin", Description = "tempRoleDescription" };
 			DbSession.Save(role);
 
 			IList<Role> roles = new List<Role>();
@@ -410,6 +413,7 @@ namespace Inforoom2.Test.Infrastructure
 				emp.Name = Environment.UserName;
 				emp.Login = Environment.UserName;
 				emp.Categorie = 3;
+				emp.Roles.AddEach(roles);
 			}
 			emp.Roles = roles;
 			DbSession.Save(emp);
