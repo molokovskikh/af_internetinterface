@@ -23,7 +23,9 @@ namespace InternetInterface.Background
 
 		protected override void Process()
 		{
-			SendMessages();
+			//Отправка смс отключена 19.05.2015, так как валятся ошибки в сервис из-за того, что мы разорвали отношения с нашим поставщиком смс
+			//todo вернуть отправку смс, когда будет поставщик
+			//SendMessages();
 		}
 
 		public List<SmsMessage> SendMessages()

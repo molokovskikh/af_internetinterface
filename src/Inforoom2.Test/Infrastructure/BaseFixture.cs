@@ -405,8 +405,8 @@ namespace Inforoom2.Test.Infrastructure
 				var controllers = Assembly.Load("InforoomControlPanel").GetTypes().Where(i => i.IsSubclassOf(typeof(InforoomControlPanel.Controllers.ControlPanelController))).ToList();
 				foreach (var controller in controllers)
 				{
-					var methods = controller.GetMethods();
-					var actions = methods.Where(i => i.ReturnType == typeof(ActionResult)).ToList();
+					var methods = controller.GetMethods(); 
+					var actions = methods.Where(i => i.ReturnType == typeof(ActionResult)).ToList(); 
 					foreach (var action in actions)
 					{
 						var name = controller.Name + "_" + action.Name;
