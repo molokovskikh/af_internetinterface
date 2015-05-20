@@ -255,7 +255,7 @@ namespace Inforoom2.Components
 				: ascDefault ? "" : UrlParamPrefix + "." + UrlSearchDirection + "=desc&")
 				+ UrlParamPrefix + "." + UrlOrderByColumn + "=" + name; // дополняем возвращаемый адрес условием сортировки
 
-			return ReturnUrl;
+			return UrlRootBase+ReturnUrl;
 		}
 		/// <summary>
 		///  Добавление условия фильтра в критерий

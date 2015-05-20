@@ -22,8 +22,7 @@
 	House currentHouse = ViewBag.CurrentHouse;
 	List<Street> currentStreetList = ViewBag.CurrentStreetList;
 	List<House> currentHouseList = ViewBag.CurrentHouseList;
-	var validatorFullNameOriginal = ViewBag.ValidatorFullNameOriginal;
-	bool scapeUserNameDoubling = ViewBag.ScapeUserNameDoubling;
+	var validatorFullNameOriginal = ViewBag.ValidatorFullNameOriginal; 
 }
 <div class="panel panel-primary col-md-12">
 	<div class="panel-body">
@@ -59,17 +58,13 @@
 											@ViewBag.Validation.GetError(client.PhysicalClient, "Patronymic")
 											@ViewBag.Validation.GetError(client, "PhysicalClient", forcedValidationAttribute: validatorFullNameOriginal)
 										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-4 control-label c-pointer" for="scapeUserNameDoubling">Запретить дублирование ФИО:</label>
-										<div class="col-sm-4">
-											@Html.CheckBoxFor(o => scapeUserNameDoubling, new { @Name = "scapeUserNameDoubling", @Id = "scapeUserNameDoubling", @class = "c-pointer" })
-										</div>
-									</div>	
+									</div> 
 									<div class="form-group">
 										<label class="col-sm-4 control-label">Дата рождения:</label>
 										<div class="col-sm-4 date-picker-box">
-											@Html.TextBoxFor(o => client.PhysicalClient.BirthDate, client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy"), new { @data_format = "dd.mm.yyyy", @class = "form-control datepicker" })
+											@Html.TextBoxFor(o => client.PhysicalClient.BirthDate, client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy"), 
+											new { @Value = (client.PhysicalClient.BirthDate.Year>1900?client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy"):""),
+												@data_format = "dd.mm.yyyy", @class = "form-control datepicker" })
 											@ViewBag.Validation.GetError(client.PhysicalClient, "BirthDate")
 										</div>
 
@@ -153,11 +148,11 @@
 										<div class="col-sm-4">
 											@if (currentRegion != null) {
 												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street.Region, regionList, obj => obj.Name, null,
-													new { @class = "form-control", @Id = "RegionDropDown", @Name = "client.PhysicalClient.Address.House.Street.Region.Id" }, currentRegion.Id, true)
+													new { @class = "form-control", @Id = "RegionDropDown", @Name = "" }, currentRegion.Id, true)
 											}
 											else {
 												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street.Region, regionList, obj => obj.Name, null,
-													new { @class = "form-control", @Id = "RegionDropDown", @Name = "client.PhysicalClient.Address.House.Street.Region.Id" }, true)
+													new { @class = "form-control", @Id = "RegionDropDown", @Name = "" }, true)
 											}
 										</div>
 									</div>
@@ -166,11 +161,11 @@
 										<div class="col-sm-4">
 											@if (currentStreet != null) {
 												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
-													new { @class = "form-control", @Id = "StreetDropDown", @Name = "client.PhysicalClient.Address.House.Street.Id" }, currentStreet.Id, true)
+													new { @class = "form-control", @Id = "StreetDropDown", @Name = "" }, currentStreet.Id, true)
 											}
 											else {
 												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
-													new { @class = "form-control", @Id = "StreetDropDown", @Name = "client.PhysicalClient.Address.House.Street.Id" }, true)
+													new { @class = "form-control", @Id = "StreetDropDown", @Name = "" }, true)
 											}
 										</div>
 									</div>
@@ -322,8 +317,14 @@
 									<div class="form-group">
 										<label class="col-sm-4 control-label">Дата выдачи паспорта:</label>
 										<div class="col-sm-4 date-picker-box">
-											@Html.TextBoxFor(o => client.PhysicalClient.PassportDate,client.PhysicalClient.PassportDate.ToString("dd.MM.yyyy"), new { @data_format = "dd.mm.yyyy", @class = "form-control datepicker" })
-											@ViewBag.Validation.GetError(client.PhysicalClient, "PassportDate")
+											@Html.TextBoxFor(o => client.PhysicalClient.PassportDate, client.PhysicalClient.PassportDate.ToString("dd.MM.yyyy"),
+												new
+												{
+													@Value = (client.PhysicalClient.PassportDate.Year > 1900 ? client.PhysicalClient.PassportDate.ToString("dd.MM.yyyy") : ""),
+													@data_format = "dd.mm.yyyy",
+													@class = "form-control datepicker"
+												})
+												@ViewBag.Validation.GetError(client.PhysicalClient, "PassportDate")
 										</div>
 									</div>
 									<div class="form-group">
