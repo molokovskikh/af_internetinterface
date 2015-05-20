@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using Inforoom2.Test.Infrastructure;
@@ -32,8 +33,8 @@ namespace Inforoom2.Test.Functional.Inforoom2
 			SetCookie("userCity", null);
 			Open();
 			AssertText("ВЫБЕРИТЕ ГОРОД");
-			var link = browser.FindElementByCssSelector("#CityWindow .cities a");
-			link.Click();
+			var links = browser.FindElementsByCssSelector("#CityWindow .cities a");
+			links[1].Click();
 			var userCity = GetCookie("userCity");
 			Assert.That(userCity, Is.EqualTo("Борисоглебск"));
 		}
@@ -80,7 +81,7 @@ namespace Inforoom2.Test.Functional.Inforoom2
 			Open("");
 			browser.FindElementByCssSelector(".main-offer img").Click();
 			AssertText("Заявка на подключение");
-			var selectedValue = browser.FindElementByCssSelector(".rounded option[selected='selected']");
+			var selectedValue = browser.FindElementByCssSelector("#clientRequest_Plan.rounded option[selected='selected']");
 			Assert.That(selectedValue.Text, Is.EqualTo("Народный"), "В поле тариф должен быть выбран акционный тариф");
 			//Должна быть одна зеленая галочка,при поиске одного элемента вероятно выдаст ошибку,в данном случае вернет пустой массив.
 			var greenElements = browser.FindElementsByCssSelector(".success .icon");

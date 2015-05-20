@@ -27,20 +27,22 @@ namespace Inforoom2.Controllers
 			clientRequest.ActionDate = clientRequest.RegDate = DateTime.Now;
 			var errors = ValidationRunner.ValidateDeep(clientRequest);
 
+			if (!clientRequest.IsContractAccepted) {
+				ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
+			} 
 			if (errors.Length == 0 && clientRequest.IsContractAccepted) {
+				clientRequest.City = (DbSession.Query<Region>().FirstOrDefault(s => s.Id == Convert.ToInt32(clientRequest.City)) ?? new Region()).Name;
 				clientRequest.Address = GetAddressByYandexData(clientRequest);
 				DbSession.Save(clientRequest);
 				SuccessMessage(string.Format("Спасибо, Ваша заявка принята. Номер заявки {0}", clientRequest.Id));
 				return RedirectToAction("Index", "Home");
 			}
-			if (!clientRequest.IsContractAccepted) {
-				ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
-			}
 			ViewBag.IsRedirected = false;
 			ViewBag.IsCityValidated = false;
 			ViewBag.IsStreetValidated = false;
 			ViewBag.IsHouseValidated = false;
-			ViewBag.ClientRequest = clientRequest;
+			ViewBag.Regions = DbSession.Query<Region>().ToList();
+			ViewBag.ClientRequest = clientRequest; 
 			return View("Index");
 		}
 
@@ -106,15 +108,19 @@ namespace Inforoom2.Controllers
 				clientRequest.Plan = plan;
 				ViewBag.IsRedirected = true;
 			}
+
+			ViewBag.Regions = DbSession.Query<Region>().Where(s=>s.ShownOnMainPage).OrderBy(s => s.Name).ToList();
 			ViewBag.ClientRequest = clientRequest;
 			InitRequestPlans();
 		}
 
 		private List<Plan> InitRequestPlans()
 		{
-			var plans = DbSession.Query<Plan>().ToList();
-			//Забираем не архивные планы, которые не имеют региона или соответсвуют текущему региону
-			plans = plans.Where(p => !p.IsArchived && (p.RegionPlans.Count == 0 || p.RegionPlans.Select(i=>i.Region).Contains(CurrentRegion))).ToList();
+			// Получаем список всех неархивных планов
+			var plans = DbSession.Query<Plan>().Where(p => !p.IsArchived).ToList();
+			// Закоментил т.к. изменился метод ввода
+			// Забираем не архивные планы, которые не имеют региона или соответсвуют текущему региону
+			// plans = plans.Where(p => !p.IsArchived && (p.RegionPlans.Count == 0 || p.RegionPlans.Select(i => i.Region).Contains(CurrentRegion))).ToList(); 
 			ViewBag.Plans = plans;
 			return plans;
 		}

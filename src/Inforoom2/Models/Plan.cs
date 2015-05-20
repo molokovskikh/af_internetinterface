@@ -15,10 +15,18 @@ namespace Inforoom2.Models
 	/// Тарифный план
 	/// </summary>
 	[Class(0, Table = "Tariffs", NameType = typeof(Plan))]
-	public class Plan : BaseModel
+	public class Plan : PriorityModel
 	{
 		[Property(NotNull = true, Unique = true), NotEmpty]
 		public virtual string Name { get; set; }
+
+		public Plan()
+		{
+			Regions = new List<Region>();
+			PlanTransfers = new List<PlanTransfer>();
+			RegionPlans = new List<RegionPlan>();
+			TvChannelGroups = new List<TvChannelGroup>();
+		}
 
 		public virtual float Speed
 		{
@@ -59,7 +67,7 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "PackageId", PropertyRef = "PackageId")]
 		public virtual PackageSpeed PackageSpeed { get; set; }
 
-		[Bag(0, Table = "PlanTvChannelGroups",Cascade = "All")]
+		[Bag(0, Table = "PlanTvChannelGroups", Cascade = "All")]
 		[Key(1, Column = "Plan", NotNull = false)]
 		[ManyToMany(2, Column = "TvChannelGroup", ClassType = typeof(TvChannelGroup))]
 		public virtual IList<TvChannelGroup> TvChannelGroups { get; set; }
@@ -72,13 +80,14 @@ namespace Inforoom2.Models
 
 		public virtual decimal SwitchPrice { get; set; }
 
-		public Plan()
-		{
-			Regions = new List<Region>();
-			PlanTransfers = new List<PlanTransfer>();
-			RegionPlans = new List<RegionPlan>();
-			TvChannelGroups = new List<TvChannelGroup>();
-		}
+		[Property]
+		public virtual string Features { get; set; }
+
+		[Property]
+		public virtual bool Published { get; set; }
+
+		[Property]
+		public virtual string Description { get; set; }
 
 
 		/// <summary>
@@ -102,7 +111,7 @@ namespace Inforoom2.Models
 			var list = new List<TvChannel>();
 			foreach (var group in TvChannelGroups)
 				list.AddRange(group.TvChannels);
-			return list.Distinct().Where(i=>i.Enabled).OrderByDescending(i=>i.Priority).ToList();
+			return list.Distinct().Where(i => i.Enabled).OrderByDescending(i => i.Priority).ToList();
 		}
 
 		/// <summary>

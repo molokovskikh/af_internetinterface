@@ -1,0 +1,54 @@
+﻿@using Inforoom2.Models
+@model dynamic
+@{
+	ViewBag.Title = "Список баннеров";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	IList<Banner> banners = ViewBag.Banner;
+	var urlPath = (string)ViewBag.pathFromConfigURL;
+}
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+	
+
+
+	<div class="col-sm-9">
+		<div class="form-group">
+			<a class ="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("CreateBanner", "Banner")">
+				<i class="entypo-plus"></i>
+				Добавить баннер
+			</a>
+		</div>
+		<hr/>
+		<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+			<thead>
+				<tr role="row">
+					<th class="sorting" tabindex="0" aria-controls="table-2">Изображение</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">Регион</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">Ссылка</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">Опубликован</th>
+					<th class="sorting col-sm-3" style="min-width: 220px;" tabindex="0" aria-controls="table-2">Действие</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				@foreach (var item in banners) {
+					<tr role="row" class="odd">
+						<td class ="col-sm-3 col-md-3"> <img src="@urlPath@item.ImagePath" style="max-height: 90px;" /> </td>
+						<td>@item.Region.Name</td>
+						<td><a href="@item.Url">@item.Url</a></td>
+						<td>@Html.CheckBoxFor(modelItem => item.Enabled, new { @disabled = "disabled", @checked = "checked" })</td>
+						<td>
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditBanner", "Banner", new { id = item.Id })">
+							<i class=" entypo-vcard">
+							</i>
+							Изменить
+						</a> 
+						<a class="btn btn-red btn-sm btn-icon icon-left" href="@Url.Action("DeleteBanner", "Banner", new { id = item.Id })">
+							<i class="entypo-cancel-circled"></i>
+							Удалить
+						</a>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>

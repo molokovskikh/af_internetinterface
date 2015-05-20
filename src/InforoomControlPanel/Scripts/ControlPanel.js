@@ -14,7 +14,7 @@ function ControlPanel() {
 	this.templates = {};
 
 	/**
-     * Контсруктор
+     * Конструктор
      */
 	this.initialize = function() {
 		window.cli = this;
@@ -323,6 +323,4 @@ var Base64 = {
 	}
 }
 
-window.onload = function() {
-	cli = new ControlPanel();
-}
+cli = new ControlPanel();

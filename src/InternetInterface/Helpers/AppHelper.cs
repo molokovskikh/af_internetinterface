@@ -18,6 +18,19 @@ using NHibernate;
 
 namespace InternetInterface.Helpers
 {
+	public static class GlobalNames
+	{
+		public static string AdminPanelOld
+		{
+			get { return System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"]; }
+		}
+
+		public static string AdminPanelNew
+		{
+			get { return System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]; }
+		}
+	}
+
 	public class AppHelper : Common.Web.Ui.Helpers.AppHelper
 	{
 		public AppHelper(IEngineContext engineContext) : base(engineContext)
@@ -33,7 +46,7 @@ namespace InternetInterface.Helpers
 		public override bool HavePermission(string controller, string action)
 		{
 			return AccessRules.GetAccessName(action).Count(InitializeContent.Partner.AccesPartner) > 0
-				|| InitializeContent.Partner.HavePermissionTo(controller, action);
+			       || InitializeContent.Partner.HavePermissionTo(controller, action);
 		}
 
 		public void RegisterEditor()
@@ -44,9 +57,9 @@ namespace InternetInterface.Helpers
 					return null;
 
 				return "<label style='padding:2px'>Год</label>"
-					+ GetEdit(name + ".Year", typeof(int), period.Year, options)
-						+ "<label style='padding:2px'>Месяц</label>"
-							+ GetEdit(name + ".Interval", typeof(Interval), period.Interval, options);
+				       + GetEdit(name + ".Year", typeof(int), period.Year, options)
+				       + "<label style='padding:2px'>Месяц</label>"
+				       + GetEdit(name + ".Interval", typeof(Interval), period.Interval, options);
 			});
 		}
 
@@ -186,9 +199,7 @@ namespace InternetInterface.Helpers
 				var context = new ControllerContext {
 					Helpers = ControllerContext.Helpers
 				};
-				foreach (var key in Context.CurrentControllerContext.PropertyBag.Keys) {
-					context.PropertyBag[key] = Context.CurrentControllerContext.PropertyBag[key];
-				}
+				foreach (var key in Context.CurrentControllerContext.PropertyBag.Keys) context.PropertyBag[key] = Context.CurrentControllerContext.PropertyBag[key];
 				context.PropertyBag["model"] = new DisplayModel(target, value);
 				Context.Services.ViewEngineManager.ProcessPartial(template, writer, Context, Controller, context);
 				return writer.ToString();

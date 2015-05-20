@@ -1,5 +1,6 @@
 ﻿<div class="borderless-content width900">
-	<h1>Регистрация абонента</h1>
+	<h1>Регистрация абонента <strong style="color:#DF0000">Для выполнения данной функции перейдите в
+	<a style="color:#00A651" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/Registration">Inforoom2</a> !</strong></h1>
 	<div class="comment_text">
 		обязательные для заполнения поля выделены жирным шрифтом
 	</div>
