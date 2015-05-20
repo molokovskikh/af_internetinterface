@@ -306,6 +306,7 @@
     <Content Include="assets\js\additional-methods.min.js" />
     <Content Include="assets\js\bootstrap-colorpicker.min.js" />
     <Content Include="assets\js\bootstrap-datepicker.js" />
+    <Content Include="assets\js\bootstrap-datepicker.ru.min.js" />
     <Content Include="assets\js\bootstrap-switch.min.js" />
     <Content Include="assets\js\bootstrap-tagsinput.min.js" />
     <Content Include="assets\js\bootstrap-timepicker.min.js" />
