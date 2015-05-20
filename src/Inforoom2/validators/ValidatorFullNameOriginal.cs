@@ -19,9 +19,16 @@ namespace Inforoom2.validators
 				if (physic.Id == 0) {
 					var dbSession = MvcApplication.SessionFactory.GetCurrentSession();
 					if (dbSession.Query<Models.PhysicalClient>().Any(s => s.Name == physic.Name &&
-						s.Surname == physic.Surname && s.Patronymic == physic.Patronymic))
-					{
-						AddError("<p class='msg'><strong>Клиент с подобным ФИО уже зарегистрирован</strong></p>");
+					                                                      s.Surname == physic.Surname && s.Patronymic == physic.Patronymic)) {
+						AddError("<p class='msg'><strong>Клиент с подобным ФИО уже зарегистрирован!</strong>" +
+								 @"<div class='form-group'>
+										<label class='col-sm-8 control-label c-pointer' for='scapeUserNameDoubling'>Разрешить дублирование ФИО:</label>
+										<div class='col-sm-4'>
+			<input id='scapeUserNameDoubling' class='c-pointer' data-val='true' data-val-required='Требуется поле Checked.' name='scapeUserNameDoubling' type='checkbox' value='true'> 
+			<input name='scapeUserNameDoubling' type='hidden' value='false'>
+										</div>
+									</div>" +
+						         "</p>");
 					}
 				}
 			}

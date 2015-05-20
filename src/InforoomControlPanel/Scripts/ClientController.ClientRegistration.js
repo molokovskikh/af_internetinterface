@@ -108,7 +108,7 @@ getPlansList = function (regionId, funcAfter) {
 
 // После AJAX-запросов
 getStreetFuncAfter = function (data) {
-	var tmp = $("#StreetDropDown option").clone();
+	var tmp = $("#StreetDropDown option:last").clone();
 	$("#StreetDropDown").html("<option></option>"); 
 		// заполнение списка улиц
 	$(data).each(function () {
@@ -121,7 +121,7 @@ getStreetFuncAfter = function (data) {
 	$("#StreetDropDown").val($("#StreetDropDown option:first")); 
 }
 getHouseFuncAfter = function (data) {
-	var tmp = $("#HouseDropDown option").clone();
+	var tmp = $("#HouseDropDown option:last").clone();
 	$("#HouseDropDown").html("<option></option>");
 	// заполнение списка домов
 	$(data).each(function () {
@@ -134,13 +134,13 @@ getHouseFuncAfter = function (data) {
 	$("#HouseDropDown").val($("#HouseDropDown option:first"));
 }
 getPlansFuncAfter = function (data) {
-	var tmp = $("#PlanDropDown option").clone();
+	var tmp = $("#PlanDropDown option:last").clone();
 	$("#PlanDropDown").html("<option></option>");
 	// заполнение списка тарифов
 	$(data).each(function () {
 		var el = tmp.clone();
-		el.attr(addressHelper.getPlanIdAttribute(), this.Id);
-		el.val(this[addressHelper.getPlanValueType()]);
+		el.attr(addressHelper.getPlanValueType(), this.Id);
+		el.val(this.Id);
 		el.html(this.Name);
 		$("#PlanDropDown").append(el);
 	});
@@ -158,7 +158,6 @@ $("#RegionDropDown").change(function () {
 	$("#HouseDropDown").val($("#HouseDropDown option:first"));
 	$("#StreetDropDown").val($("#StreetDropDown option:first"));
 	$("#PlanDropDown").val($("#PlanDropDown option:first"));
-
 	var _this = $("#RegionDropDown :selected");
 	if ($(_this).attr(addressHelper.getRegionIdAttribute()) != null && $(_this).attr(addressHelper.getRegionIdAttribute()) != "") { 
 		getPlansList($(_this).attr(addressHelper.getRegionIdAttribute()), getPlansFuncAfter);

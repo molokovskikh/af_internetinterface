@@ -29,8 +29,10 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			var employee = GetCurrentEmployee();
-			string access = ViewBag.ControllerName+"Controller_"+ViewBag.ActionName;
-			if (!employee.HasAccess(access) && access != "Admin_AccessDenined")
+			string name = ViewBag.ControllerName + "Controller_" + ViewBag.ActionName;
+			var permission = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
+			//@todo убрать проверку, на accessDenined, а вместо этого просто не генерировать его. В целом подумать
+			if (permission != null && permission.Name != "Admin_AccessDenined" && !employee.HasAccess(permission.Name))
 				filterContext.Result = new RedirectResult("/Admin/AccessDenined");
 		}
 

@@ -9,8 +9,7 @@
 	string action = ViewBag.ActionName;
 	string controller = ViewBag.ControllerName;
 	var employeeList = (List<Employee>)ViewBag.EmployeeList;
-	var dealerList = (List<Dealer>)ViewBag.DealerList;
-	var adminPanelNew = ViewBag.AdminPanelNew;
+	var dealerList = (List<Dealer>)ViewBag.DealerList; 
 	var dealer = (Dealer)ViewBag.DealerMan;
 }
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
@@ -43,7 +42,7 @@
 							<span>@item.Employee.Name</span>
 						</td>
 						<td>
-							<a class="btn btn-red btn-sm btn-icon icon-left" href="@(adminPanelNew)Client/DealerDelete/@item.Id">
+							<a class="btn btn-red btn-sm btn-icon icon-left" href="@Url.Action("DealerDelete", new { @id = @item.Id })">
 								<i class="entypo-cancel-circled"></i>
 								Удалить
 							</a>

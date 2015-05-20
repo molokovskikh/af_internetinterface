@@ -115,11 +115,11 @@
 										<div class="col-sm-4">
 											@if (currentRegion != null) {
 												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street.Region, regionList, obj => obj.Name, null,
-													new { @class = "form-control", @Id = "RegionDropDown", @Name = "client.PhysicalClient.Address.House.Street.Region.Id" }, currentRegion.Id, true)
+													new { @class = "form-control", @Id = "RegionDropDown", @Name = "" }, currentRegion.Id, true)
 											}
 											else {
 												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street.Region, regionList, obj => obj.Name, null,
-													new { @class = "form-control", @Id = "RegionDropDown", @Name = "client.PhysicalClient.Address.House.Street.Region.Id" }, true)
+													new { @class = "form-control", @Id = "RegionDropDown", @Name = "" }, true)
 											}
 										</div>
 									</div>
@@ -128,11 +128,11 @@
 										<div class="col-sm-4">
 											@if (currentStreet != null) {
 												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
-													new { @class = "form-control", @Id = "StreetDropDown", @Name = "client.PhysicalClient.Address.House.Street.Id" }, currentStreet.Id, true)
+													new { @class = "form-control", @Id = "StreetDropDown", @Name = "" }, currentStreet.Id, true)
 											}
 											else {
 												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
-													new { @class = "form-control", @Id = "StreetDropDown", @Name = "client.PhysicalClient.Address.House.Street.Id" }, true)
+													new { @class = "form-control", @Id = "StreetDropDown", @Name = "" }, true)
 											}
 										</div>
 									</div>
