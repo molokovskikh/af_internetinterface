@@ -482,6 +482,7 @@ namespace InternetInterface.Controllers
 				else {
 					PropertyBag["WhoConnected"] = null;
 				}
+				PropertyBag["ClientIdHref"] = "../UserInfo/ShowPhysicalClient?filter.ClientCode=" + ClientID;
 				PropertyBag["Client"] = physicalClient;
 				PropertyBag["_client"] = client;
 				PropertyBag["Password"] = password;
