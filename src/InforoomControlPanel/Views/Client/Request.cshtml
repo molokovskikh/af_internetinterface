@@ -68,7 +68,7 @@
 										@Html.DropDownListExtendedFor(i => clientRequest.City, regionList, obj => obj.Name, s => new { @value = s.Name, @modelId = s.Id },
 											new {
 												@class = "form-control", @Id = "RegionDropDown",
-												@Name = "client.PhysicalClient.Address.House.Street.Region.Id",
+												@Name = "ClientRequest.City",
 												onclick = "typeWatcher(1000)"
 											}, currentRegion.Id, true)
 									}
@@ -76,7 +76,7 @@
 										@Html.DropDownListExtendedFor(i => clientRequest.City, regionList, obj => obj.Name, s => new { @value = s.Name, @modelId = s.Id },
 											new {
 												@class = "form-control", @Id = "RegionDropDown",
-												@Name = "client.PhysicalClient.Address.House.Street.Region.Id",
+												@Name = "ClientRequest.City",
 												onclick = "typeWatcher(1000)"
 											}, true)
 									}
@@ -89,7 +89,7 @@
 										@Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.Name, s => new { @value = s.Name, @modelId = s.Id },
 											new {
 												@class = "form-control", @Id = "StreetDropDown",
-												@Name = "client.PhysicalClient.Address.House.Street.Id",
+												@Name = "ClientRequest.Street",
 												onclick = "typeWatcher(1000)"
 											}, currentStreet.Id, true)
 									}
@@ -97,7 +97,7 @@
 										@Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.Name, s => new { @value = s.Name, @modelId = s.Id },
 											new {
 												@class = "form-control", @Id = "StreetDropDown",
-												@Name = "client.PhysicalClient.Address.House.Street.Id",
+												@Name = "ClientRequest.Street",
 												onclick = "typeWatcher(1000)"
 											}, true)
 									}
@@ -107,18 +107,19 @@
 								<label class="col-sm-3@(currentHouse == null ? " bold msg" : "")">Дом:</label>
 								<div class="col-sm-6">
 									@if (currentHouse != null && currentHouseList != null) {
-										@Html.DropDownListExtendedFor(i => clientRequest.HouseNumber, currentHouseList, obj => obj.Number, s => new { @value = s.Number, @modelId = s.Id }, new {
+										@Html.DropDownListExtendedFor(i => clientRequest.Housing, currentHouseList, obj => obj.Number, s => new { @value = s.Number, @modelId = s.Id }, new {
 											@class = "form-control",
 											@Id = "HouseDropDown",
-											@Name = "client.PhysicalClient.Address.House.Id",
+											@Name = "ClientRequest.Housing",
 											onclick = "typeWatcher(1000)"
 										}, currentHouse.Id, true)
 									}
 									else {
-										@Html.DropDownListExtendedFor(i => clientRequest.Address.House, currentHouseList, obj => obj.Number, s => new { @value = s.Number, @modelId = s.Id }, new {
+										@Html.DropDownListExtendedFor(i => clientRequest.Housing, currentHouseList, obj => obj.Number, s => new { @value = s.Number, @modelId = s.Id }, new
+	 {
 											@class = "form-control",
 											@Id = "HouseDropDown",
-											@Name = "client.PhysicalClient.Address.House.Id",
+											@Name = "ClientRequest.Housing",
 											onclick = "typeWatcher(1000)"
 										}, true)
 									}

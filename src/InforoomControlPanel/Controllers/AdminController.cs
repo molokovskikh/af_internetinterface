@@ -99,7 +99,7 @@ namespace InforoomControlPanel.Controllers
 			var controllers = GetType().Assembly.GetTypes().Where(i=> i.IsSubclassOf(typeof(ControlPanelController))).ToList();
 			foreach (var controller in controllers) {
 				var methods = controller.GetMethods();
-				var actions = methods.Where(i => i.ReturnType == typeof(ActionResult)).ToList();
+				var actions = methods.Where(i => i.ReturnType == typeof(ActionResult) || i.ReturnType == typeof(JsonResult)).ToList();
 				foreach (var action in actions) {
 					var name = controller.Name + "_" + action.Name;
 					var right = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);

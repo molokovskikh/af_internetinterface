@@ -144,7 +144,7 @@ namespace Inforoom2.Test.Infrastructure
 			var tables = new List<string>();
 
 			//Приоритет удаления данных
-			var order = "lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
+			var order = "perm_role,user_role,roles,permissions,lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
 						+ "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
 
 			var parts = order.Split(',');
@@ -394,14 +394,40 @@ namespace Inforoom2.Test.Infrastructure
 
 			DbSession.Save(region);
 		}
-		 
+
+		private void RenewActionPermissions()
+		{
+			var testOfInforoomControlPanel = GetType().Assembly.GetTypes().FirstOrDefault(i => i.Name == "ControlPanelBaseFixture");
+			if (testOfInforoomControlPanel != null)
+			{
+			//	new .AdminController().RenewActionPermissions(); 
+
+				var controllers = Assembly.Load("InforoomControlPanel").GetTypes().Where(i => i.IsSubclassOf(typeof(InforoomControlPanel.Controllers.ControlPanelController))).ToList();
+				foreach (var controller in controllers)
+				{
+					var methods = controller.GetMethods();
+					var actions = methods.Where(i => i.ReturnType == typeof(ActionResult) || i.ReturnType == typeof(JsonResult)).ToList();
+					foreach (var action in actions)
+					{
+						var name = controller.Name + "_" + action.Name;
+						var right = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
+						if (right != null)
+							continue;
+						var newright = new Permission();
+						newright.Name = name; 
+						newright.Description = "someDescription";
+						DbSession.Save(newright);
+					}
+				}
+			}
+		}
 
 		private void GenerateAdmins()
 		{
-			var permission = new Permission { Name = "TestPermission", Description = "tempPermissionDescription" }; 
-			DbSession.Save(permission);
+			RenewActionPermissions();
+			var permissions = DbSession.Query<Permission>().ToList();  
 
-			var role = new Role { Name = "Admin", Description = "tempRoleDescription" };
+			Role role = new Role { Name = "Admin", Description = "tempRoleDescription", Permissions = permissions};
 			DbSession.Save(role);
 
 			IList<Role> roles = new List<Role>();

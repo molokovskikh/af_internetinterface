@@ -3,6 +3,7 @@
 @model dynamic
 
 @{
+	var urlRoot = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
 	ViewBag.Title = "Список пользователей";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	IList<Client> clients = ViewBag.Clients;
@@ -20,8 +21,8 @@
 						</label>
 					</div>
 				</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Id)">Номер</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.PhysicalClient.Name)">Имя</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.Id)">Номер</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.PhysicalClient.Name)">Имя</a></th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
 			</tr>
 		</thead>

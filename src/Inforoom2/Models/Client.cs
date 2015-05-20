@@ -10,6 +10,8 @@ using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate;
 using NHibernate.Mapping.Attributes;
+using NHibernate.Validator.Cfg.MappingSchema;
+using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {

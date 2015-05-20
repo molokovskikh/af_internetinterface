@@ -103,17 +103,10 @@ namespace InforoomControlPanel.Controllers
 			clientRequest.RequestSource = RequestType.FromOperator;
 			clientRequest.RequestAuthor = GetCurrentEmployee();
 			// Сохранение адреса  
-			if (clientRequest.Address != null && clientRequest.Address.House != null) {
-				// региона
-				clientRequest.City = clientRequest.Address.House.Street.Region.Name;
-				// улицы
-				clientRequest.Street = clientRequest.Address.House.Street.Name;
-				// отделение цифровой части от "Номера дома"
-				// нужно выбрать циферную часть до первого символа т.к.
-				// если выбирать все цифры из 23А/24 - можно получить не достоверную информацию
-				// string houseNumber = Regex.Replace(clientRequest.Address.House.Number, @"[^\d]", "");
+			if (clientRequest.Housing != null && clientRequest.Housing != "")
+			{ 
 				string houseNumber = "";
-				string justStr = clientRequest.Address.House.Number;
+				string justStr = clientRequest.Housing;
 				foreach (char t in justStr) {
 					try {
 						houseNumber += Convert.ToInt32(t.ToString()).ToString();
@@ -125,10 +118,10 @@ namespace InforoomControlPanel.Controllers
 				houseNumber = houseNumber == string.Empty ? "0" : houseNumber;
 				clientRequest.HouseNumber = Convert.ToInt32(houseNumber);
 				// отделение буквенной части от "Номера дома"
-				var housingPostfix = clientRequest.Address.House.Number.IndexOf(houseNumber);
+				var housingPostfix = clientRequest.Housing.IndexOf(houseNumber);
 				housingPostfix = housingPostfix == -1 ? 0 : housingPostfix + houseNumber.Length;
-				clientRequest.Housing = clientRequest.Address.House.Number.Substring(housingPostfix,
-					clientRequest.Address.House.Number.Length - housingPostfix);
+				clientRequest.Housing = clientRequest.Housing.Substring(housingPostfix,
+					clientRequest.Housing.Length - housingPostfix);
 			}
 			// валидация и сохранение
 			var errors = ValidationRunner.ValidateDeep(clientRequest);
@@ -152,7 +145,7 @@ namespace InforoomControlPanel.Controllers
 			if (clientRequest.Address != null && clientRequest.Address.House != null) {
 				currentHouse = clientRequest.Address.House;
 				currentStreet = clientRequest.Address.House.Street;
-				currentRegion = clientRequest.Address.House.Street.Region;
+				currentRegion = clientRequest.Address.House.Region;
 			}
 			// получаем списки тарифов по выбранному выбранному региону
 			var planList = new List<Plan>();
@@ -232,12 +225,8 @@ namespace InforoomControlPanel.Controllers
 		/// <param name="ClientRequest"></param>
 		/// <returns></returns>
 		public ActionResult RequestsList()
-		{
-			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"];
-			if (pathFromConfigUrl == null) {
-				throw new Exception("Значение 'adminPanelNew' отсуствует в Global.config!");
-			}
-			var pager = new ModelFilter<ClientRequest>(this, urlBasePrefix: pathFromConfigUrl);
+		{ 
+			var pager = new ModelFilter<ClientRequest>(this, urlBasePrefix: "/");
 			var clientRequests = pager.GetCriteria().List<ClientRequest>();
 			ViewBag.Pager = pager;
 			ViewBag.ClientRequests = clientRequests;
@@ -392,7 +381,7 @@ namespace InforoomControlPanel.Controllers
 		///  Форма регистрации клиента по заявке POST
 		/// </summary> 
 		[HttpPost]
-		public ActionResult RequestRegistration([EntityBinder] Client client, int requestId, bool redirectToCard, bool scapeUserNameDoubling = true)
+		public ActionResult RequestRegistration([EntityBinder] Client client, int requestId, bool redirectToCard, bool scapeUserNameDoubling = false)
 		{
 			// удаление неиспользованного контакта *иначе в БД лишняя запись
 			client.Contacts = client.Contacts.Where(s => s.ContactString != string.Empty).ToList();
@@ -401,7 +390,7 @@ namespace InforoomControlPanel.Controllers
 			client.WhoRegistered = GetCurrentEmployee();
 			// добавление клиента
 			var errors = ValidationRunner.ValidateDeep(client);
-			if (scapeUserNameDoubling) {
+			if (!scapeUserNameDoubling) {
 				// Принудительная валидация, проверка дублирования ФИО
 				var scapeNameDoubling = new Inforoom2.validators.ValidatorPhysicalClient();
 				ViewBag.ValidatorFullNameOriginal = scapeNameDoubling;
@@ -480,7 +469,7 @@ namespace InforoomControlPanel.Controllers
 			var planList = new List<Plan>();
 			// если дом существует, на его основе создать адрес
 			if (client.Address.House != null) {
-				currentRegion = client.Address.House.Street.Region;
+				currentRegion = client.Address.House.Region;
 				currentStreet = client.Address.House.Street;
 				currentHouse = client.Address.House;
 				client.PhysicalClient.Address = new Address() {
@@ -579,7 +568,7 @@ namespace InforoomControlPanel.Controllers
 		///  Форма регистрации клиента POST
 		/// </summary> 
 		[HttpPost]
-		public ActionResult Registration([EntityBinder] Client client, bool redirectToCard, bool scapeUserNameDoubling = true)
+		public ActionResult Registration([EntityBinder] Client client, bool redirectToCard, bool scapeUserNameDoubling = false)
 		{
 			// удаление неиспользованного контакта *иначе в БД лишняя запись  
 			client.Contacts = client.Contacts.Where(s => s.ContactString != string.Empty).ToList();
@@ -590,7 +579,7 @@ namespace InforoomControlPanel.Controllers
 
 			// проводим валидацию модели клиента
 			var errors = ValidationRunner.ValidateDeep(client);
-			if (scapeUserNameDoubling) // Принудительная валидация, проверка дублирования ФИО
+			if (!scapeUserNameDoubling) // Принудительная валидация, проверка дублирования ФИО
 			{
 				var scapeNameDoubling = new Inforoom2.validators.ValidatorPhysicalClient();
 				ViewBag.ValidatorFullNameOriginal = scapeNameDoubling;
@@ -657,7 +646,7 @@ namespace InforoomControlPanel.Controllers
 			if (client.Address != null && client.Address.House != null) {
 				currentHouse = client.Address.House;
 				currentStreet = client.Address.House.Street;
-				currentRegion = client.Address.House.Street.Region;
+				currentRegion = client.Address.House.Region;
 			}
 			var planList = new List<Plan>();
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
@@ -711,7 +700,7 @@ namespace InforoomControlPanel.Controllers
 			if (client.Address != null && client.Address.House != null) {
 				currentHouse = client.Address.House;
 				currentStreet = client.Address.House.Street;
-				currentRegion = client.Address.House.Street.Region;
+				currentRegion = client.Address.House.Region;
 			}
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			// списки улиц и домов 
@@ -777,7 +766,7 @@ namespace InforoomControlPanel.Controllers
 			if (client.Address != null && client.Address.House != null) {
 				currentHouse = client.Address.House;
 				currentStreet = client.Address.House.Street;
-				currentRegion = client.Address.House.Street.Region;
+				currentRegion = client.Address.House.Region;
 			}
 			var RegionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 
@@ -803,13 +792,7 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		public ActionResult DealerList()
-		{
-			var adminPanelNew = System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"];
-			if (adminPanelNew == null) {
-				throw new Exception("Значение 'adminPanelNew' отсуствует в Global.config!");
-			}
-			ViewBag.AdminPanelNew = adminPanelNew;
-
+		{ 
 			var dealer = DbSession.QueryOver<Dealer>().List();
 			dealer = dealer.OrderBy(s => s.Employee.Name).ToList();
 			var employee = DbSession.QueryOver<Employee>().List();
