@@ -1380,7 +1380,8 @@
 	$(document).on(
 		'focus.datepicker.data-api click.datepicker.data-api',
 		'[data-provide="datepicker"]',
-		function(e){
+		function (e) {
+			alert();
 			var $this = $(this);
 			if ($this.data('datepicker')) return;
 			e.preventDefault();
@@ -1388,8 +1389,13 @@
 			$this.datepicker('show');
 		}
 	);
-	$(function(){
-		$('[data-provide="datepicker-inline"]').datepicker();
+	$(function () {
+	 	$('[data-provide="datepicker-inline"]').datepicker({
+			startView: 2,
+			clearBtn: true,
+			language: "ru",
+			todayHighlight: true
+		});
 	});
 
 }( window.jQuery ));

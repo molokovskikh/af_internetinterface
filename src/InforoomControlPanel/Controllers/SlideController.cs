@@ -29,7 +29,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.Slides = slides;
 			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
 			if (pathFromConfigUrl == null) {
-				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
+				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			return View();
@@ -63,10 +63,10 @@ namespace InforoomControlPanel.Controllers
 			var pathFromConfig = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadPath"];
 			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
 			if (pathFromConfig == null) {
-				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config!");
+				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
 			if (pathFromConfigUrl == null) {
-				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
+				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
@@ -102,7 +102,7 @@ namespace InforoomControlPanel.Controllers
 			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
 			if (pathFromConfigUrl == null)
 			{
-				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
+				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			//Создаем слайд
@@ -125,10 +125,10 @@ namespace InforoomControlPanel.Controllers
 			var pathFromConfig = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadPath"];
 			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
 			if (pathFromConfig == null) {
-				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config!");
+				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
 			if (pathFromConfigUrl == null) {
-				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
+				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			var ext = uploadedFile == null ? "" : new FileInfo(uploadedFile.FileName).Extension;
@@ -190,7 +190,7 @@ namespace InforoomControlPanel.Controllers
 		{
 			var pathFromConfig = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadPath"];
 			if (pathFromConfig == null) {
-				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config!");
+				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
 			var slide = DbSession.Query<Slide>().FirstOrDefault(s => s.Id == id);
 
