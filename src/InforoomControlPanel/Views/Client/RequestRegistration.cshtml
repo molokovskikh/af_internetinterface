@@ -68,7 +68,7 @@
 											@Html.TextBoxFor(o => client.PhysicalClient.BirthDate, client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy"),
 												new {
 													@Value = (client.PhysicalClient.BirthDate.Year > 1900 ? client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy") : ""),
-													@data_format = "dd.mm.yyyy", @class = "form-control datepicker"
+													@data_format = "dd.mm.yyyy", @class = "form-control", @data_provide="datepicker-inline"
 												})
 										</div>
 									</div>
@@ -322,7 +322,7 @@
 												new {
 													@Value = (client.PhysicalClient.PassportDate.Year > 1900 ? client.PhysicalClient.PassportDate.ToString("dd.MM.yyyy") : ""),
 													@data_format = "dd.mm.yyyy",
-													@class = "form-control datepicker"
+													@class = "form-control", @data_provide="datepicker-inline"
 												})
 										</div>
 									</div>

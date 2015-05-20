@@ -22,6 +22,7 @@
 					<th class="sorting" tabindex="0" aria-controls="table-2">Регион</th>
 					<th class="sorting" tabindex="0" aria-controls="table-2">Ссылка</th>
 					<th class="sorting" tabindex="0" aria-controls="table-2">Опубликован</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">Приоритет</th>
 					<th class="sorting col-sm-3" style="min-width: 270px;" tabindex="0" aria-controls="table-2">Действие</th>
 				</tr>
 			</thead>
@@ -32,6 +33,7 @@
 						<td>@item.Region.Name</td>
 						<td><a href="@item.Url">@item.Url</a></td>
 						<td>@Html.CheckBoxFor(modelItem => item.Enabled, new { @disabled = "disabled", @checked = "checked" })</td>
+						<td>@item.Priority</td>
 						<td>
 						<a class="entypo-up" href="@Url.Action("SlidePriorityIncerease", "Slide", new { id = item.Id })"></a>
 						<a class="entypo-down" href="@Url.Action("SlidePriorityDecrease", "Slide", new { id = item.Id })"></a>

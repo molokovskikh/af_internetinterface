@@ -19,7 +19,7 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual bool LastStartFail { get; set; }
-		
+
 		[Property, Description("Дата следующей проверки целостности БД")]
 		public virtual DateTime? NextDataAuditDate { get; set; }
 	}

@@ -164,7 +164,7 @@ namespace InforoomControlPanel.Controllers
 			var urlBasePrefix = System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"];
 			if (urlBasePrefix == null)
 			{
-				throw new Exception("Значение 'adminPanelNew' отсуствует в Global.config!");
+				throw new Exception("Значение 'adminPanelNew' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
 			// urlBasePrefix = urlBasePrefix , но в локальной "/"
 			var pager = new ModelFilter<Street>(this, urlBasePrefix: "/");
@@ -244,7 +244,7 @@ namespace InforoomControlPanel.Controllers
 			var urlBasePrefix = System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"];
 			if (urlBasePrefix == null)
 			{
-				throw new Exception("Значение 'adminPanelNew' отсуствует в Global.config!");
+				throw new Exception("Значение 'adminPanelNew' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
 			// urlBasePrefix = urlBasePrefix , но в локальной "/"
 			var pager = new ModelFilter<House>(this, urlBasePrefix: "/");
