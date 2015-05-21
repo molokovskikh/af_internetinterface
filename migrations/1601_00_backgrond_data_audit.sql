@@ -1,3 +1,3 @@
 USE internet;
 ALTER TABLE `InternetSettings`
-	ADD COLUMN `NextAuditDate` DATETIME NULL DEFAULT NULL AFTER `NextSmsSendDate`;
+	ADD COLUMN `NextDataAuditDate` DATETIME NULL DEFAULT NULL AFTER `NextSmsSendDate`;
