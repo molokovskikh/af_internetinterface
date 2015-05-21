@@ -21,8 +21,8 @@
 	<head>
 		<title>@(ViewBag.Title)</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<link href="~/css/main.css?v9" rel="stylesheet" />
-		<link href="~/css/style.css?v7" rel="stylesheet" />
+		<link href="~/css/main.css?v10" rel="stylesheet" />
+		<link href="~/css/style.css?v8" rel="stylesheet" />
 		<link href="~/css/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" />
 	</head>
 	<body>
@@ -30,6 +30,11 @@
 		<div class="rightbg"></div>
 		<div class="wrapper">
 			<div class="errorContainer"></div>
+			@if (Request.IsAuthenticated && ViewBag.PrivateMsg != null) {
+				<div class="messageContainer">
+					<div class="notification"><span class="message">@ViewBag.PrivateMsg.Text</span></div>
+				</div>
+			}
 			<div class="top">
 				<div class="tab">
 					<div class="whiteleft"></div>
@@ -55,7 +60,7 @@
 						<p>	@ViewBag.ClientInfo </p>
 						@using (Html.BeginForm("Profile", "Personal", FormMethod.Get, new { @class = "logonform" })) {
 							<input type="submit" value="Личный кабинет">
-							}
+						}
 						@if(!ViewBag.NetworkClientFlag){
 							@Html.ActionLink("Выход", "Logout", "Account")
 						}
