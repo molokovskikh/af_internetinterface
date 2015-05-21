@@ -10,6 +10,36 @@ namespace Inforoom2.Models.Services
 	[Subclass(0, ExtendsType = typeof(Service), DiscriminatorValue = "VoluntaryBlockin")]
 	public class BlockAccountService : Service
 	{
+		public override bool CanActivate(ClientService assignedService)
+		{
+			var blockingTime = assignedService.EndDate - assignedService.BeginDate;
+			if (blockingTime == null) {
+				assignedService.CannotActivateMsg = "Невозможно определить срок добровольной блокировки. Активация отменена!";
+				return false;
+			}
+
+			var client = assignedService.Client;
+			var paidDays = (int)Math.Ceiling(blockingTime.Value.TotalDays) - client.FreeBlockDays;
+			if (paidDays > 0) {
+				var servicePay = 50m + (paidDays * 3m);
+				if (servicePay > client.Balance) {
+					assignedService.CannotActivateMsg = string.Format(
+						"Недостаточно средств на счете для добровольной блокировки до {0}.</br>",
+						assignedService.EndDate.Value.ToShortDateString());
+					string plusMsg;
+					if (client.FreeBlockDays > 0) {
+						plusMsg = string.Format("Вы можете активировать услугу на бесплатные дни "
+							+ "либо пополнить баланс и уже затем перейти к ее активации!");
+					}
+					else
+						plusMsg = "Пополните баланс, чтобы затем перейти к активации услуги!";
+					assignedService.CannotActivateMsg += plusMsg;
+					return false;
+				}
+			}
+			return true;
+		}
+
 		public override void Activate(ClientService assignedService, ISession session)
 		{
 			var client = assignedService.Client;

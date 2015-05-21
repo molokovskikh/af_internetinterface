@@ -9,7 +9,7 @@
 	Client client = ViewBag.Client;
 	BlockAccountService service = ViewBag.BlockAccountService;
 	var nowDate = SystemTime.Now();
-	var blockingEndDate = nowDate.AddDays(client.FreeBlockDays).ToShortDateString();
+	var blockingEndDate = nowDate.AddDays(client.FreeBlockDays > 0 ? client.FreeBlockDays : 1).ToShortDateString();
 	var blockService = client.ClientServices.FirstOrDefault(c => c.Service.GetType() == typeof(BlockAccountService)) ?? new ClientService();
 }
 
@@ -50,7 +50,7 @@
 			@Html.HiddenFor(modelItem => service.Id)
 			<input id="DisconnectBtn" class="button" type="submit" value="Отключить" />
 		}
-		
+
 		<p>Доступно @client.FreeBlockDays бесплатных дней.</p>
 		if (client.YearCycleDate != null) {
 			if (client.FreeBlockDays > 0) {
@@ -66,5 +66,5 @@
 			}
 		}
 	}
-	
+
 </div>
