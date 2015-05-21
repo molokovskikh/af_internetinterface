@@ -150,6 +150,10 @@
 			<td>${OrderInfo.ClientConnectInfo.Pool} ${"(${OrderInfo.ClientConnectInfo.PoolDescription})" if OrderInfo.ClientConnectInfo.Pool != null}</td>
 		</tr>
 		<tr>
+			<td><span class="description">Адрес подключения</span></td>
+			<td>${OrderInfo.Order.ConnectionAddress}</td>
+		</tr>
+		<tr>
 			<td class="width400px">
 			<a href="${SiteRoot}/Switches/MakeSwitch?Switch=${OrderInfo.ClientConnectInfo.Switch}"> Коммутатор</a>
 		</td>
@@ -386,6 +390,12 @@
 					${app.Error("OrderInfo.ClientConnectInfo.Pool")}
 				</td>
 			</tr>
+		<tr>
+			<td>Адрес подключения</td>
+			<td colspan="2">
+				<input type="text" id="ConnAddrEdit" name="Order.ConnectionAddress" value="${OrderInfo.Order.ConnectionAddress}" class="width100"/>
+			</td>
+		</tr>
 		<tr>
 			<td>Коммутатор</td>
 			<td class="width200px">

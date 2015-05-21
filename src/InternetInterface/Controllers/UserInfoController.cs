@@ -261,7 +261,7 @@ namespace InternetInterface.Controllers
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoint();
 
-			//если это не создание ордера, то это его редактировани
+			//если это не создание ордера, то это его редактирование
 			//если editConnect == 0, то это новый ордер
 			var existingOrder = DbSession.Query<Order>().FirstOrDefault(o => o.Id == EditConnect);
 
@@ -401,6 +401,7 @@ namespace InternetInterface.Controllers
 					existingOrder.BeginDate = Order.BeginDate;
 					existingOrder.EndDate = Order.EndDate;
 					existingOrder.Number = Order.Number;
+					existingOrder.ConnectionAddress = Order.ConnectionAddress;
 				}
 				if (currentEndPoint > 0) {
 					existingOrder.EndPoint = DbSession.Get<ClientEndpoint>(currentEndPoint);
