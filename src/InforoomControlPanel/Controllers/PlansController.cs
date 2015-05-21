@@ -15,7 +15,7 @@ namespace InforoomControlPanel.Controllers
 	/// <summary>
 	/// Страница управления вопросами от пользователя
 	/// </summary>
-	public class PlansController : AdminController
+	public class PlansController : ControlPanelController
 	{
 
 		public PlansController()
@@ -23,7 +23,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "Тарифы";
 		}
 
-		public new ActionResult Index()
+		public  ActionResult Index()
 		{
 			return PlanIndex();
 		}
@@ -32,7 +32,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult PlanIndex()
 		{
-			var plans = DbSession.Query<Plan>().OrderByDescending(i => i.Id).ToList();
+			var plans = DbSession.Query<Plan>().OrderByDescending(i => i.Priority).ToList();
 			var regions = DbSession.Query<Region>().ToList();
 			ViewBag.Plans = plans;
 			ViewBag.Regions = regions;
@@ -126,6 +126,42 @@ namespace InforoomControlPanel.Controllers
 			EditPlan(plan.Id);
 			ViewBag.Plan = plan;
 			return View("EditPlan");
+		}
+
+		/// <summary>
+		/// Удаление тарифа
+		/// </summary>
+		/// <param name="id">Идентификатор тарифа</param>
+		/// <returns></returns>
+		public ActionResult RemovePlan(int id)
+		{
+			var plan = DbSession.Get<Plan>(id);
+			DbSession.Delete(plan);
+			return RedirectToAction("PlanIndex");
+		}
+
+		/// <summary>
+		/// Увеличивает приоритет тарифа
+		/// </summary>
+		/// <param name="id">Идентификатор тарифа</param>
+		/// <returns></returns>
+		public ActionResult IncreasePlanShowPriority(int id)
+		{
+			var plan = DbSession.Get<Plan>(id);
+			plan.IncereasePriority(DbSession);
+			return RedirectToAction("PlanIndex");
+		}
+
+		/// <summary>
+		/// Уменьшает приоритет тарифа
+		/// </summary>
+		/// <param name="id">Идентификатор тарифа</param>
+		/// <returns></returns>
+		public ActionResult DecreasePlanShowPriority(int id)
+		{
+			var plan = DbSession.Get<Plan>(id);
+			plan.DecreasePriority(DbSession);
+			return RedirectToAction("PlanIndex");
 		}
 
 		/// <summary>

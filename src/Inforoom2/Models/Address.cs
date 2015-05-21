@@ -1,18 +1,19 @@
-﻿using NHibernate.Mapping.Attributes;
+﻿using Inforoom2.validators;
+using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
 	[Class(0, Table = "address", NameType = typeof(Address))]
 	public class Address : BaseModel
-	{
-		[ManyToOne(Column = "house", Cascade = "save-update")]
+	{ 
+		[ManyToOne(Column = "house", Cascade = "save-update"),ValidatorNotEmpty]
 		public virtual House House { get; set; }
 
 		[Property]
 		public virtual string Entrance { get; set; }
 
-		[Property, Min(Value = 1, Message = "Введите номер квартиры")]
+		[Property]
 		public virtual string Apartment { get; set; }
 
 		[Property]
@@ -21,6 +22,10 @@ namespace Inforoom2.Models
 		//true если яндекс api нашел адрес
 		[Property]
 		public virtual bool IsCorrectAddress { get; set; }
+
+		public virtual Region Region {
+			get { return House.Region ?? House.Street.Region; }
+		}
 
 		public virtual string FullAddress
 		{

@@ -1,4 +1,5 @@
-﻿@using Inforoom2.Models
+﻿@using Common.Tools
+@using Inforoom2.Models
 @using Inforoom2.Models.Services
 
 @model dynamic
@@ -7,7 +8,8 @@
 	ViewBag.Title = "Личный кабинет: Добровольная блокировка";
 	Client client = ViewBag.Client;
 	BlockAccountService service = ViewBag.BlockAccountService;
-	var blockingEndDate = DateTime.Now.AddDays(client.FreeBlockDays).ToShortDateString();
+	var nowDate = SystemTime.Now();
+	var blockingEndDate = nowDate.AddDays(client.FreeBlockDays).ToShortDateString();
 	var blockService = client.ClientServices.FirstOrDefault(c => c.Service.GetType() == typeof(BlockAccountService)) ?? new ClientService();
 }
 
@@ -29,7 +31,7 @@
 		if (client.YearCycleDate != null) {
 			if (client.FreeBlockDays > 0) {
 				<p>Ваши бесплатные дни доступны в период с 
-					@DateTime.Now.Date.ToShortDateString() по 
+					@nowDate.Date.ToShortDateString() по 
 					@client.YearCycleDate.Value.AddYears(1).AddDays(-1).ToShortDateString()
 				</p>
 			}
@@ -53,7 +55,7 @@
 		if (client.YearCycleDate != null) {
 			if (client.FreeBlockDays > 0) {
 				<p>Ваши бесплатные дни доступны в период с 
-					@DateTime.Now.Date.ToShortDateString() по 
+					@nowDate.Date.ToShortDateString() по 
 					@client.YearCycleDate.Value.AddYears(1).AddDays(-1).ToShortDateString()
 				</p>
 			}

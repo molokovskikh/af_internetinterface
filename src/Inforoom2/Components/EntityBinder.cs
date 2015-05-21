@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using Inforoom2.Helpers;
 using Inforoom2.Models;
 using log4net.Appender;
 using NHibernate;
@@ -27,6 +28,9 @@ namespace Inforoom2.Components
 		}
 	}
 
+	//TODO:подумать над обработкой ошибок, вызванных некорректным HTML
+
+	//TODO:подумать, как избежать инъекции лишних значений в Байндер
 	/// <summary>
 	/// Объект, который натягивает данные из форм на объекты
 	/// </summary>
@@ -54,7 +58,7 @@ namespace Inforoom2.Components
 		{
 			var modelName = bindingContext.ModelName;
 			var type = bindingContext.ModelType;
-			
+
 			//Так как мы удаляем использованные элементы из коллекции, во время байндинга
 			//Форму необходимо скопировать
 			var collection = new NameValueCollection(controllerContext.HttpContext.Request.Form);
@@ -74,20 +78,48 @@ namespace Inforoom2.Components
 			var form = request.Form;
 			var keys = form.AllKeys;
 			string name = null;
-			foreach (var key in keys) {
+			foreach (var key in keys)
+			{
 				var split = key.Split('.');
-				if (split.Length > 1) {
+				if (split.Length > 1)
+				{
 					name = split.First();
 					break;
 				}
 			}
-			if(name == null)
+			if (name == null)
 				throw new Exception("Не удалось выяснить имя модели");
 
 			var values = SliceValues(new NameValueCollection(request.Form), name);
 			var ret = MapModel(values, type);
 			return ret;
 		}
+
+		/// <summary>
+		///  Генерирование переменной на основе полученных типа и значения
+		/// </summary>
+		/// <param name="values">Коллекция свойств для модели</param>
+		/// <param name="entityType">Тип модели</param> 
+		/// <returns>модель</returns>
+		protected object GenerateInstance(NameValueCollection values, Type entityType)
+		{
+			// данное значение возможно при использовании
+			// Inforoom2.Helpers.ViewHelper.DropDownListExtendedFor
+			// в пустом значении списка
+			if (values["id"] == "") return null;
+
+			if (values["id"] == null || int.Parse(values["id"]) == 0)
+			{
+				// создание пустой переменной указанного типа
+				return Activator.CreateInstance(entityType);
+			}
+			else
+			{
+				// создание переменной указанного типа с переданным значением
+				return Session.Get(entityType, int.Parse(values["id"]));
+			}
+		}
+
 
 		/// <summary>
 		/// Рекурсивно Натягивает данные из списка на модель. Каждый элемент в списке считается частью модели.
@@ -98,22 +130,36 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		public object MapModel(NameValueCollection values, Type entityType)
 		{
-			var instance = values["id"] == null || int.Parse(values["id"]) == 0 ? Activator.CreateInstance(entityType) : Session.Get(entityType, int.Parse(values["id"]));
-			while(values.HasKeys()) {
+			var instance = GenerateInstance(values, entityType);
+
+			if (instance == null)
+				return null;
+
+			while (values.HasKeys())
+			{
 				var key = values.Keys.First() as string;
 				object newValue;
 				//Получаем имя поля из параметров
 				var propName = GetPropertyNameFromKey(key);
 				//Получаем поле
 				var property = instance.GetType().GetProperty(propName);
-				
-				if (property.PropertyType.IsSubclassOf(typeof(BaseModel))) {
+
+				if (property.PropertyType.IsSubclassOf(typeof(BaseModel)))
+				{
 					//Если это модель то мапим модель
+					var oldValue = property.GetValue(instance, new object[] { }) as BaseModel;
+					var idKey = property.Name + ".Id";
+					//Если нет идентификатора вложенной модели, то мы его создаем в параметрах
+					//То есть если не было дано никаких специальных указаний, что модель надо затереть или подгрузить другую
+					if (oldValue != null && values[idKey] == null)
+						values[idKey] = oldValue.Id.ToString();
 					var subvalues = SliceValues(values, property.Name);
 					newValue = MapModel(subvalues, property.PropertyType);
-					property.SetValue(instance, newValue, new object[]{});
+					property.SetValue(instance, newValue, new object[] { });
+					if (values[key] != null) throw new Exception("Не удается назначить поле! \n Вероятная причина: значени в свойстве name тэга обрабатываемого представления *view* указывает на объект ( на модель '" + key + "' ), а не на его поле!");
 				}
-				else if (property.PropertyType.IsGenericType && property.PropertyType.GetInterfaces().Contains(typeof(IEnumerable))){
+				else if (property.PropertyType.IsGenericType && property.PropertyType.GetInterfaces().Contains(typeof(IEnumerable)))
+				{
 					//Если поле это коллекция, то получаем набор параметров для каждого элемента и закидываем их в список
 					//Получаем тип элемента коллекции
 					var subType = property.PropertyType.GetGenericArguments().FirstOrDefault();
@@ -122,22 +168,44 @@ namespace Inforoom2.Components
 					//Получаем словарь с коллекциями значений для элементов списка
 					var subCollections = SliceMultipleValues(values, property.Name);
 
-					//Есть 2 варианта использования байндера: изменение коллекции или добавления элемента
-					if (subCollections.ContainsKey("-1"))
-						AppendToCollection(collection, subType,subCollections["-1"]);
+					//Есть 3 варианта использования байндера: изменение коллекции, удаление элементов или добавления элемента в конец
+					if (subCollections.ContainsKey("add"))
+						AppendToCollection(collection, subType, subCollections["add"]);
+					else if (subCollections.Keys.Any(i => int.Parse(i) < 0))
+						RemoveFromCollection(collection, subCollections);
 					else
-						ChangeCollection(collection,subType, subCollections);
+						ChangeCollection(collection, subType, subCollections);
 				}
-				else {
-					 //Если это простое поле, то просто присваиваем его специальной функцией
-					 //Которая хорошо конвертирует строки в значения полей модели
-					 newValue = values[key];
-					 values.Remove(key);
-					 SetValue(instance, property, newValue);
+				else
+				{
+					//Если это простое поле, то просто присваиваем его специальной функцией
+					//Которая хорошо конвертирует строки в значения полей модели
+					newValue = values[key];
+					values.Remove(key);
+					SetValue(instance, property, newValue);
 				}
 			}
 			return instance;
 		}
+
+		private void RemoveFromCollection(IList collection, Dictionary<string, NameValueCollection> subCollections)
+		{
+			
+			foreach (var pair in subCollections)
+			{
+				//Получаем коллекцию из коллекции коллекций
+				var subcollection = pair.Value;
+				//Находим id, модели, которую нужно удалить из коллекции
+				//а затем саму модель
+				var id = int.Parse(subcollection["Id"]);
+				foreach (var model in collection)
+					if ((model as BaseModel).Id == id) {
+						collection.Remove(model);
+						break;
+					}
+			}
+		}
+
 		/// <summary>
 		/// Изменяет списочное поле-коллекцию у модели, заполняет ее новыми значениями.
 		/// Остаются только те значения, которые были переданы.
@@ -151,9 +219,7 @@ namespace Inforoom2.Components
 			collection.Clear();
 			foreach (var pair in subCollections)
 			{
-				//Получаем индекс элемента
-				var index = pair.Key;
-				//Получаем коллекцию коллекций
+				//Получаем коллекцию из коллекции коллекций
 				var subcollection = pair.Value;
 				//Натягиваем параметры
 				var newValue = MapModel(subcollection, type);
@@ -182,7 +248,7 @@ namespace Inforoom2.Components
 		{
 			var key = str.Split('.').First();
 			if (key.IndexOf('[') != -1)
-				key = key.Substring(0,key.IndexOf('['));
+				key = key.Substring(0, key.IndexOf('['));
 			return key;
 		}
 
@@ -195,20 +261,23 @@ namespace Inforoom2.Components
 		/// <returns>
 		/// Возвращает словарь, элементами, которого являются списки параметров для вложенных моделей.
 		/// Индексом, является порядковый номер модели в списке.
-		/// Элемент у которого в изначальном списке не указан индекс (то есть мы хотели его добавить в конец) получает индекс -1.
+		/// 
+		/// Элемент у которого в изначальном списке не указан индекс (то есть мы хотели его добавить в конец) получает индекс "add".
 		/// </returns>
 		private Dictionary<string, NameValueCollection> SliceMultipleValues(NameValueCollection values, string name)
 		{
-			var dictionary = new Dictionary<string,NameValueCollection>();
-			while (values.AllKeys.Any(i => i.Contains(name))) {
+			var dictionary = new Dictionary<string, NameValueCollection>();
+			while (values.AllKeys.Any(i => i.Contains(name)))
+			{
 				var key = values.AllKeys.First(i => i.Contains(name));
-				var index = key[name.Length + 1];
+				//получаем значения индекса элемента из верстки
+				var index = key.Split('[')[1].Split(']')[0];
 				int indexVal;
-				var isRealIndex = int.TryParse(index.ToString(), out indexVal);
+				var isRealIndex = int.TryParse(index, out indexVal);
 				var subname = isRealIndex ? name + "[" + index + "]" : name + "[]";
-				var subcollection = SliceValues(values,subname );
-				indexVal = isRealIndex ? indexVal : -1;
-				dictionary.Add(indexVal.ToString(), subcollection);
+				var subcollection = SliceValues(values, subname);
+				var dictionaryIndex = isRealIndex ? indexVal.ToString() : "add";
+				dictionary.Add(dictionaryIndex, subcollection);
 			}
 			return dictionary;
 		}
@@ -224,10 +293,14 @@ namespace Inforoom2.Components
 			name = name.ToLower();
 			var collection = new NameValueCollection();
 			foreach (var key in values.AllKeys)
-				if (key.ToLower().Contains(name)) {
+			{
+				//Проверяем, является ли ключ объектом с полями
+				if (key.ToLower().IndexOf(name + ".") == 0)
+				{
 					collection.Add(key.Substring(name.Length + 1), values[key]);
 					values.Remove(key);
 				}
+			}
 
 			return collection;
 		}
@@ -241,7 +314,6 @@ namespace Inforoom2.Components
 		/// <param name="propertyVal">Значение свойства (как правило строка)</param>
 		public void SetValue(object inputObject, PropertyInfo propertyInfo, object propertyVal)
 		{
-
 			//Convert.ChangeType does not handle conversion to nullable types
 			//if the property type is nullable, we need to get the underlying type of the property
 			var targetType = IsNullableType(propertyInfo.PropertyType)
@@ -264,15 +336,21 @@ namespace Inforoom2.Components
 				//Значения перечислений задаются через их строчное обозначение
 				propertyVal = Enum.Parse(targetType, propertyVal.ToString());
 			}
-			try {
-				//
-				propertyVal = Convert.ChangeType(propertyVal, targetType);
+
+			if (IsNullableType(propertyInfo.PropertyType) && targetType != typeof(String) && propertyVal == "")
+			{
+				propertyVal = null;
+			}
+
+			try
+			{
+				if (propertyVal != null)
+					propertyVal = Convert.ChangeType(propertyVal, targetType);
 				propertyInfo.SetValue(inputObject, propertyVal, null);
 			}
-			catch (Exception e) {
-				
+			catch (Exception e)
+			{
 			}
-			
 		}
 
 		/// <summary>

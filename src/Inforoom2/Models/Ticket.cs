@@ -1,4 +1,5 @@
 ﻿using System;
+using Common.Tools;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
@@ -12,7 +13,7 @@ namespace Inforoom2.Models
 	{
 		public Ticket()
 		{
-			CreationDate = DateTime.Now;
+			CreationDate = SystemTime.Now();
 		}
 
 		[Property, NotNullNotEmpty(Message = "Текст вопроса должен быть заполнен")]

@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Security.AccessControl;
 using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Controllers;
@@ -13,27 +16,13 @@ namespace InforoomControlPanel.Controllers
 	/// <summary>
 	/// Базовый контролер администратора
 	/// </summary>
-	[AuthorizeUser(Roles = "Admin")]
-	public class AdminController : BaseController
+	public class AdminController : ControlPanelController
 	{
 		public AdminController()
 		{
 			ViewBag.BreadCrumb = "Панель управления";
 		}
 
-		public override Employee GetCurrentEmployee()
-		{
-			if (User == null || DbSession == null || !DbSession.IsConnected) {
-				return null;
-			}
-			return DbSession.Query<Employee>().FirstOrDefault(e => e.Login == User.Identity.Name);
-		}
-
-		protected override void OnResultExecuting(ResultExecutingContext filterContext)
-		{
-			var curEmployee = GetCurrentEmployee();
-			ViewBag.CurrentEmployee = curEmployee ?? new Employee();
-		}
 
 		public ActionResult Statistic()
 		{
@@ -44,69 +33,129 @@ namespace InforoomControlPanel.Controllers
 		/// Список администраторов и создание нового
 		/// </summary>
 		/// <returns></returns>
-		public ActionResult Admins()
+		public ActionResult EmployeeList()
 		{
-			var newAdmin = new Administrator();
-			var admins = DbSession.Query<Administrator>().ToList();
-			var employees = DbSession.Query<Employee>().OrderBy(i => i.Name).ToList().Where(e => admins.Where(a => a.Employee == e).ToList().Count == 0).ToList();
+			var employees = DbSession.Query<Employee>().OrderBy(i => i.Name).ToList();
 			ViewBag.employees = employees;
-			ViewBag.admins = admins;
-			ViewBag.Administrator = newAdmin;
 			return View();
 		}
 
+		
 		/// <summary>
-		/// Создание нового администратора
+		/// Редактирование администратора
+		/// </summary>
+		/// <returns></returns>
+		public ActionResult EditEmployee(int id)
+		{
+			var employee = DbSession.Get<Employee>(id);
+			var roles = DbSession.Query<Role>().ToList();
+			roles = roles.Where(i => !employee.Roles.Any(j => j == i)).ToList();
+
+			ViewBag.Employee = employee;
+			ViewBag.Roles = roles;
+			return View("EditEmployee");
+		}
+
+		/// <summary>
+		///Редактирование администратора
 		/// </summary>
 		/// <returns></returns>
 		[HttpPost]
-		public ActionResult Admins([EntityBinder] Administrator Administrator)
+		public ActionResult EditEmployee([EntityBinder] Employee employee)
 		{
-			var errors = ValidationRunner.ValidateDeep(Administrator);
-			if (errors.Length == 0) {
-				DbSession.Save(Administrator);
-				SuccessMessage("Администратор успешно добавлен");
-				return Admins();
+			var errors = ValidationRunner.ValidateDeep(employee);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(employee);
+				SuccessMessage("Объект успешно изменен");
+				RedirectToAction("EditRole");
 			}
-			Admins();
-			ViewBag.newAdmin = Administrator;
+			EditEmployee(employee.Id);
+			return View("EditEmployee");
+		}	
+
+		/// <summary>
+		/// Список прав, которые можно назначать администраторам
+		/// </summary>
+		/// <returns></returns>
+		public ActionResult PermissionList()
+		{
+			var rights = DbSession.Query<Permission>().ToList();
+			ViewBag.Permissions = rights;
+			return View();
+		}
+		/// <summary>
+		/// Страница, отображаемая, в случае, если у пользователя нет прав
+		/// </summary>
+		/// <returns></returns>
+		public ActionResult AccessDenined()
+		{
+			ErrorMessage("Вы попытались получить доступ к части системы для которой у вас нет прав!");
+			return View();
+		}
+
+		public ActionResult RenewActionPermissions()
+		{
+			var controllers = GetType().Assembly.GetTypes().Where(i=> i.IsSubclassOf(typeof(ControlPanelController))).ToList();
+			foreach (var controller in controllers) {
+				var methods = controller.GetMethods();
+				var actions = methods.Where(i => i.ReturnType == typeof(ActionResult)).ToList();
+				foreach (var action in actions) {
+					var name = controller.Name + "_" + action.Name;
+					var right = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
+					if(right != null)
+						continue;
+					var newright = new Permission();
+					newright.Name = name;
+					var url = Url.Action(action.Name,controller.Name.Replace("Controller",""));
+					newright.Description = "Доступ к странице <a href='"+url+"'>"+name+"</a>";
+					DbSession.Save(newright);
+				}
+			}
+			return RedirectToAction("PermissionList");
+		}
+
+		/// <summary>
+		/// Список ролей
+		/// </summary>
+		/// <returns></returns>
+		public ActionResult RoleList()
+		{
+			var roles = DbSession.Query<Role>().ToList();
+			ViewBag.Roles = roles;
 			return View();
 		}
 
 		/// <summary>
-		/// Метод, изменяющий порядок отображения сущностей.
+		/// Редактирование роли
 		/// </summary>
-		public ActionResult ChangeModelPriority<TModel>(int? modelId, string direction, string actionName, string controllerName)
-			where TModel : IModelWithPriority, new()
+		/// <returns></returns>
+		public ActionResult EditRole(int id)
 		{
-			var model = DbSession.Get<TModel>(modelId);
-			IModelWithPriority maxIndexModel = DbSession.Query<TModel>().OrderByDescending(k => k.Priority).First();
-			var maxIndex = 0;
-			if (maxIndexModel != null)
-				maxIndex = maxIndexModel.Priority + 1;
+			var role = DbSession.Get<Role>(id);
+			var permissions = DbSession.Query<Permission>().ToList();
+			permissions = permissions.Where(i => !role.Permissions.Any(j => j == i)).ToList();
 
-			IList<TModel> models;
-			TModel targetModel;
-			if (direction == "Up") {
-				models = DbSession.Query<TModel>().OrderByDescending(k => k.Priority).ToList();
-				targetModel = models.FirstOrDefault(k => k.Priority < model.Priority);
+			ViewBag.Role = role;
+			ViewBag.Permissions = permissions;
+			return View("EditRole");
+		}
+
+		/// <summary>
+		/// Редактирование роли
+		/// </summary>
+		/// <returns></returns>
+		[HttpPost]
+		public ActionResult EditRole([EntityBinder] Role role)
+		{
+			var errors = ValidationRunner.ValidateDeep(role);
+			if (errors.Length == 0) {
+				DbSession.Save(role);
+				SuccessMessage("Объект успешно изменен");
+				RedirectToAction("EditRole");
 			}
-			else {
-				models = DbSession.Query<TModel>().OrderBy(k => k.Priority).ToList();
-				targetModel = models.FirstOrDefault(k => k.Priority > model.Priority);
-			}
-			if (targetModel != null) {
-				int targetPriority = targetModel.Priority;
-				targetModel.Priority = model.Priority;
-				model.Priority = maxIndex;
-				DbSession.Save(targetModel);
-				DbSession.Save(model);
-				//сохраняем в базу, чтобы не столкнуться с Duplicate Entry
-				DbSession.Flush();
-				model.Priority = targetPriority;
-				DbSession.Save(model);
-			}
-			return RedirectToAction(actionName, controllerName);
+			EditRole(role.Id);
+			return View("EditRole");
 		}
 	}
 }

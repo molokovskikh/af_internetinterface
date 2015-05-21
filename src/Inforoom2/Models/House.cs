@@ -38,5 +38,8 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual int EntranceAmount { get; set; }
+
+		[ManyToOne(Column = "Region", Cascade = "save-update")]
+		public virtual Region Region { get; set; }
 	}
 }

@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Runtime.Remoting.Channels;
 using System.Text;
 using System.Web.Mvc;
+using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
+using Inforoom2.validators;
 using InternetInterface.Models;
 using NHibernate.Linq;
-using NHibernate.Util;
 using AppealType = Inforoom2.Models.AppealType;
 using Client = Inforoom2.Models.Client;
 using ClientEndpoint = Inforoom2.Models.ClientEndpoint;
@@ -33,14 +33,12 @@ namespace Inforoom2.Controllers
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
 			base.OnActionExecuting(filterContext);
-			if (filterContext == null)
-			{
+			if (filterContext == null) {
 				throw new ArgumentNullException("filterContext");
 			}
 			//если клиент был залогинен по сети, то HTTPСontext не будет изменен
 			//в этом случае можно оттолкнуть от переменной CurrentClient
-			if (CurrentClient == null && !filterContext.HttpContext.User.Identity.IsAuthenticated)
-			{
+			if (CurrentClient == null && !filterContext.HttpContext.User.Identity.IsAuthenticated) {
 				string loginUrl = "/Account/Login"; // Default Login Url 
 				filterContext.Result = new RedirectResult(loginUrl);
 			}
@@ -168,9 +166,9 @@ namespace Inforoom2.Controllers
 		{
 			ViewBag.Title = "Платежи";
 			var client = CurrentClient;
-			var userWriteOffs = DbSession.Query<UserWriteOff>().Where(uwo => uwo.Client.Id == client.Id && uwo.Date > DateTime.Now.AddMonths(-3));
-			var writeOffs = DbSession.Query<WriteOff>().Where(wo => wo.Client.Id == client.Id && wo.WriteOffDate > DateTime.Now.AddMonths(-3));
-			var payments = DbSession.Query<Payment>().Where(p => p.Client.Id == client.Id && p.RecievedOn > DateTime.Now.AddMonths(-3));
+			var userWriteOffs = DbSession.Query<UserWriteOff>().Where(uwo => uwo.Client.Id == client.Id && uwo.Date > SystemTime.Now().AddMonths(-3));
+			var writeOffs = DbSession.Query<WriteOff>().Where(wo => wo.Client.Id == client.Id && wo.WriteOffDate > SystemTime.Now().AddMonths(-3));
+			var payments = DbSession.Query<Payment>().Where(p => p.Client.Id == client.Id && p.RecievedOn > SystemTime.Now().AddMonths(-3));
 
 			var historyList = userWriteOffs.Select(userWriteOff => new BillingHistory {
 				Date = userWriteOff.Date,
@@ -232,6 +230,11 @@ namespace Inforoom2.Controllers
 				smsContact = new Contact();
 				smsContact.Type = ContactType.SmsSending;
 			}
+			else {
+				// удаления символа "-" при выводе номера пользователю
+				smsContact.ContactString = smsContact.ContactString.Replace("-", "");
+			}
+
 			ViewBag.Contact = smsContact;
 			ViewBag.IsSmsNotificationActive = client.SendSmsNotification;
 			ViewBag.Title = "Уведомления";
@@ -244,11 +247,22 @@ namespace Inforoom2.Controllers
 		{
 			var client = CurrentClient;
 			var errors = ValidationRunner.Validate(contact);
+			//Валидация контакта
+			if (contact.ContactString != null && contact.ContactString.Length == 10) // добавление символа "-" при сохранении номера в БД
+			{
+				contact.ContactString = contact.ContactString.IndexOf('-') != -1 ? contact.ContactString : contact.ContactString.Insert(3, "-");
+			}
+			if (client.SendSmsNotification == false) {
+				var contactValidation = new ValidatorContacts(); // Принудительная валидация модели контактов по атрибуту ValidatorContacts
+				ViewBag.ContactValidation = contactValidation;
+				errors = errors.Length != 0 ? errors : ValidationRunner.ForcedValidationByAttribute<Contact>(contact, s => s.ContactString, contactValidation);
+			}
+
 			if (errors.Length == 0) {
 				var smsContact = client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending);
 				if (smsContact == null) {
 					smsContact = contact;
-					smsContact.Date = DateTime.Now;
+					smsContact.Date = SystemTime.Now();
 					smsContact.Comment = "Пользователь создал из личного кабинета";
 					client.Contacts.Add(smsContact);
 				}
@@ -268,7 +282,6 @@ namespace Inforoom2.Controllers
 					DbSession.Save(appeal);
 					SuccessMessage("Вы успешно подписались на смс рассылку");
 				}
-
 				smsContact.ContactString = contact.ContactString;
 				DbSession.Save(client);
 				return RedirectToAction("Notifications");
@@ -298,7 +311,7 @@ namespace Inforoom2.Controllers
 			ViewBag.Client = client;
 			//todo - наверно надо подумать как эти провеки засунуть куда следует
 			var beginDate = client.WorkingStartDate ?? new DateTime();
-			if (beginDate == DateTime.MinValue || beginDate.AddMonths(2) >= DateTime.Now) {
+			if (beginDate == DateTime.MinValue || beginDate.AddMonths(2) >= SystemTime.Now()) {
 				ErrorMessage("Нельзя менять тариф, в первые 2 месяца после подключения");
 				return View("Plans");
 			}
@@ -347,7 +360,7 @@ namespace Inforoom2.Controllers
 			//если адреса нет, показываем все тарифы
 			if (client.PhysicalClient.Address != null) {
 				//Если у тарифа нет региона, то он доступен во всех регионах
-				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && (!p.RegionPlans.Any() || p.RegionPlans.Any(r => r.Region.Id == client.PhysicalClient.Address.House.Street.Region.Id))).ToList();
+				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && (!p.RegionPlans.Any() || p.RegionPlans.Any(r => r.Region == client.PhysicalClient.Address.Region))).ToList();
 			}
 			else {
 				plans = GetList<Plan>().Where(p => !p.IsArchived && !p.IsServicePlan && !p.RegionPlans.Any()).ToList();

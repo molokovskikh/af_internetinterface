@@ -30,7 +30,7 @@ namespace Inforoom2.Controllers
 			var client = CurrentClient;
 			if (client.CanUseService(service) && blockingEndDate != null) {
 				var clientService = new ClientService {
-					BeginDate = DateTime.Now,
+					BeginDate = SystemTime.Now(),
 					EndDate = blockingEndDate,
 					Service = service,
 					Client = client,
@@ -38,7 +38,7 @@ namespace Inforoom2.Controllers
 				};
 				ActivateService(clientService, client);
 				var appealText = "Услуга \"{0}\" активирована на период с {1} по {2}. Баланс {3}.";
-				var appeal = new Appeal(string.Format(appealText, service.Name, DateTime.Now.ToShortDateString(),
+				var appeal = new Appeal(string.Format(appealText, service.Name, SystemTime.Now().ToShortDateString(),
 					blockingEndDate.Value.ToShortDateString(), client.Balance),
 					client, AppealType.User) {
 						Employee = GetCurrentEmployee()
@@ -76,15 +76,15 @@ namespace Inforoom2.Controllers
 			var client = CurrentClient;
 			if (client.CanUseService(service)) {
 				var clientService = new ClientService {
-					BeginDate = DateTime.Now,
-					EndDate = DateTime.Now.AddDays(3),
+					BeginDate = SystemTime.Now(),
+					EndDate = SystemTime.Now().AddDays(3),
 					Service = service,
 					Client = client
 				};
 				ActivateService(clientService, client);
 				var appealText = "Услуга \"{0}\" активирована на период с {1} по {2}. Баланс {3}.";
-				var appeal = new Appeal(string.Format(appealText, service.Name, DateTime.Now.ToShortDateString(),
-					DateTime.Now.AddDays(3).ToShortDateString(), client.Balance), client, AppealType.User) {
+				var appeal = new Appeal(string.Format(appealText, service.Name, SystemTime.Now().ToShortDateString(),
+					SystemTime.Now().AddDays(3).ToShortDateString(), client.Balance), client, AppealType.User) {
 						Employee = GetCurrentEmployee()
 					};
 				DbSession.Save(appeal);

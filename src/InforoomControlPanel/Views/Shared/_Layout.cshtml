@@ -89,24 +89,34 @@
 					</a>
 				</li>
 				<li>
-					<a href="@Url.Action("ClientList","Client")">
+					<a href="@Url.Action("List","Client")">
 						<i class="entypo-users"></i>
 						<span class="title">Клиенты</span>
 					</a>
 					<ul class="visible">
 						<li>
-							<a href="@Url.Action("ClientList","Client")">
+							<a href="@Url.Action("List","Client")">
 								<span class="title">Список клиентов</span>
 							</a>
 						</li>
 						<li>
-							<a href="@Url.Action("ClientRequest","Client")">
+							<a href="@Url.Action("Registration","Client")">
+								<span class="title">Зарегистрировать клиента</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("Request","Client")">
 								<span class="title">Создать заявку на подключение</span>
 							</a>
 						</li>
 						<li>
-							<a href="@Url.Action("ClientRequestsList","Client")">
+							<a href="@Url.Action("RequestsList","Client")">
 								<span class="title">Заявки на подключение</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("DealerList","Client")">
+								<span class="title">Дилеры</span>
 							</a>
 						</li>
 					</ul>
@@ -154,17 +164,36 @@
 								<span class="title">Новости</span>
 							</a>
 						</li>
+						<li>
+							<a href="@Url.Action("SlideIndex", "Slide")">
+								<span class="title">Слайды</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("BannerIndex", "Banner")">
+								<span class="title">Баннеры</span>
+							</a>
+						</li>
 					</ul>
 				</li>
 				<li>
-					<a href="@Url.Action("Admins","Admin")">
+					<a href="@Url.Action("EmployeeList","Admin")">
 						<i class="entypo-user"></i>
-						<span class="title">Администраторы</span>
+						<span class="title">Сотрудники</span>
 					</a>
 					<ul class="visible">
 						<li>
-							<a href="@Url.Action("Admins","Admin")">
-								<span class="title">Администраторы</span>
+							<a href="@Url.Action("EmployeeList","Admin")">
+								<span class="title">Сотрудники</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("RoleList","Admin")">
+								<span class="title">Роли</span>
+							</a>
+						</li>						<li>
+							<a href="@Url.Action("PermissionList","Admin")">
+								<span class="title">Права</span>
 							</a>
 						</li>
 					</ul>
@@ -293,7 +322,7 @@
 		
 		</div>
 		<hr />
-		<ol class="breadcrumb bc-3">
+		<ol class="breadcrumb bc-3 server-message">
 			<li>
 				<a href="@Url.Action("Index","AdminAccount")"><i class="fa-home"></i>Панель управления</a>
 			</li>
@@ -337,6 +366,7 @@
 	<script src="~/assets/js/bootstrap.js"></script>
 	<script src="~/assets/js/bootstrap-datepicker.js"></script>
 	<script src="~/assets/js/bootstrap-timepicker.min.js"></script>
+	<script src="~/assets/js/bootstrap-datepicker.ru.min.js"></script>
 	<script src="~/assets/js/joinable.js"></script>
 	<script src="~/assets/js/resizeable.js"></script>
 	<script src="~/assets/js/neon-api.js"></script>
@@ -352,10 +382,19 @@
 		<script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
 		<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
 		<script type="text/javascript" src="~/Scripts/Helpers.js"></script>
-		<script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
+	<script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
+	<script type="text/javascript" src="~/Scripts/Window.js"></script>
 		<script type="text/javascript" src="~/Scripts/ControlPanel.js"></script>
-		<script type="text/javascript" src="~/Scripts/Window.js"></script>
+
 		<link rel="stylesheet" href="~/Css/style.css"></link>
 		@RenderSection("JavaScript", required: false)
+	@{
+		var IeWaterline = "";
+#if DEBUG
+		IeWaterline = "<div class='IeWaterline'></div>";
+#endif
+	}
+	@Html.Raw(IeWaterline)
+
 	</body>
 </html>

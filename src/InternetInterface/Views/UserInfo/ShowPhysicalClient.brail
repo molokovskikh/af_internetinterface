@@ -1,4 +1,4 @@
-﻿${app.Asset("UserInfo.js")}
+﻿	${app.Asset("UserInfo.js")}
 <script type="text/javascript">
 	$(function () {
 		$('.button_mod').click(function () {
@@ -25,7 +25,8 @@
 		$('#myModal').append(html);
 	}
 </script>
-<div id="myModal" class="reveal-modal">
+
+<div id="myModal" class="reveal-modal">
 	<a class="close-reveal-modal">x</a>
 </div>
 
@@ -110,6 +111,7 @@
 			<td>
 				<span class="description">Адрес подключения:</span>
 				${client.GetFullAddress()}
+				<a href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/Edit/${_client.Id}" style="margin-left: 5px;border-bottom: 1px solid #00a651;color: #00a651; text-decoration: none;">Изменить адрес</a>
 			</td>
 		</tr>
 		<% end %>
@@ -233,6 +235,24 @@
 		<tr>
 			<td><span class="description">Дата начала расчетного периода:</span> ${_client.RatedPeriodDate.ToShortDateString()}</td>
 		</tr>
+		<% end %>
+		<tr>
+			<td><span class="description">Количество бесплатных дней:</span> ${_client.FreeBlockDays}</td>
+		</tr>
+		<% if (_client.YearCycleDate != null): %>
+			<% if (_client.FreeBlockDays > 0): %>
+			<tr>
+				<td><span class="description">Дата окончания периода использования бесплатных дней: </span>
+					${NextYearCycle.AddDays(-1).ToShortDateString()}
+				</td>
+			</tr>
+			<% else: %>
+			<tr>
+				<td><span class="description">Новые бесплатные дни станут доступны с </span>
+					${NextYearCycle.ToShortDateString()}
+				</td>
+			</tr>
+			<% end %>
 		<% end %>
 		<% if _client.StartNoBlock != null : %>
 		<tr>
