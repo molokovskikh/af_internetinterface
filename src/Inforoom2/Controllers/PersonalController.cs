@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Runtime.Remoting.Channels;
 using System.Text;
 using System.Web.Mvc;
+using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -12,7 +12,6 @@ using Inforoom2.Models.Services;
 using Inforoom2.validators;
 using InternetInterface.Models;
 using NHibernate.Linq;
-using NHibernate.Util;
 using AppealType = Inforoom2.Models.AppealType;
 using Client = Inforoom2.Models.Client;
 using ClientEndpoint = Inforoom2.Models.ClientEndpoint;
@@ -167,9 +166,9 @@ namespace Inforoom2.Controllers
 		{
 			ViewBag.Title = "Платежи";
 			var client = CurrentClient;
-			var userWriteOffs = DbSession.Query<UserWriteOff>().Where(uwo => uwo.Client.Id == client.Id && uwo.Date > DateTime.Now.AddMonths(-3));
-			var writeOffs = DbSession.Query<WriteOff>().Where(wo => wo.Client.Id == client.Id && wo.WriteOffDate > DateTime.Now.AddMonths(-3));
-			var payments = DbSession.Query<Payment>().Where(p => p.Client.Id == client.Id && p.RecievedOn > DateTime.Now.AddMonths(-3));
+			var userWriteOffs = DbSession.Query<UserWriteOff>().Where(uwo => uwo.Client.Id == client.Id && uwo.Date > SystemTime.Now().AddMonths(-3));
+			var writeOffs = DbSession.Query<WriteOff>().Where(wo => wo.Client.Id == client.Id && wo.WriteOffDate > SystemTime.Now().AddMonths(-3));
+			var payments = DbSession.Query<Payment>().Where(p => p.Client.Id == client.Id && p.RecievedOn > SystemTime.Now().AddMonths(-3));
 
 			var historyList = userWriteOffs.Select(userWriteOff => new BillingHistory {
 				Date = userWriteOff.Date,
@@ -263,7 +262,7 @@ namespace Inforoom2.Controllers
 				var smsContact = client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending);
 				if (smsContact == null) {
 					smsContact = contact;
-					smsContact.Date = DateTime.Now;
+					smsContact.Date = SystemTime.Now();
 					smsContact.Comment = "Пользователь создал из личного кабинета";
 					client.Contacts.Add(smsContact);
 				}
@@ -312,7 +311,7 @@ namespace Inforoom2.Controllers
 			ViewBag.Client = client;
 			//todo - наверно надо подумать как эти провеки засунуть куда следует
 			var beginDate = client.WorkingStartDate ?? new DateTime();
-			if (beginDate == DateTime.MinValue || beginDate.AddMonths(2) >= DateTime.Now) {
+			if (beginDate == DateTime.MinValue || beginDate.AddMonths(2) >= SystemTime.Now()) {
 				ErrorMessage("Нельзя менять тариф, в первые 2 месяца после подключения");
 				return View("Plans");
 			}

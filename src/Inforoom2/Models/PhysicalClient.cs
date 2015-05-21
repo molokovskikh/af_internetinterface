@@ -5,7 +5,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Common.Tools;
-using Inforoom2.validators;
 using InternetInterface.Models;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Util;
@@ -149,14 +148,14 @@ namespace Inforoom2.Models
 			WriteOff(price);
 			var writeOff = new UserWriteOff {
 				Client = Client,
-				Date = DateTime.Now,
+				Date = SystemTime.Now(),
 				Sum = price,
 				Comment = comment,
 				IsProcessedByBilling = true
 			};
-			LastTimePlanChanged = DateTime.Now;
-			if (Client.Internet.ActivatedByUser)
-				Client.Endpoints.ForEach(e => e.PackageId = Plan.PackageSpeed.PackageId);
+			LastTimePlanChanged = SystemTime.Now();
+			if (Client.Internet.ActivatedByUser) 
+				Client.Endpoints.ForEach(e => e.PackageId = Plan.PackageSpeed.PackageId); 
 			return writeOff;
 		}
 

@@ -1,5 +1,5 @@
 ﻿@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/Personal.Plans.js")"></script>}
-@using System
+@using Common.Tools
 @using Inforoom2.Models
 
 @{
@@ -15,7 +15,7 @@
 		Текущий тарифный план: @client.Plan.Name
 	</div>
 	<br/>
-	@if (beginDate.AddMonths(2) >= DateTime.Now) {
+	@if (beginDate.AddMonths(2) >= SystemTime.Now()) {
 		<div class="paragraph">
 			<b>Вы пока не можете сменить тарифный план, т.к. подключились к нам менее 2-х месяцев назад.</b>
 		</div>
@@ -41,7 +41,7 @@
 					@if (plan.Id == client.Plan.Id) {
 						<div class="paragraph">Текущий</div>
 					}
-					else if (beginDate.AddMonths(2) < DateTime.Now) {
+					else if (beginDate.AddMonths(2) < SystemTime.Now()) {
 						using (@Html.BeginForm("ChangePlan", "Personal",FormMethod.Post,new{id="changeplan"})) {
 							@Html.HiddenFor(modelItem => plan.Id)
 							<input class="connectfee" type="submit" value="Сменить"/>

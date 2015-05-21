@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using NHibernate.Linq;
@@ -24,7 +25,7 @@ namespace Inforoom2.Controllers
 		{
 			var tariff = InitRequestPlans().FirstOrDefault(k => k.Id == clientRequest.Plan.Id);
 			clientRequest.Plan = tariff;
-			clientRequest.ActionDate = clientRequest.RegDate = DateTime.Now;
+			clientRequest.ActionDate = clientRequest.RegDate = SystemTime.Now();
 			var errors = ValidationRunner.ValidateDeep(clientRequest);
 
 			if (!clientRequest.IsContractAccepted) {

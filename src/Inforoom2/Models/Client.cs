@@ -6,12 +6,9 @@ using System.Linq;
 using Common.Tools;
 using Inforoom2.Models.Services;
 using Inforoom2.validators;
-using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate;
 using NHibernate.Mapping.Attributes;
-using NHibernate.Validator.Cfg.MappingSchema;
-using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
@@ -213,7 +210,7 @@ namespace Inforoom2.Models
 		/// <returns>Расчётное кол-во дней работы без пополнения баланса</returns>
 		public virtual int GetWorkDays()
 		{
-			var priceInDay = Plan.Price / DateTime.Now.DaysInMonth(); // ToDo Улучшить алгоритм вычисления
+			var priceInDay = Plan.Price / SystemTime.Now().DaysInMonth(); // ToDo Улучшить алгоритм вычисления
 			return (int)Math.Floor(Balance / priceInDay);
 		}
 
@@ -318,9 +315,8 @@ namespace Inforoom2.Models
 				Discount = 0;
 			}
 
-			if (Status.Type != status.Type)
-			{
-				StatusChangedOn = DateTime.Now;
+			if (Status.Type != status.Type) {
+				StatusChangedOn = SystemTime.Now();
 			}
 			Status = status;
 		}

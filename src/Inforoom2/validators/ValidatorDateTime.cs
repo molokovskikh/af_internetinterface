@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using Common.Tools;
 
 namespace Inforoom2.validators
 {
@@ -52,10 +50,11 @@ namespace Inforoom2.validators
 			{
 				case DateTimeType.Max: return DateTime.MaxValue;
 				case DateTimeType.Min: return DateTime.MinValue;
-				case DateTimeType.Now: return DateTime.Now;
+				case DateTimeType.Now: return SystemTime.Now();
 			}
-			return DateTime.Now;
+			return SystemTime.Now();
 		}
+
 		protected string Stringify(DateTime date)
 		{
 			return DateTimeFlag ? date.ToShortTimeString() : date.ToShortDateString();
