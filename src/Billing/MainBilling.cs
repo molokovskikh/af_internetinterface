@@ -9,7 +9,6 @@ using Common.NHibernate;
 using Common.Tools;
 using Common.Tools.Calendar;
 using Common.Web.Ui.ActiveRecordExtentions;
-using Common.Web.Ui.MonoRailExtentions;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -392,7 +391,7 @@ set s.LastStartFail = true;")
 			}
 
 			//Отсылка инфы о просроченных заявках
-			SendExpiredServiceRequestEmails(client);
+			AddExpiredServiceRequestNoteToRedmine(session, client);
 
 			//Обновление расчетного периода для подключенного клиента
 			var phisicalClient = client.PhysicalClient;
@@ -491,10 +490,11 @@ set s.LastStartFail = true;")
 		}
 
 		/// <summary>
-		/// Отправляем письма о просроченных заявках техподдержке
+		/// Создаем заметку в Redmine о просроченной заявке для техподдержки
 		/// </summary>
+		/// <param name="session">Сессия для работы с БД</param>
 		/// <param name="client">Клиент</param>
-		private void SendExpiredServiceRequestEmails(Client client)
+		private void AddExpiredServiceRequestNoteToRedmine(ISession session, Client client)
 		{
 			foreach (var request in client.ServiceRequests) {
 				if (request.Status == ServiceRequestStatus.Close || request.Status == ServiceRequestStatus.Cancel)
@@ -502,22 +502,36 @@ set s.LastStartFail = true;")
 				if ((SystemTime.Now() - request.RegDate).TotalDays < 3)
 					continue;
 
-				var address = ConfigurationManager.AppSettings["BlockForRepairNotificationMail"];
-				if (address == null)
-					throw new Exception("Параметр BlockForRepairNotificationMail должен быть задан в config");
-				var mailer = new Mailer(new FolderSender(ConfigurationManager.AppSettings["SmtpServer"]));
-
-				var regionName = "неизвестно";
+				var cityName = "Неизвестный";
 				var region = client.GetRegion();
 
 				//на 21.11.14 в базе бывают люди без регионов. В основном в белгороде.
-				if (region != null)
-					regionName = region.Name;
-				if (client.PhysicalClient != null && client.PhysicalClient.City != null)
-					regionName = client.PhysicalClient.City;
+				if (region != null && region.City != null)
+					cityName = region.City.Name;
 
-				var textMessage = "Срок исполнения сервисной заявки #" + request.Id + " (" + regionName + ") истек";
-				mailer.SendText("internet@ivrn.net", address, textMessage, textMessage);
+				var issue = ConfigurationManager.AppSettings[cityName + "RedmineTask"];
+				var issueId = string.IsNullOrEmpty(issue) ? 0u : Convert.ToUInt32(issue);
+				if (issueId == 0u) {
+					issue = ConfigurationManager.AppSettings["НеизвестныйRedmineTask"];
+					issueId = string.IsNullOrEmpty(issue) ? 0u : Convert.ToUInt32(issue);
+				}
+
+				try {
+					var rmUser = session.Query<RedmineUser>().ToList().FirstOrDefault(ru => ru.Login == "redmine");
+					var textMessage = "Срок исполнения сервисной заявки №" + request.Id + " истек";
+					var rmTaskNote = new RedmineJournal {
+						RedmineIssueId = issueId,
+						JournalType = "Issue",
+						UserId = (rmUser != null) ? rmUser.Id : 0,
+						Notes = textMessage,
+						CreateDate = SystemTime.Now(),
+						IsPrivate = false
+					};
+					session.Save(rmTaskNote);
+				}
+				catch (Exception ex) {
+					_log.Error("Ошибка при создании заметки в RedMine по истекшей сервисной заявке", ex);
+				}
 			}
 		}
 

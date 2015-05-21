@@ -4,24 +4,18 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Runtime.Remoting.Channels;
 using System.Web.Mvc;
 using Billing;
 using Common.Tools;
 using Inforoom2.Components;
-using Inforoom2.Controllers;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using Inforoom2.Test.Infrastructure.Helpers;
-using Inforoom2.Test.Infrastructure.Helpers;
 using InternetInterface.Helpers;
-using InternetInterface.Models;
-using MvcContrib;
 using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Mapping.Attributes;
-using NPOI.SS.Formula.Functions;
 using NUnit.Framework;
 using Test.Support.Selenium;
 using Address = Inforoom2.Models.Address;
@@ -56,7 +50,6 @@ namespace Inforoom2.Test.Infrastructure
 		protected List<Address> UnusedClientAddresses;
 		protected ClientCreateHelper ClientHelper = new ClientCreateHelper();
 
-
 		protected int EndpointIpCounter;
 
 		private Address GetUnusedAddress()
@@ -69,7 +62,6 @@ namespace Inforoom2.Test.Infrastructure
 			UnusedClientAddresses.RemoveAt(0);
 			return obj;
 		}
-
 
 		[SetUp]
 		public override void IntegrationSetup()
