@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NHibernate.Mapping.Attributes;
-using NHibernate.Transform;
 
 namespace Inforoom2.Models
 {
@@ -11,6 +10,13 @@ namespace Inforoom2.Models
 	[Class(0, Table = "Partners", NameType = typeof(Employee))]
 	public class Employee : BaseModel
 	{
+		public Employee()
+		{
+			Roles = new List<Role>();
+			Permissions = new List<Permission>();
+			PaymentEmployee = new List<PaymentSystem>();
+		}
+
 		[Property]
 		public virtual string Name { get; set; }
 
