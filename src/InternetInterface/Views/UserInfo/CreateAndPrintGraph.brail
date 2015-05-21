@@ -39,10 +39,13 @@
 	<div style="page-break-before: always;">
 		<% OutputSubView("""\UserInfo\ClientRegisteredInfo""", {
 						"_client": Client,
+						"ClientIdHref": "../UserInfo/ShowPhysicalClient?filter.ClientCode=" + Client.Id,
 						"Client": Client.PhysicalClient,
 						"WhoConnected" : Client.WhoConnected,
 						"ConnectInfo": Client.ConnectInfoFirst(),
 						"Password" : Client.ChangePhysicalClientPassword(),
-						"AccountNumber" : Client.Id.ToString("00000")}) %>
+						"AccountNumber" : Client.Id.ToString("00000")
+			})
+		%>
 	</div>
 <% end %>
