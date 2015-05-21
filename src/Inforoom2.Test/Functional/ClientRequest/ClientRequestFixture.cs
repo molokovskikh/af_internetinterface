@@ -103,14 +103,20 @@ namespace Inforoom2.Test.Functional.ClientRequest
 		}
 
 		[Test, Description("Не заполнено поле номера телефона")]
-		public void ClientRequestWrongPhone()
+		public void ClientRequestEmptyPhone()
 		{
 			Phone.Clear();
 			SendRequest();
-			// в списке ошибок появилась еще одна, идущая раньше предыдущей
-			AssertText("Введите номер телефона"); 
-			// поэтому предыдущую не проверяем
-			//AssertText("Введите номер в десятизначном");
+			AssertText("Введите номер телефона");
+			AssertFail();
+		}
+		[Test, Description("Введен номер не в десятизначном формате")]
+		public void ClientRequestWrongPhone()
+		{
+			Phone.Clear();
+			Phone.SendKeys("01234567890");
+			SendRequest();
+			AssertText("Введите номер в десятизначном формате"); 
 			AssertFail();
 		}
 

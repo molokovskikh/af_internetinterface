@@ -474,7 +474,7 @@ namespace InternetInterface.Controllers
 				var client = DbSession.Load<Client>(ClientID);
 				var physicalClient = client.PhysicalClient;
 				var password = CryptoPass.GeneratePassword();
-				physicalClient.Password = CryptoPass.GetHashString(password);
+				physicalClient.Password = CryptoPass.GetHashString(password); 
 				DbSession.Save(physicalClient);
 				var endPoint = client.Endpoints.FirstOrDefault();
 				if (endPoint != null)
@@ -482,6 +482,7 @@ namespace InternetInterface.Controllers
 				else {
 					PropertyBag["WhoConnected"] = null;
 				}
+				PropertyBag["ClientIdHref"] = "../UserInfo/ShowPhysicalClient?filter.ClientCode=" + ClientID;
 				PropertyBag["Client"] = physicalClient;
 				PropertyBag["_client"] = client;
 				PropertyBag["Password"] = password;

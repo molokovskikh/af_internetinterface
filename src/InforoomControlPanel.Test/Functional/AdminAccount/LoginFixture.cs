@@ -13,6 +13,7 @@ namespace InforoomControlPanel.Test.Functional.AdminAccount
 		[Test, Description("Успешная авторизация администратора")]
 		public void Authorization()
 		{
+			Css(".entypo-logout.right").Click();
 			Css("#username").SendKeys(Employee.Login);
 			Css("#password").SendKeys("1234");
 			Css(".btn-login").Click();

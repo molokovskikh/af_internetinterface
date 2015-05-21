@@ -14,7 +14,7 @@ function ControlPanel() {
 	this.templates = {};
 
 	/**
-     * Контсруктор
+     * Конструктор
      */
 	this.initialize = function() {
 		window.cli = this;
@@ -170,11 +170,11 @@ function ControlPanel() {
 	this.showMessages = function() {
 		var msg = this.getCookie("SuccessMessage", true);
 		if (msg) {
-			$('.breadcrumb').prepend('<div class="row col-md-12 alert alert-success">'+ msg +'</div>');
+			$('.server-message').prepend('<div class="col-md-12 alert alert-success">'+ msg +'</div>');
 		} else {
 			msg = this.getCookie("ErrorMessage", true);
 			if(msg)
-				$('.breadcrumb').prepend('<div class="row col-md-12 alert alert-danger">' + msg + '</div>');
+				$('.server-message').prepend('<div class="col-md-12 alert alert-danger">' + msg + '</div>');
 		}
 	}
 
@@ -323,6 +323,4 @@ var Base64 = {
 	}
 }
 
-window.onload = function() {
-	cli = new ControlPanel();
-}
+cli = new ControlPanel();

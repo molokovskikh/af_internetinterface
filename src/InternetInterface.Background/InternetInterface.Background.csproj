@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataAudit.cs" />
     <Compile Include="DeleteFixIpIfClientLongDisable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SendNullTariffLawyerPerson.cs" />

@@ -14,6 +14,8 @@ namespace Inforoom2.Test.Functional.Personal
 		[Test, Description("Успешная подписка на уведомления")]
 		public void Notifications()
 		{
+			DbSession.Save(Client);
+			DbSession.Flush();
 			Open("Personal/Notifications");
 			var phone = browser.FindElementByCssSelector("input[id=contact_ContactString]");
 			phone.SendKeys("8556478974");

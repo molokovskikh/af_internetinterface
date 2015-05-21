@@ -4,7 +4,7 @@
  * @author Sarychev Alexei
  * @constructor
  */
-function Window(title,html)
+function InforoomWindow(title, html)
 {
 	this.constructor.parent.apply(this,arguments);
 	this.title = title;
@@ -17,14 +17,14 @@ function Window(title,html)
 	this.cancelButton = null;
 
 }
-Window.extending(EventEmitter);
+InforoomWindow.extending(EventEmitter);
 
 /**
  * Отображение окна на экране
  * 
  * @param HTMLElement element DOM элемент, в котором будет отображаться окно
  */
-Window.prototype.render = function (element) {
+InforoomWindow.prototype.render = function (element) {
 
 	this.content = cli.getTemplate("WindowLayout");
 	$(this.content).find(".title").html(this.title);
@@ -46,7 +46,7 @@ Window.prototype.render = function (element) {
  *  
  *  @return HTMLElement Узел окна в документе
  */
-Window.prototype.getElement = function()
+InforoomWindow.prototype.getElement = function()
 {
 	return this.content;
 }
@@ -56,7 +56,7 @@ Window.prototype.getElement = function()
  * 
  * @return undefined
  */
-Window.prototype.block = function()
+InforoomWindow.prototype.block = function()
 {
 	if(this.blocker)
 		return false;
@@ -73,7 +73,7 @@ Window.prototype.block = function()
 /**
  *  Удаляет окно
  */
-Window.prototype.remove = function(callback)
+InforoomWindow.prototype.remove = function(callback)
 {
 	if(typeof callback != 'function')
 		callback = function(){};
@@ -85,7 +85,7 @@ Window.prototype.remove = function(callback)
 	callback();
 }
 
-Window.prototype.isRemoved = function()
+InforoomWindow.prototype.isRemoved = function()
 {
 	if(this.removedFlag)
 		return true;
@@ -97,7 +97,7 @@ Window.prototype.isRemoved = function()
  * 
  * @param {Number} width Ширина
  */
-Window.prototype.setWidth = function(width)
+InforoomWindow.prototype.setWidth = function(width)
 {
 	this.getElement().style.width  =width+'px';
 }
@@ -107,7 +107,7 @@ Window.prototype.setWidth = function(width)
  * 
  * @param {Number} height Высота
  */
-Window.prototype.setHeight = function(height)
+InforoomWindow.prototype.setHeight = function(height)
 {
 	this.getElement().style.height  =height+'px';
 }
@@ -117,7 +117,7 @@ Window.prototype.setHeight = function(height)
  * 
  * @param {String} title Название окна
  */
-Window.prototype.setTitle = function(title)
+InforoomWindow.prototype.setTitle = function(title)
 {
 	this.getElement().selector('.title').innerHTML = title;
 }
@@ -127,7 +127,7 @@ Window.prototype.setTitle = function(title)
  * 
  * @param {String} data HTML код контента
  */
-Window.prototype.setContent = function(data)
+InforoomWindow.prototype.setContent = function(data)
 {
 	this.getElement().selector('.wrap').firstChild.remove();
 	this.getElement().selector('.wrap').appendChild(data);
@@ -140,7 +140,7 @@ Window.prototype.setContent = function(data)
  * 
  * @param {HTMLElement} data HTML элемент
  */
-Window.prototype.pushContent = function(data)
+InforoomWindow.prototype.pushContent = function(data)
 {
 	console.log('Push content ',this,data);
 	var storage = [];
@@ -154,7 +154,7 @@ Window.prototype.pushContent = function(data)
 /**
  * Переключает окно на предыдущее содержимое.
  */
-Window.prototype.popContent = function()
+InforoomWindow.prototype.popContent = function()
 {
 	console.log('Pop content ',this,this.contentStack);
 	if(this.contentStack.length == 0)
@@ -167,14 +167,14 @@ Window.prototype.popContent = function()
 /**
  * Фокусируется на автофокусных элементах
  */
-Window.prototype.autofocus = function()
+InforoomWindow.prototype.autofocus = function()
 {
 	var input = this.getElement().selector('input[autofocus]');
 	if(input)
 		input.focus();
 }
 
-Window.prototype.add2Buttons = function ()
+InforoomWindow.prototype.add2Buttons = function ()
 {
 	var html = cli.getTemplate("windowButtons");
 	this.okButton = $(html).find(".ok");
@@ -189,10 +189,10 @@ Window.prototype.add2Buttons = function ()
 	this.getElement().selector('.wrap').appendChild(spacer);
 }
 
-Window.prototype.getOkButton = function () {
+InforoomWindow.prototype.getOkButton = function () {
 	return this.okButton;
 }
 
-Window.prototype.getCancelButton = function () {
+InforoomWindow.prototype.getCancelButton = function () {
 	return this.cancelButton;
 }

@@ -9,6 +9,7 @@ using Inforoom2.Controllers;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
+using System.Security.Cryptography;
 
 namespace InforoomControlPanel.Controllers
 {
@@ -53,6 +54,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult AdminLogout()
 		{
 			FormsAuthentication.SignOut();
+			SetCookie(FormsAuthentication.FormsCookieName, null);
 			return RedirectToAction("Index");
 		}
 

@@ -1,11 +1,15 @@
 ﻿@using System.Activities.Statements
 @using Inforoom2.Models
 @model dynamic
-@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/HomeController.js")"></script>}
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/HomeController.js")"></script>}
 @{
 	ViewBag.Title = "Инфорум";
 	IList<NewsBlock> news = ViewBag.News ?? new List<NewsBlock>();
 	Layout = "~/Views/Shared/_Layout.cshtml";
+	List<Slide> slideList = ViewBag.SlideList;
+	Banner banner = ViewBag.Banner;
+	var urlPath = (string)ViewBag.pathFromConfigURL;
 }
 
 
@@ -13,26 +17,14 @@
 	<div class="slider">
 		<div class="content">
 			<div class="longspace notext">
-				<div class="offer">
-					<a href="/Home/Plans/49?v2">
-						<img src="~/images/tv.jpg"/>
-					</a>
-				</div>
-				<div class="offer">
-					<a href="/Home/Plans/45?v2">
-						<img src="~/images/free.jpg"/>
-					</a>
-				</div>
-				<div class="offer">
-					<a href="/Home/Plans/85">
-						<img src="~/images/maximum.jpg"/>
-					</a>
-				</div>
-				<div class="offer">
-					<a href="/Bussiness">
-						<img src="~/images/biznes.jpg"/>
-					</a>
-				</div>
+				@foreach (var item in slideList)
+				{
+					<div class="offer">
+						<a href="@item.Url">
+							<img src="@urlPath@item.ImagePath" />
+						</a>
+					</div>
+				}
 			</div>
 		</div>
 		<ul class="controls">
@@ -44,33 +36,36 @@
 		</ul>
 	</div>
 	<div class="main-offer">
-		<a href="/ClientRequest/RequestFromTariff/85">
-			<img src="~/images/actionfolk.png?v2"/>
+		<a href="@banner.Url">
+			<img src="@urlPath@banner.ImagePath" />
 		</a>
 	</div>
 
 </div>
 <div class="find">
 	<a href="/TestSpeed">
-		<div class="speed">Протестировать скорость
+		<div class="speed">
+			Протестировать скорость
 			<div class="speedbg"></div>
 		</div>
 	</a>
 	<a href="/IsMyHouseConnected">
-		<div class="connection">Подключен ли мой дом?
+		<div class="connection">
+			Подключен ли мой дом?
 			<div class="connectionbg"></div>
 		</div>
 	</a>
 </div>
 <div class="news">НОВОСТИ</div>
 <div class="information">
-	
-	@foreach (var item in news) {
+
+	@foreach (var item in news)
+	{
 		<div class="text">
 			<h3 class="links-header"><a href="@Url.Action("ViewNewsBlock", "Home", new { id = item.Id })">@Html.DisplayFor(modelItem => item.Title)</a></h3>
 			<p>@Html.DisplayFor(modelItem => item.CreationDate)</p>
 			<div class="font">@Html.DisplayFor(modelItem => item.Preview)</div>
 		</div>
 	}
-	
+
 </div>

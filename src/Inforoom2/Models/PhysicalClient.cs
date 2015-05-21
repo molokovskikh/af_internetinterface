@@ -1,8 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using Common.Tools;
-using Inforoom2.validators;
+using InternetInterface.Models;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Util;
 using NHibernate.Validator.Constraints;
@@ -15,13 +18,32 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual string Password { get; set; }
 
-		[ManyToOne(Column = "_Address", Cascade = "save-update")]
+		[ManyToOne(Column = "_Address", Cascade = "save-update"), NotNull(Message = "Адрес указан не полностью!")]
 		public virtual Address Address { get; set; }
 
 		[Property(Column = "_Email", NotNull = true)]
-		public virtual string Email { get; set; }
+		public virtual string Email
+		{
+			get
+			{
+				if (Client != null && Client.Contacts != null) {
+					var contactMail = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.Email);
+					return contactMail != null ? contactMail.ContactString : "";
+				}
+				return "";
+			}
+			set
+			{
+				if (Client != null && Client.Contacts != null) {
+					var contactMail = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.Email);
+					if (contactMail != null) {
+						contactMail.ContactString = value;
+					}
+				}
+			}
+		}
 
-		[ManyToOne(Column = "Tariff")]
+		[ManyToOne(Column = "Tariff"), NotNull(Message = "Выберите тариф")]
 		public virtual Plan Plan { get; set; }
 
 		[Property(Column = "_LastTimePlanChanged")]
@@ -36,32 +58,58 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual decimal VirtualBalance { get; set; }
 
+		[Property, Description("Клиент проверен. устанавливается в админке, при редактировании клиента")]
+		public virtual bool Checked { get; set; }
+
 		[Property]
 		public virtual decimal MoneyBalance { get; set; }
 
 		[Property(Column = "IdDocType"), Description("Документ, удостоверяющий личность")]
 		public virtual CertificateType CertificateType { get; set; }
 
-		[Property(Column = "IdDocName"), NotNullNotEmpty(Message = "Введите название"), Description("Название документа, удостоверяющего личность")]
+		[Property(Column = "IdDocName"), Description("Название документа, удостоверяющего личность")]
 		public virtual string CertificateName { get; set; }
 
-		[Property, NotNullNotEmpty(Message = "Введите номер паспорта")]
+		[Property]
 		public virtual string PassportNumber { get; set; }
 
-		[Property, NotNullNotEmpty(Message = "Введите серию паспорта")]
+		[Property]
 		public virtual string PassportSeries { get; set; }
 
-		[Property, DateTimeNotEmpty]
+		[DataType(DataType.Date)]
+		[Property]
 		public virtual DateTime PassportDate { get; set; }
 
-		[Property(Column = "RegistrationAdress"), NotNull(Message = "Введите адрес регистрации")]
+		[Property(Column = "RegistrationAdress")]
 		public virtual string RegistrationAddress { get; set; }
 
-		[Property(Column = "WhoGivePassport"), NotNullNotEmpty(Message = "Поле не может быть пустым")]
+		[Property(Column = "WhoGivePassport")]
 		public virtual string PassportResidention { get; set; }
 
+		[Property, Description("Номер абонента Ситилайн")]
+		public virtual int? ExternalClientId { get; set; }
+
 		[Property(Column = "_PhoneNumber", NotNull = true)]
-		public virtual string PhoneNumber { get; set; }
+		public virtual string PhoneNumber
+		{
+			get
+			{
+				if (Client != null && Client.Contacts != null) {
+					var contactPhone = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
+					return contactPhone != null ? contactPhone.ContactString : "";
+				}
+				return "";
+			}
+			set
+			{
+				if (Client != null && Client.Contacts != null) {
+					var contactPhone = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
+					if (contactPhone != null) {
+						contactPhone.ContactString = value;
+					}
+				}
+			}
+		}
 
 		[Property(NotNull = true), NotEmpty(Message = "Введите имя")]
 		public virtual string Name { get; set; }
@@ -72,7 +120,8 @@ namespace Inforoom2.Models
 		[Property(NotNull = true), NotEmpty(Message = "Введите отчество")]
 		public virtual string Patronymic { get; set; }
 
-		[Property(Column = "DateOfBirth"), DateTimeNotEmpty]
+		[DataType(DataType.Date)]
+		[Property(Column = "DateOfBirth")]
 		public virtual DateTime BirthDate { get; set; }
 
 		[OneToOne(PropertyRef = "PhysicalClient")]
@@ -82,9 +131,6 @@ namespace Inforoom2.Models
 		{
 			get { return Surname + " " + Name + " " + Patronymic; }
 		}
-
-		[OneToMany]
-		public virtual ClientRequest ClientRequest { get; set; }
 
 		public virtual UserWriteOff RequestChangePlan(Plan planToSwitchOn)
 		{
@@ -100,8 +146,7 @@ namespace Inforoom2.Models
 			var comment = string.Format("Изменение тарифа, старый '{0}' новый '{1}'", Plan.Name, planTo.Name);
 			Plan = planTo;
 			WriteOff(price);
-			var writeOff = new UserWriteOff
-			{
+			var writeOff = new UserWriteOff {
 				Client = Client,
 				Date = SystemTime.Now(),
 				Sum = price,
@@ -116,8 +161,7 @@ namespace Inforoom2.Models
 
 		public virtual bool IsEnoughBalance(decimal sum)
 		{
-			if (sum < 0)
-			{
+			if (sum < 0) {
 				return false;
 			}
 			return Balance - sum > 0;
@@ -145,18 +189,15 @@ namespace Inforoom2.Models
 			decimal virtualWriteoff;
 			decimal moneyWriteoff;
 
-			if (writeoffVirtualFirst)
-			{
+			if (writeoffVirtualFirst) {
 				virtualWriteoff = Math.Min(sum, VirtualBalance);
 			}
-			else
-			{
+			else {
 				virtualWriteoff = Math.Min(Math.Abs(Math.Min(MoneyBalance - sum, 0)), VirtualBalance);
 			}
 			moneyWriteoff = sum - virtualWriteoff;
 
-			return new WriteOff
-			{
+			return new WriteOff {
 				Client = Client,
 				WriteOffDate = SystemTime.Now(),
 				WriteOffSum = Math.Round(sum, 2),
@@ -166,13 +207,45 @@ namespace Inforoom2.Models
 				BeforeWriteOffBalance = Client.Balance
 			};
 		}
+
+
+		///  Генерация пароля для пользователя
+		///  *взято из старой админки////////////////////// 
+		public static string GeneratePassword(PhysicalClient ph)
+		{
+			var availableChars = "23456789qwertyupasdfghjkzxcvbnmQWERTYUPASDFGHJKLZXCVBNM";
+			var password = String.Empty;
+			while (password.Length < 8) {
+				int availableChars_elem = 0;
+
+				var rngCsp = new RNGCryptoServiceProvider();
+				var randomNumber = new byte[1];
+				do {
+					rngCsp.GetBytes(randomNumber);
+				} while (!(randomNumber[0] < (availableChars.Length - 1) * (Byte.MaxValue / (availableChars.Length - 1))));
+
+				availableChars_elem = (randomNumber[0] % (availableChars.Length - 1)) + 1;
+
+				password += availableChars[availableChars_elem];
+			}
+			string hash = string.Empty;
+			if (password != null) {
+				byte[] bytes = Encoding.Unicode.GetBytes(password);
+				var CSP = new MD5CryptoServiceProvider();
+				byte[] byteHash = CSP.ComputeHash(bytes);
+				foreach (byte b in byteHash)
+					hash += string.Format("{0:x2}", b);
+			}
+			ph.Password = hash;
+			return password;
+		}
+
+		//////////////////////////////////////////////////
 	}
 
 	public enum CertificateType
 	{
-		[Display(Name = "Паспорт РФ")]
-		Passport = 0,
-		[Display(Name = "Иной документ")]
-		Other = 1
+		[Display(Name = "Паспорт РФ")] [Description("Паспорт РФ")] Passport = 0,
+		[Display(Name = "Иной документ")] [Description("Иной документ")] Other = 1
 	}
 }

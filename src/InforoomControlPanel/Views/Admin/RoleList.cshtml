@@ -1,0 +1,40 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "Роли";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	var roles = ViewBag.Roles as List<Role>;
+	
+}
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+		<thead>
+			<tr role="row">
+				<th class="sorting" tabindex="0" aria-controls="table-2">Номер</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Имя</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Количество прав</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			@foreach (var item in roles)
+			{
+				<tr role="row" class="odd">
+					<td>@item.Id</td>
+					<td>@item.Name</td>
+					<td>@item.Description</td>
+					<td>@item.Permissions.Count</td>
+					<td>
+							<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditRole", ViewBag.ControllerName, new { id = item.Id })"> 
+							<i class="entypo-plus-circled"></i>
+							Изменить
+						</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+
+</div>
