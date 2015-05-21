@@ -786,6 +786,7 @@ namespace InternetInterface.Controllers
 			var brigads = Brigad.All(DbSession);
 			PropertyBag["_client"] = client;
 			PropertyBag["IsDissolved"] = StatusType.Dissolved; // Для задания префикса "РАСТОРГНУТ" клиенту
+			PropertyBag["NextYearCycle"] = (client.YearCycleDate != null) ? client.YearCycleDate.Value.AddYears(1) : DateTime.MinValue;
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["uniqueClientEndpoints"] = client.Endpoints.Distinct().ToList();
 
