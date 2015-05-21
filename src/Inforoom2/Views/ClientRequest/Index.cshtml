@@ -11,6 +11,8 @@
 	bool IsCityValidated = ViewBag.IsCityValidated;
 	bool IsStreetValidated = ViewBag.IsStreetValidated;
 	bool IsHouseValidated = ViewBag.IsHouseValidated;
+	List<Region> regions = ViewBag.Regions;
+	Region currentRegion = ViewBag.CurrentRegion;
 }
 
 <script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
@@ -32,7 +34,12 @@
 		</div>
 		<div>
 			<div class="personals">Город:</div>
-			@Html.ValidationEditor(validationRunner, clientRequest, "City", new { @class = "personal", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text, IsCityValidated)
+			@if (currentRegion != null) {
+				@Html.DropDownListExtendedFor(k => clientRequest.City, regions, k => k.Name, i => i.HasChildren() ? new { @title = "есть частный сектор" } : new object { }, new { @Id = "clientRequest_City", @class = "rounded", onclick = "typeWatcher(1000);updatePlanList();" }, currentRegion.Id)
+			}
+			else {
+				@Html.DropDownListExtendedFor(k => clientRequest.City, regions, k => k.Name, i => i.HasChildren() ? new { @title = "есть частный сектор" } : new object { }, new { @Id = "clientRequest_City", @class = "rounded", onclick = "typeWatcher(1000);updatePlanList();" })
+			}
 		</div>
 		<div>
 			<div class="personals">Улица:</div>
@@ -62,13 +69,15 @@
 			@if (IsRedirected) {
 				<div class ="success">
 					<div class="personals">Тарифный план:</div>
-					@Html.DropDownListExtendedFor(k => clientRequest.Plan, ViewBag.Plans as List<Plan>, k => k.Name, null, new { @class = "rounded" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)<div class="icon"></div>
+					@Html.DropDownListExtendedFor(k => clientRequest.Plan, ViewBag.Plans as List<Plan>, k => k.Name, i => i.RegionPlans.Count > 0 ? new { @title = string.Join(",", i.RegionPlans.Select(r => r.Region.Name).ToArray()) } : new object { }
+						, new { @class = "rounded", @Id = "clientRequest_Plan" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)<div class="icon"></div>
 					<!-- не переноси строку - поедет верстка -->
 				</div>
 			}
 			else {
 				<div class="personals">Тарифный план:</div>
-				@Html.DropDownListExtendedFor(k => clientRequest.Plan, ViewBag.Plans as List<Plan>, k => k.Name, null, new { @class = "rounded" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)
+				@Html.DropDownListExtendedFor(k => clientRequest.Plan, ViewBag.Plans as List<Plan>, k => k.Name, i => i.RegionPlans.Count > 0 ? new { @title = string.Join(",", i.RegionPlans.Select(r => r.Region.Name).ToArray()) } : new object { },
+					new { @class = "rounded", @Id = "clientRequest_Plan" }, clientRequest.Plan != null ? clientRequest.Plan.Id : 0)
 			}
 		</div>
 	</div>

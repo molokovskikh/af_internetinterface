@@ -3,15 +3,22 @@
 namespace Inforoom2.validators
 {
 	//todo Переделать в NotEmpty - так как не имеет смысла делать отдельный валидатор для DateTime
-	class DateTimeNotEmpty : CustomValidator
+	class ValidatorNotEmpty : CustomValidator
 	{
 		protected override void Run(object value)
 		{
-			var val = value as DateTime?;
+			if (value is DateTime?)
+			{
+				var val = value as DateTime?;
 			if (!val.HasValue)
 				AddError("Отсутствует значение");
 			else if(val.Value == DateTime.MinValue)
 				AddError("Отсутствует значение");
+			}
+			if (value == null) {
+				AddError("Значение Null");
+			}
+
 		}
 	}
 }

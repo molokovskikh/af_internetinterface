@@ -6,7 +6,7 @@ using Test.Support.Selenium;
 
 namespace InternetInterface.Test.Functional
 {
-	[TestFixture]
+	[TestFixture, Ignore("Страница 'RegisterClient' перенесена в новую админку")]
 	public class RegisterClientFixture : SeleniumFixture
 	{
 		[Test]

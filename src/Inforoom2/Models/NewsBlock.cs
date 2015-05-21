@@ -1,4 +1,5 @@
 ﻿using System;
+using Common.Tools;
 using Inforoom2.Intefaces;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
@@ -43,7 +44,7 @@ namespace Inforoom2.Models
 
 		public NewsBlock(int priority)
 		{
-			CreationDate = DateTime.Now;
+			CreationDate = SystemTime.Now();
 			Priority = priority;
 		}
 

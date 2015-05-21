@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
-	class SearchFixture : ClientFunctionalFixture
+	internal class SearchFixture : ClientFunctionalFixture
 	{
 		[SetUp]
 		public void Setup()
@@ -57,7 +57,7 @@ namespace InternetInterface.Test.Functional
 			AssertText(Client.Name);
 			AssertNoText(disabledClient.Name);
 			var radio1 = browser.FindElementById("filter_EnabledTypeProperties_1");
-			if(!radio1.Selected)
+			if (!radio1.Selected)
 				radio1.Click();
 
 			Css("#SearchButton").Click();
@@ -151,7 +151,8 @@ namespace InternetInterface.Test.Functional
 		{
 			Open(ClientUrl);
 			WaitForText("Тариф");
-			AssertText("Город");
+			//Страница изменения адреса перенесена в новую админку
+			//	AssertText("Город");
 			AssertText("Паспортные данные");
 			AssertText("Тариф");
 			AssertText("Платежи");
@@ -164,12 +165,13 @@ namespace InternetInterface.Test.Functional
 			Css("#ChangeBalanceButton").Click();
 			AssertText("Платеж ожидает обработки");
 		}
+
 		[Test]
 		public void OutOfMemoryExcelExportTest()
 		{
 			File.Delete("Клиенты.xls");
 			var radio1 = browser.FindElementById("filter_clientTypeFilter_1");
-			if(!radio1.Selected)
+			if (!radio1.Selected)
 				radio1.Click();
 			Click("Выгрузить статистику по клиентам в Excel");
 			WaitHelper.WaitOrFail(20.Second(), () => File.Exists("Клиенты.xls"), String.Format("не удалось дождаться файла {0}", Path.GetFullPath("Клиенты.xls")));

@@ -3,6 +3,7 @@
 @model dynamic
 
 @{
+	var urlRoot = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
 	ViewBag.Title = "Список пользователей";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	IList<Client> clients = ViewBag.Clients;
@@ -20,8 +21,8 @@
 						</label>
 					</div>
 				</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Id)">Номер</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.PhysicalClient.Name)">Имя</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.Id)">Номер</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.PhysicalClient.Name)">Имя</a></th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
 			</tr>
 		</thead>
@@ -34,15 +35,15 @@
 						<div class="checkbox checkbox-replace neon-cb-replacement">
 							<label class="cb-wrapper"><input type="checkbox" id="chk-1"><div class="checked"></div></label>
 						</div>
-					</td>
-					<td><a href="@Url.Action("ClientInfo", "Client", new { clientId = client.Id })">@client.Id</a></td>
-					<td><a href="@Url.Action("ClientInfo", "Client", new { clientId = client.Id })">@client.PhysicalClient.FullName</a></td>
+					</td> 
+					<td><a href="@Url.Action("Info", "Client", new { id = client.Id })">@client.Id</a></td>
+					<td><a href="@Url.Action("Info", "Client", new { id = client.Id })">@client.PhysicalClient.FullName</a></td>
 					<td>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequest", "Client", new { clientId = client.Id })">
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequest", "Client", new { id = client.Id })">
 							<i class="entypo-plus-circled"></i>
 							Сервисная заявка
 						</a>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ConnectionRequest", "Client", new { clientId = client.Id })">
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ConnectionRequest", "Client", new { id = client.Id })"> 
 							<i class="entypo-plus-circled"></i>
 							Заявка на подключение
 						</a>

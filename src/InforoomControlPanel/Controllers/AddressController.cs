@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Text;
 using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
+using NHibernate.Criterion;
 using NHibernate.Linq;
 using NHibernate.Mapping.Attributes;
 using Switch = Inforoom2.Models.Switch;
@@ -18,7 +20,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "Адреса";
 		}
 
-		public  ActionResult Index()
+		public ActionResult Index()
 		{
 			return SwitchAddressList();
 		}
@@ -159,7 +161,15 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult StreetList()
 		{
-			var streets = DbSession.Query<Street>().ToList();
+			var urlBasePrefix = System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"];
+			if (urlBasePrefix == null)
+			{
+				throw new Exception("Значение 'adminPanelNew' отсуствует в Global.config либо невозможно найти сам Global.config !");
+			}
+			// urlBasePrefix = urlBasePrefix , но в локальной "/"
+			var pager = new ModelFilter<Street>(this, urlBasePrefix: "/");
+			var streets = pager.GetCriteria().List<Street>();
+			ViewBag.Pager = pager;
 			ViewBag.Streets = streets;
 			return View();
 		}
@@ -231,7 +241,15 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult HouseList()
 		{
-			var houses = DbSession.Query<House>().ToList();
+			var urlBasePrefix = System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"];
+			if (urlBasePrefix == null)
+			{
+				throw new Exception("Значение 'adminPanelNew' отсуствует в Global.config либо невозможно найти сам Global.config !");
+			}
+			// urlBasePrefix = urlBasePrefix , но в локальной "/"
+			var pager = new ModelFilter<House>(this, urlBasePrefix: "/");
+			var houses = pager.GetCriteria().List<House>();
+			ViewBag.Pager = pager;
 			ViewBag.Houses = houses;
 			return View();
 		}
@@ -307,6 +325,74 @@ namespace InforoomControlPanel.Controllers
 			EditHouse(House.Id);
 			ViewBag.House = House;
 			return View("CreateHouse");
+		}
+
+		/// <summary>
+		/// Возвращение списка улиц по региону.
+		/// </summary>
+		/// <param name="regionId">Id региона</param>
+		/// <returns>Json* Список в форме: Id, Name, Geomark, Confirmed, Region (Id), Houses (кол-во)</returns>
+		[HttpPost]
+		public JsonResult GetStreetList(int regionId)
+		{
+			var streets = DbSession.Query<Street>().
+				Where(s => s.Region.Id == regionId || s.Houses.Any(a => a.Region.Id == regionId)).
+				Select(s => new {
+					Id = s.Id,
+					Name = s.Name,
+					Geomark = s.Geomark,
+					Confirmed = s.Confirmed, Region = s.Region.Id, Houses = s.Houses.Count
+				}).OrderBy(s => s.Name).ToList();
+			return Json(streets, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Возвращение списка домов по улице.
+		/// </summary>
+		/// <param name="regionId">Id региона</param>
+		/// <param name="streetId">Id улицы</param>
+		/// <returns>Json* Список в форме: Id, Number, Geomark, Confirmed, Street (Id), EntranceAmount ,ApartmentAmount</returns>
+		[HttpPost]
+		public JsonResult GetHouseList(int streetId, int regionId = 0)
+		{
+			var query = DbSession.Query<House>();
+			if (regionId != 0) {
+				query = query.Where(s => (s.Region == null || regionId == s.Region.Id) &&
+										 ((s.Street.Region.Id == regionId && s.Street.Id == streetId) || (s.Street.Id == streetId && s.Region.Id == regionId)) &&
+										 (s.Street.Region.Id == regionId && s.Region == null ||( s.Street.Id == streetId && s.Region.Id == regionId))
+					);
+			}
+			else {
+				query = query.Where(s => s.Street.Id == streetId);
+			}
+			var houses = query.Select(s => new {
+				Id = s.Id,
+				Number = s.Number,
+				Geomark = s.Geomark,
+				Confirmed = s.Confirmed,
+				Street = s.Street.Id,
+				EntranceAmount = s.EntranceAmount,
+				ApartmentAmount = s.ApartmentAmount
+			}).OrderBy(s => s.Number).ToList();
+			return Json(houses, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Получение тарифов по региону
+		/// </summary>
+		/// <param name="regionId">Id региона</param>
+		/// <returns>Json* Список в форме: Id, Name, Price</returns>
+		[HttpPost]
+		public JsonResult GetPlansListForRegion(int regionId)
+		{
+			var planList = DbSession.Query<Plan>()
+				.Where(s => s.RegionPlans.Any(d => d.Region.Id == regionId))
+				.Select(d => new {
+					Id = d.Id,
+					Name = d.Name,
+					Price = d.Price
+				}).OrderBy(s => s.Name).ToList();
+			return Json(planList, JsonRequestBehavior.AllowGet);
 		}
 	}
 }

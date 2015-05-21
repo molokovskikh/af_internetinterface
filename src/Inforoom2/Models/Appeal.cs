@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Net;
-using Inforoom2.Helpers;
+using Common.Tools;
 using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
@@ -20,7 +19,7 @@ namespace Inforoom2.Models
 	{
 		public Appeal()
 		{
-			Date = DateTime.Now;
+			Date = SystemTime.Now();
 			inforoom2 = true;
 		}
 

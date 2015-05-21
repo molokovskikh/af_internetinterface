@@ -48,8 +48,7 @@ namespace Inforoom2.Models.Services
 			var now = SystemTime.Now();
 			if (!client.PaidDay && now.Hour < 22 && assignedService.BeginDate.Value.Date == now.Date) {
 				client.PaidDay = true;
-				var comment = string.Format("Абонентская плата за {0} из-за добровольной блокировки клиента",
-					now.ToShortDateString());
+				var comment = string.Format("Абонентская плата за {0} из-за добровольной блокировки клиента", now.ToShortDateString());
 				var writeOff = new UserWriteOff {
 					Client = client,
 					Date = now,

@@ -66,16 +66,30 @@ function findAddressOnMap(searchQuery) {
 
 var typeWatcher = function() {
 	var timer = 0;
-	console.log('tick');
+	console.log('tick'); 
 	return function(ms) {
 		var callback = function showAddressOnMap() {
-			userCity = document.getElementById('clientRequest_City').value.toLowerCase();
-			userStreet = document.getElementById('clientRequest_Street').value.toLowerCase();
-			userHouse = document.getElementById('clientRequest_HouseNumber').value.toLowerCase();
-			userHousing = document.getElementById('clientRequest_Housing').value.toLowerCase();
-
-			var address = userCity + " " + userStreet + " " + userHouse + " " + userHousing;
-			findAddressOnMap(address);
+			var userCity,userStreet,userHouse ="";
+			var skillsSelect = document.getElementById("RegionDropDown"); 
+			if(skillsSelect.options[skillsSelect.selectedIndex]!=null){				
+			var selectedText = skillsSelect.options[skillsSelect.selectedIndex].text;
+			userCity = selectedText.toLowerCase();	
+			}
+			skillsSelect = document.getElementById("StreetDropDown");
+			if(skillsSelect.options[skillsSelect.selectedIndex]){
+			selectedText = skillsSelect.options[skillsSelect.selectedIndex].text;
+			userStreet = selectedText.toLowerCase();	
+			}
+			skillsSelect = document.getElementById("HouseDropDown");
+			if(skillsSelect.options[skillsSelect.selectedIndex]){				
+			selectedText = skillsSelect.options[skillsSelect.selectedIndex].text;
+			userHouse = selectedText.toLowerCase(); 
+			}
+			var address = userCity + " " + userStreet + " " + userHouse;	 
+			if(address!=null && userCity+userStreet+userHouse+userHousing!=""){ 
+				findAddressOnMap(address);
+			}
+			
 			
 		}
 		clearTimeout(timer);

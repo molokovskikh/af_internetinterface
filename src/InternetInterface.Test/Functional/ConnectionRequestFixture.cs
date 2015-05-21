@@ -13,7 +13,7 @@ namespace InternetInterface.Test.Functional
 	[TestFixture]
 	public class ConnectionRequestFixture : SeleniumFixture
 	{
-		[Test]
+		[Test, Ignore("Игнорируется в связи с переносом функционала на новую админку")]
 		public void Create_request()
 		{
 			Open();

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Globalization;
-using System.Web.Services.Description;
-using Inforoom2.Intefaces;
+using Common.Tools;
 using NHibernate.Mapping.Attributes;
-using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
@@ -33,7 +30,7 @@ namespace Inforoom2.Models
 		{
 			Sum = sum;
 			EndPoint = point;
-			RegDate = DateTime.Now;
+			RegDate = SystemTime.Now();
 			Employee = null;
 		}
 	}

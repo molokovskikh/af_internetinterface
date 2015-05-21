@@ -1029,7 +1029,7 @@ where CE.Client = {0}", Id))
 		}
 
 		/// <summary>
-		/// синхронизирует состояние услуг и состояние точки подключения
+		/// синхронизирует состояние услуг и состояние точки подключения. Вызывается иногда из Background.
 		/// </summary>
 		public virtual void SyncServices(Settings settings)
 		{

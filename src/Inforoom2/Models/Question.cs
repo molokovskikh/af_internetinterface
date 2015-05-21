@@ -1,9 +1,8 @@
 ﻿using System;
+using Common.Tools;
 using Inforoom2.Intefaces;
-using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
-
 
 namespace Inforoom2.Models
 {
@@ -30,7 +29,7 @@ namespace Inforoom2.Models
 
 		public Question(int priority)
 		{
-			CreationDate = DateTime.Now;
+			CreationDate = SystemTime.Now();
 			Priority = priority;
 		}
 
