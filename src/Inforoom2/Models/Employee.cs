@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
@@ -9,6 +10,13 @@ namespace Inforoom2.Models
 	[Class(0, Table = "Partners", NameType = typeof(Employee))]
 	public class Employee : BaseModel
 	{
+		public Employee()
+		{
+			Roles = new List<Role>();
+			Permissions = new List<Permission>();
+			PaymentEmployee = new List<PaymentSystem>();
+		}
+
 		[Property]
 		public virtual string Name { get; set; }
 
@@ -40,6 +48,18 @@ namespace Inforoom2.Models
 		{
 			var ret = PaymentEmployee.Count > 0;
 			return ret;
+		}
+
+		/// <summary>
+		/// Проверяет, есть ли у клиента права на какой-либо контент или страницу.
+		/// В данный момент только проверяются доступы к старницам на основе ролей.
+		/// </summary>
+		/// <param name="access">Название права</param>
+		/// <returns></returns>
+		public virtual bool HasAccess(string access)
+		{
+			var hasPermission = Roles.Any(i => i.Permissions.Any(j => j.Name.ToLower() == access.ToLower()));
+			return hasPermission;
 		}
 	}
 }

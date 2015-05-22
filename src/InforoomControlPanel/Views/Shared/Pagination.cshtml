@@ -1,43 +1,76 @@
-﻿@{
-	var perpage = 10;
-	if(ViewBag.ModelsPerPage != null) {
-		perpage = ViewBag.ModelsPerPage;
+﻿@using Inforoom2.Components
+@{
+	var urlRoot = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
+	IModelFilter pager = ViewBag.Pager; // получение объекта листалки
+	var perpage = 10; // присвоение значения кол-ва за раз выводимых страниц по умолчанию
+	if (ViewBag.ModelsPerPage != null) {
+		perpage = pager.ItemsPerPage; // присвоение значения кол-ва за раз выводимых страниц из объекта листалки
 	}
-	var page = 1;
-	if(ViewBag.Page != null) {
-		page = ViewBag.Page;
+	var page = 1; // присвоение текущего номера страницы по умолчанию
+	if (pager.Page != null) {
+		page = pager.Page; // присвоение текущего номера страницы по умолчанию объекта листалки
 	}
-	var count = ViewBag.ModelsCount;
-	var pageCount = Math.Ceiling((double) count/perpage);
-	var prevClass = page <= 1 ? "disabled" : "";
-	var nextClass = page >= pageCount ? "disabled" : "";
-	var from = page*perpage;
-	var to = from + perpage-1;
+	var count = pager.TotalItems; // общее кол-во элементов
+	var pageCount = pager.PagesCount; // общее кол-во страниц
+	var prevClass = page <= 1 ? "disabled" : ""; // назначение скрывающего стиля, при пороговом количестве эл-тов
+	var nextClass = page >= pageCount ? "disabled" : ""; // назначение скрывающего стиля, при пороговом количестве эл-тов
+	var from = (page - 1) * (perpage <= pager.TotalItems ? perpage : pager.TotalItems); // показ от данного элементы
+	var to = page * (perpage <= pager.TotalItems ? perpage : pager.TotalItems); // показ до данного элементы
+	to = (to >= count ? count : to); // показ до последнего элемента в списке, если он меньше рассчитанного
 }
-<div class="col-xs-6 col-left">
-	<div class="dataTables_info" id="table-2_info" role="status" aria-live="polite">Showing @from to @to of @count entries</div>
-</div>
-<div class="col-xs-6 col-right">
-	<div class="dataTables_paginate paging_bootstrap" id="table-2_paginate">
-			  <ul class="pagination pagination-sm">
-				  <li class="prev @prevClass">
-					  <a href="@Url.Action(ViewBag.ActionName,ViewBag.ControllerName,new {page = ViewBag.Page - 1})"><i class="entypo-left-open"></i></a>
-				  </li>
-				  @for(var i=1; i <= pageCount; i++)
-				  {
-					var cl = "";
-					if(i == page) {
-						cl = "active";
-					}
-					<li class="@cl">
-						<a href="@Url.Action(ViewBag.ActionName,ViewBag.ControllerName,new {page = i})">@i</a>
+@if (pageCount != 0 && pageCount != 1) {
+	<div class="col-xs-6 col-left">
+		<div class="dataTables_info" id="table-2_info" role="status" aria-live="polite">@(to == count ? "Показаны последние элементы" : "Показано от " + from + " до " + to + " из " + count + " элементов")</div>
+	</div>
+	<div class="col-xs-6 col-right">
+		<div class="dataTables_paginate paging_bootstrap" id="table-2_paginate">
+			<ul class="pagination pagination-sm">
+				@if (pager.Page > 1) {
+					@* // Ссылка на предыдущий элемент *@
+					<li class="next @prevClass">
+						<a href="@urlRoot@pager.UrlBase@(pager.UrlBase.Contains("?") ? "&" : "?" )@(pager.UrlParamPrefix + "." + pager.UrlCurrentPage)=@(pager.Page - 1)">
+							<i class="entypo-left-open"></i>
+						</a>
 					</li>
-				  }
+				} @* // Нумерация страниц, с выведением ссылок на них *@@for (var i = 1; i <= pageCount; i++) {
+					                                                        var cl = "";
+					                                                        if (i == page) {
+						                                                        cl = "active";
+					                                                        }
+					                                                        <li class="@cl">
+						                                                        @if (i == 1) {
+							                                                        <a href="@urlRoot@pager.UrlBase@(pager.UrlBase.Contains("?") ? "&" : "?")@(pager.UrlParamPrefix + "." + pager.UrlCurrentPage)=@i">@i</a>
+						                                                        }
+						                                                        @if (i == page - 1 && i != 1) {
+							                                                        <span>...</span>
+							                                                        <a href="@urlRoot@pager.UrlBase@(pager.UrlBase.Contains("?") ? "&" : "?")@(pager.UrlParamPrefix + "." + pager.UrlCurrentPage)=@i">@i</a>
+							                                                        <span>.</span>
+						                                                        }
+						                                                        @if (i == page && i != 1 && i != pageCount)
+																				{
+																					<a href="@urlRoot@pager.UrlBase@(pager.UrlBase.Contains("?") ? "&" : "?")@(pager.UrlParamPrefix + "." + pager.UrlCurrentPage)=@i">@i</a>
+																				} 					
+						                                                        @if (i == page + 1 && i != pageCount) {
+							                                                        <span>.</span>
+							                                                        <a href="@urlRoot@pager.UrlBase@(pager.UrlBase.Contains("?") ? "&" : "?")@(pager.UrlParamPrefix + "." + pager.UrlCurrentPage)=@i">@i</a>
+							                                                        <span>...</span>
+						                                                        } 						
+						                                                        @if (i == pageCount)
+																				{
+																					<a href="@urlRoot@pager.UrlBase@(pager.UrlBase.Contains("?") ? "&" : "?")@(pager.UrlParamPrefix + "." + pager.UrlCurrentPage)=@i">@i</a>
+																				} 
+					                                                        </li>
+				                                                        }
+				@if (pager.Page < pager.PagesCount) {
+				@* // Ссылка на следующий элемент *@
 					<li class="next @nextClass">
-					  <a href="@Url.Action(ViewBag.ActionName,ViewBag.ControllerName,new {page = page + 1})">
-						  <i class="entypo-right-open"></i>
-					  </a>
-				  </li>
-			  </ul>
-		  </div>
-</div>
+						<a href="@urlRoot@pager.UrlBase@(pager.UrlBase.Contains("?") ? "&" : "?" )@(pager.UrlParamPrefix + "." + pager.UrlCurrentPage)=@(pager.Page + 1)">
+							<i class="entypo-right-open"></i>
+						</a>
+					</li>
+				}
+
+			</ul>
+		</div>
+	</div>
+}

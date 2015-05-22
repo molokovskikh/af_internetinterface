@@ -147,6 +147,10 @@
       <Project>{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}</Project>
       <Name>Inforoom2</Name>
     </ProjectReference>
+    <ProjectReference Include="..\InforoomControlPanel\InforoomControlPanel.csproj">
+      <Project>{4436a72e-730b-497c-989c-42bbb4208024}</Project>
+      <Name>InforoomControlPanel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">
       <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
       <Name>InternetInterface</Name>
@@ -162,6 +166,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="switches.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\global.config">
+      <Link>global.config</Link>
+      <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="App.config">
@@ -181,24 +190,26 @@
   <ItemGroup>
     <Compile Include="Functional\Account\AccountFixture.cs" />
     <Compile Include="Functional\Account\LogoutFixture.cs" />
-    <Compile Include="Functional\BaseControllerFixture.cs" />
-    <Compile Include="Functional\infrastructure\BillingFixture.cs" />
-    <Compile Include="Functional\ClientRequestFixture.cs" />
+    <Compile Include="Functional\Home\HomeFixture.cs" />
+    <Compile Include="Functional\Inforoom2\Inforoom2Fixture.cs" />
+    <Compile Include="Functional\Billing\BillingFixture.cs" />
+    <Compile Include="Functional\ClientRequest\ClientRequestFixture.cs" />
     <Compile Include="Functional\Account\LoginFixture.cs" />
-    <Compile Include="Functional\infrastructure\BaseFixture.cs" />
-    <Compile Include="Functional\infrastructure\Helpers\ClientCreateHelper.cs" />
-    <Compile Include="Functional\infrastructure\Helpers\AddressCreateHelper.cs" />
+    <Compile Include="Functional\Personal\PersonalPlayList.cs" />
+    <Compile Include="Infrastructure\BaseFixture.cs" />
+    <Compile Include="Infrastructure\Helpers\ClientCreateHelper.cs" />
+    <Compile Include="Infrastructure\Helpers\AddressCreateHelper.cs" />
+    <Compile Include="Functional\Personal\PersonalTvLinkFixture.cs" />
     <Compile Include="Functional\Personal\PersonalFirstVisitFixture.cs" />
     <Compile Include="Functional\Personal\PersonalNotificationsFixture.cs" />
     <Compile Include="Functional\Personal\PersonalPlansFixture.cs" />
-    <Compile Include="Functional\infrastructure\PersonalFixture.cs" />
+    <Compile Include="Functional\Personal\PersonalFixture.cs" />
     <Compile Include="Functional\Faq\FaqFixture.cs" />
-    <Compile Include="Functional\CallMeBackFixture.cs" />
-    <Compile Include="Functional\HomeFixture.cs" />
-    <Compile Include="Functional\infrastructure\Setup.cs" />
-    <Compile Include="Functional\DeferredPaymentFixture.cs" />
-    <Compile Include="Functional\VoluntaryBlockingFixture.cs" />
-    <Compile Include="Functional\WarningFixture.cs" />
+    <Compile Include="Functional\Home\CallMeBackFixture.cs" />
+    <Compile Include="Functional\Setup.cs" />
+    <Compile Include="Functional\Personal\DeferredPaymentFixture.cs" />
+    <Compile Include="Functional\Personal\VoluntaryBlockingFixture.cs" />
+    <Compile Include="Functional\Personal\WarningFixture.cs" />
     <Compile Include="Integration\BaseIntegrationFixture.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

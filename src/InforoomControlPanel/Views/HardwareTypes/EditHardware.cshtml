@@ -6,7 +6,7 @@
 @{
 	ViewBag.Title = "Редактировать оборудование";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	RentalHardware hardware = ViewBag.Hardware;
+	RentalHardware rentalHardware = ViewBag.Hardware;
 	ValidationRunner validationRunner = ViewBag.Validation;
 }
 
@@ -16,23 +16,22 @@
 			@using (@Html.BeginForm("EditHardware", "HardwareTypes", FormMethod.Post, new {@id = "EditHardwareForm", @class = "form-horizontal form-groups-bordered"}))
 			{
 				<div class="form-group">
-					@Html.HiddenFor(model => hardware.Id)
+					@Html.HiddenFor(model => rentalHardware.Id)
 					<label class="col-sm-3 control-label" for="HwNameText">Название</label>
 					<div id="HwNameText" class="col-sm-5">
-@*						@Html.ValidationEditor(validationRunner, hardware, "Name", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)*@
-						@Html.DisplayFor(modelItem => hardware.Name, new { @class = "form-control" })
+						@Html.DisplayFor(modelItem => rentalHardware.Name, new { @class = "form-control" })
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-3 control-label" for="HwPriceText">Цена</label>
 					<div id="HwPriceText" class="col-sm-5">
-						@Html.ValidationEditor(validationRunner, hardware, "Price", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+						@Html.ValidationEditor(validationRunner, rentalHardware, "Price", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-3 control-label" for="HwFreeDaysText">Бесплатные дни</label>
 					<div id="HwFreeDaysText" class="col-sm-5">
-						@Html.ValidationEditor(validationRunner, hardware, "FreeDays", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+						@Html.ValidationEditor(validationRunner, rentalHardware, "FreeDays", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
 					</div>
 				</div>
 				<div class="form-group">

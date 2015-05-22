@@ -306,6 +306,7 @@
     <Content Include="assets\js\additional-methods.min.js" />
     <Content Include="assets\js\bootstrap-colorpicker.min.js" />
     <Content Include="assets\js\bootstrap-datepicker.js" />
+    <Content Include="assets\js\bootstrap-datepicker.ru.min.js" />
     <Content Include="assets\js\bootstrap-switch.min.js" />
     <Content Include="assets\js\bootstrap-tagsinput.min.js" />
     <Content Include="assets\js\bootstrap-timepicker.min.js" />
@@ -1491,6 +1492,7 @@
     <Content Include="Css\style.css" />
     <Content Include="Images\map.png" />
     <Content Include="Images\tick.png" />
+    <Content Include="Scripts\ClientController.ClientRegistration.js" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\AddressController.CreateStreet.js" />
     <Content Include="Scripts\AddressController.CreateHouse.js" />
@@ -1514,10 +1516,14 @@
     <Compile Include="Controllers\AdminAccountController.cs" />
     <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\ClientActionsController.cs" />
     <Compile Include="Controllers\ConnectionTeamController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\HardwareTypesController.cs" />
     <Compile Include="Controllers\HardwareRentController.cs" />
+    <Compile Include="Controllers\BannerController.cs" />
+    <Compile Include="Controllers\SlideController.cs" />
+    <Compile Include="Controllers\ControlPanelController.cs" />
     <Compile Include="Controllers\SwitchController.cs" />
     <Compile Include="Controllers\PlansController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
@@ -1532,20 +1538,12 @@
     <Content Include="packages.config" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Address\SwitchAddressList.cshtml" />
-    <Content Include="Views\Address\EditAddress.cshtml" />
-    <Content Include="Views\Address\EditCity.cshtml" />
-    <Content Include="Views\Address\EditHouse.cshtml" />
-    <Content Include="Views\Address\EditRegion.cshtml" />
-    <Content Include="Views\Address\EditStreet.cshtml" />
     <Content Include="Views\News\NewsIndex.cshtml" />
     <Content Include="Views\News\EditNewsBlock.cshtml" />
-    <Content Include="Views\Plan\Plan.cshtml" />
-    <Content Include="Views\Plan\EditPlan.cshtml" />
     <Content Include="Views\Question\QuestionIndex.cshtml" />
     <Content Include="Views\Question\EditQuestion.cshtml" />
     <Content Include="Views\Ticket\TicketIndex.cshtml" />
     <Content Include="Views\Ticket\EditTicket.cshtml" />
-    <Content Include="Views\Shared\AdminPanel.cshtml" />
     <Content Include="Views\AdminAccount\Index.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Web.test2.config">
@@ -1565,6 +1563,7 @@
     <Folder Include="assets\js\aci-tree\php\tree\Item 7\Item 4\Item 3\" />
     <Folder Include="assets\js\aci-tree\php\tree\Item 7\Item 4\Item 4\" />
     <Folder Include="assets\js\selectboxit\css\" />
+    <Folder Include="Images\Uploaded\" />
     <Folder Include="Models\" />
     <Folder Include="Properties\" />
   </ItemGroup>
@@ -1808,7 +1807,7 @@
     <Content Include="assets\js\zurb-responsive-tables\javascripts\app.js.orig" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Client\ClientList.cshtml" />
+    <Content Include="Views\Client\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Client\ServiceRequest.cshtml" />
@@ -1823,16 +1822,16 @@
     <Content Include="Views\ConnectionTeam\AttachServiceRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Client\ClientRequestsList.cshtml" />
+    <Content Include="Views\Client\RequestsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\ConnectionTeam\AttachConnectionRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Client\ClientRequest.cshtml" />
+    <Content Include="Views\Client\Request.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Admin\Admins.cshtml" />
+    <Content Include="Views\Admin\EmployeeList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\Pagination.cshtml" />
@@ -1847,7 +1846,7 @@
     <Content Include="Views\Ticket\EditCallMeBackTicket.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Client\ClientInfo.cshtml" />
+    <Content Include="Views\Client\Info.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Plans\EditPlan.cshtml" />
@@ -1892,8 +1891,38 @@
     <Content Include="Views\HardwareRent\UpdateHardwareRent.cshtml" />
     <Content Include="Views\HardwareTypes\EditHardware.cshtml" />
     <Content Include="Views\HardwareTypes\ShowHardware.cshtml" />
+    <Content Include="Views\Client\Registration.cshtml" />
+    <Content Include="Views\Client\Edit.cshtml" />
+    <Content Include="Views\Client\RequestRegistration.cshtml" />
+    <Content Include="Views\Plans\CreateTvProtocol.cshtml" />
+    <Content Include="Views\Plans\TvProtocolList.cshtml" />
+    <Content Include="Views\Plans\TvChannelList.cshtml" />
+    <Content Include="Views\Plans\CreateTvChannel.cshtml" />
+    <Content Include="Views\Plans\TvChannelGroupList.cshtml" />
+    <Content Include="Views\Slide\CreateSlide.cshtml" />
+    <Content Include="Views\Slide\EditSlide.cshtml" />
+    <Content Include="Views\Slide\SlideIndex.cshtml" />
+    <Content Include="Views\Banner\CreateBanner.cshtml" />
+    <Content Include="Views\Banner\EditBanner.cshtml" />
+    <Content Include="Views\Banner\BannerIndex.cshtml" />
+    <Content Include="Views\Plans\CreateTvChannelGroup.cshtml" />
+    <Content Include="..\global.config">
+      <Link>global.config</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Admin\EditEmployee.cshtml" />
+    <Content Include="Views\Admin\AccessDenined.cshtml" />
+    <Content Include="Views\Admin\PermissionList.cshtml" />
+    <Content Include="Views\Admin\RoleList.cshtml" />
+    <Content Include="Views\Admin\EditRole.cshtml" />
+    <Content Include="Views\Client\DealerList.cshtml" />
+    <Content Include="Views\ClientActions\PrivateMessage.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
+    <None Include="Web.release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

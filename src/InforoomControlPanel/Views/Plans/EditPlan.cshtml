@@ -1,4 +1,4 @@
-﻿@using System.Collections
+﻿ 
 @using Inforoom2.Helpers
 @using Inforoom2.Models
 @using NPOI.SS.Formula.Functions
@@ -14,13 +14,12 @@
 	RegionPlan RegionPlan = ViewBag.RegionPlan;
 	List<PackageSpeed> speed = ViewBag.PackageSpeed;
 	PackageSpeed currentSpeed = plan.PackageSpeed ?? new PackageSpeed();
-
+	List<TvChannelGroup> tvChannelGroups = ViewBag.TvChannelGroups ?? new List<TvChannelGroup>();
 }
 <div class="panel panel-primary">
 	<div class="panel-body">
 		<div class="col-md-6">
-			@using (@Html.BeginForm("UpdatePlan", "Plans", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
-			{
+			@using (@Html.BeginForm("EditPlan", "Plans", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
 				<div class="form-group">
 					@Html.HiddenFor(model => plan.Id)
 					<label class="col-sm-3 control-label" for="field-ta">Название</label>
@@ -56,19 +55,35 @@
 					</div>
 				</div>
 				<div class="form-group">
+					<label class="col-sm-3 control-label c-pointer" for="isPublished">Опубликован (выводится на странице "тарифы")</label>
+					<div class="col-sm-5">
+						@Html.CheckBoxFor(model => plan.Published, new { @id = "isPublished", @class = "c-pointer" })
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label c-pointer">Заголовок</label>
+					<div class="col-sm-5">
+						@Html.TextAreaFor(model => plan.Features, new { @class = "form-control" })
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label c-pointer">Содержание</label>
+					<div class="col-sm-5">
+						@Html.TextAreaFor(model => plan.Description, new { @class = "form-control", @Rows = "7" })
+					</div>
+				</div>
+				<div class="form-group">
 					<button class="btn btn-green" type="submit">Принять изменения</button>
 				</div>
 			}
 		</div>
 		<div class="col-md-6">
-			@if (plans.Count > 0)
-			{
+			@if (plans.Count > 0) {
 				<div class="col-sm-12">
 					<h4>Создать стоимость перехода:</h4>
 				</div>
 				<div class="col-sm-12 ">
-					@using (@Html.BeginForm("AddPlanTransfer", "Plans", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered col-sm-12" }))
-					{
+					@using (@Html.BeginForm("AddPlanTransfer", "Plans", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered col-sm-12" })) {
 						<div class="form-group">
 							<div class="col-sm-5">Тарифный план</div>
 							<div class="col-sm-2">Стоимость</div>
@@ -99,8 +114,7 @@
 				<div class="col-sm-2">Стоимость</div>
 				<div class="col-sm-2">Действия</div>
 			</div>
-			@foreach (var item in plan.PlanTransfers)
-			{
+			@foreach (var item in plan.PlanTransfers) {
 				<div class="form-group">
 					<div class="col-sm-5">
 						@item.PlanTo.Name
@@ -109,20 +123,18 @@
 						@item.Price.ToString("F2")
 					</div>
 					<div class="col-sm-2">
-						<a class="entypo-cancel-circled" style="color:red" href="@Url.Action("DeletePlanTransfer","Plans",new {id = item.Id })"></a>
+						<a class="entypo-cancel-circled" style="color: red" href="@Url.Action("DeletePlanTransfer", "Plans", new { id = item.Id })"></a>
 					</div>
 				</div>
 			}
 		</div>
 		<div class="col-md-6">
-			@if (plans.Count > 0)
-			{
+			@if (regions.Count > 0) {
 				<div class="col-sm-12">
 					<h4>Добавить pегион:</h4>
 				</div>
 				<div class="col-sm-12 ">
-					@using (@Html.BeginForm("AddRegionPlan", "Plans", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered col-sm-12" }))
-					{
+					@using (@Html.BeginForm("AddRegionPlan", "Plans", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered col-sm-12" })) {
 						<div class="form-group">
 							@Html.HiddenFor(i => RegionPlan.Plan.Id)
 							<div class="col-sm-5">
@@ -138,21 +150,64 @@
 					}
 				</div>
 			}
-			<div class="col-sm-12">
-				<h4>Тариф доступен в регионах:</h4>
-			</div>
-			@foreach (var item in plan.RegionPlans)
-			{
-				<div class="form-group">
-					<div class="col-sm-5">
-						@item.Region.Name
-					</div>
-					<div class="col-sm-2">
-					</div>
-					<div class="col-sm-2">
-						<a class="entypo-cancel-circled" style="color:red" href="@Url.Action("DeleteRegion","Plans",new {id = item.Id })"></a>
-					</div>
+			@if (plan.RegionPlans.Count > 0) {
+				<div class="col-sm-12">
+					<h4>Тариф доступен в регионах:</h4>
 				</div>
+				foreach (var item in plan.RegionPlans) {
+					<div class="form-group">
+						<div class="col-sm-5">
+							@item.Region.Name
+						</div>
+						<div class="col-sm-2">
+						</div>
+						<div class="col-sm-2">
+							<a class="entypo-cancel-circled" style="color: red" href="@Url.Action("DeleteRegion", "Plans", new { id = item.Id })"></a>
+						</div>
+					</div>
+				}
+			}
+
+		</div>
+		<div class="col-md-6">
+			@if (tvChannelGroups.Count > 0) {
+				<div class="col-sm-12">
+					<h4>Добавить канал:</h4>
+				</div>
+				<div class="col-sm-12 ">
+					@using (@Html.BeginForm("AttachTvChannelGroup", "Plans", new { id = plan.Id }, FormMethod.Post, new { @class = "form-horizontal  col-sm-12" })) {
+						@Html.HiddenFor(i => plan.Id)
+						<div class="form-group">
+							<div class="col-sm-5">
+								@Html.DropDownListExtendedFor(i => plan.TvChannelGroups, tvChannelGroups, obj => obj.Name, null, new { @class = "form-control" })
+							</div>
+							<div class="col-sm-2"></div>
+							<div class="col-sm-2">
+								<button class="btn btn-green" type="submit">Добавить</button>
+							</div>
+						</div>
+					}
+				</div>
+			}
+			@if (plan.TvChannelGroups.Count > 0) {
+				<div class="col-sm-12">
+					<h4>Включенные каналы:</h4>
+				</div>
+				foreach (var item in plan.TvChannelGroups) {
+					<div class="form-group">
+						<div class="col-sm-5">
+							@item.Name
+						</div>
+						<div class="col-sm-2"></div>
+						<div class="col-sm-2">
+							@using (@Html.BeginForm("EditPlan", "Plans", new { id = plan.Id }, FormMethod.Post)) {
+								@Html.HiddenFor(i => plan.Id)
+								@Html.HiddenForModelList(plan, i => plan.TvChannelGroups, item.Id)
+								<button type="submit" class="btn-link entypo-cancel-circled" style="color: red"></button>
+							}
+						</div>
+					</div>
+				}
 			}
 		</div>
 	</div>
@@ -160,4 +215,4 @@
 
 <div class="form-group">
 </div>
-<button class="btn btn-blue" onclick=" location.href='@Url.Action("PlanIndex", "Plans")' ">Назад</button>
+<button class="btn btn-blue" onclick=" location.href = '@Url.Action("PlanIndex", "Plans")' ">Назад</button>

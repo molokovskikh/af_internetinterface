@@ -15,7 +15,10 @@ namespace Inforoom2.Models
 		public virtual int PackageId { get; set; }
 
 		[Property]
-		public virtual int Speed { get;  set; }
+		public virtual int Speed { get; set; }
+
+		[Property]
+		public virtual bool IsPhysic { get; set; }
 
 		/// <summary>
 		/// Получение скорости в пакета в Мегабитах

@@ -12,7 +12,12 @@ ${FormHelper.HiddenField("houseNumber")}
 <table class="table" style="border:1px solid #AAA">
     <thead>
         <tr>
-            <th colspan=2>Регистрация заявки</th>
+            <th colspan=2>
+							Регистрация заявки <strong style="color:#DF0000">
+								Для выполнения данной функции перейдите в
+								<a style="color:#00A651" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/Request">Inforoom2</a> !
+							</strong>
+						</th>
         </tr>
     </thead>
     <tbody>

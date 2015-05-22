@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Web;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using Common.Tools;
 using Common.Web.Ui.Models.Audit;
 using InternetInterface.Helpers;
 using NHibernate;
-using NHibernate.Linq;
 
 namespace InternetInterface.Models
 {
@@ -70,6 +68,9 @@ namespace InternetInterface.Models
 		//обработана ли деактивация заказа, устанавливает биллинг нужен для учета списаний периодических услуг
 		[Property]
 		public virtual bool IsDeactivated { get; set; }
+
+		[Property, Description("Вспомогательное поле для указания фактического адреса подключения")]
+		public virtual string ConnectionAddress { get; set; }
 
 		/// <summary>
 		/// Статус заказа

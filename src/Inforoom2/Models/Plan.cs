@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web.UI.WebControls;
 using Inforoom2.Intefaces;
 using NHibernate;
@@ -14,10 +15,18 @@ namespace Inforoom2.Models
 	/// Тарифный план
 	/// </summary>
 	[Class(0, Table = "Tariffs", NameType = typeof(Plan))]
-	public class Plan : BaseModel
+	public class Plan : PriorityModel
 	{
 		[Property(NotNull = true, Unique = true), NotEmpty]
 		public virtual string Name { get; set; }
+
+		public Plan()
+		{
+			Regions = new List<Region>();
+			PlanTransfers = new List<PlanTransfer>();
+			RegionPlans = new List<RegionPlan>();
+			TvChannelGroups = new List<TvChannelGroup>();
+		}
 
 		public virtual float Speed
 		{
@@ -58,6 +67,11 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "PackageId", PropertyRef = "PackageId")]
 		public virtual PackageSpeed PackageSpeed { get; set; }
 
+		[Bag(0, Table = "PlanTvChannelGroups", Cascade = "All")]
+		[Key(1, Column = "Plan", NotNull = false)]
+		[ManyToMany(2, Column = "TvChannelGroup", ClassType = typeof(TvChannelGroup))]
+		public virtual IList<TvChannelGroup> TvChannelGroups { get; set; }
+
 		[Property]
 		public virtual bool IgnoreDiscount { get; set; }
 
@@ -66,12 +80,14 @@ namespace Inforoom2.Models
 
 		public virtual decimal SwitchPrice { get; set; }
 
-		public Plan()
-		{
-			this.Regions = new List<Region>();
-			this.PlanTransfers = new List<PlanTransfer>();
-			this.RegionPlans = new List<RegionPlan>();
-		}
+		[Property]
+		public virtual string Features { get; set; }
+
+		[Property]
+		public virtual bool Published { get; set; }
+
+		[Property]
+		public virtual string Description { get; set; }
 
 
 		/// <summary>
@@ -84,6 +100,42 @@ namespace Inforoom2.Models
 			var transfer = PlanTransfers.ToList().FirstOrDefault(i => i.PlanTo.Unproxy() == planTo);
 			var ret = transfer != null ? transfer.Price : 0;
 			return ret;
+		}
+
+		/// <summary>
+		/// Получение списка каналов, доступного для этого тарифа
+		/// </summary>
+		/// <returns></returns>
+		public virtual List<TvChannel> GetTvChannels()
+		{
+			var list = new List<TvChannel>();
+			foreach (var group in TvChannelGroups)
+				list.AddRange(group.TvChannels);
+			return list.Distinct().Where(i => i.Enabled).OrderByDescending(i => i.Priority).ToList();
+		}
+
+		/// <summary>
+		/// Есть ли у данного тарифа ТВ каналы
+		/// </summary>
+		/// <returns></returns>
+		public virtual bool HasTvChannels()
+		{
+			var count = TvChannelGroups.Count();
+			return count > 0;
+		}
+
+		/// <summary>
+		/// Получение содержимого файла плейлиста для тарифа
+		/// </summary>
+		/// <returns></returns>
+		public virtual string GetPlaylist()
+		{
+			var channels = GetTvChannels();
+
+			var sb = new StringBuilder(1000);
+			foreach (var channel in channels)
+				sb.Append(channel.GenerateM3uCode());
+			return sb.ToString();
 		}
 	}
 }

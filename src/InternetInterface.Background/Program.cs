@@ -42,7 +42,6 @@ namespace InternetInterface.Background
 				}));
 
 				tasks.Each(t => t.Cancellation = runner.Cancellation);
-
 				return CommandService.Start(args, runner);
 			}
 			catch(Exception e) {

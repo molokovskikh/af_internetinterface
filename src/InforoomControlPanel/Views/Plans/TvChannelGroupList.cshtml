@@ -1,0 +1,42 @@
+﻿@using Inforoom2.Models
+@model dynamic
+@{
+	ViewBag.Title = "Список групп ТВ каналов";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	IList<TvChannelGroup> groups = ViewBag.TvChannelGroups;
+}
+	<div class="form-group">
+		<a class="btn btn-green" href="@Url.Action("CreateTvChannelGroup","Plans")">Добавить группу</a>
+	</div>
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+	
+	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+		<thead>
+			<tr role="row">
+				<th class="sorting" tabindex="0" aria-controls="table-2">#</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Название</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			@foreach (var item in groups)
+			{
+				<tr role="row" class="odd">
+					<td>@item.Id</td>
+					<td>@item.Name</td>
+					<td>	
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditTvChannelGroup","Plans",new {id = item.Id})">
+							<i class="entypo-vcard"></i>
+							Изменить
+						</a>
+						<a class="btn btn-red btn-sm btn-icon icon-left" href="@Url.Action("DeleteTvChannelGroup","Plans",new {id = item.Id})">
+							<i class="entypo-cancel-circled"></i>
+							Удалить
+						</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>

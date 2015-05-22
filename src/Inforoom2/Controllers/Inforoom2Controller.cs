@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Security;
+using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -18,17 +18,25 @@ namespace Inforoom2.Controllers
 			get { return HttpContext.User as CustomPrincipal; }
 		}
 
+		protected Client _CurrentClient;
 		protected Client CurrentClient
 		{
 			get
-			{
-				if (User == null || DbSession == null || !DbSession.IsConnected) {
+			{ 
+				if (_CurrentClient != null)
+					return _CurrentClient;
+
+				if (User == null || DbSession == null || !DbSession.IsConnected)
+				{ 
 					return null;
 				}
 				int id;
 				int.TryParse(User.Identity.Name, out id);
-				return DbSession.Get<Client>(id);
+				var client =  DbSession.Get<Client>(id);
+				_CurrentClient = client;
+				return client;
 			}
+			set { _CurrentClient = value; }
 		}
 
 		private static string userCity;
@@ -55,12 +63,10 @@ namespace Inforoom2.Controllers
 				userCity = cookieCity;
 			}
 			ViewBag.Title = "Инфорум";
-			ViewBag.Cities = new[] { "Борисоглебск", "Белгород" };
-			ViewBag.JavascriptParams["baseurl"] = String.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, UrlHelper.GenerateContentUrl("~/", HttpContext));
-			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
-			ViewBag.ControllerName = GetType().Name.Replace("Controller", "");
-			//todo куда это девать? 
-			var newCallMeBackTicket = new CallMeBackTicket() { 
+			var CityList = DbSession.Query<Region>().Where(s => s.ShownOnMainPage).Select(s=>s.Name).OrderBy(s=>s).ToArray();
+			ViewBag.Cities = CityList;
+			//todo куда это девать?
+			var newCallMeBackTicket = new CallMeBackTicket() {
 				Name = (CurrentClient == null) ? "" : CurrentClient.Name,
 				PhoneNumber = (CurrentClient == null) ? "" : CurrentClient.PhoneNumber
 			};
@@ -68,6 +74,8 @@ namespace Inforoom2.Controllers
 			ViewBag.CallMeBackTicket = ViewBag.CallMeBackTicket ?? newCallMeBackTicket;
 
 			ProcessRegionPanel();
+			ProcessPrivateMessage();
+
 			if (TryAuthorizeNetworkClient())
 				return;
 			ViewBag.NetworkClientFlag = GetCookie("networkClient") != null;
@@ -87,9 +95,10 @@ namespace Inforoom2.Controllers
 		}
 
 		//Авторизация клиента из сети
-		private bool TryAuthorizeNetworkClient()
+		public bool TryAuthorizeNetworkClient()
 		{
 			var ipstring = Request.UserHostAddress;
+
 #if DEBUG
 			//Можем авторизоваться по лизе за клиента
 			ipstring = Request.QueryString["ip"] ?? null;
@@ -101,13 +110,23 @@ namespace Inforoom2.Controllers
 			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring, DbSession);
 			if (endpoint != null && endpoint.Client.PhysicalClient != null) //Юриков авторизовывать не нужно
 			{
-				SetCookie("networkClient", "true");
+				SetCookie("networkClient", "true"); 
+				// если у клиента есть адрес, связанный с эндпойнтом, по нему сохраняем город (userCity) в cookie 
+				if (endpoint.Client.PhysicalClient.Address != null) {
+					SetCookie("userCity", endpoint.Client.PhysicalClient.Address.House.Street.Region.Name);
+				} 
+				//Это необходимо, чтобы авторизация срабатывала моментально. Так как метод authenticate требует перезагрузки страницы
+				CurrentClient = endpoint.Client; 
 				this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, endpoint.Client.Id.ToString(), true);
 				return true;
 			}
 			return false;
 		}
 
+		/// <summary>
+		/// Проверка cookie "networkClient" при авторизации 
+		/// </summary>
+		/// <returns></returns>
 		private bool CheckNetworkClient()
 		{
 			var ipstring = Request.UserHostAddress;
@@ -118,7 +137,6 @@ namespace Inforoom2.Controllers
 			var cookie = GetCookie("networkClient");
 			if (cookie == null)
 				return true;
-
 			//если нет текущего клиента то снимаем флаг клиента из интернета
 			//больше ничего делать не надо - он может продолжить работку
 			if (CurrentClient == null || string.IsNullOrEmpty(ipstring)) {
@@ -162,16 +180,15 @@ namespace Inforoom2.Controllers
 
 		private void ProcessCallMeBackTicket()
 		{
-			var binder = new EntityBinderAttribute("callMeBackTicket.Id", typeof(CallMeBackTicket));
-			var callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request);
+			var binder = new EntityBinder();
+			var callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request,typeof(CallMeBackTicket));
 			ViewBag.CallMeBackTicket = callMeBackTicket;
 			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
 			callMeBackTicket.Client = CurrentClient;
-			 
+
 			var errors = ValidationRunner.Validate(callMeBackTicket);
-			if (errors.Length == 0)
-			{ 
+			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);
 				if (callMeBackTicket.Client != null) {
 					var appeal = new Appeal("Клиент создал запрос на обратный звонок № " + callMeBackTicket.Id,
@@ -189,7 +206,7 @@ namespace Inforoom2.Controllers
 				AddJavascriptParam("CallMeBack", "1");
 		}
 
-		public void ProcessRegionPanel()
+		private void ProcessRegionPanel()
 		{
 			var cookieCity = GetCookie("userCity");
 			if (User == null) {
@@ -207,11 +224,11 @@ namespace Inforoom2.Controllers
 				}
 				else {
 					//Куков нет, пытаемся достать город из базы, иначе определяем по геобазе
-					PhysicalClient user = null;
+					Client user = null;
 					int userId;
 					int.TryParse(User.Identity.Name, out userId);
 					if (userId != 0)
-						user = DbSession.Query<PhysicalClient>().FirstOrDefault(k => k.Id == userId);
+						user = DbSession.Query<Client>().FirstOrDefault(k => k.Id == userId);
 					if (user != null && user.Address != null) {
 						userCity = user.Address.House.Street.Region.City.Name;
 					}
@@ -220,11 +237,22 @@ namespace Inforoom2.Controllers
 					}
 				}
 			}
+
 			ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(UserCity);
 			ViewBag.UserCity = UserCity;
 			ViewBag.UserRegion = DbSession.Query<Region>().FirstOrDefault(i => i.Name == UserCity);
 			if (ViewBag.UserRegion == null)
 				ViewBag.UserRegion = DbSession.Query<Region>().First();
+		}
+
+		/// <summary>
+		/// Вывод приватного сообщения в ЛК клиенту
+		/// </summary>
+		private void ProcessPrivateMessage()
+		{
+			var message = DbSession.Query<PrivateMessage>().
+				FirstOrDefault(pm => pm.Client == CurrentClient && pm.Enabled && pm.EndDate.Date > SystemTime.Today());
+			ViewBag.PrivateMsg = message;
 		}
 
 		private bool IsUserCityBelongsToUs(string city)
@@ -275,7 +303,7 @@ namespace Inforoom2.Controllers
 				builder.Append("Поймали циклическое исключение на попытке получить ip клиента \n ");
 			}
 
-			builder.Append("Дата: " + DateTime.Now + " \n ");
+			builder.Append("Дата: " + SystemTime.Now() + " \n ");
 			builder.Append("Referrer: " + Request.UrlReferrer + " \n ");
 			builder.Append("Query: " + Request.QueryString + " \n ");
 			builder.Append("Ip: " + Request.UserHostAddress + " \n ");

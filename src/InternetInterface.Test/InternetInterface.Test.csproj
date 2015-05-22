@@ -217,8 +217,8 @@
     <Compile Include="Unit\TimeunitFixture.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\global.config">
-      <Link>global.config</Link>
+    <None Include="..\global.local.config">
+      <Link>global.local.config</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="App.config">

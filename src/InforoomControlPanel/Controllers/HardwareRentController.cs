@@ -9,7 +9,7 @@ namespace InforoomControlPanel.Controllers
 	/// <summary>
 	/// Класс-контроллер для управления операциями по "Аренде оборудования" клиента
 	/// </summary>
-	public class HardwareRentController : AdminController
+	public class HardwareRentController : ControlPanelController
 	{
 		/// <summary>
 		/// Отображает список оборудования для аренды
@@ -69,31 +69,31 @@ namespace InforoomControlPanel.Controllers
 		/// Создает новую аренду оборудования для клиента
 		/// </summary>
 		[HttpPost]
-		public ActionResult SaveHwRentService([EntityBinder] ClientRentalHardware hardwareRent)
+		public ActionResult SaveHwRentService([EntityBinder] ClientRentalHardware clientRentalHardware)
 		{
-			var errors = ValidationRunner.Validate(hardwareRent);
-			if (errors.Length > 0 || hardwareRent.Client == null || hardwareRent.Hardware == null) {
+			var errors = ValidationRunner.Validate(clientRentalHardware);
+			if (errors.Length > 0 || clientRentalHardware.Client == null || clientRentalHardware.Hardware == null) {
 				if (errors.Length == 0)
 					ErrorMessage("Невозможно активировать услугу!");
-				ViewBag.ClientHardware = hardwareRent;
+				ViewBag.ClientHardware = clientRentalHardware;
 				return View("UpdateHardwareRent");
 			}
 
-			var msg = hardwareRent.Activate(DbSession, GetCurrentEmployee());
-			DbSession.Save(hardwareRent);
+			var msg = clientRentalHardware.Activate(DbSession, GetCurrentEmployee());
+			DbSession.Save(clientRentalHardware);
 			// 1-ое обращение - об активации услуги
-			var appeal = new Appeal(msg, hardwareRent.Client, AppealType.User) {
+			var appeal = new Appeal(msg, clientRentalHardware.Client, AppealType.User) {
 				Employee = GetCurrentEmployee()
 			};
 			DbSession.Save(appeal);
 			// 2-ое обращение - об арендуемом оборудовании
-			appeal = new Appeal(string.Format("Клиент арендовал \"{0}\", модель \"{1}\", S/N {2}", hardwareRent.Hardware.Name, 
-				hardwareRent.Model.Name, hardwareRent.Model.SerialNumber), hardwareRent.Client, AppealType.User) {
+			appeal = new Appeal(string.Format("Клиент арендовал \"{0}\", модель \"{1}\", S/N {2}", clientRentalHardware.Hardware.Name, 
+				clientRentalHardware.Model.Name, clientRentalHardware.Model.SerialNumber), clientRentalHardware.Client, AppealType.User) {
 				Employee = GetCurrentEmployee()
 			};
 			DbSession.Save(appeal);
 			SuccessMessage("Услуга успешно активирована!");
-			return RedirectToAction("HardwareList", new {@id = hardwareRent.Client.Id});
+			return RedirectToAction("HardwareList", new {@id = clientRentalHardware.Client.Id});
 		}
 	}
 }

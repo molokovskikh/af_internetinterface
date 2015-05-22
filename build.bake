@@ -3,6 +3,7 @@
 Global(
 	Project : "InternetInterface",
 	HumanReadableName : "Интернет интерфейс",
+	ExcludesDeployDirectory : ("Content",),
 	Config: {
 		"db:generate:log": {@Sufix : "Internet"},
 		"db:seed": {@Profile: "Internet"}
@@ -11,9 +12,9 @@ Global(
 
 task @default, [@build]
 
-task @build, ["generate:assembly:info", @BuildWebSite, "build:background", "build:printer", "build:billing", "build:inforoom2"]
+task @build, ["generate:assembly:info", @BuildWebSite, "build:background", "build:billing", "build:inforoom2","build:controlpanel"]
 
-task @deploy, [@Production, "build", "version:bump", "deploy:pipeline", "deploy:printer", "deploy:background", "deploy:inforoom2", "deploy:billing"]
+task @deploy, [@Production, "build", "version:bump", "deploy:pipeline","deploy:background", "deploy:inforoom2","deploy:controlpanel", "deploy:billing"]
 
 task "deploy:background", ["build:background"]:
 	return if Globals.Environment != @Production

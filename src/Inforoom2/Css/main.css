@@ -13,7 +13,7 @@ a {text-decoration: none;color: #474747;}
 .notext { font-size: 0px;}
 .centre {text-align: center;}
 .wrapper {width:1182px; background: #ffffff; height: auto;margin:0px auto;position: relative;overflow: visible; }
-.top {background-color:#373737;height:51px;position: absolute;width:1182px;}
+.top {background-color:#373737;height:51px;position: relative;width:1182px;}
 .blackleft {width: 20px;height: 20px;background: #373637;position: absolute;left: 11px;top: 31px;border-radius: 0 0 8px;}
 .whiteleft {width: 20px;height: 20px;background: #ffffff;position: absolute;left: 11px;top: 31px;}
 .city {background: none repeat scroll 0 0 #ffffff;border-radius: 5px;color: #a61c21;cursor: pointer;font-size: 18px;
@@ -26,7 +26,7 @@ a {text-decoration: none;color: #474747;}
 .user {margin-right:13px;height:24px;width:166px;background:#cacaca;font-family:PTSans;font-style: oblique;font-size:13px;border:medium none;
        padding-left:10px;color:#8f8f8f; }
 .click {background:#aa181e;border: medium none;margin-left: -3px;height: 29px;width: 102px;color:#ffffff;font-family:PTSans;font-size:14px;border-radius: 2px;cursor: pointer;}
-.wrapper .header {width:1182px;height: 166px;background: #ffffff;}
+.wrapper .header {width:1182px;height: 166px;background: #ffffff;position: relative;}
 .inforum {width: 300px;height: 100px;background: url("../images/inforum.png");background-repeat: no-repeat;position: absolute;top: 70px;left: 22px;cursor: pointer;}
 .connect {background:#aa181e;border: medium none;color:#ffffff;border-radius: 2px;position: absolute;left: 507px;padding: 5px 26px;
           top: 90px;font-size: 20px;font-family: PDFDinTextPro;cursor: pointer;}
@@ -90,7 +90,7 @@ a {text-decoration: none;color: #474747;}
 .error .icon {background: url("../images/crusty.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;height: 14px;width: 16px;}
 .leftpersonal .error input {border:1px solid #920f15;}
 .leftpersonal .success input {border:1px solid #6ec400;}
-.map {width: 442px;height: 445px; background: url("../images/map.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block; position: absolute;
+.map {width: 442px;height: 445px; background: none repeat scroll 0 0 #ffffff;display: inline-block; position: absolute;
     right: 62px;top: 89px;}
 .left-move { position: absolute;left: 65px;right: 0;top: 60px; }
 .contract {margin-left: 100px;margin-top: 36px;width: 925px;font-family: PTSans;font-size: 14px;}

@@ -1,0 +1,2 @@
+USE internet;
+ALTER TABLE `clients` CHANGE COLUMN `Type` `Type` INT(10) UNSIGNED NULL DEFAULT '1' AFTER `Name`;

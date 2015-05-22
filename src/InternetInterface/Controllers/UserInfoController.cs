@@ -16,6 +16,7 @@ using InternetInterface.Models;
 using InternetInterface.Models.Services;
 using InternetInterface.Queries;
 using InternetInterface.Services;
+using NHibernate;
 using NHibernate.Linq;
 using Contact = InternetInterface.Models.Contact;
 using ContactType = InternetInterface.Models.ContactType;
@@ -260,7 +261,7 @@ namespace InternetInterface.Controllers
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoint();
 
-			//если это не создание ордера, то это его редактировани
+			//если это не создание ордера, то это его редактирование
 			//если editConnect == 0, то это новый ордер
 			var existingOrder = DbSession.Query<Order>().FirstOrDefault(o => o.Id == EditConnect);
 
@@ -400,6 +401,7 @@ namespace InternetInterface.Controllers
 					existingOrder.BeginDate = Order.BeginDate;
 					existingOrder.EndDate = Order.EndDate;
 					existingOrder.Number = Order.Number;
+					existingOrder.ConnectionAddress = Order.ConnectionAddress;
 				}
 				if (currentEndPoint > 0) {
 					existingOrder.EndPoint = DbSession.Get<ClientEndpoint>(currentEndPoint);
@@ -473,7 +475,7 @@ namespace InternetInterface.Controllers
 				var client = DbSession.Load<Client>(ClientID);
 				var physicalClient = client.PhysicalClient;
 				var password = CryptoPass.GeneratePassword();
-				physicalClient.Password = CryptoPass.GetHashString(password);
+				physicalClient.Password = CryptoPass.GetHashString(password); 
 				DbSession.Save(physicalClient);
 				var endPoint = client.Endpoints.FirstOrDefault();
 				if (endPoint != null)
@@ -481,6 +483,7 @@ namespace InternetInterface.Controllers
 				else {
 					PropertyBag["WhoConnected"] = null;
 				}
+				PropertyBag["ClientIdHref"] = "../UserInfo/ShowPhysicalClient?filter.ClientCode=" + ClientID;
 				PropertyBag["Client"] = physicalClient;
 				PropertyBag["_client"] = client;
 				PropertyBag["Password"] = password;
@@ -573,13 +576,15 @@ namespace InternetInterface.Controllers
 			BindObjectInstance(client, ParamStore.Form, "_client");
 
 			if (oldStatus != client.Status) {
-				//BlockedAndConnected = "не подключен", а не то, что ты подумал
-				if (oldStatus.ManualSet ||
-					oldStatus.Type == StatusType.BlockedAndConnected ||
-					(oldStatus.Type == StatusType.VoluntaryBlocking && client.NoEndPoint())) {
-					if (client.Status.Type == StatusType.Dissolved &&
-						(client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
-						GetErrorSummary(updateClient).RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное" + " оборудование, перед расторжением договора нужно изъять оборудование");
+				// BlockedAndNoConnected = "зарегистрирован", BlockedAndConnected = "не подключен"
+				var isDissolved = client.Status.Type == StatusType.Dissolved;
+				var setStatusToDissolved = isDissolved && 
+					(oldStatus.Type == StatusType.BlockedAndNoConnected || oldStatus.Type == StatusType.VoluntaryBlocking);
+				if (oldStatus.ManualSet || oldStatus.Type == StatusType.BlockedAndConnected || setStatusToDissolved) {
+					if (isDissolved && (client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
+						GetErrorSummary(updateClient).RegisterErrorMessage("Status", 
+								"Договор не может быть расторгнут тк у клиента имеется арендованное оборудование," + 
+								" перед расторжением договора нужно изъять оборудование");
 					}
 				}
 				else {
@@ -618,6 +623,15 @@ namespace InternetInterface.Controllers
 							client.CreareAppeal("Оператором отключена страница Warning", AppealType.Statistic);
 					}
 					if (client.Status.Type == StatusType.Dissolved) {
+						if (client.HaveService<VoluntaryBlockin>()) {
+							var thisService = client.ClientServices
+								.Where(cs => NHibernateUtil.GetClass(cs.Service) == typeof(VoluntaryBlockin) && cs.IsActivated)
+								.ToList().FirstOrDefault();
+							if (thisService != null) {
+								thisService.ForceDeactivate();
+								client.SetStatus(StatusType.Dissolved, DbSession);
+							}
+						}
 						var endpointLog = client.Endpoints
 							.Where(e => e.Switch != null)
 							.Implode(e => String.Format("Коммутатор {0} порт {1}", e.Switch.Name, e.Port), Environment.NewLine);
@@ -780,6 +794,7 @@ namespace InternetInterface.Controllers
 			var brigads = Brigad.All(DbSession);
 			PropertyBag["_client"] = client;
 			PropertyBag["IsDissolved"] = StatusType.Dissolved; // Для задания префикса "РАСТОРГНУТ" клиенту
+			PropertyBag["NextYearCycle"] = (client.YearCycleDate != null) ? client.YearCycleDate.Value.AddYears(1) : DateTime.MinValue;
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["uniqueClientEndpoints"] = client.Endpoints.Distinct().ToList();
 
@@ -1093,18 +1108,18 @@ namespace InternetInterface.Controllers
 			RedirectToReferrer();
 		}
 
-		[AccessibleThrough(Verb.Post)]
-		public void RemakeVirginityClient(uint clientId)
-		{
-			var client = DbSession.Get<Client>(clientId);
-			client.Status = Status.Get(StatusType.BlockedAndConnected, DbSession);
-			client.BeginWork = null;
-			client.RatedPeriodDate = null;
-			if (client.ConnectGraph != null)
-				DbSession.Delete(client.ConnectGraph);
-			DbSession.Save(client);
-			RedirectToReferrer();
-		}
+		//[AccessibleThrough(Verb.Post)]
+		//public void RemakeVirginityClient(uint clientId)
+		//{
+		//	var client = DbSession.Get<Client>(clientId);
+		//	client.Status = Status.Get(StatusType.BlockedAndConnected, DbSession);
+		//	client.BeginWork = null;
+		//	client.RatedPeriodDate = null;
+		//	if (client.ConnectGraph != null)
+		//		DbSession.Delete(client.ConnectGraph);
+		//	DbSession.Save(client);
+		//	RedirectToReferrer();
+		//}
 
 		public void ShowRegions()
 		{

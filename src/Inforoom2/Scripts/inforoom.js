@@ -8,13 +8,16 @@ function Inforoom() {
 	this.windows = [];
 
 	/**
-     * @var Параметры клиента. Пополняются параметрами с сервера.
+     * @var Параметры клиентского приложения. Пополняются параметрами с сервера.
      */
 	this.params = {};
+	/**
+	 * @var Шаблоны клиентского приложения. Присылает сервер.
+	 */
 	this.templates = {};
 
 	/**
-     * Контсруктор
+     * Конструктор
      */
 	this.initialize = function() {
 		window.cli = this;
@@ -44,6 +47,9 @@ function Inforoom() {
 		this.showMessages();
 	}
 
+	/**
+	 * Приводит инпуты на странице к форме, которую задумал дизайнер
+	 */
 	this.initInputs = function() {
 		$(".error .msg").on("mouseover", function () {
 			$(this).fadeOut(800);
@@ -56,16 +62,22 @@ function Inforoom() {
 		});
 		$('input').attr('autocomplete', 'off');
 	}
+
+	/**
+     * Создает окно, в котором отображается создание заявки на обратный звонок
+     * @returns {Window} Объект окна
+     */
 	this.callMeBackWindow = function() {
 		var wnd = this.createWindow("Обратный звонок", this.getTemplate("CallMeBackWindow"));
 		wnd.block();
+		return wnd;
 	}
 	/**
      * Создает окно
      * @returns {Window} Объект окна
      */
 	this.createWindow = function(name, content) {
-		var window = new Window(name, content);
+		var window = new InforoomWindow(name, content);
 		this.windows.push(window);
 		window.render(document.body);
 		return window;
@@ -91,14 +103,13 @@ function Inforoom() {
 		return $(selector).toArray();
 	}
 
-	this.post = function(query, data, callback) {
-
-	}
-
-	this.get = function(query, data, callback) {
-
-	}
-
+	/**
+	 * Создает куки. Кодирует его в Base64 (это баг IE)
+	 *
+	 * @param {String} name Имя куки
+	 * @param {String} value Значение куки
+	 * @param {Object} options Объект, поля которого являются дополнительными параметрами (Например expires, domain)
+	 */
 	this.setCookie = function(name, value, options) {
 		if (value == null) {
 			this.setCookie(name, "", { expires: -1 });
@@ -131,6 +142,13 @@ function Inforoom() {
 		document.cookie = updatedCookie;
 	}
 
+	/**
+     * Получает куку
+     * 
+     * @param {String} name Имя куки
+     * @param {Boolean} eraseFlag Удалять ли куку, после получения
+     * @returns {String} Значение куки или undefined
+     */
 	this.getCookie = function(name, eraseFlag) {
 		var matches = document.cookie.match(new RegExp(
 			"(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
@@ -143,13 +161,35 @@ function Inforoom() {
 		}
 		return ret;
 	}
+
+	/**
+     * Получает HTML шаблон, переданный сервером.
+     * 
+     * @param {String} name Имя шаблона
+     * @returns {String} Код шаблона
+     */
 	this.getTemplate = function(name) {
 		return this.templates[name] ? this.templates[name].toHTML() : null;
 	}
+
+	/**
+     * Получает параметр клиентского приложенияю. Не переносятся на следующую страницу.
+	 * Если необходимо, чтобы параметр жил между страницами, необходимо использовать куки.
+	 *
+     * @param {String} name Имя параметра
+     * @returns {String} Значение параметра
+     */
 	this.getParam = function(name) {
 		return this.params[name];
 	}
 
+	/**
+     * Назначает параметр клиентского приложенияю. Не переносятся на следующую страницу.
+	 * Если необходимо, чтобы параметр жил между страницами, необходимо использовать куки.
+	 *
+     * @param {String} name Имя параметра
+     * @param {String} value Значение
+     */
 	this.setParam = function(name, value) {
 		this.params[name] = value;
 	}
@@ -178,6 +218,9 @@ function Inforoom() {
 		return window;
 	}
 
+	/**
+	* Отображает сообщение переданные сервером клиентскому приложению
+	*/
 	this.showMessages = function() {
 		var msg = this.getCookie("SuccessMessage", true);
 		if (msg)
@@ -188,12 +231,20 @@ function Inforoom() {
 			this.showError(msg2);
 	}
 
+	/**
+	* Отображает сообщение об ошибке
+	* @param {String} msg Текст сообщения
+	*/
 	this.showError = function(msg) {
 		var div = this.showSuccess(msg);
 		$(div).addClass("error");
 		return div;
 	}
 
+	/**
+	* Отображает сообщение об успешном выполнении операции
+	* @param {String} msg Текст сообщения
+	*/
 	this.showSuccess = function (msg) {
 		var div = this.getTemplate("notification");
 		$(div).find(".message").append(msg);
@@ -204,6 +255,9 @@ function Inforoom() {
 		return div;
 	}
 
+	/**
+	* Проверяет состояние пользователя и отображает страницу выбора региона, если это необходимо
+	*/
 	this.checkCity = function () {
 		//показать выбор городов
 		$('.city .name, .city .arrow').on("click", function(e) {
@@ -225,6 +279,9 @@ function Inforoom() {
 			this.showCityWindow();
 	};
 
+	/**
+	* Отображает страницу выбора региона
+	*/
 	this.showCityWindow = function() {
 		var wnd = this.createWindow("Выберите город", this.getTemplate("CityWindow"));
 		wnd.block();
@@ -260,6 +317,9 @@ function Inforoom() {
 		});
 	}
 
+	/**
+	* Получение текущей даты (присылается с сервера)
+	*/
 	this.getCurrentDate = function() {
 		var date = new Date();
 		var timestamp = this.getParam("Timestamp");
@@ -267,8 +327,9 @@ function Inforoom() {
 		return date;
 	};
 
+	//Запускаем конструктор
 	this.initialize();
-}
+} 
 
 Date.prototype.getDaysInMonth = function() {
 	return new Date(this.getYear(), this.getMonth()+1, 0).getDate();
@@ -374,7 +435,4 @@ var Base64 = {
 	}
 }
 
-
-window.onload = function() {
-	cli = new Inforoom();
-}
+	cli = new Inforoom(); 

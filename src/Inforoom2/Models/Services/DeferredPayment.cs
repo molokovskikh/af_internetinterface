@@ -18,13 +18,11 @@ namespace Inforoom2.Models.Services
 
 		public override void Activate(ClientService assignedService, ISession session)
 		{
-			if (CanActivate(assignedService)) {
-				var client = assignedService.Client;
-				client.RatedPeriodDate = SystemTime.Now();
-				client.SetStatus(StatusType.Worked, session);
-				session.Update(client);
-				assignedService.IsActivated = true;
-			}
+			var client = assignedService.Client;
+			client.RatedPeriodDate = SystemTime.Now();
+			client.SetStatus(StatusType.Worked, session);
+			session.Update(client);
+			assignedService.IsActivated = true;
 		}
 
 		// Причина, по которой клиенту не доступен "Обещанный платеж" (заполняется при вызове метода IsAvailableInThisTime)
@@ -56,9 +54,9 @@ namespace Inforoom2.Models.Services
 				}
 			}
 
-			var timeToActivation = serviceDate.AddDays(30) - DateTime.Now;
+			var timeToActivation = serviceDate.AddDays(30) - SystemTime.Now();
 			if (timeToActivation > TimeSpan.Zero) {
-				NotActivateReason = "Услуга станет доступна через " + StringHepler.ShowTimeLeft(timeToActivation);
+				NotActivateReason = "Услуга станет доступна через " + StringHelper.ShowTimeLeft(timeToActivation);
 				return false;
 			}
 			return true;
