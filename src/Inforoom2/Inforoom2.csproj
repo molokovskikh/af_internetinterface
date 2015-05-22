@@ -310,6 +310,7 @@
     <Compile Include="Models\ClientService.cs" />
     <Compile Include="Models\CallMeBackTicket.cs" />
     <Compile Include="Models\PriorityModel.cs" />
+    <Compile Include="Models\PrivateMessage.cs" />
     <Compile Include="Models\TvProtocol.cs" />
     <Compile Include="Models\TvChannelGroup.cs" />
     <Compile Include="Models\TvChannel.cs" />

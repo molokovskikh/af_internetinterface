@@ -74,6 +74,8 @@ namespace Inforoom2.Controllers
 			ViewBag.CallMeBackTicket = ViewBag.CallMeBackTicket ?? newCallMeBackTicket;
 
 			ProcessRegionPanel();
+			ProcessPrivateMessage();
+
 			if (TryAuthorizeNetworkClient())
 				return;
 			ViewBag.NetworkClientFlag = GetCookie("networkClient") != null;
@@ -204,7 +206,7 @@ namespace Inforoom2.Controllers
 				AddJavascriptParam("CallMeBack", "1");
 		}
 
-		public void ProcessRegionPanel()
+		private void ProcessRegionPanel()
 		{
 			var cookieCity = GetCookie("userCity");
 			if (User == null) {
@@ -241,6 +243,16 @@ namespace Inforoom2.Controllers
 			ViewBag.UserRegion = DbSession.Query<Region>().FirstOrDefault(i => i.Name == UserCity);
 			if (ViewBag.UserRegion == null)
 				ViewBag.UserRegion = DbSession.Query<Region>().First();
+		}
+
+		/// <summary>
+		/// Вывод приватного сообщения в ЛК клиенту
+		/// </summary>
+		private void ProcessPrivateMessage()
+		{
+			var message = DbSession.Query<PrivateMessage>().
+				FirstOrDefault(pm => pm.Client == CurrentClient && pm.Enabled && pm.EndDate.Date > SystemTime.Today());
+			ViewBag.PrivateMsg = message;
 		}
 
 		private bool IsUserCityBelongsToUs(string city)

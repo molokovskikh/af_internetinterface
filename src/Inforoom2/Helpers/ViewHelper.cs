@@ -210,15 +210,15 @@ namespace Inforoom2.Helpers
 					html = string.Format("<{0} id=\"{1}\" {2} type=\"{3}\" name =\"{4}\" value=\"{5}\">", tag, id, attributes, type, name, value);
 					break;
 				case HtmlTag.textarea:
-					html = string.Format("<{0} name =\"{3}\" {2} rows = \"6\" cols = \"75\">{4}</{5}>", tag, id, attributes, name, value, tag);
+					html = string.Format("<{0} id=\"{1}\" name =\"{3}\" {2} rows = \"6\" cols = \"75\">{4}</{5}>", tag, id, attributes, name, value, tag);
 					break;
 				case HtmlTag.checkbox:
 					var val = (bool)value ? "checked" : "";
-					html = string.Format("<input type=\"checkbox\" id=\"{0}\" name =\"{2}\" {1} value=\"{3}\"></input>", id, attributes, name, val);
+					html = string.Format("<input type=\"checkbox\" id=\"{0}\" name =\"{2}\" {1} value=\"{3}\"/>", id, attributes, name, val);
 					break;
 				case HtmlTag.date:
 					//todo Использовать HTMLGenerator
-					html = string.Format("<div class=\"input-group\"><input id=\"{0}\" name =\"{2}\" {1} value=\"{3}\" class=\"form-control datepicker\" data-format=\"D, dd MM yyyy\" type=\"text\" /><div class=\"input-group-addon\"><a href=\"#\"><i class=\"entypo-calendar\"></i></a></div></div>", id, attributes, name, value);
+					html = string.Format("<div class=\"input-group\"><input id=\"{0}\" name =\"{2}\" {1} value=\"{3}\" class=\"form-control datepicker\" data-format=\"dd.mm.yyyy\" type=\"text\" /><div class=\"input-group-addon\"><a href=\"#\"><i class=\"entypo-calendar\"></i></a></div></div>", id, attributes, name, value);
 					break;
 				case HtmlTag.datetime:
 					var dobj = value != null ? (DateTime)value : SystemTime.Now();
