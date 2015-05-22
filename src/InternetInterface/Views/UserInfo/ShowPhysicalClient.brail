@@ -54,7 +54,7 @@
 			<tr>
 				<td>
 					<a href="${Siteroot}/Sms/SmsIndex?clientId=${ClientCode}" class="button ok">Отправить смс</a>
-					<a href="${Siteroot}/PrivateMessages/ForClient?clientId=${ClientCode}" class="button ok">Приватное сообщение</a>
+					<a href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}ClientActions/PrivateMessage?id=${ClientCode}" class="button ok" style="color: #00a651;" target="_blank"><b>Приватное сообщение</b></a>
 					<a href="${Siteroot}/TvRequest/New?clientId=${ClientCode}" class="button ok">Заявка на ТВ</a>
 				</td>
 			</tr>
