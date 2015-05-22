@@ -5,25 +5,19 @@ using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
 using Castle.Components.Validator;
-using Castle.MonoRail.Framework;
 using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
-using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Audit;
-using Common.Web.Ui.MonoRailExtentions;
 using Common.Web.Ui.NHibernateExtentions;
-using ExcelLibrary.BinaryFileFormat;
 using InternetInterface.Controllers;
 using InternetInterface.Helpers;
 using InternetInterface.Models.Services;
 using InternetInterface.Services;
 using NHibernate;
 using NHibernate.Linq;
-using NPOI.SS.Formula.Functions;
 
 namespace InternetInterface.Models
 {
@@ -242,6 +236,9 @@ namespace InternetInterface.Models
 
 		[HasMany(ColumnKey = "ClientId", Lazy = true)]
 		public virtual IList<Order> Orders { get; set; }
+
+		[HasMany(ColumnKey = "Client", OrderBy = "BeginDate", Lazy = true, Cascade = ManyRelationCascadeEnum.SaveUpdate)]
+		public virtual IList<ClientRentalHardware> RentalHardwareList { get; set; } 
 
 		public virtual Brigad WhoConnected
 		{
@@ -520,6 +517,38 @@ namespace InternetInterface.Models
 			return ClientServices.Any(c => NHibernateUtil.GetClass(c.Service) == typeof(T));
 		}
 
+		/// <summary>
+		/// Метод для проверки, арендовано ли оборудование типа hwType у клиента
+		/// </summary>
+		public virtual bool HardwareIsRented(HardwareType hwType)
+		{
+			if (RentalHardwareList == null || hwType == HardwareType.None || hwType == HardwareType.Count)
+				return false;
+			return RentalHardwareList.ToList().Exists(rh => rh.Hardware.Type == hwType && rh.IsActive);
+		}
+
+		/// <summary>
+		/// Метод получения у клиента текущей услуги "Аренда оборудования" типа hwType
+		/// </summary>
+		public virtual ClientRentalHardware GetActiveRentalHardware(HardwareType hwType)
+		{
+			if (RentalHardwareList == null || hwType == HardwareType.None || hwType == HardwareType.Count)
+				return null;
+			var thisHardware = RentalHardwareList.Where(rh => rh.Hardware.Type == hwType && rh.IsActive).ToList();
+			return thisHardware.OrderBy(h => h.BeginDate).LastOrDefault();
+		}
+
+		/// <summary>
+		/// Метод определения того, что у клиента имеется арендованное оборудование
+		/// </summary>
+		public virtual bool HasActiveRentalHardware()
+		{
+			if (RentalHardwareList == null)
+				return false;
+			var activeServices = RentalHardwareList.Where(rh => rh.IsActive).ToList();
+			return activeServices.Count > 0;
+		}
+
 		public virtual ClientType GetClientType()
 		{
 			if (PhysicalClient != null)
@@ -771,6 +800,15 @@ where CE.Client = {0}", Id))
 			if (Disabled)
 				return 0;
 			return GetPriceForTariff();
+		}
+
+		/// <summary>
+		/// Получить цену ежедневного списания за аренду оборудования hardware
+		/// </summary>
+		public virtual decimal GetPriceForHardware(RentalHardware hardware)
+		{
+			var price = Math.Round(hardware.Price / GetInterval(), 2);
+			return AccountDiscounts(price);
 		}
 
 		private decimal AccountDiscounts(decimal price)

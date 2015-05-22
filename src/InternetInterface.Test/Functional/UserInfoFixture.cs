@@ -259,9 +259,8 @@ namespace InternetInterface.Test.Functional
 			Assert.That(request.Comment.Contains("Hello"), Is.True);
 			Assert.That(request.Contact, Is.Not.Null);
 
-			var issue = session.Query<RedmineIssue>().First(i => i.project_id == 67);
+			var issue = session.Query<RedmineIssue>().First(i => i.project_id == 67 && i.description.Contains("HDMI: да"));
 			Assert.That(issue, Is.Not.Null);
-			Assert.That(issue.description.Contains("HDMI: да"), Is.True);
 
 			var appeal = session.Query<Appeals>().First(i => i.Client == Client && i.Appeal.Contains("на подключение ТВ"));
 			Assert.That(appeal, Is.Not.Null);

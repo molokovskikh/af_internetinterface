@@ -2,12 +2,12 @@
 
 @{
 	Client client = ViewBag.Client;
+	bool rentIsActive = ViewBag.RentIsActive;
 	ViewBag.Title = "Информация по клиенту " + client.PhysicalClient.FullName;
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	string action = ViewBag.ActionName;
 	string controller = ViewBag.ControllerName;
 	List<SwitchAddress> networkNodeList = ViewBag.networkNodeList;
-	;
 }
 
 <div class="panel panel-primary col-md-12">
@@ -37,44 +37,55 @@
 					@Html.DisplayFor(o => client.Status.Name, new { @class = "form-control" })
 				</div>
 			</div>
+			<div class="form-group">
+				<a class="btn @(rentIsActive ? "btn-red" : "btn-success") btn-sm btn-icon icon-left" href="@Url.Action("HardwareList","HardwareRent", new {id = client.Id})">
+					<i class="entypo-plus-circled"></i>
+					АРЕНДА ОБОРУДОВАНИЯ
+				</a>
+				@if (rentIsActive) {
+					<div style="width: 445px; font-weight: bold;">
+						<br/><p style="background-color: pink; color: black">ПРИ РАСТОРЖЕНИИ ДОГОВОРА КЛИЕНТ ДОЛЖЕН ВЕРНУТЬ ОБОРУДОВАНИЕ</p>
+					</div>
+				}
+			</div>
 		}
 	</div>
 
-	<div class="panel-body col-md-6">
-		@if (networkNodeList.Count > 0) {
-			foreach (var node in networkNodeList) {
-				<div class="form-group">
-					<div class="col-sm-10">
-						<h5><strong>@node.NetworkNode.Name</strong></h5>
-						@foreach (var iswitch in node.NetworkNode.Switches) {
-							<h5>@iswitch.Name</h5>
-							<p><span>Свободные порты: </span>@(iswitch.PortCount - @iswitch.Endpoints.Count)</p>
-							<p>
-								<span>Витые пары: </span>
-								@if (iswitch.NetworkNode.TwistedPairs.Count > 0) {
-									int countOfPairs = 0;
-									for (int i = 0; i < iswitch.NetworkNode.TwistedPairs.Count; i++) {
-										countOfPairs += iswitch.NetworkNode.TwistedPairs[i].PairCount;
-										if (i > 0) {
-											@Html.Raw(" + " + iswitch.NetworkNode.TwistedPairs[i].PairCount)
-										}
-										else {
-											@Html.Raw(iswitch.NetworkNode.TwistedPairs[i].PairCount)
-										}
-										if (i == iswitch.NetworkNode.TwistedPairs.Count - 1) {
-											@Html.Raw(" = " + countOfPairs)
-										}
+	@if (networkNodeList != null && networkNodeList.Count > 0) {
+		<div class="panel-body col-md-6">
+			@foreach (var node in networkNodeList) {
+			<div class="form-group">
+				<div class="col-sm-10">
+					<h5><strong>@node.NetworkNode.Name</strong></h5>
+					@foreach (var iswitch in node.NetworkNode.Switches) {
+						<h5>@iswitch.Name</h5>
+						<p><span>Свободные порты: </span>@(iswitch.PortCount - @iswitch.Endpoints.Count)</p>
+						<p>
+							<span>Витые пары: </span>
+							@if (iswitch.NetworkNode.TwistedPairs.Count > 0) {
+								int countOfPairs = 0;
+								for (int i = 0; i < iswitch.NetworkNode.TwistedPairs.Count; i++) {
+									countOfPairs += iswitch.NetworkNode.TwistedPairs[i].PairCount;
+									if (i > 0) {
+										@Html.Raw(" + " + iswitch.NetworkNode.TwistedPairs[i].PairCount)
+									}
+									else {
+										@Html.Raw(iswitch.NetworkNode.TwistedPairs[i].PairCount)
+									}
+									if (i == iswitch.NetworkNode.TwistedPairs.Count - 1) {
+										@Html.Raw(" = " + countOfPairs)
 									}
 								}
-								else {
-									@Html.Raw(" нет ")
-								}
-							</p>
-						}
-					</div>
+							}
+							else {
+								@Html.Raw(" нет ")
+							}
+						</p>
+					}
 				</div>
+			</div>
 			}
-		}
+		</div>
+	}
 
-	</div>
 </div>

@@ -693,12 +693,19 @@ namespace InternetInterface.Controllers
 			SendUserWriteOff();
 		}
 
+		// Проверка сервиса на то, что он не является арендой
+		private bool IsNotRent(Service s)
+		{
+			return (s.Name != "Аренда приставки" && s.Name != "Аренда оборудования");
+		}
+
 		private void CommonEditorValues(Client client)
 		{
 			PropertyBag["statuses"] = client.GetAvailableStatuses(DbSession);
 			var services = DbSession.Query<Service>().OrderBy(s => s.HumanName).ToList();
-			PropertyBag["services"] = services.Where(s => s.CanActivateInWeb(client)).ToList();
-			PropertyBag["activeServices"] = client.ClientServices.Where(c => c.Service.InterfaceControl).OrderBy(s => s.Service.HumanName).ToList();
+			PropertyBag["services"] = services.Where(s => s.CanActivateInWeb(client) && IsNotRent(s)).ToList();
+			PropertyBag["activeServices"] = client.ClientServices.Where(c => c.Service.InterfaceControl && IsNotRent(c.Service)).ToList()
+					.OrderBy(s => s.Service.HumanName).ToList();
 			PropertyBag["rentableHardwares"] = DbSession.Query<RentableHardware>().OrderBy(h => h.Name).ToList();
 		}
 

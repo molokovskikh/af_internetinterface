@@ -5,7 +5,6 @@ using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using NHibernate.Linq;
-using NHibernate.Util;
 using Client = Inforoom2.Models.Client;
 using House = Inforoom2.Models.House;
 using ServiceRequest = Inforoom2.Models.ServiceRequest;
@@ -37,16 +36,18 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult ClientInfo(int clientId)
 		{
 			// Find Client
-			var Client = DbSession.Query<Client>().FirstOrDefault(i => i.PhysicalClient != null && i.Id == clientId);
-			ViewBag.Client = Client;
-			if (Client.Status.Type == StatusType.BlockedAndConnected) {
+			var client = DbSession.Query<Client>().FirstOrDefault(i => i.PhysicalClient != null && i.Id == clientId);
+			ViewBag.Client = client;
+			var activeServices = client.RentalHardwareList.Where(rh => rh.IsActive).ToList();
+			ViewBag.RentIsActive = activeServices.Count > 0;
+			if (client.Status.Type == StatusType.BlockedAndConnected) {
 				// Find Switches
 				var networkNodeList = DbSession.QueryOver<SwitchAddress>().Where(s =>
-					s.House == Client.PhysicalClient.Address.House && s.Entrance == Client.PhysicalClient.Address.Entrance ||
-					s.House == Client.PhysicalClient.Address.House && s.Entrance == null).List();
+					s.House == client.PhysicalClient.Address.House && s.Entrance == client.PhysicalClient.Address.Entrance ||
+					s.House == client.PhysicalClient.Address.House && s.Entrance == null).List();
 
 				if (networkNodeList.Count > 0) {
-					ViewBag.NetworkNodeList = networkNodeList; //.NetworkNode.Switches.ToList(); 
+					ViewBag.NetworkNodeList = networkNodeList;
 				}
 			}
 			return View();

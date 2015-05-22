@@ -34,8 +34,8 @@ Window.prototype.render = function (element) {
 	else
 		var html = this.html;
 	this.getElement().selector('.wrap').appendChild(html);
-	this.getElement().addEventListener('mousdown',function(e){e.stopPropagation()});
-	this.getElement().addEventListener('click',function(e){e.stopPropagation()});
+	this.getElement().addEventListener('mousedown',function(e) { e.stopPropagation(); });
+	this.getElement().addEventListener('click',function(e) { e.stopPropagation(); });
 	this.autofocus();
 }
 

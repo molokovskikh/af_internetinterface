@@ -48,6 +48,8 @@
 					<a href="${Siteroot}/UserInfo/Leases?filter.ClientCode=${ClientCode}" class="button ok">Статистика работы</a>
 					<a class="big-link button ok" data-reveal-id="myModal_active" href="javascript:void(0)">Управление услугами</a>
 					${app.LinkTo("Сервисная заявка", @ServiceRequest, @New, { @ClientCode: ClientCode, @attributes: {@class: "button ok"}})}
+					<a class="big-link button" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}HardwareList?id=${ClientCode}"
+					   style="color: #00a651;"><b>Аренда оборудования</b></a>
 				</td>
 			</tr>
 			<tr>

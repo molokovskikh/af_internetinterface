@@ -469,6 +469,11 @@ set s.LastStartFail = true;")
 				}
 			} //конец обработки списаний
 
+			//Обработка аренды оборудования
+			if (client.HasActiveRentalHardware()) {
+				ProcessHardwareRent(session, client);
+			}
+
 			//Обработка блокировок
 			if (client.CanBlock()) {
 				client.SetStatus(Status.Get(StatusType.NoWorked, session));
@@ -511,6 +516,99 @@ set s.LastStartFail = true;")
 
 				var textMessage = "Срок исполнения сервисной заявки #" + request.Id + " (" + regionName + ") истек";
 				mailer.SendText("internet@ivrn.net", address, textMessage, textMessage);
+			}
+		}
+
+		/// <summary>
+		/// Метод обработки услуги "Аренда оборудования" для клиента client
+		/// </summary>
+		private void ProcessHardwareRent(ISession session, Client client)
+		{
+			var balance = client.Balance;
+
+			// Контроль отрицательного баланса у клиента
+			if (balance < 0m) {
+				var curRmIssues = session.Query<RedmineIssue>().Where(ri => ri.subject.Contains(client.Id.ToString("D5"))).ToList();
+				var noOpenIssues = curRmIssues.Count == 0 || 
+						curRmIssues.FirstOrDefault(ri => ri.status_id != 5) == null; // поиск "закрытых" задач в RedMine
+				if (noOpenIssues) {
+					var indicateDate = SystemTime.Today().AddDays(-30);
+					var payments = client.Payments.Where(p => p.PaidOn >= indicateDate).ToList();
+					var writeoffs = client.GetWriteOffs(session, "").Where(wo => wo.WriteOffDate >= indicateDate).ToList();
+					// Проверка истории баланса у клиента за последние 30 дней
+					while (balance < 0m) {
+						var lastPayment = payments.LastOrDefault() ?? new Payment {PaidOn = DateTime.MinValue};
+						var lastWriteOff = writeoffs.LastOrDefault() ?? new BaseWriteOff {WriteOffDate = DateTime.MinValue};
+						if (lastPayment.PaidOn > lastWriteOff.WriteOffDate) {
+							balance -= lastPayment.Sum;
+							payments.Remove(lastPayment);
+						}
+						else if (lastPayment.PaidOn < lastWriteOff.WriteOffDate) {
+							balance += lastWriteOff.WriteOffSum;
+							writeoffs.Remove(lastWriteOff);
+						}
+						else if (lastPayment.PaidOn == lastWriteOff.WriteOffDate && lastPayment.PaidOn != DateTime.MinValue) {
+							balance -= (lastPayment.Sum - lastWriteOff.WriteOffSum);
+							payments.Remove(lastPayment);
+							writeoffs.Remove(lastWriteOff);
+						}
+						else
+							break;
+					}
+					// Т.е. баланс оставался < 0 в течение 30 дней
+					if (balance < 0m) {
+						var redmineIssue = new RedmineIssue {
+							project_id = 67,              // Проект "Координация"
+							status_id = 1,                // Статус "Новый"
+							created_on = SystemTime.Now(),
+							due_date = SystemTime.Today().AddDays(3),
+							subject = "Возврат оборудования, ЛС " + client.Id.ToString("D5") + ", "
+							          + client.PhysicalClient.Patronymic + " " + client.PhysicalClient.Name + " "
+							          + client.PhysicalClient.Surname,
+							description = "Баланс клиента, равный "
+							              + client.Balance.ToString("F2") + " р., не пополнялся более 30 дней."
+						};
+						session.Save(redmineIssue);
+					}
+				}
+			}
+
+			// Обработка списаний за аренду конкретного оборудования
+			var phisicalClient = client.PhysicalClient;
+			for (var i = HardwareType.TvBox; i < HardwareType.Count; i++) {
+				if (client.HardwareIsRented(i)) {
+					var clientHardware = client.GetActiveRentalHardware(i);
+					// Если пустая дата начала аренды, деактивировать услугу
+					if (clientHardware.GiveDate == null) {
+						var msg = clientHardware.Deactivate();
+						session.Update(clientHardware);
+						var appeal = client.CreareAppeal(msg, AppealType.System, false);
+						session.Save(appeal);
+					}
+					else if ((SystemTime.Now() - clientHardware.GiveDate.Value.Date) > TimeSpan.FromDays(30)) {
+						// Если с даты начала аренды прошло > 30 дней, списать ежедневную плату за аренду
+						var sum = client.GetPriceForHardware(clientHardware.Hardware);
+						var sumDiff = Math.Min(phisicalClient.MoneyBalance - sum, 0);
+						var virtualWriteoff = Math.Min(Math.Abs(sumDiff), phisicalClient.VirtualBalance);
+						var moneyWriteoff = sum - virtualWriteoff;
+						var newWriteoff = new WriteOff {
+							Client = client,
+							WriteOffDate = SystemTime.Now(),
+							WriteOffSum = Math.Round(sum, 2),
+							MoneySum = Math.Round(moneyWriteoff, 2),
+							VirtualSum = Math.Round(virtualWriteoff, 2),
+							Sale = client.Sale,
+							BeforeWriteOffBalance = client.Balance,
+							Comment = clientHardware.Hardware.Name + ": ежедневная плата за аренду"
+						};
+						session.Save(newWriteoff);
+
+						// сохранение измененных данных у физ. клиента
+						phisicalClient.Balance -= newWriteoff.WriteOffSum;
+						phisicalClient.VirtualBalance -= newWriteoff.VirtualSum;
+						phisicalClient.MoneyBalance -= newWriteoff.MoneySum;
+					}
+				}
 			}
 		}
 

@@ -311,12 +311,15 @@
     <Compile Include="Models\ClientRequest.cs" />
     <Compile Include="Models\ClientService.cs" />
     <Compile Include="Models\CallMeBackTicket.cs" />
+    <Compile Include="Models\ClientRentalHardware.cs" />
+    <Compile Include="Models\HardwareModel.cs" />
     <Compile Include="Models\PackageSpeed.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Appeal.cs" />
     <Compile Include="Models\ConnectionRequest.cs" />
     <Compile Include="Models\Dealer.cs" />
     <Compile Include="Models\RegionPlan.cs" />
+    <Compile Include="Models\RentalHardware.cs" />
     <Compile Include="Models\TwistedPair.cs" />
     <Compile Include="Models\NetworkNode.cs" />
     <Compile Include="Models\StreetAlias.cs" />
