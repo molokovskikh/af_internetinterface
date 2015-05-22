@@ -108,6 +108,7 @@ table.cost { min-height: 140px;}
 .Notifications .button, .BlockAccount .button {margin-left: 20px;}
 
 .errorContainer {top: 223px;position: absolute;width: 100%;z-index: 20;}
+.messageContainer {width: 100%;z-index: 20;}
 .notification {background: none repeat scroll 0 0 #c8e8cb;border: 1px solid #e0e0e0;box-sizing: border-box;display: block;height: auto;line-height: 50px;text-align: center;vertical-align: middle;font-size: 17px;}
 .notification .hide {cursor: pointer; color: #ac3237;display: inline-block;margin-left: 20px;position: absolute;right: 20px; }
 .notification.error { background: #F77B7B;border: 1px solid #737373;}

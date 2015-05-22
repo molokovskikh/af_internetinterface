@@ -1516,6 +1516,7 @@
     <Compile Include="Controllers\AdminAccountController.cs" />
     <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\ClientActionsController.cs" />
     <Compile Include="Controllers\ConnectionTeamController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\BannerController.cs" />
@@ -1568,6 +1569,10 @@
     <ProjectReference Include="..\Common.MySql\Common.MySql\Common.MySql.csproj">
       <Project>{8a680813-c83b-497a-85e6-e8f07b7d7650}</Project>
       <Name>Common.MySql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common.Tools\Common.Tools\Common.Tools.csproj">
+      <Project>{72AFCFE8-C9E9-45FA-9698-BEE896A517A3}</Project>
+      <Name>Common.Tools</Name>
     </ProjectReference>
     <ProjectReference Include="..\Inforoom2\Inforoom2.csproj">
       <Project>{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}</Project>
@@ -1906,6 +1911,7 @@
     <Content Include="Views\Admin\RoleList.cshtml" />
     <Content Include="Views\Admin\EditRole.cshtml" />
     <Content Include="Views\Client\DealerList.cshtml" />
+    <Content Include="Views\ClientActions\PrivateMessage.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <None Include="Web.release.config">
