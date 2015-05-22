@@ -1101,18 +1101,18 @@ namespace InternetInterface.Controllers
 			RedirectToReferrer();
 		}
 
-		[AccessibleThrough(Verb.Post)]
-		public void RemakeVirginityClient(uint clientId)
-		{
-			var client = DbSession.Get<Client>(clientId);
-			client.Status = Status.Get(StatusType.BlockedAndConnected, DbSession);
-			client.BeginWork = null;
-			client.RatedPeriodDate = null;
-			if (client.ConnectGraph != null)
-				DbSession.Delete(client.ConnectGraph);
-			DbSession.Save(client);
-			RedirectToReferrer();
-		}
+		//[AccessibleThrough(Verb.Post)]
+		//public void RemakeVirginityClient(uint clientId)
+		//{
+		//	var client = DbSession.Get<Client>(clientId);
+		//	client.Status = Status.Get(StatusType.BlockedAndConnected, DbSession);
+		//	client.BeginWork = null;
+		//	client.RatedPeriodDate = null;
+		//	if (client.ConnectGraph != null)
+		//		DbSession.Delete(client.ConnectGraph);
+		//	DbSession.Save(client);
+		//	RedirectToReferrer();
+		//}
 
 		public void ShowRegions()
 		{

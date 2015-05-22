@@ -51,7 +51,8 @@ namespace InternetInterface.Background
 					Session.Save(client);
 					sb.AppendLine("<br/>Дата расчетного периода проставлена автоматически, так как клиент скорее всего является антенщиком");
 				}
-				mailhelper.SendText("debug-inforoom@analit.net", "service@analit.net", "Подозрительный клиент в InternetInterface", sb.ToString());
+				//@todo подумать над структурой данного класса и над адресами посылки почты - не правильно держать их как литеральные строки
+				mailhelper.SendText("service@analit.net", "service@analit.net", "Подозрительный клиент в InternetInterface", sb.ToString());
 				sb.Clear();
 			}
 		}

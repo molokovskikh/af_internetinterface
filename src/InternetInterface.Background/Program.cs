@@ -9,7 +9,6 @@ using Common.Tools.Threading;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Jobs;
 using InternetInterface.Helpers;
-using InternetInterface.Models;
 using log4net;
 using log4net.Config;
 using NHibernate.Type;
@@ -43,8 +42,6 @@ namespace InternetInterface.Background
 				}));
 
 				tasks.Each(t => t.Cancellation = runner.Cancellation);
-				var mailhelper = new Mailer();
-				mailhelper.SendText("debug-inforoom@analit.net", "137@analit.net", "Background в InternetInterface", "Background запущен");
 				return CommandService.Start(args, runner);
 			}
 			catch(Exception e) {
