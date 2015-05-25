@@ -369,9 +369,7 @@ namespace InternetInterface.Models
 			if (HouseObj == null)
 				return;
 
-			if (HouseObj.Region != null
-			    && HouseObj.Region.IsExternalClientIdMandatory
-			    && ExternalClientId == null) {
+			if (HouseObj.Region != null && HouseObj.Region.IsExternalClientIdMandatory && ExternalClientId == null) {
 				ExternalClientId = (int?)Client.Id;
 			}
 		}

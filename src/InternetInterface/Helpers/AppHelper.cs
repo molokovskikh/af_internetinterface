@@ -45,8 +45,7 @@ namespace InternetInterface.Helpers
 
 		public override bool HavePermission(string controller, string action)
 		{
-			return AccessRules.GetAccessName(action).Count(InitializeContent.Partner.AccesPartner) > 0
-			       || InitializeContent.Partner.HavePermissionTo(controller, action);
+			return AccessRules.GetAccessName(action).Count(InitializeContent.Partner.AccesPartner) > 0 || InitializeContent.Partner.HavePermissionTo(controller, action);
 		}
 
 		public void RegisterEditor()
