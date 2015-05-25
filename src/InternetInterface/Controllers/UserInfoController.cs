@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Net;
+using System.Reflection.Emit;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
+using Castle.Core.Internal;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.Tools;
@@ -1184,6 +1187,30 @@ namespace InternetInterface.Controllers
 			MessageOrderHelper.SendMail("Уведомление о закрытии заказа", message);
 			var appeal = new Appeals(message, order.Client, AppealType.System);
 			DbSession.Save(appeal);
+		}
+
+		/// <summary>
+		/// Вывод поля "Адрес подключения" на отдельную страницу для редактирования
+		/// </summary>
+		public void EditConnectionAddress(uint orderId)
+		{
+			var order = DbSession.Get<Order>(orderId);
+			var client = (order != null) ? order.Client : null;
+			PropertyBag["Client"] = client ?? new Client();
+			PropertyBag["Order"] = order ?? new Order();
+		}
+
+		/// <summary>
+		/// Сохранение заказа (фактически поля "Адрес подключения") со страницы редактирования
+		/// </summary>
+		public void SaveConnectionAddress([DataBind("order")] Order order)
+		{
+			if (order == null || order.Client == null) {
+				RedirectToSiteRoot();
+				return;
+			}
+			DbSession.Update(order);
+			RedirectToAction("ShowLawyerPerson", new Dictionary<string, string> { { "filter.ClientCode", order.Client.Id.ToString("D") } });
 		}
 
 		public void OrdersArchive(uint clientCode)

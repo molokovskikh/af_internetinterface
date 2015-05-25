@@ -183,6 +183,8 @@ namespace InternetInterface.Models
 						new ControllerActionPermission("UserInfo", "ShowRegions"),
 						new ControllerActionPermission("UserInfo", "EditRegion"),
 						new ControllerActionPermission("UserInfo", "RegisterRegion"),
+						new ControllerActionPermission("UserInfo", "EditConnectionAddress"),
+						new ControllerActionPermission("UserInfo", "SaveConnectionAddress"),
 						new ControllerPermission(typeof(RentableHardwaresController))
 					}
 				}, {
