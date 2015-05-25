@@ -2,6 +2,7 @@
 
 @{
 	Client client = ViewBag.Client;
+	bool rentIsActive = ViewBag.RentIsActive;
 	ViewBag.Title = "Информация по клиенту " + client.PhysicalClient.FullName;
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	string action = ViewBag.ActionName;
@@ -53,6 +54,17 @@
 					@Html.DisplayFor(o => client.Status.Name, new { @class = "form-control" })
 				</div>
 			</div>
+			<div class="form-group">
+				<a class="btn @(rentIsActive ? "btn-red" : "btn-success") btn-sm btn-icon icon-left" href="@Url.Action("HardwareList","HardwareRent", new {id = client.Id})">
+					<i class="entypo-plus-circled"></i>
+					АРЕНДА ОБОРУДОВАНИЯ
+				</a>
+				@if (rentIsActive) {
+					<div style="width: 475px; font-weight: bold;">
+						<br/><p style="background-color: pink; color: black">ПРИ РАСТОРЖЕНИИ ДОГОВОРА КЛИЕНТ ДОЛЖЕН ВЕРНУТЬ ОБОРУДОВАНИЕ</p>
+					</div>
+				}
+			</div>
 		}
 	</div>
 
@@ -82,13 +94,14 @@
 										}
 									}
 								}
-								else {
-									@Html.Raw(" нет ")
-								}
-							</p>
-						}
-					</div>
+							}
+							else {
+								@Html.Raw(" нет ")
+							}
+						</p>
+					}
 				</div>
+			</div>
 			}
 		}
 	</div>

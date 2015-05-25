@@ -467,11 +467,13 @@
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientEndpoint.cs" />
     <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\ClientRentalHardware.cs" />
     <Compile Include="Models\ClientService.cs" />
     <Compile Include="Models\ConnectGraph.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Contract.cs" />
     <Compile Include="Models\Entrance.cs" />
+    <Compile Include="Models\HardwareModel.cs" />
     <Compile Include="Models\House.cs" />
     <Compile Include="Models\Internetsessionslog.cs" />
     <Compile Include="Models\InternetSettings.cs" />
@@ -496,6 +498,7 @@
     <Compile Include="Models\RedmineJournal.cs" />
     <Compile Include="Models\RedmineUser.cs" />
     <Compile Include="Models\RegionHouse.cs" />
+    <Compile Include="Models\RentalHardware.cs" />
     <Compile Include="Models\Request.cs" />
     <Compile Include="Models\RequestMessage.cs" />
     <Compile Include="Models\SaleSettings.cs" />

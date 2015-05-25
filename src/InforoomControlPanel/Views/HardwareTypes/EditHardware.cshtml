@@ -1,0 +1,47 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "Редактировать оборудование";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	RentalHardware rentalHardware = ViewBag.Hardware;
+	ValidationRunner validationRunner = ViewBag.Validation;
+}
+
+<div class="panel panel-primary">
+	<div class="panel-body">
+		<div class="col-md-6">
+			@using (@Html.BeginForm("EditHardware", "HardwareTypes", FormMethod.Post, new {@id = "EditHardwareForm", @class = "form-horizontal form-groups-bordered"}))
+			{
+				<div class="form-group">
+					@Html.HiddenFor(model => rentalHardware.Id)
+					<label class="col-sm-3 control-label" for="HwNameText">Название</label>
+					<div id="HwNameText" class="col-sm-5">
+						@Html.DisplayFor(modelItem => rentalHardware.Name, new { @class = "form-control" })
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" for="HwPriceText">Цена</label>
+					<div id="HwPriceText" class="col-sm-5">
+						@Html.ValidationEditor(validationRunner, rentalHardware, "Price", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" for="HwFreeDaysText">Бесплатные дни</label>
+					<div id="HwFreeDaysText" class="col-sm-5">
+						@Html.ValidationEditor(validationRunner, rentalHardware, "FreeDays", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+					</div>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-green" type="submit" id="AcceptBtn">Принять изменения</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="form-group">
+	<button class="btn btn-blue" onclick=" location.href = '@Url.Action("ShowHardware", "HardwareTypes")' ">Назад</button>
+</div>

@@ -1519,6 +1519,8 @@
     <Compile Include="Controllers\ClientActionsController.cs" />
     <Compile Include="Controllers\ConnectionTeamController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
+    <Compile Include="Controllers\HardwareTypesController.cs" />
+    <Compile Include="Controllers\HardwareRentController.cs" />
     <Compile Include="Controllers\BannerController.cs" />
     <Compile Include="Controllers\SlideController.cs" />
     <Compile Include="Controllers\ControlPanelController.cs" />
@@ -1885,6 +1887,10 @@
   <ItemGroup>
     <Content Include="Views\Plans\CreatePlan.cshtml" />
     <Content Include="Views\ConnectionTeam\UnpluggedClientList.cshtml" />
+    <Content Include="Views\HardwareRent\HardwareList.cshtml" />
+    <Content Include="Views\HardwareRent\UpdateHardwareRent.cshtml" />
+    <Content Include="Views\HardwareTypes\EditHardware.cshtml" />
+    <Content Include="Views\HardwareTypes\ShowHardware.cshtml" />
     <Content Include="Views\Client\Registration.cshtml" />
     <Content Include="Views\Client\Edit.cshtml" />
     <Content Include="Views\Client\RequestRegistration.cshtml" />

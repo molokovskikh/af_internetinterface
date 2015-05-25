@@ -1,0 +1,11 @@
+USE Internet;
+CREATE TABLE `inforoom2_rentalhardware` (
+	`Id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`Name` VARCHAR(50) NOT NULL,
+	`Price` DECIMAL(10,2) UNSIGNED NOT NULL DEFAULT '0.00',
+	`FreeDays` INT(5) UNSIGNED NOT NULL DEFAULT '30',
+	PRIMARY KEY (`Id`),
+	UNIQUE INDEX `Name` (`Name`)
+)
+COLLATE='cp1251_general_ci'
+ENGINE=InnoDB;

@@ -154,6 +154,11 @@ namespace Inforoom2.Models
 		[OneToMany(2, ClassType = typeof(Appeal))]
 		public virtual IList<Appeal> Appeals { get; set; }
 
+		[Bag(0, Table = "ClientRentalHardware", Cascade = "all-delete-orphan")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof(ClientRentalHardware))]
+		public virtual IList<ClientRentalHardware> RentalHardwareList { get; set; } 
+
 		[Property(Column = "SendSmsNotifocation")]
 		public virtual bool SendSmsNotification { get; set; }
 
@@ -178,7 +183,6 @@ namespace Inforoom2.Models
 			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet)); }
 		}
 
-
 		public virtual bool HasActiveService(Service service)
 		{
 			return ClientServices.FirstOrDefault(cs => cs.Service.Id == service.Id && cs.IsActivated) != null;
@@ -192,6 +196,28 @@ namespace Inforoom2.Models
 		public virtual bool HasActiveService<T>()
 		{
 			return FindActiveService<T>() != null;
+		}
+
+		/// <summary>
+		/// Метод для проверки, арендовано ли оборудование типа hwType у клиента
+		/// </summary>
+		public virtual bool HardwareIsRented(HardwareType hwType)
+		{
+			if (hwType == HardwareType.None || hwType == HardwareType.Count)
+				return false;
+			return RentalHardwareList.ToList().Exists(rh => rh.Hardware.Type == hwType && rh.IsActive);
+		}
+
+		/// <summary>
+		/// Метод получения у клиента текущей услуги "Аренда оборудования" типа hwType
+		/// </summary>
+		public virtual ClientRentalHardware GetActiveRentalHardware(HardwareType hwType)
+		{
+			if (hwType == HardwareType.None || hwType == HardwareType.Count)
+				return null;
+
+			var thisHardware = RentalHardwareList.Where(rh => rh.Hardware.Type == hwType && rh.IsActive).ToList();
+			return thisHardware.OrderBy(h => h.BeginDate).LastOrDefault();
 		}
 
 		public virtual bool CanUseService(Service service)
