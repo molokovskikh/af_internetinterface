@@ -293,7 +293,7 @@ namespace InternetInterface.Test.Functional
 			Assert.That(request.AdditionalContact, Is.EqualTo("8-926-152-23-23"));
 		}
 
-		[Test]
+		[Test, Ignore("Т.к. action 'RemakeVirginityClient' временно закомментирован")]
 		public void Reset_client()
 		{
 			var brigad = new Brigad("test");

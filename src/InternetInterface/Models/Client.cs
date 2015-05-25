@@ -293,7 +293,7 @@ namespace InternetInterface.Models
 		public virtual string GetFreePorts()
 		{
 			var result = string.Empty;
-			if (Endpoints.Count == 0)
+			if (Endpoints.Count == 0 || Endpoints[0].Switch == null)
 				return string.Empty;
 			var deniedPorts = Endpoints[0].Switch.Endpoints.Select(e => e.Port);
 			for (int i = 1; i <= Endpoints[0].Switch.TotalPorts; i++) {
