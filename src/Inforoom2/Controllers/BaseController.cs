@@ -10,6 +10,7 @@ using System.Web.Routing;
 using System.Web.Security;
 using Common.Tools;
 using Inforoom2.Components;
+using Inforoom2.Helpers;
 using Inforoom2.Models;
 using log4net;
 using NHibernate;
@@ -125,11 +126,11 @@ namespace Inforoom2.Controllers
 			log.ErrorFormat("{0} {1}", filterContext.Exception.Message, filterContext.Exception.StackTrace);
 			if (DbSession == null)
 				return;
+
 			// Иногда транзакции надо закрывать отдельно, так как метод OnResultExecuted не будет вызван
-			if (DbSession.Transaction.IsActive) {
-				EmailSender.SendDebugInfo("Rollback транзакции в OnException", "");
+			// Это случается, когда ошибка не в SQL запросе хибернейта, а в самом проекте
+			if (DbSession.Transaction.IsActive)
 				DbSession.Transaction.Rollback();
-			}
 			if (DbSession.IsOpen)
 				DbSession.Close();
 		}
@@ -147,18 +148,10 @@ namespace Inforoom2.Controllers
 			if (session == null)
 				return;
 
-			//дебаг
-			if (filterContext.Exception != null)
-				EmailSender.SendDebugInfo("Rollback транзакции в OnResultExecuted", "");
 
-			if (session.Transaction.IsActive) {
-				//Мне кажется этот код никогда не исполнится, todo подумать и удалить
-				if (filterContext.Exception != null)
-					session.Transaction.Rollback();
-				else
-					session.Transaction.Commit();
-			}
-
+			session.SafeTransactionCommit(filterContext.Exception);
+		
+			//Я не понимаю зачем нужна следующая команда
 			session = CurrentSessionContext.Unbind(MvcApplication.SessionFactory);
 			if (session.IsOpen)
 				session.Close();
