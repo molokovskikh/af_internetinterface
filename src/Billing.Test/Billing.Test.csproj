@@ -80,6 +80,7 @@
     <Compile Include="Integration\BonusFixture.cs" />
     <Compile Include="Integration\ClientFixture.cs" />
     <Compile Include="Integration\DebtWorkFixture.cs" />
+    <Compile Include="Integration\HardwareRentFixture.cs" />
     <Compile Include="Integration\LawyerPersonFixture.cs" />
     <Compile Include="Integration\BillingOrdersFixture.cs" />
     <Compile Include="Integration\MutexFixture.cs" />

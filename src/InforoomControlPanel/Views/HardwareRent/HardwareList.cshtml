@@ -1,0 +1,33 @@
+﻿@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "Выберите оборудование для аренды:";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	Client client = ViewBag.Client;
+	var hwName = Enum.GetValues(typeof(HardwareType)) as HardwareType[];
+	var activeHw = ViewBag.ActiveRent as bool[];
+}
+
+<div class="panel panel-primary col-md-12">
+	<div class="panel-body">
+		@using (Html.BeginForm("UpdateHardwareRent", "HardwareRent", new {@id = client.Id}, FormMethod.Post, new {@id = "HardwareListForm"}))
+		{
+			<table id="HardwareTable" class="table table-bordered table-striped datatable dataTable no-footer" aria-describedby="HardwareTable_info" role="grid">
+				<tbody>
+					@for (var i = (int)HardwareType.TvBox; i < (int)HardwareType.Count; i++) {
+						var trClass = i%2 == 1 ? "odd" : "even";
+						var rentStatus = activeHw[i] ? "Арендуется" : "Отсутствует";
+						var btnClass = activeHw[i] ? "btn-red" : "btn-green";
+						var btnCaption = activeHw[i] ? "Снять с аренды" : "Добавить в аренду";
+				 
+						<tr class="@trClass" role="row">
+							<td><b>@hwName[i].GetDescription()</b></td>
+							<td>@rentStatus</td>
+							<td><button class="btn @btnClass" type="submit" name="hardware" value="@hwName[i]">@btnCaption</button></td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</div>
+</div>

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Common.Web.Ui.Models;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
-using OpenQA.Selenium;
 
 namespace InternetInterface.Test.Functional
 {
@@ -55,7 +53,7 @@ namespace InternetInterface.Test.Functional
 			AssertText("Данные изменены");
 		}
 
-		[Test]
+		[Test, Ignore("Аренда ТВ-приставки исключена из данного интерфейса; задача №28785")]
 		public void Activate_iptv_box_rent()
 		{
 			Open(client.Redirect());
@@ -71,7 +69,7 @@ namespace InternetInterface.Test.Functional
 			AssertText("Услуга \"Аренда приставки\" деактивирована");
 		}
 
-		[Test]
+		[Test, Ignore("Аренда ТВ-приставки исключена из данного интерфейса; задача №28785")]
 		public void Print_rent_contract()
 		{
 			var hardware = session.Query<RentableHardware>().FirstOrDefault(h => h.Name == "Коммутатор");

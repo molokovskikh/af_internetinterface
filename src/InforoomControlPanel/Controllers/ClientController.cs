@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using InternetInterface.Models;
 using NHibernate.Linq;
-using NHibernate.Util;
 using Client = Inforoom2.Models.Client;
 using ClientService = Inforoom2.Models.ClientService;
 using Contact = Inforoom2.Models.Contact;
@@ -62,9 +60,12 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult Info(int id)
 		{
-			// Find Client 
+			// Find Client
 			var client = DbSession.Query<Client>().FirstOrDefault(i => i.PhysicalClient != null && i.Id == id);
 			ViewBag.Client = client;
+			// Find active RentalHardware
+			var activeServices = client.RentalHardwareList.Where(rh => rh.IsActive).ToList();
+			ViewBag.RentIsActive = activeServices.Count > 0;
 
 			if (client.Status != null && client.Status.Type == StatusType.BlockedAndConnected) {
 				// Find Switches
@@ -73,7 +74,7 @@ namespace InforoomControlPanel.Controllers
 					s.House == client.PhysicalClient.Address.House && s.Entrance == null).List();
 
 				if (networkNodeList.Count > 0) {
-					ViewBag.NetworkNodeList = networkNodeList; //.NetworkNode.Switches.ToList(); 
+					ViewBag.NetworkNodeList = networkNodeList;
 				}
 			}
 			return View();
@@ -103,10 +104,10 @@ namespace InforoomControlPanel.Controllers
 			clientRequest.RequestSource = RequestType.FromOperator;
 			clientRequest.RequestAuthor = GetCurrentEmployee();
 			// Сохранение адреса  
-			if (clientRequest.Housing != null && clientRequest.Housing != "")
+			if (!string.IsNullOrEmpty(clientRequest.Housing))
 			{ 
-				string houseNumber = "";
-				string justStr = clientRequest.Housing;
+				var houseNumber = "";
+				var justStr = clientRequest.Housing;
 				foreach (char t in justStr) {
 					try {
 						houseNumber += Convert.ToInt32(t.ToString()).ToString();
@@ -126,7 +127,7 @@ namespace InforoomControlPanel.Controllers
 			// валидация и сохранение
 			var errors = ValidationRunner.ValidateDeep(clientRequest);
 			if (errors.Length == 0 && clientRequest.IsContractAccepted) {
-				// чистим адрес - его сохранять не нужно					  TODO: не помогает !!!
+				// чистим адрес - его сохранять не нужно    TODO: не помогает !!!
 				clientRequest.Address = null;
 				// сохранение
 				DbSession.Save(clientRequest);
@@ -205,17 +206,14 @@ namespace InforoomControlPanel.Controllers
 			if (street == null) {
 				street = new Street(clientRequest.YandexStreet);
 			}
-			var house = DbSession.Query<House>().FirstOrDefault(h => h.Number == clientRequest.YandexHouse
-			                                                         && h.Street.Name == clientRequest.YandexStreet
-			                                                         && (h.Street.Region == region
-			                                                             || h.Region == region));
+			var house = DbSession.Query<House>().FirstOrDefault(h =>
+				h.Number == clientRequest.YandexHouse && h.Street.Name == clientRequest.YandexStreet &&
+				(h.Street.Region == region || h.Region == region));
 			if (house == null) {
 				house = new House(clientRequest.YandexHouse);
 			}
-			var address = GetList<Address>().FirstOrDefault(a => a.IsCorrectAddress
-			                                                     && a.House == house
-			                                                     && a.House.Street == street
-			                                                     && a.House.Street.Region == region);
+			var address = GetList<Address>().FirstOrDefault(a =>
+				a.IsCorrectAddress && a.House == house && a.House.Street == street && a.House.Street.Region == region);
 			return address;
 		}
 
