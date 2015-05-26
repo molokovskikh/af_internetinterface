@@ -9,6 +9,7 @@ using Inforoom2.validators;
 using InternetInterface.Models;
 using NHibernate;
 using NHibernate.Mapping.Attributes;
+using NHibernate.Util;
 
 namespace Inforoom2.Models
 {
@@ -28,6 +29,7 @@ namespace Inforoom2.Models
 			UserWriteOffs = new List<UserWriteOff>();
 			WriteOffs = new List<WriteOff>();
 			Appeals = new List<Appeal>();
+			RentalHardwareList = new List<ClientRentalHardware>();
 
 			/// из старой админки. 
 			Disabled = true;
@@ -280,15 +282,17 @@ namespace Inforoom2.Models
 		/// </summary>
 		public virtual decimal GetUnlockPrice()
 		{
-			decimal price = 0;
+			var sum = 0m;                       // Сумма для разблокировки
 			if (Internet.ActivatedByUser)
-				price += GetTariffPrice(true);
+				sum += GetTariffPrice(true);
 
-			var service = FindActiveService<IpTvBoxRent>();
-			if (service != null)
-				price += service.GetPrice();
+			// Учет цен на арендуемое оборудование для разблокировки
+			foreach (var clientHardware in RentalHardwareList) {
+				if (clientHardware.IsActive)
+					sum += clientHardware.GetPrice();
+			}
 
-			return (price - Balance);
+			return (sum - Balance);
 		}
 
 		/// <summary>

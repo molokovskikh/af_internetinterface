@@ -77,5 +77,13 @@ namespace Inforoom2.Models
 			Comment += comment;
 			return String.Format("Услуга \"Аренда оборудования типа \"{0}\" деактивирована", Hardware.Name);
 		}
+
+		/// <summary>
+		/// Возвращает итоговую цену за месяц аренды оборудования 
+		/// </summary>
+		public virtual decimal GetPrice()
+		{
+			return (Hardware != null) ? Hardware.Price : 0m;
+		}
 	}
 }
