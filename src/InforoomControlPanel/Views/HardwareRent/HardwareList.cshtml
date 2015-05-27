@@ -4,6 +4,7 @@
 	ViewBag.Title = "Выберите оборудование для аренды:";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	Client client = ViewBag.Client;
+	var clientHasHardware = client.RentalHardwareList.Any(ch => ch.IsActive);
 	var hwName = Enum.GetValues(typeof(HardwareType)) as HardwareType[];
 	var activeHw = ViewBag.ActiveRent as bool[];
 }
@@ -13,16 +14,40 @@
 		@using (Html.BeginForm("UpdateHardwareRent", "HardwareRent", new {@id = client.Id}, FormMethod.Post, new {@id = "HardwareListForm"}))
 		{
 			<table id="HardwareTable" class="table table-bordered table-striped datatable dataTable no-footer" aria-describedby="HardwareTable_info" role="grid">
+				<thead>
+					<tr>
+						<th>Тип</th>
+						@if (clientHasHardware) {
+							<th>Модель, серийный номер</th>
+							<th>Дата выдачи</th>
+							<th>Данные о состоянии</th>
+							<th>Комментарий</th>
+						}
+						<th>Действие</th>
+					</tr>
+				</thead>
 				<tbody>
 					@for (var i = (int)HardwareType.TvBox; i < (int)HardwareType.Count; i++) {
 						var trClass = i%2 == 1 ? "odd" : "even";
-						var rentStatus = activeHw[i] ? "Арендуется" : "Отсутствует";
 						var btnClass = activeHw[i] ? "btn-red" : "btn-green";
 						var btnCaption = activeHw[i] ? "Снять с аренды" : "Добавить в аренду";
-				 
+						var thisHw = client.GetActiveRentalHardware((HardwareType)i);
+
 						<tr class="@trClass" role="row">
 							<td><b>@hwName[i].GetDescription()</b></td>
-							<td>@rentStatus</td>
+							@if (clientHasHardware) {
+								if (thisHw != null){
+									<td>@thisHw.Model.Name, @thisHw.Model.SerialNumber</td>
+									<td>@(thisHw.GiveDate.HasValue ? thisHw.GiveDate.Value.ToShortDateString() : "")</td>
+									<td>@(thisHw.WasUsed ? "б/у" : "новый"), @(thisHw.IsCompleteSet ? "полный комплект" : "неполный комплект")</td>
+									<td>@thisHw.Comment</td>
+								} else {
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								}
+							}
 							<td><button class="btn @btnClass" type="submit" name="hardware" value="@hwName[i]">@btnCaption</button></td>
 						</tr>
 					}
