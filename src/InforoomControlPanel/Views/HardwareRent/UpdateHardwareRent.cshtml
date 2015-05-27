@@ -7,6 +7,7 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	ClientRentalHardware clientRentalHardware = ViewBag.ClientHardware;
 	var hwName = (clientRentalHardware.Hardware != null ? clientRentalHardware.Hardware.Type.GetDescription() : HardwareType.None.GetDescription()).ToUpper();
+	var date = (clientRentalHardware.GiveDate.HasValue) ? clientRentalHardware.GiveDate.Value.ToShortDateString() : "";
 	ValidationRunner validationRunner = ViewBag.Validation;
 }
 
@@ -30,6 +31,30 @@
 				<label class="col-sm-2 control-label">Серийный номер:</label>
 				<div class = "col-sm-4">
 					@Html.ValidationEditor(validationRunner, clientRentalHardware, "SerialNumber", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Дата выдачи:</label>
+				<div class = "col-sm-4">
+					@Html.ValidationEditor(validationRunner, clientRentalHardware, "GiveDate", new { @value = date }, HtmlTag.date, HtmlType.none)
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Бывшее в употреблении:</label>
+				<div class = "col-sm-4">
+					@Html.CheckBoxFor(k => clientRentalHardware.WasUsed)
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Полный комплект:</label>
+				<div class = "col-sm-4">
+					@Html.CheckBoxFor(k => clientRentalHardware.IsCompleteSet)
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Комментарий:</label>
+				<div class = "col-sm-4">
+					@Html.ValidationEditor(validationRunner, clientRentalHardware, "Comment", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
 				</div>
 			</div>
 			<div class="form-group">

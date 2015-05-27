@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
+using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using NHibernate.Linq;
@@ -59,7 +60,8 @@ namespace InforoomControlPanel.Controllers
 			}
 			var clientHardware = new ClientRentalHardware {
 				Hardware = rentHardware,
-				Client = client
+				Client = client,
+				GiveDate = SystemTime.Now()
 			};
 			ViewBag.ClientHardware = clientHardware;
 			return View();
@@ -80,19 +82,23 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			var msg = clientRentalHardware.Activate(DbSession, GetCurrentEmployee());
-			DbSession.Save(clientRentalHardware);
-			// 1-ое обращение - об активации услуги
-			var appeal = new Appeal(msg, clientRentalHardware.Client, AppealType.User) {
-				Employee = GetCurrentEmployee()
-			};
-			DbSession.Save(appeal);
-			// 2-ое обращение - об арендуемом оборудовании
-			appeal = new Appeal(string.Format("Клиент арендовал \"{0}\", модель \"{1}\", S/N {2}", clientRentalHardware.Hardware.Name, 
-				clientRentalHardware.Model.Name, clientRentalHardware.Model.SerialNumber), clientRentalHardware.Client, AppealType.User) {
-				Employee = GetCurrentEmployee()
-			};
-			DbSession.Save(appeal);
-			SuccessMessage("Услуга успешно активирована!");
+			if (clientRentalHardware.IsActive) {
+				DbSession.Save(clientRentalHardware);
+				// 1-ое обращение - об активации услуги
+				var appeal = new Appeal(msg, clientRentalHardware.Client, AppealType.User) {
+					Employee = GetCurrentEmployee()
+				};
+				DbSession.Save(appeal);
+				// 2-ое обращение - об арендуемом оборудовании
+				appeal = new Appeal(string.Format("Клиент арендовал \"{0}\", модель \"{1}\", S/N {2}",
+					clientRentalHardware.Hardware.Name, clientRentalHardware.ModelName, clientRentalHardware.SerialNumber),
+					clientRentalHardware.Client, AppealType.User);
+				appeal.Employee = GetCurrentEmployee();
+				DbSession.Save(appeal);
+				SuccessMessage("Услуга успешно активирована!");
+			}
+			else
+				ErrorMessage("Ошибка! Услуга не была активирована.");
 			return RedirectToAction("HardwareList", new {@id = clientRentalHardware.Client.Id});
 		}
 	}

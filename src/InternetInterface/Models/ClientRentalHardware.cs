@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
+using Common.Tools;
 
 namespace InternetInterface.Models
 {
@@ -29,7 +30,7 @@ namespace InternetInterface.Models
 		[Property, Description("Дата снятия с регистрации/возврата оборудования")]
 		public virtual DateTime? EndDate { get; set; }
 
-		[Property(Column = "Active", NotNull = true), Description("Индикатор действующей аренды")]
+		[Property(Column = "Active"), Description("Индикатор действующей аренды")]
 		public virtual bool IsActive { get; set; }
 
 		[BelongsTo(Column = "Employee"), Description("Сотрудник, регистрирующий аренду")]
@@ -37,6 +38,12 @@ namespace InternetInterface.Models
 
 		[Property, Description("Дата фактической выдачи оборудования")]
 		public virtual DateTime? GiveDate { get; set; }
+
+		[Property(Column = "Used"), Description("Оборудование, бывшее в употреблении")]
+		public virtual bool WasUsed { get; set; }
+
+		[Property(Column = "CompleteSet"), Description("Оборудование в полной комплектации")]
+		public virtual bool IsCompleteSet { get; set; }
 
 		[Property, Description("Поле комментария для сотрудника")]
 		public virtual string Comment { get; set; }
@@ -57,8 +64,8 @@ namespace InternetInterface.Models
 				Name = ModelName,
 				SerialNumber = SerialNumber
 			};
-			BeginDate = DateTime.Now;
-			GiveDate = DateTime.Now;
+			BeginDate = SystemTime.Now();
+			GiveDate = SystemTime.Now();
 			IsActive = true;
 			Partner = Partner.GetInitPartner();
 			Comment = comment;
@@ -68,7 +75,7 @@ namespace InternetInterface.Models
 		// Метод деактивации "Аренды оборудования"
 		public virtual string Deactivate(string comment = "")
 		{
-			EndDate = DateTime.Now;
+			EndDate = SystemTime.Now();
 			IsActive = false;
 			Comment += comment;
 			return String.Format("Услуга \"Аренда оборудования типа \"{0}\" деактивирована", Hardware.Name);

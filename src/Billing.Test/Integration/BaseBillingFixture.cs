@@ -72,6 +72,8 @@ namespace Billing.Test.Integration
 			ActiveRecordMediator.Save(tariff);
 			return new PhysicalClient {
 				Name = "TestPhisicalClient",
+				Surname = "Test",
+				Patronymic = "Testovich",
 				Balance = balance,
 				Tariff = tariff,
 				PassportNumber = "123456"
