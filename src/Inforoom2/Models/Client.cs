@@ -28,8 +28,8 @@ namespace Inforoom2.Models
 			Contacts = new List<Contact>();
 			UserWriteOffs = new List<UserWriteOff>();
 			WriteOffs = new List<WriteOff>();
-			Appeals = new List<Appeal>();
-			RentalHardwareList = new List<ClientRentalHardware>();
+			Appeals = new List<Appeal>(); 
+			RentalHardwareList = new List<ClientRentalHardware>(); 
 
 			/// из старой админки. 
 			Disabled = true;
