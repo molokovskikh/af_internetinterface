@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Castle.ActiveRecord;
-using Castle.ActiveRecord.Framework;
 using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Controllers;
 using InternetInterface.Models;
-using InternetInterface.Models.Services;
-using InternetInterface.Services;
-using NUnit.Framework;
 
 namespace Billing.Test.Integration
 {
@@ -96,7 +91,9 @@ namespace Billing.Test.Integration
 		{
 			new Payment {
 				BillingAccount = false,
-				Client = Client.Queryable.Count(c => c.Name == "testblockedClient") != 0 ? Client.Queryable.First(c => c.Name == "testblockedClient") : Client.FindFirst(),
+				Client = Client.Queryable.AsQueryable().Count(c => c.Name == "testblockedClient") != 0 ? 
+					Client.Queryable.AsQueryable().First(c => c.Name == "testblockedClient") : 
+					Client.FindFirst(),
 				PaidOn = DateTime.Now,
 				RecievedOn = DateTime.Now,
 				Sum = sum

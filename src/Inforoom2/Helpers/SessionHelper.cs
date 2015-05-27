@@ -12,8 +12,10 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
 using System.Web.UI.WebControls;
+using Common.MySql;
 using Inforoom2.Components;
 using Inforoom2.Models;
+using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Linq.Functions;
 using NHibernate.Validator.Cfg.Loquacious;
@@ -23,6 +25,9 @@ namespace Inforoom2.Helpers
 
 	public static class SessionHelper
 	{
+		private static int DeadlockWaitTime = 2000;
+		private static int DeadlockWaitAttempts = 5;
+
 		/// <summary>
 		/// Пытается удалить объект. Возврает индикатор успешного выполнения задачи.
 		/// Очищает сессию, в случае неудачи.
@@ -46,6 +51,50 @@ namespace Inforoom2.Helpers
 				DbSession.Clear();
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// Безопасный коммит транзакции, лечит дедлоки
+		/// </summary>
+		/// <param name="DbSession">Сессия Nhibernate</param>
+		/// <param name="exception">Ошибка в контроллере (обычно должен быть null)</param>
+		/// <returns></returns>
+		public static void SafeTransactionCommit(this ISession session, Exception exception = null)
+		{
+			if (session.Transaction.IsActive)
+			{
+				//Мне кажется этот код никогда не исполнится, todo подумать и удалить
+				// 25.05.2015 Код все же выполняется. Но не могу точно объяснить когда он доходит до этого места,
+				// а когда попадает в обработчик onException в BaseController
+				if (exception != null)
+					session.Transaction.Rollback();
+				else {
+					CommitAndAvoidDeadLocks(session);
+				}
+			}
+		}
+
+		private static void CommitAndAvoidDeadLocks(ISession session)
+		{
+			var iteration = 0;
+			while (true)
+			{
+				iteration++;
+				try
+				{
+					session.Transaction.Commit();
+					return;
+				}
+				catch (Exception e)
+				{
+					var needToRepeat = iteration <= DeadlockWaitAttempts;
+					if (!ExceptionHelper.IsDeadLockOrSimilarExceptionInChain(e) || !needToRepeat)
+						throw;
+					var str = String.Format("Deadlock найден, пытаемся восстановить {0} из· {1} попыток. <br> {2}", iteration, DeadlockWaitAttempts,e.Message);
+					EmailSender.SendError(str);
+				}
+				Thread.Sleep(DeadlockWaitTime);
+			}
 		}
 	}
 }
