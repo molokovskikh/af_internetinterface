@@ -17,6 +17,14 @@ namespace InternetInterface.Test.Functional
 		{
 			Open(string.Format("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", Client.Id));
 			AssertText(string.Format("Дата начала расчетного периода: {0}", DateTime.Now.ToShortDateString()));
+			AssertText("Количество бесплатных дней: " + Client.FreeBlockDays);
+			if (Client.YearCycleDate != null) {
+				var yearCycleDate = Client.YearCycleDate.Value.AddYears(1);
+				var lineText = (Client.FreeBlockDays > 0)
+					? "Дата окончания периода использования бесплатных дней: " + yearCycleDate.AddDays(-1).ToShortDateString()
+					: "Новые бесплатные дни станут доступны с " + yearCycleDate.ToShortDateString();
+				AssertText(lineText);
+			}
 			AssertText(string.Format("Дата начала программы скидок: {0}", DateTime.Now.AddMonths(-1).ToShortDateString()));
 		}
 
@@ -259,9 +267,8 @@ namespace InternetInterface.Test.Functional
 			Assert.That(request.Comment.Contains("Hello"), Is.True);
 			Assert.That(request.Contact, Is.Not.Null);
 
-			var issue = session.Query<RedmineIssue>().First(i => i.project_id == 67);
+			var issue = session.Query<RedmineIssue>().First(i => i.project_id == 67 && i.description.Contains("HDMI: да"));
 			Assert.That(issue, Is.Not.Null);
-			Assert.That(issue.description.Contains("HDMI: да"), Is.True);
 
 			var appeal = session.Query<Appeals>().First(i => i.Client == Client && i.Appeal.Contains("на подключение ТВ"));
 			Assert.That(appeal, Is.Not.Null);
@@ -286,7 +293,7 @@ namespace InternetInterface.Test.Functional
 			Assert.That(request.AdditionalContact, Is.EqualTo("8-926-152-23-23"));
 		}
 
-		[Test]
+		[Test, Ignore("Т.к. action 'RemakeVirginityClient' временно закомментирован")]
 		public void Reset_client()
 		{
 			var brigad = new Brigad("test");

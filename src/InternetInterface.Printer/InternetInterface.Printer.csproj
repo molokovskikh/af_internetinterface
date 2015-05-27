@@ -107,6 +107,10 @@
       <Link>global.config</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="..\global.local.config">
+      <Link>global.local.config</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="App.config" />
     <None Include="App.release.config" />
   </ItemGroup>

@@ -478,7 +478,7 @@ namespace InternetInterface.Controllers
 				var client = DbSession.Load<Client>(ClientID);
 				var physicalClient = client.PhysicalClient;
 				var password = CryptoPass.GeneratePassword();
-				physicalClient.Password = CryptoPass.GetHashString(password);
+				physicalClient.Password = CryptoPass.GetHashString(password); 
 				DbSession.Save(physicalClient);
 				var endPoint = client.Endpoints.FirstOrDefault();
 				if (endPoint != null)
@@ -486,6 +486,7 @@ namespace InternetInterface.Controllers
 				else {
 					PropertyBag["WhoConnected"] = null;
 				}
+				PropertyBag["ClientIdHref"] = "../UserInfo/ShowPhysicalClient?filter.ClientCode=" + ClientID;
 				PropertyBag["Client"] = physicalClient;
 				PropertyBag["_client"] = client;
 				PropertyBag["Password"] = password;
@@ -709,12 +710,19 @@ namespace InternetInterface.Controllers
 			SendUserWriteOff();
 		}
 
+		// Проверка сервиса на то, что он не является арендой
+		private bool IsNotRent(Service s)
+		{
+			return (s.Name != "Аренда приставки" && s.Name != "Аренда оборудования");
+		}
+
 		private void CommonEditorValues(Client client)
 		{
 			PropertyBag["statuses"] = client.GetAvailableStatuses(DbSession);
 			var services = DbSession.Query<Service>().OrderBy(s => s.HumanName).ToList();
-			PropertyBag["services"] = services.Where(s => s.CanActivateInWeb(client)).ToList();
-			PropertyBag["activeServices"] = client.ClientServices.Where(c => c.Service.InterfaceControl).OrderBy(s => s.Service.HumanName).ToList();
+			PropertyBag["services"] = services.Where(s => s.CanActivateInWeb(client) && IsNotRent(s)).ToList();
+			PropertyBag["activeServices"] = client.ClientServices.Where(c => c.Service.InterfaceControl && IsNotRent(c.Service)).ToList()
+					.OrderBy(s => s.Service.HumanName).ToList();
 			PropertyBag["rentableHardwares"] = DbSession.Query<RentableHardware>().OrderBy(h => h.Name).ToList();
 		}
 
@@ -789,6 +797,7 @@ namespace InternetInterface.Controllers
 			var brigads = Brigad.All(DbSession);
 			PropertyBag["_client"] = client;
 			PropertyBag["IsDissolved"] = StatusType.Dissolved; // Для задания префикса "РАСТОРГНУТ" клиенту
+			PropertyBag["NextYearCycle"] = (client.YearCycleDate != null) ? client.YearCycleDate.Value.AddYears(1) : DateTime.MinValue;
 			PropertyBag["ClientCode"] = clientId;
 			PropertyBag["uniqueClientEndpoints"] = client.Endpoints.Distinct().ToList();
 
@@ -1102,18 +1111,18 @@ namespace InternetInterface.Controllers
 			RedirectToReferrer();
 		}
 
-		[AccessibleThrough(Verb.Post)]
-		public void RemakeVirginityClient(uint clientId)
-		{
-			var client = DbSession.Get<Client>(clientId);
-			client.Status = Status.Get(StatusType.BlockedAndConnected, DbSession);
-			client.BeginWork = null;
-			client.RatedPeriodDate = null;
-			if (client.ConnectGraph != null)
-				DbSession.Delete(client.ConnectGraph);
-			DbSession.Save(client);
-			RedirectToReferrer();
-		}
+		//[AccessibleThrough(Verb.Post)]
+		//public void RemakeVirginityClient(uint clientId)
+		//{
+		//	var client = DbSession.Get<Client>(clientId);
+		//	client.Status = Status.Get(StatusType.BlockedAndConnected, DbSession);
+		//	client.BeginWork = null;
+		//	client.RatedPeriodDate = null;
+		//	if (client.ConnectGraph != null)
+		//		DbSession.Delete(client.ConnectGraph);
+		//	DbSession.Save(client);
+		//	RedirectToReferrer();
+		//}
 
 		public void ShowRegions()
 		{

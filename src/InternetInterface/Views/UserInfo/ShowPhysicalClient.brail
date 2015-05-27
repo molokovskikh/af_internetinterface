@@ -1,4 +1,4 @@
-﻿${app.Asset("UserInfo.js")}
+﻿	${app.Asset("UserInfo.js")}
 <script type="text/javascript">
 	$(function () {
 		$('.button_mod').click(function () {
@@ -25,7 +25,8 @@
 		$('#myModal').append(html);
 	}
 </script>
-<div id="myModal" class="reveal-modal">
+
+<div id="myModal" class="reveal-modal">
 	<a class="close-reveal-modal">x</a>
 </div>
 
@@ -48,12 +49,15 @@
 					<a href="${Siteroot}/UserInfo/Leases?filter.ClientCode=${ClientCode}" class="button ok">Статистика работы</a>
 					<a class="big-link button ok" data-reveal-id="myModal_active" href="javascript:void(0)">Управление услугами</a>
 					${app.LinkTo("Сервисная заявка", @ServiceRequest, @New, { @ClientCode: ClientCode, @attributes: {@class: "button ok"}})}
+					<a href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}HardwareRent/HardwareList?id=${ClientCode}" class="big-link button ok"
+					   style="color: #00a651;" target="_blank"><b>Аренда оборудования</b></a>
 				</td>
 			</tr>
 			<tr>
 				<td>
 					<a href="${Siteroot}/Sms/SmsIndex?clientId=${ClientCode}" class="button ok">Отправить смс</a>
-					<a href="${Siteroot}/PrivateMessages/ForClient?clientId=${ClientCode}" class="button ok">Приватное сообщение</a>
+					<a href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}ClientActions/PrivateMessage?id=${ClientCode}" class="button ok"
+					   style="color: #00a651;" target="_blank"><b>Приватное сообщение</b></a>
 					<a href="${Siteroot}/TvRequest/New?clientId=${ClientCode}" class="button ok">Заявка на ТВ</a>
 				</td>
 			</tr>
@@ -110,6 +114,7 @@
 			<td>
 				<span class="description">Адрес подключения:</span>
 				${client.GetFullAddress()}
+				<a href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/Edit/${_client.Id}" style="margin-left: 5px;border-bottom: 1px solid #00a651;color: #00a651; text-decoration: none;">Изменить адрес</a>
 			</td>
 		</tr>
 		<% end %>
@@ -233,6 +238,24 @@
 		<tr>
 			<td><span class="description">Дата начала расчетного периода:</span> ${_client.RatedPeriodDate.ToShortDateString()}</td>
 		</tr>
+		<% end %>
+		<tr>
+			<td><span class="description">Количество бесплатных дней:</span> ${_client.FreeBlockDays}</td>
+		</tr>
+		<% if (_client.YearCycleDate != null): %>
+			<% if (_client.FreeBlockDays > 0): %>
+			<tr>
+				<td><span class="description">Дата окончания периода использования бесплатных дней: </span>
+					${NextYearCycle.AddDays(-1).ToShortDateString()}
+				</td>
+			</tr>
+			<% else: %>
+			<tr>
+				<td><span class="description">Новые бесплатные дни станут доступны с </span>
+					${NextYearCycle.ToShortDateString()}
+				</td>
+			</tr>
+			<% end %>
 		<% end %>
 		<% if _client.StartNoBlock != null : %>
 		<tr>

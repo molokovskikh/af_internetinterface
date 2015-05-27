@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
+using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -51,6 +52,14 @@ namespace Inforoom2.Controllers
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
 			var currentDate = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 			AddJavascriptParam("Timestamp", currentDate.ToString());
+		}
+
+		protected override void OnActionExecuting(ActionExecutingContext filterContext)
+		{
+			base.OnActionExecuting(filterContext);
+			ViewBag.JavascriptParams["baseurl"] = String.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, UrlHelper.GenerateContentUrl("~/", HttpContext));
+			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
+			ViewBag.ControllerName = GetType().Name.Replace("Controller", "");
 		}
 
 		public void AddJavascriptParam(string name, string value)
@@ -117,11 +126,11 @@ namespace Inforoom2.Controllers
 			log.ErrorFormat("{0} {1}", filterContext.Exception.Message, filterContext.Exception.StackTrace);
 			if (DbSession == null)
 				return;
+
 			// Иногда транзакции надо закрывать отдельно, так как метод OnResultExecuted не будет вызван
-			if (DbSession.Transaction.IsActive) {
-				EmailSender.SendDebugInfo("Rollback транзакции в OnException", "");
+			// Это случается, когда ошибка не в SQL запросе хибернейта, а в самом проекте
+			if (DbSession.Transaction.IsActive)
 				DbSession.Transaction.Rollback();
-			}
 			if (DbSession.IsOpen)
 				DbSession.Close();
 		}
@@ -139,18 +148,10 @@ namespace Inforoom2.Controllers
 			if (session == null)
 				return;
 
-			//дебаг
-			if (filterContext.Exception != null)
-				EmailSender.SendDebugInfo("Rollback транзакции в OnResultExecuted", "");
 
-			if (session.Transaction.IsActive) {
-				//Мне кажется этот код никогда не исполнится, todo подумать и удалить
-				if (filterContext.Exception != null)
-					session.Transaction.Rollback();
-				else
-					session.Transaction.Commit();
-			}
-
+			session.SafeTransactionCommit(filterContext.Exception);
+		
+			//Я не понимаю зачем нужна следующая команда
 			session = CurrentSessionContext.Unbind(MvcApplication.SessionFactory);
 			if (session.IsOpen)
 				session.Close();
@@ -181,7 +182,7 @@ namespace Inforoom2.Controllers
 		public void SetCookie(string name, string value)
 		{
 			if (value == null) {
-				Response.Cookies.Add(new HttpCookie(name, "false") { Path = "/", Expires = DateTime.Now });
+				Response.Cookies.Add(new HttpCookie(name, "false") { Path = "/", Expires = SystemTime.Now() });
 				return;
 			}
 			var plainTextBytes = Encoding.UTF8.GetBytes(value);
@@ -200,14 +201,14 @@ namespace Inforoom2.Controllers
 			var ticket = new FormsAuthenticationTicket(
 				1,
 				username,
-				DateTime.Now,
-				DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes),
+				SystemTime.Now(),
+				SystemTime.Now().AddMinutes(FormsAuthentication.Timeout.TotalMinutes),
 				shouldRemember,
 				userData,
 				FormsAuthentication.FormsCookiePath);
 			var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket));
 			if (shouldRemember)
-				cookie.Expires = DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes);
+				cookie.Expires = SystemTime.Now().AddMinutes(FormsAuthentication.Timeout.TotalMinutes);
 			Response.Cookies.Set(cookie);
 			return RedirectToAction(action, controller,RouteData);
 		}

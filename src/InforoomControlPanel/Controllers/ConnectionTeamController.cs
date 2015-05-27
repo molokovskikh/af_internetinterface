@@ -8,7 +8,7 @@ using NHibernate.Linq;
 
 namespace InforoomControlPanel.Controllers
 {
-	public class ConnectionTeamController : AdminController
+	public class ConnectionTeamController : ControlPanelController
 	{
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
@@ -17,9 +17,14 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.TableTimeStep = 30;
 		}
 
-		public new ActionResult Index()
+		public ConnectionTeamController()
 		{
-			return View();
+			ViewBag.BreadCrumb = "Сервисные бригады";
+		}
+
+		public ActionResult Index()
+		{
+			return Servicemen();
 		}
 
 		/// <summary>
@@ -229,7 +234,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.ServiceMan = new ServiceMan();
 			ViewBag.Team = team;
 			ViewBag.Employees = employees;
-			return View();
+			return View("Servicemen");
 		}
 
 		/// <summary>

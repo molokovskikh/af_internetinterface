@@ -302,12 +302,17 @@
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Administrator.cs" />
     <Compile Include="Models\BillingHistory.cs" />
+    <Compile Include="Models\Banner.cs" />
+    <Compile Include="Models\Slide.cs" />
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientEndPoint.cs" />
     <Compile Include="Models\ClientRequest.cs" />
     <Compile Include="Models\ClientService.cs" />
     <Compile Include="Models\CallMeBackTicket.cs" />
+    <Compile Include="Models\ClientRentalHardware.cs" />
+    <Compile Include="Models\HardwareModel.cs" />
     <Compile Include="Models\PriorityModel.cs" />
+    <Compile Include="Models\PrivateMessage.cs" />
     <Compile Include="Models\TvProtocol.cs" />
     <Compile Include="Models\TvChannelGroup.cs" />
     <Compile Include="Models\TvChannel.cs" />
@@ -317,6 +322,7 @@
     <Compile Include="Models\ConnectionRequest.cs" />
     <Compile Include="Models\Dealer.cs" />
     <Compile Include="Models\RegionPlan.cs" />
+    <Compile Include="Models\RentalHardware.cs" />
     <Compile Include="Models\TwistedPair.cs" />
     <Compile Include="Models\NetworkNode.cs" />
     <Compile Include="Models\StreetAlias.cs" />
@@ -364,10 +370,13 @@
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\UserWriteOff.cs" />
     <Compile Include="Models\WriteOff.cs" />
-    <Compile Include="validators\NumericValidator.cs" />
-    <Compile Include="validators\DateTimeNotEmpty.cs" />
+    <Compile Include="validators\ValidatorEmail.cs" />
+    <Compile Include="validators\ValidatorFullNameOriginal.cs" />
+    <Compile Include="validators\ValidatorContacts.cs" />
+    <Compile Include="validators\ValidatorNumberic.cs" />
+    <Compile Include="validators\ValidatorNotEmpty.cs" />
     <Compile Include="validators\CustomValidator.cs" />
-    <Compile Include="validators\DateTimeValidator.cs" />
+    <Compile Include="validators\ValidatorDateTime.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
@@ -440,6 +449,11 @@
     <Content Include="Views\Shared\Empty.cshtml" />
     <Content Include="Views\Home\ExtraServicesPriceList.cshtml" />
     <Content Include="Views\Personal\ActiveServices.cshtml" />
+    <Content Include="..\global.config">
+      <Link>global.config</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Web.test2.config" />
     <None Include="Web.release.config">
       <SubType>Designer</SubType>

@@ -1,0 +1,51 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models 
+
+@{
+	ViewBag.Title = "Добавление слайда";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	Slide slide = ViewBag.Slide;
+	int currentRegion = slide.Region != null ? slide.Region.Id : 0;
+	List<Region> regionList = ViewBag.RegionList;
+}
+<div class="panel panel-primary">
+	<div class="panel-body">
+		<div class="col-md-6">
+			@using (@Html.BeginForm("CreateSlide", "Slide", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered", EncType = "multipart/form-data" }))
+   {
+				<div class="form-group">
+					@Html.HiddenFor(model => slide.Id)
+					<label class="col-sm-3 control-label">Ссылка</label>
+					<div class="col-sm-5">
+						@Html.TextBoxFor(model => slide.Url, new { @class = "form-control" }) 
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Изображение</label>
+					<div class="col-md-5">
+						<input type="file" name="uploadedFile" class="file" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Регион</label>
+					<div class="col-sm-5">
+						@Html.DropDownListExtendedFor(i => slide.Region, regionList, obj => obj.Name, null, new { @class = "form-control" }, currentRegion) 
+					</div>
+					</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label c-pointer" for="isEnabled">Показ</label>
+					<div class="col-md-5">
+						@Html.CheckBoxFor(model => slide.Enabled, new { @id = "isEnabled", @class = "c-pointer" })
+					</div>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-green" type="submit">Добавить</button>
+				</div>
+   }
+		</div> 
+	</div>
+</div>
+
+<div class="form-group">
+	<button class="btn btn-blue" onclick=" location.href='@Url.Action("SlideIndex", "Slide")' ">Назад</button>
+</div>

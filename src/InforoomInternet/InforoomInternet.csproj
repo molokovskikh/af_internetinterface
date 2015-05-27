@@ -238,6 +238,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="playlist.xspf" />
+    <Content Include="..\global.local.config">
+      <Link>global.local.config</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Views\BonusPrograms\ConnectFriend.brail" />
     <None Include="Views\Main\Feedback.brail" />
     <None Include="Views\Main\MessageSended.brail" />

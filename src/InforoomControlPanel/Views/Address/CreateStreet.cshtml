@@ -17,10 +17,12 @@
 		<div class="panel-body">
 			@using (Html.BeginForm(ViewBag.ActionName as string, "Address", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
    {
+	   @Html.HiddenFor(i=>Street.Id)
 				<div class="col-sm-6">
 					<div class="form-group">
 						<label class="col-sm-4 control-label">Регион</label>
 						<div class="col-sm-6">
+							<!-- todo исправить i.city.name -->
 							@Html.DropDownListExtendedFor(i=>Street.Region,Regions,i=>i.Name,null,new { @class = "form-control" },region.Id)
 							@ViewBag.Validation.GetError(Street, "Region")
 						</div>

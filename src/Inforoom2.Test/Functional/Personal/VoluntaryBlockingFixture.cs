@@ -4,10 +4,8 @@ using Billing;
 using Common.Tools;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
-using Inforoom2.Test.Infrastructure;
-using Inforoom2.Test.Functional.Personal;
+using Inforoom2.Test.Infrastructure.Helpers;
 using NHibernate.Linq;
-
 using NUnit.Framework;
 
 namespace Inforoom2.Test.Functional.Personal
@@ -19,7 +17,7 @@ namespace Inforoom2.Test.Functional.Personal
 		[TestCase(arg: true, Description = "Проверка подключения клиенту услуги 'Добровольная блокировка'")]
 		public void SetBlockAccountToClient(bool isFree)
 		{
-			Assert.IsNotNull(Client.PhysicalClient, "Клиент должен быть поключен");
+			Assert.IsNotNull(Client.PhysicalClient, "Клиент должен быть подключен");
 			SystemTime.Now = () => DateTime.Now;            // Для независимого выполнения каждого тест-кейса
 
 			// Обработать уже созданные платежи/списания клиента
@@ -44,6 +42,10 @@ namespace Inforoom2.Test.Functional.Personal
 			btnConnect.Click();
 			btnConnect = browser.FindElementById("ConnectBtn");
 			btnConnect.Click();
+			if (!isFree) {
+				btnConnect = browser.FindElementByCssSelector(".window .click.ok");
+				btnConnect.Click();
+			}
 
 			DbSession.Refresh(Client);
 			var blockAccountService = Client.ClientServices.FirstOrDefault(cs => (cs.Service as BlockAccountService) != null);
@@ -130,6 +132,52 @@ namespace Inforoom2.Test.Functional.Personal
 				var balanceDiff = oldBalance - myClient.Balance;
 				Assert.AreEqual(3m, balanceDiff, "\noldBalance-newBalance=" + balanceDiff);
 			}
+		}
+
+		[Test(Description = "Проверка отказа в блокировке клиенту с недостаточным балансом; для задачи №33323")]
+		public void RefuseClientInBlockAccount()
+		{
+			// Получить клиента с низким балансом
+			var clientMark = ClientCreateHelper.ClientMark.lowBalanceClient.GetDescription();
+			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Comment == clientMark);
+			Assert.IsNotNull(client, "Искомый клиент не найден");
+			Assert.AreEqual(StatusType.Worked, client.Status.Type, "Клиент должен быть подключен");
+
+			// Чтобы имелась возм-ть для добровольной блокировки на бесплатные дни
+			client.FreeBlockDays = 2;
+			DbSession.Update(client);
+			DbSession.Flush();
+
+			LoginForClient(client);
+			var thisElement = browser.FindElementByLinkText("Услуги");
+			thisElement.Click();
+			thisElement = browser.FindElementByLinkText("Подключить");
+			thisElement.Click();
+			thisElement = browser.FindElementById("blockingEndDate");
+			thisElement.Clear();
+			thisElement.SendKeys(DateTime.Now.AddDays(client.FreeBlockDays + 1).ToShortDateString());
+			thisElement = browser.FindElementById("ConnectBtn");
+			thisElement.Click();
+			thisElement = browser.FindElementByCssSelector(".window .click.ok");
+			thisElement.Click();
+
+			AssertText("Недостаточно средств на счете для добровольной блокировки");
+			AssertText("Вы можете активировать услугу на бесплатные дни либо пополнить баланс и уже затем перейти к ее активации!");
+
+			// Чтобы возм-ть добровольной блокировки была только после пополнения баланса
+			client.FreeBlockDays = 0;
+			DbSession.Update(client);
+			DbSession.Flush();
+
+			thisElement = browser.FindElementByLinkText("Подключить");
+			thisElement.Click();
+			thisElement = browser.FindElementById("ConnectBtn");
+			thisElement.Click();
+			thisElement = browser.FindElementByCssSelector(".window .click.ok");
+			thisElement.Click();
+
+			AssertText("Недостаточно средств на счете для добровольной блокировки");
+			AssertText("Пополните баланс, чтобы затем перейти к активации услуги!");
 		}
 	}
 }

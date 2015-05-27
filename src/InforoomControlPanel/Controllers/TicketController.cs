@@ -10,13 +10,23 @@ namespace InforoomControlPanel.Controllers
 	/// <summary>
 	/// Страница управления вопросами от пользователя
 	/// </summary>
-	public class TicketController : AdminController
+	public class TicketController : ControlPanelController
 	{
+		public TicketController()
+		{
+			ViewBag.BreadCrumb = "Запросы пользователей";
+		}
+
+		public  ActionResult Index()
+		{
+			return TicketIndex();
+		}
+
 		public ActionResult TicketIndex()
 		{
 			var tickets = DbSession.Query<Ticket>().OrderByDescending(i => i.CreationDate).ToList();
 			ViewBag.Tickets = tickets;
-			return View();
+			return View("TicketIndex");
 		}
 
 		public ActionResult CallMeBackTicketIndex()
@@ -68,8 +78,7 @@ namespace InforoomControlPanel.Controllers
 				ticket.Employee = GetCurrentEmployee();
 				ticket.IsNotified = true;
 				try {
-					EmailSender.SendEmail(new PhysicalClient { Email = ticket.Email },
-						"Ответ на ваш запрос в техподдержку компании Инфорум", ticket.Answer);
+					EmailSender.SendEmail(ticket.Email,"Ответ на ваш запрос в техподдержку компании Инфорум", ticket.Answer);
 				}
 				catch (System.Net.Mail.SmtpException) {
 					ErrorMessage("Указанный e-mail клиента не может быть обработан!");

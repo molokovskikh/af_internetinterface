@@ -9,7 +9,6 @@ using Common.NHibernate;
 using Common.Tools;
 using Common.Tools.Calendar;
 using Common.Web.Ui.ActiveRecordExtentions;
-using Common.Web.Ui.MonoRailExtentions;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
@@ -386,32 +385,39 @@ set s.LastStartFail = true;")
 		/// <param name="client">Объект клиента</param>
 		private void WriteOffFromPhysicalClient(ISession session, Client client)
 		{
+			//Сброс статуса "Заблокирован - Восстановление работы" у клиента
 			if (_saleSettings.IsRepairExpaired(client)) {
 				client.SetStatus(StatusType.Worked, session);
 			}
 
 			//Отсылка инфы о просроченных заявках
-			SendExpiredServiceRequestEmails(client);
+			AddExpiredServiceRequestNoteToRedmine(session, client);
 
+			//Обновление расчетного периода для подключенного клиента
 			var phisicalClient = client.PhysicalClient;
-			var balance = phisicalClient.Balance;
-			if (balance >= 0 && !client.Disabled && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue) {
+			if (phisicalClient.Balance >= 0 && !client.Disabled && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue) {
 				var dtNow = SystemTime.Now();
+				// Если дата расчетного периода (с поправкой на долговые дни) ровно на 1 месяц позади текущей даты
 				if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).Days == -client.DebtDays) {
 					var dtFrom = client.RatedPeriodDate.Value;
 					var dtTo = dtNow;
+					// Фактически обнулить кол-во долговых дней у клиента
 					client.DebtDays += dtFrom.Day - dtTo.Day;
 					var thisMonth = dtNow.Month;
+					// Задать расчетный период с поправкой на долговые дни и на текущий месяц
 					client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
 					while (client.RatedPeriodDate.Value.Month != thisMonth) {
 						client.RatedPeriodDate = client.RatedPeriodDate.Value.AddDays(-1);
 					}
 				}
 				else if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).TotalDays < -client.DebtDays) {
+					// Задать расчетный период с поправкой на долговые дни
 					client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
 					client.DebtDays = 0;
 				}
 			}
+
+			//Обновление (назначение заново) скидки клиента
 			if (client.StartNoBlock != null) {
 				decimal sale = 0;
 				var monthOnStart = SystemTime.Now().TotalMonth(client.StartNoBlock.Value);
@@ -469,6 +475,11 @@ set s.LastStartFail = true;")
 				}
 			} //конец обработки списаний
 
+			//Обработка аренды оборудования
+			if (client.HasActiveRentalHardware()) {
+				ProcessHardwareRent(session, client);
+			}
+
 			//Обработка блокировок
 			if (client.CanBlock()) {
 				client.SetStatus(Status.Get(StatusType.NoWorked, session));
@@ -484,10 +495,11 @@ set s.LastStartFail = true;")
 		}
 
 		/// <summary>
-		/// Отправляем письма о просроченных заявках техподдержке
+		/// Создаем заметку в Redmine о просроченной заявке для техподдержки
 		/// </summary>
+		/// <param name="session">Сессия для работы с БД</param>
 		/// <param name="client">Клиент</param>
-		private void SendExpiredServiceRequestEmails(Client client)
+		private void AddExpiredServiceRequestNoteToRedmine(ISession session, Client client)
 		{
 			foreach (var request in client.ServiceRequests) {
 				if (request.Status == ServiceRequestStatus.Close || request.Status == ServiceRequestStatus.Cancel)
@@ -495,22 +507,129 @@ set s.LastStartFail = true;")
 				if ((SystemTime.Now() - request.RegDate).TotalDays < 3)
 					continue;
 
-				var address = ConfigurationManager.AppSettings["BlockForRepairNotificationMail"];
-				if (address == null)
-					throw new Exception("Параметр BlockForRepairNotificationMail должен быть задан в config");
-				var mailer = new Mailer(new FolderSender(ConfigurationManager.AppSettings["SmtpServer"]));
-
-				var regionName = "неизвестно";
+				var cityName = "Неизвестный";
 				var region = client.GetRegion();
 
 				//на 21.11.14 в базе бывают люди без регионов. В основном в белгороде.
-				if (region != null)
-					regionName = region.Name;
-				if (client.PhysicalClient != null && client.PhysicalClient.City != null)
-					regionName = client.PhysicalClient.City;
+				if (region != null && region.City != null)
+					cityName = region.City.Name;
 
-				var textMessage = "Срок исполнения сервисной заявки #" + request.Id + " (" + regionName + ") истек";
-				mailer.SendText("internet@ivrn.net", address, textMessage, textMessage);
+				var issue = ConfigurationManager.AppSettings[cityName + "RedmineTask"];
+				var issueId = string.IsNullOrEmpty(issue) ? 0u : Convert.ToUInt32(issue);
+				if (issueId == 0u) {
+					issue = ConfigurationManager.AppSettings["НеизвестныйRedmineTask"];
+					issueId = string.IsNullOrEmpty(issue) ? 0u : Convert.ToUInt32(issue);
+				}
+
+				try {
+					var rmUser = session.Query<RedmineUser>().ToList().FirstOrDefault(ru => ru.Login == "redmine");
+					var textMessage = "Срок исполнения сервисной заявки №" + request.Id + " истек";
+					var rmTaskNote = new RedmineJournal {
+						RedmineIssueId = issueId,
+						JournalType = "Issue",
+						UserId = (rmUser != null) ? rmUser.Id : 0,
+						Notes = textMessage,
+						CreateDate = SystemTime.Now(),
+						IsPrivate = false
+					};
+					session.Save(rmTaskNote);
+				}
+				catch (Exception ex) {
+					_log.Error("Ошибка при создании заметки в RedMine по истекшей сервисной заявке", ex);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Метод обработки услуги "Аренда оборудования" для клиента client
+		/// </summary>
+		private void ProcessHardwareRent(ISession session, Client client)
+		{
+			var balance = client.Balance;
+
+			// Контроль отрицательного баланса у клиента
+			if (balance < 0m) {
+				var curRmIssues = session.Query<RedmineIssue>().Where(ri => ri.subject.Contains(client.Id.ToString("D5"))).ToList();
+				var noOpenIssues = curRmIssues.Count == 0 || 
+						curRmIssues.FirstOrDefault(ri => ri.status_id != 5) == null; // поиск "закрытых" задач в RedMine
+				if (noOpenIssues) {
+					var indicateDate = SystemTime.Today().AddDays(-30);
+					var payments = client.Payments.Where(p => p.PaidOn >= indicateDate).ToList();
+					var writeoffs = client.GetWriteOffs(session, "").Where(wo => wo.WriteOffDate >= indicateDate).ToList();
+					// Проверка истории баланса у клиента за последние 30 дней
+					while (balance < 0m) {
+						var lastPayment = payments.LastOrDefault() ?? new Payment {PaidOn = DateTime.MinValue};
+						var lastWriteOff = writeoffs.LastOrDefault() ?? new BaseWriteOff {WriteOffDate = DateTime.MinValue};
+						if (lastPayment.PaidOn > lastWriteOff.WriteOffDate) {
+							balance -= lastPayment.Sum;
+							payments.Remove(lastPayment);
+						}
+						else if (lastPayment.PaidOn < lastWriteOff.WriteOffDate) {
+							balance += lastWriteOff.WriteOffSum;
+							writeoffs.Remove(lastWriteOff);
+						}
+						else if (lastPayment.PaidOn == lastWriteOff.WriteOffDate && lastPayment.PaidOn != DateTime.MinValue) {
+							balance -= (lastPayment.Sum - lastWriteOff.WriteOffSum);
+							payments.Remove(lastPayment);
+							writeoffs.Remove(lastWriteOff);
+						}
+						else
+							break;
+					}
+					// Т.е. баланс оставался < 0 в течение 30 дней
+					if (balance < 0m) {
+						var redmineIssue = new RedmineIssue {
+							project_id = 67,              // Проект "Координация"
+							status_id = 1,                // Статус "Новый"
+							created_on = SystemTime.Now(),
+							due_date = SystemTime.Today().AddDays(3),
+							subject = "Возврат оборудования, ЛС " + client.Id.ToString("D5") + ", "
+							          + client.PhysicalClient.Patronymic + " " + client.PhysicalClient.Name + " "
+							          + client.PhysicalClient.Surname,
+							description = "Баланс клиента, равный "
+							              + client.Balance.ToString("F2") + " р., не пополнялся более 30 дней."
+						};
+						session.Save(redmineIssue);
+					}
+				}
+			}
+
+			// Обработка списаний за аренду конкретного оборудования
+			var phisicalClient = client.PhysicalClient;
+			for (var i = HardwareType.TvBox; i < HardwareType.Count; i++) {
+				if (client.HardwareIsRented(i)) {
+					var clientHardware = client.GetActiveRentalHardware(i);
+					// Если пустая дата начала аренды, деактивировать услугу
+					if (clientHardware.GiveDate == null) {
+						var msg = clientHardware.Deactivate();
+						session.Update(clientHardware);
+						var appeal = client.CreareAppeal(msg, AppealType.System, false);
+						session.Save(appeal);
+					}
+					else if ((SystemTime.Now() - clientHardware.GiveDate.Value.Date) > TimeSpan.FromDays(30)) {
+						// Если с даты начала аренды прошло > 30 дней, списать ежедневную плату за аренду
+						var sum = client.GetPriceForHardware(clientHardware.Hardware);
+						var sumDiff = Math.Min(phisicalClient.MoneyBalance - sum, 0);
+						var virtualWriteoff = Math.Min(Math.Abs(sumDiff), phisicalClient.VirtualBalance);
+						var moneyWriteoff = sum - virtualWriteoff;
+						var newWriteoff = new WriteOff {
+							Client = client,
+							WriteOffDate = SystemTime.Now(),
+							WriteOffSum = Math.Round(sum, 2),
+							MoneySum = Math.Round(moneyWriteoff, 2),
+							VirtualSum = Math.Round(virtualWriteoff, 2),
+							Sale = client.Sale,
+							BeforeWriteOffBalance = client.Balance,
+							Comment = clientHardware.Hardware.Name + ": ежедневная плата за аренду"
+						};
+						session.Save(newWriteoff);
+
+						// сохранение измененных данных у физ. клиента
+						phisicalClient.Balance -= newWriteoff.WriteOffSum;
+						phisicalClient.VirtualBalance -= newWriteoff.VirtualSum;
+						phisicalClient.MoneyBalance -= newWriteoff.MoneySum;
+					}
+				}
 			}
 		}
 

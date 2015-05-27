@@ -1,0 +1,51 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+
+@model dynamic
+@{
+	ViewBag.Title = "Приватное сообщение для клиента";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	string action = ViewBag.ActionName;
+	string controller = ViewBag.ControllerName;
+	Client client = ViewBag.Client;
+	PrivateMessage privateMessage = ViewBag.PrivateMessage;
+	var endDate = privateMessage.EndDate.ToShortDateString();
+	ValidationRunner validationRunner = ViewBag.Validation;
+}
+
+<div class="panel panel-primary col-md-12">
+	<div class="panel-body">
+		@using (Html.BeginForm(action, controller, null, FormMethod.Post, new {@id = "PrivateMsgForm", @class = "form-horizontal form-groups-bordered"})) {
+			<div class="form-group">
+				<label class="col-sm-2 control-label">ФИО клиента:</label>
+				<div>
+					<b>@Html.DisplayFor(n => client.PhysicalClient.FullName, new {@class = "form-control"})</b>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Текст сообщения:</label>
+				<div class = "col-sm-4">
+					@Html.ValidationEditor(validationRunner, privateMessage, "Text", new {@class = "form-control"}, HtmlTag.textarea, HtmlType.none)
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Дата отключения:</label>
+				<div class = "col-sm-4">
+					@Html.ValidationEditor(validationRunner, privateMessage, "EndDate", new {@value = endDate}, HtmlTag.date, HtmlType.none)
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Показывать</label>
+				<div class="col-sm-4">
+					@Html.CheckBoxFor(h => privateMessage.Enabled)
+				</div>
+			</div>
+			<div class="form-group">
+				@Html.HiddenFor(k => privateMessage.Id)
+				@Html.HiddenFor(k => privateMessage.Client.Id, new {@name = "@client.Id"})
+				<input id="SaveMsgBtn" class="btn btn-green" type="submit" value="Сохранить">
+			</div>
+		}
+	</div>
+</div>

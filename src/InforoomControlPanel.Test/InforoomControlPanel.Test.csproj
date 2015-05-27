@@ -183,7 +183,14 @@
   <ItemGroup>
     <Compile Include="Functional\AdminAccount\AdminAccountFixture.cs" />
     <Compile Include="Functional\AdminAccount\LoginFixture.cs" />
+    <Compile Include="Functional\ClientActions\ClientActionsFixture.cs" />
+    <Compile Include="Functional\ClientActions\PrivateMessageFixture.cs" />
     <Compile Include="Functional\Infrastructure\ControlPanelBaseFixture.cs" />
+    <Compile Include="Functional\Plans\CreatePlanFixture.cs" />
+    <Compile Include="Functional\Plans\DeleteTVChannelFixture .cs" />
+    <Compile Include="Functional\Plans\EditTVChannelFixture.cs" />
+    <Compile Include="Functional\Plans\CreateTVChannelFixture.cs" />
+    <Compile Include="Functional\Plans\PlanFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

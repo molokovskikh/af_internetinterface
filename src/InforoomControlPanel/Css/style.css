@@ -31,5 +31,6 @@
 	.servicemen .description { font-weight: bold;margin-bottom: 20px;}
 	
 	.error .msg { color: red;}
-
+	.IeWaterline{ border-bottom: 3px solid #00A651;width: 1024px;}
 	.c-pointer {cursor: pointer;}
+	.date-picker-box input{width: 150px;text-align: center;}

@@ -17,10 +17,10 @@ namespace Inforoom2.Test.Functional.Home
 			var phone = browser.FindElementByCssSelector("input[id=callMeBackTicket_PhoneNumber]");
 			var comment = browser.FindElementByName("callMeBackTicket.Text");
 			name.SendKeys("Иван Петров");
-			phone.SendKeys("855647897");
+			phone.SendKeys("8556478970");
 			comment.SendKeys("my question");
 			browser.FindElementByCssSelector(".contacting").Click();
-			var callMeBackTicket = DbSession.Query<CallMeBackTicket>().FirstOrDefault(c => c.PhoneNumber == "855647897");
+			var callMeBackTicket = DbSession.Query<CallMeBackTicket>().FirstOrDefault(c => c.PhoneNumber == "8556478970");
 			Assert.NotNull(callMeBackTicket);
 			var count = DbSession.Query<CallMeBackTicket>().ToList().Count;
 			Assert.That(count, Is.EqualTo(1), "Создается только одна заявка за раз");
@@ -42,14 +42,14 @@ namespace Inforoom2.Test.Functional.Home
 			var name = browser.FindElementByCssSelector(".city .name").Text;
 			Assert.That(name, Is.StringContaining(clickedText), "Изначальный город должен поменяться");
 		}
-
+		
 		[Test(Description = "Выбор акционного тарифа")]
 		public void PromotionalPlan()
 		{
 			Open("");
 			browser.FindElementByCssSelector(".main-offer img").Click();
 			AssertText("Заявка на подключение");
-			var selectedValue = browser.FindElementByCssSelector(".rounded option[selected='selected']");
+			var selectedValue = browser.FindElementByCssSelector("#clientRequest_Plan.rounded option[selected='selected']");
 			Assert.That(selectedValue.Text, Is.EqualTo("Народный"), "В поле тариф должен быть выбран акционный тариф");
 			//Должна быть одна зеленая галочка,при поиске одного элемента вероятно выдаст ошибку,в данном случае вернет пустой массив.
 			var greenElements = browser.FindElementsByCssSelector(".success .icon");

@@ -184,6 +184,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="..\global.local.config">
+      <Link>global.local.config</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Views\AgentInfo\GroupInfo.brail" />
     <None Include="Views\AgentInfo\PaymentBlock.brail" />
     <None Include="Views\AgentInfo\SummaryInformation.brail" />
@@ -324,9 +328,7 @@
     </Content>
     <None Include="Views\UserInfo\CreateAndPrintGraph.brail" />
     <None Include="Views\ConnectionRequest\RequestOne.brail" />
-    <None Include="Views\UserInfo\RequestGraph.brail">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="Views\UserInfo\RequestGraph.brail" />
     <None Include="Views\UserInfo\ShowLawyerPerson.brail" />
     <None Include="Views\UserInfo\RequestGraph.brail">
       <SubType>Designer</SubType>
@@ -461,13 +463,16 @@
     <Compile Include="Models\Brigad.cs" />
     <Compile Include="Models\BypassHouse.cs" />
     <Compile Include="Models\CatalystCommutateurInfo.cs" />
+    <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientEndpoint.cs" />
     <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\ClientRentalHardware.cs" />
     <Compile Include="Models\ClientService.cs" />
     <Compile Include="Models\ConnectGraph.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Contract.cs" />
     <Compile Include="Models\Entrance.cs" />
+    <Compile Include="Models\HardwareModel.cs" />
     <Compile Include="Models\House.cs" />
     <Compile Include="Models\Internetsessionslog.cs" />
     <Compile Include="Models\InternetSettings.cs" />
@@ -489,7 +494,10 @@
     <Compile Include="Models\Period.cs" />
     <Compile Include="Models\Printer.cs" />
     <Compile Include="Models\RedmineIssue.cs" />
+    <Compile Include="Models\RedmineJournal.cs" />
+    <Compile Include="Models\RedmineUser.cs" />
     <Compile Include="Models\RegionHouse.cs" />
+    <Compile Include="Models\RentalHardware.cs" />
     <Compile Include="Models\Request.cs" />
     <Compile Include="Models\RequestMessage.cs" />
     <Compile Include="Models\SaleSettings.cs" />

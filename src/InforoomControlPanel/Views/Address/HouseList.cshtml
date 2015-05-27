@@ -1,10 +1,12 @@
 ﻿@using System.Activities.Expressions
+@using Inforoom2.Components
 @using Inforoom2.Models
 
 @{
 	ViewBag.Title = "Дома";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	IList<House> houses = ViewBag.Houses;
+	ModelFilter<House> pager = ViewBag.Pager;
 }
 <div class="form-group">
 <a class="btn btn-success btn-sm btn-icon icon-left" href = '@Url.Action("CreateHouse", "Address")'>
@@ -16,17 +18,17 @@
 <table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 	<thead>
 		<tr role="row">
-			<th class="sorting" tabindex="0" aria-controls="table-2" >Регион</th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" >Улица</th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" >Номер</th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" >Проверенно яндексом</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Street.Region)">Регион (Регион улицы)</a></th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Street)">Улица</a></th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Number)">Номер</a></th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Confirmed)">Проверенно яндексом</a></th>
 			<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
 		</tr>
 	</thead>
 			@foreach (var item in houses)
 			{
 			<tr>
-				<td>@item.Street.Region.Name</td>
+				<td>@(item.Region != null ? item.Region.Name + " ("+item.Street.Region.Name+")" : item.Street.Region.Name)</td>
 				<td>@item.Street.Name</td>
 				<td>@item.Number</td>
 				<td>@Html.DisplayFor(i=>item.Confirmed)</td>
@@ -41,4 +43,7 @@
 	<tbody>
 	</tbody>
 </table>
+</div>
+<div class="row">
+	@{ Html.RenderPartial("Pagination"); }
 </div>

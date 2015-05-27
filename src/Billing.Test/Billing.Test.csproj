@@ -80,12 +80,14 @@
     <Compile Include="Integration\BonusFixture.cs" />
     <Compile Include="Integration\ClientFixture.cs" />
     <Compile Include="Integration\DebtWorkFixture.cs" />
+    <Compile Include="Integration\HardwareRentFixture.cs" />
     <Compile Include="Integration\LawyerPersonFixture.cs" />
     <Compile Include="Integration\BillingOrdersFixture.cs" />
     <Compile Include="Integration\MutexFixture.cs" />
     <Compile Include="Integration\OtherFixture.cs" />
     <Compile Include="Integration\SaleFixture.cs" />
     <Compile Include="Integration\ServiceFixture.cs" />
+    <Compile Include="Integration\ServiceRequestsFixture.cs" />
     <Compile Include="Integration\SmsFixture.cs" />
     <Compile Include="Integration\VirtualMoneyFixture.cs" />
     <Compile Include="Integration\WorkBillingFixture.cs" />
@@ -116,8 +118,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\global.config">
-      <Link>global.config</Link>
+    <None Include="..\global.local.config">
+      <Link>global.local.config</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="App.config">
