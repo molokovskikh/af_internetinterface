@@ -150,7 +150,10 @@
 			<td>${OrderInfo.ClientConnectInfo.Pool} ${"(${OrderInfo.ClientConnectInfo.PoolDescription})" if OrderInfo.ClientConnectInfo.Pool != null}</td>
 		</tr>
 		<tr>
-			<td><span class="description">Адрес подключения</span></td>
+			<td>
+				<span class="description">Адрес подключения</span>
+				<a id="ConnAddrEditBtn" href="${siteroot}/UserInfo/EditConnectionAddress?orderId=${OrderInfo.Order.Id}">Редактировать</a>
+			</td>
 			<td>${OrderInfo.Order.ConnectionAddress}</td>
 		</tr>
 		<tr>

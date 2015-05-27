@@ -187,6 +187,7 @@
     <Content Include="..\global.local.config">
       <Link>global.local.config</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <None Include="Views\AgentInfo\GroupInfo.brail" />
     <None Include="Views\AgentInfo\PaymentBlock.brail" />
@@ -321,14 +322,13 @@
     <None Include="Views\TvRequest\new.brail">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Views\UserInfo\EditConnectionAddress.brail" />
     <Content Include="Views\UserInfo\EditRegion.brail" />
     <Content Include="Views\UserInfo\OrdersArchive.brail">
       <SubType>Designer</SubType>
     </Content>
     <None Include="Views\UserInfo\CreateAndPrintGraph.brail" />
-    <None Include="Views\ConnectionRequest\RequestOne.brail">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="Views\ConnectionRequest\RequestOne.brail" />
     <None Include="Views\UserInfo\RequestGraph.brail" />
     <None Include="Views\UserInfo\ShowLawyerPerson.brail" />
     <None Include="Views\UserInfo\RequestGraph.brail">
@@ -619,11 +619,11 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>58359</DevelopmentServerPort>
           <DevelopmentServerVPath>/InternetInterface</DevelopmentServerVPath>
-          <IISUrl>http://localhost:59060/</IISUrl>
+          <IISUrl>http://localhost:58359/InternetInterface</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -1,0 +1,16 @@
+﻿
+<div class="content">
+	<h2>Редактирование данных заказа №${Order.Id}</h2>
+	<div>
+		<form method="POST" action="${siteroot}/UserInfo/SaveConnectionAddress">
+			<div class="remark">
+				<span>Адрес подключения</span>
+				<input id="ConnAddrInput" type="text" name="order.ConnectionAddress" value="${Order.ConnectionAddress}" style="width: 30%"/>
+			</div>
+			<input type="hidden" name="order.Id" value="${Order.Id}" class="submit" />
+			<input type="hidden" name="order.Client.Id" value="${?Order.Client.Id}" class="submit" />
+			<input type="hidden" name="order.EndPoint.Id" value="${?Order.EndPoint.Id}" class="submit" />
+			<input id="SaveAddrButton" type="submit" value="Сохранить" class="submit" />
+		</form>
+	</div>
+</div>
