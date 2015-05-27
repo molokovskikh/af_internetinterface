@@ -24,8 +24,8 @@ namespace Inforoom2.Models
 
 		[Property, NotNullNotEmpty(Message = "Введите ФИО")]
 		public virtual string ApplicantName { get; set; }
-
-		[Property, NotNullNotEmpty(Message = "Введите номер телефона"), Pattern(@"^\d{10}$", Message = "Введите номер в десятизначном формате")]
+		// валидация происходит справа налево (по атрибута), поэтому нельзя менять атрибуты местами!
+		[Property, Pattern(@"^\d{10}$", Message = "Введите номер в десятизначном формате"), NotNullNotEmpty(Message = "Введите номер телефона")]
 		public virtual string ApplicantPhoneNumber { get; set; }
 
 		[Property(Column = "ApplicantEmail"), ValidatorEmail]

@@ -28,8 +28,6 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			var speed = DbSession.Query<PackageSpeed>().First(p => p.Speed == 40000000);
 			AssertText(plan.Name);
 			Assert.That(plan.PackageSpeed.PackageId, Is.EqualTo(speed.PackageId), "Скорость у тарифа должна быть установлена корректна");
-
-
 		}
 	}
 }
