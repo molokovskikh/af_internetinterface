@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using Common.Tools;
 using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Mapping.Attributes;
@@ -38,6 +39,12 @@ namespace Inforoom2.Models
 		[Property, Description("Дата фактической выдачи оборудования")]
 		public virtual DateTime? GiveDate { get; set; }
 
+		[Property(Column = "Used"), NotNull, Description("Оборудование, бывшее в употреблении")]
+		public virtual bool WasUsed { get; set; }
+
+		[Property(Column = "CompleteSet"), NotNull, Description("Оборудование в полной комплектации")]
+		public virtual bool IsCompleteSet { get; set; }
+
 		[Property, Description("Поле комментария для сотрудника")]
 		public virtual string Comment { get; set; }
 
@@ -61,20 +68,21 @@ namespace Inforoom2.Models
 					SerialNumber = SerialNumber
 				};
 			}
-			BeginDate = DateTime.Now;
-			GiveDate = DateTime.Now;
+			BeginDate = SystemTime.Now();
 			IsActive = true;
 			Employee = employee;
-			Comment = comment;
+			if (!string.IsNullOrEmpty(comment))
+				Comment = comment;
 			return String.Format("Услуга \"Аренда оборудования типа \"{0}\" активирована", Hardware.Name);
 		}
 
 		// Метод деактивации "Аренды оборудования"
 		public virtual string Deactivate(string comment = "")
 		{
-			EndDate = DateTime.Now;
+			EndDate = SystemTime.Now();
 			IsActive = false;
-			Comment += comment;
+			if (!string.IsNullOrEmpty(comment))
+				Comment += "; " + comment;
 			return String.Format("Услуга \"Аренда оборудования типа \"{0}\" деактивирована", Hardware.Name);
 		}
 
