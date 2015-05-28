@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using InternetInterface.Models;
 using NHibernate.Linq;
+using NHibernate.Util;
 using Client = Inforoom2.Models.Client;
 using ClientService = Inforoom2.Models.ClientService;
 using Contact = Inforoom2.Models.Contact;
@@ -43,7 +45,7 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		public ActionResult List()
-		{ 
+		{
 			var pager = new ModelFilter<Client>(this, urlBasePrefix: "/");
 			var clients = pager.GetCriteria(i => i.PhysicalClient != null).List<Client>();
 
@@ -66,13 +68,11 @@ namespace InforoomControlPanel.Controllers
 			// Find active RentalHardware
 			var activeServices = client.RentalHardwareList.Where(rh => rh.IsActive).ToList();
 			ViewBag.RentIsActive = activeServices.Count > 0;
-
 			if (client.Status != null && client.Status.Type == StatusType.BlockedAndConnected) {
 				// Find Switches
 				var networkNodeList = DbSession.QueryOver<SwitchAddress>().Where(s =>
 					s.House == client.PhysicalClient.Address.House && s.Entrance.ToString() == client.PhysicalClient.Address.Entrance ||
 					s.House == client.PhysicalClient.Address.House && s.Entrance == null).List();
-
 				if (networkNodeList.Count > 0) {
 					ViewBag.NetworkNodeList = networkNodeList;
 				}
@@ -104,10 +104,9 @@ namespace InforoomControlPanel.Controllers
 			clientRequest.RequestSource = RequestType.FromOperator;
 			clientRequest.RequestAuthor = GetCurrentEmployee();
 			// Сохранение адреса  
-			if (!string.IsNullOrEmpty(clientRequest.Housing))
-			{ 
-				var houseNumber = "";
-				var justStr = clientRequest.Housing;
+			if (clientRequest.Housing != null && clientRequest.Housing != "") {
+				string houseNumber = "";
+				string justStr = clientRequest.Housing;
 				foreach (char t in justStr) {
 					try {
 						houseNumber += Convert.ToInt32(t.ToString()).ToString();
@@ -127,7 +126,7 @@ namespace InforoomControlPanel.Controllers
 			// валидация и сохранение
 			var errors = ValidationRunner.ValidateDeep(clientRequest);
 			if (errors.Length == 0 && clientRequest.IsContractAccepted) {
-				// чистим адрес - его сохранять не нужно    TODO: не помогает !!!
+				// чистим адрес - его сохранять не нужно					  TODO: не помогает !!!
 				clientRequest.Address = null;
 				// сохранение
 				DbSession.Save(clientRequest);
@@ -154,11 +153,11 @@ namespace InforoomControlPanel.Controllers
 				planList = DbSession.Query<Plan>().Where(s => s.IsArchived == false && s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
 			}
 			// списки улиц и домов
-			var currentStreetList = currentStreet == null ? new List<Street>() : DbSession.Query<Street>()
+			var currentStreetList = currentStreet == null || currentRegion == null ? new List<Street>() : DbSession.Query<Street>()
 				.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id)).OrderBy(s => s.Name).ToList();
-			var currentHouseList = currentStreet == null ? new List<House>() : DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
-										 ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
-										 (s.Street.Region.Id == currentRegion.Id && s.Region == null || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id))).OrderBy(s => s.Number).ToList();
+			var currentHouseList = currentStreet == null || currentRegion == null ? new List<House>() : DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
+			                                                                                                                                ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
+			                                                                                                                                (s.Street.Region.Id == currentRegion.Id && s.Region == null || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id))).OrderBy(s => s.Number).ToList();
 			ViewBag.CurrentRegion = currentRegion;
 			ViewBag.CurrentStreet = currentStreet;
 			ViewBag.CurrentHouse = currentHouse;
@@ -206,14 +205,17 @@ namespace InforoomControlPanel.Controllers
 			if (street == null) {
 				street = new Street(clientRequest.YandexStreet);
 			}
-			var house = DbSession.Query<House>().FirstOrDefault(h =>
-				h.Number == clientRequest.YandexHouse && h.Street.Name == clientRequest.YandexStreet &&
-				(h.Street.Region == region || h.Region == region));
+			var house = DbSession.Query<House>().FirstOrDefault(h => h.Number == clientRequest.YandexHouse
+			                                                         && h.Street.Name == clientRequest.YandexStreet
+			                                                         && (h.Street.Region == region
+			                                                             || h.Region == region));
 			if (house == null) {
 				house = new House(clientRequest.YandexHouse);
 			}
-			var address = GetList<Address>().FirstOrDefault(a =>
-				a.IsCorrectAddress && a.House == house && a.House.Street == street && a.House.Street.Region == region);
+			var address = GetList<Address>().FirstOrDefault(a => a.IsCorrectAddress
+			                                                     && a.House == house
+			                                                     && a.House.Street == street
+			                                                     && a.House.Street.Region == region);
 			return address;
 		}
 
@@ -223,7 +225,7 @@ namespace InforoomControlPanel.Controllers
 		/// <param name="ClientRequest"></param>
 		/// <returns></returns>
 		public ActionResult RequestsList()
-		{ 
+		{
 			var pager = new ModelFilter<ClientRequest>(this, urlBasePrefix: "/");
 			var clientRequests = pager.GetCriteria().List<ClientRequest>();
 			ViewBag.Pager = pager;
@@ -329,6 +331,9 @@ namespace InforoomControlPanel.Controllers
 				if (tempYandexAddress != null && tempYandexAddress.House != null) {
 					clientRequest.Address = tempYandexAddress;
 					clientRequest.Address.IsCorrectAddress = true;
+					clientRequest.Address.Floor = clientRequest.Floor;
+					clientRequest.Address.Entrance = clientRequest.Entrance.ToString();
+					clientRequest.Address.Apartment = clientRequest.Apartment.ToString();
 				}
 			}
 			else {
@@ -342,18 +347,18 @@ namespace InforoomControlPanel.Controllers
 			}
 			// TODO: учесть принадлежность домов к региону
 			// списки улиц и домов
-			var currentStreetList = currentStreet == null ? new List<Street>() : DbSession.Query<Street>()
+			var currentStreetList = currentStreet == null || currentRegion == null ? new List<Street>() : DbSession.Query<Street>()
 				.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id)).OrderBy(s => s.Name).ToList();
-			var currentHouseList = currentStreet == null ? new List<House>() : DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
-										 ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
-										 (s.Street.Region.Id == currentRegion.Id && s.Region == null || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id))).OrderBy(s => s.Number).ToList();
+			var currentHouseList = currentStreet == null || currentRegion == null ? new List<House>() : DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
+			                                                                                                                                ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
+			                                                                                                                                (s.Street.Region.Id == currentRegion.Id && s.Region == null || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id))).OrderBy(s => s.Number).ToList();
 			// тариф по запросу
 			client.PhysicalClient.Plan = clientRequest.Plan;
 			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			var planList = DbSession.Query<Plan>().OrderBy(s => s.Name).ToList();
 			if (regionList.Count > 0) {
-				planList = planList.Where(s => s.RegionPlans.Any(d => d.Region == currentRegion)).OrderBy(s => s.Name).ToList();
+				planList = planList.Where(s => s.IsArchived == false && s.RegionPlans.Any(d => d.Region == currentRegion)).OrderBy(s => s.Name).ToList();
 			}
 			//
 			ViewBag.CurrentRegion = currentRegion;
@@ -470,8 +475,7 @@ namespace InforoomControlPanel.Controllers
 				currentRegion = client.Address.House.Region;
 				currentStreet = client.Address.House.Street;
 				currentHouse = client.Address.House;
-				if (currentRegion == null)
-				{
+				if (currentRegion == null) {
 					currentRegion = client.Address.House.Street.Region;
 				}
 				client.PhysicalClient.Address = new Address() {
@@ -481,11 +485,11 @@ namespace InforoomControlPanel.Controllers
 					Apartment = client.Address.Apartment
 				};
 				// списки улиц и домов
-				currentStreetList = currentStreet == null ? new List<Street>() : DbSession.Query<Street>()
+				currentStreetList = currentStreet == null || currentRegion == null ? new List<Street>() : DbSession.Query<Street>()
 					.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id)).OrderBy(s => s.Name).ToList();
 				currentHouseList = DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
-										 ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
-										 (s.Street.Region.Id == currentRegion.Id && s.Region == null || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id))).OrderBy(s => s.Number).ToList();
+				                                                       ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
+				                                                       (s.Street.Region.Id == currentRegion.Id && s.Region == null || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id))).OrderBy(s => s.Number).ToList();
 			}
 			else {
 				//если адрес пустой создаем новый дом ( not null )
@@ -499,7 +503,7 @@ namespace InforoomControlPanel.Controllers
 			// получаем списки регионов и тарифов по выбранному выбранному региону (городу) 
 			var regionList = DbSession.Query<Region>().ToList();
 			if (currentRegion != null) {
-				planList = DbSession.Query<Plan>().Where(s => s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
+				planList = DbSession.Query<Plan>().Where(s => s.IsArchived == false && s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
 			}
 			//
 			ViewBag.CurrentRegion = currentRegion;
@@ -650,22 +654,21 @@ namespace InforoomControlPanel.Controllers
 				currentHouse = client.Address.House;
 				currentStreet = client.Address.House.Street;
 				currentRegion = client.Address.House.Region;
-				if (currentRegion==null)
-				{
+				if (currentRegion == null) {
 					currentRegion = client.Address.House.Street.Region;
 				}
 			}
 			var planList = new List<Plan>();
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			if (currentRegion != null) {
-				planList = DbSession.Query<Plan>().Where(s => s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
+				planList = DbSession.Query<Plan>().Where(s => s.IsArchived == false && s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
 			}
 			// списки улиц и домов 
-			var currentStreetList = currentStreet == null && currentRegion!=null ? new List<Street>() : DbSession.Query<Street>()
+			var currentStreetList = currentStreet == null || currentRegion == null ? new List<Street>() : DbSession.Query<Street>()
 				.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id)).OrderBy(s => s.Name).ToList();
-			var currentHouseList = currentStreet == null && currentRegion != null ? new List<House>() : DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
-										 ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
-										 (s.Street.Region.Id == currentRegion.Id && s.Region == null || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id))).OrderBy(s => s.Number).ToList();
+			var currentHouseList = currentStreet == null || currentRegion == null ? new List<House>() : DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
+			                                                                                                                                ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
+			                                                                                                                                (s.Street.Region.Id == currentRegion.Id && s.Region == null || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id))).OrderBy(s => s.Number).ToList();
 			ViewBag.CurrentRegion = currentRegion;
 			ViewBag.CurrentStreet = currentStreet;
 			ViewBag.CurrentHouse = currentHouse;
@@ -708,18 +711,17 @@ namespace InforoomControlPanel.Controllers
 				currentHouse = client.Address.House;
 				currentStreet = client.Address.House.Street;
 				currentRegion = client.Address.House.Region;
-				if (currentRegion == null)
-				{
+				if (currentRegion == null) {
 					currentRegion = client.Address.House.Street.Region;
 				}
 			}
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			// списки улиц и домов 
-			var currentStreetList = currentStreet == null && currentRegion != null ? new List<Street>() : DbSession.Query<Street>()
+			var currentStreetList = currentStreet == null || currentRegion == null ? new List<Street>() : DbSession.Query<Street>()
 				.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id)).OrderBy(s => s.Name).ToList();
-			var currentHouseList = currentStreet == null && currentRegion != null ? new List<House>() : DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
-										 ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
-										 (s.Street.Region.Id == currentRegion.Id && s.Region == null || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id))).OrderBy(s => s.Number).ToList();
+			var currentHouseList = currentStreet == null || currentRegion == null ? new List<House>() : DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
+			                                                                                                                                ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
+			                                                                                                                                (s.Street.Region.Id == currentRegion.Id && s.Region == null || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id))).OrderBy(s => s.Number).ToList();
 			ViewBag.CurrentRegion = currentRegion;
 			ViewBag.CurrentStreet = currentStreet;
 			ViewBag.CurrentHouse = currentHouse;
@@ -778,8 +780,7 @@ namespace InforoomControlPanel.Controllers
 				currentHouse = client.Address.House;
 				currentStreet = client.Address.House.Street;
 				currentRegion = client.Address.House.Region;
-				if (currentRegion == null)
-				{
+				if (currentRegion == null) {
 					currentRegion = client.Address.House.Street.Region;
 				}
 			}
@@ -787,11 +788,11 @@ namespace InforoomControlPanel.Controllers
 
 			// списки улиц и домов
 
-			var currentStreetList = currentStreet == null && currentRegion != null ? new List<Street>() : DbSession.Query<Street>()
+			var currentStreetList = currentStreet == null || currentRegion == null ? new List<Street>() : DbSession.Query<Street>()
 				.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id)).OrderBy(s => s.Name).ToList();
-			var currentHouseList = currentStreet == null && currentRegion != null ? new List<House>() : DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
-										 ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
-										 (s.Street.Region.Id == currentRegion.Id && s.Region == null || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id))).OrderBy(s => s.Number).ToList();
+			var currentHouseList = currentStreet == null || currentRegion == null ? new List<House>() : DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
+			                                                                                                                                ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
+			                                                                                                                                (s.Street.Region.Id == currentRegion.Id && s.Region == null || (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id))).OrderBy(s => s.Number).ToList();
 
 			ViewBag.CurrentRegion = currentRegion;
 			ViewBag.CurrentStreet = currentStreet;
@@ -807,7 +808,7 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		public ActionResult DealerList()
-		{ 
+		{
 			var dealer = DbSession.QueryOver<Dealer>().List();
 			dealer = dealer.OrderBy(s => s.Employee.Name).ToList();
 			var employee = DbSession.QueryOver<Employee>().List();

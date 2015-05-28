@@ -9,6 +9,7 @@ using Common.Tools.Threading;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Jobs;
 using InternetInterface.Helpers;
+using InternetInterface.Models;
 using log4net;
 using log4net.Config;
 using NHibernate.Type;
@@ -37,10 +38,11 @@ namespace InternetInterface.Background
 						t.Execute();
 					}
 					catch(Exception e) {
+						var mailhelper = new Mailer();
+						mailhelper.SendText("service@analit.net", "service@analit.net", "Исключение в Internet.Background", e.Message + " " + e.StackTrace);
 						log.Error(String.Format("Выполнение задачи {0} завершилось ошибкой", t), e);
 					}
 				}));
-
 				tasks.Each(t => t.Cancellation = runner.Cancellation);
 				return CommandService.Start(args, runner);
 			}

@@ -19,6 +19,9 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			AssertText(client.PhysicalClient.FullName);
 			Css("#privateMessage_Text").SendKeys("Тестовое сообщение");
 			Css("#privateMessage_EndDate").SendKeys(DateTime.Now.ToShortDateString());
+			// возникает ошибка бес "скликивания" по форме, 
+			// т.к. пенель календаря заслоняет следующее поле
+			Css(".page-container").Click();
 			Css("#privateMessage_Enabled").Click();
 			Css("#SaveMsgBtn").Click();
 			AssertText("Приватное сообщение успешно сохранено!");
