@@ -34,7 +34,7 @@ namespace InternetInterface.Background
 			var mailhelper = new Mailer();
 
 			//Если не прошло дня то выходим, так как аудит должен случаться раз в день, а запускается процесс каждые пол часа
-			if (settings.NextDataAuditDate != null && settings.NextDataAuditDate.Value < SystemTime.Now())
+			if (settings.NextDataAuditDate != null && DateTime.Compare(settings.NextDataAuditDate.Value, SystemTime.Now()) < 0)
 				return;
 
 			//Формируем следующую дату прохода
