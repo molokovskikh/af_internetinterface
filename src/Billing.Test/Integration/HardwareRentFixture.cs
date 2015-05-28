@@ -35,16 +35,17 @@ namespace Billing.Test.Integration
 			ActiveRecordMediator.SaveAndFlush(clientHardware);
 		}
 
-		[Test(Description = "Проверка формирования у клиента списаний за аренду оборудования")]
+		[Test(Description = "Проверка формирования списаний за аренду оборудования у заблокированного клиента")]
 		public void Writeoff_pay_for_hardware_rent()
 		{
 			using (new SessionScope()) {
 				AddRentalHardwareToClient();
 				ActiveRecordMediator.Refresh(client);
 
-				// Изменить текущий баланс клиента
+				// Изменить текущий баланс и статус клиента
 				client.PhysicalClient.Balance = 1000m;
-				ActiveRecordMediator.UpdateAndFlush(client.PhysicalClient);
+				client.SetStatus(ActiveRecordMediator<Status>.FindByPrimaryKey((uint)StatusType.NoWorked));
+				ActiveRecordMediator.UpdateAndFlush(client);
 
 				for (var i = -10; i < 30; i++) {
 					var oldBalance = client.Balance;
