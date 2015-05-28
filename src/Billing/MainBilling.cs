@@ -476,7 +476,8 @@ set s.LastStartFail = true;")
 			} //конец обработки списаний
 
 			//Обработка аренды оборудования
-			if (client.HasActiveRentalHardware()) {
+			if ((client.Status.Type == StatusType.NoWorked || client.Status.Type == StatusType.Dissolved) &&
+			    client.HasActiveRentalHardware()) {
 				ProcessHardwareRent(session, client);
 			}
 
@@ -606,8 +607,10 @@ set s.LastStartFail = true;")
 						var appeal = client.CreareAppeal(msg, AppealType.System, false);
 						session.Save(appeal);
 					}
-					else if ((SystemTime.Now() - clientHardware.GiveDate.Value.Date) > TimeSpan.FromDays(30)) {
-						// Если с даты начала аренды прошло > 30 дней, списать ежедневную плату за аренду
+					else if (client.Status.Type == StatusType.Dissolved ||
+					         (client.Status.Type == StatusType.NoWorked && client.StatusChangedOn != null &&
+					          (SystemTime.Now() - client.StatusChangedOn) > TimeSpan.FromDays(clientHardware.Hardware.FreeDays))) {
+						// Если с даты изменения статуса клиента прошло > 30 дней, списать ежедневную плату за аренду
 						var sum = client.GetPriceForHardware(clientHardware.Hardware);
 						var sumDiff = Math.Min(phisicalClient.MoneyBalance - sum, 0);
 						var virtualWriteoff = Math.Min(Math.Abs(sumDiff), phisicalClient.VirtualBalance);
