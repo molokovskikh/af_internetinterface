@@ -807,7 +807,10 @@ where CE.Client = {0}", Id))
 		/// </summary>
 		public virtual decimal GetPriceForHardware(RentalHardware hardware)
 		{
-			var price = Math.Round(hardware.Price / GetInterval(), 2);
+			if (!RatedPeriodDate.HasValue)
+				return 0m;
+			var timePeriod = (((DateTime)RatedPeriodDate).AddMonths(1) - (DateTime)RatedPeriodDate).Days + DebtDays;
+			var price = Math.Round(hardware.Price / timePeriod, 2);
 			return AccountDiscounts(price);
 		}
 
