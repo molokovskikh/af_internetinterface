@@ -613,7 +613,7 @@ set s.LastStartFail = true;")
 						// Если с даты изменения статуса клиента прошло > 30 дней, списать ежедневную плату за аренду
 						var sum = client.GetPriceForHardware(clientHardware.Hardware);
 						if (sum <= 0m)                  // В случае 0-й платы за аренду не создавать списание
-							break;
+							continue;
 
 						var sumDiff = Math.Min(phisicalClient.MoneyBalance - sum, 0);
 						var virtualWriteoff = Math.Min(Math.Abs(sumDiff), phisicalClient.VirtualBalance);
