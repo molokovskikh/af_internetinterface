@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using NHibernate;
 using NHibernate.Linq;
+using NHibernate.Validator.Util;
 
 namespace Inforoom2.Components
 {
@@ -151,7 +152,8 @@ namespace Inforoom2.Components
 		/// <param name="controller">Текущий контроллер ( на основе которого будут формироваться url-адреса )</param>
 		/// <param name="itemsPerPage">Количесто записей на страницу ( по умолчанию 10 )</param>
 		/// <param name="urlBasePrefix">Префикс url, по умолчанию пустой (url начинается с контроллера), </param>
-		public ModelFilter(Controller controller, int itemsPerPage = 10, string urlBasePrefix = "")
+		/// <param name="orderDirrection">Сортировка по умолчанию </param>
+		public ModelFilter(Controller controller, int itemsPerPage = 100, string urlBasePrefix = "", string orderByColumn = "", bool orderDirrection = true)
 		{
 			// получение наименования контроллера, при его наличии
 			var controllerName = controller.Url.RequestContext.RouteData.Values.ContainsKey(urlController)
@@ -161,7 +163,7 @@ namespace Inforoom2.Components
 				? controller.Url.RequestContext.RouteData.Values[urlAction].ToString() : "";
 
 			// заполнение своиств значениями по умолчанию
-			OrderByColumn = "";
+			OrderByColumn = orderByColumn;
 			SearchParam = "";
 			SearchText = "";
 			UrlBase = "";
@@ -173,6 +175,10 @@ namespace Inforoom2.Components
 			AscOrder = true;
 
 			var dic = controller.Url.RequestContext.HttpContext.Request.Params;
+			if ((!dic.AllKeys.Any(s=>s==UrlParamPrefix + "." + UrlOrderByColumn)) && orderDirrection == false)
+			{
+				AscOrder = false;
+			}
 			for (int i = 0; i < dic.Count; i++)
 			{
 				if (dic.Keys[i] == UrlParamPrefix + "." + UrlCurrentPage)

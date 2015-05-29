@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.AccessControl;
 using System.Web.Mvc;
+using Common.MySql;
 using Inforoom2.Components;
 using Inforoom2.Controllers;
 using Inforoom2.Helpers;
@@ -157,5 +158,25 @@ namespace InforoomControlPanel.Controllers
 			EditRole(role.Id);
 			return View("EditRole");
 		}
+		/// <summary>
+		/// Логи
+		/// </summary> 
+		public ActionResult LogRegResultList()
+		{
+			var pager = new ModelFilter<Log>(this, urlBasePrefix: "/", orderByColumn:"Id",orderDirrection: false);
+			var logs = pager.GetCriteria().List<Log>();
+			ViewBag.Pager = pager;
+			ViewBag.Logs = logs;
+
+			return View();
+		}
+		public ActionResult LogRegResultInfo(int Id = 0,string path="")
+		{
+			var log = DbSession.Query<Log>().FirstOrDefault(s => s.Id == Id); 
+			ViewBag.Log = log;
+			ViewBag.BackUrl = (path == string.Empty ? "/Admin/LogRegResultList" : path);
+			return View();
+		}
+		
 	}
 }

@@ -477,7 +477,7 @@ namespace Inforoom2.Models
 				"SendSmsNotification" 
 			};
 		}
-		public virtual string GetRelationChanges(string property, object oldPropertyValue)
+		public virtual string GetAdditionalAppealInfo(string property, object oldPropertyValue, ISession session)
 		{ 
 			return "";
 		}

@@ -30,7 +30,7 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			var employee = GetCurrentEmployee();
-			ModelUpdateListener.SetEmployee(employee);
+			ModelCrudListener.SetEmployee(employee);
 			string name = ViewBag.ControllerName + "Controller_" + ViewBag.ActionName;
 			var permission = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
 			//@todo убрать проверку, на accessDenined, а вместо этого просто не генерировать его. В целом подумать

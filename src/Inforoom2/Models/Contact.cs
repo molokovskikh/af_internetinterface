@@ -46,9 +46,10 @@ namespace Inforoom2.Models
 				"Date"
 			};
 		}
-		public virtual string GetRelationChanges(string property, object oldObj)
+
+		public virtual string GetAdditionalAppealInfo(string property, object oldPropertyValue, ISession session)
 		{
 			return "";
-		}
+		} 
 	}
 }

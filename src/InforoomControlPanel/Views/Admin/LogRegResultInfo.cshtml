@@ -1,0 +1,58 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Models 
+@model dynamic
+
+@{
+	ViewBag.Title = "Лог";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	var backUrl = (string)ViewBag.BackUrl;
+	var log = (Log)ViewBag.Log;
+}
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+ 
+	<div class="row" style="padding-top: 14px;">
+		<a class="btn btn-success btn-sm btn-icon icon-left" href="@backUrl">
+			<i class="entypo-left-open"></i>
+			Назад
+		</a>
+	</div>
+	<div class="row" style="padding-top: 14px;">
+		<div class="form-group col-lg-4">
+			<label class="col-lg-4 control-label"><strong>Инициатор</strong>:</label>
+			<div class="col-lg-4">
+				@if (log.Employee != null)
+				{
+					<span>@log.Employee.Name</span>
+				}
+				else
+				{
+					<span>Неизвестный</span>
+				}
+			</div>
+		</div>
+	</div>
+	<div class="row" style="padding-top: 14px;">
+		<div class="form-group col-lg-4">
+			<label class="col-lg-4 control-label"><strong>Дата</strong>:</label>
+			<div class="col-lg-4">
+				@log.Date
+			</div>
+		</div>
+	</div>
+	<div class="row" style="padding-top: 14px;">
+		<div class="form-group col-lg-4">
+			<label class="col-lg-4 control-label"><strong>Тип изменения</strong>:</label>
+			<div class="col-lg-4">
+				@log.Type.ToString()
+			</div>
+		</div>
+	</div>
+	<div class="row" style="padding-top: 14px;">
+		<div class="form-group col-lg-4">
+			<label class="col-lg-10 control-label"><strong>Содержание</strong>:</label>
+			<div class="col-lg-10">
+				@Html.Raw(log.Message)
+			</div>
+		</div>
+	</div>
+</div>

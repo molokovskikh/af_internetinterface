@@ -70,8 +70,10 @@ namespace InforoomControlPanel
 				.SetProperty("connection.driver_class", "NHibernate.Driver.MySqlDataDriver")
 				.SetProperty("connection.connection_string", nhibernateConnectionString)
 				.SetProperty("dialect", "NHibernate.Dialect.MySQL5Dialect")
-				.SetProperty("current_session_context_class", "web"); 
-			configuration.EventListeners.PostUpdateEventListeners = new IPostUpdateEventListener[] { new ModelUpdateListener() }; 
+				.SetProperty("current_session_context_class", "web");
+			configuration.EventListeners.PreUpdateEventListeners = new IPreUpdateEventListener[] { new ModelCrudListener() };
+			configuration.EventListeners.PostInsertEventListeners = new IPostInsertEventListener[] { new ModelCrudListener() };
+			configuration.EventListeners.PreDeleteEventListeners = new IPreDeleteEventListener[] { new ModelCrudListener() };
 			/*	var listener = new SyncObject();			configuration.EventListeners.PostUpdateEventListeners =
 				new IPostUpdateEventListener[] { listener };
 			configuration.EventListeners.PostInsertEventListeners =
