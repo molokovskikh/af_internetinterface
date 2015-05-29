@@ -34,7 +34,7 @@ namespace InternetInterface.Background
 			var mailhelper = new Mailer();
 
 			//Если не прошло дня то выходим, так как аудит должен случаться раз в день, а запускается процесс каждые пол часа
-			if (settings.NextDataAuditDate != null && DateTime.Compare(settings.NextDataAuditDate.Value, SystemTime.Now()) < 0)
+			if (settings.NextDataAuditDate != null && settings.NextDataAuditDate.Value > SystemTime.Now())
 				return;
 
 			//Формируем следующую дату прохода
@@ -42,7 +42,7 @@ namespace InternetInterface.Background
 			date = date.AddDays(1);
 			settings.NextDataAuditDate = new DateTime(date.Year, date.Month, date.Day, 15, 0, 0);
 			Session.Save(settings);
-			
+
 			//Обработка отсутствия значения ratedPeriodDate у пользователей
 			var sb = new StringBuilder();
 			var status = Session.Load<Status>((uint)StatusType.Worked);
@@ -51,7 +51,7 @@ namespace InternetInterface.Background
 			foreach (var client in clients) {
 				//Формируем сообщения для пользователей
 				var url = "http://stat.ivrn.net/ii/UserInfo/ShowPhysicalClient?filter.ClientCode=" + client.Id;
-				sb.Append("<br/><a href='" + url + "'>");
+				sb.Append("<br/>\n<a href='" + url + "'>");
 				sb.Append(client.Id);
 				sb.Append("</a>");
 				var ips = Session.Query<StaticIp>().Where(i => client.Endpoints.Contains(i.EndPoint)).ToList();
@@ -61,7 +61,6 @@ namespace InternetInterface.Background
 					sb.Append(" (Дата расчетного периода проставлена автоматически, так как клиент скорее всего является антенщиком)");
 				}
 			}
-
 			//@todo подумать над структурой данного класса и над адресами посылки почты - не правильно держать их как литеральные строки
 			mailhelper.SendText("service@analit.net", "service@analit.net", "Подозрительные клиенты в InternetInterface: " + clients.Count, sb.ToString());
 			Session.Flush();
