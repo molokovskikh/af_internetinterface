@@ -612,6 +612,9 @@ set s.LastStartFail = true;")
 					          (SystemTime.Now() - client.StatusChangedOn) > TimeSpan.FromDays(clientHardware.Hardware.FreeDays))) {
 						// Если с даты изменения статуса клиента прошло > 30 дней, списать ежедневную плату за аренду
 						var sum = client.GetPriceForHardware(clientHardware.Hardware);
+						if (sum <= 0m)                  // В случае 0-й платы за аренду не создавать списание
+							break;
+
 						var sumDiff = Math.Min(phisicalClient.MoneyBalance - sum, 0);
 						var virtualWriteoff = Math.Min(Math.Abs(sumDiff), phisicalClient.VirtualBalance);
 						var moneyWriteoff = sum - virtualWriteoff;
