@@ -66,15 +66,17 @@
 
 	$('.validateFormService').validate({
 		submitHandler: function (form) {
-			var id = $("#request_Id");
+			var id = $("#request_Id").val();
 			var flagFree = document.getElementById('request_Free').checked;
 			if (flagFree && checkFlag) {
 				var url = "${Siteroot}/ServiceRequest/AddServiceComment";
 				$.ajax({
 					url: url,
-					data: { requestId: id,
-							commentText: $('.comment_sum_text:first').val()},
-					cache: false
+					data: {
+						requestId: id,
+						commentText: $('.comment_sum_text:first').val()
+					},
+					cache: false 
 				});
 			}
 			form.submit();

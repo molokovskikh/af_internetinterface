@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace InforoomControlPanel.Test.Functional.ClientActions
 {
-	class CreatePlanFixture : ClientActionsFixture
+	internal class CreatePlanFixture : ClientActionsFixture
 	{
 		[Test, Description("Сохранение приватного сообщения для случайного клиента")]
 		public void SavePrivateMessage()
@@ -19,6 +19,8 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			AssertText(client.PhysicalClient.FullName);
 			Css("#privateMessage_Text").SendKeys("Тестовое сообщение");
 			Css("#privateMessage_EndDate").SendKeys(DateTime.Now.ToShortDateString());
+			// возникает ошибка бес "скликивания" по форме, 
+			// т.к. пенель календаря заслоняет следующее поле 
 			Css(".page-container").Click();
 			Css("#privateMessage_Enabled").Click();
 			Css("#SaveMsgBtn").Click();

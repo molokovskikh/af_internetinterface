@@ -68,9 +68,12 @@
 						<button type="submit" id="Button1" class="button ok">Изменить пароль и показать карту</button>
 					</form>
 				<% if _client.HaveRed(): %>
-					<button type=button class="button ok" onclick="GoTo('http://redmine.analit.net/issues/${_client.RedmineTask}');">Страница Redmine</button></td>
+					<button type=button class="button ok" onclick="GoTo('http://redmine.analit.net/issues/${_client.RedmineTask}');">Страница Redmine</button>
 				<% end %>
-				<a href="http://ivrn.net/Account/AdminLogin?clientId=${ClientCode}&username=${MapPartner.Login}" class="button ok" target="_blank">Личный кабинет</a>
+					<a href="http://ivrn.net/Account/AdminLogin?clientId=${ClientCode}&username=${MapPartner.Login}" class="button ok" target="_blank">Личный кабинет</a>
+					<a href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/Info?id=${ClientCode}" class="big-link button ok"
+					   style="color: #00a651;" target="_blank"><b>Страница клиента</b></a>
+				</td>
 			</tr>
 		</tbody>
 	</table>

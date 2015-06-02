@@ -305,7 +305,7 @@ namespace InternetInterface.Controllers
 			if (!withoutEndPoint && currentEndPoint == 0) {
 				if ((ConnectInfo.static_IP != string.Empty) || (nullFlag)) {
 					if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
-						(oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
+					    (oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
 						if (client.GetClientType() == ClientType.Phisical) {
 							client.PhysicalClient.UpdatePackageId(clientEntPoint);
 						}
@@ -445,7 +445,7 @@ namespace InternetInterface.Controllers
 					}
 				}
 				if (client.Disabled
-					&& client.Orders.Count > 0)
+				    && client.Orders.Count > 0)
 					client.Disabled = false;
 				DbSession.Save(client);
 				DbSession.Save(existingOrder);
@@ -478,7 +478,7 @@ namespace InternetInterface.Controllers
 				var client = DbSession.Load<Client>(ClientID);
 				var physicalClient = client.PhysicalClient;
 				var password = CryptoPass.GeneratePassword();
-				physicalClient.Password = CryptoPass.GetHashString(password); 
+				physicalClient.Password = CryptoPass.GetHashString(password);
 				DbSession.Save(physicalClient);
 				var endPoint = client.Endpoints.FirstOrDefault();
 				if (endPoint != null)
@@ -581,12 +581,12 @@ namespace InternetInterface.Controllers
 			if (oldStatus != client.Status) {
 				// BlockedAndNoConnected = "зарегистрирован", BlockedAndConnected = "не подключен"
 				var isDissolved = client.Status.Type == StatusType.Dissolved;
-				var setStatusToDissolved = isDissolved && 
-					(oldStatus.Type == StatusType.BlockedAndNoConnected || oldStatus.Type == StatusType.VoluntaryBlocking);
+				var setStatusToDissolved = isDissolved &&
+				                           (oldStatus.Type == StatusType.BlockedAndNoConnected || oldStatus.Type == StatusType.VoluntaryBlocking);
 				if (oldStatus.ManualSet || oldStatus.Type == StatusType.BlockedAndConnected || setStatusToDissolved) {
 					if (isDissolved && (client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
 						GetErrorSummary(updateClient).RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное оборудование," +
-							" перед расторжением договора нужно изъять оборудование");
+						                                                             " перед расторжением договора нужно изъять оборудование");
 					}
 				}
 				else {
@@ -721,7 +721,7 @@ namespace InternetInterface.Controllers
 			var services = DbSession.Query<Service>().OrderBy(s => s.HumanName).ToList();
 			PropertyBag["services"] = services.Where(s => s.CanActivateInWeb(client) && IsNotRent(s)).ToList();
 			PropertyBag["activeServices"] = client.ClientServices.Where(c => c.Service.InterfaceControl && IsNotRent(c.Service)).ToList()
-					.OrderBy(s => s.Service.HumanName).ToList();
+				.OrderBy(s => s.Service.HumanName).ToList();
 			PropertyBag["rentableHardwares"] = DbSession.Query<RentableHardware>().OrderBy(h => h.Name).ToList();
 		}
 
@@ -919,9 +919,7 @@ namespace InternetInterface.Controllers
 			client.Endpoints.Clear();
 			client.PhysicalClient.HouseObj = null;
 			DbSession.Save(client);
-			foreach (var graph in DbSession.Query<ConnectGraph>().Where(c => c.Client == client)) {
-				DbSession.Delete(graph);
-			}
+			foreach (var graph in DbSession.Query<ConnectGraph>().Where(c => c.Client == client)) DbSession.Delete(graph);
 			CreateAppeal("Причина отказа:  " + prichina + " \r\n Комментарий: \r\n " + Appeal, ClientID);
 			LayoutName = "NoMap";
 		}
@@ -990,9 +988,7 @@ namespace InternetInterface.Controllers
 				return false;
 			var client = DbSession.Load<Client>(clientId);
 			if (client.BeginWork == null)
-				foreach (var graph in DbSession.Query<ConnectGraph>().Where(c => c.Client == client).ToList()) {
-					DbSession.Delete(graph);
-				}
+				foreach (var graph in DbSession.Query<ConnectGraph>().Where(c => c.Client == client).ToList()) DbSession.Delete(graph);
 			var briad = DbSession.Load<Brigad>(brigadId);
 			var intervals = briad.GetIntervals(DbSession, graph_date);
 			var connectGraph = new ConnectGraph {
@@ -1023,9 +1019,7 @@ namespace InternetInterface.Controllers
 			var briad = DbSession.Load<Brigad>(brigadId);
 			var intervals = briad.GetIntervals(DbSession, graph_date);
 			if (client.BeginWork == null)
-				foreach (var graph in DbSession.Query<ConnectGraph>().Where(c => c.Client == client).ToList()) {
-					DbSession.Delete(graph);
-				}
+				foreach (var graph in DbSession.Query<ConnectGraph>().Where(c => c.Client == client).ToList()) DbSession.Delete(graph);
 			DbSession.Save(new ConnectGraph {
 				Client = client,
 				Brigad = briad,
@@ -1211,14 +1205,18 @@ namespace InternetInterface.Controllers
 		/// <summary>
 		/// Сохранение заказа (фактически поля "Адрес подключения") со страницы редактирования
 		/// </summary>
-		public void SaveConnectionAddress([DataBind("order")] Order order)
+		public void SaveConnectionAddress(int id, int clientId, string connection)
 		{
-			if (order == null || order.Client == null) {
+			if (id == 0 || connection == null) {
 				RedirectToSiteRoot();
 				return;
 			}
-			DbSession.Update(order);
-			RedirectToAction("ShowLawyerPerson", new Dictionary<string, string> { { "filter.ClientCode", order.Client.Id.ToString("D") } });
+			var existingOrder = DbSession.Query<Order>().FirstOrDefault(o => o.Id == id);
+			if (existingOrder != null) {
+				existingOrder.ConnectionAddress = connection;
+				DbSession.Update(existingOrder);
+			}
+			RedirectToAction("ShowLawyerPerson", new Dictionary<string, string> { { "filter.ClientCode", clientId.ToString("D") } });
 		}
 
 		public void OrdersArchive(uint clientCode)
