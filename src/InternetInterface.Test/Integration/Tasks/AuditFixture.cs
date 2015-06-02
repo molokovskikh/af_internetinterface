@@ -24,9 +24,10 @@ namespace InternetInterface.Test.Integration.Tasks
 		public void CheckForHouseObjAbsenceFixtureExists()
 		{
 			var mailhelper = new Mailer();
-			var clientWithEmptyHouseObj = session.Query<PhysicalClient>().FirstOrDefault();
+			var clientWithEmptyHouseObj = session.Query<Client>().FirstOrDefault(s => s.PhysicalClient != null);
 			if (clientWithEmptyHouseObj != null) {
-				clientWithEmptyHouseObj.HouseObj = null;
+				clientWithEmptyHouseObj.PhysicalClient.HouseObj = null;
+				clientWithEmptyHouseObj.Status.Id = 5;
 				session.Update(clientWithEmptyHouseObj);
 				session.Flush();
 			}
@@ -37,10 +38,12 @@ namespace InternetInterface.Test.Integration.Tasks
 		[Test(Description = "Проверка на формирование сообщения при отсуствии физика с пустым полем HouseObj.")]
 		public void CheckForHouseObjAbsenceFixtureExistsNot()
 		{
-			var clientWithEmptyHouseObj = session.Query<PhysicalClient>().Where(s => s.HouseObj == null).ToList();
+			var clientWithEmptyHouseObj = session.Query<Client>().Where(s => s.PhysicalClient != null && s.PhysicalClient.HouseObj == null
+			                                                                 && s.Status.Id != 10 && s.Status.Id != 3 && s.Status.Id != 1).ToList();
 			var houseObj = session.Query<House>().FirstOrDefault();
 			foreach (var item in clientWithEmptyHouseObj) {
-				item.HouseObj = houseObj;
+				item.PhysicalClient.HouseObj = houseObj;
+				item.Status.Id = 5;
 				session.Update(item);
 			}
 			session.Flush();

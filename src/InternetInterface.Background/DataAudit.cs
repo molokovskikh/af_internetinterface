@@ -66,9 +66,13 @@ namespace InternetInterface.Background
 		/// <returns>Содержание сообщения</returns>
 		public string CheckForHouseObjAbsence()
 		{
-			var clients = Session.Query<Client>().Where(s => s.PhysicalClient != null && s.PhysicalClient.HouseObj == null).Select(s => s.Id).ToList();
+			var clients = Session.Query<Client>().Where(s => s.PhysicalClient != null
+			                                                 && s.PhysicalClient.HouseObj == null && s.Status.Id != 10 && s.Status.Id != 3 && s.Status.Id != 1).Select(s => s.Id).ToList();
 			if (clients.Count > 0) {
-				return "Найдены физики без HouseObj со следующими Clinet.Id: " + string.Join(", ", clients);
+				string message = "Найдены физики без HouseObj со следующими Clinet.Id: <br/>";
+				var url = "http://stat.ivrn.net/ii/UserInfo/ShowPhysicalClient?filter.ClientCode=";
+				for (int i = 0; i < clients.Count; i++) message += "<a href='" + url + clients[i] + "'>" + clients[i] + "</a><br/>";
+				return message;
 			}
 			return string.Empty;
 		}
