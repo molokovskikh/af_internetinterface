@@ -289,6 +289,7 @@
     <Compile Include="Helpers\AuthorizeUserAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Helpers\ModelCrudListener.cs" />
     <Compile Include="Helpers\SessionHelper.cs" />
     <Compile Include="Helpers\CustomPrincipal.cs" />
     <Compile Include="Helpers\IpGeoHelper.cs" />
@@ -298,9 +299,11 @@
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Helpers\ViewHelper.cs" />
     <Compile Include="Intefaces\IModelWithPriority.cs" />
+    <Compile Include="Intefaces\ILogAppeal.cs" />
     <Compile Include="Models\AdditionalStatus.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Administrator.cs" />
+    <Compile Include="Models\ModelAppeal.cs" />
     <Compile Include="Models\BillingHistory.cs" />
     <Compile Include="Models\Banner.cs" />
     <Compile Include="Models\Slide.cs" />

@@ -11,6 +11,7 @@ using System.Web.Security;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate;
+using NHibernate.Event;
 using NHibernate.Linq;
 using Configuration = NHibernate.Cfg.Configuration;
 
@@ -70,7 +71,9 @@ namespace InforoomControlPanel
 				.SetProperty("connection.connection_string", nhibernateConnectionString)
 				.SetProperty("dialect", "NHibernate.Dialect.MySQL5Dialect")
 				.SetProperty("current_session_context_class", "web");
-
+			configuration.EventListeners.PreUpdateEventListeners = new IPreUpdateEventListener[] { new ModelCrudListener() };
+			configuration.EventListeners.PostInsertEventListeners = new IPostInsertEventListener[] { new ModelCrudListener() };
+			configuration.EventListeners.PreDeleteEventListeners = new IPreDeleteEventListener[] { new ModelCrudListener() };
 			/*	var listener = new SyncObject();			configuration.EventListeners.PostUpdateEventListeners =
 				new IPostUpdateEventListener[] { listener };
 			configuration.EventListeners.PostInsertEventListeners =

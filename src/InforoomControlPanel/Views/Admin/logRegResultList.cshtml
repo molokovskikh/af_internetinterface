@@ -1,0 +1,57 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Models 
+@model dynamic
+
+@{
+	var urlRoot = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
+	ViewBag.Title = "Список логов";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	IList<Log> logs = ViewBag.Logs;
+	ModelFilter<Log> pager = ViewBag.Pager;
+}
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+		<thead>
+			<tr role="row">
+				<th class="sorting_asc" rowspan="1" colspan="1" style="width: 50px;" aria-label="">
+					<div class="checkbox checkbox-replace neon-cb-replacement">
+						<label class="cb-wrapper">
+							<input type="checkbox" id="chk-1">
+							<div class="checked"></div>
+						</label>
+					</div>
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.Id)">Номер</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.Employee)">Пользователь</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.Type)">Тип события</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.Date)">Дата</a></th> 
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.Message)">Содержание</a></th> 
+				<th  tabindex="0" aria-controls="table-2">Действие</th> 
+			</tr>
+		</thead>
+
+		<tbody>
+			@foreach (var log in logs) {
+				<tr role="row" class="odd">
+					<td></td>
+					<td class="sorting_1">
+						<span>@log.Id</span>
+					</td>
+					<td><span>@(log.Employee != null ? log.Employee.Name : "none")</span></td>
+					<td><span>@log.Type.ToString()</span></td>
+					<td><span>@log.Date</span></td>
+					<td>@(log.Message.Length > 300 ? Html.Raw(log.Message.Substring(0, 300) + "...") : Html.Raw(log.Message))</td>
+					<td>
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("LogRegResultInfo", "Admin", new { @Id = log.Id, @path = Request.Url.ToString() })">
+							<i class="entypo-vcard"></i>
+							Просмотреть
+						</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<div class="row">
+		@{ Html.RenderPartial("Pagination"); }
+	</div>
+</div>

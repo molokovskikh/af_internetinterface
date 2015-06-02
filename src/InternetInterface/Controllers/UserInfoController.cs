@@ -585,9 +585,8 @@ namespace InternetInterface.Controllers
 				                           (oldStatus.Type == StatusType.BlockedAndNoConnected || oldStatus.Type == StatusType.VoluntaryBlocking);
 				if (oldStatus.ManualSet || oldStatus.Type == StatusType.BlockedAndConnected || setStatusToDissolved) {
 					if (isDissolved && (client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
-						GetErrorSummary(updateClient).RegisterErrorMessage("Status",
-							"Договор не может быть расторгнут тк у клиента имеется арендованное оборудование," +
-							" перед расторжением договора нужно изъять оборудование");
+						GetErrorSummary(updateClient).RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное оборудование," +
+						                                                             " перед расторжением договора нужно изъять оборудование");
 					}
 				}
 				else {

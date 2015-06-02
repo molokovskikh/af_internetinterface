@@ -82,7 +82,9 @@ namespace Inforoom2
 				.SetProperty("connection.connection_string", nhibernateConnectionString)
 				.SetProperty("dialect", "NHibernate.Dialect.MySQL5Dialect")
 				.SetProperty("current_session_context_class", "web");
-
+			configuration.EventListeners.PreUpdateEventListeners = new IPreUpdateEventListener[] { new ModelCrudListener() };
+			configuration.EventListeners.PostInsertEventListeners = new IPostInsertEventListener[] { new ModelCrudListener() };
+			configuration.EventListeners.PreDeleteEventListeners = new IPreDeleteEventListener[] { new ModelCrudListener() };
 			/*	var listener = new SyncObject();			configuration.EventListeners.PostUpdateEventListeners =
 				new IPostUpdateEventListener[] { listener };
 			configuration.EventListeners.PostInsertEventListeners =
@@ -111,7 +113,7 @@ namespace Inforoom2
 			HttpException httpException = exception as HttpException;
 			RouteData routeData = new RouteData();
 			routeData.Values.Add("controller", "StaticContent");
-			
+
 			if (httpException == null) {
 				routeData.Values.Add("action", "Error");
 			}
@@ -147,15 +149,14 @@ namespace Inforoom2
 			// Call target Controller and pass the routeData.
 			IController errorController = new StaticContentController();
 			errorController.Execute(new RequestContext(
-					new HttpContextWrapper(Context), routeData));
-			
+				new HttpContextWrapper(Context), routeData));
 		}
 
 		public static void RegisterRoutes(RouteCollection routes)
 		{
 			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 			routes.MapRoute("old index", "Main/Index", new { controller = "Home", action = "PermanentHomeRedirect" });
-			routes.MapRoute("Default","{controller}/{action}/{id}", new { controller = "Home", action = "Index", id = UrlParameter.Optional });
+			routes.MapRoute("Default", "{controller}/{action}/{id}", new { controller = "Home", action = "Index", id = UrlParameter.Optional });
 		}
 	}
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Inforoom2.Controllers;
+using Inforoom2.Helpers;
 using Inforoom2.Intefaces;
 using Inforoom2.Models;
 using NHibernate.Linq;
@@ -29,6 +30,7 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			var employee = GetCurrentEmployee();
+			ModelCrudListener.SetEmployee(employee);
 			string name = ViewBag.ControllerName + "Controller_" + ViewBag.ActionName;
 			var permission = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
 			//@todo убрать проверку, на accessDenined, а вместо этого просто не генерировать его. В целом подумать

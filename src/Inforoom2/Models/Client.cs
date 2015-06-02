@@ -4,12 +4,16 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Common.Tools;
+using Inforoom2.Intefaces;
 using Inforoom2.Models.Services;
 using Inforoom2.validators;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate;
-using NHibernate.Mapping.Attributes;
-using NHibernate.Util;
+using NHibernate.Mapping.Attributes; 
+using NHibernate.Util; 
+using NHibernate.Validator.Cfg.MappingSchema;
+using NHibernate.Validator.Constraints; 
 
 namespace Inforoom2.Models
 {
@@ -17,7 +21,7 @@ namespace Inforoom2.Models
 	/// Модель пользователя
 	/// </summary>
 	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof(Client))]
-	public class Client : BaseModel
+	public class Client : BaseModel, ILogAppeal
 	{
 		public Client()
 		{
@@ -33,12 +37,12 @@ namespace Inforoom2.Models
 
 			/// из старой админки. 
 			Disabled = true;
-			SendSmsNotification = true; 
+			SendSmsNotification = true;
 			PercentBalance = 0.8m;
 			FreeBlockDays = 28;
 			CreationDate = DateTime.Now;
 			/// задано по результатам анализа изменений в БД "регистрацией клиента" старой админки.
-			BlockDate = DateTime.Now;	 
+			BlockDate = DateTime.Now;
 			YearCycleDate = DateTime.Now;
 		}
 
@@ -53,7 +57,7 @@ namespace Inforoom2.Models
 			get { return ConnectionRequests != null ? ConnectionRequests.FirstOrDefault() : null; }
 			set { }
 		}
-		  
+
 		[Property, Description("Перенесено из старой админки")]
 		public virtual DateTime ConnectedDate { get; set; }
 		[Property, Description("Перенесено из старой админки (в старом проекте ему ничего не присваивается.)")]
@@ -238,7 +242,7 @@ namespace Inforoom2.Models
 		/// <returns>Расчётное кол-во дней работы без пополнения баланса</returns>
 		public virtual int GetWorkDays()
 		{
-			var priceInDay = Plan.Price / SystemTime.Now().DaysInMonth(); // ToDo Улучшить алгоритм вычисления
+			var priceInDay = Plan.Price / DateTime.Now.DaysInMonth(); // ToDo Улучшить алгоритм вычисления
 			return (int)Math.Floor(Balance / priceInDay);
 		}
 
@@ -308,7 +312,7 @@ namespace Inforoom2.Models
 		public virtual void SetStatus(StatusType status, ISession session)
 		{
 			SetStatus(session.Load<Status>((Int32)status));
-		} 
+		}
 
 		public virtual void SetStatus(Status status)
 		{
@@ -345,8 +349,9 @@ namespace Inforoom2.Models
 				Discount = 0;
 			}
 
-			if (Status.Type != status.Type) {
-				StatusChangedOn = SystemTime.Now();
+			if (Status.Type != status.Type)
+			{
+				StatusChangedOn = DateTime.Now;
 			}
 			Status = status;
 		}
@@ -457,6 +462,24 @@ namespace Inforoom2.Models
 		public virtual string GetAddress()
 		{
 			return _oldAdressStr;
+		}
+
+		public virtual Client GetAppealClient(ISession session)
+		{
+			return this;
+		}
+
+		public virtual List<string> GetAppealFields()
+		{
+			return new List<string>() {
+				"LegalClient",
+				"Status",
+				"SendSmsNotification" 
+			};
+		}
+		public virtual string GetAdditionalAppealInfo(string property, object oldPropertyValue, ISession session)
+		{ 
+			return "";
 		}
 	}
 

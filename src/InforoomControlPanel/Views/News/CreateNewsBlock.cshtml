@@ -3,9 +3,9 @@
 @{
 	NewsBlock newsBlock = ViewBag.NewsBlock;
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	ViewBag.Title = "Изменить новость";
+	ViewBag.Title = "Создать новость";
 }
-	@using (@Html.BeginForm("UpdateNewsBlock", "News", FormMethod.Post,new {@class = "form-horizontal form-groups-bordered"})) {
+	@using (@Html.BeginForm("CreateNewsBlock", "News", FormMethod.Post,new {@class = "form-horizontal form-groups-bordered"})) {
 			<div class="form-group">
 				@Html.HiddenFor(model => newsBlock.Id)
 			@Html.HiddenFor(model => newsBlock.Priority)
@@ -52,7 +52,7 @@
 			<div class="form-group">
 			<div class="col-sm-7">
 				</div>
-				<button class="btn btn-green" type="submit">Изменить</button>
+				<button class="btn btn-green" type="submit">Сохранить</button>
 			</div>
 		}
 <div class="form-group">

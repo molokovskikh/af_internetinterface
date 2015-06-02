@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Common.Tools;
+using Inforoom2.Intefaces;
 using InternetInterface.Models;
+using NHibernate;
+using NHibernate.Linq;
+using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Util;
 using NHibernate.Validator.Constraints;
@@ -13,7 +18,7 @@ using NHibernate.Validator.Constraints;
 namespace Inforoom2.Models
 {
 	[Class(0, Table = "PhysicalClients", Schema = "internet", NameType = typeof(PhysicalClient))]
-	public class PhysicalClient : BaseModel
+	public class PhysicalClient : BaseModel, ILogAppeal
 	{
 		[Property]
 		public virtual string Password { get; set; }
@@ -26,7 +31,8 @@ namespace Inforoom2.Models
 		{
 			get
 			{
-				if (Client != null && Client.Contacts != null) {
+				if (Client != null && Client.Contacts != null)
+				{
 					var contactMail = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.Email);
 					return contactMail != null ? contactMail.ContactString : "";
 				}
@@ -34,9 +40,11 @@ namespace Inforoom2.Models
 			}
 			set
 			{
-				if (Client != null && Client.Contacts != null) {
+				if (Client != null && Client.Contacts != null)
+				{
 					var contactMail = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.Email);
-					if (contactMail != null) {
+					if (contactMail != null)
+					{
 						contactMail.ContactString = value;
 					}
 				}
@@ -94,7 +102,8 @@ namespace Inforoom2.Models
 		{
 			get
 			{
-				if (Client != null && Client.Contacts != null) {
+				if (Client != null && Client.Contacts != null)
+				{
 					var contactPhone = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
 					return contactPhone != null ? contactPhone.ContactString : "";
 				}
@@ -102,24 +111,26 @@ namespace Inforoom2.Models
 			}
 			set
 			{
-				if (Client != null && Client.Contacts != null) {
+				if (Client != null && Client.Contacts != null)
+				{
 					var contactPhone = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
-					if (contactPhone != null) {
+					if (contactPhone != null)
+					{
 						contactPhone.ContactString = value;
 					}
 				}
 			}
 		}
-
+		 
 		[Property(NotNull = true), NotEmpty(Message = "Введите имя")]
 		public virtual string Name { get; set; }
-
+		 
 		[Property(NotNull = true), NotEmpty(Message = "Введите фамилию")]
 		public virtual string Surname { get; set; }
-
+		 
 		[Property(NotNull = true), NotEmpty(Message = "Введите отчество")]
 		public virtual string Patronymic { get; set; }
-
+		 
 		[DataType(DataType.Date)]
 		[Property(Column = "DateOfBirth")]
 		public virtual DateTime BirthDate { get; set; }
@@ -135,7 +146,8 @@ namespace Inforoom2.Models
 		public virtual UserWriteOff RequestChangePlan(Plan planToSwitchOn)
 		{
 			var price = Plan.GetTransferPrice(planToSwitchOn);
-			if (!IsEnoughBalance(price)) {
+			if (!IsEnoughBalance(price))
+			{
 				return null;
 			}
 			return SwitchPlan(planToSwitchOn, price);
@@ -146,7 +158,8 @@ namespace Inforoom2.Models
 			var comment = string.Format("Изменение тарифа, старый '{0}' новый '{1}'", Plan.Name, planTo.Name);
 			Plan = planTo;
 			WriteOff(price);
-			var writeOff = new UserWriteOff {
+			var writeOff = new UserWriteOff
+			{
 				Client = Client,
 				Date = SystemTime.Now(),
 				Sum = price,
@@ -154,14 +167,15 @@ namespace Inforoom2.Models
 				IsProcessedByBilling = true
 			};
 			LastTimePlanChanged = SystemTime.Now();
-			if (Client.Internet.ActivatedByUser) 
-				Client.Endpoints.ForEach(e => e.PackageId = Plan.PackageSpeed.PackageId); 
+			if (Client.Internet.ActivatedByUser)
+				Client.Endpoints.ForEach(e => e.PackageId = Plan.PackageSpeed.PackageId);
 			return writeOff;
 		}
 
 		public virtual bool IsEnoughBalance(decimal sum)
 		{
-			if (sum < 0) {
+			if (sum < 0)
+			{
 				return false;
 			}
 			return Balance - sum > 0;
@@ -189,15 +203,18 @@ namespace Inforoom2.Models
 			decimal virtualWriteoff;
 			decimal moneyWriteoff;
 
-			if (writeoffVirtualFirst) {
+			if (writeoffVirtualFirst)
+			{
 				virtualWriteoff = Math.Min(sum, VirtualBalance);
 			}
-			else {
+			else
+			{
 				virtualWriteoff = Math.Min(Math.Abs(Math.Min(MoneyBalance - sum, 0)), VirtualBalance);
 			}
 			moneyWriteoff = sum - virtualWriteoff;
 
-			return new WriteOff {
+			return new WriteOff
+			{
 				Client = Client,
 				WriteOffDate = SystemTime.Now(),
 				WriteOffSum = Math.Round(sum, 2),
@@ -215,12 +232,14 @@ namespace Inforoom2.Models
 		{
 			var availableChars = "23456789qwertyupasdfghjkzxcvbnmQWERTYUPASDFGHJKLZXCVBNM";
 			var password = String.Empty;
-			while (password.Length < 8) {
+			while (password.Length < 8)
+			{
 				int availableChars_elem = 0;
 
 				var rngCsp = new RNGCryptoServiceProvider();
 				var randomNumber = new byte[1];
-				do {
+				do
+				{
 					rngCsp.GetBytes(randomNumber);
 				} while (!(randomNumber[0] < (availableChars.Length - 1) * (Byte.MaxValue / (availableChars.Length - 1))));
 
@@ -229,7 +248,8 @@ namespace Inforoom2.Models
 				password += availableChars[availableChars_elem];
 			}
 			string hash = string.Empty;
-			if (password != null) {
+			if (password != null)
+			{
 				byte[] bytes = Encoding.Unicode.GetBytes(password);
 				var CSP = new MD5CryptoServiceProvider();
 				byte[] byteHash = CSP.ComputeHash(bytes);
@@ -241,11 +261,65 @@ namespace Inforoom2.Models
 		}
 
 		//////////////////////////////////////////////////
+
+		public virtual Client GetAppealClient(ISession session)
+		{
+			return session.Query<Client>().FirstOrDefault(s => s.PhysicalClient.Id == this.Id);
+		}
+		public virtual List<string> GetAppealFields()
+		{
+			return new List<string>() {
+				"Name",
+				"Surname",
+				"Patronymic", 
+				"CertificateType",
+				"CertificateName",
+				"PassportSeries",
+				"PassportNumber",
+				"PassportDate",
+				"PassportResidention",
+				"RegistrationAddress",
+				"Plan",
+				"Checked",
+				"Address"
+			};
+		}
+		public virtual string GetAdditionalAppealInfo(string property, object oldPropertyValue, ISession session)
+		{
+			string message = "";
+			// для свойства Tariff
+			if (property == "Plan")
+			{
+				var oldPlan = oldPropertyValue == null ? null : ((Plan)oldPropertyValue);
+				var currentPlan = this.Plan;
+				if (oldPlan != null)
+				{
+					message += property + " было: " + oldPlan.Name + " <br/>";
+				}
+				else
+				{
+					message += property + " было: " + "значение отсуствует <br/> ";
+				}
+				if (currentPlan != null)
+				{
+					message += property + " стало: " + currentPlan.Name + " <br/>";
+				}
+				else
+				{
+					message += property + " стало: " + "значение отсуствует <br/> ";
+				}
+			}
+			return message;
+		}
 	}
 
 	public enum CertificateType
 	{
-		[Display(Name = "Паспорт РФ")] [Description("Паспорт РФ")] Passport = 0,
-		[Display(Name = "Иной документ")] [Description("Иной документ")] Other = 1
+		[Display(Name = "Паспорт РФ")]
+		[Description("Паспорт РФ")]
+		Passport = 0,
+		[Display(Name = "Иной документ")]
+		[Description("Иной документ")]
+		Other = 1
 	}
 }
