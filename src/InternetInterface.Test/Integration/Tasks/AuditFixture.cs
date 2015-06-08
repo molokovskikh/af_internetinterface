@@ -23,14 +23,36 @@ namespace InternetInterface.Test.Integration.Tasks
 		[Test(Description = "Проверка на формирование сообщения при наличии физика с пустым полем HouseObj.")]
 		public void CheckForHouseObjAbsenceFixtureExists()
 		{
+			// Создаем необходимые данные 
 			var mailhelper = new Mailer();
-			var clientWithEmptyHouseObj = session.Query<Client>().FirstOrDefault(s => s.PhysicalClient != null);
-			if (clientWithEmptyHouseObj != null) {
-				clientWithEmptyHouseObj.PhysicalClient.HouseObj = null;
-				clientWithEmptyHouseObj.Status.Id = 5;
-				session.Update(clientWithEmptyHouseObj);
+			if (session.Query<Status>().Count() < 5) {
+				for (int i = 0; i < 10; i++) session.Save(new Status() { Name = "ssdsd" + i, ShortName = "sdsd" });
 				session.Flush();
 			}
+			var clientWithEmptyHouseObj = new Client {
+				PhysicalClient = new PhysicalClient {
+					Password = "sdcsdcsdcsdcsdscfv",
+					PhoneNumber = "4951234567",
+					Email = "test@client.ru",
+					Name = "Иван",
+					Surname = "Кузнецов",
+					Patronymic = "нормальный клиент",
+					PassportDate = DateTime.Now.AddYears(-20),
+					DateOfBirth = DateTime.Now.AddYears(-40),
+					PassportNumber = "123456",
+					PassportSeries = "1234",
+					Balance = 1000
+				},
+				SendSmsNotification = false,
+				Disabled = false,
+				RatedPeriodDate = DateTime.Now,
+				FreeBlockDays = 28
+			};
+			clientWithEmptyHouseObj.PhysicalClient.HouseObj = null;
+			clientWithEmptyHouseObj.Status = session.Query<Status>().FirstOrDefault(s => s.Id == 5);
+			session.Save(clientWithEmptyHouseObj);
+			session.Flush();
+			// проводим тестирвоание
 			string mailAboutHouseObjAbsence = new DataAudit(session).CheckForHouseObjAbsence();
 			Assert.That(mailAboutHouseObjAbsence, Is.Not.EqualTo(""));
 		}
@@ -55,8 +77,18 @@ namespace InternetInterface.Test.Integration.Tasks
 		public void CheckForSuspiciousClientFixtureExists()
 		{
 			var mailhelper = new Mailer();
+			// Создаем необходимые данные 
 			var settings = session.Query<InternetSettings>().First();
-
+			if (session.Query<Status>().Count() < 5)
+			{
+				for (int i = 0; i < 10; i++) session.Save(new Status() { Name = "ssdsd" + i, ShortName = "sdsd" });
+				session.Flush();
+			}
+			if (settings == null)
+			{
+				settings = new InternetSettings() { NextBillingDate = DateTime.Now };
+				session.Save(settings);
+			}
 			var status = session.Load<Status>((uint)StatusType.Worked);
 			var clientSuspiciousClient = session.Query<Client>().FirstOrDefault();
 			if (clientSuspiciousClient != null) {
@@ -68,6 +100,7 @@ namespace InternetInterface.Test.Integration.Tasks
 				session.Flush();
 			}
 			int suspiciousClientNumber = 0;
+			// проводим тестирвоание
 			string mailAboutSuspiciousClient = new DataAudit(session).CheckForSuspiciousClient(settings, ref suspiciousClientNumber);
 			if (mailAboutSuspiciousClient != string.Empty) {
 				mailhelper.SendText("service@analit.net", "service@analit.net", "Подозрительные клиенты в InternetInterface: " + suspiciousClientNumber, mailAboutSuspiciousClient);
