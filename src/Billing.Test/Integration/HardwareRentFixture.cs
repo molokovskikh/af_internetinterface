@@ -3,6 +3,7 @@ using System.Linq;
 using Castle.ActiveRecord;
 using Common.Tools;
 using InternetInterface.Models;
+using NHibernate;
 using NUnit.Framework;
 
 namespace Billing.Test.Integration
@@ -81,55 +82,40 @@ namespace Billing.Test.Integration
 				AddRentalHardwareToClient();
 				ActiveRecordMediator.Refresh(client);
 
-				// Установить первоначальный баланс клиента
-				client.PhysicalClient.Balance = 10m;
-				ActiveRecordMediator.UpdateAndFlush(client.PhysicalClient);
+				// Установить статус заблокирован десять дней назад
+				var status = ActiveRecordMediator<Status>.FindByPrimaryKey((uint)7);
+				client.SetStatus(status);
+				client.PaidDay = false;
+				client.StatusChangedOn = SystemTime.Now().AddDays(-10);
+				ActiveRecordMediator.UpdateAndFlush(client);
 
-				// Создать 2 списания + 1 платеж для клиента и обработать в Billing
-				var writeoff1 = client.PhysicalClient.WriteOff(50m);
-				writeoff1.WriteOffDate = DateTime.Now.AddDays(-20);
-				writeoff1.BeforeWriteOffBalance = client.Balance;
-				writeoff1.Comment = "WriteOff #1";
-				ActiveRecordMediator.SaveAndFlush(writeoff1);
+				//После непосредственной блокировки не должно быть задачи в редмайне, так как еще не прошел месяц
 				billing.ProcessWriteoffs();
-				var payment = new Payment(client, 120m) {
-					BillingAccount = false,
-					RecievedOn = DateTime.Now.AddDays(-19),
-					PaidOn = DateTime.Now.AddDays(-19),
-					Virtual = true,
-					Comment = "payment"
-				};
-				ActiveRecordMediator.SaveAndFlush(payment);
-				billing.SafeProcessPayments();
-				var writeoff2 = new UserWriteOff(client, 100m, "WriteOff #2") {
-					BillingAccount = false,
-					Date = DateTime.Now.AddDays(-18)
-				};
-				ActiveRecordMediator.SaveAndFlush(writeoff2);
-				billing.SafeProcessPayments();
 				ActiveRecordMediator.Refresh(client);
+				var redmineIssues = ActiveRecordMediator<RedmineIssue>.FindAll().ToList();
+				var clientIssues = redmineIssues.Where(ri => ri.subject.Contains(client.Id.ToString("D5")) && ri.status_id != 5).ToList();
+				Assert.That(clientIssues.Count, Is.EqualTo(0), "Задачи в редмайн быть не должно");
 
-				for (var i = 1; i <= 30; i++) {
-					// Сбросить флаг клиента "день оплачен" и обработать списания
-					client.PaidDay = false;
-					ActiveRecordMediator.UpdateAndFlush(client);
-					SystemTime.Now = () => DateTime.Now.AddDays(i);
-					billing.ProcessWriteoffs();
+				//Теперь какбудто клиент уже давно заблокирован
+				client.StatusChangedOn = SystemTime.Now().AddMonths(-2);
+				client.PaidDay = false;
+				ActiveRecordMediator.UpdateAndFlush(client);
+				billing.ProcessWriteoffs();
 
-					// Проверить задачи в RedMine, открытые для данного клиента
-					ActiveRecordMediator.Refresh(client);
-					var redmineIssues = ActiveRecordMediator<RedmineIssue>.FindAll().ToList();
-					var clientIssues = redmineIssues
-							.Where(ri => ri.subject.Contains(client.Id.ToString("D5")) && ri.status_id != 5).ToList();
-					// Первые 12 дней (от текущей даты) открытых задач в RedMine быть не должно
-					if (i < 13)
-						Assert.IsTrue(clientIssues.Count == 0, "\nЕсть задача в Redmine");
-					// Должна быть создана ровно 1 задача в RedMine
-					else {
-						Assert.IsTrue(clientIssues.Count == 1, "\nredmineIssues = " + clientIssues.Count);
-						Assert.IsTrue(clientIssues.Exists(ri => ri.subject.Contains("Возврат оборудования, ЛС")));
-					}
-				}
+				//Должна появиться задача в редмайн, так как бесплатные дни аренды закончились
+				ActiveRecordMediator.Refresh(client);
+				redmineIssues = ActiveRecordMediator<RedmineIssue>.FindAll().ToList();
+				clientIssues = redmineIssues.Where(ri => ri.subject.Contains(client.Id.ToString("D5")) && ri.status_id != 5).ToList();
+				Assert.That(clientIssues.Count, Is.EqualTo(1), "Нет задачи в Redmine");
+
+				//Проверяем, что при повторном запуске биллинга не будет дублирования задачи
+				client.PaidDay = false;
+				ActiveRecordMediator.UpdateAndFlush(client);
+				billing.ProcessWriteoffs();
+				ActiveRecordMediator.Refresh(client);
+				redmineIssues = ActiveRecordMediator<RedmineIssue>.FindAll().ToList();
+				clientIssues = redmineIssues.Where(ri => ri.subject.Contains(client.Id.ToString("D5")) && ri.status_id != 5).ToList();
+				Assert.That(clientIssues.Count, Is.EqualTo(1), "Дублирование задачи в Redmine");
 			}
 		}
 	}

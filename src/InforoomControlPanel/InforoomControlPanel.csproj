@@ -1923,6 +1923,7 @@
     <Content Include="Views\Admin\LogRegResultList.cshtml" />
     <Content Include="Views\Admin\LogRegResultInfo.cshtml" />
     <Content Include="Views\News\CreateNewsBlock.cshtml" />
+    <Content Include="Views\HardwareTypes\ClientList.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <None Include="Web.release.config">

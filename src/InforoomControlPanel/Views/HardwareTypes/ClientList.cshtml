@@ -1,0 +1,83 @@
+﻿@using System.Collections.Specialized
+@using Common.Tools
+@using Inforoom2.Components 
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "Список пользователей";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	
+	IList<RentalHardware> hardware = ViewBag.Hardware;
+	ModelFilter<Client> pager = ViewBag.Pager;
+	IList<Client> clients = pager.GetItems();
+	var hardwarelist = new NameValueCollection();
+	hardwarelist["0"] = " ";
+	hardware.Each(i => hardwarelist[i.Id.ToString()] = i.Name.ToString());
+}
+<panel class="panel panel-default">
+	<form>
+		<div class ="row">
+			<div class="col-sm-1">Выдан с </div>
+			<div class="col-sm-2">@pager.FormFilterManual("RentBegins",HtmlType.Date)</div>
+			<div class="col-sm-1">по</div>
+			<div class="col-sm-2">@pager.FormFilterManual("RentEnds",HtmlType.Date)</div>
+			<div class="col-sm-1">Тип оборудования</div>
+			<div class="col-sm-2">	@pager.FormFilterManual("HardwareType",HtmlType.Dropdown,hardwarelist)</div>
+			<div class="col-sm-1">
+				<input type="submit" class="btn btn-success btn-sm"/>
+			</div>
+		</div>
+		@pager.GenerateInputs()
+	</form>
+</panel>
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+		<thead>
+			<tr role="row">
+				<th class="sorting_asc" rowspan="1" colspan="1" style="width: 50px;" aria-label="">
+					<div class="checkbox checkbox-replace neon-cb-replacement">
+						<label class="cb-wrapper">
+							<input type="checkbox" id="chk-1">
+							<div class="checked"></div>
+						</label>
+					</div>
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Id)">Номер</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.PhysicalClient.Name)">Имя</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Кол-во оборудования</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			@foreach (var item in clients)
+			{
+				<tr role="row" class="odd">
+					<td class="sorting_1">
+						<div class="checkbox checkbox-replace neon-cb-replacement">
+							<label class="cb-wrapper"><input type="checkbox" id="chk-1"><div class="checked"></div></label>
+						</div>
+					</td> 
+					<td><a href="@Url.Action("Info", "Client", new { id = item.Id })">@item.Id</a></td>
+					<td><a href="@Url.Action("Info", "Client", new { id = item.Id })">@item.PhysicalClient.FullName</a></td>
+					<td><a href="@Url.Action("Info", "Client", new { id = item.Id })">@item.RentalHardwareList.Count</a></td>
+					<td>
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("Info", "Client", new { id = item.Id })">
+							<i class="entypo-plus-circled"></i>
+							Просмотреть
+						</a>
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@string.Format("{0}UserInfo/ShowPhysicalClient?filter.ClientCode={1}",@ConfigHelper.GetParam("adminPanelOld"),item.Id)"> 
+							<i class="entypo-plus-circled"></i>
+							ЛК в старом ИИ
+						</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<div class="row">
+		@{ Html.RenderPartial("Pagination"); }
+	</div>
+</div>

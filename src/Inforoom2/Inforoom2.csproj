@@ -290,6 +290,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Helpers\DescriptionHelper.cs" />
+    <Compile Include="Helpers\ConfigHelper.cs" />
     <Compile Include="Helpers\ModelCrudListener.cs" />
     <Compile Include="Helpers\SessionHelper.cs" />
     <Compile Include="Helpers\CustomPrincipal.cs" />

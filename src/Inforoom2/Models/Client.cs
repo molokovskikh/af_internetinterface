@@ -286,15 +286,9 @@ namespace Inforoom2.Models
 		/// </summary>
 		public virtual decimal GetUnlockPrice()
 		{
-			var sum = 0m;                       // Сумма для разблокировки
+			var sum = 0m; // Сумма для разблокировки
 			if (Internet.ActivatedByUser)
 				sum += GetTariffPrice(true);
-
-			// Учет цен на арендуемое оборудование для разблокировки
-			foreach (var clientHardware in RentalHardwareList) {
-				if (clientHardware.IsActive)
-					sum += clientHardware.GetPrice();
-			}
 
 			return (sum - Balance);
 		}
