@@ -1,12 +1,26 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using Inforoom2.Helpers;
+using Microsoft.VisualBasic.CompilerServices;
 using NHibernate;
+using NHibernate.Criterion;
+using NHibernate.Engine;
+using NHibernate.Impl;
 using NHibernate.Linq;
+using NHibernate.Loader;
+using NHibernate.Loader.Criteria;
+using NHibernate.Mapping;
+using NHibernate.Mapping.ByCode.Impl.CustomizersImpl;
+using NHibernate.Persister.Entity;
 using NHibernate.Validator.Util;
 
 namespace Inforoom2.Components
@@ -48,14 +62,37 @@ namespace Inforoom2.Components
 	{
 		private ISession dbSession = MvcApplication.SessionFactory.OpenSession();
 
+		protected NameValueCollection Params;
+		protected List<string> FilterNames;
+		protected ICriteria Criteria;
+		protected IList<TModel> Models;
+
 		[Description("Кол-во страниц")]
-		public int PagesCount { get; private set; }
+		public int PagesCount {
+			get
+			{
+				return Math.Abs(TotalItems / ItemsPerPage) + (TotalItems % ItemsPerPage > 0 ? 1 : 0);
+			} private set{} 
+		}
 
 		[Description("Текущая страница")]
 		public int Page { get; private set; }
 
+		private int? _totalItems;
 		[Description("Общее количество записей, удовлетворяющих запросу")]
-		public int TotalItems { get; private set; }
+		public int TotalItems {
+			get
+			{
+				if (!_totalItems.HasValue) {
+					Criteria.SetFirstResult(0);
+					Criteria.SetMaxResults(1000000);
+					var res =  Criteria.SetProjection(Projections.RowCount()).UniqueResult();
+					_totalItems = int.Parse(res.ToString());
+				}
+				return _totalItems.Value;
+			}
+			private set{}
+		}
 
 		[Description("Кол-во записей на страницу ")]
 		public int ItemsPerPage { get; private set; }
@@ -173,6 +210,16 @@ namespace Inforoom2.Components
 			Page = 1; // min 1  
 			ItemsPerPage = itemsPerPage;
 			AscOrder = true;
+			Params = new NameValueCollection();
+			FilterNames = new List<string>();
+
+			var request = controller.Url.RequestContext.HttpContext.Request.Params;
+			foreach (var key in request.AllKeys) {
+				if(!key.Contains(UrlParamPrefix))
+					continue;
+				var name = key.Replace(UrlParamPrefix + ".", "");
+				Params[name] = request[key];
+			}
 
 			var dic = controller.Url.RequestContext.HttpContext.Request.Params;
 			if ((!dic.AllKeys.Any(s=>s==UrlParamPrefix + "." + UrlOrderByColumn)) && orderDirrection == false)
@@ -270,7 +317,6 @@ namespace Inforoom2.Components
 		/// <param name="key">параметр фильтра из url</param>
 		/// <param name="value">значение фильтра</param> 
 		/// <param name="usedAliasList">используемы в запросе псевдонимы</param> 
-
 		public void AddSearchToCriteria(ICriteria criteria, string key, string value, Dictionary<string, string> usedAliasList)
 		{
 			string searchByAlias = "";			// псевдоним, по которому будет проходить фильтрация
@@ -370,13 +416,16 @@ namespace Inforoom2.Components
 		/// <returns>Критерий, который можно дополнить или, выполнив запрос, получить список запрашиваемых моделей.</returns>
 		public ICriteria GetCriteria(Expression<Func<TModel, bool>> expression = null)
 		{
+			if (Criteria != null)
+				return Criteria;
+
 			string orderByAlias = OrderByColumn;	// получение поля для сортировки у основной модели  
 
 			TotalItems = expression == null ? dbSession.Query<TModel>().Count() : dbSession.Query<TModel>().Where(expression).Count();
 
 			// расчет лимитов
 			var skip = ItemsPerPage * (Page - 1);
-			PagesCount = Math.Abs(TotalItems / ItemsPerPage) + (TotalItems % ItemsPerPage > 0 ? 1 : 0);
+
 
 			var criteria = dbSession.CreateCriteria(typeof(TModel));		   // создаем критерий
 
@@ -433,7 +482,135 @@ namespace Inforoom2.Components
 					criteria.AddOrder(NHibernate.Criterion.Order.Desc(orderByAlias)); // Сортировка по полю связи  
 				}
 			}
+
+			Criteria = criteria;
 			return criteria; // возврат критерия;
+		}
+
+		/// <summary>
+		/// Получение параметра объекта
+		/// </summary>
+		/// <param name="name">Имя параметра</param>
+		/// <returns></returns>
+		public string GetParam(string name)
+		{
+			return this.Params[name];
+		}
+
+		/// <summary>
+		/// Ручной фильтр. Задачет имя параметра, который необходимо будет передать на сервер
+		/// </summary>
+		/// <param name="name">Имя параметра</param>
+		/// <param name="type">Тип HTML контрола</param>
+		/// <param name="additional">Дополнительные параметры</param>
+		/// <returns></returns>
+		public HtmlString FormFilterManual(string name, HtmlType type, object additional = null)
+		{
+			var attrs = new Dictionary<string,string>();
+			if(Params[name]!= null)
+				attrs["value"] = Params[name];
+
+			attrs["name"] = UrlParamPrefix + "." + name;
+			attrs["class"] = "form-control";
+			FilterNames.Add(name);
+			var html = GenerateHtml(type, attrs, additional);
+			var ret = new HtmlString(html);
+			return ret;
+		}
+
+		/// <summary>
+		/// Создает необходимые инпуты для фильтрации, при помощи Get формы.
+		/// </summary>
+		/// <returns></returns>
+		public HtmlString GenerateInputs()
+		{
+			if (Params.Count == 0)
+				return new HtmlString("");
+			var builder = new StringBuilder();
+			var keys = Params.AllKeys;
+
+			foreach (var key in keys)
+				if(!FilterNames.Contains(key))
+					builder.Append(string.Format("<input style='display: none' name='{0}.{1}' value='{2}' />", UrlParamPrefix, key, Params[key]));
+
+			var html = new HtmlString(builder.ToString());
+			return html;
+		}
+
+		/// <summary>
+		/// Генерирует HTML код.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="o">Словарь с html аттрибутами</param>
+		/// <param name="additional">Дополнительные параметры</param>
+		/// <returns></returns>
+		private string GenerateHtml(HtmlType type, Dictionary<string, string> o, object additional = null)
+		{
+			if (type == HtmlType.Date) {
+				o["class"] = " datepicker " + o["class"];
+				o["date-format"] = "dd.nn.yyyy";
+				o[" data-provide"] = "datepicker-inline";
+				return string.Format("<input {0} />", GetPropsValues(o));
+			}
+				
+
+			if(type == HtmlType.Dropdown) {
+				var list = additional as NameValueCollection;
+				var values = list.AllKeys.Select(i => string.Format("<option {2} value='{0}'>{1}</option>",i,list[i],o.ContainsKey("value") && i == o["value"] ? "selected='selected'" : "")).ToList();
+				return string.Format("<select {0}>{1}</select>",GetPropsValues(o),string.Join("\n",values));
+			}
+			return "";
+		}
+
+		/// <summary>
+		/// Конвертация словаря, в строку c html аттрибутами
+		/// </summary>
+		/// <param name="obj">Словарь, создержащий названия и значения аттрибутов</param>
+		/// <returns>Строка вида "name1='value1' name2='value2'"</returns>
+		private string GetPropsValues(Dictionary<string, string> obj)
+		{
+			var sb = new StringBuilder();
+			foreach (var key in obj.Keys)
+			{
+				sb.Append(string.Format(" {0}='{1}'", key, obj[key]));
+			}
+			return sb.ToString();
+		}
+
+		/// <summary>
+		/// Получение списка моделей.
+		/// </summary>
+		/// <returns>Список моделей</returns>
+		public IList<TModel> GetItems()
+		{
+			if(Models == null)
+				Execute();
+			return Models;
+		}
+
+		/// <summary>
+		/// Выполнение SQL кода и заполнение списка моделей
+		/// </summary>
+		/// <returns></returns>
+		public void Execute()
+		{
+			Models = Criteria.List<TModel>();
+		}
+
+		/// <summary>
+		/// Получение SQL кода запроса на поиск моделей
+		/// </summary>
+		/// <returns></returns>
+		public string GetSql()
+		{
+			CriteriaImpl c = (CriteriaImpl)Criteria;
+			SessionImpl s = (SessionImpl)c.Session;
+			ISessionFactoryImplementor factory = s.Factory;
+			String[] implementors = factory.GetImplementors(c.EntityOrClassName);
+			CriteriaLoader loader = new CriteriaLoader((IOuterJoinLoadable)factory.GetEntityPersister(implementors[0]),
+				factory, c, implementors[0], s.EnabledFilters);
+			var str = loader.ToString();
+			return str;
 		}
 	}
 }

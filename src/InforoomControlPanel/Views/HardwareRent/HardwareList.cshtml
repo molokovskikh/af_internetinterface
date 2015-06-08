@@ -1,9 +1,10 @@
 ﻿@using Inforoom2.Models
 
 @{
-	ViewBag.Title = "Выберите оборудование для аренды:";
-	Layout = "~/Views/Shared/_Layout.cshtml";
 	Client client = ViewBag.Client;
+	ViewBag.Title = String.Format("Арендованное оборудование клиента: {0} ({1}) ",client.Fullname, client.Id);
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	
 	var clientHasHardware = client.RentalHardwareList.Any(ch => ch.IsActive);
 	var hwName = Enum.GetValues(typeof(HardwareType)) as HardwareType[];
 	var activeHw = ViewBag.ActiveRent as bool[];

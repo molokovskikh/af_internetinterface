@@ -158,6 +158,7 @@ namespace InforoomControlPanel.Controllers
 			EditRole(role.Id);
 			return View("EditRole");
 		}
+
 		/// <summary>
 		/// Логи
 		/// </summary> 
@@ -167,9 +168,12 @@ namespace InforoomControlPanel.Controllers
 			var logs = pager.GetCriteria().List<Log>();
 			ViewBag.Pager = pager;
 			ViewBag.Logs = logs;
-
 			return View();
 		}
+
+		/// <summary>
+		/// Логи
+		/// </summary> 
 		public ActionResult LogRegResultInfo(int Id = 0,string path="")
 		{
 			var log = DbSession.Query<Log>().FirstOrDefault(s => s.Id == Id); 

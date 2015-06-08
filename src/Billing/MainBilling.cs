@@ -476,10 +476,8 @@ set s.LastStartFail = true;")
 			} //конец обработки списаний
 
 			//Обработка аренды оборудования
-			if ((client.Status.Type == StatusType.NoWorked || client.Status.Type == StatusType.Dissolved) &&
-			    client.HasActiveRentalHardware()) {
-				ProcessHardwareRent(session, client);
-			}
+			ProcessHardwareRent(session, client);
+
 
 			//Обработка блокировок
 			if (client.CanBlock()) {
@@ -542,99 +540,107 @@ set s.LastStartFail = true;")
 		}
 
 		/// <summary>
-		/// Метод обработки услуги "Аренда оборудования" для клиента client
+		/// Обработка аренды оборудования для клиента client
 		/// </summary>
+		/// <param name="session">Сессия Nhibernate</param>
+		/// <param name="client">Клиент, потенциально арендующий оборудование</param>
 		private void ProcessHardwareRent(ISession session, Client client)
 		{
-			var balance = client.Balance;
+			//Если нет активной аренды, то он нам и не нужен
+			if (!client.HasActiveRentalHardware())
+				return;
 
-			// Контроль отрицательного баланса у клиента
-			if (balance < 0m) {
-				var curRmIssues = session.Query<RedmineIssue>().Where(ri => ri.subject.Contains(client.Id.ToString("D5"))).ToList();
-				var noOpenIssues = curRmIssues.Count == 0 || 
-						curRmIssues.FirstOrDefault(ri => ri.status_id != 5) == null; // поиск "закрытых" задач в RedMine
-				if (noOpenIssues) {
-					var indicateDate = SystemTime.Today().AddDays(-30);
-					var payments = client.Payments.Where(p => p.PaidOn >= indicateDate).ToList();
-					var writeoffs = client.GetWriteOffs(session, "").Where(wo => wo.WriteOffDate >= indicateDate).ToList();
-					// Проверка истории баланса у клиента за последние 30 дней
-					while (balance < 0m) {
-						var lastPayment = payments.LastOrDefault() ?? new Payment {PaidOn = DateTime.MinValue};
-						var lastWriteOff = writeoffs.LastOrDefault() ?? new BaseWriteOff {WriteOffDate = DateTime.MinValue};
-						if (lastPayment.PaidOn > lastWriteOff.WriteOffDate) {
-							balance -= lastPayment.Sum;
-							payments.Remove(lastPayment);
-						}
-						else if (lastPayment.PaidOn < lastWriteOff.WriteOffDate) {
-							balance += lastWriteOff.WriteOffSum;
-							writeoffs.Remove(lastWriteOff);
-						}
-						else if (lastPayment.PaidOn == lastWriteOff.WriteOffDate && lastPayment.PaidOn != DateTime.MinValue) {
-							balance -= (lastPayment.Sum - lastWriteOff.WriteOffSum);
-							payments.Remove(lastPayment);
-							writeoffs.Remove(lastWriteOff);
-						}
-						else
-							break;
-					}
-					// Т.е. баланс оставался < 0 в течение 30 дней
-					if (balance < 0m) {
-						var redmineIssue = new RedmineIssue {
-							project_id = 67,              // Проект "Координация"
-							status_id = 1,                // Статус "Новый"
-							created_on = SystemTime.Now(),
-							due_date = SystemTime.Today().AddDays(3),
-							subject = "Возврат оборудования, ЛС " + client.Id.ToString("D5") + ", "
-							          + client.PhysicalClient.Patronymic + " " + client.PhysicalClient.Name + " "
-							          + client.PhysicalClient.Surname,
-							description = "Баланс клиента, равный "
-							              + client.Balance.ToString("F2") + " р., не пополнялся более 30 дней."
-						};
-						session.Save(redmineIssue);
-					}
-				}
-			}
+			//если клиент не заблокирован и не отключен, то он нас мало интересует
+			var correctStatus = client.Status.Type == StatusType.NoWorked || client.Status.Type == StatusType.Dissolved;
+			if (!correctStatus)
+				return;
 
+			//Создание задачи в Redmine и обработка списаний
+			CreateRentalHardwareWriteOffs(session, client);
+		}
+
+		/// <summary>
+		/// Создание записи в редмайне для аренды оборудования
+		/// </summary>
+		/// <param name="session">Сессия Nhibernate</param>
+		/// <param name="client">Клиент, потенциально арендующий оборудование</param>
+		private void CreateRentalHardwareRedmineIssue(ISession session, Client client)
+		{
+			//Проверяем, существует ли уже активная задача по этому клиенту
+			var fio = string.Format("{0} {1} {2}", client.PhysicalClient.Surname, client.PhysicalClient.Name, client.PhysicalClient.Patronymic);
+			var redmineIssueName = string.Format("Возврат оборудования, ЛС {0}, {1}", client.Id.ToString("D5"), fio);
+			var clientIssues = session.Query<RedmineIssue>().Where(ri => ri.subject == redmineIssueName).ToList();
+			var hasRedmineIssue = clientIssues.Any(i => i.status_id != 5);
+			if (hasRedmineIssue)
+				return;
+
+			var redmineIssue = new RedmineIssue
+			{
+				project_id = 67,	// Проект "Координация"
+				status_id = 1,	// Статус "Новый"
+				created_on = SystemTime.Now(),
+				due_date = SystemTime.Today().AddDays(3),
+				subject = redmineIssueName,
+				description = "Баланс клиента, равный " + client.Balance.ToString("F2") + " р., не пополнялся более 30 дней."
+			};
+			session.Save(redmineIssue);
+		}
+
+		/// <summary>
+		/// Обработка списаний за аренду оборудования
+		/// </summary>
+		/// <param name="session">Сессия Nhibernate</param>
+		/// <param name="client">Клиент, потенциально арендующий оборудование</param>
+		private void CreateRentalHardwareWriteOffs(ISession session, Client client)
+		{
 			// Обработка списаний за аренду конкретного оборудования
 			var phisicalClient = client.PhysicalClient;
-			for (var i = HardwareType.TvBox; i < HardwareType.Count; i++) {
-				if (client.HardwareIsRented(i)) {
-					var clientHardware = client.GetActiveRentalHardware(i);
-					// Если пустая дата начала аренды, деактивировать услугу
-					if (clientHardware.GiveDate == null) {
-						var msg = clientHardware.Deactivate();
-						session.Update(clientHardware);
-						var appeal = client.CreareAppeal(msg, AppealType.System, false);
-						session.Save(appeal);
-					}
-					else if (client.Status.Type == StatusType.Dissolved ||
-					         (client.Status.Type == StatusType.NoWorked && client.StatusChangedOn != null &&
-					          (SystemTime.Now() - client.StatusChangedOn) > TimeSpan.FromDays(clientHardware.Hardware.FreeDays))) {
-						// Если с даты изменения статуса клиента прошло > 30 дней, списать ежедневную плату за аренду
-						var sum = client.GetPriceForHardware(clientHardware.Hardware);
-						if (sum <= 0m)                  // В случае 0-й платы за аренду не создавать списание
-							continue;
+			var count = 1;
+			for (var i = HardwareType.TvBox; i < HardwareType.Count; i++)
+			{
+				if (!client.HardwareIsRented(i)) 
+					continue;
 
-						var sumDiff = Math.Min(phisicalClient.MoneyBalance - sum, 0);
-						var virtualWriteoff = Math.Min(Math.Abs(sumDiff), phisicalClient.VirtualBalance);
-						var moneyWriteoff = sum - virtualWriteoff;
-						var newWriteoff = new WriteOff {
-							Client = client,
-							WriteOffDate = SystemTime.Now(),
-							WriteOffSum = Math.Round(sum, 2),
-							MoneySum = Math.Round(moneyWriteoff, 2),
-							VirtualSum = Math.Round(virtualWriteoff, 2),
-							Sale = client.Sale,
-							BeforeWriteOffBalance = client.Balance,
-							Comment = clientHardware.Hardware.Name + ": ежедневная плата за аренду"
-						};
-						session.Save(newWriteoff);
+				var clientHardware = client.GetActiveRentalHardware(i);
+				// Если пустая дата начала аренды, деактивировать услугу
+				if (clientHardware.GiveDate == null)
+				{
+					var msg = clientHardware.Deactivate();
+					session.Update(clientHardware);
+					var appeal = client.CreareAppeal(msg, AppealType.System, false);
+					session.Save(appeal);
+				}
+				else if (client.Status.Type == StatusType.Dissolved ||
+						(client.Status.Type == StatusType.NoWorked && client.StatusChangedOn != null &&
+						(SystemTime.Now() - client.StatusChangedOn) > TimeSpan.FromDays(clientHardware.Hardware.FreeDays))) {
+					//Создаем задачу в РМ
+					CreateRentalHardwareRedmineIssue(session, client);
 
-						// сохранение измененных данных у физ. клиента
-						phisicalClient.Balance -= newWriteoff.WriteOffSum;
-						phisicalClient.VirtualBalance -= newWriteoff.VirtualSum;
-						phisicalClient.MoneyBalance -= newWriteoff.MoneySum;
-					}
+					// Если с даты изменения статуса клиента прошло > 30 дней, списать ежедневную плату за аренду
+					var sum = client.GetPriceForHardware(clientHardware.Hardware);
+					if (sum <= 0m)                  // В случае 0-й платы за аренду не создавать списание
+						continue;
+
+					var sumDiff = Math.Min(phisicalClient.MoneyBalance - sum, 0);
+					var virtualWriteoff = Math.Min(Math.Abs(sumDiff), phisicalClient.VirtualBalance);
+					var moneyWriteoff = sum - virtualWriteoff;
+					var newWriteoff = new WriteOff
+					{
+						Client = client,
+						WriteOffDate = SystemTime.Now().AddSeconds(count++), //списания должны быть выровнены по дате, а при одинаковых датах, возникает путаница
+						WriteOffSum = Math.Round(sum, 2),
+						MoneySum = Math.Round(moneyWriteoff, 2),
+						VirtualSum = Math.Round(virtualWriteoff, 2),
+						Sale = client.Sale,
+						BeforeWriteOffBalance = client.Balance,
+						Comment = clientHardware.Hardware.Name + ": ежедневная плата за аренду"
+					};
+					session.Save(newWriteoff);
+
+					// сохранение измененных данных у физ. клиента
+					phisicalClient.Balance -= newWriteoff.WriteOffSum;
+					phisicalClient.VirtualBalance -= newWriteoff.VirtualSum;
+					phisicalClient.MoneyBalance -= newWriteoff.MoneySum;
 				}
 			}
 		}

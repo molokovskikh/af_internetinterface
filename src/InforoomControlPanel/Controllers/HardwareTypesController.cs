@@ -1,8 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
+using NHibernate.Criterion;
 using NHibernate.Linq;
+using NHibernate.SqlCommand;
+using NHibernate.Transform;
 
 namespace InforoomControlPanel.Controllers
 {
@@ -48,6 +52,34 @@ namespace InforoomControlPanel.Controllers
 				return RedirectToAction("ShowHardware");
 			}
 			ViewBag.Hardware = rentalHardware;
+			return View();
+		}
+
+		/// <summary>
+		/// Список клиентов, у которых подключено арендованное оборудование
+		/// </summary>
+		/// <returns></returns>
+		public ActionResult ClientList()
+		{
+			var pager = new ModelFilter<Client>(this);
+			var criteria = pager.GetCriteria(i => i.PhysicalClient != null);
+			//Это эквивалентно Group By по Id. Нельзя использовать Group By в проекциях, так как это сужает селект до 1го поля
+			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());
+			var joined = criteria.CreateCriteria("RentalHardwareList", JoinType.InnerJoin);
+
+			if (!string.IsNullOrEmpty(pager.GetParam("RentBegins")))
+				joined.Add(Restrictions.Gt("BeginDate", DateTime.Parse(pager.GetParam("RentBegins"))));
+			if (!string.IsNullOrEmpty(pager.GetParam("RentEnds")))
+				joined.Add(Restrictions.Lt("BeginDate", DateTime.Parse(pager.GetParam("RentEnds"))));
+
+			if (!string.IsNullOrEmpty(pager.GetParam("HardwareType")) && pager.GetParam("HardwareType") != "0")
+				joined.CreateCriteria("Hardware").Add(Restrictions.Eq("Id", int.Parse(pager.GetParam("HardwareType"))));
+
+			pager.Execute();
+			
+			var hardware = DbSession.Query<RentalHardware>().ToList();
+			ViewBag.Hardware = hardware;
+			ViewBag.Pager = pager;
 			return View();
 		}
 	}

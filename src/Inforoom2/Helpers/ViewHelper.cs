@@ -260,7 +260,7 @@ namespace Inforoom2.Helpers
 			return sb;
 		}
 
-		private static void GetPropsValues(object obj, Dictionary<string, string> currentAttributes)
+		public static void GetPropsValues(object obj, Dictionary<string, string> currentAttributes)
 		{
 			var type = obj.GetType();
 			var sb = new StringBuilder();
