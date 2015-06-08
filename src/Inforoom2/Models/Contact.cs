@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using Inforoom2.Intefaces;
 using Inforoom2.validators;
@@ -10,7 +11,7 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
-	[Class(0, Table = "Contacts", NameType = typeof(Contact))]
+	[Class(0, Table = "Contacts", NameType = typeof(Contact)), Description("Контакты")]
 	public class Contact : BaseModel, ILogAppeal
 	{
 		[ManyToOne]
@@ -20,16 +21,16 @@ namespace Inforoom2.Models
 		public virtual ContactType Type { get; set; }
 
 		//[Property(Column = "Contact"), NotNullNotEmpty(Message = "Введите номер телефона"), Pattern(@"^\d{10}$", RegexOptions.Compiled, Message = "Номер телефона введен неправильно")]
-		[Property(Column = "Contact"), NotNullNotEmpty(Message = "Введите номер телефона")] //Введите контакт
+		[Property(Column = "Contact"), Description("значение"), NotNullNotEmpty(Message = "Введите номер телефона")] //Введите контакт
 		public virtual string ContactString { get; set; }
 
-		[Property]
+		[Property, Description("Комментарий")]
 		public virtual string Comment { get; set; }
 
-		[Property]
+		[Property, Description("Наименование")]
 		public virtual string ContactName { get; set; }
 
-		[Property]
+		[Property, Description("Дата")]
 		public virtual DateTime Date { get; set; }
 
 		public virtual Client GetAppealClient(ISession session)

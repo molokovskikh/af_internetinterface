@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Web.UI.WebControls;
@@ -14,7 +15,7 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Тарифный план
 	/// </summary>
-	[Class(0, Table = "Tariffs", NameType = typeof(Plan))]
+	[Class(0, Table = "Tariffs", NameType = typeof(Plan)), Description("Тариф")]
 	public class Plan : PriorityModel
 	{
 		[Property(NotNull = true, Unique = true), NotEmpty]
