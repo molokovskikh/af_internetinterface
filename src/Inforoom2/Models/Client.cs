@@ -20,7 +20,7 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Модель пользователя
 	/// </summary>
-	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof(Client))]
+	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof(Client)), Description("Клиент")]
 	public class Client : BaseModel, ILogAppeal
 	{
 		public Client()
@@ -115,13 +115,13 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual DateTime? YearCycleDate { get; set; }
 
-		[ManyToOne(Cascade = "save-update")]
+		[ManyToOne(Cascade = "save-update"), Description("Статус")]
 		public virtual Status Status { get; set; }
 
 		[ManyToOne(Column = "PhysicalClient", Cascade = "save-update")]
 		public virtual PhysicalClient PhysicalClient { get; set; }
 
-		[ManyToOne(Column = "LawyerPerson", Cascade = "save-update")]
+		[ManyToOne(Column = "LawyerPerson", Cascade = "save-update"), Description("Юр. лицо")]
 		public virtual LegalClient LegalClient { get; set; }
 
 		[Bag(0, Table = "ClientServices", Cascade = "all-delete-orphan")]
@@ -163,9 +163,9 @@ namespace Inforoom2.Models
 		[Bag(0, Table = "ClientRentalHardware", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof(ClientRentalHardware))]
-		public virtual IList<ClientRentalHardware> RentalHardwareList { get; set; } 
+		public virtual IList<ClientRentalHardware> RentalHardwareList { get; set; }
 
-		[Property(Column = "SendSmsNotifocation")]
+		[Property(Column = "SendSmsNotifocation"), Description("СМС уведомление")]
 		public virtual bool SendSmsNotification { get; set; }
 
 		[ManyToOne(Column = "WhoRegistered", Cascade = "save-update")]

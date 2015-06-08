@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Common.Tools;
+using Inforoom2.Helpers;
 using Inforoom2.Intefaces;
 using InternetInterface.Models;
 using NHibernate;
@@ -17,13 +18,13 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
-	[Class(0, Table = "PhysicalClients", Schema = "internet", NameType = typeof(PhysicalClient))]
+	[Class(0, Table = "PhysicalClients", Schema = "internet", NameType = typeof(PhysicalClient)), Description("Клиент")]
 	public class PhysicalClient : BaseModel, ILogAppeal
 	{
 		[Property]
 		public virtual string Password { get; set; }
 
-		[ManyToOne(Column = "_Address", Cascade = "save-update"), NotNull(Message = "Адрес указан не полностью!")]
+		[ManyToOne(Column = "_Address", Cascade = "save-update"), NotNull(Message = "Адрес указан не полностью!"), Description("Адрес")]
 		public virtual Address Address { get; set; }
 
 		[Property(Column = "_Email", NotNull = true)]
@@ -51,7 +52,7 @@ namespace Inforoom2.Models
 			}
 		}
 
-		[ManyToOne(Column = "Tariff"), NotNull(Message = "Выберите тариф")]
+		[ManyToOne(Column = "Tariff"), NotNull(Message = "Выберите тариф"), Description("Тариф")]
 		public virtual Plan Plan { get; set; }
 
 		[Property(Column = "_LastTimePlanChanged")]
@@ -78,20 +79,20 @@ namespace Inforoom2.Models
 		[Property(Column = "IdDocName"), Description("Название документа, удостоверяющего личность")]
 		public virtual string CertificateName { get; set; }
 
-		[Property]
+		[Property, Description("Номер паспорта")]
 		public virtual string PassportNumber { get; set; }
 
-		[Property]
+		[Property, Description("Серия паспорта")]
 		public virtual string PassportSeries { get; set; }
 
 		[DataType(DataType.Date)]
-		[Property]
+		[Property, Description("Дата выдачи паспорта")]
 		public virtual DateTime PassportDate { get; set; }
 
-		[Property(Column = "RegistrationAdress")]
+		[Property(Column = "RegistrationAdress"), Description("Адрес регистрации")]
 		public virtual string RegistrationAddress { get; set; }
 
-		[Property(Column = "WhoGivePassport")]
+		[Property(Column = "WhoGivePassport"), Description("Кем выдан")]
 		public virtual string PassportResidention { get; set; }
 
 		[Property, Description("Номер абонента Ситилайн")]
@@ -121,14 +122,14 @@ namespace Inforoom2.Models
 				}
 			}
 		}
-		 
-		[Property(NotNull = true), NotEmpty(Message = "Введите имя")]
+
+		[Property(NotNull = true), NotEmpty(Message = "Введите имя"), Description("Имя")]
 		public virtual string Name { get; set; }
-		 
-		[Property(NotNull = true), NotEmpty(Message = "Введите фамилию")]
+
+		[Property(NotNull = true), NotEmpty(Message = "Введите фамилию"), Description("Фамилия")]
 		public virtual string Surname { get; set; }
-		 
-		[Property(NotNull = true), NotEmpty(Message = "Введите отчество")]
+
+		[Property(NotNull = true), NotEmpty(Message = "Введите отчество"), Description("Отчество")]
 		public virtual string Patronymic { get; set; }
 		 
 		[DataType(DataType.Date)]
@@ -290,6 +291,8 @@ namespace Inforoom2.Models
 			// для свойства Tariff
 			if (property == "Plan")
 			{
+				// получаем псевдоним из описания 
+				property = this.Plan.GetDescription();
 				var oldPlan = oldPropertyValue == null ? null : ((Plan)oldPropertyValue);
 				var currentPlan = this.Plan;
 				if (oldPlan != null)

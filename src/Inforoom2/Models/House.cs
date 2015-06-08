@@ -1,9 +1,10 @@
-﻿using NHibernate.Mapping.Attributes;
+﻿using System.ComponentModel;
+using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
-	[Class(0, Table = "house", NameType = typeof(House))]
+	[Class(0, Table = "house", NameType = typeof(House)), Description("Дом")]
 	public class House : BaseModel
 	{
 		public House()
@@ -21,10 +22,10 @@ namespace Inforoom2.Models
 			Street = street;
 		}
 
-		[ManyToOne(Column = "Street" , Cascade = "save-update"), NotNull]
+		[ManyToOne(Column = "Street", Cascade = "save-update"), NotNull, Description("Улица")]
 		public virtual Street Street { get; set; }
 
-		[Property, NotEmpty(Message = "Введите номер дома")]
+		[Property, NotEmpty(Message = "Введите номер дома"), Description("Номер дома")]
 		public virtual string Number { get; set; }
 
 		[Property]
