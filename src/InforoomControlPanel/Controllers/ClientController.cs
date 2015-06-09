@@ -560,7 +560,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.CurrentStreet = null;
 			ViewBag.CurrentHouse = null;
 			// получаем всех диллеров (работников)
-			ViewBag.Dealers = DbSession.Query<Dealer>().Select(s => s.Employee).OrderBy(s => s.Name).ToList();
+			ViewBag.Dealers = DbSession.Query<Dealer>().Where(s => s.Active).OrderBy(s => s.Name).ToList();
 			ViewBag.RegionList = regionList;
 			ViewBag.CurrentStreetList = new List<Street>();
 			ViewBag.CurrentHouseList = new List<House>();
@@ -680,7 +680,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.ScapeUserNameDoubling = scapeUserNameDoubling;
 
 			// получаем всех диллеров (работников)
-			ViewBag.Dealers = DbSession.Query<Dealer>().Select(s => s.Employee).OrderBy(s => s.Name).ToList();
+			ViewBag.Dealers = DbSession.Query<Dealer>().Where(s => s.Active).OrderBy(s => s.Name).ToList();
 			ViewBag.CertificateTypeDic = CertificateTypeDic;
 			ViewBag.RedirectToCard = redirectToCard;
 			ViewBag.Client = client;
@@ -810,21 +810,35 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult DealerList()
 		{
 			var dealer = DbSession.QueryOver<Dealer>().List();
-			dealer = dealer.OrderBy(s => s.Employee.Name).ToList();
+			dealer = dealer.OrderByDescending(s => s.Active).ThenBy(s => s.Name).ToList();
 			var employee = DbSession.QueryOver<Employee>().List();
 			ViewBag.DealerList = dealer;
-			ViewBag.EmployeeList = employee.Where(s => !dealer.Any(c => c.Employee == s)).OrderBy(s => s.Name).ToList();
 			ViewBag.DealerMan = new Dealer();
 			return View("DealerList");
 		}
 
 		public ActionResult DealerAdd([EntityBinder] Dealer dealer)
 		{
-			var employee = DbSession.Query<Employee>().FirstOrDefault(s => s == dealer.Employee);
-			var existedDealer = DbSession.Query<Dealer>().FirstOrDefault(s => s.Employee == dealer.Employee);
-			if (employee != null && existedDealer == null) {
-				DbSession.Save(dealer);
-				SuccessMessage("Дилер успешно добавлен");
+			var existedDealer = DbSession.Query<Dealer>().FirstOrDefault(s => s.Name.ToLower().Trim() == dealer.Name.ToLower().Trim());
+			if (existedDealer == null) {
+				var errors = ValidationRunner.ValidateDeep(dealer);
+				if (errors.Length == 0) {
+					DbSession.Save(dealer);
+					SuccessMessage("Дилер успешно добавлен");
+				}
+			}
+			else {
+				ErrorMessage("Дилер с подобным именем уже существует!");
+			}
+			return RedirectToAction("DealerList");
+		}
+
+		public ActionResult DealerStatusChange(int id)
+		{
+			var dealer = DbSession.Query<Dealer>().FirstOrDefault(s => s.Id == id);
+			if (dealer != null) {
+				dealer.Active = !dealer.Active;
+				DbSession.Update(dealer);
 			}
 			return RedirectToAction("DealerList");
 		}

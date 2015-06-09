@@ -1,0 +1,6 @@
+USE internet;
+	ALTER TABLE `inforoom2_dealers`
+	ADD COLUMN `Name` VARCHAR(45) NOT NULL DEFAULT '0' AFTER `Id`,
+	ADD COLUMN `Active` TINYINT(1) NOT NULL DEFAULT '0' AFTER `Name`,
+	DROP COLUMN `Employee`,
+	DROP FOREIGN KEY `FK_Dealers`; 

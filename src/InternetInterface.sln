@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{443E97FC-E470-41C9-9301-CB5D1B9E8C6F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetInterface", "InternetInterface\InternetInterface.csproj", "{E2B03BC7-AACB-4A72-BBC7-DF4325912504}"
@@ -955,8 +957,5 @@ Global
 		{D6853570-4238-430A-ADFE-3CAACE172954} = {443E97FC-E470-41C9-9301-CB5D1B9E8C6F}
 		{E37375CE-ADBA-47C9-9FA1-D7C5C704CD89} = {443E97FC-E470-41C9-9301-CB5D1B9E8C6F}
 		{8BE188CA-A0D9-4609-AB2E-AB8EDF849FE0} = {443E97FC-E470-41C9-9301-CB5D1B9E8C6F}
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal
