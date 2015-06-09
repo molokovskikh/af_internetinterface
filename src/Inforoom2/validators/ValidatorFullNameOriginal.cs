@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Inforoom2.Helpers;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using Contact = Inforoom2.Models.Contact;
@@ -17,18 +18,27 @@ namespace Inforoom2.validators
 			if (value != null && value is Inforoom2.Models.PhysicalClient) {
 				var physic = (Inforoom2.Models.PhysicalClient)value;
 				if (physic.Id == 0) {
+					// формируем шаблон и часть ссылки
+					string hrefItem = "<a href='{0}{1}' target= '_blank'>ЛС {1}</a>";
+					string urlToClientInfo = ConfigHelper.GetParam("adminPanelOld") + "UserInfo/ShowPhysicalClient?filter.ClientCode=";
+					// получаем текущую сессию
 					var dbSession = MvcApplication.SessionFactory.GetCurrentSession();
-					if (dbSession.Query<Models.PhysicalClient>().Any(s => s.Name == physic.Name &&
-					                                                      s.Surname == physic.Surname && s.Patronymic == physic.Patronymic)) {
-						AddError("<p class='msg'><strong>Клиент с подобным ФИО уже зарегистрирован!</strong>" +
-								 @"<div class='form-group'>
+					// поиск совпадений по ФИО, формирование списка ссылок по найденным совпадениям
+					var doubleNameList = dbSession.Query<Models.PhysicalClient>().Where(s => s.Name == physic.Name &&
+						s.Surname == physic.Surname && s.Patronymic == physic.Patronymic)
+						.Select(s => string.Format(hrefItem, urlToClientInfo, s.Client.Id)).ToList();
+					// если найдены совпадения
+					if (doubleNameList.Count > 0) {
+						// добавляем checkbox в сообщение валидатора
+						AddError(string.Format("<p class='msg'><strong>Клиент с подобным ФИО уже зарегистрирован!</strong><br>{0}" +
+						                       @"<div class='form-group'>
 										<label class='col-sm-8 control-label c-pointer' for='scapeUserNameDoubling'>Разрешить дублирование ФИО:</label>
 										<div class='col-sm-4'>
 			<input id='scapeUserNameDoubling' class='c-pointer' data-val='true' data-val-required='Требуется поле Checked.' name='scapeUserNameDoubling' type='checkbox' value='true'> 
 			<input name='scapeUserNameDoubling' type='hidden' value='false'>
-										</div>
-									</div>" +
-						         "</p>");
+										</div> 
+									</div>
+								</p>", string.Join("<span style='color:black;'>, </span>", doubleNameList)));
 					}
 				}
 			}
