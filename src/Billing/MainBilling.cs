@@ -578,6 +578,7 @@ set s.LastStartFail = true;")
 			{
 				project_id = 67,	// Проект "Координация"
 				status_id = 1,	// Статус "Новый"
+				assigned_to_id = 279, //Группа координаторы
 				created_on = SystemTime.Now(),
 				due_date = SystemTime.Today().AddDays(3),
 				subject = redmineIssueName,
