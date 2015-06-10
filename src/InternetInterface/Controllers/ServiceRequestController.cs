@@ -4,6 +4,7 @@ using System.Threading;
 using Castle.MonoRail.ActiveRecordSupport;
 using Castle.MonoRail.Framework;
 using Common.MySql;
+using Common.Tools;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.MonoRailExtentions;
 using Common.Web.Ui.NHibernateExtentions;
@@ -97,8 +98,11 @@ namespace InternetInterface.Controllers
 		{
 			var iteration = new ServiceIteration();
 			BindObjectInstance(iteration, "iteration", AutoLoadBehavior.NewInstanceIfInvalidKey);
-			if (iteration.Request != null)
+			if (iteration.Request != null) {
+				iteration.Request.ModificationDate = SystemTime.Now();
 				DbSession.Save(iteration);
+				DbSession.Save(iteration.Request);
+			}
 			RedirectToReferrer();
 		}
 
@@ -106,6 +110,7 @@ namespace InternetInterface.Controllers
 		public void EditServiceRequest([ARDataBind("Request", AutoLoadBehavior.NullIfInvalidKey)] ServiceRequest request)
 		{
 			if (request != null) {
+				request.ModificationDate = SystemTime.Now();
 				var writeOff = request.GetWriteOff(DbSession);
 				DbSession.Save(request);
 				if (writeOff != null)
@@ -148,6 +153,8 @@ namespace InternetInterface.Controllers
 			var interaction = new ServiceIteration(request) {
 				Description = commentText
 			};
+			request.ModificationDate = SystemTime.Now();
+			DbSession.Save(request);
 			DbSession.Save(interaction);
 			CancelView();
 			CancelLayout();

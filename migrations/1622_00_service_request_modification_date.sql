@@ -1,0 +1,3 @@
+USE Internet;
+ALTER TABLE `servicerequest`
+	ADD COLUMN `ModificationDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `BeginTime`;
