@@ -476,7 +476,12 @@ set s.LastStartFail = true;")
 			} //конец обработки списаний
 
 			//Обработка аренды оборудования
-			ProcessHardwareRent(session, client);
+			try {
+				ProcessHardwareRent(session, client);
+			}
+			catch (Exception e) {
+				_log.Error(string.Format("Не удалось обработать аренду оборудования для клиента {0}", client.Id), e);
+			}
 
 
 			//Обработка блокировок
@@ -555,6 +560,11 @@ set s.LastStartFail = true;")
 			if (!correctStatus)
 				return;
 
+			//Кидаем исключение, так как когда у клиента нет данных о последней смене статуса - это как минимум странно
+			//В идеале не должно никогда срабатывать
+			if(client.StatusChangedOn == null)
+				throw new Exception(string.Format("У клиента {0} нет даты последней смены статуса", client.Id));
+
 			//Создание задачи в Redmine и обработка списаний
 			CreateRentalHardwareWriteOffs(session, client);
 		}
@@ -612,8 +622,9 @@ set s.LastStartFail = true;")
 					session.Save(appeal);
 				}
 				else if (client.Status.Type == StatusType.Dissolved ||
-						(client.Status.Type == StatusType.NoWorked && client.StatusChangedOn != null &&
+						(client.Status.Type == StatusType.NoWorked &&
 						(SystemTime.Now() - client.StatusChangedOn) > TimeSpan.FromDays(clientHardware.Hardware.FreeDays))) {
+
 					//Создаем задачу в РМ
 					CreateRentalHardwareRedmineIssue(session, client);
 
