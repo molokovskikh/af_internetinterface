@@ -624,7 +624,6 @@ set s.LastStartFail = true;")
 				else if (client.Status.Type == StatusType.Dissolved ||
 						(client.Status.Type == StatusType.NoWorked &&
 						(SystemTime.Now() - client.StatusChangedOn) > TimeSpan.FromDays(clientHardware.Hardware.FreeDays))) {
-
 					//Создаем задачу в РМ
 					CreateRentalHardwareRedmineIssue(session, client);
 
