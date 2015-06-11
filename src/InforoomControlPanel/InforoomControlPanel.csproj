@@ -1918,7 +1918,7 @@
     <Content Include="Views\Admin\PermissionList.cshtml" />
     <Content Include="Views\Admin\RoleList.cshtml" />
     <Content Include="Views\Admin\EditRole.cshtml" />
-    <Content Include="Views\Client\DealerList.cshtml" />
+    <Content Include="Views\Client\AgentList.cshtml" />
     <Content Include="Views\ClientActions\PrivateMessage.cshtml" />
     <Content Include="Views\Admin\LogRegResultList.cshtml" />
     <Content Include="Views\Admin\LogRegResultInfo.cshtml" />

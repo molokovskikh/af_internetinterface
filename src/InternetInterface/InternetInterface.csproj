@@ -282,7 +282,9 @@
     <Content Include="Views\Shared\EditorTemplates\IpTvBoxRent.brail" />
     <Content Include="Views\Shared\EditorTemplates\SpeedBoost.brail" />
     <None Include="Views\Sms\SmsIndex.brail" />
-    <None Include="Views\Subview\AppealsInfo.brail" />
+    <None Include="Views\Subview\AppealsInfo.brail">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Views\Subview\CallsHistory.brail" />
     <None Include="Views\Subview\ChangeBalanceInfo.brail" />
     <None Include="Views\Subview\Client.brail" />

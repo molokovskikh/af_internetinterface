@@ -325,7 +325,7 @@
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Appeal.cs" />
     <Compile Include="Models\ConnectionRequest.cs" />
-    <Compile Include="Models\Dealer.cs" />
+    <Compile Include="Models\Agent.cs" />
     <Compile Include="Models\RegionPlan.cs" />
     <Compile Include="Models\RentalHardware.cs" />
     <Compile Include="Models\TwistedPair.cs" />

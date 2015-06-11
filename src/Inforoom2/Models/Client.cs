@@ -174,8 +174,8 @@ namespace Inforoom2.Models
 		[Property(Column = "WhoRegisteredName")]
 		public virtual string WhoRegisteredName { get; set; }
 
-		[ManyToOne(Column = "Dealer", Cascade = "save-update")]
-		public virtual Dealer Dealer { get; set; }
+		[ManyToOne(Column = "Agent", Cascade = "save-update")]
+		public virtual Agent Agent { get; set; }
 
 		public virtual bool IsNeedRecofiguration { get; set; }
 

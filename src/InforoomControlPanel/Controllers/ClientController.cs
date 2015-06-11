@@ -9,6 +9,7 @@ using Inforoom2.Models.Services;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NHibernate.Util;
+using Agent = Inforoom2.Models.Agent;
 using Client = Inforoom2.Models.Client;
 using ClientService = Inforoom2.Models.ClientService;
 using Contact = Inforoom2.Models.Contact;
@@ -560,7 +561,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.CurrentStreet = null;
 			ViewBag.CurrentHouse = null;
 			// получаем всех диллеров (работников)
-			ViewBag.Dealers = DbSession.Query<Dealer>().Where(s => s.Active).OrderBy(s => s.Name).ToList();
+			ViewBag.Agents = DbSession.Query<Agent>().Where(s => s.Active).OrderBy(s => s.Name).ToList();
 			ViewBag.RegionList = regionList;
 			ViewBag.CurrentStreetList = new List<Street>();
 			ViewBag.CurrentHouseList = new List<House>();
@@ -599,7 +600,7 @@ namespace InforoomControlPanel.Controllers
 				"Inforoom2.Models.PhysicalClient.CertificateName"
 			});
 			// если нет ошибок и регистрирующее лицо указано
-			if (errors.Length == 0 && client.Dealer != null) {
+			if (errors.Length == 0 && client.Agent != null) {
 				// указываем имя лица, которое проводит регистрирацию
 				client.WhoRegisteredName = client.WhoRegistered.Name;
 				// генерируем пароль и его хыш сохраняем в модель физ.клиента
@@ -680,7 +681,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.ScapeUserNameDoubling = scapeUserNameDoubling;
 
 			// получаем всех диллеров (работников)
-			ViewBag.Dealers = DbSession.Query<Dealer>().Where(s => s.Active).OrderBy(s => s.Name).ToList();
+			ViewBag.Agents = DbSession.Query<Agent>().Where(s => s.Active).OrderBy(s => s.Name).ToList();
 			ViewBag.CertificateTypeDic = CertificateTypeDic;
 			ViewBag.RedirectToCard = redirectToCard;
 			ViewBag.Client = client;
@@ -807,49 +808,53 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
-		public ActionResult DealerList()
+		public ActionResult AgentList()
 		{
-			var dealer = DbSession.QueryOver<Dealer>().List();
-			dealer = dealer.OrderByDescending(s => s.Active).ThenBy(s => s.Name).ToList();
+			var Agent = DbSession.QueryOver<Agent>().List();
+			Agent = Agent.OrderByDescending(s => s.Active).ThenBy(s => s.Name).ToList();
 			var employee = DbSession.QueryOver<Employee>().List();
-			ViewBag.DealerList = dealer;
-			ViewBag.DealerMan = new Dealer();
-			return View("DealerList");
+			ViewBag.AgentList = Agent;
+			ViewBag.AgentMan = new Agent();
+			return View("AgentList");
 		}
 
-		public ActionResult DealerAdd([EntityBinder] Dealer dealer)
+		public ActionResult AgentAdd([EntityBinder] Agent agent)
 		{
-			var existedDealer = DbSession.Query<Dealer>().FirstOrDefault(s => s.Name.ToLower().Trim() == dealer.Name.ToLower().Trim());
-			if (existedDealer == null) {
-				var errors = ValidationRunner.ValidateDeep(dealer);
+			var existedAgent = DbSession.Query<Agent>()
+				.FirstOrDefault(s => s.Name.ToLower().Replace(" ", "") == agent.Name.ToLower().Replace(" ", ""));
+			if (existedAgent == null) {
+				var errors = ValidationRunner.ValidateDeep(agent);
 				if (errors.Length == 0) {
-					DbSession.Save(dealer);
-					SuccessMessage("Дилер успешно добавлен");
+					DbSession.Save(agent);
+					SuccessMessage("Агент успешно добавлен");
+				}
+				else {
+					ErrorMessage(errors[0].Message);
 				}
 			}
 			else {
-				ErrorMessage("Дилер с подобным именем уже существует!");
+				ErrorMessage("Агент с подобным ФИО уже существует!");
 			}
-			return RedirectToAction("DealerList");
+			return RedirectToAction("AgentList");
 		}
 
-		public ActionResult DealerStatusChange(int id)
+		public ActionResult AgentStatusChange(int id)
 		{
-			var dealer = DbSession.Query<Dealer>().FirstOrDefault(s => s.Id == id);
-			if (dealer != null) {
-				dealer.Active = !dealer.Active;
-				DbSession.Update(dealer);
+			var Agent = DbSession.Query<Agent>().FirstOrDefault(s => s.Id == id);
+			if (Agent != null) {
+				Agent.Active = !Agent.Active;
+				DbSession.Update(Agent);
 			}
-			return RedirectToAction("DealerList");
+			return RedirectToAction("AgentList");
 		}
 
-		public ActionResult DealerDelete(int id)
+		public ActionResult AgentDelete(int id)
 		{
-			var dealer = DbSession.Query<Dealer>().FirstOrDefault(s => s.Id == id);
-			if (dealer != null) {
-				DbSession.Delete(dealer);
+			var Agent = DbSession.Query<Agent>().FirstOrDefault(s => s.Id == id);
+			if (Agent != null) {
+				DbSession.Delete(Agent);
 			}
-			return RedirectToAction("DealerList");
+			return RedirectToAction("AgentList");
 		}
 	}
 }
