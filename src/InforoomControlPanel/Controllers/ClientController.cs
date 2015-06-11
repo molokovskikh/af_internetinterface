@@ -397,8 +397,8 @@ namespace InforoomControlPanel.Controllers
 				// Принудительная валидация, проверка дублирования ФИО
 				var scapeNameDoubling = new Inforoom2.validators.ValidatorPhysicalClient();
 				ViewBag.ValidatorFullNameOriginal = scapeNameDoubling;
-				errors = errors.Length != 0 ? errors : ValidationRunner.ForcedValidationByAttribute(
-					client, client.GetType().GetProperty("PhysicalClient"), scapeNameDoubling, false);
+				errors = ValidationRunner.ForcedValidationByAttribute(
+					client, client.GetType().GetProperty("PhysicalClient"), scapeNameDoubling, false, errors);
 			}
 			// убираем из списка ошибок те, которые допустимы в данном случае
 			errors.RemoveErrors(new List<string>() {
@@ -590,8 +590,8 @@ namespace InforoomControlPanel.Controllers
 			{
 				var scapeNameDoubling = new Inforoom2.validators.ValidatorPhysicalClient();
 				ViewBag.ValidatorFullNameOriginal = scapeNameDoubling;
-				errors = errors.Length != 0 ? errors : ValidationRunner.ForcedValidationByAttribute(
-					client, client.GetType().GetProperty("PhysicalClient"), scapeNameDoubling, false);
+				errors = ValidationRunner.ForcedValidationByAttribute(
+					client, client.GetType().GetProperty("PhysicalClient"), scapeNameDoubling, false, errors);
 			}
 			// убираем из списка ошибок те, которые допустимы в данном случае
 			errors.RemoveErrors(new List<string>() {

@@ -121,9 +121,10 @@ namespace Inforoom2.Components
 		/// <param name="instableProperty">Параметр с вероятной ошибкой (для отображения ошибки)</param>
 		/// <param name="customValidatorAttribute">Атрибут (от CustomValidator), на основе которого проводится валидация</param>
 		/// <param name="validateJustModel">валидация только модели модели</param>
+		/// <param name="currentErrors">Существующий список ошибок</param>
 		/// <returns>Перечень ошибок</returns>
 		public ValidationErrors ForcedValidationByAttribute(object obj, PropertyInfo instableProperty,
-			object customValidatorAttribute, bool validateJustModel = true)
+			object customValidatorAttribute, bool validateJustModel = true, ValidationErrors currentErrors = null)
 		{
 			var summary = new List<InvalidValue>();
 			if (instableProperty != null) {
@@ -131,7 +132,26 @@ namespace Inforoom2.Components
 				var errors = attribute.ModelForcedValidation((BaseModel)obj, instableProperty, validateJustModel);
 				summary.AddRange(errors);
 			}
+			if (currentErrors != null) {
+				return Concatinate(currentErrors, summary);
+			}
 			return new ValidationErrors(summary.ToList());
+		}
+
+		/// <summary>
+		/// Объединяет список текущий список ошибок с другими  
+		/// </summary>
+		/// <param name="range">текущий список ошибок</param>
+		/// <param name="errors">список ошибок</param>
+		/// <returns></returns>
+		public ValidationErrors Concatinate(ValidationErrors range, List<InvalidValue> errors)
+		{
+			if (range == null || errors == null) {
+				return null;
+			}
+			range = new ValidationErrors(range.Where(s => !errors
+				.Any(d => s.Message == d.Message && s.PropertyName == d.PropertyName && s.Entity == d.Entity)).ToList().Concat(errors));
+			return range;
 		}
 
 		public ValidationErrors Validate(object obj)
