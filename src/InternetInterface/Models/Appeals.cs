@@ -84,6 +84,9 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual DateTime Date { get; set; }
 
+		[Property("_inforoom2")]
+		public virtual bool FromNewAdminPanel { get; set; }
+
 		[BelongsTo("Partner")]
 		public virtual Partner Partner { get; set; }
 
@@ -110,7 +113,7 @@ namespace InternetInterface.Models
 			var appeals = Queryable.Where(predicate).ToList().Select(a => new UniversalAppeal {
 				Date = a.Date,
 				Partner = a.Partner != null ? a.Partner.Name : string.Empty,
-				Text = a.GetTransformedAppeal(),
+				Text = a.FromNewAdminPanel ? a.Appeal : a.GetTransformedAppeal(),
 				Type = UniversalAppealType.Appeal,
 				AppealType = a.AppealType
 			}).ToList();
