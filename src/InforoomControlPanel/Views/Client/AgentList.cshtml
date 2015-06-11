@@ -4,23 +4,23 @@
 @model dynamic
 
 @{
-	ViewBag.Title = "Список дилеров";
+	ViewBag.Title = "Список агентов";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	string action = ViewBag.ActionName;
 	string controller = ViewBag.ControllerName;
-	var dealerList = (List<Dealer>)ViewBag.DealerList;
+	var agentList = (List<Agent>)ViewBag.agentList;
 	ValidationRunner runner = ViewBag.Validation;
-	var dealer = (Dealer)ViewBag.DealerMan;
+	var agent = (Agent)ViewBag.agentMan;
 }
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
 	
-	@using (@Html.BeginForm("DealerAdd", controller, null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
+	@using (@Html.BeginForm("AgentAdd", controller, null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
 		<div class="form-group">
 			<div class="col-sm-2">
 				<label class="control-label">ФИО</label>
 			</div>
 			<div class="col-sm-8">
-				@Html.ValidationEditor(runner, dealer, "Name", new { @class = "form-control " }, HtmlTag.input, HtmlType.none) 
+				@Html.ValidationEditor(runner, agent, "Name", new { @class = "form-control " }, HtmlTag.input, HtmlType.none)  
 			</div>
 			<div class="col-sm-2">
 				<button class="btn btn-green" type="submit">Добавить</button>
@@ -33,13 +33,13 @@
 		<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 			<thead>
 				<tr role="row">
-					<th tabindex="0" aria-controls="table-2">Дилер</th>
-					<th tabindex="0" aria-controls="table-2">Активен</th>
+					<th tabindex="0" aria-controls="table-2">агент</th>
+					<th tabindex="0" aria-controls="table-2">активен</th>
 					<th tabindex="0" aria-controls="table-2">действие</th>  
 				</tr>
 			</thead>			
 			<tbody>
-				@foreach (Dealer item in dealerList) {
+				@foreach (Agent item in agentList) {
 					<tr>
 						<td class="col-sm-6">
 							<span>@item.Name</span>
@@ -48,7 +48,7 @@
 							<span>@Html.CheckBoxFor(i => @item.Active, new { @disabled = "disabled" })</span>
 						</td>
 						<td>
-							<a class="btn @(@item.Active == false ? "btn-green" : "btn-red") btn-sm btn-icon icon-left" href="@Url.Action("DealerStatusChange", new { @id = @item.Id })">
+							<a class="btn @(@item.Active == false ? "btn-green" : "btn-red") btn-sm btn-icon icon-left" href="@Url.Action("agentStatusChange", new { @id = @item.Id })">
 								<i class="entypo-cancel-circled"></i>
 								@(@item.Active == false ? "Активировать" : "Дезактивировать")
 							</a>

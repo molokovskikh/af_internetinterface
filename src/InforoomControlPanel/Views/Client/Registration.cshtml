@@ -2,6 +2,7 @@
 @using Inforoom2.Helpers
 @using Inforoom2.Models 
 @using InternetInterface.Models
+@using Agent = Inforoom2.Models.Agent
 @using Client = Inforoom2.Models.Client
 @using House = Inforoom2.Models.House
 @using Street = Inforoom2.Models.Street
@@ -12,7 +13,7 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	string action = ViewBag.ActionName;
 	string controller = ViewBag.ControllerName;
-	List<Dealer> dealers = ViewBag.Dealers;
+	List<Agent> agents = ViewBag.Agents;
 	Dictionary<int, CertificateType> certificateTypeDic = ViewBag.CertificateTypeDic;
 	bool redirectToCard = ViewBag.RedirectToCard;
 	List<Region> regionList = ViewBag.RegionList;
@@ -260,14 +261,14 @@
 										</div>
 									</div>
 									<div class="form-group error">
-										<label class="col-sm-4 control-label@(client.Dealer == null ? " bold msg" : "")">Привел клиента в компанию</label>
+										<label class="col-sm-4 control-label@(client.Agent == null ? " bold msg" : "")">Привел клиента в компанию</label>
 										<div class="col-sm-6">
-											@if (client.Dealer != null) {
-												@Html.DropDownListExtendedFor(i => client.Dealer, dealers, obj => obj.Name, null, new { @class = "form-control" }, client.Dealer.Id, true)
+											@if (client.Agent != null) {
+												@Html.DropDownListExtendedFor(i => client.Agent, agents, obj => obj.Name, null, new { @class = "form-control" }, client.Agent.Id, true)
 											}
 											else {
-												@Html.DropDownListExtendedFor(i => client.Dealer, dealers, obj => obj.Name, null, new { @class = "form-control" }, firstEmptyElementAdd: true)
-												@ViewBag.Validation.GetError(client, "Dealer")
+												@Html.DropDownListExtendedFor(i => client.Agent, agents, obj => obj.Name, null, new { @class = "form-control" }, firstEmptyElementAdd: true)
+												@ViewBag.Validation.GetError(client, "Agent")
 											}
 										</div>
 									</div>
