@@ -506,9 +506,12 @@ set s.LastStartFail = true;")
 		private void AddExpiredServiceRequestNoteToRedmine(ISession session, Client client)
 		{
 			foreach (var request in client.ServiceRequests) {
+				//Если заявка отменена или закрыта, то она не может быть просроченна
 				if (request.Status == ServiceRequestStatus.Close || request.Status == ServiceRequestStatus.Cancel)
 					continue;
-				if ((SystemTime.Now() - request.RegDate).TotalDays < 3)
+
+				//Уведомления отсылаются через 3 дня
+				if ((SystemTime.Now() - request.ModificationDate).TotalDays < 3)
 					continue;
 
 				var cityName = "Неизвестный";

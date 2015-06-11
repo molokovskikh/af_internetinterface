@@ -138,6 +138,9 @@ namespace InternetInterface.Models
 
 		public virtual bool IsOverdue { get; protected set; }
 
+		[Description("Дата последней модификации")]
+		public virtual DateTime ModificationDate { get; set; }
+
 		public virtual void Calculate(SaleSettings settings)
 		{
 			if (Status == ServiceRequestStatus.New)
