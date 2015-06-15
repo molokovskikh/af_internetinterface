@@ -61,11 +61,13 @@ namespace InternetInterface.Test.Integration.Tasks
 		public void CheckForHouseObjAbsenceFixtureExistsNot()
 		{
 			var clientWithEmptyHouseObj = session.Query<Client>().Where(s => s.PhysicalClient != null && s.PhysicalClient.HouseObj == null
-			                                                                 && s.Status.Id != 10 && s.Status.Id != 3 && s.Status.Id != 1).ToList();
+																			 && s.Status.Id != 10 && s.Status.Id != 3 && s.Status.Id != 1).ToList();
 			var houseObj = session.Query<House>().FirstOrDefault();
-			foreach (var item in clientWithEmptyHouseObj) {
+			var statusFive = session.Query<Status>().FirstOrDefault(s => s.Id == 5);
+			foreach (var item in clientWithEmptyHouseObj)
+			{
 				item.PhysicalClient.HouseObj = houseObj;
-				item.Status.Id = 5;
+				item.Status = statusFive;
 				session.Update(item);
 			}
 			session.Flush();
