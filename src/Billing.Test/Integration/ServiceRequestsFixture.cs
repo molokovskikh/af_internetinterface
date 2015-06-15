@@ -38,10 +38,11 @@ namespace Billing.Test.Integration
 					Description = "Тестовая заявка",
 					RegDate = SystemTime.Now(),
 					Status = ServiceRequestStatus.New,
+					ModificationDate = DateTime.Now,
 					Sum = 100m
 				};
-				ActiveRecordMediator.Save(serviceRequest);
-
+				ActiveRecordMediator.SaveAndFlush(serviceRequest);
+				ActiveRecordMediator.Refresh(serviceRequest);
 				client.Refresh();
 				Assert.IsTrue(client.ServiceRequests.Count == 1, "\nНе создалась сервисная заявка");
 
