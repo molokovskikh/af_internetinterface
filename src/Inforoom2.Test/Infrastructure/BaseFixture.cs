@@ -202,7 +202,7 @@ namespace Inforoom2.Test.Infrastructure
 
 		private void GenerateTvProtocols()
 		{
-			var names = "udp,rtp".Split(',');
+			var names = "udp,rtp,test".Split(',');
 			foreach (var name in names)
 			{
 				var protocol = new TvProtocol();
@@ -261,6 +261,10 @@ namespace Inforoom2.Test.Infrastructure
 			group.Name = "Спорт";
 			group.TvChannels.Add(TvChannels.First(i => i.Name == "РТР"));
 			group.TvChannels.Add(TvChannels.First(i => i.Name == "Спорт"));
+			DbSession.Save(group);
+
+			group = new TvChannelGroup();
+			group.Name = "Детская";
 			DbSession.Save(group);
 		}
 
@@ -795,7 +799,6 @@ namespace Inforoom2.Test.Infrastructure
 			plan.PackageSpeed = DbSession.Get<PackageSpeed>(23);
 			DbSession.Save(plan);
 
-
 			plan = new Plan();
 			plan.Price = 245;
 			plan.Name = "Старт";
@@ -830,7 +833,6 @@ namespace Inforoom2.Test.Infrastructure
 			plan.IsServicePlan = false;
 			plan.PackageSpeed = DbSession.Get<PackageSpeed>(23);
 			DbSession.Save(plan);
-
 
 			DbSession.Flush();
 

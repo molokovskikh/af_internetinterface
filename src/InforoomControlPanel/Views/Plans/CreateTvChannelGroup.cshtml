@@ -26,7 +26,7 @@
 				</div>
 				<div class="form-group">
 					<div class="col-sm-2">
-						<button class="btn btn-green" type="submit">Сохранить</button>
+						<button class="btn btn-green save" type="submit">Сохранить</button>
 					</div>
 				</div>
 		}
@@ -34,7 +34,7 @@
 		<div class="col-md-6">
 			@if (TvChannelGroup.TvChannels.Count > 0) {
 				<h4>Включенные каналы:</h4>
-				<div class="row">
+				<div class="row tvChannels">
 				@foreach (var item in TvChannelGroup.TvChannels)
 				 {
 					<div class="col-sm-5">
@@ -59,7 +59,7 @@
 								@Html.DropDownListExtendedFor(i => TvChannelGroup.TvChannels, TvChannels, obj => obj.Name, null, new { @class = "form-control" })
 							</div>
 							<div class="col-sm-2">
-								<button class="btn btn-green" type="submit">Добавить</button>
+								<button class="btn btn-green add" type="submit">Добавить</button>
 							</div>
 				}
 			}

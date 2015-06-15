@@ -136,7 +136,10 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult RemovePlan(int id)
 		{
 			var plan = DbSession.Get<Plan>(id);
-			DbSession.Delete(plan);
+			if (DbSession.AttemptDelete(plan))
+				SuccessMessage("Объект успешно удален!");
+			else
+				ErrorMessage("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
 			return RedirectToAction("PlanIndex");
 		}
 

@@ -73,7 +73,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<button class="btn btn-green" type="submit">Принять изменения</button>
+					<button class="btn btn-green save" type="submit">Принять изменения</button>
 				</div>
 			}
 		</div>
@@ -100,7 +100,7 @@
 								@ViewBag.Validation.GetError(PlanTransfer, "Speed")
 							</div>
 							<div class="col-sm-2">
-								<button class="btn btn-green" type="submit">Добавить</button>
+								<button class="btn btn-green addPrice" type="submit">Добавить</button>
 							</div>
 						</div>
 					}
@@ -144,7 +144,7 @@
 							<div class="col-sm-2">
 							</div>
 							<div class="col-sm-2">
-								<button class="btn btn-green" type="submit">Добавить</button>
+								<button class="btn btn-green addRegion" type="submit">Добавить</button>
 							</div>
 						</div>
 					}
@@ -156,7 +156,7 @@
 				</div>
 				foreach (var item in plan.RegionPlans) {
 					<div class="form-group">
-						<div class="col-sm-5">
+						<div class="col-sm-5 region">
 							@item.Region.Name
 						</div>
 						<div class="col-sm-2">
@@ -183,7 +183,7 @@
 							</div>
 							<div class="col-sm-2"></div>
 							<div class="col-sm-2">
-								<button class="btn btn-green" type="submit">Добавить</button>
+								<button class="btn btn-green addTVChannel" type="submit">Добавить</button>
 							</div>
 						</div>
 					}
@@ -195,7 +195,7 @@
 				</div>
 				foreach (var item in plan.TvChannelGroups) {
 					<div class="form-group">
-						<div class="col-sm-5">
+						<div class="col-sm-5 tvChannelGroups">
 							@item.Name
 						</div>
 						<div class="col-sm-2"></div>

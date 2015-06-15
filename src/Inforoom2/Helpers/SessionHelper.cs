@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.DirectoryServices;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Mime;
 using System.Reflection;
+using System.Security.Authentication.ExtendedProtection;
 using System.Text;
 using System.Threading;
 using System.Web;
@@ -18,6 +20,7 @@ using Inforoom2.Models;
 using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Linq.Functions;
+using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Cfg.Loquacious;
 
 namespace Inforoom2.Helpers
@@ -37,8 +40,11 @@ namespace Inforoom2.Helpers
 		/// <returns>True, в случае успеха</returns>
 		public static bool AttemptDelete(this NHibernate.ISession DbSession, BaseModel model)
 		{
-			try
-			{
+			try {
+				//Почему-то не инициализированные ManyToMany поля вызывают проблемы
+				//todo проблема наблюдается в ModelCrudListener
+				//Возможно в ModelCrudListener ее лучше лечить - пока мне кажется, что проще инициализировать поля, так как все-равно не будет особого ущерба производительности
+				InitializeModel(model);
 				DbSession.Delete(model);
 				//Внешние ключи могут не дать удалить объект
 				//В этом случае, если сейчас не закрыть транзакцию, то приложение упадет с ошибкой, когда будет когда будет
@@ -46,11 +52,24 @@ namespace Inforoom2.Helpers
 				DbSession.Transaction.Commit();
 				return true;
 			}
-			catch (Exception e)
+			catch (NHibernate.Exceptions.GenericADOException e)
 			{
 				DbSession.Clear();
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// Инициализвация полей модели. Пока только ManyToMany
+		/// </summary>
+		/// <param name="model">Модель, поля котоой необходимо инициализировать.</param>
+		private static void InitializeModel(BaseModel model)
+		{
+			var props = model.GetType().GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(ManyToManyAttribute)));
+			foreach (var prop in props) {
+				var obj = prop.GetValue(model,new object[]{});
+				NHibernateUtil.Initialize(obj);
+			}
 		}
 
 		/// <summary>
