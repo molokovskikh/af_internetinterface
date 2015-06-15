@@ -83,7 +83,7 @@ namespace Inforoom2.Helpers
 			string expr = expression.ToString();
 			defaultSelectAttributes["name"] = "name=\"" + expr.After(").") + ".Id\"";
 			if (typeof(TProperty).GetInterfaces().Contains(typeof(IEnumerable)))
-				defaultSelectAttributes["name"] = "name=\"" + expr.After(").") + "[].Id" + ".Id\"";
+				defaultSelectAttributes["name"] = "name=\"" + expr.After(").") + "[].Id\"";
 
 			if (modelCollection.Count > 0) {
 				defaultSelectAttributes["id"] = "id=\"" + modelCollection.FirstOrDefault().GetType().Name + "DropDown\"";

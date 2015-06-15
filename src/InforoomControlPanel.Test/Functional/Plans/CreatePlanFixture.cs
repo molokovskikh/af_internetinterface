@@ -27,7 +27,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			var plan = DbSession.Query<Plan>().First(p => p.Name == "Марс");
 			var speed = DbSession.Query<PackageSpeed>().First(p => p.Speed == 40000000);
 			AssertText(plan.Name);
-			Assert.That(plan.PackageSpeed.PackageId, Is.EqualTo(speed.PackageId), "Скорость у тарифа должна быть установлена корректна");
+			Assert.That(plan.PackageSpeed.PackageId, Is.EqualTo(speed.PackageId), "Скорость у тарифа должна быть установлена корректно");
 		}
 	}
 }

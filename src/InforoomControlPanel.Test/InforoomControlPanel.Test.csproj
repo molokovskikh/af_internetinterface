@@ -188,7 +188,14 @@
     <Compile Include="Functional\ClientActions\LogAppealFixture.cs" />
     <Compile Include="Functional\Infrastructure\ControlPanelBaseFixture.cs" />
     <Compile Include="Functional\Plans\CreatePlanFixture.cs" />
+    <Compile Include="Functional\Plans\CreateTVProtocolFixture.cs" />
+    <Compile Include="Functional\Plans\CreateTVChannelGroupFixture.cs" />
+    <Compile Include="Functional\Plans\DeleteTVProtocolFixture.cs" />
+    <Compile Include="Functional\Plans\DeleteTVChannelGroupFixture.cs" />
     <Compile Include="Functional\Plans\DeleteTVChannelFixture .cs" />
+    <Compile Include="Functional\Plans\EditPlanFixture.cs" />
+    <Compile Include="Functional\Plans\EditTVProtocolFixture.cs" />
+    <Compile Include="Functional\Plans\EditTVChannelGroupFixture.cs" />
     <Compile Include="Functional\Plans\EditTVChannelFixture.cs" />
     <Compile Include="Functional\Plans\CreateTVChannelFixture.cs" />
     <Compile Include="Functional\Plans\PlanFixture.cs" />
