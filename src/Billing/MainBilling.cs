@@ -30,10 +30,10 @@ namespace Billing
 
 		// Основные тарифные планы (для начисления бонуса при первом платеже)
 		public uint[] FirstPaymentBonusTariffIds = {
-			45,		// "Популярный"
-			49,		// "Оптимальный"
-			81,		// "Максимальный"
-			85		//Народный
+			45, // "Популярный"
+			49, // "Оптимальный"
+			81, // "Максимальный"
+			85 //Народный
 		};
 
 		public MainBilling()
@@ -166,9 +166,7 @@ set s.LastStartFail = true;")
 								if (updateClient.IsChanged(c => c.ShowBalanceWarningPage))
 									updateClient.CreareAppeal("Отключена страница Warning, клиент внес платеж", AppealType.Statistic);
 							}
-							foreach (var clientService in updateClient.ClientServices.ToList()) {
-								clientService.PaymentProcessed();
-							}
+							foreach (var clientService in updateClient.ClientServices.ToList()) clientService.PaymentProcessed();
 						}
 						ProcessBonusesForFirstPayment(payment, session);
 					}
@@ -235,9 +233,7 @@ set s.LastStartFail = true;")
 							client.CreareAppeal("Отключена страница Warning", AppealType.Statistic);
 					}
 				}
-				foreach (var assignedservice in session.Query<ClientService>()) {
-					assignedservice.TryDeactivate();
-				}
+				foreach (var assignedservice in session.Query<ClientService>()) assignedservice.TryDeactivate();
 			});
 		}
 
@@ -475,7 +471,7 @@ set s.LastStartFail = true;")
 				}
 			} //конец обработки списаний
 
-			//Обработка аренды оборудования
+			//Обработка аренды оборудования 
 			try {
 				ProcessHardwareRent(session, client);
 			}
@@ -564,8 +560,8 @@ set s.LastStartFail = true;")
 				return;
 
 			//Кидаем исключение, так как когда у клиента нет данных о последней смене статуса - это как минимум странно
-			//В идеале не должно никогда срабатывать
-			if(client.StatusChangedOn == null)
+			//В идеале не должно никогда срабатывать 
+			if (client.StatusChangedOn == null)
 				throw new Exception(string.Format("У клиента {0} нет даты последней смены статуса", client.Id));
 
 			//Создание задачи в Redmine и обработка списаний
@@ -587,10 +583,9 @@ set s.LastStartFail = true;")
 			if (hasRedmineIssue)
 				return;
 
-			var redmineIssue = new RedmineIssue
-			{
-				project_id = 67,	// Проект "Координация"
-				status_id = 1,	// Статус "Новый"
+			var redmineIssue = new RedmineIssue {
+				project_id = 67, // Проект "Координация"
+				status_id = 1, // Статус "Новый"
 				assigned_to_id = 279, //Группа координаторы
 				created_on = SystemTime.Now(),
 				due_date = SystemTime.Today().AddDays(3),
@@ -610,36 +605,33 @@ set s.LastStartFail = true;")
 			// Обработка списаний за аренду конкретного оборудования
 			var phisicalClient = client.PhysicalClient;
 			var count = 1;
-			for (var i = HardwareType.TvBox; i < HardwareType.Count; i++)
-			{
-				if (!client.HardwareIsRented(i)) 
+			for (var i = HardwareType.TvBox; i < HardwareType.Count; i++) {
+				if (!client.HardwareIsRented(i))
 					continue;
 
 				var clientHardware = client.GetActiveRentalHardware(i);
 				// Если пустая дата начала аренды, деактивировать услугу
-				if (clientHardware.GiveDate == null)
-				{
+				if (clientHardware.GiveDate == null) {
 					var msg = clientHardware.Deactivate();
 					session.Update(clientHardware);
 					var appeal = client.CreareAppeal(msg, AppealType.System, false);
 					session.Save(appeal);
 				}
 				else if (client.Status.Type == StatusType.Dissolved ||
-						(client.Status.Type == StatusType.NoWorked &&
-						(SystemTime.Now() - client.StatusChangedOn) > TimeSpan.FromDays(clientHardware.Hardware.FreeDays))) {
+				         (client.Status.Type == StatusType.NoWorked &&
+				          (SystemTime.Now() - client.StatusChangedOn) > TimeSpan.FromDays(clientHardware.Hardware.FreeDays))) {
 					//Создаем задачу в РМ
 					CreateRentalHardwareRedmineIssue(session, client);
 
 					// Если с даты изменения статуса клиента прошло > 30 дней, списать ежедневную плату за аренду
 					var sum = client.GetPriceForHardware(clientHardware.Hardware);
-					if (sum <= 0m)                  // В случае 0-й платы за аренду не создавать списание
+					if (sum <= 0m) // В случае 0-й платы за аренду не создавать списание
 						continue;
 
 					var sumDiff = Math.Min(phisicalClient.MoneyBalance - sum, 0);
 					var virtualWriteoff = Math.Min(Math.Abs(sumDiff), phisicalClient.VirtualBalance);
 					var moneyWriteoff = sum - virtualWriteoff;
-					var newWriteoff = new WriteOff
-					{
+					var newWriteoff = new WriteOff {
 						Client = client,
 						WriteOffDate = SystemTime.Now().AddSeconds(count++), //списания должны быть выровнены по дате, а при одинаковых датах, возникает путаница
 						WriteOffSum = Math.Round(sum, 2),

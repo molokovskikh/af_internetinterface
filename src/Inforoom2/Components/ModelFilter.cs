@@ -31,19 +31,19 @@ namespace Inforoom2.Components
 	/// </summary>
 	public interface IModelFilter
 	{
-		int PagesCount { get; }					 // Кол-во страниц
-		int Page { get; }						 // Текущая страница
-		int TotalItems { get; }					 // Общее количество записей, удовлетворяющих запросу
-		int ItemsPerPage { get; }				 // Кол-во записей на страницу   
-		string OrderByColumn { get; }			 // Наименование поля, по которому будет сортироваться таблица
-		bool AscOrder { get; }					 // Направление сортировки
-		string SearchParam { get; }				 // Поле, по которому будет производится фильтрация
-		string SearchText { get; }				 // Значения фильтра
-		string UrlBase { get; }					 // Адрес основной
-		string UrlForColumns { get; }			 // Адрес для колонок
-		string UrlPagePrevious { get; }			 // Адрес предыдущей страницы
-		string UrlPageNext { get; }				 // Адрес следующей страницы
-		string UrlRootBase { get; }				 // Адрес корневой
+		int PagesCount { get; } // Кол-во страниц
+		int Page { get; } // Текущая страница
+		int TotalItems { get; } // Общее количество записей, удовлетворяющих запросу
+		int ItemsPerPage { get; } // Кол-во записей на страницу   
+		string OrderByColumn { get; } // Наименование поля, по которому будет сортироваться таблица
+		bool AscOrder { get; } // Направление сортировки
+		string SearchParam { get; } // Поле, по которому будет производится фильтрация
+		string SearchText { get; } // Значения фильтра
+		string UrlBase { get; } // Адрес основной
+		string UrlForColumns { get; } // Адрес для колонок
+		string UrlPagePrevious { get; } // Адрес предыдущей страницы
+		string UrlPageNext { get; } // Адрес следующей страницы
+		string UrlRootBase { get; } // Адрес корневой
 
 
 		// Наименование параметров в адресе
@@ -54,6 +54,7 @@ namespace Inforoom2.Components
 		string UrlItemsPerPage { get; }
 		string UrlOrderByColumn { get; }
 	}
+
 	/// <summary>
 	///  Реализует функционал, упрощающий постраничную навигацию, фильтрацию и сортировку.
 	/// </summary>
@@ -68,30 +69,31 @@ namespace Inforoom2.Components
 		protected IList<TModel> Models;
 
 		[Description("Кол-во страниц")]
-		public int PagesCount {
-			get
-			{
-				return Math.Abs(TotalItems / ItemsPerPage) + (TotalItems % ItemsPerPage > 0 ? 1 : 0);
-			} private set{} 
+		public int PagesCount
+		{
+			get { return Math.Abs(TotalItems / ItemsPerPage) + (TotalItems % ItemsPerPage > 0 ? 1 : 0); }
+			private set { }
 		}
 
 		[Description("Текущая страница")]
 		public int Page { get; private set; }
 
 		private int? _totalItems;
+
 		[Description("Общее количество записей, удовлетворяющих запросу")]
-		public int TotalItems {
+		public int TotalItems
+		{
 			get
 			{
 				if (!_totalItems.HasValue) {
 					Criteria.SetFirstResult(0);
 					Criteria.SetMaxResults(1000000);
-					var res =  Criteria.SetProjection(Projections.RowCount()).UniqueResult();
+					var res = Criteria.SetProjection(Projections.RowCount()).UniqueResult();
 					_totalItems = int.Parse(res.ToString());
 				}
 				return _totalItems.Value;
 			}
-			private set{}
+			private set { }
 		}
 
 		[Description("Кол-во записей на страницу ")]
@@ -124,7 +126,7 @@ namespace Inforoom2.Components
 			get
 			{
 				return Page <= 1 ? "" : "href=" + UrlBase +
-					(UrlBase.Contains("?") ? "&" : "?") + UrlCurrentPage + "=" + (Page - 1);
+				                        (UrlBase.Contains("?") ? "&" : "?") + UrlCurrentPage + "=" + (Page - 1);
 			}
 		}
 
@@ -134,7 +136,7 @@ namespace Inforoom2.Components
 			get
 			{
 				return Page >= PagesCount ? "" : "href=" + UrlBase +
-					(UrlBase.Contains("?") ? "&" : "?") + UrlCurrentPage + "=" + (Page + 1);
+				                                 (UrlBase.Contains("?") ? "&" : "?") + UrlCurrentPage + "=" + (Page + 1);
 			}
 		}
 
@@ -215,60 +217,50 @@ namespace Inforoom2.Components
 
 			var request = controller.Url.RequestContext.HttpContext.Request.Params;
 			foreach (var key in request.AllKeys) {
-				if(!key.Contains(UrlParamPrefix))
+				if (!key.Contains(UrlParamPrefix))
 					continue;
 				var name = key.Replace(UrlParamPrefix + ".", "");
 				Params[name] = request[key];
 			}
 
 			var dic = controller.Url.RequestContext.HttpContext.Request.Params;
-			if ((!dic.AllKeys.Any(s=>s==UrlParamPrefix + "." + UrlOrderByColumn)) && orderDirrection == false)
-			{
+			if ((!dic.AllKeys.Any(s => s == UrlParamPrefix + "." + UrlOrderByColumn)) && orderDirrection == false) {
 				AscOrder = false;
 			}
-			for (int i = 0; i < dic.Count; i++)
-			{
-				if (dic.Keys[i] == UrlParamPrefix + "." + UrlCurrentPage)
-				{
+			for (int i = 0; i < dic.Count; i++) {
+				if (dic.Keys[i] == UrlParamPrefix + "." + UrlCurrentPage) {
 					Page = Convert.ToInt32(dic[i]);
 				}
-				if (dic.Keys[i] == UrlParamPrefix + "." + UrlItemsPerPage)
-				{
+				if (dic.Keys[i] == UrlParamPrefix + "." + UrlItemsPerPage) {
 					ItemsPerPage = Convert.ToInt32(dic[i]);
 				}
-				if (dic.Keys[i] == UrlParamPrefix + "." + UrlSearchDirection)
-				{
+				if (dic.Keys[i] == UrlParamPrefix + "." + UrlSearchDirection) {
 					AscOrder = false;
 				}
-				if (dic.Keys[i] == UrlParamPrefix + "." + UrlOrderByColumn)
-				{
+				if (dic.Keys[i] == UrlParamPrefix + "." + UrlOrderByColumn) {
 					OrderByColumn = dic[i];
 				}
-				if (dic.Keys[i].Contains(UrlParamPrefix + "." + UrlSimpleSearch))
-				{
+				if (dic.Keys[i].Contains(UrlParamPrefix + "." + UrlSimpleSearch)) {
 					SearchParam = dic.Keys[i];
 					SearchText = dic[i];
 				}
 			}
 
 			string url_params = "";
-			for (int i = 0; i < controller.Request.QueryString.Count; i++)
-			{
+			for (int i = 0; i < controller.Request.QueryString.Count; i++) {
 				// относим к параметрам по умолчанию все параметры, кроме тех, что добавляет постраничная навигация, сортировка колонок и фильтр
 				if (!controller.Request.QueryString.AllKeys[i].Contains(UrlParamPrefix)
-					|| controller.Request.QueryString.AllKeys[i] == UrlParamPrefix + "." + UrlItemsPerPage)
-				{
+				    || controller.Request.QueryString.AllKeys[i] == UrlParamPrefix + "." + UrlItemsPerPage) {
 					url_params += (url_params == "" ? "?" : "&") + controller.Request.QueryString.AllKeys[i] + "=" + controller.Request.QueryString[i];
 				}
 				// относим к параметрам для листалки все параметры, кроме тех, что добавляет сама постраничная навигация 
-				if (controller.Request.QueryString.AllKeys[i] != UrlParamPrefix + "." + UrlCurrentPage)
-				{
+				if (controller.Request.QueryString.AllKeys[i] != UrlParamPrefix + "." + UrlCurrentPage) {
 					UrlBase += (UrlBase == "" ? "?" : "&") + controller.Request.QueryString.AllKeys[i] + "=" + controller.Request.QueryString[i];
 				}
 			}
 			UrlForColumns = (urlBasePrefix != "" ? "" : "/") + controllerName + "/" + actionName; // получаем основной адрес
-			UrlBase = urlBasePrefix + UrlForColumns + UrlBase;									  // добавляем основной адрес к полученным для листалки параметрам
-			UrlForColumns += url_params;								      // формируем адрес для колонок таблицы из основного адреса и параметров по умолчанию
+			UrlBase = urlBasePrefix + UrlForColumns + UrlBase; // добавляем основной адрес к полученным для листалки параметрам
+			UrlForColumns += url_params; // формируем адрес для колонок таблицы из основного адреса и параметров по умолчанию
 		}
 
 		/// <summary>
@@ -281,35 +273,32 @@ namespace Inforoom2.Components
 		{
 			string name = ""; // Наименование поля, по которому будет сортироваться таблица 
 
-			try
-			{
+			try {
 				var body = (MemberExpression)expression.Body;
 				// получаем наименование поля, если оно не обернуто в Convert()
 				name = body.ToString().Replace(expression.Parameters[0].ToString() + ".", "");
 			}
-			catch (Exception)
-			{
+			catch (Exception) {
 				var body = expression.Body;
 				// получаем наименование поля из обертки Convert()
 				name = body.ToString().Replace("Convert(" + expression.Parameters[0].ToString() + ".", "").Replace(")", "");
 			}
 
 			string ReturnUrl = UrlForColumns;
-			if (ReturnUrl.IndexOf("?") == -1)
-			{
+			if (ReturnUrl.IndexOf("?") == -1) {
 				ReturnUrl = ReturnUrl + "?";
 			}
-			else
-			{
+			else {
 				ReturnUrl = ReturnUrl + "&";
 			}
 
 			ReturnUrl += (name == OrderByColumn ? AscOrder ? UrlParamPrefix + "." + UrlSearchDirection + "=desc&" : ""
 				: ascDefault ? "" : UrlParamPrefix + "." + UrlSearchDirection + "=desc&")
-				+ UrlParamPrefix + "." + UrlOrderByColumn + "=" + name; // дополняем возвращаемый адрес условием сортировки
+			             + UrlParamPrefix + "." + UrlOrderByColumn + "=" + name; // дополняем возвращаемый адрес условием сортировки
 
-			return UrlRootBase+ReturnUrl;
+			return UrlRootBase + ReturnUrl;
 		}
+
 		/// <summary>
 		///  Добавление условия фильтра в критерий
 		/// </summary>
@@ -319,83 +308,70 @@ namespace Inforoom2.Components
 		/// <param name="usedAliasList">используемы в запросе псевдонимы</param> 
 		public void AddSearchToCriteria(ICriteria criteria, string key, string value, Dictionary<string, string> usedAliasList)
 		{
-			string searchByAlias = "";			// псевдоним, по которому будет проходить фильтрация
-			var keyPieces = key.Split('.');		// массив элементов параметра адреса из url 
-			if (keyPieces.Length < 5)
-			{
+			string searchByAlias = ""; // псевдоним, по которому будет проходить фильтрация
+			var keyPieces = key.Split('.'); // массив элементов параметра адреса из url 
+			if (keyPieces.Length < 5) {
 				throw new Exception("ModelFilter.AddSearchToCriteria: Недостаточно элементов в параметре фильтрации!");
 			}
-			string searchType = keyPieces[2];	// тип условия фильтрации like, equal,..
+			string searchType = keyPieces[2]; // тип условия фильтрации like, equal,..
 
-			string searchProperty = "";			// фильтруемого поле 
+			string searchProperty = ""; // фильтруемого поле 
 			string searchPropertyTypeName = ""; // название типа фильтруемого поля
 			// последовательно получаем из адреса наименование типа параметра и его полное наименование в модели
 			bool startPropType = false;
 			bool startPropName = false;
-			for (int i = 3; i < keyPieces.Count(); i++)
-			{
-				if (startPropType && keyPieces[i] != "@name")
-				{
+			for (int i = 3; i < keyPieces.Count(); i++) {
+				if (startPropType && keyPieces[i] != "@name") {
 					searchPropertyTypeName += searchPropertyTypeName == string.Empty ? keyPieces[i] : "." + keyPieces[i];
 				}
-				if (startPropName)
-				{
+				if (startPropName) {
 					searchProperty += searchProperty == string.Empty ? keyPieces[i] : "." + keyPieces[i];
 				}
 
-				if (keyPieces[i] == "@type")
-				{
+				if (keyPieces[i] == "@type") {
 					startPropType = true;
 				}
-				if (keyPieces[i] == "@name")
-				{
+				if (keyPieces[i] == "@name") {
 					startPropType = false;
 					startPropName = true;
 				}
 			}
 
-			var searchPropertyType = Type.GetType(searchPropertyTypeName);		// получаем тип по найденному наименованию типа
+			var searchPropertyType = Type.GetType(searchPropertyTypeName); // получаем тип по найденному наименованию типа
 
 			object searchValue = Convert.ChangeType(value, searchPropertyType); // заварачиваем сконвертированное значение параметра
 
-			if (searchPropertyType == null)
-			{
+			if (searchPropertyType == null) {
 				throw new Exception("ModelFilter.AddSearchToCriteria: Не определен тип параметра фильтрации!");
 			}
 
-			if (searchProperty.Contains("."))
-			{	// если свойство принадлежит дочерней модели
+			if (searchProperty.Contains(".")) {
+				// если свойство принадлежит дочерней модели
 
 				var props = searchProperty.Split('.');
 				var indexOfLastProp = searchProperty.LastIndexOf("." + props[props.Length - 1]);
 				// если значение псевдонима отсуствует в словаре, то добавляем новый псевдоним
-				if (!usedAliasList.ContainsKey(searchProperty.Substring(0, indexOfLastProp > 0 ? indexOfLastProp : 0)))
-				{
+				if (!usedAliasList.ContainsKey(searchProperty.Substring(0, indexOfLastProp > 0 ? indexOfLastProp : 0))) {
 					usedAliasList.Add(searchProperty.Substring(0, indexOfLastProp > 0 ? indexOfLastProp : 0), "_searchFor" + props[props.Length - 1]);
 					criteria.CreateAlias(searchProperty.Substring(0, indexOfLastProp > 0 ? indexOfLastProp : 0), "_searchFor" + props[props.Length - 1]);
 					// получаем название параметра с псевдонимом  
 					searchByAlias = "_searchFor" + props[props.Length - 1] + "." + props[props.Length - 1];
 				}
-				else
-				{
+				else {
 					searchByAlias = usedAliasList[(searchProperty.Substring(0, indexOfLastProp > 0 ? indexOfLastProp : 0))] +
-						"." + props[props.Length - 1]; // иначе - название параметра с псевдонимом из словаря
+					                "." + props[props.Length - 1]; // иначе - название параметра с псевдонимом из словаря
 				}
 			}
-			else
-			{
+			else {
 				searchByAlias = searchProperty; // если свойство не принадлежит дочерней модели
 			}
 			// добавляем условия фильтра в критерий на основе типа условия, псевдонима и значения параметра
-			switch (searchType)
-			{
+			switch (searchType) {
 				case "like":
-					if (searchValue is string)
-					{
+					if (searchValue is string) {
 						criteria.Add(NHibernate.Criterion.Restrictions.Like(searchByAlias, "%" + searchValue + "%"));
 					}
-					else
-					{
+					else {
 						criteria.Add(NHibernate.Criterion.Restrictions.Like(searchByAlias, searchValue));
 					}
 					break;
@@ -406,7 +382,6 @@ namespace Inforoom2.Components
 					throw new Exception("ModelFilter.AddSearchToCriteria: Тип запроса фильтрации не известен!");
 					break;
 			}
-
 		}
 
 		/// <summary>
@@ -419,7 +394,7 @@ namespace Inforoom2.Components
 			if (Criteria != null)
 				return Criteria;
 
-			string orderByAlias = OrderByColumn;	// получение поля для сортировки у основной модели  
+			string orderByAlias = OrderByColumn; // получение поля для сортировки у основной модели  
 
 			TotalItems = expression == null ? dbSession.Query<TModel>().Count() : dbSession.Query<TModel>().Where(expression).Count();
 
@@ -427,20 +402,17 @@ namespace Inforoom2.Components
 			var skip = ItemsPerPage * (Page - 1);
 
 
-			var criteria = dbSession.CreateCriteria(typeof(TModel));		   // создаем критерий
+			var criteria = dbSession.CreateCriteria(typeof(TModel)); // создаем критерий
 
-			if (expression != null)
-			{
+			if (expression != null) {
 				criteria.Add(NHibernate.Criterion.Restrictions.Where(expression)); // лямбда выражение 
 			}
 
-			if (SearchParam == "")
-			{
-				criteria.SetFirstResult(skip)		// сколько записей пропустить
-					.SetMaxResults(ItemsPerPage);	// количество выводимых записей  	
+			if (SearchParam == "") {
+				criteria.SetFirstResult(skip) // сколько записей пропустить
+					.SetMaxResults(ItemsPerPage); // количество выводимых записей  	
 			}
-			else
-			{
+			else {
 				skip = 0;
 				Page = 1;
 				PagesCount = 0;
@@ -449,36 +421,32 @@ namespace Inforoom2.Components
 
 			// используемые псевдонимы, нужно хранить, т.к. добавления разных псевдонимов на одно и тоже поле недопустимо
 			Dictionary<string, string> UsedAliasList = new Dictionary<string, string>();
-			if (!string.IsNullOrWhiteSpace(SearchParam) && !string.IsNullOrWhiteSpace(SearchText))
-			{
-				AddSearchToCriteria(criteria, SearchParam, SearchText, UsedAliasList);		//добавление условия фильтра
+			if (!string.IsNullOrWhiteSpace(SearchParam) && !string.IsNullOrWhiteSpace(SearchText)) {
+				AddSearchToCriteria(criteria, SearchParam, SearchText, UsedAliasList); //добавление условия фильтра
 			}
-													//добавление условия сортировки
-			if (OrderByColumn.Contains("."))		// если поле принадлежит дочерней модели 
+			//добавление условия сортировки
+			if (OrderByColumn.Contains(".")) // если поле принадлежит дочерней модели 
 			{
 				var props = OrderByColumn.Split('.');
 				var indexOfLastProp = OrderByColumn.LastIndexOf("." + props[props.Length - 1]);
-				if (!UsedAliasList.ContainsKey(OrderByColumn.Substring(0, indexOfLastProp > 0 ? indexOfLastProp : 0)))
-				{
+				if (!UsedAliasList.ContainsKey(OrderByColumn.Substring(0, indexOfLastProp > 0 ? indexOfLastProp : 0))) {
 					UsedAliasList.Add(OrderByColumn.Substring(0, indexOfLastProp > 0 ? indexOfLastProp : 0), "_order");
 					criteria.CreateAlias(OrderByColumn.Substring(0, indexOfLastProp > 0 ? indexOfLastProp : 0), "_order"); // добавляем псевдоним 
-					orderByAlias = "_order." + props[props.Length - 1];	 // получаем название параметра с псевдонимом
+					orderByAlias = "_order." + props[props.Length - 1]; // получаем название параметра с псевдонимом
 				}
-				else
-				{
+				else {
 					orderByAlias = UsedAliasList[OrderByColumn.Substring(0, indexOfLastProp > 0 ? indexOfLastProp : 0)] +
-						"." + props[props.Length - 1]; ; // получаем название параметра с псевдонимом
+					               "." + props[props.Length - 1];
+					; // получаем название параметра с псевдонимом
 				}
 			}
 
-			if (OrderByColumn != "")
-			{			   // если свойство принадлежит дочерней модели 
-				if (AscOrder)
-				{
-					criteria.AddOrder(NHibernate.Criterion.Order.Asc(orderByAlias));  // Сортировка по полю связи 
+			if (OrderByColumn != "") {
+				// если свойство принадлежит дочерней модели 
+				if (AscOrder) {
+					criteria.AddOrder(NHibernate.Criterion.Order.Asc(orderByAlias)); // Сортировка по полю связи 
 				}
-				else
-				{
+				else {
 					criteria.AddOrder(NHibernate.Criterion.Order.Desc(orderByAlias)); // Сортировка по полю связи  
 				}
 			}
@@ -506,8 +474,8 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		public HtmlString FormFilterManual(string name, HtmlType type, object additional = null)
 		{
-			var attrs = new Dictionary<string,string>();
-			if(Params[name]!= null)
+			var attrs = new Dictionary<string, string>();
+			if (Params[name] != null)
 				attrs["value"] = Params[name];
 
 			attrs["name"] = UrlParamPrefix + "." + name;
@@ -529,9 +497,10 @@ namespace Inforoom2.Components
 			var builder = new StringBuilder();
 			var keys = Params.AllKeys;
 
-			foreach (var key in keys)
-				if(!FilterNames.Contains(key))
+			foreach (var key in keys) {
+				if (!FilterNames.Contains(key))
 					builder.Append(string.Format("<input style='display: none' name='{0}.{1}' value='{2}' />", UrlParamPrefix, key, Params[key]));
+			}
 
 			var html = new HtmlString(builder.ToString());
 			return html;
@@ -552,12 +521,16 @@ namespace Inforoom2.Components
 				o[" data-provide"] = "datepicker-inline";
 				return string.Format("<input {0} />", GetPropsValues(o));
 			}
-				
 
-			if(type == HtmlType.Dropdown) {
+			if (type == HtmlType.text) {
+				o["class"] = " form-control " + o["class"];
+				return string.Format("<input type='text' {0} />", GetPropsValues(o));
+			}
+
+			if (type == HtmlType.Dropdown) {
 				var list = additional as NameValueCollection;
-				var values = list.AllKeys.Select(i => string.Format("<option {2} value='{0}'>{1}</option>",i,list[i],o.ContainsKey("value") && i == o["value"] ? "selected='selected'" : "")).ToList();
-				return string.Format("<select {0}>{1}</select>",GetPropsValues(o),string.Join("\n",values));
+				var values = list.AllKeys.Select(i => string.Format("<option {2} value='{0}'>{1}</option>", i, list[i], o.ContainsKey("value") && i == o["value"] ? "selected='selected'" : "")).ToList();
+				return string.Format("<select {0}>{1}</select>", GetPropsValues(o), string.Join("\n", values));
 			}
 			return "";
 		}
@@ -570,10 +543,7 @@ namespace Inforoom2.Components
 		private string GetPropsValues(Dictionary<string, string> obj)
 		{
 			var sb = new StringBuilder();
-			foreach (var key in obj.Keys)
-			{
-				sb.Append(string.Format(" {0}='{1}'", key, obj[key]));
-			}
+			foreach (var key in obj.Keys) sb.Append(string.Format(" {0}='{1}'", key, obj[key]));
 			return sb.ToString();
 		}
 
@@ -583,7 +553,7 @@ namespace Inforoom2.Components
 		/// <returns>Список моделей</returns>
 		public IList<TModel> GetItems()
 		{
-			if(Models == null)
+			if (Models == null)
 				Execute();
 			return Models;
 		}

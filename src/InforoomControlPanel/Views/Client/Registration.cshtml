@@ -12,8 +12,8 @@
 	ViewBag.Title = "Регистрация нового клиента " + client.PhysicalClient.FullName;
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	string action = ViewBag.ActionName;
-	string controller = ViewBag.ControllerName;
-	List<Agent> agents = ViewBag.Agents;
+	string controller = ViewBag.ControllerName; 
+	List<Agent> agents = ViewBag.Agents; 
 	Dictionary<int, CertificateType> certificateTypeDic = ViewBag.CertificateTypeDic;
 	bool redirectToCard = ViewBag.RedirectToCard;
 	List<Region> regionList = ViewBag.RegionList;

@@ -61,11 +61,10 @@ namespace InternetInterface.Test.Integration.Tasks
 		public void CheckForHouseObjAbsenceFixtureExistsNot()
 		{
 			var clientWithEmptyHouseObj = session.Query<Client>().Where(s => s.PhysicalClient != null && s.PhysicalClient.HouseObj == null
-																			 && s.Status.Id != 10 && s.Status.Id != 3 && s.Status.Id != 1).ToList();
+			                                                                 && s.Status.Id != 10 && s.Status.Id != 3 && s.Status.Id != 1).ToList();
 			var houseObj = session.Query<House>().FirstOrDefault();
 			var statusFive = session.Query<Status>().FirstOrDefault(s => s.Id == 5);
-			foreach (var item in clientWithEmptyHouseObj)
-			{
+			foreach (var item in clientWithEmptyHouseObj) {
 				item.PhysicalClient.HouseObj = houseObj;
 				item.Status = statusFive;
 				session.Update(item);
@@ -81,13 +80,11 @@ namespace InternetInterface.Test.Integration.Tasks
 			var mailhelper = new Mailer();
 			// Создаем необходимые данные 
 			var settings = session.Query<InternetSettings>().First();
-			if (session.Query<Status>().Count() < 5)
-			{
+			if (session.Query<Status>().Count() < 5) {
 				for (int i = 0; i < 10; i++) session.Save(new Status() { Name = "ssdsd" + i, ShortName = "sdsd" });
 				session.Flush();
 			}
-			if (settings == null)
-			{
+			if (settings == null) {
 				settings = new InternetSettings() { NextBillingDate = DateTime.Now };
 				session.Save(settings);
 			}
