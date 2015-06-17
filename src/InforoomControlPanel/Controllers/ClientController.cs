@@ -559,9 +559,9 @@ namespace InforoomControlPanel.Controllers
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 
 			ViewBag.CurrentStreet = null;
-			ViewBag.CurrentHouse = null;
-			// получаем всех диллеров (работников)
-			ViewBag.Agents = DbSession.Query<Agent>().Where(s => s.Active).OrderBy(s => s.Name).ToList();
+			ViewBag.CurrentHouse = null; 
+			// получаем всех диллеров (работников) 
+			ViewBag.Agents = DbSession.Query<Agent>().Where(s => s.Active).OrderBy(s => s.Name).ToList();  
 			ViewBag.RegionList = regionList;
 			ViewBag.CurrentStreetList = new List<Street>();
 			ViewBag.CurrentHouseList = new List<House>();
@@ -679,9 +679,9 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.CurrentHouseList = currentHouseList;
 			ViewBag.PlanList = planList;
 			ViewBag.ScapeUserNameDoubling = scapeUserNameDoubling;
-
-			// получаем всех диллеров (работников)
-			ViewBag.Agents = DbSession.Query<Agent>().Where(s => s.Active).OrderBy(s => s.Name).ToList();
+			 
+			// получаем всех диллеров (работников) 
+			ViewBag.Agents = DbSession.Query<Agent>().Where(s => s.Active).OrderBy(s => s.Name).ToList();  
 			ViewBag.CertificateTypeDic = CertificateTypeDic;
 			ViewBag.RedirectToCard = redirectToCard;
 			ViewBag.Client = client;

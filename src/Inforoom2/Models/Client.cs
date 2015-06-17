@@ -172,10 +172,10 @@ namespace Inforoom2.Models
 		public virtual Employee WhoRegistered { get; set; }
 
 		[Property(Column = "WhoRegisteredName")]
-		public virtual string WhoRegisteredName { get; set; }
+		public virtual string WhoRegisteredName { get; set; } 
 
 		[ManyToOne(Column = "Agent", Cascade = "save-update")]
-		public virtual Agent Agent { get; set; }
+		public virtual Agent Agent { get; set; } 
 
 		public virtual bool IsNeedRecofiguration { get; set; }
 

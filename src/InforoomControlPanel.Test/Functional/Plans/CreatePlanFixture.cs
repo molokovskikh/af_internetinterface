@@ -24,10 +24,10 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			planPrice.SendKeys("300");
 			browser.FindElementByCssSelector(".btn-green").Click();
 			AssertText("Тарифный план успешно добавлен");
-			var plan = DbSession.Query<Plan>().First(p => p.Name == "Марс");
-			var speed = DbSession.Query<PackageSpeed>().First(p => p.Speed == 40000000);
+			var plan = DbSession.Query<Plan>().First(p => p.Name == "Марс"); 
+			var speed = DbSession.Query<PackageSpeed>().First(p => p.Speed == 40000000); 
 			AssertText(plan.Name);
-			Assert.That(plan.PackageSpeed.PackageId, Is.EqualTo(speed.PackageId), "Скорость у тарифа должна быть установлена корректно");
+			Assert.That(plan.PackageSpeed.PackageId, Is.EqualTo(speed.PackageId), "Скорость у тарифа должна быть установлена корректно");  
 		}
 	}
 }
