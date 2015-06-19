@@ -11,7 +11,7 @@ using NHibernate.Event;
 
 namespace InternetInterface.Helpers
 {
-	public class AuditablePropertyInternet : AuditableProperty
+	public class AuditablePropertyInternet : RewrittenAuditableProperty
 	{
 		public AuditablePropertyInternet(PropertyInfo property, string name, object newValue, object oldValue)
 			: base(property, name, newValue, oldValue)

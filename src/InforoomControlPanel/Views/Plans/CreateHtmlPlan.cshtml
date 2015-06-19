@@ -21,11 +21,11 @@
 					<div class="col-sm-8">
 						@if (planContent.Region != null) {
 							@Html.DropDownListExtendedFor(i => planContent.Region, regions, obj => obj.Name, null,
-								new { @class = "form-control", @Id = "RegionDropDown", @Name = "PlanHtmlContent.Region" }, planContent.Region.Id, true)
+										new { @class = "form-control", @Id = "RegionDropDown", @Name = "planContent.Region.Id" }, planContent.Region.Id, true) 
 						}
 						else {
 							@Html.DropDownListExtendedFor(i => planContent.Region, regions, obj => obj.Name, null,
-														  new { @class = "form-control", @Id = "RegionDropDown", @Name = "PlanHtmlContent.Region" }, true)
+										new { @class = "form-control", @Id = "RegionDropDown", @Name = "planContent.Region.Id" }, true)
 						}
 					</div>
 				</div>
