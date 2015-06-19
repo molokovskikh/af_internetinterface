@@ -1,0 +1,12 @@
+﻿<div class="">
+	<% for i, item in enumerate(actions): %>
+		<div>
+			<form action="${siteroot}/Test/${actions[i]}">
+				<span>${actions[i]}</span>
+				<input type="text" name="id" />
+				<input type="submit"></input>
+			</form>
+		</div>
+	<% end %>
+	${content}
+</div>

@@ -171,6 +171,7 @@ namespace InternetInterface.Models
 						new ControllerPermission(typeof(ActsController)),
 						new ControllerPermission(typeof(ContractsController)),
 						new ControllerPermission(typeof(ServicesController)),
+						new ControllerPermission(typeof(TestController)),
 						new ControllerPermission(typeof(TariffsController)),
 						new ControllerPermission(typeof(ExportController)),
 						new ControllerPermission(typeof(MapController)),

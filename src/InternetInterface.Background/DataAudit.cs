@@ -55,8 +55,6 @@ namespace InternetInterface.Background
 			if (mailAboutSuspiciousClient != string.Empty) {
 				mailhelper.SendText("service@analit.net", "service@analit.net", "Найдены физики без HouseObj. ", smsAboutHouseObjAbsence);
 			}
-
-
 			Session.Flush();
 		}
 

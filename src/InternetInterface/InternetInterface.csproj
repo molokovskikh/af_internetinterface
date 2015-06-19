@@ -309,6 +309,7 @@
     <Content Include="Views\Tariffs\Edit.brail" />
     <None Include="Views\Templates\Internet.brail" />
     <None Include="Views\Templates\IpTv.brail" />
+    <Content Include="Views\Test\Index.brail" />
     <None Include="Views\UserInfo\AddInfo.brail" />
     <Content Include="Views\IpPools\ShowIpPoolsOfRegion.brail">
       <SubType>Designer</SubType>
@@ -382,6 +383,7 @@
     <Compile Include="Controllers\ClientsController.cs" />
     <Compile Include="Controllers\ConnectionRequestController.cs" />
     <Compile Include="Controllers\ContractsController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\ExportController.cs" />
     <Compile Include="Controllers\Filter\ActsFilter.cs" />
     <Compile Include="Controllers\Filter\ContractFilter.cs" />

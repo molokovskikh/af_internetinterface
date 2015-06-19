@@ -90,19 +90,27 @@ namespace InternetInterface.Models
 			return cond;
 		}
 
+		/// <summary>
+		/// Обработка списаний с юридических лиц
+		/// </summary>
+		/// <param name="dateTime">Дата по которой проводится списание</param>
+		/// <returns>Список списаний абонентской платы</returns>
 		public virtual List<WriteOff> Calculate(DateTime dateTime)
 		{
+			//Если нет даты, когда списывается абонентская плата, то выставляем ее
 			if (PeriodEnd == DateTime.MinValue) {
 				PeriodEnd = SystemTime.Today().LastDayOfMonth();
 			}
 
 			var results = new List<WriteOff>();
-			//списываем деньги за отключенные услуги
+			//Создаем списания за отключение услуг с ежемесячной абонентской платой (последняя абонентская плата за незаконченный месяц)
 			var toDeactivate = client.Orders.Where(o => !o.IsDeactivated && o.OrderStatus == OrderStatus.Disabled).ToArray();
 			results.AddRange(toDeactivate
 				.SelectMany(s => s.OrderServices)
 				.Where(s => s.IsPeriodic)
 				.Select(s => new WriteOff(client, s)));
+
+			//Деактивируем услуги, оставляем заметки, освобождаем порты, если необходимо
 			toDeactivate.Each(o => {
 				o.IsDeactivated = true;
 				client.CreareAppeal(String.Format("Деактивирован заказ {0}", o.Description));
@@ -114,22 +122,29 @@ namespace InternetInterface.Models
 				}
 			});
 
+			//Создаем списания за включение услуги (для единоразовых услуг)
 			var toActivate = client.Orders.Where(o => !o.IsActivated && o.OrderStatus == OrderStatus.Enabled).ToArray();
 			results.AddRange(toActivate
 				.SelectMany(s => s.OrderServices)
 				.Where(s => !s.IsPeriodic)
 				.Select(s => new WriteOff(client, s)));
+			//Активируем услуги
 			toActivate.Each(o => o.IsActivated = true);
 
+			//Если сейчас не последний день месяца, то выходим
+			//То есть до этого момента обрабатываются единоразовые списания
 			if (PeriodEnd > dateTime) {
 				return results.Where(w => w.Sum > 0).ToList();
 			}
 
+			//Обработка услуг с ежемесячной абонентской платой
 			results.AddRange(client.Orders.Where(o => o.OrderStatus == OrderStatus.Enabled)
 				.SelectMany(s => s.OrderServices)
 				.Where(s => s.IsPeriodic)
 				.Select(s => new WriteOff(client, s)));
+			//Выставляем дату следующей абонентской платы
 			PeriodEnd = PeriodEnd.AddMonths(1).LastDayOfMonth();
+
 			return results.Where(w => w.Sum > 0).ToList();
 		}
 
