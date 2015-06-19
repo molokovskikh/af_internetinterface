@@ -1,5 +1,4 @@
-﻿ 
-@using Inforoom2.Helpers
+﻿@using Inforoom2.Helpers
 @using Inforoom2.Models
 @using NPOI.SS.Formula.Functions
 @model dynamic
@@ -40,6 +39,13 @@
 					<div class="col-sm-5">
 						@Html.TextBoxFor(model => plan.Price, new { @class = "form-control" })
 						@ViewBag.Validation.GetError(plan, "Price")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" for="field-ta">Стоимость (альтернативный HTML)</label>
+					<div class="col-sm-5">
+						@Html.TextBoxFor(model => plan.TextPrice, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(plan, "TextPrice")
 					</div>
 				</div>
 				<div class="form-group">

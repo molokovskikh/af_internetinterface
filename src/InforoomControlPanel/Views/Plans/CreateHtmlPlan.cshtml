@@ -1,0 +1,52 @@
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using NPOI.SS.Formula.Functions
+@model dynamic
+
+@{
+	ViewBag.Title = "Добавить HTML для региона";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	PlanHtmlContent planContent = ViewBag.PlanContent;
+	IList<Region> regions = ViewBag.Regions;
+}
+<div class="panel panel-primary">
+	<div class="panel-body">
+		<div class="col-md-6">
+			@using (@Html.BeginForm("CreateHtmlPlan", "Plans", null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label class="control-label">Регион</label>
+					</div>
+					<div class="col-sm-8">
+						@if (planContent.Region != null) {
+							@Html.DropDownListExtendedFor(i => planContent.Region, regions, obj => obj.Name, null,
+								new { @class = "form-control", @Id = "RegionDropDown", @Name = "PlanHtmlContent.Region" }, planContent.Region.Id, true)
+						}
+						else {
+							@Html.DropDownListExtendedFor(i => planContent.Region, regions, obj => obj.Name, null,
+														  new { @class = "form-control", @Id = "RegionDropDown", @Name = "PlanHtmlContent.Region" }, true)
+						}
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label class="control-label">HTML</label>
+					</div>
+					<div class="col-sm-8">
+						@Html.TextAreaFor(o => planContent.Content, new { @class = "form-control", @rows = "20"})
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<button class="btn btn-green" type="submit">Добавить</button>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="form-group">
+</div>
+<button class="btn btn-blue" onclick=" location.href = '@Url.Action("HtmlPlanIndex", "Plans")' ">Назад</button>

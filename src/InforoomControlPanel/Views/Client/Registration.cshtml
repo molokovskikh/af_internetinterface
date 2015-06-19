@@ -12,8 +12,8 @@
 	ViewBag.Title = "Регистрация нового клиента " + client.PhysicalClient.FullName;
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	string action = ViewBag.ActionName;
-	string controller = ViewBag.ControllerName; 
-	List<Agent> agents = ViewBag.Agents; 
+	string controller = ViewBag.ControllerName;
+	List<Agent> agents = ViewBag.Agents;
 	Dictionary<int, CertificateType> certificateTypeDic = ViewBag.CertificateTypeDic;
 	bool redirectToCard = ViewBag.RedirectToCard;
 	List<Region> regionList = ViewBag.RegionList;
@@ -23,7 +23,7 @@
 	House currentHouse = ViewBag.CurrentHouse;
 	List<Street> currentStreetList = ViewBag.CurrentStreetList;
 	List<House> currentHouseList = ViewBag.CurrentHouseList;
-	var validatorFullNameOriginal = ViewBag.ValidatorFullNameOriginal; 
+	var validatorFullNameOriginal = ViewBag.ValidatorFullNameOriginal;
 }
 <div class="panel panel-primary col-md-12">
 	<div class="panel-body">
@@ -60,16 +60,6 @@
 											@ViewBag.Validation.GetError(client, "PhysicalClient", forcedValidationAttribute: validatorFullNameOriginal)
 										</div>
 									</div> 
-									<div class="form-group">
-										<label class="col-sm-4 control-label">Дата рождения:</label>
-										<div class="col-sm-4 date-picker-box">
-											@Html.TextBoxFor(o => client.PhysicalClient.BirthDate, client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy"), 
-											new { @Value = (client.PhysicalClient.BirthDate.Year>1900?client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy"):""),
-												@data_format = "dd.mm.yyyy", @class = "form-control", @data_provide="datepicker-inline" })
-											@ViewBag.Validation.GetError(client.PhysicalClient, "BirthDate")
-										</div>
-
-									</div>
 									<div class="form-group">
 										<label class="col-sm-4 control-label">Мобильный телефон:</label>
 										<div class="col-sm-4">
@@ -216,10 +206,10 @@
 										<div class="col-sm-2">
 										</div>
 										<div class="col-sm-3">
-											<a href="@Url.Action("CreateStreet", "Address")" target="_blank" class="btn btn-green">Добавить улицу</a>
+											<a href="@Url.Action("CreateStreet", "Address")" id="addStreetButton" target="_blank" class="btn btn-green">Добавить улицу</a>
 										</div>
 										<div class="col-sm-3">
-											<a href="@Url.Action("CreateHouse", "Address")" target="_blank" class="btn btn-green">Добавить дом</a>
+											<a href="@Url.Action("CreateHouse", "Address")" id="addHouseButton" target="_blank" class="btn btn-green">Добавить дом</a>
 										</div>
 									</div>
 								</div>
@@ -319,13 +309,12 @@
 										<label class="col-sm-4 control-label">Дата выдачи паспорта:</label>
 										<div class="col-sm-4 date-picker-box">
 											@Html.TextBoxFor(o => client.PhysicalClient.PassportDate, client.PhysicalClient.PassportDate.ToString("dd.MM.yyyy"),
-												new
-												{
+												new {
 													@Value = (client.PhysicalClient.PassportDate.Year > 1900 ? client.PhysicalClient.PassportDate.ToString("dd.MM.yyyy") : ""),
 													@data_format = "dd.mm.yyyy",
-													@class = "form-control", @data_provide="datepicker-inline"
+													@class = "form-control", @data_provide = "datepicker-inline"
 												})
-												@ViewBag.Validation.GetError(client.PhysicalClient, "PassportDate")
+											@ViewBag.Validation.GetError(client.PhysicalClient, "PassportDate")
 										</div>
 									</div>
 									<div class="form-group">
@@ -340,6 +329,19 @@
 										<div class="col-sm-4">
 											@Html.TextBoxFor(o => client.PhysicalClient.RegistrationAddress, new { @class = "form-control" })
 											@ViewBag.Validation.GetError(client.PhysicalClient, "RegistrationAddress")
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label">Дата рождения:</label>
+										<div class="col-sm-4 date-picker-box">
+											@Html.TextBoxFor(o => client.PhysicalClient.BirthDate, client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy"),
+												new {
+													@Value = (client.PhysicalClient.BirthDate.Year > 1900 ? client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy") : ""),
+													@data_format = "dd.mm.yyyy",
+													@class = "form-control",
+													@data_provide = "datepicker-inline"
+												})
+											@ViewBag.Validation.GetError(client.PhysicalClient, "BirthDate")
 										</div>
 									</div>
 									<div class="form-group">

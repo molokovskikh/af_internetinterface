@@ -444,7 +444,8 @@ namespace InforoomControlPanel.Controllers
 					// привязка текущего клиента к поданой им заявке
 					// отправление запроса на регистрацию в архив
 					clientRequest.Client = client;
-					clientRequest.Archived = true;
+					clientRequest.Archived = true; 
+					clientRequest.Label = 23;
 					DbSession.Save(clientRequest);
 				}
 				// предварительно вызывая процедуру (старой админки) которая делает необходимые поправки в записях клиента и физ.клиента

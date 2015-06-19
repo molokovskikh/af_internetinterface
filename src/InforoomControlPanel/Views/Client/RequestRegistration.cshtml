@@ -25,7 +25,7 @@
 	List<Street> currentStreetList = ViewBag.CurrentStreetList;
 	List<House> currentHouseList = ViewBag.CurrentHouseList;
 	int requestId = ViewBag.requestId;
-	var validatorFullNameOriginal = ViewBag.ValidatorFullNameOriginal; 
+	var validatorFullNameOriginal = ViewBag.ValidatorFullNameOriginal;
 }
 
 <div class="panel panel-primary col-md-12">
@@ -60,16 +60,6 @@
 										<div class="col-sm-4">
 											@Html.TextBoxFor(o => client.PhysicalClient.Patronymic, new { @class = "form-control" })
 											@ViewBag.Validation.GetError(client, "PhysicalClient", forcedValidationAttribute: validatorFullNameOriginal)
-										</div>
-									</div>	 							 
-									<div class="form-group">
-										<label class="col-sm-4 control-label">Дата рождения:</label>
-										<div class="col-sm-4 date-picker-box">
-											@Html.TextBoxFor(o => client.PhysicalClient.BirthDate, client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy"),
-												new {
-													@Value = (client.PhysicalClient.BirthDate.Year > 1900 ? client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy") : ""),
-													@data_format = "dd.mm.yyyy", @class = "form-control", @data_provide="datepicker-inline"
-												})
 										</div>
 									</div>
 									<div class="form-group">
@@ -224,10 +214,10 @@
 										<div class="col-sm-2">
 										</div>
 										<div class="col-sm-3">
-											<a href="@Url.Action("CreateStreet", "Address")" class="btn btn-green">Добавить улицу</a>
+											<a href="@Url.Action("CreateStreet", "Address")" id="addStreetButton" target="_blank" class="btn btn-green">Добавить улицу</a>
 										</div>
 										<div class="col-sm-3">
-											<a href="@Url.Action("CreateHouse", "Address")" class="btn btn-green">Добавить дом</a>
+											<a href="@Url.Action("CreateHouse", "Address")" id="addHouseButton" target="_blank" class="btn btn-green">Добавить дом</a>
 										</div>
 									</div>
 								</div>
@@ -322,7 +312,7 @@
 												new {
 													@Value = (client.PhysicalClient.PassportDate.Year > 1900 ? client.PhysicalClient.PassportDate.ToString("dd.MM.yyyy") : ""),
 													@data_format = "dd.mm.yyyy",
-													@class = "form-control", @data_provide="datepicker-inline"
+													@class = "form-control", @data_provide = "datepicker-inline"
 												})
 										</div>
 									</div>
@@ -336,6 +326,18 @@
 										<label class="col-sm-4 control-label">Адрес регистрации:</label>
 										<div class="col-sm-4">
 											@Html.TextBoxFor(o => client.PhysicalClient.RegistrationAddress, new { @class = "form-control" })
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label">Дата рождения:</label>
+										<div class="col-sm-4 date-picker-box">
+											@Html.TextBoxFor(o => client.PhysicalClient.BirthDate, client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy"),
+												new {
+													@Value = (client.PhysicalClient.BirthDate.Year > 1900 ? client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy") : ""),
+													@data_format = "dd.mm.yyyy",
+													@class = "form-control",
+													@data_provide = "datepicker-inline"
+												})
 										</div>
 									</div>
 									<div class="form-group">

@@ -24,8 +24,8 @@ namespace Inforoom2.Models
 
 		[Property, NotNullNotEmpty(Message = "Введите ФИО")]
 		public virtual string ApplicantName { get; set; }
-		// валидация происходит справа налево (по атрибута), поэтому нельзя менять атрибуты местами!
-		[Property, Pattern(@"^\d{10}$", Message = "Введите номер в десятизначном формате"), NotNullNotEmpty(Message = "Введите номер телефона")]
+		 
+		[Property, ApplicantPhoneValidator]
 		public virtual string ApplicantPhoneNumber { get; set; }
 
 		[Property(Column = "ApplicantEmail"), ValidatorEmail]
@@ -39,6 +39,10 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual bool SelfConnect { get; set; }
+
+		// TODO: сделать специальный тип моделей, содержащий метод
+		[Property]
+		public virtual int Label { get; set; }
 
 		[ManyToOne(Column = "_ServiceMan")]
 		public virtual ServiceMan ServiceMan { get; set; }
@@ -73,6 +77,7 @@ namespace Inforoom2.Models
 		// для привязки клиента к заявке (на нее есть ссылка в информации о клиенте)
 		[ManyToOne(Column = "Client")]
 		public virtual Client Client { get; set; }
+
 		// <<<================================================================
 
 
@@ -92,7 +97,7 @@ namespace Inforoom2.Models
 		public virtual DateTime RegDate { get; set; }
 
 		public virtual bool IsContractAccepted { get; set; }
-		 
+
 		public virtual string YandexCity { get; set; }
 
 		[Property]
