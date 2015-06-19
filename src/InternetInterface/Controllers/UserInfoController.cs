@@ -305,7 +305,7 @@ namespace InternetInterface.Controllers
 			if (!withoutEndPoint && currentEndPoint == 0) {
 				if ((ConnectInfo.static_IP != string.Empty) || (nullFlag)) {
 					if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
-					    (oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
+						(oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
 						if (client.GetClientType() == ClientType.Phisical) {
 							client.PhysicalClient.UpdatePackageId(clientEntPoint);
 						}
@@ -444,8 +444,7 @@ namespace InternetInterface.Controllers
 						DbSession.Save(orderService);
 					}
 				}
-				if (client.Disabled
-				    && client.Orders.Count > 0)
+				if (client.Disabled && client.Orders.Count > 0)
 					client.Disabled = false;
 				DbSession.Save(client);
 				DbSession.Save(existingOrder);
@@ -581,12 +580,10 @@ namespace InternetInterface.Controllers
 			if (oldStatus != client.Status) {
 				// BlockedAndNoConnected = "зарегистрирован", BlockedAndConnected = "не подключен"
 				var isDissolved = client.Status.Type == StatusType.Dissolved;
-				var setStatusToDissolved = isDissolved &&
-				                           (oldStatus.Type == StatusType.BlockedAndNoConnected || oldStatus.Type == StatusType.VoluntaryBlocking);
+				var setStatusToDissolved = isDissolved && (oldStatus.Type == StatusType.BlockedAndNoConnected || oldStatus.Type == StatusType.VoluntaryBlocking);
 				if (oldStatus.ManualSet || oldStatus.Type == StatusType.BlockedAndConnected || setStatusToDissolved) {
 					if (isDissolved && (client.HaveService<HardwareRent>() || client.HaveService<IpTvBoxRent>())) {
-						GetErrorSummary(updateClient).RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное оборудование," +
-						                                                             " перед расторжением договора нужно изъять оборудование");
+						GetErrorSummary(updateClient).RegisterErrorMessage("Status", "Договор не может быть расторгнут тк у клиента имеется арендованное оборудование, перед расторжением договора нужно изъять оборудование");
 					}
 				}
 				else {

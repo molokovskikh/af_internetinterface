@@ -60,8 +60,7 @@ namespace InternetInterface.Test.Integration.Tasks
 		[Test(Description = "Проверка на формирование сообщения при отсуствии физика с пустым полем HouseObj.")]
 		public void CheckForHouseObjAbsenceFixtureExistsNot()
 		{
-			var clientWithEmptyHouseObj = session.Query<Client>().Where(s => s.PhysicalClient != null && s.PhysicalClient.HouseObj == null
-			                                                                 && s.Status.Id != 10 && s.Status.Id != 3 && s.Status.Id != 1).ToList();
+			var clientWithEmptyHouseObj = session.Query<Client>().Where(s => s.PhysicalClient != null && s.PhysicalClient.HouseObj == null && s.Status.Id != 10 && s.Status.Id != 3 && s.Status.Id != 1).ToList();
 			var houseObj = session.Query<House>().FirstOrDefault();
 			var statusFive = session.Query<Status>().FirstOrDefault(s => s.Id == 5);
 			foreach (var item in clientWithEmptyHouseObj) {

@@ -617,9 +617,7 @@ set s.LastStartFail = true;")
 					var appeal = client.CreareAppeal(msg, AppealType.System, false);
 					session.Save(appeal);
 				}
-				else if (client.Status.Type == StatusType.Dissolved ||
-				         (client.Status.Type == StatusType.NoWorked &&
-				          (SystemTime.Now() - client.StatusChangedOn) > TimeSpan.FromDays(clientHardware.Hardware.FreeDays))) {
+				else if (client.Status.Type == StatusType.Dissolved || (client.Status.Type == StatusType.NoWorked && (SystemTime.Now() - client.StatusChangedOn) > TimeSpan.FromDays(clientHardware.Hardware.FreeDays))) {
 					//Создаем задачу в РМ
 					CreateRentalHardwareRedmineIssue(session, client);
 
