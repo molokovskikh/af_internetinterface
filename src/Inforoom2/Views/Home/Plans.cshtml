@@ -1,5 +1,6 @@
 ﻿@model dynamic
-@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/HomeController.js")"></script>}
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/HomeController.js")"></script>}
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -12,22 +13,26 @@
 	var divClass = plan.Name == "" ? "typehit" : "";
 	var inputClass = plan.Name == "" ? "button" : "";
 	List<Plan> plans = ViewBag.Plans;
+	PlanHtmlContent planHtml = ViewBag.ContentHtml;
 }
 <div class="plans">
 	<div class="heading">ТАРИФНЫЕ ПЛАНЫ</div>
 	<div class="variants">
 		@for (int i = 0; i < plans.Count; i++) {
-	  var featuresLines = @plans[i].Features==null?new string[0]: @plans[i].Features.Split('\n');
-			<div class="type @(plan == plans[i] ? "typehit" : "")"> 
-				<h1>@plans[i].Name</h1> 
+			var featuresLines = @plans[i].Features == null ? new string[0] : @plans[i].Features.Split('\n');
+			<div class="type @(plan == plans[i] ? "typehit" : "")">
+				<h1>@plans[i].Name</h1>
 				<h2>@plans[i].Speed Мбит/с</h2>
 				@for (int j = 0; j < featuresLines.Length; j++) {
-					<h4>@featuresLines[j]</h4>
-				} 
+					@Html.Raw(featuresLines[j])
+				}
 				<p>
-					@plans[i].Description
+					@Html.Raw(@plans[i].Description)
 				</p>
-				<h3>@plans[i].Price <span>Р.</span>/мес.</h3>
+				<h3>
+					@(!string.IsNullOrEmpty(plans[i].TextPrice) ? Html.Raw(plans[i].TextPrice)
+						  : Html.Raw(@plans[i].Price + "<span>Р.</span>/мес. "))
+				</h3>
 				@using (Html.BeginForm(action, controller, new { id = plans[i].Id }, FormMethod.Post, null)) {
 					<input class="button plug" type="submit" value="Подключить">
 				}
@@ -38,15 +43,6 @@
 		<a class="links-header" href="/Home/PricesList">Прайс-лист дополнительных услуг</a>
 	</div>
 	<div class="details">
-		<p>Все тарифные планы действительны для многоквартирных домов при наличии технической возможности.</p>
-		<p>Для подключения в частном секторе г.Борисоглебск уточняйте техническую возможность и тарифные планы по тел. 8 473 22 999 87</p>
-		<p><sup>1</sup> — Ночной безлимит – скорость до 100 Мбит/с. с 21:00 до 7:00 часов</p>
-		<p><sup>2</sup> — Подключение возможно при наличии технической возможности.Предоставляется в ответственное хранение оборудование на один телевизор</p>
-		<p>Есть возможность предоставления Wi-Fi роутера</p>
-		<p>TV Free включает в себя 167 каналов (24 HD)</p>
-		<p><sup>3</sup> — По истечению 180 дней пользования стоимость тарифа составит 600р./месяц.</p>
-		<p>Для сохранения стоимости 300р. необходимо самостоятельно в личном кабинете сменить тарифный план на "Популярный", смена бесплатна.</p>
-		<p>Тариф доступен для подключения до 31.10.2015г.</p>
-		<p>Внимание: накопительная скидка по платежам отменяется на весь период действия скидки по тарифу.</p>
+		@(planHtml != null ? Html.Raw(planHtml.Content) : Html.Raw(""))
 	</div>
 </div>

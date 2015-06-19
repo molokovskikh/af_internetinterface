@@ -1,48 +1,67 @@
 ﻿@using System.Activities.Expressions
+@using System.Collections.Specialized
+@using Common.Tools
 @using Inforoom2.Components
 @using Inforoom2.Models
 
 @{
 	ViewBag.Title = "Дома";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	IList<House> houses = ViewBag.Houses;
 	ModelFilter<House> pager = ViewBag.Pager;
+	IList<House> houses = pager.GetItems();
+	List<Street> streets = ViewBag.Streets;
+	var streetList = new NameValueCollection();
+	streetList["0"] = " ";
+	streets.Each(i => streetList[i.Id.ToString()] = i.Name.ToString());
 }
 <div class="form-group">
-<a class="btn btn-success btn-sm btn-icon icon-left" href = '@Url.Action("CreateHouse", "Address")'>
-	<i class="entypo-plus"></i>
-	Создать адрес
-</a>
-	</div>
+	<a class="btn btn-success btn-sm btn-icon icon-left" href='@Url.Action("CreateHouse", "Address")'>
+		<i class="entypo-plus"></i>
+		Создать адрес
+	</a>
+</div>
+<panel class="panel panel-default">
+	<form>
+		<div class="row">
+			<div class="col-sm-1"><label>Улица</label> </div>
+			<div class="col-sm-2">@pager.FormFilterManual("Street.Id", HtmlType.Dropdown, streetList)</div>
+			<input type="submit" class="btn btn-success btn-sm" />
+		</div>
+		<div class="row">
+			<div class="col-sm-1"><label>Номер</label> </div>
+			<div class="col-sm-2">@pager.FormFilterManual("Number", HtmlType.text)</div>
+			<input type="submit" class="btn btn-success btn-sm" />
+		</div>
+		@pager.GenerateInputs()
+	</form>
+</panel>
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
-<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
-	<thead>
-		<tr role="row">
-			<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Street.Region)">Регион (Регион улицы)</a></th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Street)">Улица</a></th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Number)">Номер</a></th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Confirmed)">Проверенно яндексом</a></th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
-		</tr>
-	</thead>
-			@foreach (var item in houses)
-			{
+	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+		<thead>
+			<tr role="row">
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Street.Region)">Регион (Регион улицы)</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Street)">Улица</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Number)">Номер</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Confirmed)">Проверенно яндексом</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
+			</tr>
+		</thead>
+		@foreach (var item in houses) {
 			<tr>
-				<td>@(item.Region != null ? item.Region.Name + " ("+item.Street.Region.Name+")" : item.Street.Region.Name)</td>
+				<td>@(item.Region != null ? item.Region.Name + " (" + item.Street.Region.Name + ")" : item.Street.Region.Name)</td>
 				<td>@item.Street.Name</td>
 				<td>@item.Number</td>
-				<td>@Html.DisplayFor(i=>item.Confirmed)</td>
+				<td>@Html.DisplayFor(i => item.Confirmed)</td>
 				<td>
-					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditHouse","Address",new {id = item.Id})">
+					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditHouse", "Address", new { id = item.Id })">
 						<i class="entypo-vcard"></i>
 						Изменить
 					</a>
 				</td>
 			</tr>
-			}
-	<tbody>
-	</tbody>
-</table>
+		}
+		<tbody></tbody>
+	</table>
 </div>
 <div class="row">
 	@{ Html.RenderPartial("Pagination"); }

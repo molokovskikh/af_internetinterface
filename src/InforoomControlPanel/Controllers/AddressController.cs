@@ -9,6 +9,8 @@ using Inforoom2.Models;
 using NHibernate.Criterion;
 using NHibernate.Linq;
 using NHibernate.Mapping.Attributes;
+using NHibernate.SqlCommand;
+using NHibernate.Transform;
 using Switch = Inforoom2.Models.Switch;
 
 namespace InforoomControlPanel.Controllers
@@ -101,9 +103,9 @@ namespace InforoomControlPanel.Controllers
 			if (id > 0)
 				ViewBag.Switch = DbSession.Get<NetworkNode>(id);
 
-			var regions = DbSession.Query<Region>().ToList();
-			var streets = DbSession.Query<Street>().ToList();
-			var houses = DbSession.Query<House>().ToList();
+			var regions = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
+			var streets = DbSession.Query<Street>().OrderBy(s => s.Name).ToList();
+			var houses = DbSession.Query<House>().OrderBy(s => s.Number).ToList();
 			var NetworkNodes = DbSession.Query<NetworkNode>().OrderBy(i => i.Name).ToList();
 			ViewBag.Streets = streets;
 			ViewBag.Houses = houses;
@@ -147,30 +149,31 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult CityList()
 		{
-			var cities = DbSession.Query<City>().ToList();
+			var cities = DbSession.Query<City>().OrderBy(s => s.Name).ToList();
 			ViewBag.Cities = cities;
 			return View();
 		}
 
 		public ActionResult RegionList()
 		{
-			var regions = DbSession.Query<Region>().ToList();
+			var regions = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			ViewBag.Regions = regions;
 			return View();
 		}
 
 		public ActionResult StreetList()
 		{
-			var urlBasePrefix = System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"];
-			if (urlBasePrefix == null)
-			{
-				throw new Exception("Значение 'adminPanelNew' отсуствует в Global.config либо невозможно найти сам Global.config !");
-			}
-			// urlBasePrefix = urlBasePrefix , но в локальной "/"
-			var pager = new ModelFilter<Street>(this, urlBasePrefix: "/");
-			var streets = pager.GetCriteria().List<Street>();
+			var pager = new ModelFilter<Street>(this);
+			var criteria = pager.GetCriteria();
+			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());
+			if (!string.IsNullOrEmpty(pager.GetParam("Name")))
+				criteria.Add(Restrictions.Like("Name", pager.GetParam("Name")));
+			if ((!string.IsNullOrEmpty(pager.GetParam("Region.Id"))) && pager.GetParam("Region.Id") != "0")
+				criteria.Add(Restrictions.Eq("Region.Id", Int32.Parse(pager.GetParam("Region.Id"))));
+			pager.Execute();
+			ViewBag.Regions = DbSession.Query<Street>().Select(s => s.Region)
+				.OrderBy(s => s.Name).Distinct().ToList();
 			ViewBag.Pager = pager;
-			ViewBag.Streets = streets;
 			return View();
 		}
 
@@ -181,7 +184,7 @@ namespace InforoomControlPanel.Controllers
 			if (regionId > 0)
 				ViewBag.Region = DbSession.Get<Region>(regionId);
 
-			var regions = DbSession.Query<Region>().ToList();
+			var regions = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			ViewBag.Regions = regions;
 			ViewBag.Street = Street;
 			return View("CreateStreet");
@@ -211,7 +214,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult EditStreet(int id)
 		{
 			var Street = DbSession.Get<Street>(id);
-			var regions = DbSession.Query<Region>().ToList();
+			var regions = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			ViewBag.Region = Street.Region;
 			ViewBag.Regions = regions;
 			ViewBag.Street = Street;
@@ -241,16 +244,17 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult HouseList()
 		{
-			var urlBasePrefix = System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"];
-			if (urlBasePrefix == null)
-			{
-				throw new Exception("Значение 'adminPanelNew' отсуствует в Global.config либо невозможно найти сам Global.config !");
-			}
-			// urlBasePrefix = urlBasePrefix , но в локальной "/"
-			var pager = new ModelFilter<House>(this, urlBasePrefix: "/");
-			var houses = pager.GetCriteria().List<House>();
+			var pager = new ModelFilter<House>(this);
+			var criteria = pager.GetCriteria();
+			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());
+			if (!string.IsNullOrEmpty(pager.GetParam("Number")))
+				criteria.Add(Restrictions.Like("Number", pager.GetParam("Number")));
+			if ((!string.IsNullOrEmpty(pager.GetParam("Street.Id"))) && pager.GetParam("Street.Id") != "0")
+				criteria.Add(Restrictions.Eq("Street.Id", Int32.Parse(pager.GetParam("Street.Id"))));
+			pager.Execute();
+			ViewBag.Streets = DbSession.Query<House>().Select(s => s.Street)
+				.OrderBy(s => s.Name).Distinct().ToList();
 			ViewBag.Pager = pager;
-			ViewBag.Houses = houses;
 			return View();
 		}
 
@@ -261,8 +265,8 @@ namespace InforoomControlPanel.Controllers
 			if (streetId > 0)
 				ViewBag.Street = DbSession.Get<Street>(streetId);
 
-			var streets = DbSession.Query<Street>().ToList();
-			var regions = DbSession.Query<Region>().ToList();
+			var streets = DbSession.Query<Street>().OrderBy(s => s.Name).ToList();
+			var regions = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			ViewBag.Streets = streets;
 			ViewBag.House = House;
 			ViewBag.Regions = regions;
@@ -327,6 +331,44 @@ namespace InforoomControlPanel.Controllers
 			return View("CreateHouse");
 		}
 
+
+		/// <summary>
+		/// Возвращение списка улиц по региону.
+		/// </summary>
+		/// <param name="regionId">Id региона</param>
+		/// <param name="count">кол-во улиц</param>
+		/// <returns>Изменение произошло</returns>
+		[HttpPost]
+		public JsonResult GetStreetNumberChangedFlag(int regionId, int count)
+		{
+			var equals = DbSession.Query<Street>()
+				.Count(s => s.Region.Id == regionId || s.Houses.Any(a => a.Region.Id == regionId)) != count;
+			return Json(equals, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Возвращение списка улиц по региону.
+		/// </summary>
+		/// <param name="regionId">Id региона</param>
+		/// <param name="streetId">Id улицы</param>
+		/// <param name="count">кол-во улиц</param>
+		/// <returns>Изменение произошло</returns>
+		[HttpPost]
+		public JsonResult GetHouseNumberChangedFlag(int streetId, int count, int regionId = 0)
+		{
+			var equals = false;
+			if (regionId != 0) {
+				equals = DbSession.Query<House>().Count(s => (s.Region == null || regionId == s.Region.Id) &&
+				                                             ((s.Street.Region.Id == regionId && s.Street.Id == streetId) || (s.Street.Id == streetId && s.Region.Id == regionId)) &&
+				                                             (s.Street.Region.Id == regionId && s.Region == null || (s.Street.Id == streetId && s.Region.Id == regionId))
+					) != count;
+			}
+			else {
+				equals = DbSession.Query<House>().Count(s => s.Street.Id == streetId) != count;
+			}
+			return Json(equals, JsonRequestBehavior.AllowGet);
+		}
+
 		/// <summary>
 		/// Возвращение списка улиц по региону.
 		/// </summary>
@@ -341,7 +383,9 @@ namespace InforoomControlPanel.Controllers
 					Id = s.Id,
 					Name = s.Name,
 					Geomark = s.Geomark,
-					Confirmed = s.Confirmed, Region = s.Region.Id, Houses = s.Houses.Count
+					Confirmed = s.Confirmed,
+					Region = s.Region.Id,
+					Houses = s.Houses.Count
 				}).OrderBy(s => s.Name).ToList();
 			return Json(streets, JsonRequestBehavior.AllowGet);
 		}
@@ -358,8 +402,8 @@ namespace InforoomControlPanel.Controllers
 			var query = DbSession.Query<House>();
 			if (regionId != 0) {
 				query = query.Where(s => (s.Region == null || regionId == s.Region.Id) &&
-										 ((s.Street.Region.Id == regionId && s.Street.Id == streetId) || (s.Street.Id == streetId && s.Region.Id == regionId)) &&
-										 (s.Street.Region.Id == regionId && s.Region == null ||( s.Street.Id == streetId && s.Region.Id == regionId))
+				                         ((s.Street.Region.Id == regionId && s.Street.Id == streetId) || (s.Street.Id == streetId && s.Region.Id == regionId)) &&
+				                         (s.Street.Region.Id == regionId && s.Region == null || (s.Street.Id == streetId && s.Region.Id == regionId))
 					);
 			}
 			else {
@@ -386,7 +430,7 @@ namespace InforoomControlPanel.Controllers
 		public JsonResult GetPlansListForRegion(int regionId)
 		{
 			var planList = DbSession.Query<Plan>()
-				.Where(s => s.RegionPlans.Any(d => d.Region.Id == regionId))
+				.Where(s => s.IsArchived == false && s.RegionPlans.Any(d => d.Region.Id == regionId))
 				.Select(d => new {
 					Id = d.Id,
 					Name = d.Name,

@@ -1,7 +1,8 @@
-﻿@section JavaScript{<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js")"></script>}
+﻿@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js")"></script>}
 @using Inforoom2.Helpers
-@using Inforoom2.Models 
-@using InternetInterface.Models 
+@using Inforoom2.Models
+@using InternetInterface.Models
 @using House = Inforoom2.Models.House
 @using Street = Inforoom2.Models.Street
 
@@ -25,7 +26,7 @@
 	<div class="panel-body">
 		@using (@Html.BeginForm(action, controller, null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" })) {
 			<div class="panel-body">
-				<div class="row"> 
+				<div class="row">
 					@Html.HiddenFor(s => client.Id);
 					<div class="panel panel-default">
 						<div class="panel-heading">
@@ -57,19 +58,11 @@
 											@ViewBag.Validation.GetError(client.PhysicalClient, "Patronymic")
 											@ViewBag.Validation.GetError(client, "PhysicalClient")
 										</div>
-									</div>									 
-									<div class="form-group">
-										<label class="col-sm-4 control-label">Дата рождения:</label>
-										<div class="col-sm-4 date-picker-box">
-											@Html.TextBoxFor(o => client.PhysicalClient.BirthDate, client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy"), new { @data_format = "dd.mm.yyyy", @class = "form-control", @data_provide="datepicker-inline", @disabled = "disabled" })
-											@ViewBag.Validation.GetError(client.PhysicalClient, "BirthDate")
-										</div>
-
 									</div>
 									<div class="form-group">
 										<label class="col-sm-4 control-label">Номер абонента Ситилайн:</label>
 										<div class="col-sm-4">
-											@Html.TextBoxFor(o => client.PhysicalClient.ExternalClientId, new { @class = "form-control",@disabled="disabled" })
+											@Html.TextBoxFor(o => client.PhysicalClient.ExternalClientId, new { @class = "form-control", @disabled = "disabled" })
 											@ViewBag.Validation.GetError(client.PhysicalClient, "ExternalClientId")
 										</div>
 									</div>
@@ -102,7 +95,7 @@
 								</div>
 							</div><!-- /.row -->
 						</div>
-					</div>  
+					</div>
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h3 class="panel-title">Адрес</h3>
@@ -180,22 +173,21 @@
 										<div class="col-sm-2">
 										</div>
 										<div class="col-sm-3">
-											<a href="@Url.Action("CreateStreet", "Address")" target="_blank" class="btn btn-green">Добавить улицу</a>
+											<a href="@Url.Action("CreateStreet", "Address")" target="_blank" id="addStreetButton" class="btn btn-green">Добавить улицу</a>
 										</div>
 										<div class="col-sm-3">
-											<a href="@Url.Action("CreateHouse", "Address")" target="_blank" class="btn btn-green">Добавить дом</a>
+											<a href="@Url.Action("CreateHouse", "Address")" target="_blank" id="addHouseButton" class="btn btn-green">Добавить дом</a>
 										</div>
 									</div>
 								</div>
 							</div><!-- /.row -->
 						</div>
-					</div> 
+					</div>
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h3 class="panel-title">Паспортные данные</h3>
 						</div>
 						<div class="panel-body">
-
 							<div class="row">
 								<div class="col-lg-8">
 									<div class="form-group">
@@ -203,8 +195,7 @@
 										<div class="col-sm-4">
 											<select name="client.PhysicalClient.CertificateType" class="form-control" disabled="disabled">
 												@foreach (var region in certificateTypeDic) {
-													<option value="@region.Key" @(client.PhysicalClient.CertificateType == region.Value ?
-														                              "selected=selected" : "")>@region.Value.GetDescription()</option>
+													<option value="@region.Key" @(client.PhysicalClient.CertificateType == region.Value ? "selected=selected" : "")>@region.Value.GetDescription()</option>
 												}
 											</select>
 										</div>
@@ -230,7 +221,7 @@
 									<div class="form-group">
 										<label class="col-sm-4 control-label">Дата выдачи паспорта:</label>
 										<div class="col-sm-4 date-picker-box">
-											@Html.TextBoxFor(o => client.PhysicalClient.PassportDate, client.PhysicalClient.PassportDate.ToString("dd.MM.yyyy"), new { @data_format = "dd.mm.yyyy", @class = "form-control", @data_provide="datepicker-inline", @disabled = "disabled" })
+											@Html.TextBoxFor(o => client.PhysicalClient.PassportDate, client.PhysicalClient.PassportDate.ToString("dd.MM.yyyy"), new { @data_format = "dd.mm.yyyy", @class = "form-control", @data_provide = "datepicker-inline", @disabled = "disabled" })
 										</div>
 									</div>
 									<div class="form-group">
@@ -246,6 +237,13 @@
 										</div>
 									</div>
 									<div class="form-group">
+										<label class="col-sm-4 control-label">Дата рождения:</label>
+										<div class="col-sm-4 date-picker-box">
+											@Html.TextBoxFor(o => client.PhysicalClient.BirthDate, client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy"), new { @data_format = "dd.mm.yyyy", @class = "form-control", @data_provide = "datepicker-inline", @disabled = "disabled" })
+											@ViewBag.Validation.GetError(client.PhysicalClient, "BirthDate")
+										</div>
+									</div>
+									<div class="form-group">
 										<div class="col-sm-4">
 											<input type="submit" class="btn btn-green" value="Сохранить" />
 										</div>
@@ -253,12 +251,9 @@
 								</div><!-- /.col-lg-6 -->
 							</div><!-- /.row -->
 						</div>
-					</div> 
+					</div>
 				</div>
 			</div>
 		}
 	</div>
-
-
-
 </div>

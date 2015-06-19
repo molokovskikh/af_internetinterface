@@ -308,6 +308,7 @@
     <Compile Include="Models\ModelAppeal.cs" />
     <Compile Include="Models\BillingHistory.cs" />
     <Compile Include="Models\Banner.cs" />
+    <Compile Include="Models\PlanHtmlContent.cs" />
     <Compile Include="Models\Slide.cs" />
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientEndPoint.cs" />

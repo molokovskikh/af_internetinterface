@@ -238,7 +238,7 @@
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>мобильный телефон: <i style='mso-bidi-font-style: normal'><u>${_client.Contact}</u></i></p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>принял подключение услуги доступа к сети интернет
 							со следующими параметрами:</p>
-						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>адрес подключения: <i style='mso-bidi-font-style: normal'><u>г. ${Client.City} ул. ${Client.Street} д. ${Client.House} ${Client.CaseHouse} кв. ${Client.Apartment} этаж ${Client.Floor}</u></i></p>
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>адрес подключения: <i style='mso-bidi-font-style: normal'><u>${Client.GetPrintAddressNoEntrance}</u></i></p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
 							Счет: <i style='mso-bidi-font-style: normal'><u>${AccountNumber}<b style='mso-bidi-font-weight: normal'><o:p></o:p></b></u></i>
 							<% if IsDefined("ConnectInfo"): %>
@@ -270,18 +270,18 @@
 							имею.</p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'><o:p>&nbsp;</o:p></p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>__________________________________________<span
-							                                                                                                                                                       style='mso-spacerun: yes'>               </span><span
-								                                                                                                                                                                                                      style='mso-spacerun: yes'>     </span><span
-									                                                                                                                                                                                                                                           style='mso-spacerun: yes'>         </span><span
-										                                                                                                                                                                                                                                                                                    style='mso-spacerun: yes'>   </span><i style='mso-bidi-font-style: normal'><u>________________________</u></i></p>
+							                                                                                                                                                       style='mso-spacerun: yes'>               </span><span
+								                                                                                                                                                                                                      style='mso-spacerun: yes'>     </span><span
+									                                                                                                                                                                                                                                           style='mso-spacerun: yes'>         </span><span
+										                                                                                                                                                                                                                                                                                    style='mso-spacerun: yes'>   </span><i style='mso-bidi-font-style: normal'><u>________________________</u></i></p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'><span style='font-size: 8.0pt'><span
-							                                                                                                                                           style='mso-spacerun: yes'>                                         </span>(подпись
+							                                                                                                                                           style='mso-spacerun: yes'>                                         </span>(подпись
 							                                                                                                             Абонента)<span
-								                                                                                                                      style='mso-spacerun: yes'>                                                                                
-							                                                                                                                      </span><span style='mso-spacerun: yes'>            </span><span
-								                                                                                                                                                                               style='mso-spacerun: yes'>          </span><span
-									                                                                                                                                                                                                                         style='mso-spacerun: yes'>  </span><span
-										                                                                                                                                                                                                                                                           style='mso-spacerun: yes'>      </span>(дата)<o:p></o:p></span></p>
+								                                                                                                                      style='mso-spacerun: yes'>                                                                                
+							                                                                                                                      </span><span style='mso-spacerun: yes'>            </span><span
+								                                                                                                                                                                               style='mso-spacerun: yes'>          </span><span
+									                                                                                                                                                                                                                         style='mso-spacerun: yes'>  </span><span
+										                                                                                                                                                                                                                                                           style='mso-spacerun: yes'>      </span>(дата)<o:p></o:p></span></p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
 							<![if !vml]><span style='mso-ignore: vglayout'>
 								<table cellpadding=0 cellspacing=0 align=left style="height: 70px; margin-top: -12px;">
@@ -329,13 +329,13 @@
 									                                                           </span><![endif]></p>
 						<br style='mso-ignore: vglayout' clear=ALL>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; line-height: normal'><b style='mso-bidi-font-weight: normal'>Расход материалов:<o:p></o:p></b></p>
-						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; line-height: normal'><span style='mso-spacerun: yes'> </span><b style='mso-bidi-font-weight: normal'>кабель </b><b style='mso-bidi-font-weight: normal'><span lang=EN-US
-							                                                                                                                                                                                                                              style='mso-ansi-language: EN-US'>UTP</span> 2</b><b style='mso-bidi-font-weight: normal'><span lang=EN-US style='mso-ansi-language: EN-US'>x</span>2</b> начальная
+						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; line-height: normal'><span style='mso-spacerun: yes'> </span><b style='mso-bidi-font-weight: normal'>кабель </b><b style='mso-bidi-font-weight: normal'><span lang=EN-US
+							                                                                                                                                                                                                                              style='mso-ansi-language: EN-US'>UTP</span> 2</b><b style='mso-bidi-font-weight: normal'><span lang=EN-US style='mso-ansi-language: EN-US'>x</span>2</b> начальная
 							метка
 							<![if !vml]><img width=114 height=20
 								            src="../Images/image003.gif" v:shapes="_x0000_s1033"><![endif]>
 							<span
-								style='mso-spacerun: yes'> </span>конечная метка
+								style='mso-spacerun: yes'> </span>конечная метка
 							<![if !vml]><img width=114 height=20
 								            src="../Images/image003.gif" v:shapes="_x0000_s1032"><![endif]>
 						</p>
@@ -345,13 +345,13 @@
 								                                                                                                                                                                                                                                                           <![if !vml]><img width=51 height=20
 									                                                                                                                                                                                                                                                                       src="../Images/image004.gif" v:shapes="_x0000_s1031"><![endif]></b>
 							<span
-								style='mso-spacerun: yes'> </span>шт. <b style='mso-bidi-font-weight: normal'>скоба
-									                                     с гвоздем</b> -
+								style='mso-spacerun: yes'> </span>шт. <b style='mso-bidi-font-weight: normal'>скоба
+									                                     с гвоздем</b> -
 							<b style='mso-bidi-font-weight: normal'>
 								<![if !vml]><img width=51 height=20
 									            src="../Images/image004.gif" v:shapes="_x0000_s1030"><![endif]></b>
 							<span
-								style='mso-spacerun: yes'>  </span>шт.
+								style='mso-spacerun: yes'>  </span>шт.
 							<%
 							freePorts = _client.GetFreePorts()
 							if (freePorts != ""):
@@ -366,10 +366,10 @@
 								<![if !vml]><img width=166 height=24
 									            src="../Images/image005.gif" v:shapes="_x0000_s1029"><![endif]></b>
 							<span
-								style='mso-spacerun: yes'> </span><i style='mso-bidi-font-style: normal'>
-									                                 <% else: %>
-									                                 ${WhoConnected.Name}
-									                                 <% end %></i></p>
+								style='mso-spacerun: yes'> </span><i style='mso-bidi-font-style: normal'>
+									                                 <% else: %>
+									                                 ${WhoConnected.Name}
+									                                 <% end %></i></p>
 					</td>
 				</tr>
 				<tr style='mso-yfti-irow: 1'>
@@ -378,7 +378,7 @@
 						class="style1">
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; line-height: normal'>
 							<i style='mso-bidi-font-style: normal'>
-								<span style='font-size: 8.0pt'>---------------------------------линия отрыва<span style='mso-spacerun: yes'>   </span>---<span style='mso-spacerun: yes'>  </span>линия отрыва<span style='mso-spacerun: yes'>   </span>---<span style='mso-spacerun: yes'>   </span>линия отрыва<span style='mso-spacerun: yes'>   </span>---<span style='mso-spacerun: yes'>   </span>линия отрыва<span style='mso-spacerun: yes'></span>---<span style='mso-spacerun: yes'>   </span>линия отрыва<span style='mso-spacerun: yes'>   <o:p>---------------------------------</o:p></span>
+								<span style='font-size: 8.0pt'>---------------------------------линия отрыва<span style='mso-spacerun: yes'>   </span>---<span style='mso-spacerun: yes'>  </span>линия отрыва<span style='mso-spacerun: yes'>   </span>---<span style='mso-spacerun: yes'>   </span>линия отрыва<span style='mso-spacerun: yes'>   </span>---<span style='mso-spacerun: yes'>   </span>линия отрыва<span style='mso-spacerun: yes'></span>---<span style='mso-spacerun: yes'>   </span>линия отрыва<span style='mso-spacerun: yes'>   <o:p>---------------------------------</o:p></span>
 							</i>
 						</p>
 					</td>
@@ -399,7 +399,7 @@
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal; tab-stops: center 269.3pt'>&nbsp;</p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal; tab-stops: center 269.3pt'>
 							<b style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'>Параметры услуги: </i></b>Адрес
-							подключения: <i style='mso-bidi-font-style: normal'><u>г. ${Client.City} ул. ${Client.Street} д. ${Client.House} ${Client.CaseHouse} кв. ${Client.Apartment}</u></i></p>
+							подключения: <i style='mso-bidi-font-style: normal'><u>${Client.GetPrintAddressNoEntranceFloor}</u></i></p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Тарифный план: <i style='mso-bidi-font-style: normal'><u>${?Client.Tariff.Name}<b style='mso-bidi-font-weight: normal'><o:p></o:p></b></u></i></p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>Лицевой счет № <i style='mso-bidi-font-style: normal'><u>${AccountNumber}<b style='mso-bidi-font-weight: normal'><o:p></o:p></b></u></i></p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'><b style='mso-bidi-font-weight: normal'>Для оплаты
@@ -431,17 +431,17 @@
 							                                                                                                                                            style='mso-bidi-font-weight: normal'><i style='mso-bidi-font-style: normal'><u>${Client.ConnectSum} </u></i></b> руб.</p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>&nbsp;</p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>__________________________________________<span
-							                                                                                                                                                       style='mso-spacerun: yes'>               </span><span
-								                                                                                                                                                                                                      style='mso-spacerun: yes'>            </span><span
-									                                                                                                                                                                                                                                                  style='mso-spacerun: yes'>     </span><span
-										                                                                                                                                                                                                                                                                                       style='mso-spacerun: yes'>       </span><i style='mso-bidi-font-style: normal'><u>________________________</u></i></p>
+							                                                                                                                                                       style='mso-spacerun: yes'>               </span><span
+								                                                                                                                                                                                                      style='mso-spacerun: yes'>            </span><span
+									                                                                                                                                                                                                                                                  style='mso-spacerun: yes'>     </span><span
+										                                                                                                                                                                                                                                                                                       style='mso-spacerun: yes'>       </span><i style='mso-bidi-font-style: normal'><u>________________________</u></i></p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'><span style='font-size: 8.0pt'><span
-							                                                                                                                                           style='mso-spacerun: yes'>                                         </span>(подпись
+							                                                                                                                                           style='mso-spacerun: yes'>                                         </span>(подпись
 							                                                                                                             Абонента)<span
-								                                                                                                                      style='mso-spacerun: yes'>                                                                                         
-							                                                                                                                      </span><span style='mso-spacerun: yes'>                      </span><span
-								                                                                                                                                                                                         style='mso-spacerun: yes'>    </span><span style='mso-spacerun: yes'>   </span><span
-									                                                                                                                                                                                                                                                                      style='mso-spacerun: yes'> </span>(дата)<o:p></o:p></span></p>
+								                                                                                                                      style='mso-spacerun: yes'>                                                                                         
+							                                                                                                                      </span><span style='mso-spacerun: yes'>                      </span><span
+								                                                                                                                                                                                         style='mso-spacerun: yes'>    </span><span style='mso-spacerun: yes'>   </span><span
+									                                                                                                                                                                                                                                                                      style='mso-spacerun: yes'> </span>(дата)<o:p></o:p></span></p>
 						<p class=MsoNormal align=center style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: center; line-height: normal'><i style='mso-bidi-font-style: normal'><span
 							                                                                                                                                                               style='font-size: 10.0pt'>Договор - оферты и правила оказания услуг
 							                                                                                                                                                               опубликованы на </span></i><i style='mso-bidi-font-style: normal'><span
@@ -470,10 +470,10 @@
 							<![if !vml]><img width=166 height=24
 								            src="../Images/image005.gif" v:shapes="_x0000_s1028"><![endif]>
 							<span
-								style='mso-spacerun: yes'> </span><span style='mso-spacerun: yes'> </span><i
-									                                                                        style='mso-bidi-font-style: normal'>  <% else: %>
-									                                                                        ${WhoConnected.Name}
-									                                                                        <% end %></i></p>
+								style='mso-spacerun: yes'> </span><span style='mso-spacerun: yes'> </span><i
+									                                                                        style='mso-bidi-font-style: normal'>  <% else: %>
+									                                                                        ${WhoConnected.Name}
+									                                                                        <% end %></i></p>
 						<p class=MsoNormal style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'><span style='font-size: 2.0pt'><o:p>&nbsp;</o:p></span></p>
 					</td>
 				</tr>

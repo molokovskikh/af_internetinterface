@@ -43,6 +43,7 @@ namespace Inforoom2.Controllers
 		public ActionResult Plans(int? id)
 		{
 			ViewBag.Client = CurrentClient;
+			ViewBag.ContentHtml = DbSession.Query<PlanHtmlContent>().FirstOrDefault(s => s.Region == CurrentRegion);
 			if (id != null) {
 				var plan = DbSession.Get<Plan>(id);
 				ViewBag.Plan = plan;

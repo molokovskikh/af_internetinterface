@@ -1,5 +1,5 @@
- using System;
-using System.Collections.Generic; 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Inforoom2.Helpers;
@@ -94,7 +94,7 @@ namespace Inforoom2.Models
 				}
 			}
 			return message;
-		} 
+		}
 
 		/// <summary>
 		/// Получение форматированного адреса
@@ -164,8 +164,7 @@ namespace Inforoom2.Models
 					var streetSubStings = street.Split(' ');
 					var newStreet = "";
 					for (int j = 0; j < streetSubStings.Length; j++) newStreet += streetSubStings[j][0].ToString().ToUpper() + streetSubStings[j].Substring(1);
-					street = newStreet.Remove(indexOfCut, shortCut.ElementAt(i).Key.Length)
-						.Insert(indexOfCut, shortCut.ElementAt(i).Value);
+					street = shortCut.ElementAt(i).Value + " " + newStreet.Remove(indexOfCut - 1, shortCut.ElementAt(i).Key.Length);
 					withoutCut = false;
 				}
 				else {
@@ -190,6 +189,6 @@ namespace Inforoom2.Models
 				street = "ул. " + street;
 			}
 			return street;
-		} 
+		}
 	}
 }
