@@ -39,7 +39,7 @@ namespace InternetInterface.Controllers
 		{
 			var propObj = DbSession.CreateSQLQuery(
 				string.Format(@"SELECT r.Region AS region, s.Name AS street, h.Number AS house,  a.Floor AS floor,
-								a.Apartment AS apartment, a.Entrance AS entrance, p.Id, ci.Name, hr.Region AS houseRegion  
+								a.Apartment AS apartment, a.Entrance AS entrance, p.Id, ci.Name, hr.Region AS houseRegion  , hr.Region AS houseCity
 								FROM internet.regions AS r  
 								INNER JOIN  internet.inforoom2_city AS ci ON r._City = ci.Id 
 								INNER JOIN  internet.inforoom2_street AS s ON s.Region = r.Id 
@@ -48,6 +48,7 @@ namespace InternetInterface.Controllers
 								INNER JOIN  internet.physicalclients AS p ON a.Id = p._Address 
 								INNER JOIN  internet.clients AS c ON p.Id = c.PhysicalClient 
 								LEFT JOIN  internet.regions AS hr ON hr.Id = h.Region  
+								LEFT JOIN  internet.inforoom2_city AS hc ON hr._City = hc.Id 
 								WHERE c.Id={0}", clientId)).UniqueResult();
 			if (propObj != null) {
 				var aList = (object[])propObj;
@@ -74,11 +75,13 @@ namespace InternetInterface.Controllers
 				newHouse.Street = aList[1].ToString();
 				newHouse.Region = regionExists ?? new RegionHouse() { Name = (aList[8] ?? aList[0]).ToString() };
 				DbSession.Save(newHouse);
-
-				DbSession.CreateSQLQuery(string.Format(@" UPDATE internet.physicalclients SET City='{0}',Street='{1}',House='{2}',Floor='{3}',Apartment='{4}',
-				Entrance='{5}',HouseObj={6}  WHERE Id={7}", aList[7], aList[1], newHouse.Number, aList[3] == "" ? "0" : aList[3], aList[4] == "" ? "0" : aList[4],
-					aList[5] == "" ? "0" : aList[5], newHouse.Id, aList[6]) + "; " + string.Format(" UPDATE internet.clients SET Address='улица {1} дом {2} квартира {4} подъезд {5} этаж {3}' " + " WHERE Id={6}", (aList[8] ?? aList[0]),
-						aList[1], newHouse.Number, aList[3] == "" ? "0" : aList[3], aList[4] == "" ? "0" : aList[4], aList[5] == "" ? "0" : aList[5], clientId)).UniqueResult();
+				string streetOrHouseTown = (aList[9] ?? aList[7]).ToString();
+				DbSession.CreateSQLQuery(string.Format(
+					@" UPDATE internet.physicalclients SET City='{0}',Street='{1}',House='{2}',Floor='{3}',Apartment='{4}', Entrance='{5}',HouseObj={6}  WHERE Id={7}",
+					streetOrHouseTown, aList[1], newHouse.Number, aList[3] == "" ? "0" : aList[3], aList[4] == "" ? "0" : aList[4],
+					aList[5] == "" ? "0" : aList[5], newHouse.Id, aList[6]) + "; " +
+				                         string.Format(" UPDATE internet.clients SET Address='улица {1} дом {2} квартира {4} подъезд {5} этаж {3}' " + " WHERE Id={6}", (aList[8] ?? aList[0]),
+					                         aList[1], newHouse.Number, aList[3] == "" ? "0" : aList[3], aList[4] == "" ? "0" : aList[4], aList[5] == "" ? "0" : aList[5], clientId)).UniqueResult();
 			}
 
 			RedirectToUrl(path);
