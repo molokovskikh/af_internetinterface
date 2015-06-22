@@ -44,6 +44,9 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual decimal FinalPrice { get; set; }
 
+		[Property(Column = "TextPrice")]
+		public virtual string TextPrice { get; set; }
+
 		[Property(Column = "_IsServicePlan")]
 		public virtual bool IsServicePlan { get; set; }
 

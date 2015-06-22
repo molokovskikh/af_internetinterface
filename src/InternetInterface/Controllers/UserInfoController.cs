@@ -593,7 +593,7 @@ namespace InternetInterface.Controllers
 							client.Status.Name));
 				}
 			}
-
+			 
 			if (IsValid(updateClient)) {
 				if (!string.IsNullOrEmpty(comment)) {
 					client.LogComment = comment;

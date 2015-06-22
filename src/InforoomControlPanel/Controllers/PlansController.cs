@@ -17,16 +17,16 @@ namespace InforoomControlPanel.Controllers
 	/// </summary>
 	public class PlansController : ControlPanelController
 	{
-
 		public PlansController()
 		{
 			ViewBag.BreadCrumb = "Тарифы";
 		}
 
-		public  ActionResult Index()
+		public ActionResult Index()
 		{
 			return PlanIndex();
 		}
+
 		/// <summary>
 		/// Список тарифов
 		/// </summary>
@@ -52,15 +52,15 @@ namespace InforoomControlPanel.Controllers
 
 			return View();
 		}
+
 		/// <summary>
-		/// Добавление тарифа в базу
+		/// Добавление тарифа в базу	(ValidateInput = false указываем для получения HTML со страницы)
 		/// </summary>
-		[HttpPost]
+		[HttpPost, ValidateInput(false)]
 		public ActionResult CreatePlan([EntityBinder] Plan plan)
 		{
 			var errors = ValidationRunner.ValidateDeep(plan);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(plan);
 				SuccessMessage("Тарифный план успешно добавлен!");
 				return RedirectToAction("PlanIndex");
@@ -71,7 +71,7 @@ namespace InforoomControlPanel.Controllers
 
 			return View("CreatePlan");
 		}
-		
+
 		/// <summary>
 		/// Просмотр тарифа
 		/// </summary>
@@ -83,19 +83,13 @@ namespace InforoomControlPanel.Controllers
 			var PlanTransfer = new PlanTransfer();
 			//назначение поля тарифа
 			PlanTransfer.PlanFrom = plan;
-			var plans = DbSession.Query<Plan>().OrderByDescending(i => i.Id).ToList(); 
-			foreach (var transfer in plan.PlanTransfers)
-			{
-				plans.Remove(transfer.PlanTo);
-			} 
+			var plans = DbSession.Query<Plan>().OrderByDescending(i => i.Id).ToList();
+			foreach (var transfer in plan.PlanTransfers) plans.Remove(transfer.PlanTo);
 
 			var RegionPlan = new RegionPlan();
 			RegionPlan.Plan = plan;
-			var regions = DbSession.Query<Region>().ToList(); 
-			foreach (var rp in plan.RegionPlans)
-			{
-				regions.Remove(rp.Region);
-			}
+			var regions = DbSession.Query<Region>().ToList();
+			foreach (var rp in plan.RegionPlans) regions.Remove(rp.Region);
 			ViewBag.PackageSpeed = DbSession.Query<PackageSpeed>().OrderBy(s => s.Speed)
 				.GroupBy(s => s.Speed).Select(grp => grp.First()).ToList();
 			var channelGroups = DbSession.Query<TvChannelGroup>().ToList();
@@ -106,18 +100,17 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.PlanTransfer = PlanTransfer;
 			ViewBag.TvChannelGroups = channelGroups;
 			ViewBag.RegionPlan = RegionPlan;
-			return View("EditPlan");
+			return View("EditPlan", new { id = plan.Id });
 		}
 
 		/// <summary>
-		/// Изменение тарифа
+		/// Изменение тарифа	(ValidateInput = false указываем для получения HTML со страницы)
 		/// </summary>
-		[HttpPost]
+		[HttpPost, ValidateInput(false)]
 		public ActionResult EditPlan([EntityBinder] Plan plan)
 		{
 			var errors = ValidationRunner.ValidateDeep(plan);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(plan);
 				SuccessMessage("Тарифный план успешно отредактирован");
 				return RedirectToAction("EditPlan", new { id = plan.Id });
@@ -136,10 +129,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult RemovePlan(int id)
 		{
 			var plan = DbSession.Get<Plan>(id);
-			if (DbSession.AttemptDelete(plan))
-				SuccessMessage("Объект успешно удален!");
-			else
-				ErrorMessage("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
+			DbSession.Delete(plan);
 			return RedirectToAction("PlanIndex");
 		}
 
@@ -165,6 +155,114 @@ namespace InforoomControlPanel.Controllers
 			var plan = DbSession.Get<Plan>(id);
 			plan.DecreasePriority(DbSession);
 			return RedirectToAction("PlanIndex");
+		}
+
+		/// <summary>
+		/// Список тарифов
+		/// </summary>
+		public ActionResult HtmlPlanIndex()
+		{
+			var planContent = DbSession.Query<PlanHtmlContent>().OrderByDescending(i => i.Region).ToList();
+			ViewBag.PlanContent = planContent;
+			return View("HtmlPlanIndex");
+		}
+
+		/// <summary>
+		/// Форма добавление тарифа
+		/// </summary>
+		public ActionResult CreateHtmlPlan()
+		{
+			//Создаентся тарифный план  
+			var planContent = new PlanHtmlContent();
+			var regions = DbSession.Query<Region>().Where(s => s.ShownOnMainPage).OrderBy(s => s.Name).ToList();
+
+			ViewBag.Regions = regions;
+			ViewBag.PlanContent = planContent;
+
+			return View();
+		}
+
+		/// <summary>
+		/// Изменение тарифа	(ValidateInput = false указываем для получения HTML со страницы)
+		/// </summary>
+		[HttpPost, ValidateInput(false)]
+		public ActionResult CreateHtmlPlan([EntityBinder] PlanHtmlContent planContent)
+		{
+			var htmlForRegionExists = DbSession.Query<PlanHtmlContent>()
+				.FirstOrDefault(s => s.Id != planContent.Id && s.Region == planContent.Region);
+
+			if (htmlForRegionExists != null) {
+				htmlForRegionExists.Content = planContent.Content;
+				DbSession.Save(htmlForRegionExists);
+				SuccessMessage("HTML страницы 'тарифы' успешно заменен.");
+				return RedirectToAction("HtmlPlanIndex");
+			}
+			var errors = ValidationRunner.ValidateDeep(planContent);
+			if (errors.Length == 0) {
+				DbSession.Save(planContent);
+				SuccessMessage("HTML страницы 'тарифы' добавлена.");
+				return RedirectToAction("HtmlPlanIndex");
+			}
+
+			var regions = DbSession.Query<Region>().Where(s => s.ShownOnMainPage).OrderBy(s => s.Name).ToList();
+			ViewBag.Regions = regions;
+			ViewBag.PlanContent = planContent;
+			return View();
+		}
+
+		/// <summary>
+		/// Форма добавление тарифа
+		/// </summary>
+		public ActionResult EditHtmlPlan(int id)
+		{
+			//Создаентся тарифный план  
+			var planContent = DbSession.Query<PlanHtmlContent>().FirstOrDefault(s => s.Id == id);
+			var regions = DbSession.Query<Region>().Where(s => s.ShownOnMainPage).OrderBy(s => s.Name).ToList();
+
+			ViewBag.Regions = regions;
+			ViewBag.PlanContent = planContent;
+
+			return View();
+		}
+
+		/// <summary>
+		/// Изменение тарифа	(ValidateInput = false указываем для получения HTML со страницы)
+		/// </summary>
+		[HttpPost, ValidateInput(false)]
+		public ActionResult EditHtmlPlan([EntityBinder] PlanHtmlContent planContent)
+		{
+			var htmlForRegionExists = DbSession.Query<PlanHtmlContent>()
+				.FirstOrDefault(s => s.Id != planContent.Id && s.Region == planContent.Region);
+
+			if (htmlForRegionExists != null) {
+				htmlForRegionExists.Content = planContent.Content;
+				DbSession.Save(htmlForRegionExists);
+				SuccessMessage("HTML страницы 'тарифы' успешно заменен.");
+				return RedirectToAction("HtmlPlanIndex");
+			}
+			var errors = ValidationRunner.ValidateDeep(planContent);
+			if (errors.Length == 0) {
+				DbSession.Save(planContent);
+				SuccessMessage("HTML страницы 'тарифы' отредактирован");
+				return RedirectToAction("HtmlPlanIndex");
+			}
+
+			var regions = DbSession.Query<Region>().Where(s => s.ShownOnMainPage).OrderBy(s => s.Name).ToList();
+			ViewBag.Regions = regions;
+			ViewBag.PlanContent = planContent;
+			return RedirectToAction("EditHtmlPlan", new { id = planContent.Id });
+		}
+
+		/// <summary>
+		/// Удаление тарифа
+		/// </summary>
+		/// <param name="id">Идентификатор тарифа</param>
+		/// <returns></returns>
+		public ActionResult RemoveHtmlPlan(int id)
+		{
+			var planContent = DbSession.Get<PlanHtmlContent>(id);
+			DbSession.Delete(planContent);
+			return RedirectToAction("HtmlPlanIndex");
 		}
 
 		/// <summary>
@@ -230,7 +328,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult TvProtocolList()
 		{
-			var protocols = DbSession.Query<TvProtocol>().OrderByDescending(i=>i.Id).ToList();
+			var protocols = DbSession.Query<TvProtocol>().OrderByDescending(i => i.Id).ToList();
 			ViewBag.TvProtocols = protocols;
 			return View();
 		}
@@ -252,8 +350,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult CreateTvProtocol([EntityBinder] TvProtocol tvProtocol)
 		{
 			var errors = ValidationRunner.Validate(tvProtocol);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(tvProtocol);
 				SuccessMessage("Протокол успешно добавлен!");
 				return RedirectToAction("TvProtocolList");
@@ -281,8 +378,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult EditTvProtocol([EntityBinder] TvProtocol tvProtocol)
 		{
 			var errors = ValidationRunner.Validate(tvProtocol);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(tvProtocol);
 				SuccessMessage("Протокол успешно изменен!");
 				return RedirectToAction("TvProtocolList");
@@ -291,13 +387,14 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.TvProtocol = tvProtocol;
 			return View("CreateTvProtocol");
 		}
+
 		/// <summary>
 		/// Удаление ТВ протокола
 		/// </summary>
 		public ActionResult DeleteTvProtocol(int id)
 		{
 			var tvProtocol = DbSession.Get<TvProtocol>(id);
-			if(DbSession.AttemptDelete(tvProtocol))
+			if (DbSession.AttemptDelete(tvProtocol))
 				SuccessMessage("Объект успешно удален!");
 			else
 				ErrorMessage("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
@@ -309,7 +406,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult TvChannelList()
 		{
-			var tvChannels = DbSession.Query<TvChannel>().OrderByDescending(i=>i.Priority).ThenByDescending(i => i.Id).ToList();
+			var tvChannels = DbSession.Query<TvChannel>().OrderByDescending(i => i.Priority).ThenByDescending(i => i.Id).ToList();
 			ViewBag.TvChannels = tvChannels;
 			return View();
 		}
@@ -357,8 +454,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult CreateTvChannel([EntityBinder] TvChannel TvChannel)
 		{
 			var errors = ValidationRunner.Validate(TvChannel);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(TvChannel);
 				SuccessMessage("Канал успешно добавлен!");
 				return RedirectToAction("TvChannelList");
@@ -387,8 +483,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult EditTvChannel([EntityBinder] TvChannel TvChannel)
 		{
 			var errors = ValidationRunner.Validate(TvChannel);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(TvChannel);
 				SuccessMessage("Канал успешно изменен!");
 				return RedirectToAction("TvChannelList");
@@ -439,8 +534,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult CreateTvChannelGroup([EntityBinder] TvChannelGroup tvChannelGroup)
 		{
 			var errors = ValidationRunner.Validate(tvChannelGroup);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(tvChannelGroup);
 				SuccessMessage("Объект успешно добавлен!");
 				return RedirectToAction("TvChannelGroupList");
@@ -474,11 +568,10 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult EditTvChannelGroup([EntityBinder] TvChannelGroup tvChannelGroup)
 		{
 			var errors = ValidationRunner.Validate(tvChannelGroup);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(tvChannelGroup);
 				SuccessMessage("Объект успешно изменен!");
-				return RedirectToAction("EditTvChannelGroup",new{id=tvChannelGroup.Id});
+				return RedirectToAction("EditTvChannelGroup", new { id = tvChannelGroup.Id });
 			}
 
 			EditTvChannel(tvChannelGroup.Id);
@@ -512,7 +605,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			else
 				ErrorMessage("Объект не удалось прикрепить! Возможно вложеные объекты не являются валидными.");
-			return RedirectToAction("EditTvChannelGroup",new{id = tvChannelGroup.Id});
+			return RedirectToAction("EditTvChannelGroup", new { id = tvChannelGroup.Id });
 		}
 
 		/// <summary>
@@ -522,8 +615,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult AttachTvChannelGroup([EntityBinder] Plan plan)
 		{
-			if (ValidationRunner.ValidateDeep(plan).Length == 0)
-			{
+			if (ValidationRunner.ValidateDeep(plan).Length == 0) {
 				DbSession.Save(plan);
 				SuccessMessage("Объект успешно прикреплен!");
 			}

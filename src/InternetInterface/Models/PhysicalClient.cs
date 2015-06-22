@@ -382,5 +382,108 @@ namespace InternetInterface.Models
 			}
 			return true;
 		}
+
+		public virtual string GetPrintAddressNoEntrance
+		{
+			get { return GetStringForPrint(entrance: false); }
+		}
+
+		public virtual string GetPrintAddressNoEntranceFloor
+		{
+			get { return GetStringForPrint(entrance: false, floor: false); }
+		}
+
+		/// <summary>
+		/// Получение форматированного адреса
+		/// </summary>
+		/// <param name="city">Город</param>
+		/// <param name="street">Улица</param>
+		/// <param name="house">Дом</param>
+		/// <param name="entrance">Подъезд</param>
+		/// <param name="floor">Этаж</param>
+		/// <param name="apartment">Квартира</param>
+		/// <returns>Форматированный адрес</returns>
+		public virtual string GetStringForPrint(bool city = true, bool street = true, bool house = true, bool entrance = true, bool floor = true, bool apartment = true)
+		{
+			return GetAddressString(street ? Street : "", house ? (House.HasValue ? (House == 0 ? "" : House.ToString()) + CaseHouse : "") : "",
+				city ? City ?? "" : "", apartment ? Apartment ?? "" : "", entrance ? Entrance == 0 ? "" : Entrance.ToString() : "", floor ? Floor == 0 ? "" : Floor.ToString() : "");
+		}
+
+		/// <summary>
+		/// Формирование адреса
+		/// </summary>
+		/// <param name="street">Улица</param>
+		/// <param name="house">Дом</param>
+		/// <param name="city">Город</param>
+		/// <param name="apartment">Квартира</param>
+		/// <param name="entrance">Подъезд</param>
+		/// <param name="floor">Этаж</param>
+		/// <param name="mask">форматирующая маска</param>
+		/// <returns></returns>
+		protected static string GetAddressString(string street, string house, string city = "", string apartment = "", string entrance = "", string floor = "", string mask = "")
+		{
+			string address;
+			if (mask != String.Empty) {
+				address = string.Format(mask, GetPrintStreet(street), house, city, apartment, entrance, floor);
+			}
+			else {
+				address = (city != "" ? "г. " + city : "")
+				          + (street != "" ? ", " + GetPrintStreet(street) : "")
+				          + (house != "" ? ", д. " + house : "")
+				          + (apartment != "" ? ", кв. " + apartment : "")
+				          + (entrance != "" ? ", подъезд " + entrance : "")
+				          + (floor != "" ? ", этаж " + floor : "");
+				address = address[0] == ',' ? address.Substring(1) : address;
+				address = address.Replace(",,", ",");
+			}
+			return address;
+		}
+
+		/// <summary>
+		/// Форматирование названия улицы
+		/// </summary>
+		/// <param name="street">Улица</param>
+		/// <returns>Форматированное название улицы</returns>
+		protected static string GetPrintStreet(string street)
+		{
+			var shortCut = new Dictionary<string, string>() {
+				{ "улица", "ул." },
+				{ "проспект", "просп." },
+				{ "переулок", "пер." },
+				{ "бульвар", "бул." }
+			};
+			bool withoutCut = true;
+			for (int i = 0; i < shortCut.Count; i++) {
+				var indexOfCut = street.ToLower().IndexOf(shortCut.ElementAt(i).Key);
+				if (indexOfCut != -1) {
+					var streetSubStings = street.Split(' ');
+					var newStreet = "";
+					for (int j = 0; j < streetSubStings.Length; j++) newStreet += streetSubStings[j][0].ToString().ToUpper() + streetSubStings[j].Substring(1);
+					street = shortCut.ElementAt(i).Value + " " + newStreet.Remove(indexOfCut - 1, shortCut.ElementAt(i).Key.Length);
+					withoutCut = false;
+				}
+				else {
+					if (street.ToLower().IndexOf(shortCut.ElementAt(i).Value) != -1) {
+						var streetSubStings = street.Split(' ');
+						var newStreet = "";
+						for (int j = 0; j < streetSubStings.Length; j++) {
+							if (!shortCut.Any(s => s.Key == streetSubStings[j].ToLower() || s.Value == streetSubStings[j].ToLower())) {
+								newStreet += newStreet.Length == 0 ? streetSubStings[j][0].ToString().ToUpper() + streetSubStings[j].Substring(1)
+									: " " + streetSubStings[j][0].ToString().ToUpper() + streetSubStings[j].Substring(1);
+							}
+							else {
+								newStreet += newStreet.Length == 0 ? streetSubStings[j] : " " + streetSubStings[j];
+							}
+						}
+						street = newStreet;
+						withoutCut = false;
+					}
+				}
+			}
+			if (withoutCut) {
+				street = "ул. " + street;
+			}
+			return street;
+		}
 	}
 }

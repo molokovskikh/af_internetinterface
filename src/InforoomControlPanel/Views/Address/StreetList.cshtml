@@ -1,32 +1,54 @@
 ﻿@using System.Activities.Expressions
+@using System.Collections.Specialized
 @using System.ComponentModel.DataAnnotations
+@using Common.Tools
 @using Inforoom2.Components
 @using Inforoom2.Models
 
 @{
 	ViewBag.Title = "Улицы";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	IList<Street> streets = ViewBag.Streets;
 	ModelFilter<Street> pager = ViewBag.Pager;
+	IList<Street> streets = pager.GetItems();
+	List<Region> regions = ViewBag.Regions;
+	var regionList = new NameValueCollection();
+	regionList["0"] = " ";
+	regions.Each(i => regionList[i.Id.ToString()] = i.Name.ToString());
 }
 <div class="form-group">
-	<a class="btn btn-success btn-sm btn-icon icon-left" href = '@Url.Action("CreateStreet", "Address")'>
+	<a class="btn btn-success btn-sm btn-icon icon-left" href='@Url.Action("CreateStreet", "Address")'>
 		<i class="entypo-plus"></i>
 		Создать улицу
 	</a>
 </div>
+<panel class="panel panel-default">
+	<form>
+		<div class="row">
+			<div class="col-sm-1"><label>Регион</label> </div>
+			<div class="col-sm-2">@pager.FormFilterManual("Region.Id", HtmlType.Dropdown, regionList)</div>
+			<input type="submit" class="btn btn-success btn-sm" />
+		</div>
+		<div class="row">
+			<div class="col-sm-1"><label>Название</label> </div>
+			<div class="col-sm-2">@pager.FormFilterManual("Name", HtmlType.text)</div>
+			<input type="submit" class="btn btn-success btn-sm" />
+		</div>
+		@pager.GenerateInputs()
+	</form>
+</panel>
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
 	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 		<thead>
 			<tr role="row">
-				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Id)">Номер</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Region)">Регион</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Name)">Название</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Confirmed)">Проверенно яндексом</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Id)">Номер</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Region)">Регион</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Name)">Название</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Confirmed)">Проверенно яндексом</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
 			</tr>
 		</thead>
-		@foreach (var item in streets) {
+		@foreach (var item in streets)
+		{
 			<tr>
 				<td>@item.Id</td>
 				<td>@item.Region.Name</td>
@@ -40,8 +62,7 @@
 				</td>
 			</tr>
 		}
-		<tbody>
-		</tbody>
+		<tbody></tbody>
 	</table>
 </div>
 <div class="row">

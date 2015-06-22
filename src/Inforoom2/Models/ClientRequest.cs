@@ -40,6 +40,10 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual bool SelfConnect { get; set; }
 
+		// TODO: сделать специальный тип моделей, содержащий метод
+		[Property]
+		public virtual int Label { get; set; }
+
 		[ManyToOne(Column = "_ServiceMan")]
 		public virtual ServiceMan ServiceMan { get; set; }
 
