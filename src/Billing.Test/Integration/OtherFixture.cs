@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
 using InternetInterface.Models;
+using InternetInterface.Services;
+using NHibernate.Linq;
 using NUnit.Framework;
 
 namespace Billing.Test.Integration
@@ -53,6 +55,28 @@ namespace Billing.Test.Integration
 			client.PhysicalClient.PassportNumber = null;
 
 			Assert_warning_page(false);
+		}
+
+		[Test]
+		public void CheckDebtWork()
+		{
+			scope = new SessionScope();
+			var sessionHolder = ActiveRecordMediator.GetSessionFactoryHolder();
+			session = sessionHolder.CreateSession(typeof(ActiveRecordBase));
+			var counter = 0;
+			for (var j = 1000; j < 20000; j++) {
+				Client client = null;
+				client = session.Query<Client>().FirstOrDefault(i => i.Id == j);
+
+				if (client == null)
+					continue;
+				if (!client.HaveService<DebtWork>())
+					continue;
+				var active = client.FindActiveService<DebtWork>() == null;
+				Console.WriteLine(String.Format("{3}Клиент: {0}, Сервис активен:{1}, будет заблокирован: {2}", client.Id, active, client.CanBlock(), "<br/>"));
+				counter++;
+			}
+			Console.WriteLine("Всего клиентов: " + counter);
 		}
 
 		private void Assert_warning_page(bool assert)
