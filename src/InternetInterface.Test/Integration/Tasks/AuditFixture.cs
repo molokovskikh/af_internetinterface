@@ -9,8 +9,10 @@ using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Background;
 using InternetInterface.Models;
+using InternetInterface.Services;
 using InternetInterface.Test.Helpers;
 using NHibernate.Linq;
+using NHibernate.Util;
 using NUnit.Framework;
 using Test.Support;
 using Test.Support.log4net;
@@ -24,7 +26,6 @@ namespace InternetInterface.Test.Integration.Tasks
 		public void CheckForHouseObjAbsenceFixtureExists()
 		{
 			// Создаем необходимые данные 
-			var mailhelper = new Mailer();
 			if (session.Query<Status>().Count() < 5) {
 				for (int i = 0; i < 10; i++) session.Save(new Status() { Name = "ssdsd" + i, ShortName = "sdsd" });
 				session.Flush();
@@ -52,9 +53,11 @@ namespace InternetInterface.Test.Integration.Tasks
 			clientWithEmptyHouseObj.Status = session.Query<Status>().FirstOrDefault(s => s.Id == 5);
 			session.Save(clientWithEmptyHouseObj);
 			session.Flush();
+
 			// проводим тестирвоание
-			string mailAboutHouseObjAbsence = new DataAudit(session).CheckForHouseObjAbsence();
-			Assert.That(mailAboutHouseObjAbsence, Is.Not.EqualTo(""));
+			var dataAudit = new DataAudit(session);
+			dataAudit.CheckForHouseObjAbsence();
+			Assert.That(dataAudit.Reports.First(), Is.Not.EqualTo(""));
 		}
 
 		[Test(Description = "Проверка на формирование сообщения при отсуствии физика с пустым полем HouseObj.")]
@@ -69,14 +72,14 @@ namespace InternetInterface.Test.Integration.Tasks
 				session.Update(item);
 			}
 			session.Flush();
-			string mailAboutHouseObjAbsence = new DataAudit(session).CheckForHouseObjAbsence();
-			Assert.That(mailAboutHouseObjAbsence, Is.EqualTo(""));
+			var dataAudit = new DataAudit(session);
+			dataAudit.CheckForHouseObjAbsence();
+			Assert.That(dataAudit.Reports.Count, Is.EqualTo(0));
 		}
 
 		[Test(Description = "Проверка на формирование сообщения при наличии подозрительного клиента.")]
 		public void CheckForSuspiciousClientFixtureExists()
 		{
-			var mailhelper = new Mailer();
 			// Создаем необходимые данные 
 			var settings = session.Query<InternetSettings>().First();
 			if (session.Query<Status>().Count() < 5) {
@@ -97,21 +100,14 @@ namespace InternetInterface.Test.Integration.Tasks
 				session.Update(clientSuspiciousClient);
 				session.Flush();
 			}
-			int suspiciousClientNumber = 0;
-			// проводим тестирвоание
-			string mailAboutSuspiciousClient = new DataAudit(session).CheckForSuspiciousClient(settings, ref suspiciousClientNumber);
-			if (mailAboutSuspiciousClient != string.Empty) {
-				mailhelper.SendText("service@analit.net", "service@analit.net", "Подозрительные клиенты в InternetInterface: " + suspiciousClientNumber, mailAboutSuspiciousClient);
-			}
-			Assert.That(mailAboutSuspiciousClient, Is.Not.EqualTo(""));
-			Assert.That(suspiciousClientNumber, Is.Not.EqualTo(0));
+			var dataAudit = new DataAudit(session);
+			dataAudit.CheckForSuspiciousClient();
+			Assert.That(dataAudit.Reports.Count, Is.EqualTo(0));
 		}
 
 		[Test(Description = "Проверка на формирование сообщения при отсуствии подозрительного клиента.")]
 		public void CheckForSuspiciousClientFixtureExistsNot()
 		{
-			var mailhelper = new Mailer();
-			var settings = session.Query<InternetSettings>().First();
 			var status = session.Load<Status>((uint)StatusType.Worked);
 			var clientSuspiciousClients = session.Query<Client>().Where(i => i.PhysicalClient != null && i.Disabled == false && i.Status == status && i.RatedPeriodDate == null).ToList();
 			status = session.Load<Status>((uint)StatusType.BlockedAndNoConnected);
@@ -121,13 +117,45 @@ namespace InternetInterface.Test.Integration.Tasks
 				session.Update(item);
 			}
 			session.Flush();
-			int suspiciousClientNumber = 0;
-			string mailAboutSuspiciousClient = new DataAudit(session).CheckForSuspiciousClient(settings, ref suspiciousClientNumber);
-			if (mailAboutSuspiciousClient != string.Empty) {
-				mailhelper.SendText("service@analit.net", "service@analit.net", "Подозрительные клиенты в InternetInterface: " + suspiciousClientNumber, mailAboutSuspiciousClient);
-			}
-			Assert.That(mailAboutSuspiciousClient, Is.EqualTo(""));
-			Assert.That(suspiciousClientNumber, Is.EqualTo(0));
+			var dataAudit = new DataAudit(session);
+			dataAudit.CheckForSuspiciousClient();
+			Assert.That(dataAudit.Reports.Count, Is.EqualTo(0));
+		}
+
+		[Test(Description = "Проверка на нежелательную блокировку услуги обещанный платеж к задаче")]
+		public void CheckForDefferedPayment()
+		{
+			//Убираем из выборки все старые сервисы
+			var oldServicers = session.Query<ClientService>().ToList();
+			oldServicers.Each(i => i.EndWorkDate = SystemTime.Now().AddDays(-10));
+			oldServicers.Each(i => session.Save(i));
+
+			//Создаем клиента и подключаем ему сервис
+			var client = ClientHelper.Client(session);
+			client.WriteOff(10000, false);
+			client.SetStatus(StatusType.NoWorked, session);
+			session.Save(client);
+			var service = session.Query<Service>().First(i => i.HumanName.Contains("Обещанный"));
+			var clientservice = new ClientService(client, service, true);
+			clientservice.EndWorkDate = SystemTime.Now().AddDays(3);
+			clientservice.TryActivate();
+			session.Save(client);
+			session.Save(clientservice);
+			session.Flush();
+
+			//Тест
+			var audit = new DataAudit(session);
+			audit.CheckForDefferedPaymentFailure();
+			//Пока все нормально
+			Assert.That(audit.Reports.Count, Is.EqualTo(0));
+
+			//Создаем ненормальную ситуацию
+			client.SetStatus(StatusType.NoWorked, session);
+			session.Save(client);
+			session.Flush();
+			audit.CheckForDefferedPaymentFailure();
+			Assert.That(audit.Reports.Count, Is.EqualTo(1));
+			Assert.That(audit.Reports[audit.Reports.Keys[0]], Is.StringContaining(client.Id.ToString()));
 		}
 	}
 }

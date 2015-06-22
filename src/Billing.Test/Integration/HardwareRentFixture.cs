@@ -18,8 +18,7 @@ namespace Billing.Test.Integration
 		private void AddRentalHardwareToClient()
 		{
 			// Для примера в качестве арендуемого оборудования взят коммутатор
-			_hardware = ActiveRecordMediator<RentalHardware>.FindAllByProperty("Name", "Коммутатор")
-					.FirstOrDefault() ?? new RentalHardware { Name = "Коммутатор"};
+			_hardware = ActiveRecordMediator<RentalHardware>.FindAllByProperty("Name", "Коммутатор").FirstOrDefault() ?? new RentalHardware { Name = "Коммутатор"};
 			_hardware.Price = (_hardware.Price == 0m) ? 150m : _hardware.Price;
 			_hardware.FreeDays = 30;
 			ActiveRecordMediator.SaveAndFlush(_hardware);

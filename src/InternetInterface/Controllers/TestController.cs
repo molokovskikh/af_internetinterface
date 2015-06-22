@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Net;
 using System.Reflection.Emit;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
@@ -21,6 +22,10 @@ using InternetInterface.Queries;
 using InternetInterface.Services;
 using NHibernate;
 using NHibernate.Linq;
+using NHibernate.SqlCommand;
+using NHibernate.Transform;
+using NPOI.HPSF;
+using NPOI.SS.UserModel;
 using Contact = InternetInterface.Models.Contact;
 using ContactType = InternetInterface.Models.ContactType;
 using TextHelper = InternetInterface.Helpers.TextHelper;
@@ -79,17 +84,6 @@ namespace InternetInterface.Controllers
 			var client = DbSession.Query<Client>().FirstOrDefault(i => i.Id == id);
 			var block = client.CanBlock();
 			PropertyBag["content"] = "Клиента можно заблокировать:" + block;
-#endif
-		}
-
-		/// <summary>
-		/// Проверка сможет ли биллиг заблокировать клиента
-		/// </summary>
-		/// <param name="id">Id Клиента</param>
-		public void RunBilling(uint id = 0)
-		{
-#if DEBUG
-			//var billing = new MainBilling();
 #endif
 		}
 	}
