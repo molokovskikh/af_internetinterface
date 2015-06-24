@@ -41,7 +41,7 @@ namespace InternetInterface.Test.Integration
 			Assert.That(writeOffs[1].Comment, Is.EqualTo("testUserWriteOff"));
 		}
 
-		[Test]
+		[Test,Ignore("Бессмысленный тест, так как из старого интернет интерфейса ничего больше подключать не надо")]
 		public void Do_not_activate_debt_work_second_time()
 		{
 			var client = ClientHelper.Client(session);

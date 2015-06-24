@@ -29,6 +29,7 @@ namespace Billing.Test.Integration
 			Assert.IsTrue(client.Disabled);
 			service.TryActivate();
 			Assert.IsTrue(client.Disabled);
+			session.Clear();
 		}
 
 		[Test(Description = "Проверка на деактивацию сервиса. Сервис должен деактивироваться, но не удаляться.")]

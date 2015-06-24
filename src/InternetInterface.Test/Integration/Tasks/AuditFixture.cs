@@ -102,7 +102,7 @@ namespace InternetInterface.Test.Integration.Tasks
 			}
 			var dataAudit = new DataAudit(session);
 			dataAudit.CheckForSuspiciousClient();
-			Assert.That(dataAudit.Reports.Count, Is.EqualTo(0));
+			Assert.That(dataAudit.Reports.Count, Is.EqualTo(1));
 		}
 
 		[Test(Description = "Проверка на формирование сообщения при отсуствии подозрительного клиента.")]
