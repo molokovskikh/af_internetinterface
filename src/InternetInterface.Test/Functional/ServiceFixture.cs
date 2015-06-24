@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using Common.Tools;
 using Common.Tools.Calendar;
 using InternetInterface.Models;
 using InternetInterface.Test.Helpers;
@@ -34,6 +35,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void Create_request()
 		{
+			var time = SystemTime.Now();
 			Open("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", client.Id);
 			Click("Сервисная заявка");
 
@@ -51,9 +53,11 @@ namespace InternetInterface.Test.Functional
 			Click("Сохранить");
 			AssertText("Информация по клиенту");
 
+			session.Clear();
 			var request = session.Query<ServiceRequest>().Where(r => r.Client == client).ToArray().Last();
 			Assert.That(request.PerformanceDate.ToString(), Is.EqualTo("21.05.2012 10:00:00"));
 			Assert.That(request.PerformanceTime.ToString(), Is.EqualTo("10:00:00"));
+			Assert.That(request.ModificationDate, Is.GreaterThanOrEqualTo(time));
 		}
 
 		[Test]
@@ -94,6 +98,7 @@ namespace InternetInterface.Test.Functional
 		[Test]
 		public void EditBlockForRepair()
 		{
+			var time = SystemTime.Now();
 			var request = CreateRequest();
 			session.Save(request);
 			Assert.That(request.BlockForRepair, Is.False);
@@ -112,6 +117,7 @@ namespace InternetInterface.Test.Functional
 			var saved = session.Load<ServiceRequest>(request.Id);
 			Assert.That(saved.BlockForRepair, Is.True);
 			Assert.That(saved.Client.Status.Type, Is.EqualTo(StatusType.BlockedForRepair));
+			Assert.That(request.ModificationDate, Is.GreaterThanOrEqualTo(time));
 		}
 
 		[Test]
