@@ -309,7 +309,9 @@
     <Content Include="Views\Tariffs\Edit.brail" />
     <None Include="Views\Templates\Internet.brail" />
     <None Include="Views\Templates\IpTv.brail" />
-    <Content Include="Views\Test\Index.brail" />
+    <Content Include="Views\Test\Index.brail">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Views\UserInfo\AddInfo.brail" />
     <Content Include="Views\IpPools\ShowIpPoolsOfRegion.brail">
       <SubType>Designer</SubType>
