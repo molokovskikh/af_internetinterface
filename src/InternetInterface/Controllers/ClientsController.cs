@@ -80,8 +80,7 @@ namespace InternetInterface.Controllers
 					@" UPDATE internet.physicalclients SET City='{0}',Street='{1}',House='{2}',Floor='{3}',Apartment='{4}', Entrance='{5}',HouseObj={6}  WHERE Id={7}",
 					streetOrHouseTown, aList[1], newHouse.Number, aList[3] == "" ? "0" : aList[3], aList[4] == "" ? "0" : aList[4],
 					aList[5] == "" ? "0" : aList[5], newHouse.Id, aList[6]) + "; " +
-				                         string.Format(" UPDATE internet.clients SET Address='улица {1} дом {2} квартира {4} подъезд {5} этаж {3}' " + " WHERE Id={6}", (aList[8] ?? aList[0]),
-					                         aList[1], newHouse.Number, aList[3] == "" ? "0" : aList[3], aList[4] == "" ? "0" : aList[4], aList[5] == "" ? "0" : aList[5], clientId)).UniqueResult();
+					string.Format(" UPDATE internet.clients SET Address='улица {1} дом {2} квартира {4} подъезд {5} этаж {3}' " + " WHERE Id={6}", (aList[8] ?? aList[0]), aList[1], newHouse.Number, aList[3] == "" ? "0" : aList[3], aList[4] == "" ? "0" : aList[4], aList[5] == "" ? "0" : aList[5], clientId)).UniqueResult();
 			}
 
 			RedirectToUrl(path);

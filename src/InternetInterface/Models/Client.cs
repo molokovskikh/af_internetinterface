@@ -610,7 +610,7 @@ namespace InternetInterface.Models
 		public virtual bool CanBlock()
 		{
 			//Если у клиента подключен сервис, отменяющий блокировки, то он не должен быть заблокирован
-			var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(DebtWork));
+			var cServ = ClientServices.FirstOrDefault(c => NHibernateUtil.GetClass(c.Service) == typeof(DebtWork) && c.IsActivated);
 			if (cServ != null && !cServ.Service.CanBlock(cServ))
 				return false;
 
@@ -892,10 +892,12 @@ where CE.Client = {0}", Id))
 		/// </summary>
 		public virtual string Activate(ClientService clientService)
 		{
-			var serviceType = NHibernateUtil.GetClass(clientService.Service);
-			if (ClientServices.Any(c => NHibernateUtil.GetClass(c.Service) == serviceType)
-				&& !new[] { typeof(IpTvBoxRent), typeof(HardwareRent) }.Contains(serviceType))
-				throw new ServiceActivationException(String.Format("Невозможно активировать услугу \"{0}\"", clientService.Service.HumanName));
+			//Ничего из этого больше не надо, так как все сервисы могут быть во множественном числе и больше не удаляются с клиента
+			//var serviceType = NHibernateUtil.GetClass(clientService.Service);
+			//var hasSameService = ClientServices.Any(c => NHibernateUtil.GetClass(c.Service) == serviceType);
+			//var isPluralService = new[] { typeof(IpTvBoxRent), typeof(HardwareRent) }.Contains(serviceType);
+			//if (hasSameService &&  !isPluralService)
+			//	throw new ServiceActivationException(String.Format("Невозможно активировать услугу \"{0}\"", clientService.Service.HumanName));
 
 			if (!clientService.TryActivate())
 				throw new ServiceActivationException(String.Format("Невозможно активировать услугу \"{0}\"", clientService.Service.HumanName));
@@ -909,7 +911,7 @@ where CE.Client = {0}", Id))
 					? clientService.EndWorkDate.Value.ToShortDateString()
 					: string.Empty);
 			CreareAppeal(message, AppealType.Statistic);
-			IsNeedRecofiguration = serviceType == typeof(DebtWork);
+			IsNeedRecofiguration = NHibernateUtil.GetClass(clientService.Service) == typeof(DebtWork);
 			return message;
 		}
 

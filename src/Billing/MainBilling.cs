@@ -166,7 +166,10 @@ set s.LastStartFail = true;")
 								if (updateClient.IsChanged(c => c.ShowBalanceWarningPage))
 									updateClient.CreareAppeal("Отключена страница Warning, клиент внес платеж", AppealType.Statistic);
 							}
-							foreach (var clientService in updateClient.ClientServices.ToList()) clientService.PaymentProcessed();
+
+							//Возможность сервисам отреагировать на платеж
+							foreach (var clientService in updateClient.ClientServices.ToList())
+								clientService.PaymentProcessed();
 						}
 						ProcessBonusesForFirstPayment(payment, session);
 					}
@@ -233,7 +236,10 @@ set s.LastStartFail = true;")
 							client.CreareAppeal("Отключена страница Warning", AppealType.Statistic);
 					}
 				}
-				foreach (var assignedservice in session.Query<ClientService>()) assignedservice.TryDeactivate();
+				//Пытаемся удалить сервисы, которые отработали свое
+				var services = session.Query<ClientService>().ToList();
+				foreach (var assignedservice in services)
+					assignedservice.TryDeactivate();
 			});
 		}
 

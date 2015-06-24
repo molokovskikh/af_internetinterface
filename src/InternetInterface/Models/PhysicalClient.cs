@@ -428,11 +428,11 @@ namespace InternetInterface.Models
 			}
 			else {
 				address = (city != "" ? "г. " + city : "")
-				          + (street != "" ? ", " + GetPrintStreet(street) : "")
-				          + (house != "" ? ", д. " + house : "")
-				          + (apartment != "" ? ", кв. " + apartment : "")
-				          + (entrance != "" ? ", подъезд " + entrance : "")
-				          + (floor != "" ? ", этаж " + floor : "");
+					+ (street != "" ? ", " + GetPrintStreet(street) : "")
+					+ (house != "" ?	", д. " + house : "")
+					+ (apartment != "" ? ", кв. " + apartment : "")
+					+ (entrance != "" ? ", подъезд " + entrance : "")
+					+ (floor != "" ? ", этаж " + floor : "");
 				address = address[0] == ',' ? address.Substring(1) : address;
 				address = address.Replace(",,", ",");
 			}
@@ -462,22 +462,20 @@ namespace InternetInterface.Models
 					street = shortCut.ElementAt(i).Value + " " + newStreet.Remove(indexOfCut - 1, shortCut.ElementAt(i).Key.Length);
 					withoutCut = false;
 				}
-				else {
-					if (street.ToLower().IndexOf(shortCut.ElementAt(i).Value) != -1) {
-						var streetSubStings = street.Split(' ');
-						var newStreet = "";
-						for (int j = 0; j < streetSubStings.Length; j++) {
-							if (!shortCut.Any(s => s.Key == streetSubStings[j].ToLower() || s.Value == streetSubStings[j].ToLower())) {
-								newStreet += newStreet.Length == 0 ? streetSubStings[j][0].ToString().ToUpper() + streetSubStings[j].Substring(1)
-									: " " + streetSubStings[j][0].ToString().ToUpper() + streetSubStings[j].Substring(1);
-							}
-							else {
-								newStreet += newStreet.Length == 0 ? streetSubStings[j] : " " + streetSubStings[j];
-							}
+				else if (street.ToLower().IndexOf(shortCut.ElementAt(i).Value) != -1) {
+					var streetSubStings = street.Split(' ');
+					var newStreet = "";
+					for (int j = 0; j < streetSubStings.Length; j++) {
+						if (!shortCut.Any(s => s.Key == streetSubStings[j].ToLower() || s.Value == streetSubStings[j].ToLower())) {
+							newStreet += newStreet.Length == 0 ? streetSubStings[j][0].ToString().ToUpper() + streetSubStings[j].Substring(1)
+								: " " + streetSubStings[j][0].ToString().ToUpper() + streetSubStings[j].Substring(1);
 						}
-						street = newStreet;
-						withoutCut = false;
+						else {
+							newStreet += newStreet.Length == 0 ? streetSubStings[j] : " " + streetSubStings[j];
+						}
 					}
+					street = newStreet;
+					withoutCut = false;
 				}
 			}
 			if (withoutCut) {

@@ -4,6 +4,7 @@ using Castle.ActiveRecord;
 using Common.Tools;
 using InternetInterface.Models;
 using InternetInterface.Services;
+using NHibernate.Linq;
 using NUnit.Framework;
 
 namespace Billing.Test.Integration
@@ -28,37 +29,86 @@ namespace Billing.Test.Integration
 			Assert.IsTrue(client.Disabled);
 			service.TryActivate();
 			Assert.IsTrue(client.Disabled);
+			session.Clear();
 		}
 
-		[Test]
-		public void Debt_Work_diactivate_and_delete()
+		[Test(Description = "Проверка на деактивацию сервиса. Сервис должен деактивироваться, но не удаляться.")]
+		public void TestDebtWorkDeactivate()
 		{
-			client.AutoUnblocked = true;
-			client.Disabled = true;
-			client.PhysicalClient.Balance = -5m;
+			client.PhysicalClient.Balance = -10;
 			session.Save(client);
-			var service = new ClientService(client, Service.GetByType(typeof(DebtWork))) {
-				BeginWorkDate = DateTime.Now,
-				EndWorkDate = DateTime.Now.AddDays(1),
-			};
-			client.Activate(service);
-			Assert.IsTrue(client.ClientServices.Select(c => c.Service).Contains(Service.Type<DebtWork>()));
-
-			SystemTime.Now = () => DateTime.Now.AddDays(2);
-			billing.ProcessPayments();
-
+			session.Flush();
+			
+			var service = session.Query<DebtWork>().First();
+			var clientService = new ClientService(client, service);
+			clientService.IsDeactivated = false;
+			clientService.IsActivated = true;
+			clientService.BeginWorkDate = DateTime.Parse("2014-11-07 22:04:13").AddDays(-10);
+			clientService.EndWorkDate = clientService.BeginWorkDate.Value.AddDays(3);
+			session.Save(clientService);
 			session.Refresh(client);
-			service = client.ClientServices.FirstOrDefault(s => s.Service.Id == Service.Type<DebtWork>().Id);
-			Assert.IsNotNull(service);
-			Assert.IsTrue(service.IsDeactivated);
-			Assert.False(service.IsActivated);
+			Assert.That(client.ClientServices.Count, Is.EqualTo(3));
+			var serviceId = clientService.Id;
+			var clientId = client.Id;
 
-			session.Save(new Payment(client, client.GetPriceForTariff() + 50));
+			//После первого пробега биллинга, сервис должен быть деактивирован
 			billing.ProcessPayments();
+			session.Clear();
+			client = session.Get<Client>(clientId);
+			clientService = session.Query<ClientService>().FirstOrDefault(i => i.Id == serviceId);
+			Assert.That(clientService, Is.Not.Null);
+			Assert.That(clientService.IsActivated, Is.False);
+			Assert.That(client.ClientServices.Count, Is.EqualTo(3));
 
+			var payment = new Payment(client, 250);
+			payment.RecievedOn = DateTime.Parse("2014-11-07 22:04:13");
+			payment.PaidOn = DateTime.Parse("2014-11-07 22:04:13");
+			payment.BillingAccount = false;
+			payment.Virtual = true;
+			session.Save(payment);
+			session.Flush();
+
+			//После второго пробега биллинга, сервис должен оставаться у клиента - больше мы сервисы не удаляем
+			billing.ProcessPayments();
+			session.Clear();
+			client = session.Get<Client>(clientId);
+			payment = client.Payments.First();
+			Assert.That(payment.BillingAccount, Is.True);
+			Assert.That(client.ClientServices.Count, Is.EqualTo(3));
+		}
+
+		[Test(Description = "Проверка, что сервис будет активироваться второй раз")]
+		public void SecondActivationOfService()
+		{
+			client.PhysicalClient.Balance = -10;
+			session.Save(client);
+			session.Flush();
+
+			var service = session.Query<DebtWork>().First();
+			var clientService = new ClientService(client, service);
+			clientService.IsDeactivated = true;
+			clientService.IsActivated = false;
+			clientService.BeginWorkDate = SystemTime.Now().AddDays(-30);
+			clientService.EndWorkDate = clientService.BeginWorkDate.Value.AddDays(3);
+			session.Save(clientService);
+			
+			billing.ProcessWriteoffs();
+			//Убеждаемся, что клиент находится в том виде, что нам нужно
 			session.Refresh(client);
-			service = client.ClientServices.FirstOrDefault(s => s.Service.Id == Service.Type<DebtWork>().Id);
-			Assert.IsNull(service);
+			session.Refresh(clientService);
+			Assert.That(client.ClientServices.Count, Is.EqualTo(3));
+			Assert.That(client.Status.Type, Is.EqualTo(StatusType.NoWorked));
+
+			clientService = new ClientService(client, service);
+			clientService.BeginWorkDate = SystemTime.Now();
+			clientService.EndWorkDate = clientService.BeginWorkDate.Value.AddDays(3);
+			client.Activate(clientService);
+
+			//Теперь клиент должен разблокироваться
+			billing.ProcessWriteoffs();
+			session.Refresh(client);
+			Assert.That(client.Status.Type, Is.EqualTo(StatusType.Worked));
+			Assert.That(client.ClientServices.Count, Is.EqualTo(4));
 		}
 
 		[Test]

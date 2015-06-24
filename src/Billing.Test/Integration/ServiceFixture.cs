@@ -3,6 +3,7 @@ using System.Linq;
 using Castle.ActiveRecord;
 using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
+using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
@@ -325,8 +326,8 @@ namespace Billing.Test.Integration
 				Assert.IsFalse(cServive.Client.Disabled);
 				cServive.ForceDeactivate();
 				Assert.IsTrue(cServive.Client.Disabled);
-
-				Assert.That(client.ClientServices.Count, Is.EqualTo(2), "должна остаться только услуга internet");
+				//А вот и не должна, теперь мы их не удаляем
+				//Assert.That(client.ClientServices.Count, Is.EqualTo(2), "должна остаться только услуга internet");
 			}
 		}
 
@@ -409,6 +410,7 @@ namespace Billing.Test.Integration
 				Assert.IsFalse(client.Disabled);
 			}
 		}
+
 
 		[Test]
 		public void VoluntaryBlockinTest()
@@ -600,7 +602,8 @@ namespace Billing.Test.Integration
 				Assert.IsTrue(client.CanBlock());
 				var service = new ClientService {
 					Client = client,
-					Service = ActiveRecordMediator<DebtWork>.FindFirst()
+					Service = ActiveRecordMediator<DebtWork>.FindFirst(),
+					IsActivated = true
 				};
 				ActiveRecordMediator.Save(service);
 
@@ -612,7 +615,8 @@ namespace Billing.Test.Integration
 					Client = client,
 					Service = Service.GetByType(typeof(DebtWork)),
 					BeginWorkDate = DateTime.Now,
-					EndWorkDate = DateTime.Now.AddDays(1)
+					EndWorkDate = DateTime.Now.AddDays(1),
+					IsActivated = true
 				};
 				client.ClientServices.Add(service);
 

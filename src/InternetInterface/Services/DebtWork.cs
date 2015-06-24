@@ -24,19 +24,16 @@ namespace InternetInterface.Services
 
 		public override bool CanActivate(Client client)
 		{
-			return InternalCanActivate(client) && !client.HaveService<DebtWork>();
+			return InternalCanActivate(client) && !client.HaveActiveService<DebtWork>();
 		}
 
-		//будь бдителен два вызова CanActivate похожи но не идентичные
+		//будь бдителен два вызова CanActivate похожи но не идентичные (!!! 24.06.2015 - ТЕПЕРЬ ИДЕНТИЧНЫЕ!!!!)
 		//CanActivate(Client client) - происходит если нужно узнать может ли услуга быть активирована
 		//CanActivate(ClientService assignedService) - происходит когда услуга активируется
 		//разница в проверке дублей когда услуга активируется она уже будет в списке ClientService
 		public override bool CanActivate(ClientService assignedService)
 		{
-			return InternalCanActivate(assignedService.Client)
-				&& !assignedService.Client.ClientServices
-					.Except(new[] { assignedService })
-					.Any(s => s.IsService(assignedService.Service));
+			return InternalCanActivate(assignedService.Client) && !assignedService.Client.HaveActiveService<DebtWork>();
 		}
 
 		public override void PaymentClient(ClientService assignedService)
@@ -54,16 +51,6 @@ namespace InternetInterface.Services
 
 		public override bool CanDelete(ClientService assignedService)
 		{
-			if (assignedService.Activator != null)
-				return true;
-
-			var lastPayments = ActiveRecordLinqBase<Payment>.Queryable
-				.Where(p => p.Client == assignedService.Client && assignedService.BeginWorkDate.Value <= p.PaidOn)
-				.ToList().Sum(p => p.Sum);
-			var balance = assignedService.Client.PhysicalClient.Balance;
-			if (balance > 0 &&
-				balance - lastPayments <= 0)
-				return true;
 			return false;
 		}
 

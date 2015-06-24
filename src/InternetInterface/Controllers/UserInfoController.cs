@@ -2,7 +2,9 @@
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Reflection.Emit;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
@@ -227,6 +229,35 @@ namespace InternetInterface.Controllers
 					SceHelper.UpdatePackageId(DbSession, client);
 			}
 			RedirectTo(client);
+		}
+
+		/// <summary>
+		/// Асинхронная функция (JSON).
+		/// Определяет не упал ли коммутатор, к которому подключен клиент.
+		/// </summary>
+		/// <param name="id">Идентификатор точки подключения клиента</param>
+		/// <returns></returns>
+		[return: JSONReturnBinder]
+		public string PingEndpoint(int id)
+		{
+			var endpoint = DbSession.Query<ClientEndpoint>().First(i => i.Id == id);
+			var ip = endpoint.Switch.IP;
+			Ping pingSender = new Ping();
+			PingOptions options = new PingOptions();
+			// Use the default Ttl value which is 128,
+			// but change the fragmentation behavior.
+			options.DontFragment = true;
+
+			// Create a buffer of 32 bytes of data to be transmitted.
+			string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+			byte[] buffer = Encoding.ASCII.GetBytes(data);
+			int timeout = 120;
+			PingReply reply = pingSender.Send(ip, timeout, buffer, options);
+
+			if (reply.Status == IPStatus.Success)
+				return string.Format("Онлайн, скорость ответа {0} мс.", reply.RoundtripTime);
+			
+			return string.Format("Коммутатор ничего не ответил");
 		}
 
 		[return: JSONReturnBinder]
