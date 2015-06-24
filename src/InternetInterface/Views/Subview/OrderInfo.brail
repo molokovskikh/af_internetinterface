@@ -137,6 +137,13 @@
 			</td>
 		</tr>
 		<tr>
+			<tr class="switchstatus">
+				<td>
+					<span class="endpointid" style="display:none">${OrderInfo.ClientConnectInfo.endpointId}</span>
+					<span class="description">Статус коммутатора</span>
+				</td>
+				<td class="status">Опрашиваю коммутатор...</td>
+			</tr>
 		<tr>
 		  <td><span class="description">Фиксированный IP </span></td>
 		  <td>${OrderInfo.ClientConnectInfo.static_IP}</td>
