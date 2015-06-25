@@ -392,8 +392,8 @@ namespace Inforoom2.Test.Infrastructure
 						if (right != null)
 							continue;
 						var newright = new Permission();
-						newright.Name = name;
-						newright.Description = "someDescription";
+						newright.Name = name; 
+						newright.Description = name;
 						DbSession.Save(newright);
 					}
 				}

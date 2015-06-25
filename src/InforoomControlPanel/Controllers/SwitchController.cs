@@ -21,12 +21,18 @@ namespace InforoomControlPanel.Controllers
 			return SwitchList();
 		}
 
+		/// <summary>
+		/// Страница списка коммутаторов
+		/// </summary>
 		public ActionResult SwitchList()
 		{
 			ViewBag.Switches = DbSession.Query<Switch>().ToList();
 			return View("SwitchList");
 		}
 
+		/// <summary>
+		/// Изменение коммутаторов
+		/// </summary>
 		public ActionResult EditSwitch(int id)
 		{
 			ViewBag.Switch = DbSession.Get<Switch>(id);
@@ -34,6 +40,9 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+		/// <summary>
+		/// Изменение коммутатора
+		/// </summary>
 		[HttpPost]
 		public ActionResult EditSwitch([EntityBinder] Switch Switch)
 		{
@@ -48,6 +57,9 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+		/// <summary>
+		/// Удаление у узла связи обслуживающего адреса
+		/// </summary>
 		public ActionResult DeleteSwitchAdress(int id)
 		{
 			var address = DbSession.Get<SwitchAddress>(id);
@@ -56,6 +68,9 @@ namespace InforoomControlPanel.Controllers
 			return RedirectToAction("EditNetworkNode", new { id = address.NetworkNode.Id });
 		}
 
+		/// <summary>
+		/// Страница списка узлов связи
+		/// </summary>
 		public ActionResult NetworkNodeList()
 		{
 			var NetworkNodes = DbSession.Query<NetworkNode>().ToList();
@@ -63,6 +78,9 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+		/// <summary>
+		///Создание нового узла связи
+		/// </summary>
 		public ActionResult CreateNetworkNode()
 		{
 			ViewBag.NetworkNode = new NetworkNode();
@@ -82,6 +100,9 @@ namespace InforoomControlPanel.Controllers
 			return View("CreateNetworkNode");
 		}
 
+		/// <summary>
+		/// Изменение узла связи
+		/// </summary>
 		public ActionResult EditNetworkNode(int id)
 		{
 			var node = DbSession.Get<NetworkNode>(id);
@@ -92,6 +113,10 @@ namespace InforoomControlPanel.Controllers
 			return View("EditNetworkNode");
 		}
 
+
+		/// <summary>
+		/// Добавление многопарника узлу связи
+		/// </summary>
 		[HttpPost]
 		public ActionResult CreateTwistedPair([EntityBinder] TwistedPair TwistedPair)
 		{
@@ -106,6 +131,9 @@ namespace InforoomControlPanel.Controllers
 			return View("EditNetworkNode");
 		}
 
+		/// <summary>
+		/// Изменение узла связи
+		/// </summary>
 		[HttpPost]
 		public ActionResult EditNetworkNode([EntityBinder] NetworkNode NetworkNode)
 		{
@@ -119,6 +147,9 @@ namespace InforoomControlPanel.Controllers
 			return View("EditNetworkNode");
 		}
 
+		/// <summary>
+		/// Удаление многопарника у узла связи
+		/// </summary>
 		public ActionResult DeleteTwistedPair(int id)
 		{
 			var TwistedPair = DbSession.Get<TwistedPair>(id);
@@ -127,6 +158,9 @@ namespace InforoomControlPanel.Controllers
 			return RedirectToAction("EditNetworkNode", new { id = TwistedPair.NetworkNode.Id });
 		}
 
+		/// <summary>
+		/// Удаление узла связи
+		/// </summary>
 		public ActionResult DeleteNetworkNode(int id)
 		{
 			var NetworkNode = DbSession.Get<NetworkNode>(id);

@@ -8,6 +8,9 @@ using NHibernate.Linq;
 
 namespace InforoomControlPanel.Controllers
 {
+	/// <summary>
+	/// Страница управления новостями
+	/// </summary>
 	public class NewsController : AdminController
 	{
 		public NewsController()
@@ -20,6 +23,9 @@ namespace InforoomControlPanel.Controllers
 			return NewsIndex();
 		}
 
+		/// <summary>
+		/// Страница списка новостей
+		/// </summary>
 		public ActionResult NewsIndex()
 		{
 			var newsBlocks = DbSession.Query<NewsBlock>().OrderBy(k => k.Priority).ToList();
@@ -31,6 +37,9 @@ namespace InforoomControlPanel.Controllers
 			return View("NewsIndex");
 		}
 
+		/// <summary>
+		/// Изменение новостей
+		/// </summary>
 		public ActionResult EditNewsBlock(int? newsBlockId)
 		{
 			NewsBlock newsBlock;
@@ -50,6 +59,9 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+		/// <summary>
+		/// Удаление новостей
+		/// </summary>
 		public ActionResult DeleteNewsBlock(int? newsBlockId)
 		{
 			var newsBlock = DbSession.Get<NewsBlock>(newsBlockId);
@@ -57,6 +69,9 @@ namespace InforoomControlPanel.Controllers
 			return RedirectToAction("NewsIndex");
 		}
 
+		/// <summary>
+		/// Создание новостей
+		/// </summary>
 		public ActionResult CreateNewsBlock()
 		{
 			NewsBlock newsBlock;
@@ -90,6 +105,9 @@ namespace InforoomControlPanel.Controllers
 			return RedirectToAction("NewsIndex");
 		}
 
+		/// <summary>
+		/// Редактирование новостей
+		/// </summary>
 		[HttpPost]
 		public ActionResult UpdateNewsBlock([EntityBinder] NewsBlock newsBlock)
 		{
@@ -108,6 +126,9 @@ namespace InforoomControlPanel.Controllers
 			return RedirectToAction("NewsIndex");
 		}
 
+		/// <summary>
+		/// Приоритет отображения новостей
+		/// </summary>
 		public ActionResult Move(int newsblockid, string direction)
 		{
 			return ChangeModelPriority<NewsBlock>(newsblockid, direction, "NewsIndex", "News");

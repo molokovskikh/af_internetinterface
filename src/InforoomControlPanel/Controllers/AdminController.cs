@@ -27,7 +27,7 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult Statistic()
 		{
-			return View("Index");
+			return View("Statistic");
 		}
 
 		/// <summary>
@@ -95,6 +95,9 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+		/// <summary>
+		/// Права доступа
+		/// </summary>
 		public ActionResult RenewActionPermissions()
 		{
 			var controllers = GetType().Assembly.GetTypes().Where(i=> i.IsSubclassOf(typeof(ControlPanelController))).ToList();

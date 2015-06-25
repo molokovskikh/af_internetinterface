@@ -27,7 +27,9 @@ namespace InforoomControlPanel.Controllers
 			return SwitchAddressList();
 		}
 
-
+		/// <summary>
+		/// Удаление адреса дома
+		/// </summary>
 		public ActionResult DeleteHouse(int? id)
 		{
 			var city = DbSession.Get<City>(id);
@@ -36,6 +38,9 @@ namespace InforoomControlPanel.Controllers
 			return RedirectToAction("HouseList");
 		}
 
+		/// <summary>
+		/// Удаление адреса улицы
+		/// </summary>
 		public ActionResult DeleteStreet(int id)
 		{
 			var street = DbSession.Get<Street>(id);
@@ -57,6 +62,9 @@ namespace InforoomControlPanel.Controllers
 			return RedirectToAction("AddressList");
 		}
 
+		/// <summary>
+		/// Удаление адреса коммутатора
+		/// </summary>
 		public ActionResult DeleteSwitchAddress(int id)
 		{
 			var switchAddress = DbSession.Get<SwitchAddress>(id);
@@ -66,12 +74,18 @@ namespace InforoomControlPanel.Controllers
 		}
 
 
+		/// <summary>
+		/// Страница списка адресов коммутаторов
+		/// </summary>
 		public ActionResult SwitchAddressList()
 		{
 			ViewBag.Addresses = GetList<SwitchAddress>();
 			return View("SwitchAddressList");
 		}
 
+		/// <summary>
+		/// Создание нового адреса коммутатора
+		/// </summary>
 		[HttpPost]
 		public ActionResult CreateSwitchAddress([EntityBinder] SwitchAddress SwitchAddress, bool? noEntrances)
 		{
@@ -92,6 +106,9 @@ namespace InforoomControlPanel.Controllers
 		}
 
 
+		/// <summary>
+		/// Создание нового адреса коммутатора
+		/// </summary>
 		public ActionResult CreateSwitchAddress(int regionId = 0, int streetId = 0, int id = 0)
 		{
 			var SwitchAddress = new SwitchAddress();
@@ -115,6 +132,9 @@ namespace InforoomControlPanel.Controllers
 			return View("CreateSwitchAddress");
 		}
 
+		/// <summary>
+		/// Изменение адреса коммутатора
+		/// </summary>
 		[HttpPost]
 		public ActionResult EditSwitchAddress([EntityBinder] SwitchAddress SwitchAddress, bool? noEntrances)
 		{
@@ -134,6 +154,9 @@ namespace InforoomControlPanel.Controllers
 			return View("CreateSwitchAddress");
 		}
 
+		/// <summary>
+		/// Изменение адреса коммутатора
+		/// </summary>
 		public ActionResult EditSwitchAddress(int id)
 		{
 			var SwitchAddress = DbSession.Get<SwitchAddress>(id);
@@ -147,6 +170,9 @@ namespace InforoomControlPanel.Controllers
 			return View("CreateSwitchAddress");
 		}
 
+		/// <summary>
+		/// Страница списка городов
+		/// </summary>
 		public ActionResult CityList()
 		{
 			var cities = DbSession.Query<City>().OrderBy(s => s.Name).ToList();
@@ -154,6 +180,9 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+		/// <summary>
+		/// Страница списка регионов
+		/// </summary>
 		public ActionResult RegionList()
 		{
 			var regions = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
@@ -161,6 +190,9 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+		/// <summary>
+		/// Страница списка адресов улиц
+		/// </summary>
 		public ActionResult StreetList()
 		{
 			var pager = new ModelFilter<Street>(this);
@@ -177,6 +209,9 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+		/// <summary>
+		/// Создание нового адреса улицы
+		/// </summary>
 		public ActionResult CreateStreet(int regionId = 0)
 		{
 			var Street = new Street();
@@ -190,6 +225,9 @@ namespace InforoomControlPanel.Controllers
 			return View("CreateStreet");
 		}
 
+		/// <summary>
+		/// Создание нового адреса улицы
+		/// </summary>
 		[HttpPost]
 		public ActionResult CreateStreet([EntityBinder] Street Street, string yandexStreet, string yandexPosition)
 		{
@@ -211,6 +249,9 @@ namespace InforoomControlPanel.Controllers
 			return View("CreateStreet");
 		}
 
+		/// <summary>
+		/// Изменение адреса улицы
+		/// </summary>
 		public ActionResult EditStreet(int id)
 		{
 			var Street = DbSession.Get<Street>(id);
@@ -242,6 +283,9 @@ namespace InforoomControlPanel.Controllers
 			return View("CreateStreet");
 		}
 
+		/// <summary>
+		/// Страница списка домов
+		/// </summary>
 		public ActionResult HouseList()
 		{
 			var pager = new ModelFilter<House>(this);
@@ -258,6 +302,9 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+		/// <summary>
+		/// Создание нового адреса дома
+		/// </summary>
 		public ActionResult CreateHouse(int streetId = 0)
 		{
 			var House = new House();
