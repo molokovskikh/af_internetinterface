@@ -45,6 +45,9 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "Клиенты";
 		}
 
+		/// <summary>
+		/// Страница списка клиентов
+		/// </summary>
 		public ActionResult List()
 		{
 			var pager = new ModelFilter<Client>(this, urlBasePrefix: "/");

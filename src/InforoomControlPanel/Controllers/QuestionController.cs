@@ -21,6 +21,9 @@ namespace InforoomControlPanel.Controllers
 			return QuestionIndex();
 		}
 
+		/// <summary>
+		/// Страница списка вопросов
+		/// </summary>
 		public ActionResult QuestionIndex()
 		{
 			var questions = DbSession.Query<Question>().OrderBy(k => k.Priority).ToList();
@@ -30,6 +33,9 @@ namespace InforoomControlPanel.Controllers
 			return View("QuestionIndex");
 		}
 
+		/// <summary>
+		/// Изменение вопросов
+		/// </summary>
 		public ActionResult EditQuestion(int? questionId)
 		{
 			Question question;
@@ -45,11 +51,17 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+		/// <summary>
+		///Приоритет отображения вопросов
+		/// </summary>
 		public ActionResult Move(int? questionId, string direction)
 		{
 			return ChangeModelPriority<Question>(questionId, direction, "QuestionIndex", "Question");
 		}
 
+		/// <summary>
+		/// Изменение вопросов
+		/// </summary>
 		[ValidateInput(false), HttpPost]
 		public ActionResult UpdateQuestion(Question question)
 		{
@@ -68,6 +80,9 @@ namespace InforoomControlPanel.Controllers
 			return RedirectToAction("QuestionIndex");
 		}
 
+		/// <summary>
+		/// Удаление вопроса
+		/// </summary>
 		public ActionResult DeleteQuestion(int? questionId)
 		{
 			var question = DbSession.Get<Question>(questionId);
