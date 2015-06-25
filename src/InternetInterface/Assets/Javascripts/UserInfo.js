@@ -19,6 +19,7 @@ function updateEndpointStatus(id, htmlElement, timeout) {
 			setTimeout(updateEndpointStatus.bind(this, id, htmlElement, timeout), timeout);
 		},
 		error: function (data) {
+			$(htmlElement).html("<b class='undefined'>Не запустить проверку коммутатора. Пробую снова.</b>");
 			setTimeout(updateEndpointStatus.bind(this, id, htmlElement, timeout), timeout);
 		}
 	});

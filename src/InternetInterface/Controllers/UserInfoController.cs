@@ -255,9 +255,9 @@ namespace InternetInterface.Controllers
 			PingReply reply = pingSender.Send(ip, timeout, buffer, options);
 
 			if (reply.Status == IPStatus.Success)
-				return string.Format("Онлайн, скорость ответа {0} мс.", reply.RoundtripTime);
+				return string.Format("<b style='color:green'>Онлайн, скорость ответа {0} мс.</b>", reply.RoundtripTime);
 			
-			return string.Format("Коммутатор ничего не ответил");
+			return string.Format("<b style='color:red'>Коммутатор ничего не ответил</b>");
 		}
 
 		[return: JSONReturnBinder]
