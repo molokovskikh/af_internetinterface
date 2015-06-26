@@ -27,13 +27,13 @@ namespace InternetInterface.Background
 
 		public DataAudit()
 		{
+			Mailer = new Mailer();
+			Reports = new NameValueCollection();
 		}
 
 		public DataAudit(ISession session)
 			: base(session)
 		{
-			Mailer = new Mailer();
-			Reports = new NameValueCollection();
 		}
 
 		protected override void Process()
