@@ -42,7 +42,7 @@ namespace Inforoom2.Models
 
 		// TODO: сделать специальный тип моделей, содержащий метод
 		[Property]
-		public virtual int Label { get; set; }
+		public virtual int? Label { get; set; }
 
 		[ManyToOne(Column = "_ServiceMan")]
 		public virtual ServiceMan ServiceMan { get; set; }
