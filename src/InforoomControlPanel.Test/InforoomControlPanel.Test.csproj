@@ -183,6 +183,8 @@
   <ItemGroup>
     <Compile Include="Functional\AdminAccount\AdminAccountFixture.cs" />
     <Compile Include="Functional\AdminAccount\LoginFixture.cs" />
+    <Compile Include="Functional\Admin\EditRoleFixture.cs" />
+    <Compile Include="Functional\Admin\AdminFixture.cs" />
     <Compile Include="Functional\ClientActions\ClientActionsFixture.cs" />
     <Compile Include="Functional\ClientActions\PrivateMessageFixture.cs" />
     <Compile Include="Functional\ClientActions\LogAppealFixture.cs" />

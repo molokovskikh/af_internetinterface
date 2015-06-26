@@ -13,7 +13,7 @@ using NHibernate.Util;
 namespace InforoomControlPanel.Controllers
 {
 	/// <summary>
-	/// Страница управления вопросами от пользователя
+	/// Страница управления тарифами пользователя
 	/// </summary>
 	public class PlansController : ControlPanelController
 	{

@@ -8,7 +8,7 @@ using NHibernate.Linq;
 namespace InforoomControlPanel.Controllers
 {
 	/// <summary>
-	/// Страница управления вопросами от пользователя
+	/// Страница управления запросами от пользователя
 	/// </summary>
 	public class TicketController : ControlPanelController
 	{
@@ -22,6 +22,9 @@ namespace InforoomControlPanel.Controllers
 			return TicketIndex();
 		}
 
+		/// <summary>
+		/// Страница списка запросов в техподдержку
+		/// </summary>
 		public ActionResult TicketIndex()
 		{
 			var tickets = DbSession.Query<Ticket>().OrderByDescending(i => i.CreationDate).ToList();
@@ -29,6 +32,9 @@ namespace InforoomControlPanel.Controllers
 			return View("TicketIndex");
 		}
 
+		/// <summary>
+		/// Страница списка заявок на обратный звонок
+		/// </summary>
 		public ActionResult CallMeBackTicketIndex()
 		{
 			var tickets = DbSession.Query<CallMeBackTicket>().OrderByDescending(i => i.CreationDate).ToList();
@@ -36,6 +42,9 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+		/// <summary>
+		/// Изменение заявок на обратный звонок
+		/// </summary>
 		public ActionResult EditCallMeBackTicket(int? ticketid)
 		{
 			var ticket = DbSession.Get<CallMeBackTicket>(ticketid);
@@ -43,6 +52,9 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+		/// <summary>
+		/// Изменение заявок на обратный звонок
+		/// </summary>
 		public ActionResult UpdateCallMeBackTicket([EntityBinder] CallMeBackTicket ticket)
 		{
 			ViewBag.Ticket = ticket;
@@ -61,6 +73,9 @@ namespace InforoomControlPanel.Controllers
 			return RedirectToAction("CallMeBackTicketIndex");
 		}
 
+		/// <summary>
+		/// Изменение запроса в техподдержку
+		/// </summary>
 		public ActionResult EditTicket(int? ticketid)
 		{
 			Ticket ticket;
@@ -69,6 +84,9 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
+		/// <summary>
+		/// Изменение запроса в техподдержку
+		/// </summary>
 		public ActionResult UpdateTicket([EntityBinder] Ticket ticket)
 		{
 			ViewBag.Ticket = ticket;
