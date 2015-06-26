@@ -25,6 +25,7 @@ namespace InternetInterface.Background
 		protected Mailer Mailer;
 		public NameValueCollection Reports;
 
+		//todo Исправить идиотизм. В реальности создается таск без сесии, но в тестах правильнее передавать сессию. Приходится дублировать конструктор
 		public DataAudit()
 		{
 			Mailer = new Mailer();
@@ -34,6 +35,8 @@ namespace InternetInterface.Background
 		public DataAudit(ISession session)
 			: base(session)
 		{
+			Mailer = new Mailer();
+			Reports = new NameValueCollection();
 		}
 
 		protected override void Process()
