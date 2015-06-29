@@ -600,8 +600,8 @@ namespace InternetInterface.Controllers
 
 			var iptv = client.Iptv;
 			var internet = client.Internet;
-
-			updateClient.UpdateHouse(DbSession.Get<House>(house_id));
+			//  не обдновляем адрес здесь, только в новой админке
+			//updateClient.UpdateHouse(DbSession.Get<House>(house_id));
 			SetARDataBinder();
 			BindObjectInstance(iptv, "iptv", AutoLoadBehavior.NullIfInvalidKey);
 			BindObjectInstance(internet, "internet", AutoLoadBehavior.NullIfInvalidKey);
