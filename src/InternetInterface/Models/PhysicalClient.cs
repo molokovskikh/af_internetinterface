@@ -448,6 +448,7 @@ namespace InternetInterface.Models
 		{
 			var shortCut = new Dictionary<string, string>() {
 				{ "улица", "ул." },
+				{ "проезд", "пр-д." },
 				{ "проспект", "просп." },
 				{ "переулок", "пер." },
 				{ "бульвар", "бул." }
@@ -458,8 +459,12 @@ namespace InternetInterface.Models
 				if (indexOfCut != -1) {
 					var streetSubStings = street.Split(' ');
 					var newStreet = "";
-					for (int j = 0; j < streetSubStings.Length; j++) newStreet += streetSubStings[j][0].ToString().ToUpper() + streetSubStings[j].Substring(1);
-					street = shortCut.ElementAt(i).Value + " " + newStreet.Remove(indexOfCut - 1, shortCut.ElementAt(i).Key.Length);
+					for (int j = 0; j < streetSubStings.Length; j++) {
+						if (!shortCut.Any(s => s.Key == streetSubStings[j].ToLower() || s.Value == streetSubStings[j].ToLower())) {
+							newStreet += (" " + streetSubStings[j][0].ToString().ToUpper() + streetSubStings[j].Substring(1));
+						}
+					}
+					street = shortCut.ElementAt(i).Value + " " + newStreet;
 					withoutCut = false;
 				}
 				else if (street.ToLower().IndexOf(shortCut.ElementAt(i).Value) != -1) {
@@ -481,7 +486,7 @@ namespace InternetInterface.Models
 			if (withoutCut) {
 				street = "ул. " + street;
 			}
-			return street;
+			return street.Trim();
 		}
 	}
 }
