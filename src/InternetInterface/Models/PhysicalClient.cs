@@ -453,6 +453,7 @@ namespace InternetInterface.Models
 				{ "переулок", "пер." },
 				{ "бульвар", "бул." }
 			};
+			street = street.Trim();
 			bool withoutCut = true;
 			for (int i = 0; i < shortCut.Count; i++) {
 				var indexOfCut = street.ToLower().IndexOf(shortCut.ElementAt(i).Key);
