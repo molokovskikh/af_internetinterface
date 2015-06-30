@@ -1,5 +1,7 @@
 ﻿@{
 	ViewBag.Title = "Оплата услуг";
+	var userAccount = ViewBag.UserAccount;
+	var paymentSum = ViewBag.PaymentSum;
 }
 <h2 class="heading" style="padding-top: 33px;">
 	@(ViewBag.Title.ToString().ToUpper())
@@ -11,6 +13,9 @@
 	</p>
 	<p> г. Борисоглебск, ул. Третьяковская, д. 6б (вход со двора) в будние дни с 9-00 до 18-00. </p>
 	<p> г. Белгород, ул. Князя Трубецкого (Воровского), д. 26 за бизнес центром “Монблан” в будние дни с 9-00 до 18-00. </p>
+	<br/>
+	<p><a class="button sber" href="https://autopays.ru/payment/#!search_provider/pt_search/100-2962-1/pay@(userAccount != "" ? "&amount=" + paymentSum : "")
+		@(userAccount != "" ? "&ЛИЦЕВОЙ_СЧЕТ=" + userAccount : "")"><span>Оплатить Сбербанком</span></a></p>
 </div>
 
 
