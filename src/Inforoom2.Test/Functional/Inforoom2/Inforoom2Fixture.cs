@@ -56,25 +56,6 @@ namespace Inforoom2.Test.Functional.Inforoom2
 			Assert.That(name, Is.StringContaining(clickedText), "Изначальный город должен поменяться");
 		}
 
-		[Test, Description("Проверка возможности запросить обратный звонок, так же проверяется forwarding")]
-		public void CallMeBackTicket()
-		{
-			Open("Faq");
-			browser.FindElementByCssSelector(".call").Click();
-			var name = browser.FindElementByCssSelector("input[id=callMeBackTicket_Name]");
-			var phone = browser.FindElementByCssSelector("input[id=callMeBackTicket_PhoneNumber]");
-			var comment = browser.FindElementByName("callMeBackTicket.Text");
-			name.SendKeys("Иван Петров");
-			phone.SendKeys("1234567890");
-			comment.SendKeys("my question");
-			browser.FindElementByCssSelector(".contacting").Click();
-			var callMeBackTicket = DbSession.Query<CallMeBackTicket>().FirstOrDefault(c => c.PhoneNumber == "1234567890");
-			Assert.NotNull(callMeBackTicket);
-			var count = DbSession.Query<CallMeBackTicket>().ToList().Count;
-			Assert.That(count, Is.EqualTo(1), "Создается только одна заявка за раз");
-			AssertText("Задать вопрос:");
-		}
-
 		[Test(Description = "Выбор акционного тарифа")]
 		public void PromotionalPlan()
 		{

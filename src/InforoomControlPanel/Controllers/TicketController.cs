@@ -4,6 +4,7 @@ using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using NHibernate.Linq;
+using NHibernate.Transform;
 
 namespace InforoomControlPanel.Controllers
 {
@@ -37,8 +38,12 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult CallMeBackTicketIndex()
 		{
-			var tickets = DbSession.Query<CallMeBackTicket>().OrderByDescending(i => i.CreationDate).ToList();
-			ViewBag.Tickets = tickets;
+			var pager = new ModelFilter<CallMeBackTicket>(this,10);
+			var criteria = pager.GetCriteria();
+			//Это эквивалентно Group By по Id. Нельзя использовать Group By в проекциях, так как это сужает селект до 1го поля
+			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());
+			pager.Execute();
+			ViewBag.Pager = pager;
 			return View();
 		}
 

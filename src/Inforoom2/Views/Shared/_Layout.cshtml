@@ -10,7 +10,7 @@
 	if (regionPhones != null && regionPhones.Contains(",")) {
 		var commaPos = regionPhones.IndexOf(',');
 		regPhone[0] = regionPhones.Substring(0, commaPos);
-		regPhone[1] = regionPhones.Substring(commaPos+1);
+		regPhone[1] = regionPhones.Substring(commaPos + 1);
 	}
 	else {
 		regPhone[0] = regionPhones;
@@ -61,7 +61,7 @@
 						@using (Html.BeginForm("Profile", "Personal", FormMethod.Get, new { @class = "logonform" })) {
 							<input type="submit" value="Личный кабинет">
 						}
-						@if(!ViewBag.NetworkClientFlag){
+						@if (!ViewBag.NetworkClientFlag) {
 							@Html.ActionLink("Выход", "Logout", "Account")
 						}
 					</div>
@@ -116,7 +116,7 @@
 						<div class="logo"></div>
 					</a>
 					<div class="address">
-						<p>© 2014 — ООО «Инфорум»</p> 
+						<p>© 2014 — ООО «Инфорум»</p>
 						<p>г. Воронеж, Студенческая ул. д. 12 А</p>
 						<p><a href="mailto:internet@ivrn.net">internet@ivrn.net</a></p>
 					</div>
@@ -158,8 +158,8 @@
 				}
 			}
 		</div>
-		<div class ="HtmlTemplates" style="display: none">
-			
+		<div class="HtmlTemplates" style="display: none">
+
 			<div id="WindowLayout" class='window outer'>
 				<div class="cell">
 					<div class="window inner">
@@ -171,7 +171,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="cityWindow" id="CityWindow" >
+			<div class="cityWindow" id="CityWindow">
 				<div>
 					@if (ViewBag.UserCity != null && ViewBag.UserCityBelongsToUs) {
 						<div id="userCity" class="whiteblocktext">
@@ -201,7 +201,7 @@
 					}
 				</div>
 			</div>
-			<div class="cityWindow" id ="SelectCityWindow" >
+			<div class="cityWindow" id="SelectCityWindow">
 				<div class="whiteblocktext"><p>Выберите регион из списка:</p></div>
 				<div class="cities">
 					@{
@@ -224,16 +224,18 @@
 					}
 				}
 			</div>
-			<div class="cityWindow" id ="CallMeBackWindow" >
-				@{
-					CallMeBackTicket ticket = ViewBag.CallMeBackTicket ?? new CallMeBackTicket();
-					ValidationRunner validationRunner = ViewBag.Validation;
-					String action = ViewBag.ActionName.ToString();
-					String controller = ViewBag.ControllerName.ToString();
-				}
-				@using (@Html.BeginForm("SubmitCallMeBackTicket", controller, new { actionString = action, controllerString = controller}, FormMethod.Post)) {
+			@{
+				CallMeBackTicket ticket = ViewBag.CallMeBackTicket ?? new CallMeBackTicket();
+				ValidationRunner validationRunner = ViewBag.Validation;
+				String action = ViewBag.ActionName.ToString();
+				String controller = ViewBag.ControllerName.ToString();
+			}
+			<div class="cityWindow@(Request.IsAuthenticated == false ? " captcha" : "")" id="CallMeBackWindow">
+
+				@using (@Html.BeginForm("SubmitCallMeBackTicket", controller, new { actionString = action, controllerString = controller }, FormMethod.Post)) {
 					<div class="whiteblocktext">
-						<p>Наш оператор свяжется с вами в течении дня.
+						<p>
+							Наш оператор свяжется с вами в течении дня.
 						</p>
 					</div>
 					<div class="applications">
@@ -243,6 +245,10 @@
 						@Html.ValidationEditor(validationRunner, ticket, "PhoneNumber", new { @class = "application entry" }, HtmlTag.input, HtmlType.none)
 						<div class="label">Комментарий:<sup>*</sup></div>
 						@Html.ValidationEditor(validationRunner, ticket, "Text", new { @class = "application entry" }, HtmlTag.textarea, HtmlType.none)
+						@if (!Request.IsAuthenticated) {
+							<div class="label" style="margin-top: 17px;" onclick=" updateCaptcha() "><span style ="position: relative; top: -16px;">Код:<sup>*</sup></span><img id="captcha" style="width: 100px; height: 34px; cursor: pointer;" src="/Home/ProcessCallMeBackTicketCaptcha/0" alt="изображение" /></div>
+							@Html.TextBoxFor(s => ticket.Captcha, new { @Name = "callMeBackTicket.Captcha", @class = "application entry", @Style = "margin-top: 14px;" })
+						}
 					</div>
 					<div class="definitely"><sup>*</sup>- обязательно для заполнения</div>
 					<div class="buttons">
@@ -265,29 +271,44 @@
 
 		@RenderSection("JavaScript", required: false)
 	</body>
+	@if (!Request.IsAuthenticated) {
+		// обновление капчи
+		<script type="text/javascript">
+			var captchaNumber = 0;
+
+			function updateCaptcha() {
+				captchaNumber++;
+				$("#captcha").attr("src", "/Home/ProcessCallMeBackTicketCaptcha/" + captchaNumber);
+			}
+		</script>
+	}
 	<!-- Yandex.Metrika counter -->
-<script type="text/javascript">
-	(function (d, w, c) {
-		(w[c] = w[c] || []).push(function () {
-			try {
-				w.yaCounter28020399 = new Ya.Metrika({
-					id: 28020399
-				});
-			} catch (e) { }
-		});
+	<script type="text/javascript">
 
-		var n = d.getElementsByTagName("script")[0],
-            s = d.createElement("script"),
-            f = function () { n.parentNode.insertBefore(s, n); };
-		s.type = "text/javascript";
-		s.async = true;
-		s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+		(function(d, w, c) {
+			(w[c] = w[c] || []).push(function() {
+				try {
+					w.yaCounter28020399 = new Ya.Metrika({
+						id: 28020399
+					});
+				} catch (e) {
+				}
+			});
 
-		if (w.opera == "[object Opera]") {
-			d.addEventListener("DOMContentLoaded", f, false);
-		} else { f(); }
-	})(document, window, "yandex_metrika_callbacks");
-</script>
-<noscript><div><img src="//mc.yandex.ru/watch/28020399" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
+			var n = d.getElementsByTagName("script")[0],
+			    s = d.createElement("script"),
+			    f = function() { n.parentNode.insertBefore(s, n); };
+			s.type = "text/javascript";
+			s.async = true;
+			s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+			if (w.opera == "[object Opera]") {
+				d.addEventListener("DOMContentLoaded", f, false);
+			} else {
+				f();
+			}
+		})(document, window, "yandex_metrika_callbacks");
+	</script>
+	<noscript><div><img src="//mc.yandex.ru/watch/28020399" style="position: absolute; left: -9999px;" alt="" /></div></noscript>
+	<!-- /Yandex.Metrika counter -->
 </html>
