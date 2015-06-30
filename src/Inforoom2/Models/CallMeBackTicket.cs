@@ -39,5 +39,7 @@ namespace Inforoom2.Models
 
 		[ManyToOne]
 		public virtual Client Client { get; set; }
+
+		public virtual string Captcha { get; set; }
 	}
 }

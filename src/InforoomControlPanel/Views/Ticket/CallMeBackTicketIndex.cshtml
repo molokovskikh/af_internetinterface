@@ -1,21 +1,23 @@
-﻿@using Inforoom2.Models
+﻿@using Inforoom2.Components
+@using Inforoom2.Models
 @model dynamic
 
 @{
 	ViewBag.Title = "Заявки на обратный звонок";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	IList<CallMeBackTicket> tickets = ViewBag.Tickets ?? new List<CallMeBackTicket>();
+	ModelFilter<CallMeBackTicket> pager = ViewBag.Pager;
+	IList<CallMeBackTicket> tickets = pager.GetItems();
 }
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
 	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 		<thead>
 			<tr role="row">
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Номер</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.OrderBy(s => s.Id)">Номер</a></th>
 				<th class="sorting" tabindex="0" aria-controls="table-2" >Вопрос</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2" >Имя</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2" >Номер телефона</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Дата создания</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Дата ответа</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.OrderBy(s => s.PhoneNumber)">Дата создания</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.OrderBy(s => s.CreationDate)">Дата ответа</a></th>
 				<th class="sorting" tabindex="0" aria-controls="table-2" >Ответил</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
 			</tr>
@@ -48,4 +50,7 @@
 			}
 		</tbody>
 	</table>
+</div>
+<div class="row">
+	@{ Html.RenderPartial("Pagination"); }
 </div>

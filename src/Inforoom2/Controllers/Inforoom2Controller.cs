@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Drawing.Text;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -8,6 +12,8 @@ using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Linq;
+using NHibernate.Validator.Engine;
+using Region = Inforoom2.Models.Region;
 
 namespace Inforoom2.Controllers
 {
@@ -19,20 +25,20 @@ namespace Inforoom2.Controllers
 		}
 
 		protected Client _CurrentClient;
+
 		protected Client CurrentClient
 		{
 			get
-			{ 
+			{
 				if (_CurrentClient != null)
 					return _CurrentClient;
 
-				if (User == null || DbSession == null || !DbSession.IsConnected)
-				{ 
+				if (User == null || DbSession == null || !DbSession.IsConnected) {
 					return null;
 				}
 				int id;
 				int.TryParse(User.Identity.Name, out id);
-				var client =  DbSession.Get<Client>(id);
+				var client = DbSession.Get<Client>(id);
 				_CurrentClient = client;
 				return client;
 			}
@@ -63,7 +69,7 @@ namespace Inforoom2.Controllers
 				userCity = cookieCity;
 			}
 			ViewBag.Title = "Инфорум";
-			var CityList = DbSession.Query<Region>().Where(s => s.ShownOnMainPage).Select(s=>s.Name).OrderBy(s=>s).ToArray();
+			var CityList = DbSession.Query<Region>().Where(s => s.ShownOnMainPage).Select(s => s.Name).OrderBy(s => s).ToArray();
 			ViewBag.Cities = CityList;
 			//todo куда это девать?
 			var newCallMeBackTicket = new CallMeBackTicket() {
@@ -110,13 +116,13 @@ namespace Inforoom2.Controllers
 			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring, DbSession);
 			if (endpoint != null && endpoint.Client.PhysicalClient != null) //Юриков авторизовывать не нужно
 			{
-				SetCookie("networkClient", "true"); 
+				SetCookie("networkClient", "true");
 				// если у клиента есть адрес, связанный с эндпойнтом, по нему сохраняем город (userCity) в cookie 
 				if (endpoint.Client.PhysicalClient.Address != null) {
 					SetCookie("userCity", endpoint.Client.PhysicalClient.Address.House.Street.Region.Name);
-				} 
+				}
 				//Это необходимо, чтобы авторизация срабатывала моментально. Так как метод authenticate требует перезагрузки страницы
-				CurrentClient = endpoint.Client; 
+				CurrentClient = endpoint.Client;
 				this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, endpoint.Client.Id.ToString(), true);
 				return true;
 			}
@@ -178,16 +184,73 @@ namespace Inforoom2.Controllers
 			return false;
 		}
 
+		public void ProcessCallMeBackTicketCaptcha(int Id)
+		{
+			// формирование капчи 
+			var sub = new Random().Next(1000, 9999).ToString();
+			HttpContext.Session.Add("captcha", sub);
+			var pfc = new PrivateFontCollection();
+			pfc.AddFontFile(Server.MapPath("~") + "/Fonts/captcha.ttf");
+			var captchImage = DrawCaptchaText(sub, new Font(pfc.Families[0], 24, FontStyle.Bold), Color.Tomato, Color.White);
+			var ms = new MemoryStream();
+			captchImage.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+			HttpContext.Response.ContentType = "image/Jpeg";
+			HttpContext.Response.BinaryWrite(ms.ToArray());
+		}
+
+		/// <summary>
+		/// Изображение для капчи
+		/// </summary> 
+		private Image DrawCaptchaText(String text, Font font, Color textColor, Color backColor)
+		{
+			//first, create a dummy bitmap just to get a graphics object
+			Image img = new Bitmap(1, 1);
+			Graphics drawing = Graphics.FromImage(img);
+
+			//measure the string to see how big the image needs to be
+			SizeF textSize = drawing.MeasureString(text, font);
+
+			//free up the dummy image and old graphics object
+			img.Dispose();
+			drawing.Dispose();
+
+			//create a new image of the right size
+			img = new Bitmap((int)textSize.Width, (int)textSize.Height);
+
+			drawing = Graphics.FromImage(img);
+
+			//paint the background
+			drawing.Clear(backColor);
+
+			//create a brush for the text
+			Brush textBrush = new SolidBrush(textColor);
+
+			drawing.DrawString(text, font, textBrush, 0, 0);
+
+			drawing.Save();
+
+			textBrush.Dispose();
+			drawing.Dispose();
+
+			return img;
+		}
+
 		private void ProcessCallMeBackTicket()
 		{
 			var binder = new EntityBinder();
-			var callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request,typeof(CallMeBackTicket));
+			var callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request, typeof(CallMeBackTicket));
 			ViewBag.CallMeBackTicket = callMeBackTicket;
+			//проверка капчи 
 			if (Request.Params["callMeBackTicket.Name"] == null)
 				return;
 			callMeBackTicket.Client = CurrentClient;
 
 			var errors = ValidationRunner.Validate(callMeBackTicket);
+			if (CurrentClient == null && (callMeBackTicket.Captcha.Length < 4
+			                              || (HttpContext.Session["captcha"].ToString()).IndexOf(callMeBackTicket.Captcha) == -1)) {
+				ErrorMessage("Код подтверждения введен неверно!");
+				return;
+			}
 			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);
 				if (callMeBackTicket.Client != null) {
@@ -197,7 +260,7 @@ namespace Inforoom2.Controllers
 						};
 					DbSession.Save(appeal);
 				}
-
+				ViewBag.CallMeBackTicket = new CallMeBackTicket();
 				SuccessMessage("Заявка отправлена. В течении дня вам перезвонят.");
 				return;
 			}
