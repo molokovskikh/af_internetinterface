@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Models;
 using NHibernate.Linq;
@@ -36,6 +37,8 @@ namespace Inforoom2.Controllers
 		/// </summary>
 		public ActionResult Payment()
 		{
+			ViewBag.UserAccount = CurrentClient != null ? CurrentClient.Id.ToString() : "";
+			ViewBag.PaymentSum = CurrentClient != null ? Math.Round(Math.Abs(CurrentClient.Balance - CurrentClient.PhysicalClient.Plan.Price)*100).ToString() : "";
 			return View();
 		}
 
