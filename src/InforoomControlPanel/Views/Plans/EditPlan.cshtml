@@ -43,6 +43,13 @@
 					</div>
 				</div>
 				<div class="form-group">
+					<label class="col-sm-3 control-label" for="field-ta">Стоимость (альтернативный HTML)</label>
+					<div class="col-sm-5">
+						@Html.TextBoxFor(model => plan.TextPrice, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(plan, "TextPrice")
+					</div>
+				</div>
+				<div class="form-group">
 					<label class="col-sm-3 control-label c-pointer" for="withBonus">Без скидки</label>
 					<div class="col-sm-5">
 						@Html.CheckBoxFor(model => plan.IgnoreDiscount, new { @id = "withBonus", @class = "c-pointer" })
