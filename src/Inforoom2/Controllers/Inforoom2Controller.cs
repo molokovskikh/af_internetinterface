@@ -90,6 +90,7 @@ namespace Inforoom2.Controllers
 				sb.AppendFormat("Здравствуйте, {0} {1}. Ваш баланс: {2} руб.", CurrentClient.PhysicalClient.Name,
 					CurrentClient.PhysicalClient.Patronymic, CurrentClient.PhysicalClient.Balance);
 				ViewBag.ClientInfo = sb.ToString();
+				ViewBag.CurrentClient = CurrentClient;
 			}
 			if (!CheckNetworkClient())
 				RedirectToAction("Index", "Home");

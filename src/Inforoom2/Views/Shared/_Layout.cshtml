@@ -21,8 +21,8 @@
 	<head>
 		<title>@(ViewBag.Title)</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<link href="~/css/main.css?v10" rel="stylesheet" />
-		<link href="~/css/style.css?v8" rel="stylesheet" />
+		<link href="~/css/main.css?v11" rel="stylesheet" />
+		<link href="~/css/style.css?v11" rel="stylesheet" />
 		<link href="~/css/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" />
 	</head>
 	<body>
@@ -30,7 +30,7 @@
 		<div class="rightbg"></div>
 		<div class="wrapper">
 			<div class="errorContainer"></div>
-			@if (Request.IsAuthenticated && ViewBag.PrivateMsg != null) {
+			@if (ViewBag.PrivateMsg != null) {
 				<div class="messageContainer">
 					<div class="notification"><span class="message">@ViewBag.PrivateMsg.Text</span></div>
 				</div>
@@ -55,7 +55,7 @@
 					<div class="whiteright"></div>
 					<div class="blackright"></div>
 				</div>
-				@if (Request.IsAuthenticated && ViewBag.ClientInfo != null) {
+				@if (ViewBag.ClientInfo != null) {
 					<div class="logon">
 						<p>	@ViewBag.ClientInfo </p>
 						@using (Html.BeginForm("Profile", "Personal", FormMethod.Get, new { @class = "logonform" })) {
@@ -230,7 +230,7 @@
 				String action = ViewBag.ActionName.ToString();
 				String controller = ViewBag.ControllerName.ToString();
 			}
-			<div class="cityWindow@(Request.IsAuthenticated == false ? " captcha" : "")" id="CallMeBackWindow">
+			<div class="cityWindow@(ViewBag.CurrentClient == null ? " captcha" : "")" id="CallMeBackWindow">
 
 				@using (@Html.BeginForm("SubmitCallMeBackTicket", controller, new { actionString = action, controllerString = controller }, FormMethod.Post)) {
 					<div class="whiteblocktext">
@@ -245,7 +245,7 @@
 						@Html.ValidationEditor(validationRunner, ticket, "PhoneNumber", new { @class = "application entry" }, HtmlTag.input, HtmlType.none)
 						<div class="label">Комментарий:<sup>*</sup></div>
 						@Html.ValidationEditor(validationRunner, ticket, "Text", new { @class = "application entry" }, HtmlTag.textarea, HtmlType.none)
-						@if (!Request.IsAuthenticated) {
+						@if (ViewBag.CurrentClient == null) {
 							<div class="label" style="margin-top: 17px;" onclick=" updateCaptcha() "><span style ="position: relative; top: -16px;">Код:<sup>*</sup></span><img id="captcha" style="width: 100px; height: 34px; cursor: pointer;" src="/Home/ProcessCallMeBackTicketCaptcha/0" alt="изображение" /></div>
 							@Html.TextBoxFor(s => ticket.Captcha, new { @Name = "callMeBackTicket.Captcha", @class = "application entry", @Style = "margin-top: 14px;" })
 						}
@@ -271,7 +271,7 @@
 
 		@RenderSection("JavaScript", required: false)
 	</body>
-	@if (!Request.IsAuthenticated) {
+	@if (ViewBag.CurrentClient == null) {
 		// обновление капчи
 		<script type="text/javascript">
 			var captchaNumber = 0;
