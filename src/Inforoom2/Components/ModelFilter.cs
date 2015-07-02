@@ -564,7 +564,8 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		public void Execute()
 		{
-			Models = Criteria.List<TModel>();
+			var criteria = GetCriteria();
+			Models = criteria.List<TModel>();
 		}
 
 		/// <summary>

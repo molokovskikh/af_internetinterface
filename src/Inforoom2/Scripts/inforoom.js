@@ -436,3 +436,10 @@ var Base64 = {
 }
 
 	cli = new Inforoom(); 
+
+
+	var captchaNumber = 0;
+	updateCaptcha = function () {
+		captchaNumber++;
+		$("#captcha").attr("src", "/Home/ProcessCallMeBackTicketCaptcha/" + captchaNumber);
+	}

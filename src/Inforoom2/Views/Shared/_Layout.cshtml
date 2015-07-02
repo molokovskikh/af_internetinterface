@@ -247,7 +247,7 @@
 						@Html.ValidationEditor(validationRunner, ticket, "Text", new { @class = "application entry" }, HtmlTag.textarea, HtmlType.none)
 						@if (ViewBag.CurrentClient == null) {
 							<div class="label" style="margin-top: 17px;" onclick=" updateCaptcha() "><span style ="position: relative; top: -16px;">Код:<sup>*</sup></span><img id="captcha" style="width: 100px; height: 34px; cursor: pointer;" src="/Home/ProcessCallMeBackTicketCaptcha/0" alt="изображение" /></div>
-							@Html.TextBoxFor(s => ticket.Captcha, new { @Name = "callMeBackTicket.Captcha", @class = "application entry", @Style = "margin-top: 14px;" })
+							@Html.ValidationEditor(validationRunner, ticket, "Captcha", new { @class = "application entry", @Name = "callMeBackTicket.Captcha", @Style = "margin-top: 14px;" }, HtmlTag.input, HtmlType.none)
 						}
 					</div>
 					<div class="definitely"><sup>*</sup>- обязательно для заполнения</div>
@@ -269,19 +269,9 @@
 		<script type="text/javascript" src="~/Scripts/Window.js?v2"></script>
 		<script type="text/javascript" src="~/Scripts/Inforoom.js?v2"></script>
 
-		@RenderSection("JavaScript", required: false)
-	</body>
-	@if (ViewBag.CurrentClient == null) {
-		// обновление капчи
-		<script type="text/javascript">
-			var captchaNumber = 0;
+		@RenderSection("JavaScript", required: false) 
+	</body>  
 
-			function updateCaptcha() {
-				captchaNumber++;
-				$("#captcha").attr("src", "/Home/ProcessCallMeBackTicketCaptcha/" + captchaNumber);
-			}
-		</script>
-	}
 	<!-- Yandex.Metrika counter -->
 	<script type="text/javascript">
 

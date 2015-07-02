@@ -40,6 +40,7 @@ namespace Inforoom2.Models
 		[ManyToOne]
 		public virtual Client Client { get; set; }
 
+		[NotNullNotEmpty(Message = "Введите код с картинки")]
 		public virtual string Captcha { get; set; }
 	}
 }
