@@ -70,68 +70,12 @@ namespace Billing
 			}
 		}
 
-		public void Run()
-		{
-			try {
-				_mutex.WaitOne();
-				var now = SystemTime.Now();
-				bool errorFlag;
-				bool normalFlag;
-				using (new SessionScope()) {
-					var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
-					errorFlag = settings.LastStartFail && (settings.NextBillingDate - now).TotalMinutes > 0;
-					normalFlag = (settings.NextBillingDate - now).TotalMinutes <= 0;
-					if (normalFlag) {
-						Reset();
-
-						var billingTime = InternetSettings.FindFirst();
-						if (now.Hour < 22) {
-							billingTime.NextBillingDate = new DateTime(now.Year, now.Month, now.Day, 22, 0, 0);
-						}
-						else {
-							billingTime.NextBillingDate = SystemTime.Now().AddDays(1).Date.AddHours(22);
-						}
-						billingTime.Save();
-					}
-				}
-
-				if (normalFlag || errorFlag)
-					ProcessWriteoffs();
-			}
-			catch (Exception ex) {
-				_log.Error("Ошибка при начислении списаний", ex);
-			}
-			finally {
-				_mutex.ReleaseMutex();
-			}
-		}
-
-		public static void Reset()
-		{
-			ArHelper.WithSession(
-				s => s.CreateSQLQuery(@"
-update internet.Clients c
-set c.PaidDay = false;
-
-update internet.InternetSettings s
-set s.LastStartFail = true;")
-					.ExecuteUpdate());
-		}
-
+		// вспомогательная
 		private void WithTransaction(Action<ISession> action)
 		{
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 				ArHelper.WithSession(action);
 				transaction.VoteCommit();
-			}
-		}
-
-		private void ActivateServices(ISession session)
-		{
-			var services = session.Query<ClientService>().Where(s => !s.IsActivated);
-			foreach (var service in services) {
-				service.TryActivate();
-				session.Save(service);
 			}
 		}
 
@@ -243,8 +187,17 @@ set s.LastStartFail = true;")
 			});
 		}
 
+		private void ActivateServices(ISession session)
+		{
+			var services = session.Query<ClientService>().Where(s => !s.IsActivated);
+			foreach (var service in services) {
+				service.TryActivate();
+				session.Save(service);
+			}
+		}
+
 		/// <summary>
-		/// Начисляет бонусы за первый платеж
+		/// Начисляет бонусы за первый платеж (ProcessPayments)
 		/// </summary>
 		/// <param name="payment">Платеж</param>
 		/// <param name="session">Сессия базы данных</param>
@@ -258,17 +211,21 @@ set s.LastStartFail = true;")
 			var firstPayment = clientPayments.Count == 1;
 			var correctSum = payment.Sum >= client.PhysicalClient.Tariff.Price;
 			// Обработка случая, когда ровно 2 первых платежа пришли за 24 ч. и их сумма >= цены тарифа
-			if (!firstPayment && !correctSum) {
+			if (!firstPayment && !correctSum)
+			{
 				var dateDiff = (clientPayments.Count == 2) ? (clientPayments[1].PaidOn - clientPayments[0].PaidOn) : TimeSpan.Zero;
-				if (dateDiff != TimeSpan.Zero && dateDiff.Duration() <= TimeSpan.FromDays(1d)) {
+				if (dateDiff != TimeSpan.Zero && dateDiff.Duration() <= TimeSpan.FromDays(1d))
+				{
 					firstPayment = true;
 					correctSum = (clientPayments[0].Sum + clientPayments[1].Sum) >= client.PhysicalClient.Tariff.Price;
 				}
 			}
 
 			var correctPlan = FirstPaymentBonusTariffIds.Contains(client.PhysicalClient.Tariff.Id);
-			if (processBonus && firstPayment && correctSum && correctPlan) {
-				var bonusPayment = new Payment(client, client.PhysicalClient.Tariff.Price) {
+			if (processBonus && firstPayment && correctSum && correctPlan)
+			{
+				var bonusPayment = new Payment(client, client.PhysicalClient.Tariff.Price)
+				{
 					Virtual = true,
 					Comment = "Месяц в подарок"
 				};
@@ -283,81 +240,83 @@ set s.LastStartFail = true;")
 			}
 		}
 
+		public void Run()
+		{
+			try {
+				_mutex.WaitOne();
+				var now = SystemTime.Now();
+				bool errorFlag;
+				bool normalFlag;
+				using (new SessionScope()) {
+					var settings = ActiveRecordMediator<InternetSettings>.FindFirst();
+					errorFlag = settings.LastStartFail && (settings.NextBillingDate - now).TotalMinutes > 0;
+					normalFlag = (settings.NextBillingDate - now).TotalMinutes <= 0;
+					if (normalFlag) {
+						// Reset
+						ArHelper.WithSession(
+							s => s.CreateSQLQuery(@"update internet.Clients c
+												set c.PaidDay = false;
+												update internet.InternetSettings s
+												set s.LastStartFail = true;")
+								.ExecuteUpdate());
+
+						var billingTime = InternetSettings.FindFirst();
+						if (now.Hour < 22) {
+							billingTime.NextBillingDate = new DateTime(now.Year, now.Month, now.Day, 22, 0, 0);
+						}
+						else {
+							billingTime.NextBillingDate = SystemTime.Now().AddDays(1).Date.AddHours(22);
+						}
+						billingTime.Save();
+					}
+				}
+
+				if (normalFlag || errorFlag)
+					ProcessWriteoffs();
+			}
+			catch (Exception ex) {
+				_log.Error("Ошибка при начислении списаний", ex);
+			}
+			finally {
+				_mutex.ReleaseMutex();
+			}
+		}
+
 		/// <summary>
 		/// Списания абоненской платы
 		/// </summary>
 		public virtual void ProcessWriteoffs()
 		{
+			// обнуление кол-ва ошибок
 			var errorCount = 0;
-			using (new SessionScope()) {
-				ArHelper.WithSession(s => {
-					var settings = s.Query<InternetSettings>().First();
-					settings.LastStartFail = true;
-					s.Save(settings);
 
-					Messages = new List<SmsMessage>();
-					_saleSettings = s.Query<SaleSettings>().First();
-				});
-			}
+			// выставление флага проведения списаний при ошибках в true
+			LastStartFailChangeForTrue();
 
-			ProcessAll(WriteOffFromPhysicalClient,
+			// списание у физ. лиц
+			ProcessAll(WriteOffFromPhysicalPerson,
 				s => s.Query<Client>().Where(c => c.PhysicalClient != null && !c.PaidDay),
 				ref errorCount);
 
+			// списание у юр. лиц
 			ProcessAll(WriteOffFromLawyerPerson,
 				s => s.Query<Client>().Where(c => c.LawyerPerson != null && !c.PaidDay),
 				ref errorCount);
 
 			WithTransaction(s => {
-				var agentSettings = AgentTariff.GetPriceForAction(AgentActions.AgentPayIndex);
-				var needToAgentSum = AgentTariff.GetPriceForAction(AgentActions.WorkedClient);
-				var bonusesClients = s.Query<Client>().Where(c =>
-					c.Request != null &&
-					!c.Request.PaidBonus &&
-					c.Request.Registrator != null &&
-					c.BeginWork != null)
-					.ToList();
-				foreach (var client in bonusesClients) {
-					if (client.Payments.Sum(p => p.Sum) >= needToAgentSum * agentSettings) {
-						var request = client.Request;
-						request.PaidBonus = true;
-						s.Save(request);
-						s.Save(new PaymentsForAgent {
-							Action = AgentTariff.GetAction(AgentActions.WorkedClient),
-							Agent = request.Registrator,
-							RegistrationDate = SystemTime.Now(),
-							Sum = needToAgentSum,
-							Comment = string.Format("Клиент {0} начал работать (Заявка №{1})", client.Id, client.Request.Id)
-						});
-					}
-				}
+				// учет оплаты работы агентов
+				ProcessPaymentsForAgent(s);
 
-				var friendBonusRequests = s.Query<Request>().Where(r =>
-					r.Client != null &&
-					r.FriendThisClient != null &&
-					!r.PaidFriendBonus &&
-					r.Client.BeginWork != null)
-					.ToList();
-				foreach (var friendBonusRequest in friendBonusRequests) {
-					if (friendBonusRequest.Client.HavePaymentToStart()) {
-						s.Save(new Payment(friendBonusRequest.FriendThisClient, 250) {
-							RecievedOn = SystemTime.Now(),
-							Virtual = true,
-							Comment = string.Format("Подключи друга {0}", friendBonusRequest.FriendThisClient.Id)
-						});
-						friendBonusRequest.PaidFriendBonus = true;
-						s.Save(friendBonusRequest);
-					}
-				}
+				// учет бонусов клиентов
+				ProcessFriendBonuses(s);
 			});
-			WithTransaction(s => {
-				var settings = s.Query<InternetSettings>().First();
-				settings.LastStartFail = errorCount > 0;
-				settings.Save();
-				s.Save(settings);
-			});
+
+			// при наличии ошибок выставление флага проведения списаний
+			LastStartFailChangeForErrorsPresent(errorCount);
 		}
 
+
+		// вспомогательная 
 		private void ProcessAll(Action<ISession, Client> action, Func<ISession, IQueryable<Client>> query, ref int errorCount)
 		{
 			var ids = new List<uint>();
@@ -381,11 +340,49 @@ set s.LastStartFail = true;")
 		}
 
 		/// <summary>
+		/// Принудительное выставление флага LastStartFail, для выполнения списаний
+		/// </summary>
+		private void LastStartFailChangeForTrue()
+		{
+			using (new SessionScope()) {
+				ArHelper.WithSession(s => {
+					var settings = s.Query<InternetSettings>().First();
+					settings.LastStartFail = true;
+					s.Save(settings);
+
+					Messages = new List<SmsMessage>();
+					_saleSettings = s.Query<SaleSettings>().First();
+				});
+			}
+		}
+
+		/// <summary>
+		/// Списания с юр. лиц
+		/// </summary>
+		/// <param name="session">Сессия базы данных</param>
+		/// <param name="client">Клиент</param>
+		private static void WriteOffFromLawyerPerson(ISession session, Client client)
+		{
+			var person = client.LawyerPerson;
+			var writeoffs = client.LawyerPerson.Calculate(SystemTime.Today());
+			person.Balance -= writeoffs.Sum(w => w.Sum);
+			session.Save(person);
+			session.SaveEach(writeoffs);
+
+			if (client.CanBlock())
+			{
+				client.SetStatus(Status.Get(StatusType.NoWorked, session));
+				if (client.IsChanged(c => c.Disabled))
+					client.CreareAppeal("Клиент был заблокирован в связи с отрицательным балансом", AppealType.Statistic);
+			}
+		}
+
+		/// <summary>
 		/// Списание абоненской платы с физического клиента
 		/// </summary>
-		/// <param name="session">Сессия бд</param>
-		/// <param name="client">Объект клиента</param>
-		private void WriteOffFromPhysicalClient(ISession session, Client client)
+		/// <param name="session">Сессия базы данных</param>
+		/// <param name="client">Клиент</param>
+		private void WriteOffFromPhysicalPerson(ISession session, Client client)
 		{
 			//Сброс статуса "Заблокирован - Восстановление работы" у клиента
 			if (_saleSettings.IsRepairExpaired(client)) {
@@ -396,86 +393,27 @@ set s.LastStartFail = true;")
 			AddExpiredServiceRequestNoteToRedmine(session, client);
 
 			//Обновление расчетного периода для подключенного клиента
-			var phisicalClient = client.PhysicalClient;
-			if (phisicalClient.Balance >= 0 && !client.Disabled && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue) {
-				var dtNow = SystemTime.Now();
-				// Если дата расчетного периода (с поправкой на долговые дни) ровно на 1 месяц позади текущей даты
-				if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).Days == -client.DebtDays) {
-					var dtFrom = client.RatedPeriodDate.Value;
-					var dtTo = dtNow;
-					// Фактически обнулить кол-во долговых дней у клиента
-					client.DebtDays += dtFrom.Day - dtTo.Day;
-					var thisMonth = dtNow.Month;
-					// Задать расчетный период с поправкой на долговые дни и на текущий месяц
-					client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
-					while (client.RatedPeriodDate.Value.Month != thisMonth) {
-						client.RatedPeriodDate = client.RatedPeriodDate.Value.AddDays(-1);
-					}
-				}
-				else if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).TotalDays < -client.DebtDays) {
-					// Задать расчетный период с поправкой на долговые дни
-					client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
-					client.DebtDays = 0;
-				}
-			}
+			UpdateRatedPeriodDate(client);
 
 			//Обновление (назначение заново) скидки клиента
-			if (client.StartNoBlock != null) {
-				decimal sale = 0;
-				var monthOnStart = SystemTime.Now().TotalMonth(client.StartNoBlock.Value);
-				if (monthOnStart >= _saleSettings.PeriodCount)
-					sale = _saleSettings.MinSale + (monthOnStart - _saleSettings.PeriodCount) * _saleSettings.SaleStep;
-				if (sale > _saleSettings.MaxSale)
-					sale = _saleSettings.MaxSale;
-				if (sale >= _saleSettings.MinSale)
-					client.Sale = sale;
-			}
+			UpdateDiscount(client);
 
 			//Обработка списаний с клиента
 			if (!client.PaidDay && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue && client.GetSumForRegularWriteOff() > 0) {
 				if (client.StartNoBlock == null)
 					client.StartNoBlock = SystemTime.Now();
 
-				var writeOff = phisicalClient.WriteOff(client.GetSumForRegularWriteOff());
+				var writeOff = client.PhysicalClient.WriteOff(client.GetSumForRegularWriteOff());
 				if (writeOff != null)
 					session.Save(writeOff);
-				session.Save(phisicalClient);
+				session.Save(client.PhysicalClient);
 
 				//Отсылаем смс если клиенту осталось работать 2 дня или меньше
-				if (client.ShouldNotifyOnLowBalance()) {
-					var message = string.Format("Ваш баланс {0:C} {1:d} доступ в сеть будет заблокирован.",
-						client.PhysicalClient.Balance,
-						client.GetPossibleBlockDate());
-					var now = SystemTime.Now();
-					DateTime shouldBeSendDate;
-					if (now.Hour < 22)
-						shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
-					else {
-						shouldBeSendDate = SystemTime.Now().Date.AddDays(1).AddHours(12);
-					}
-					var sms = SmsMessage.TryCreate(client, message, shouldBeSendDate);
-					if (sms != null) {
-						session.Save(sms);
-						Messages.Add(sms);
-					}
-				}
+				SendWarningSMS(session, client);
 
 				//Обработка отображения предупреждения о балансе
-				if (client.NeedShowWarning(client.GetSumForRegularWriteOff())) {
-					client.ShowBalanceWarningPage = true;
-					if (client.IsChanged(c => c.ShowBalanceWarningPage))
-						if (client.ShowWarningBecauseNoPassport())
-							client.CreareAppeal("Включена страница Warning, клиент не имеет паспортных данных", AppealType.Statistic);
-						else {
-							client.CreareAppeal("Включена страница Warning, клиент имеет низкий баланс", AppealType.Statistic);
-						}
-				}
-				else {
-					client.ShowBalanceWarningPage = false;
-					if (client.IsChanged(c => c.ShowBalanceWarningPage))
-						client.CreareAppeal("Отключена страница Warning", AppealType.Statistic);
-				}
-			} //конец обработки списаний
+				UpdateWarnings(client);
+			}
 
 			//Обработка аренды оборудования 
 			try {
@@ -485,23 +423,15 @@ set s.LastStartFail = true;")
 				_log.Error(string.Format("Не удалось обработать аренду оборудования для клиента {0}", client.Id), e);
 			}
 
-
 			//Обработка блокировок
-			if (client.CanBlock()) {
-				client.SetStatus(Status.Get(StatusType.NoWorked, session));
-				if (client.IsChanged(c => c.Disabled))
-					client.CreareAppeal("Клиент был заблокирован", AppealType.Statistic);
-			}
+			ProcessBlock(session, client);
 
 			//назначаем или переназначаем бесплатные блокировочные дни
-			if ((client.YearCycleDate == null && client.BeginWork != null) || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
-				client.FreeBlockDays = _saleSettings.FreeDaysVoluntaryBlocking;
-				client.YearCycleDate = SystemTime.Now();
-			}
+			UpdateYearCycleDate(client);
 		}
 
 		/// <summary>
-		/// Создаем заметку в Redmine о просроченной заявке для техподдержки
+		/// Создаем заметку в Redmine о просроченной заявке для техподдержки (для физика)
 		/// </summary>
 		/// <param name="session">Сессия для работы с БД</param>
 		/// <param name="client">Клиент</param>
@@ -550,7 +480,164 @@ set s.LastStartFail = true;")
 		}
 
 		/// <summary>
-		/// Обработка аренды оборудования для клиента client
+		/// Оплата работы агентов
+		/// </summary>
+		private void ProcessPaymentsForAgent(ISession session)
+		{
+			var agentSettings = AgentTariff.GetPriceForAction(AgentActions.AgentPayIndex);
+			var needToAgentSum = AgentTariff.GetPriceForAction(AgentActions.WorkedClient);
+			var bonusesClients = session.Query<Client>().Where(c =>
+				c.Request != null &&
+				!c.Request.PaidBonus &&
+				c.Request.Registrator != null &&
+				c.BeginWork != null)
+				.ToList();
+			foreach (var client in bonusesClients) {
+				if (client.Payments.Sum(p => p.Sum) >= needToAgentSum * agentSettings) {
+					var request = client.Request;
+					request.PaidBonus = true;
+					session.Save(request);
+					session.Save(new PaymentsForAgent {
+						Action = AgentTariff.GetAction(AgentActions.WorkedClient),
+						Agent = request.Registrator,
+						RegistrationDate = SystemTime.Now(),
+						Sum = needToAgentSum,
+						Comment = string.Format("Клиент {0} начал работать (Заявка №{1})", client.Id, client.Request.Id)
+					});
+				}
+			}
+		}
+
+		/// <summary>
+		/// Назначение бонусов
+		/// </summary>
+		private void ProcessFriendBonuses(ISession session)
+		{
+			var friendBonusRequests = session.Query<Request>().Where(r =>
+				r.Client != null &&
+				r.FriendThisClient != null &&
+				!r.PaidFriendBonus &&
+				r.Client.BeginWork != null)
+				.ToList();
+			foreach (var friendBonusRequest in friendBonusRequests) {
+				if (friendBonusRequest.Client.HavePaymentToStart()) {
+					session.Save(new Payment(friendBonusRequest.FriendThisClient, 250) {
+						RecievedOn = SystemTime.Now(),
+						Virtual = true,
+						Comment = string.Format("Подключи друга {0}", friendBonusRequest.FriendThisClient.Id)
+					});
+					friendBonusRequest.PaidFriendBonus = true;
+					session.Save(friendBonusRequest);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Выставление флага LastStartFail в зависимости от наличия ошибок, для выполнения списаний
+		/// </summary>
+		private void LastStartFailChangeForErrorsPresent(int errorCount)
+		{
+			WithTransaction(s => {
+				var settings = s.Query<InternetSettings>().First();
+				settings.LastStartFail = errorCount > 0;
+				settings.Save();
+				s.Save(settings);
+			});
+		}
+
+		/// <summary>
+		/// Отправка предупредительного SMS  (для физика)
+		/// </summary>
+		private void SendWarningSMS(ISession session, Client client)
+		{
+			if (client.ShouldNotifyOnLowBalance()) {
+				var message = string.Format("Ваш баланс {0:C} {1:d} доступ в сеть будет заблокирован.",
+					client.PhysicalClient.Balance,
+					client.GetPossibleBlockDate());
+				var now = SystemTime.Now();
+				DateTime shouldBeSendDate;
+				if (now.Hour < 22)
+					shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
+				else {
+					shouldBeSendDate = SystemTime.Now().Date.AddDays(1).AddHours(12);
+				}
+				var sms = SmsMessage.TryCreate(client, message, shouldBeSendDate);
+				if (sms != null) {
+					session.Save(sms);
+					Messages.Add(sms);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Обновление календарного периода начисления абонентской платы (для физика)
+		/// </summary>
+		private void UpdateRatedPeriodDate(Client client)
+		{
+			var phisicalClient = client.PhysicalClient;
+			if (phisicalClient.Balance >= 0 && !client.Disabled && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue) {
+				var dtNow = SystemTime.Now();
+				// Если дата расчетного периода (с поправкой на долговые дни) ровно на 1 месяц позади текущей даты
+				if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).Days == -client.DebtDays) {
+					var dtFrom = client.RatedPeriodDate.Value;
+					var dtTo = dtNow;
+					// Фактически обнулить кол-во долговых дней у клиента
+					client.DebtDays += dtFrom.Day - dtTo.Day;
+					var thisMonth = dtNow.Month;
+					// Задать расчетный период с поправкой на долговые дни и на текущий месяц
+					client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
+					while (client.RatedPeriodDate.Value.Month != thisMonth) {
+						client.RatedPeriodDate = client.RatedPeriodDate.Value.AddDays(-1);
+					}
+				}
+				else if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).TotalDays < -client.DebtDays) {
+					// Задать расчетный период с поправкой на долговые дни
+					client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
+					client.DebtDays = 0;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Обновить скидку, если задана дата StartNoBlock (для физика)
+		/// </summary>
+		private void UpdateDiscount(Client client)
+		{
+			if (client.StartNoBlock != null) {
+				decimal sale = 0;
+				var monthOnStart = SystemTime.Now().TotalMonth(client.StartNoBlock.Value);
+				if (monthOnStart >= _saleSettings.PeriodCount)
+					sale = _saleSettings.MinSale + (monthOnStart - _saleSettings.PeriodCount) * _saleSettings.SaleStep;
+				if (sale > _saleSettings.MaxSale)
+					sale = _saleSettings.MaxSale;
+				if (sale >= _saleSettings.MinSale)
+					client.Sale = sale;
+			}
+		}
+
+		/// <summary>
+		/// Предупреждение клиента о низком балансе (для физика)
+		/// </summary>
+		private void UpdateWarnings(Client client)
+		{
+			if (client.NeedShowWarning(client.GetSumForRegularWriteOff())) {
+				client.ShowBalanceWarningPage = true;
+				if (client.IsChanged(c => c.ShowBalanceWarningPage))
+					if (client.ShowWarningBecauseNoPassport())
+						client.CreareAppeal("Включена страница Warning, клиент не имеет паспортных данных", AppealType.Statistic);
+					else {
+						client.CreareAppeal("Включена страница Warning, клиент имеет низкий баланс", AppealType.Statistic);
+					}
+			}
+			else {
+				client.ShowBalanceWarningPage = false;
+				if (client.IsChanged(c => c.ShowBalanceWarningPage))
+					client.CreareAppeal("Отключена страница Warning", AppealType.Statistic);
+			}
+		}
+
+		/// <summary>
+		/// Обработка аренды оборудования для клиента client (для физика)
 		/// </summary>
 		/// <param name="session">Сессия Nhibernate</param>
 		/// <param name="client">Клиент, потенциально арендующий оборудование</param>
@@ -574,6 +661,7 @@ set s.LastStartFail = true;")
 			CreateRentalHardwareWriteOffs(session, client);
 		}
 
+		// вспомогательная
 		/// <summary>
 		/// Создание записи в редмайне для аренды оборудования
 		/// </summary>
@@ -601,6 +689,7 @@ set s.LastStartFail = true;")
 			session.Save(redmineIssue);
 		}
 
+		// вспомогательная
 		/// <summary>
 		/// Обработка списаний за аренду оборудования
 		/// </summary>
@@ -656,22 +745,25 @@ set s.LastStartFail = true;")
 		}
 
 		/// <summary>
-		/// Списания с юр. лиц
+		/// Обработка блокировок (для физика)
 		/// </summary>
-		/// <param name="session">Сессия базы данных</param>
-		/// <param name="client">Клиент</param>
-		private static void WriteOffFromLawyerPerson(ISession session, Client client)
+		private void ProcessBlock(ISession session, Client client)
 		{
-			var person = client.LawyerPerson;
-			var writeoffs = client.LawyerPerson.Calculate(SystemTime.Today());
-			person.Balance -= writeoffs.Sum(w => w.Sum);
-			session.Save(person);
-			session.SaveEach(writeoffs);
-
 			if (client.CanBlock()) {
 				client.SetStatus(Status.Get(StatusType.NoWorked, session));
 				if (client.IsChanged(c => c.Disabled))
-					client.CreareAppeal("Клиент был заблокирован в связи с отрицательным балансом", AppealType.Statistic);
+					client.CreareAppeal("Клиент был заблокирован", AppealType.Statistic);
+			}
+		}
+
+		/// <summary>
+		/// Обновление даты годового цикла (для физика)
+		/// </summary>
+		private void UpdateYearCycleDate(Client client)
+		{
+			if ((client.YearCycleDate == null && client.BeginWork != null) || (SystemTime.Now().Date >= client.YearCycleDate.Value.AddYears(1).Date)) {
+				client.FreeBlockDays = _saleSettings.FreeDaysVoluntaryBlocking;
+				client.YearCycleDate = SystemTime.Now();
 			}
 		}
 	}
