@@ -158,7 +158,7 @@ getPlansList = function (regionId, funcAfter) {
 
 // После AJAX-запросов
 getStreetFuncAfter = function (data) {
-	var tmp = $("#StreetDropDown option:last").clone();
+	var tmp = $("#StreetDropDown option:last").removeAttr("selected").clone();
 	$("#StreetDropDown").html("<option></option>");
 	// заполнение списка улиц
 	$(data).each(function () {
@@ -172,7 +172,7 @@ getStreetFuncAfter = function (data) {
 	$("#HouseDropDown").html("<option selected='selected'></option>");
 }
 getHouseFuncAfter = function (data) {
-	var tmp = $("#HouseDropDown option:last").clone();
+	var tmp = $("#HouseDropDown option:last").removeAttr("selected").clone();
 	$("#HouseDropDown").html("<option></option>");
 	// заполнение списка домов
 	$(data).each(function () {
@@ -185,7 +185,7 @@ getHouseFuncAfter = function (data) {
 	$("#HouseDropDown").val($("#HouseDropDown option:first"));
 }
 getPlansFuncAfter = function (data) {
-	var tmp = $("#PlanDropDown option:last").clone();
+	var tmp = $("#PlanDropDown option:last").removeAttr("selected").clone();
 	$("#PlanDropDown").html("<option></option>");
 	// заполнение списка тарифов
 	$(data).each(function () {
