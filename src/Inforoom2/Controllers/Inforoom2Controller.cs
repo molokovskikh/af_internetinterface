@@ -242,15 +242,20 @@ namespace Inforoom2.Controllers
 			var callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request, typeof(CallMeBackTicket));
 			ViewBag.CallMeBackTicket = callMeBackTicket;
 			//проверка капчи 
-			if (Request.Params["callMeBackTicket.Name"] == null)
+			if (CurrentClient == null && (callMeBackTicket.Captcha.Length < 4
+			                              || (HttpContext.Session["captcha"].ToString()).IndexOf(callMeBackTicket.Captcha) == -1)) {
+				callMeBackTicket.Captcha = "";
+			}
+			if (Request.Params["callMeBackTicket.Name"] == null) {
+				callMeBackTicket.Captcha = "";
 				return;
+			}
+
 			callMeBackTicket.Client = CurrentClient;
 
 			var errors = ValidationRunner.Validate(callMeBackTicket);
-			if (CurrentClient == null && (callMeBackTicket.Captcha.Length < 4
-			                              || (HttpContext.Session["captcha"].ToString()).IndexOf(callMeBackTicket.Captcha) == -1)) {
-				ErrorMessage("Код подтверждения введен неверно!");
-				return;
+			if (CurrentClient != null) {
+				errors.RemoveErrors("CallMeBackTicket", "Captcha");
 			}
 			if (errors.Length == 0) {
 				DbSession.Save(callMeBackTicket);
@@ -265,7 +270,7 @@ namespace Inforoom2.Controllers
 				SuccessMessage("Заявка отправлена. В течении дня вам перезвонят.");
 				return;
 			}
-
+			callMeBackTicket.Captcha = "";
 			if (GetJavascriptParam("CallMeBack") == null)
 				AddJavascriptParam("CallMeBack", "1");
 		}

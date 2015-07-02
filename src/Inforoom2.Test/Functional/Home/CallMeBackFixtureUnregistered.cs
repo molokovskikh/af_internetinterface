@@ -18,11 +18,11 @@ namespace Inforoom2.Test.Functional.Home
 			var name = browser.FindElementByCssSelector("input[id=callMeBackTicket_Name]");
 			var phone = browser.FindElementByCssSelector("input[id=callMeBackTicket_PhoneNumber]");
 			var comment = browser.FindElementByName("callMeBackTicket.Text");
-			name.SendKeys("Иван Петров");
-			phone.SendKeys("8556478970");
-			comment.SendKeys("my question");
+			name.SendKeys("Ёся Петров");
+			phone.SendKeys("2222222222");
+			comment.SendKeys("my bad question");
 			browser.FindElementByCssSelector(".contacting").Click();
-			var callMeBackTicket = DbSession.Query<CallMeBackTicket>().FirstOrDefault(c => c.PhoneNumber == "8556478970"); 
+			var callMeBackTicket = DbSession.Query<CallMeBackTicket>().FirstOrDefault(c => c.PhoneNumber == "2222222222"); 
 			Assert.IsNull(callMeBackTicket); 
 		}
 		//TODO: написать тест для Проверка на необходимость ввода капчи в запросе на обратный звонок у незарегистрированного пользователя, при *наличии* капчи
