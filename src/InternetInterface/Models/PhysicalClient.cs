@@ -405,7 +405,7 @@ namespace InternetInterface.Models
 		/// <returns>Форматированный адрес</returns>
 		public virtual string GetStringForPrint(bool city = true, bool street = true, bool house = true, bool entrance = true, bool floor = true, bool apartment = true)
 		{
-			return GetAddressString(street ? Street : "", house ? (House.HasValue ? (House == 0 ? "" : House.ToString()) + CaseHouse : "") : "",
+			return GetAddressString(street ? Street : "", house ? (House.HasValue ? (House == 0 ? "" : House.ToString()) : "") + CaseHouse : "",
 				city ? City ?? "" : "", apartment ? Apartment ?? "" : "", entrance ? Entrance == 0 ? "" : Entrance.ToString() : "", floor ? Floor == 0 ? "" : Floor.ToString() : "");
 		}
 

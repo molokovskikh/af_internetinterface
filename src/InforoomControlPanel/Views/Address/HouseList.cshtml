@@ -10,9 +10,13 @@
 	ModelFilter<House> pager = ViewBag.Pager;
 	IList<House> houses = pager.GetItems();
 	List<Street> streets = ViewBag.Streets;
+	List<Region> regions = ViewBag.Regions;
 	var streetList = new NameValueCollection();
+	var regionList = new NameValueCollection();
 	streetList["0"] = " ";
 	streets.Each(i => streetList[i.Id.ToString()] = i.Name.ToString());
+	regionList["0"] = " ";
+	regions.Each(i => regionList[i.Id.ToString()] = i.Name.ToString());
 }
 <div class="form-group">
 	<a class="btn btn-success btn-sm btn-icon icon-left" href='@Url.Action("CreateHouse", "Address")'>
@@ -22,6 +26,11 @@
 </div>
 <panel class="panel panel-default">
 	<form>
+		<div class="row">
+			<div class="col-sm-1"><label>Регион</label> </div>
+			<div class="col-sm-2">@pager.FormFilterManual("Region.Id", HtmlType.Dropdown, regionList)</div>
+			<input type="submit" class="btn btn-success btn-sm" />
+		</div>
 		<div class="row">
 			<div class="col-sm-1"><label>Улица</label> </div>
 			<div class="col-sm-2">@pager.FormFilterManual("Street.Id", HtmlType.Dropdown, streetList)</div>
