@@ -129,6 +129,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Selenium.WebDriver.2.42.0\lib\net40\WebDriver.dll</HintPath>
     </Reference>
+    <Reference Include="WebDriver.Support, Version=2.42.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Selenium.Support.2.42.0\lib\net40\WebDriver.Support.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Billing\Billing.csproj">
@@ -186,6 +190,11 @@
     <Compile Include="Functional\Admin\EditRoleFixture.cs" />
     <Compile Include="Functional\Admin\AdminFixture.cs" />
     <Compile Include="Functional\ClientActions\ClientActionsFixture.cs" />
+    <Compile Include="Functional\ClientActions\RegistrationFixture.cs" />
+    <Compile Include="Functional\ClientActions\AgentListFixture.cs" />
+    <Compile Include="Functional\ClientActions\agentStatusChangeFixture.cs" />
+    <Compile Include="Functional\ClientActions\RequestRegistrationFixture.cs" />
+    <Compile Include="Functional\ClientActions\ServiceRequestFixture.cs" />
     <Compile Include="Functional\ClientActions\PrivateMessageFixture.cs" />
     <Compile Include="Functional\ClientActions\LogAppealFixture.cs" />
     <Compile Include="Functional\Infrastructure\ControlPanelBaseFixture.cs" />

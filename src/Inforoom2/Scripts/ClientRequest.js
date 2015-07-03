@@ -45,7 +45,7 @@ function checkAddress(firstGeoObject) {
 		//Переделать этот код
 		$.ajax({
 			type: "POST",
-			url: cli.getParam("baseurl") + "/ClientRequest/CheckForUnusualAddress",
+			url: cli.getParam("baseurl") + "ClientRequest/CheckForUnusualAddress",
 			data: { city: yandexCity, street: yandexStreet, house: yandexHouseDetails, address: userCity + " " + userStreet + " " + userHouse + userHousing },
 			success: function (msg) {
 				console.log('Получен адрес', msg);

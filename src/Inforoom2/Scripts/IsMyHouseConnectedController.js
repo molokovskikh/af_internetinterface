@@ -60,7 +60,7 @@ function checkAddress(firstGeoObject, geoObjects) {
 		//Переделать этот код
 		$.ajax({
 			type: "POST",
-			url: cli.getParam("baseurl") + "/ClientRequest/CheckForUnusualAddress",
+			url: cli.getParam("baseurl") + "ClientRequest/CheckForUnusualAddress",
 			data: { city: yandexCity, street: yandexStreet, house: $("#houseId").val(), address: address },
 			success: function (msg) {
 				console.log('Получен адрес', msg);

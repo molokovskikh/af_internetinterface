@@ -19,6 +19,7 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "_City", Cascade = "save-update")]
 		public virtual City City { get; set; }
 
+		//todo не используется
 		[Description("Тарифные планы региона")]
 		[Bag(0, Table = "region_plan")]
 		[Key(1, Column = "region", NotNull = false)]

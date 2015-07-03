@@ -40,11 +40,11 @@
 					<td><a href="@Url.Action("Info", "Client", new { id = client.Id })">@client.PhysicalClient.FullName</a></td>
 					<td>
 						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequest", "Client", new { id = client.Id })">
-							<i class="entypo-plus-circled"></i>
+							<i class="entypo-doc-text"></i>
 							Сервисная заявка
 						</a>
 						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ConnectionRequest", "Client", new { id = client.Id })"> 
-							<i class="entypo-plus-circled"></i>
+							<i class="entypo-briefcase"></i>
 							Заявка на подключение
 						</a>
 						<form style="display: inline" action="@Url.Action("ApplyImpersonation", "AdminAccount")" method="post" target="_blank">

@@ -17,6 +17,7 @@ using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Mapping.Attributes;
 using NUnit.Framework;
+using OpenQA.Selenium;
 using Test.Support.Selenium;
 using Address = Inforoom2.Models.Address;
 using Client = Inforoom2.Models.Client;
@@ -179,6 +180,7 @@ namespace Inforoom2.Test.Infrastructure
 				DbSession.Save(new InternetSettings());
 			if (!DbSession.Query<SaleSettings>().Any())
 				DbSession.Save(SaleSettings.Defaults());
+			EndpointIpCounter = 0;
 			GenerateTvProtocols();
 			GenerateTvChannels();
 			GenerateTvChannelGroups();
@@ -191,6 +193,7 @@ namespace Inforoom2.Test.Infrastructure
 			GenerateClients();
 			GenerateContent();
 			GeneratePaymentsAndWriteoffs();
+			GenerateAgent();
 			DbSession.Flush();
 		}
 
@@ -257,6 +260,26 @@ namespace Inforoom2.Test.Infrastructure
 			group = new TvChannelGroup();
 			group.Name = "Детская";
 			DbSession.Save(group);
+		}
+
+		private void GenerateAgent()
+		{
+			//активированный агент
+			var agent = new Agent();
+			agent.Name = "Сарычев Алексей Валерьевич";
+			agent.Active = true;
+			DbSession.Save(agent);
+
+			agent = new Agent();
+			agent.Name = "Павлов Дмитрий";
+			agent.Active = true;
+			DbSession.Save(agent);
+
+			//дезактивированный агент
+			agent = new Agent();
+			agent.Name = "Егоров Павел";
+			agent.Active = false;
+			DbSession.Save(agent);
 		}
 
 
@@ -439,7 +462,7 @@ namespace Inforoom2.Test.Infrastructure
 					PassportNumber = "123456",
 					PassportSeries = "1234",
 					PassportResidention = "УФМС россии по гор. Воронежу, по райнону Северный",
-					RegistrationAddress = "г. Борисоглебск, ул Ленина, 20",
+					RegistrationAddress = "г. Борисоглебск, улица ленина, 20",
 					Plan = DbSession.Query<Plan>().First(p => p.Name == "Популярный"),
 					Balance = 1000,
 					Address = GetUnusedAddress(),
@@ -601,7 +624,7 @@ namespace Inforoom2.Test.Infrastructure
 		}
 
 		// 
-		private Client CloneClient(Client client, ClientCreateHelper.ClientMark mark)
+		protected Client CloneClient(Client client, ClientCreateHelper.ClientMark mark)
 		{
 			var obj = new Client {
 				PhysicalClient = new PhysicalClient {
