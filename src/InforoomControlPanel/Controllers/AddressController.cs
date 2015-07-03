@@ -199,7 +199,7 @@ namespace InforoomControlPanel.Controllers
 			var criteria = pager.GetCriteria();
 			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());
 			if (!string.IsNullOrEmpty(pager.GetParam("Name")))
-				criteria.Add(Restrictions.Like("Name", pager.GetParam("Name")));
+				criteria.Add(Restrictions.Like("Name", "%"+pager.GetParam("Name")+"%"));
 			if ((!string.IsNullOrEmpty(pager.GetParam("Region.Id"))) && pager.GetParam("Region.Id") != "0")
 				criteria.Add(Restrictions.Eq("Region.Id", Int32.Parse(pager.GetParam("Region.Id"))));
 			pager.Execute();
@@ -288,16 +288,21 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult HouseList()
 		{
-			var pager = new ModelFilter<House>(this);
+			var pager = new ModelFilter<House>(this, orderByColumn: "Number");
 			var criteria = pager.GetCriteria();
 			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());
 			if (!string.IsNullOrEmpty(pager.GetParam("Number")))
-				criteria.Add(Restrictions.Like("Number", pager.GetParam("Number")));
+				criteria.Add(Restrictions.Like("Number", "%" + pager.GetParam("Number") + "%"));
 			if ((!string.IsNullOrEmpty(pager.GetParam("Street.Id"))) && pager.GetParam("Street.Id") != "0")
 				criteria.Add(Restrictions.Eq("Street.Id", Int32.Parse(pager.GetParam("Street.Id"))));
-			pager.Execute();
+			if ((!string.IsNullOrEmpty(pager.GetParam("Region.Id"))) && pager.GetParam("Region.Id") != "0") {
+				criteria.CreateCriteria("Street", "StreetAl", JoinType.InnerJoin);
+				criteria.Add(Restrictions.Or(Restrictions.Eq("Region.Id", Int32.Parse(pager.GetParam("Region.Id"))),
+					Restrictions.And(Restrictions.IsNull("Region.Id"), Restrictions.Eq("StreetAl.Region.Id", Int32.Parse(pager.GetParam("Region.Id"))))));
+			}
 			ViewBag.Streets = DbSession.Query<House>().Select(s => s.Street)
 				.OrderBy(s => s.Name).Distinct().ToList();
+			ViewBag.Regions = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			ViewBag.Pager = pager;
 			return View();
 		}
