@@ -150,3 +150,5 @@ input.personal {padding: 5px; box-sizing: padding-box;}
 }
 
 .page.Personal.Profile .actions .actiontext { text-align: center;}
+
+.page.TestSpeed iframe { width: 800px;height: 240px; border: none;} 
