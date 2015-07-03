@@ -71,7 +71,7 @@ getStreetChangedFlag = function (regionId, countStreet) {
 		return;
 	}
 	$.ajax({
-		url: cli.getParam("baseurl") + "/Address/GetStreetNumberChangedFlag?regionId=" + regionId + "&count=" + countStreet,
+		url: cli.getParam("baseurl") + "Address/GetStreetNumberChangedFlag?regionId=" + regionId + "&count=" + countStreet,
 		type: 'POST',
 		dataType: "json",
 		success: function (data) {
@@ -89,7 +89,7 @@ getHouseChangedFlag = function (streetId, regionId, countHouse) {
 		return;
 	}
 	$.ajax({
-		url: cli.getParam("baseurl") + "/Address/GetHouseNumberChangedFlag?streetId=" + streetId + "&count=" + countHouse + "&regionId=" + regionId,
+		url: cli.getParam("baseurl") + "Address/GetHouseNumberChangedFlag?streetId=" + streetId + "&count=" + countHouse + "&regionId=" + regionId,
 		type: 'POST',
 		dataType: "json",
 		success: function (data) {
@@ -109,7 +109,7 @@ getStreetList = function (regionId, funcAfter, countStreet) {
 		return;
 	}
 	$.ajax({
-		url: cli.getParam("baseurl") + "/Address/GetStreetList?regionId=" + regionId,
+		url: cli.getParam("baseurl") + "Address/GetStreetList?regionId=" + regionId,
 		type: 'POST',
 		dataType: "json",
 		success: function (data) {
@@ -128,7 +128,7 @@ getHouseList = function (streetId, regionId, funcAfter, countHouse) {
 		return;
 	}
 	$.ajax({
-		url: cli.getParam("baseurl") + "/Address/GetHouseList?streetId=" + streetId + "&regionId=" + regionId,
+		url: cli.getParam("baseurl") + "Address/GetHouseList?streetId=" + streetId + "&regionId=" + regionId,
 		type: 'POST',
 		dataType: "json",
 		success: function (data) {
@@ -143,7 +143,7 @@ getHouseList = function (streetId, regionId, funcAfter, countHouse) {
 }
 getPlansList = function (regionId, funcAfter) {
 	$.ajax({
-		url: cli.getParam("baseurl") + "/Address/GetPlansListForRegion?regionId=" + regionId,
+		url: cli.getParam("baseurl") + "Address/GetPlansListForRegion?regionId=" + regionId,
 		type: 'POST',
 		dataType: "json",
 		success: function (data) {

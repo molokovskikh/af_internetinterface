@@ -40,7 +40,7 @@ var refreshConnectionTable = function () {
 	var region = $(".regionId option:selected").val();
 	$.ajax({
 		type: "POST",
-		url: cli.getParam("baseurl") + "/ConnectionTeam/ConnectionTable",
+		url: cli.getParam("baseurl") + "ConnectionTeam/ConnectionTable",
 		data: { date: date, regionId : region }
 	}).done(function (msg) {
 		var div = msg.toHTML();
