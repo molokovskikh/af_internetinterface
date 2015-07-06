@@ -22,6 +22,16 @@ namespace Inforoom2.Controllers
 		public ActionResult Index(CallMeBackTicket callMeBackTicket)
 		{ 
 			var errors = ValidationRunner.Validate(callMeBackTicket);
+			//проверка капчи 
+			if (CurrentClient == null && (callMeBackTicket.Captcha==null || (callMeBackTicket.Captcha.Length < 4
+										  || (HttpContext.Session["captcha"].ToString()).IndexOf(callMeBackTicket.Captcha) == -1)))
+			{
+				callMeBackTicket.Captcha = "";
+			}
+			else {
+				errors.RemoveErrors("CallMeBackTicket", "Captcha");
+			} 
+
 			if (errors.Length == 0)
 			{ 
 				DbSession.Save(callMeBackTicket);
