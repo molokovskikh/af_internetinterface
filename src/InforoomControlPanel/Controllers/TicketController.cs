@@ -61,6 +61,7 @@ namespace InforoomControlPanel.Controllers
 		{
 			ViewBag.Ticket = ticket;
 			var errors = ValidationRunner.ValidateDeep(ticket);
+			errors.RemoveErrors("CallMeBackTicket", "Captcha");
 			if (errors.Length == 0) {
 				ticket.AnswerDate = DateTime.Now;
 				ticket.Employee = GetCurrentEmployee();
