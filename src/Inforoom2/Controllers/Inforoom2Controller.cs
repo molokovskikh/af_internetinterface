@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -184,15 +185,30 @@ namespace Inforoom2.Controllers
 			FormsAuthentication.SignOut();
 			return false;
 		}
-
+		// получение шрифта из байтового массива
+		public static FontFamily LoadFontFamily(byte[] buffer, out PrivateFontCollection fontCollection)
+		{ 
+			var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+			try
+			{
+				var ptr = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0);
+				fontCollection = new PrivateFontCollection();
+				fontCollection.AddMemoryFont(ptr, buffer.Length);
+				return fontCollection.Families[0];
+			}
+			finally
+			{ 
+				handle.Free();
+			}
+		}
 		public void ProcessCallMeBackTicketCaptcha(int Id)
 		{
 			// формирование капчи 
 			var sub = new Random().Next(1000, 9999).ToString();
 			HttpContext.Session.Add("captcha", sub);
-			var pfc = new PrivateFontCollection();
-			pfc.AddFontFile(Server.MapPath("~") + "/Fonts/captcha.ttf");
-			var captchImage = DrawCaptchaText(sub, new Font(pfc.Families[0], 24, FontStyle.Bold), Color.Tomato, Color.White);
+			var pfc = new PrivateFontCollection(); 
+			var captchImage = DrawCaptchaText(sub, new Font(LoadFontFamily(System.IO.File.ReadAllBytes(Server.MapPath("~") + "/Fonts/captcha.ttf"),
+				out pfc), 24, FontStyle.Bold), Color.Tomato, Color.White);
 			var ms = new MemoryStream();
 			captchImage.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
 			HttpContext.Response.ContentType = "image/Jpeg";
@@ -229,7 +245,7 @@ namespace Inforoom2.Controllers
 			drawing.DrawString(text, font, textBrush, 0, 0);
 
 			drawing.Save();
-
+			 
 			textBrush.Dispose();
 			drawing.Dispose();
 
