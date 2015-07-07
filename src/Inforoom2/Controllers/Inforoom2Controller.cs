@@ -185,12 +185,18 @@ namespace Inforoom2.Controllers
 			FormsAuthentication.SignOut();
 			return false;
 		}
-		// получение шрифта из байтового массива
+
+		/// <summary>
+		/// получение шрифта из байтового массива, конструкция используется для избежания блокировки файла со шрифтом
+		/// </summary>
+		/// <param name="buffer">Байтовый массив файла со шрифтом</param>
+		/// <param name="fontCollection">Коллекция шрифтов</param>
+		/// <returns></returns>
 		public static FontFamily LoadFontFamily(byte[] buffer, out PrivateFontCollection fontCollection)
 		{ 
 			var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
 			try
-			{
+			{ 
 				var ptr = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0);
 				fontCollection = new PrivateFontCollection();
 				fontCollection.AddMemoryFont(ptr, buffer.Length);
@@ -201,14 +207,22 @@ namespace Inforoom2.Controllers
 				handle.Free();
 			}
 		}
+		/// <summary>
+		/// формирование капчи 
+		/// </summary> 
+		/// <param name="Id">для мены капчи</param>
 		public void ProcessCallMeBackTicketCaptcha(int Id)
 		{
-			// формирование капчи 
+			// формирование значения капчи, сохранение его в сессии
 			var sub = new Random().Next(1000, 9999).ToString();
 			HttpContext.Session.Add("captcha", sub);
+			// создание коллекции шрифтов
 			var pfc = new PrivateFontCollection(); 
-			var captchImage = DrawCaptchaText(sub, new Font(LoadFontFamily(System.IO.File.ReadAllBytes(Server.MapPath("~") + "/Fonts/captcha.ttf"),
+			// формирвоание изображения капчи
+			var captchImage = DrawCaptchaText(sub,
+				new Font(LoadFontFamily(System.IO.File.ReadAllBytes(Server.MapPath("~") + "/Fonts/captcha.ttf"),
 				out pfc), 24, FontStyle.Bold), Color.Tomato, Color.White);
+			//передача пользователю изображения капчи
 			var ms = new MemoryStream();
 			captchImage.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
 			HttpContext.Response.ContentType = "image/Jpeg";
