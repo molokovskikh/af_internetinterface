@@ -311,6 +311,5 @@ margin-left: 56px;padding: 5px 35px;}
  height: 43px;padding-bottom: 3px;width: 207px;}
 .callback.active {background: none repeat scroll 0 0 #ffffff;border: 0px solid #e7e7e7;border-radius: 5px;box-shadow: 0 0 10px 0 #e39194;color: #aa181e;cursor: pointer;font-family: PDFDinTextPro;font-size: 20px;
  height: 43px;padding-bottom: 3px;width: 207px;margin-top: 10px;}
-.button.sber{padding: 46px;background: url('../images/visamaster.jpg') no-repeat;}
-.button.sber span{color: #213CA9;margin-left: 52px;padding-bottom: 3px;border-bottom: 1px solid #FD9A01;}
-.button.sber:hover span{ border-bottom: none;}
+.button.visa{padding-top: 4px;padding-bottom: 12px;background: url('../images/visamaster.jpg') no-repeat;}
+.button.visa span{color: #213CA9;margin-left: 120px;padding-bottom: 3px;font-size: 18px;} 
