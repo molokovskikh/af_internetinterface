@@ -12,6 +12,7 @@ using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
+using Inforoom2.Models.Services;
 using NHibernate.Linq;
 using NHibernate.Validator.Engine;
 using Region = Inforoom2.Models.Region;
@@ -96,9 +97,29 @@ namespace Inforoom2.Controllers
 			if (!CheckNetworkClient())
 				RedirectToAction("Index", "Home");
 
+			TrigerServices(filterContext);
+
 			if (CurrentRegion != null) {
 				ViewBag.RegionOfficePhoneNumber = CurrentRegion.RegionOfficePhoneNumber;
 				ViewBag.CurrentRegion = CurrentRegion;
+			}
+		}
+
+		public void TrigerServices(ActionExecutingContext filterContext)
+		{
+			if (CurrentClient != null) {
+				var mediator = new ControllerAndServiceMediator(HttpContext.Request.Url.ToString());
+				foreach (var clientService in CurrentClient.ClientServices.Where(s => s.IsActivated)) {
+					clientService.Service.OnWebsiteVisit(mediator, DbSession, CurrentClient);
+					if (clientService.Service.Unproxy() is PlanChanger) {
+						if (!(string.IsNullOrEmpty(mediator.UrlRedirectAction)
+						      && string.IsNullOrEmpty(mediator.UrlRedirectController))) {
+							filterContext.Result = new RedirectResult(
+								new UrlHelper(ControllerContext.RequestContext)
+									.Action(mediator.UrlRedirectAction, mediator.UrlRedirectController, null));
+						}
+					}
+				}
 			}
 		}
 
@@ -193,20 +214,19 @@ namespace Inforoom2.Controllers
 		/// <param name="fontCollection">Коллекция шрифтов</param>
 		/// <returns></returns>
 		public static FontFamily LoadFontFamily(byte[] buffer, out PrivateFontCollection fontCollection)
-		{ 
+		{
 			var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-			try
-			{ 
+			try {
 				var ptr = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0);
 				fontCollection = new PrivateFontCollection();
 				fontCollection.AddMemoryFont(ptr, buffer.Length);
 				return fontCollection.Families[0];
 			}
-			finally
-			{ 
+			finally {
 				handle.Free();
 			}
 		}
+
 		/// <summary>
 		/// формирование капчи 
 		/// </summary> 
@@ -217,11 +237,11 @@ namespace Inforoom2.Controllers
 			var sub = new Random().Next(1000, 9999).ToString();
 			HttpContext.Session.Add("captcha", sub);
 			// создание коллекции шрифтов
-			var pfc = new PrivateFontCollection(); 
+			var pfc = new PrivateFontCollection();
 			// формирвоание изображения капчи
 			var captchImage = DrawCaptchaText(sub,
 				new Font(LoadFontFamily(System.IO.File.ReadAllBytes(Server.MapPath("~") + "/Fonts/captcha.ttf"),
-				out pfc), 24, FontStyle.Bold), Color.Tomato, Color.White);
+					out pfc), 24, FontStyle.Bold), Color.Tomato, Color.White);
 			//передача пользователю изображения капчи
 			var ms = new MemoryStream();
 			captchImage.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
@@ -259,7 +279,7 @@ namespace Inforoom2.Controllers
 			drawing.DrawString(text, font, textBrush, 0, 0);
 
 			drawing.Save();
-			 
+
 			textBrush.Dispose();
 			drawing.Dispose();
 

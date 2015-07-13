@@ -42,7 +42,7 @@ else if(client.PhysicalClient != null)
 		}
 		else if (client.Status.Type == StatusType.VoluntaryBlocking)
 		{
-			<p>Услуга "Добровольная блокировка" активирована до @client.ClientServices.FirstOrDefault(c => c.Service.GetType() == typeof(BlockAccountService)).EndDate</p>
+			<p>Услуга "Добровольная блокировка" активирована до @client.ClientServices.FirstOrDefault(c => c.Service.Unproxy().GetType() == typeof(BlockAccountService)).EndDate</p>
 			using (@Html.BeginForm("DeactivateAccountBlocking", "Service", null, FormMethod.Post))
 			{
 				@Html.HiddenFor(modelItem => service.Id)

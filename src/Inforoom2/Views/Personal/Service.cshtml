@@ -6,8 +6,8 @@
 	ViewBag.Title = "Личный кабинет: Услуги";
 	IList<Service> availableServices = ViewBag.AvailableServices;
 	IList<ClientService> clientServices = ViewBag.ClientServices;
-	var defPaymentIsAvailable = client.Disabled && client.Balance <= 0 && !client.HasActiveService<BlockAccountService>() 
-			&& !client.HasActiveService<DeferredPayment>() && client.AutoUnblocked;
+	var defPaymentIsAvailable = client.Disabled && client.Balance <= 0 && !client.HasActiveService<BlockAccountService>()
+	                            && !client.HasActiveService<DeferredPayment>() && client.AutoUnblocked;
 }
 
 
@@ -43,7 +43,7 @@
 				<td></td>
 				<td>
 					@if (client.CanUseService(service)) {
-						switch (service.GetType().Name) {
+						switch (service.Unproxy().GetType().Name) {
 							case "BlockAccountService":
 								@Html.ActionLink("Подключить", "BlockAccount", "Service", null, new { @class = "connectfee" })
 
@@ -54,7 +54,7 @@
 						}
 					}
 					else {
-							<div class="paragraph">Не доступно</div>
+						<div class="paragraph">Не доступно</div>
 					}
 				</td>
 			</tr>

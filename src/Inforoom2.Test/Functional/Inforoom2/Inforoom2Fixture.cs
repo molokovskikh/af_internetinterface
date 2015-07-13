@@ -62,6 +62,8 @@ namespace Inforoom2.Test.Functional.Inforoom2
 			Open("");
 			browser.FindElementByCssSelector(".main-offer img").Click();
 			AssertText("Заявка на подключение");
+			browser.FindElementByCssSelector("div.city").Click();
+			browser.FindElementByLinkText("Борисоглебск (частный сектор)").Click();
 			var selectedValue = browser.FindElementByCssSelector("#clientRequest_Plan.rounded option[selected='selected']");
 			Assert.That(selectedValue.Text, Is.EqualTo("Народный"), "В поле тариф должен быть выбран акционный тариф");
 			//Должна быть одна зеленая галочка,при поиске одного элемента вероятно выдаст ошибку,в данном случае вернет пустой массив.

@@ -49,6 +49,10 @@ namespace Inforoom2.Test.Functional.Home
 		public void PromotionalPlan()
 		{
 			Open("");
+			browser.FindElementByCssSelector(".arrow").Click();
+			var clickCity = browser.FindElementByLinkText("Борисоглебск (частный сектор)");
+			var clickedText = clickCity.Text;
+			clickCity.Click();
 			browser.FindElementByCssSelector(".main-offer img").Click();
 			AssertText("Заявка на подключение");
 			var selectedValue = browser.FindElementByCssSelector("#clientRequest_Plan.rounded option[selected='selected']");

@@ -500,6 +500,7 @@
     <Compile Include="Models\PaymentForConnect.cs" />
     <Compile Include="Models\PaymentsForAgent.cs" />
     <Compile Include="Models\Period.cs" />
+    <Compile Include="Models\PlanChangerData.cs" />
     <Compile Include="Models\Printer.cs" />
     <Compile Include="Models\RedmineIssue.cs" />
     <Compile Include="Models\RedmineJournal.cs" />
@@ -513,6 +514,7 @@
     <Compile Include="Models\ServiceRequest.cs" />
     <Compile Include="Models\ServiceInteration.cs" />
     <Compile Include="Models\Services\HardwareRent.cs" />
+    <Compile Include="Models\Services\PlanChanger.cs" />
     <Compile Include="Models\Services\Internet.cs" />
     <Compile Include="Models\Services\IpTv.cs" />
     <Compile Include="Models\Services\IpTvBoxRent.cs" />

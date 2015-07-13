@@ -86,6 +86,7 @@
     <Compile Include="Integration\MutexFixture.cs" />
     <Compile Include="Integration\OtherFixture.cs" />
     <Compile Include="Integration\SaleFixture.cs" />
+    <Compile Include="Integration\PlanChangerFixture.cs" />
     <Compile Include="Integration\ServiceFixture.cs" />
     <Compile Include="Integration\ServiceRequestsFixture.cs" />
     <Compile Include="Integration\SmsFixture.cs" />

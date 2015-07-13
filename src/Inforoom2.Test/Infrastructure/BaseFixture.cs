@@ -135,7 +135,7 @@ namespace Inforoom2.Test.Infrastructure
 			var tables = new List<string>();
 
 			//Приоритет удаления данных
-			var order = "planhtmlcontent,perm_role,user_role,roles,permissions,lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
+			var order = "planchangerdata,planhtmlcontent,perm_role,user_role,roles,permissions,lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
 			            + "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
 
 			var parts = order.Split(',');
@@ -186,8 +186,8 @@ namespace Inforoom2.Test.Infrastructure
 			GenerateTvChannelGroups();
 			GenerateRegions();
 			GenerateAddresses();
-			GenerateSlides();
 			GeneratePlans();
+			GenerateSlides();
 			GenerateAdmins();
 			GenerateSwitches();
 			GenerateClients();
@@ -744,63 +744,69 @@ namespace Inforoom2.Test.Infrastructure
 			var plan = new Plan();
 			plan.Price = 300;
 			plan.Name = "Популярный";
-			plan.IsArchived = false;
-			plan.Hidden = false;
+			plan.Disabled = false;
+			plan.AvailableForOldClients = true;
 			plan.IsServicePlan = false;
-			plan.PackageSpeed = DbSession.Get<PackageSpeed>(19);
+			plan.AvailableForNewClients = true;
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==35000000);
 			plan.TvChannelGroups.Add(TvChannelGroups.First(i => i.Name == "Основная"));
 			DbSession.Save(plan);
 
 			plan = new Plan();
 			plan.Price = 500;
 			plan.Name = "Оптимальный";
-			plan.IsArchived = false;
-			plan.Hidden = false;
-			plan.PackageSpeed = DbSession.Get<PackageSpeed>(6);
+			plan.Disabled = false;
+			plan.AvailableForOldClients = true;
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==30000000);
 			plan.IsServicePlan = false;
+			plan.AvailableForNewClients = true;
 			DbSession.Save(plan);
 
 			plan = new Plan();
 			plan.Price = 900;
 			plan.Name = "Максимальный";
-			plan.IsArchived = false;
-			plan.Hidden = false;
+			plan.Disabled = false;
+			plan.AvailableForOldClients = true;
 			plan.IsServicePlan = false;
-			plan.PackageSpeed = DbSession.Get<PackageSpeed>(23);
+			plan.AvailableForNewClients = true;
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==4000000);
 			plan.TvChannelGroups.Add(TvChannelGroups.First(i => i.Name == "Спорт"));
 			DbSession.Save(plan);
 
 			plan = new Plan();
 			plan.Price = 100m;
 			plan.Name = "Тариф-ИгнорДискаунт";
-			plan.IsArchived = false;
+			plan.Disabled = false;
 			plan.IgnoreDiscount = true;
-			plan.Hidden = false;
+			plan.AvailableForOldClients = true;
 			plan.IsServicePlan = false;
-			plan.PackageSpeed = DbSession.Get<PackageSpeed>(19);
+			plan.AvailableForNewClients = true;
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==35000000);
 			DbSession.Save(plan);
 
 
 			plan = new Plan();
 			plan.Price = 300;
 			plan.Name = "Тариф с указанным регионом";
-			plan.IsArchived = false;
-			plan.Hidden = false;
+			plan.Disabled = false;
+			plan.AvailableForOldClients = true;
 			plan.IsServicePlan = false;
+			plan.AvailableForNewClients = true;
 			plan.RegionPlans.Add(new RegionPlan() {
 				Plan = plan,
 				Region = DbSession.Query<Region>().FirstOrDefault()
 			});
-			plan.PackageSpeed = DbSession.Get<PackageSpeed>(23);
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==30000000);
 			DbSession.Save(plan);
 
 			plan = new Plan();
 			plan.Price = 245;
 			plan.Name = "Старт";
-			plan.IsArchived = false;
-			plan.Hidden = false;
+			plan.Disabled = false;
+			plan.AvailableForOldClients = true;
 			plan.IsServicePlan = false;
-			plan.PackageSpeed = DbSession.Get<PackageSpeed>(17);
+			plan.AvailableForNewClients = true;
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==4000000);
 			DbSession.Save(plan);
 			var RegionPlan = new RegionPlan();
 			RegionPlan.Plan = plan;
@@ -810,30 +816,49 @@ namespace Inforoom2.Test.Infrastructure
 			plan = new Plan();
 			plan.Price = 245;
 			plan.Name = "50 на 50";
-			plan.IsArchived = false;
-			plan.Hidden = false;
+			plan.Disabled = false;
+			plan.AvailableForOldClients = true;
 			plan.IsServicePlan = false;
+			plan.AvailableForNewClients = true;
 			plan.PackageSpeed = DbSession.Get<PackageSpeed>(17);
 			DbSession.Save(plan);
 			RegionPlan = new RegionPlan();
 			RegionPlan.Plan = plan;
 			RegionPlan.Region = DbSession.Query<Region>().First(i => i.Name == "Борисоглебск");
-			DbSession.Save(RegionPlan);
+			DbSession.Save(RegionPlan); 
 
 			plan = new Plan();
 			plan.Price = 300;
 			plan.Name = "Народный";
-			plan.IsArchived = false;
-			plan.Hidden = false;
+			plan.Disabled = false;
+			plan.AvailableForOldClients = false;
 			plan.IsServicePlan = false;
-			plan.PackageSpeed = DbSession.Get<PackageSpeed>(23);
+			plan.AvailableForNewClients = true;
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==30000000);
+			plan.Comments = "Быстрый, дешевый, есть в тарифах, нет в ЛК";
 			DbSession.Save(plan);
+			RegionPlan = new RegionPlan();
+			RegionPlan.Plan = plan;
+			RegionPlan.Region = DbSession.Query<Region>().First(i => i.Name == "Борисоглебск (частный сектор)");
+			DbSession.Save(RegionPlan); 
+
+			plan = new Plan();
+			plan.Price = 600;
+			plan.Name = "Народный";
+			plan.Disabled = false;
+			plan.AvailableForOldClients = true;
+			plan.IsServicePlan = false;
+			plan.AvailableForNewClients = false;
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==30000000);
+			plan.Comments = "Быстрый, дорогой, нет в тарифах, есть в ЛК";
+			DbSession.Save(plan);
+			RegionPlan = new RegionPlan();
+			RegionPlan.Plan = plan;
+			RegionPlan.Region = DbSession.Query<Region>().First(i => i.Name == "Борисоглебск (частный сектор)");
+			DbSession.Save(RegionPlan);
 
 			DbSession.Flush();
-
-			//todo подумать что с этим делать 
-			plan.ChangeId(85, DbSession);
-
+			
 			//Переходы с тарифов
 			var plans = DbSession.Query<Plan>().ToList();
 			//var popular = plans.First(i => i.Name.Contains("Популярный"));
@@ -1036,12 +1061,13 @@ namespace Inforoom2.Test.Infrastructure
 		// Добавление слайдов и банеров для каждого региона
 		private void GenerateSlides()
 		{
+			var tariffId = DbSession.Query<Plan>().First(s => s.Name == "Народный" && s.Price == 300);
 			var employee = DbSession.Query<Employee>().FirstOrDefault();
 			var regionList = DbSession.Query<Region>().ToList();
 			for (int i = 0; i < regionList.Count; i++) {
 				// слайдер *c изображением на инфорум2
 				Slide slide = new Slide();
-				slide.Url = "/ClientRequest/RequestFromTariff/85";
+				slide.Url = "/ClientRequest/RequestFromTariff/" + tariffId.Id;
 				slide.ImagePath = "/Images/slider1.png";
 				slide.LastEdit = DateTime.Now;
 				slide.Enabled = true;
@@ -1053,7 +1079,7 @@ namespace Inforoom2.Test.Infrastructure
 
 				// банер *c изображением на инфорум2 
 				Banner banner = new Banner();
-				banner.Url = "/ClientRequest/RequestFromTariff/85";
+				banner.Url = "/ClientRequest/RequestFromTariff/" + tariffId.Id;
 				banner.ImagePath = "/Images/actionfolk.png";
 				banner.LastEdit = DateTime.Now;
 				banner.Enabled = true;

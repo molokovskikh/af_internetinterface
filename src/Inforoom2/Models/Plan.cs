@@ -51,7 +51,7 @@ namespace Inforoom2.Models
 		public virtual bool IsServicePlan { get; set; }
 
 		[Property(Column = "_IsArchived")]
-		public virtual bool IsArchived { get; set; }
+		public virtual bool Disabled { get; set; }
 
 		[Bag(0, Table = "region_plan")]
 		[Key(1, Column = "Plan", NotNull = false)]
@@ -88,10 +88,16 @@ namespace Inforoom2.Models
 		public virtual string Features { get; set; }
 
 		[Property]
-		public virtual bool Published { get; set; }
+		public virtual bool AvailableForNewClients { get; set; }
+
+		[Property]
+		public virtual bool AvailableForOldClients { get; set; }
 
 		[Property]
 		public virtual string Description { get; set; }
+
+		[Property]
+		public virtual string Comments { get; set; }
 
 
 		/// <summary>

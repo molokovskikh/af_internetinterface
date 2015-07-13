@@ -48,8 +48,9 @@ namespace Inforoom2.Controllers
 				var plan = DbSession.Get<Plan>(id);
 				ViewBag.Plan = plan;
 			}
-			ViewBag.Plans = DbSession.Query<RegionPlan>().Where(s => s.Region == CurrentRegion && s.Plan.Published).
-				OrderBy(s=>s.Region).ThenByDescending(s=>s.Plan.Priority).Select(s=>s.Plan).ToList();
+			ViewBag.Plans = DbSession.Query<RegionPlan>().Where(s => s.Region == CurrentRegion && s.Plan.AvailableForNewClients && s.Plan.Disabled==false)
+				.OrderBy(s=>s.Region).ThenByDescending(s=>s.Plan.Priority).Select(s=>s.Plan)
+				.Take(3).ToList();
 			return View();
 		}
 

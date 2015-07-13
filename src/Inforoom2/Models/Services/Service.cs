@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Web;
+using Inforoom2.Helpers;
 using NHibernate;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
@@ -47,6 +49,24 @@ namespace Inforoom2.Models.Services
 		/// Активирует клиентскую услугу assignedService
 		/// </summary>
 		public virtual void Activate(ClientService assignedService, ISession session)
+		{
+		}
+		/// <summary>
+		/// Отражает событие, происходящее через определенный промежуток времени
+		/// </summary>
+		/// <param name="session">Сессия БД</param>
+		/// <param name="clientService">Клиентский сервис</param>
+		public virtual void OnTimer(ISession session, ClientService clientService)
+		{
+		}
+
+		/// <summary>
+		/// Отражает событие, происходящее при посещении сайта пользователем
+		/// </summary>
+		/// <param name="mediator">посредник между контроллером и сервисом</param>
+		/// <param name="session">Сессия БД</param>
+		/// <param name="client">Клиент</param>
+		public virtual void OnWebsiteVisit(ControllerAndServiceMediator mediator, ISession session, Client client)
 		{
 		}
 

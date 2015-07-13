@@ -292,6 +292,7 @@
     <Compile Include="Helpers\DescriptionHelper.cs" />
     <Compile Include="Helpers\ConfigHelper.cs" />
     <Compile Include="Helpers\ModelCrudListener.cs" />
+    <Compile Include="Helpers\ControllerAndServiceMediator.cs" />
     <Compile Include="Helpers\SessionHelper.cs" />
     <Compile Include="Helpers\CustomPrincipal.cs" />
     <Compile Include="Helpers\IpGeoHelper.cs" />
@@ -308,7 +309,9 @@
     <Compile Include="Models\ModelAppeal.cs" />
     <Compile Include="Models\BillingHistory.cs" />
     <Compile Include="Models\Banner.cs" />
+    <Compile Include="Models\PlanChangerData.cs" />
     <Compile Include="Models\PlanHtmlContent.cs" />
+    <Compile Include="Models\Services\PlanChanger.cs" />
     <Compile Include="Models\Slide.cs" />
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\ClientEndPoint.cs" />
@@ -405,6 +408,10 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Billing\Billing.csproj">
+      <Project>{a30eb5bc-959b-4031-8d90-51f045af3e6d}</Project>
+      <Name>Billing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.MySql\Common.MySql\Common.MySql.csproj">
       <Project>{8a680813-c83b-497a-85e6-e8f07b7d7650}</Project>
       <Name>Common.MySql</Name>
@@ -461,6 +468,7 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Views\Service\InternetPlanChanger.cshtml" />
     <None Include="Web.test2.config" />
     <None Include="Web.release.config">
       <SubType>Designer</SubType>

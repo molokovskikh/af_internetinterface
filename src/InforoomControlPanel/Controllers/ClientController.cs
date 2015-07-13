@@ -154,7 +154,8 @@ namespace InforoomControlPanel.Controllers
 			// получаем списки тарифов по выбранному выбранному региону
 			var planList = new List<Plan>();
 			if (currentRegion != null) {
-				planList = DbSession.Query<Plan>().Where(s => s.IsArchived == false && s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
+				planList = DbSession.Query<Plan>().Where(s => s.Disabled == false && s.AvailableForNewClients 
+					&& s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
 			}
 			// списки улиц и домов
 			var currentStreetList = currentStreet == null || currentRegion == null ? new List<Street>() : DbSession.Query<Street>()
@@ -230,7 +231,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult RequestsList()
 		{
-			var pager = new ModelFilter<ClientRequest>(this, urlBasePrefix: "/");
+			var pager = new ModelFilter<ClientRequest>(this, urlBasePrefix: "/", orderByColumn: "RegDate",orderDirrection:false);
 			var clientRequests = pager.GetCriteria().List<ClientRequest>();
 			ViewBag.Pager = pager;
 			ViewBag.ClientRequests = clientRequests;
@@ -362,7 +363,8 @@ namespace InforoomControlPanel.Controllers
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			var planList = DbSession.Query<Plan>().OrderBy(s => s.Name).ToList();
 			if (regionList.Count > 0) {
-				planList = planList.Where(s => s.IsArchived == false && s.RegionPlans.Any(d => d.Region == currentRegion)).OrderBy(s => s.Name).ToList();
+				planList = planList.Where(s => s.Disabled == false && s.AvailableForNewClients 
+					&& s.RegionPlans.Any(d => d.Region == currentRegion)).OrderBy(s => s.Name).ToList();
 			}
 			//
 			ViewBag.CurrentRegion = currentRegion;
@@ -425,12 +427,12 @@ namespace InforoomControlPanel.Controllers
 				// указываем полное имя клиента
 				client._Name = client.PhysicalClient.FullName;
 				// добавляем клиенту стандартные сервисы 
-				var services = DbSession.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet").ToList();
+				var services = DbSession.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet" || s.Name == "PlanChanger").ToList();
 				IList<ClientService> csList = services.Select(service => new ClientService {
 					Service = service,
 					Client = client,
 					BeginDate = DateTime.Now,
-					IsActivated = false,
+					IsActivated = (service.Name == "PlanChanger"),
 					ActivatedByUser = (service.Name == "Internet")
 				}).ToList();
 				client.ClientServices = csList;
@@ -508,7 +510,8 @@ namespace InforoomControlPanel.Controllers
 			// получаем списки регионов и тарифов по выбранному выбранному региону (городу) 
 			var regionList = DbSession.Query<Region>().ToList();
 			if (currentRegion != null) {
-				planList = DbSession.Query<Plan>().Where(s => s.IsArchived == false && s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
+				planList = DbSession.Query<Plan>().Where(s => s.Disabled == false && s.AvailableForNewClients 
+					&& s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
 			}
 			//
 			ViewBag.CurrentRegion = currentRegion;
@@ -612,12 +615,12 @@ namespace InforoomControlPanel.Controllers
 				// указываем полное имя клиента
 				client._Name = client.PhysicalClient.FullName;
 				// добавляем клиенту стандартные сервисы 
-				var services = DbSession.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet").ToList();
+				var services = DbSession.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet" || s.Name == "PlanChanger").ToList();
 				IList<ClientService> csList = services.Select(service => new ClientService {
 					Service = service,
 					Client = client,
 					BeginDate = DateTime.Now,
-					IsActivated = false,
+					IsActivated = (service.Name == "PlanChanger"),
 					ActivatedByUser = (service.Name == "Internet")
 				}).ToList();
 				client.ClientServices = csList;
@@ -666,7 +669,8 @@ namespace InforoomControlPanel.Controllers
 			var planList = new List<Plan>();
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			if (currentRegion != null) {
-				planList = DbSession.Query<Plan>().Where(s => s.IsArchived == false && s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
+				planList = DbSession.Query<Plan>().Where(s => s.Disabled == false && s.AvailableForNewClients 
+					&& s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
 			}
 			// списки улиц и домов 
 			var currentStreetList = currentStreet == null || currentRegion == null ? new List<Street>() : DbSession.Query<Street>()
