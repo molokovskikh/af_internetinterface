@@ -26,14 +26,18 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			var planPrice = browser.FindElementByCssSelector("input[id=plan_Price]");
 			var planFeatures = browser.FindElementByCssSelector("textarea[id=plan_Features]");
 			var planDescription = browser.FindElementByCssSelector("textarea[id=plan_Description]");
+			var disabled = browser.FindElementByCssSelector("input[id=Disabled]").GetAttribute("checked")!=null;
+			var availableForNewClients = browser.FindElementByCssSelector("input[id=AvailableForNewClients]").GetAttribute("checked") != null;
+			var availableForOldClients = browser.FindElementByCssSelector("input[id=AvailableForOldClients]").GetAttribute("checked") != null;
 			planName.Clear();
 			planName.SendKeys("Максимальный Измененный");
 			planSpeed.Click();
 			planPrice.Clear();
 			planPrice.SendKeys("300");
 			browser.FindElementByCssSelector("input[id=withBonus]").Click();
-			browser.FindElementByCssSelector("input[id=isArchived]").Click();
-			browser.FindElementByCssSelector("input[id=isPublished]").Click();
+			browser.FindElementByCssSelector("input[id=Disabled]").Click();
+			browser.FindElementByCssSelector("input[id=AvailableForNewClients]").Click();
+			browser.FindElementByCssSelector("input[id=AvailableForOldClients]").Click();
 			planFeatures.SendKeys("Тест");
 			planDescription.SendKeys("Для теста изменен");
 			browser.FindElementByCssSelector(".btn-green.save").Click();
@@ -45,8 +49,9 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			Assert.That(plan.PackageSpeed.PackageId, Is.EqualTo(speed.PackageId), "Скорость у тарифа должна быть установлена корректно");
 			Assert.That(plan.Price, Is.EqualTo(300), "Изменение цены тарифа должно сохраниться и в базе данных");
 			Assert.That(plan.IgnoreDiscount, Is.True, "Изменение отметки о скидке тарифа должно сохраниться и в базе данных");
-			Assert.That(plan.IsArchived, Is.True, "Изменение отметки о скрытости тарифа должно сохраниться и в базе данных");
-			Assert.That(plan.Published, Is.True, "Изменение отметки об опубликованности тарифа должно сохраниться и в базе данных");
+			Assert.That(plan.Disabled, Is.EqualTo(!disabled), "Изменение отметки о скрытости тарифа должно сохраниться и в базе данных");
+			Assert.That(plan.AvailableForNewClients, Is.EqualTo(!availableForNewClients), "Изменение отметки об опубликованности для новых клиентов тарифа должно сохраниться и в базе данных");
+			Assert.That(plan.AvailableForOldClients, Is.EqualTo(!availableForOldClients), "Изменение отметки об опубликованности для старых клиентов тарифа должно сохраниться и в базе данных");
 			Assert.That(plan.Features, Is.StringContaining("Тест"), "Изменение в заголовке тарифа должно сохраниться и в базе данных");
 			Assert.That(plan.Description, Is.StringContaining("Для теста изменен"), "Изменение в описании тарифа должно сохраниться и в базе данных");			
 		}
@@ -78,7 +83,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			var plan = new Plan();
 			plan.Price = 500;
 			plan.Name = "Венера";
-			plan.IsArchived = false;
+			plan.Disabled = false;
 			plan.Hidden = false;
 			plan.PackageSpeed = DbSession.Get<PackageSpeed>(6);
 			plan.IsServicePlan = false;

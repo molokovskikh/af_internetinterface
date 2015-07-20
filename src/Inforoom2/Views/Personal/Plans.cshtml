@@ -42,7 +42,7 @@
 						<div class="paragraph">Текущий</div>
 					}
 					else if (beginDate.AddMonths(2) < SystemTime.Now()) {
-						using (@Html.BeginForm("ChangePlan", "Personal",FormMethod.Post,new{id="changeplan"})) {
+						using (@Html.BeginForm("ChangePlan", "Personal", FormMethod.Post, new { id = "changeplan" })) {
 							@Html.HiddenFor(modelItem => plan.Id)
 							<input class="connectfee" type="submit" value="Сменить"/>
 						}
@@ -52,4 +52,4 @@
 		}
 	</table>
 </div>
-@{ Html.RenderPartial("Menu");  }
+@{ Html.RenderPartial("Menu"); }

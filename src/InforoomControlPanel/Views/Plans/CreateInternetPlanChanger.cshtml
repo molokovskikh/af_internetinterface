@@ -1,0 +1,76 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "Добавление правила смены тарифов для услуги Internet";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	PlanChangerData planChanger = ViewBag.PlanChanger;
+	IList<Plan> plans = ViewBag.Plans;
+}
+<div class="panel panel-primary">
+	<div class="panel-body">
+		<div class="col-md-6">
+			@using (@Html.BeginForm("CreateInternetPlanChanger", "Plans", null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
+				@Html.HiddenFor(i => planChanger.Id)
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label class="control-label">Целевой тариф</label>
+					</div>
+					<div class="col-sm-8">
+						@Html.DropDownListExtendedFor(i => planChanger.TargetPlan, plans.Where(s => s.AvailableForNewClients).ToList(), obj => obj.Name + " (" + obj.Price.ToString() + " руб.)", null,
+							new { @class = "form-control", @Id = "TargetPlanDropDown", @Name = "planChanger.TargetPlan.Id" }, planChanger.TargetPlan == null ? 0 : planChanger.TargetPlan.Id, true)
+						@ViewBag.Validation.GetError(planChanger, "TargetPlan")
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label class="control-label">Дешевый тариф</label>
+					</div>
+					<div class="col-sm-8">
+						@Html.DropDownListExtendedFor(i => planChanger.CheapPlan, plans.Where(s => s.AvailableForOldClients).ToList(), obj => obj.Name + " (" + obj.Price.ToString() + " руб.)", null,
+							new { @class = "form-control", @Id = "TargetPlanDropDown", @Name = "planChanger.CheapPlan.Id" }, planChanger.CheapPlan == null ? 0 : planChanger.CheapPlan.Id, true)
+						@ViewBag.Validation.GetError(planChanger, "CheapPlan")
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label class="control-label">Быстрый тариф</label>
+					</div>
+					<div class="col-sm-8">
+						@Html.DropDownListExtendedFor(i => planChanger.FastPlan, plans.Where(s => s.AvailableForOldClients).ToList(), obj => obj.Name + " (" + obj.Price.ToString() + " руб.)", null,
+							new { @class = "form-control", @Id = "TargetPlanDropDown", @Name = "planChanger.FastPlan.Id" }, planChanger.FastPlan == null ? 0 : planChanger.FastPlan.Id, true)
+						@ViewBag.Validation.GetError(planChanger, "FastPlan")
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label class="control-label">Таймер (в днях)</label>
+					</div>
+					<div class="col-sm-8">
+						@Html.EditorFor(o => planChanger.Timeout, new { @class = "form-control", @max = "9999", @min = -1 })
+						@ViewBag.Validation.GetError(planChanger, "Timeout")
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label class="control-label">HTML-разметка</label>
+					</div>
+					<div class="col-sm-8">
+						@Html.TextAreaFor(o => planChanger.Text, new { @class = "form-control", @rows = "20" })
+						@ViewBag.Validation.GetError(planChanger, "Text")
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<button class="btn btn-green" type="submit">Добавить</button>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="form-group">
+</div>
+<button class="btn btn-blue" onclick=" location.href = '@Url.Action("InternetPlanChangerIndex", "Plans")' ">Назад</button>

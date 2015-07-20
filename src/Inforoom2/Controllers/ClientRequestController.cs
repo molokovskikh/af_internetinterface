@@ -118,10 +118,10 @@ namespace Inforoom2.Controllers
 		private List<Plan> InitRequestPlans()
 		{
 			// Получаем список всех неархивных планов
-			var plans = DbSession.Query<Plan>().Where(p => !p.IsArchived).ToList();
+			var plans = DbSession.Query<Plan>().Where(p => p.Disabled==false && p.AvailableForNewClients).OrderBy(s=>s.Name).ToList();
 			// Закоментил т.к. изменился метод ввода
 			// Забираем не архивные планы, которые не имеют региона или соответсвуют текущему региону
-			// plans = plans.Where(p => !p.IsArchived && (p.RegionPlans.Count == 0 || p.RegionPlans.Select(i => i.Region).Contains(CurrentRegion))).ToList(); 
+			// plans = plans.Where(p => !p.Disabled && (p.RegionPlans.Count == 0 || p.RegionPlans.Select(i => i.Region).Contains(CurrentRegion))).ToList(); 
 			ViewBag.Plans = plans;
 			return plans;
 		}

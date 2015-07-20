@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Linq;
 using Castle.ActiveRecord;
 using Common.Tools;
 using InternetInterface.Services;
+using NHibernate;
+using NHibernate.Linq;
 
 namespace InternetInterface.Models.Services
 {
@@ -21,8 +24,8 @@ namespace InternetInterface.Models.Services
 		public override bool CanDeactivate(ClientService assignedService)
 		{
 			return assignedService.IsActivated &&
-				(!assignedService.ActivatedByUser
-					|| assignedService.Client.Disabled);
+			       (!assignedService.ActivatedByUser
+			        || assignedService.Client.Disabled);
 		}
 
 		//если клиент отключил себе интернет то нужно списать абонентскую плату
@@ -31,7 +34,7 @@ namespace InternetInterface.Models.Services
 		{
 			var client = assignedService.Client;
 			if (!client.Disabled
-				&& !assignedService.ActivatedByUser) {
+			    && !assignedService.ActivatedByUser) {
 				//если null значит клиент не начал работать и не за что списывать
 				if (client.RatedPeriodDate != null) {
 					var comment = string.Format("Абонентская плата за {0} из-за отключения услуги {1}", DateTime.Now.ToShortDateString(), HumanName);
@@ -46,7 +49,7 @@ namespace InternetInterface.Models.Services
 		public override void Activate(ClientService assignedService)
 		{
 			if (assignedService.ActivatedByUser
-				&& !assignedService.Client.Disabled) {
+			    && !assignedService.Client.Disabled) {
 				base.Activate(assignedService);
 				assignedService.Client.CreareAppeal(String.Format("Включена услуга \"{0}\"", HumanName));
 			}
@@ -55,9 +58,9 @@ namespace InternetInterface.Models.Services
 		public override decimal GetPrice(ClientService assignedService)
 		{
 			if (assignedService.Client.Disabled
-				|| !assignedService.ActivatedByUser)
+			    || !assignedService.ActivatedByUser)
 				return 0;
 			return assignedService.Client.GetTariffPrice();
-		}
+		} 
 	}
 }

@@ -200,6 +200,7 @@
     <Compile Include="Functional\Billing\BillingFixture.cs" />
     <Compile Include="Functional\ClientRequest\ClientRequestFixture.cs" />
     <Compile Include="Functional\Account\LoginFixture.cs" />
+    <Compile Include="Functional\Personal\PlanChangeFixture.cs" />
     <Compile Include="Functional\Personal\ProfileFixture.cs" />
     <Compile Include="Functional\Personal\PersonalPlayList.cs" />
     <Compile Include="Infrastructure\BaseFixture.cs" />

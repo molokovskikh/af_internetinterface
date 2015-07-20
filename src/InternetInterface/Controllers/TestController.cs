@@ -86,5 +86,28 @@ namespace InternetInterface.Controllers
 			PropertyBag["content"] = "Клиента можно заблокировать:" + block;
 #endif
 		}
+
+		// "Проверка вывода суммы для разблокировки в ЛК у заблокированного клиента"
+		public void PlanChangerBinder()
+		{
+			var allClients = DbSession.Query<Client>().Where(s => s.PhysicalClient != null
+																  && !s.ClientServices.Any(d => d.Service is PlanChanger)).ToList();
+			var planChangerService = DbSession.Query<Service>().FirstOrDefault(s => s.Name == "PlanChanger");
+			DbSession.Save(planChangerService);
+			foreach (var client in allClients)
+			{
+				// создание сервиса PlanChanger для текущего клиента
+				var clientService = new ClientService()
+				{
+					Client = client,
+					Service = planChangerService,
+					BeginWorkDate = SystemTime.Now(),
+					IsActivated = true
+				};
+				client.ClientServices.Add(clientService);
+				DbSession.Update(client);
+			}
+			DbSession.Flush();
+		}
 	}
 }

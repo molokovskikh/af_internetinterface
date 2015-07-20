@@ -59,6 +59,7 @@
 										<label class="col-sm-4 control-label">Отчество:</label>
 										<div class="col-sm-4">
 											@Html.TextBoxFor(o => client.PhysicalClient.Patronymic, new { @class = "form-control" })
+											@ViewBag.Validation.GetError(client.PhysicalClient, "Patronymic")
 											@ViewBag.Validation.GetError(client, "PhysicalClient", forcedValidationAttribute: validatorFullNameOriginal)
 										</div>
 									</div>

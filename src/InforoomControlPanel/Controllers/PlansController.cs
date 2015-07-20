@@ -623,5 +623,70 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage("Объект не удалось прикрепить! Возможно вложеные объекты не являются валидными.");
 			return RedirectToAction("EditPlan", new { id = plan.Id });
 		}
+
+		public ActionResult InternetPlanChangerIndex()
+		{
+			var pager = new ModelFilter<PlanChangerData>(this, urlBasePrefix: "/", orderByColumn: "TargetPlan");
+			ViewBag.Pager = pager;
+			return View();
+		}
+
+		public ActionResult CreateInternetPlanChanger()
+		{
+			var planChanger = new PlanChangerData();
+			var plans = DbSession.Query<Plan>().Where(s => s.Disabled == false).OrderBy(s=>s.Name).ToList(); 
+			ViewBag.PlanChanger = planChanger;
+			ViewBag.Plans = plans;
+			return View();
+		}
+		[HttpPost, ValidateInput(false)]
+		public ActionResult CreateInternetPlanChanger([EntityBinder] PlanChangerData planChanger)
+		{
+			var errors = ValidationRunner.Validate(planChanger);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(planChanger);
+				SuccessMessage("Объект успешно добавлен!");
+				return RedirectToAction("InternetPlanChangerIndex", new { id = planChanger.Id });
+			} 
+			var plans = DbSession.Query<Plan>().Where(s => s.Disabled == false).OrderBy(s => s.Name).ToList(); 
+			ViewBag.PlanChanger = planChanger;
+			ViewBag.Plans = plans;
+			return View();
+		}
+
+		public ActionResult EditInternetPlanChanger(int id)
+		{
+			var planChanger = DbSession.Get<PlanChangerData>(id);
+			var plans = DbSession.Query<Plan>().Where(s => s.Disabled == false).OrderBy(s => s.Name).ToList();
+			ViewBag.PlanChanger = planChanger;
+			ViewBag.Plans = plans;
+			return View();
+		}
+		[HttpPost, ValidateInput(false)]
+		public ActionResult EditInternetPlanChanger([EntityBinder] PlanChangerData planChanger)
+		{
+			var errors = ValidationRunner.Validate(planChanger);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(planChanger);
+				SuccessMessage("Объект успешно изменен!");
+				return RedirectToAction("InternetPlanChangerIndex", new { id = planChanger.Id });
+			}
+			var plans = DbSession.Query<Plan>().Where(s => s.Disabled == false).OrderBy(s => s.Name).ToList();
+			ViewBag.PlanChanger = planChanger;
+			ViewBag.Plans = plans;
+			return View();
+		}
+
+		public ActionResult DeleteInternetPlanChanger(int id)
+		{
+			var planChanger = DbSession.Get<PlanChangerData>(id);
+			if (DbSession.AttemptDelete(planChanger))
+				SuccessMessage("Объект успешно удален!");
+			else
+				ErrorMessage("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
+			return RedirectToAction("InternetPlanChangerIndex");
+		}
 	}
 }

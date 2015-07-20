@@ -50,15 +50,21 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-3 control-label c-pointer" for="isArchived">Скрытый (не доступен пользователю в личном кабинете)</label>
+					<label class="col-sm-3 control-label c-pointer" for="Disabled">Скрытый</label>
 					<div class="col-sm-5">
-						@Html.CheckBoxFor(model => plan.IsArchived, new { @id = "isArchived", @class = "c-pointer" })
+						@Html.CheckBoxFor(model => plan.Disabled, new { @id = "Disabled", @class = "c-pointer" })
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-3 control-label c-pointer" for="isPublished">Опубликован (выводится на странице "тарифы")</label>
+					<label class="col-sm-3 control-label c-pointer" for="AvailableForNewClients">Отображен на странице "Тарифы"</label>
 					<div class="col-sm-5">
-						@Html.CheckBoxFor(model => plan.Published, new { @id = "isPublished", @class = "c-pointer" })
+						@Html.CheckBoxFor(model => plan.AvailableForNewClients, new { @id = "AvailableForNewClients", @class = "c-pointer" })
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label c-pointer" for="AvailableForOldClients">Отображен на странице "Личный кабинет"</label>
+					<div class="col-sm-5">
+						@Html.CheckBoxFor(model => plan.AvailableForOldClients, new { @id = "AvailableForOldClients", @class = "c-pointer" })
 					</div>
 				</div>
 				<div class="form-group">
@@ -74,9 +80,15 @@
 					</div>
 				</div>
 				<div class="form-group">
+					<label class="col-sm-3 control-label c-pointer">Комментарии</label>
+					<div class="col-sm-5">
+						@Html.TextAreaFor(model => plan.Comments, new { @class = "form-control", @Rows = "5" })
+					</div>
+				</div>
+				<div class="form-group">
 					<button class="btn btn-green" type="submit">Сохранить</button>
 				</div>
-			}
+   }
 		</div>
 
 		@*

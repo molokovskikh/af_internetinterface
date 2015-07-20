@@ -182,8 +182,13 @@ namespace Billing
 				}
 				//Пытаемся удалить сервисы, которые отработали свое
 				var services = session.Query<ClientService>().ToList();
-				foreach (var assignedservice in services)
+				foreach (var assignedservice in services) {
+					if (assignedservice.IsActivated) {
+						// вызов события у сервиса по таймеру
+						assignedservice.Service.OnTimer(session, assignedservice);
+					}
 					assignedservice.TryDeactivate();
+				}
 			});
 		}
 
@@ -211,21 +216,17 @@ namespace Billing
 			var firstPayment = clientPayments.Count == 1;
 			var correctSum = payment.Sum >= client.PhysicalClient.Tariff.Price;
 			// Обработка случая, когда ровно 2 первых платежа пришли за 24 ч. и их сумма >= цены тарифа
-			if (!firstPayment && !correctSum)
-			{
+			if (!firstPayment && !correctSum) {
 				var dateDiff = (clientPayments.Count == 2) ? (clientPayments[1].PaidOn - clientPayments[0].PaidOn) : TimeSpan.Zero;
-				if (dateDiff != TimeSpan.Zero && dateDiff.Duration() <= TimeSpan.FromDays(1d))
-				{
+				if (dateDiff != TimeSpan.Zero && dateDiff.Duration() <= TimeSpan.FromDays(1d)) {
 					firstPayment = true;
 					correctSum = (clientPayments[0].Sum + clientPayments[1].Sum) >= client.PhysicalClient.Tariff.Price;
 				}
 			}
 
 			var correctPlan = FirstPaymentBonusTariffIds.Contains(client.PhysicalClient.Tariff.Id);
-			if (processBonus && firstPayment && correctSum && correctPlan)
-			{
-				var bonusPayment = new Payment(client, client.PhysicalClient.Tariff.Price)
-				{
+			if (processBonus && firstPayment && correctSum && correctPlan) {
+				var bonusPayment = new Payment(client, client.PhysicalClient.Tariff.Price) {
 					Virtual = true,
 					Comment = "Месяц в подарок"
 				};
@@ -369,8 +370,7 @@ namespace Billing
 			session.Save(person);
 			session.SaveEach(writeoffs);
 
-			if (client.CanBlock())
-			{
+			if (client.CanBlock()) {
 				client.SetStatus(Status.Get(StatusType.NoWorked, session));
 				if (client.IsChanged(c => c.Disabled))
 					client.CreareAppeal("Клиент был заблокирован в связи с отрицательным балансом", AppealType.Statistic);

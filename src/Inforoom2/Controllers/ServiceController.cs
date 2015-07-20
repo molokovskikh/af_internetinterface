@@ -6,6 +6,7 @@ using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
+using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
 {
@@ -111,6 +112,61 @@ namespace Inforoom2.Controllers
 			else
 				ErrorMessage(msg);
 			InitServices();
+		}
+
+		public ActionResult InternetPlanChanger()
+		{
+			if (CurrentClient == null) {
+				return RedirectToAction("index", "home");
+			}
+			else {
+				// получение сведения об изменении тарифов
+				var planChangerList = DbSession.Query<PlanChangerData>().ToList();
+				foreach (var changer in planChangerList) {
+					//поиск целевого тариф
+					if (changer.TargetPlan == CurrentClient.PhysicalClient.Plan) {
+						ViewBag.CheapPlan = DbSession.Query<Plan>().FirstOrDefault(s => s == changer.CheapPlan);
+						ViewBag.FastPlan = DbSession.Query<Plan>().FirstOrDefault(s => s == changer.FastPlan);
+						ViewBag.InnerHtml = changer.Text;
+						return View();
+					}
+				}
+				return RedirectToAction("index", "home");
+			}
+		}
+
+		/// <summary>
+		/// Смена тарифного плана
+		/// </summary>
+		/// <param name="plan">Тарифный план</param>
+		/// <returns></returns>
+		[HttpPost]
+		public ActionResult InternetPlanChanger([EntityBinder] Plan plan)
+		{
+			var client = CurrentClient;
+			ViewBag.Client = client;
+			//todo - наверно надо подумать как эти провеки засунуть куда следует
+			var beginDate = client.WorkingStartDate ?? new DateTime();
+			if (beginDate == DateTime.MinValue || beginDate.AddMonths(2) >= SystemTime.Now()) {
+				ErrorMessage("Нельзя менять тариф, в первые 2 месяца после подключения");
+				return View();
+			}
+			var oldPlan = client.PhysicalClient.Plan;
+			var result = client.PhysicalClient.RequestChangePlan(plan);
+			if (result == null) {
+				ErrorMessage("Не достаточно средств для смены тарифного плана");
+				return View();
+			}
+			DbSession.Save(client);
+			DbSession.Save(result);
+			var warning = (client.GetWorkDays() <= 3) ? " Обратите внимание, что у вас низкий баланс!" : "";
+			SuccessMessage("Тариф успешно изменен." + warning);
+			var msg = string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.", oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, result.Sum);
+			var appeal = new Appeal(msg, client, AppealType.User) {
+				Employee = GetCurrentEmployee()
+			};
+			DbSession.Save(appeal);
+			return RedirectToAction("Profile", "Personal");
 		}
 	}
 }

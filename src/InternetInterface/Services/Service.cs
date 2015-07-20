@@ -42,6 +42,10 @@ namespace InternetInterface.Services
 			}
 		}
 
+		public virtual void OnTimer(ISession session, ClientService clientService)
+		{
+		} 
+
 		public virtual bool SupportUserAcivation
 		{
 			get { return false; }

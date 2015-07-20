@@ -21,6 +21,7 @@
 				<th class="sorting" tabindex="0" aria-controls="table-2">Пакет</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">Стоимость</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">Доступен пользователю</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Комментарий</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
 			</tr>
 		</thead>
@@ -33,7 +34,12 @@
 					<td>@item.Speed.ToString("F")</td>
 					<td>@item.PackageSpeed.Id</td>
 					<td>@item.Price</td>
-					<td>@(!item.IsArchived ? "Да" : "Нет")</td>
+					<td>@(!item.Disabled ? "Да" : "Нет")</td>
+					<td><span style="width: 120px;display: block;">
+					@(item.Comments != null ?
+						item.Comments.Length > 100 ? item.Comments.Substring(0, 100) + "..." : item.Comments
+					: "")
+					</span></td>
 					<td>
 						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditPlan", "Plans", new { id = item.Id })">
 							<i class="entypo-vcard"></i>

@@ -482,7 +482,7 @@ namespace InforoomControlPanel.Controllers
 		public JsonResult GetPlansListForRegion(int regionId)
 		{
 			var planList = DbSession.Query<Plan>()
-				.Where(s => s.IsArchived == false && s.RegionPlans.Any(d => d.Region.Id == regionId))
+				.Where(s => s.Disabled == false && s.AvailableForNewClients && s.RegionPlans.Any(d => d.Region.Id == regionId))
 				.Select(d => new {
 					Id = d.Id,
 					Name = d.Name,

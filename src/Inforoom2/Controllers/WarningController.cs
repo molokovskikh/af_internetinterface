@@ -69,9 +69,9 @@ namespace Inforoom2.Controllers
 				return RedirectToAction("Index", "Home");
 			}
 			var services = DbSession.Query<Service>().Where(s => s.IsActivableFromWeb);
-			var blockAccountService = services.OfType<BlockAccountService>().FirstOrDefault();
+			var blockAccountService = services.FirstOrDefault(s => s is BlockAccountService);
 			ViewBag.Client = client;
-			ViewBag.BlockAccountService = blockAccountService;
+			ViewBag.BlockAccountService = blockAccountService.Unproxy();
 			return View("Index");
 		}
 	}
