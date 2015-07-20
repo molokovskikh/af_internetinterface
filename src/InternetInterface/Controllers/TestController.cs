@@ -92,8 +92,8 @@ namespace InternetInterface.Controllers
 		{
 			var allClients = DbSession.Query<Client>().Where(s => s.PhysicalClient != null
 																  && !s.ClientServices.Any(d => d.Service is PlanChanger)).ToList();
-			var planChangerService = DbSession.Query<Service>().FirstOrDefault(s => s.Name == "PlanChanger");
-			DbSession.Save(planChangerService);
+			var planChangerService = DbSession.Query<Service>().FirstOrDefault(s => s.HumanName == "PlanChanger");
+			
 			foreach (var client in allClients)
 			{
 				// создание сервиса PlanChanger для текущего клиента
