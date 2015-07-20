@@ -62,7 +62,7 @@ namespace Billing.Test.Integration
 			session.Save(planChangerData);
 			// присвоение целевого тарифа клиенту, указание даты подключения
 			client.PhysicalClient.Tariff = targetTariff ? tariffTarget : tariffFast;
-			client.BeginWork = DateTime.Now;
+			client.PhysicalClient.LastTimePlanChanged = SystemTime.Now();
 			session.Update(client);
 			// создание сервиса PlanChanger для текущего клиента
 			var clientService = new ClientService(client, Service.GetByType(typeof(PlanChanger)));

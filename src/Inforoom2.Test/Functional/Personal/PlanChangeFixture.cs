@@ -38,7 +38,7 @@ namespace Inforoom2.Test.Functional.Personal
 			PlanChangerDataItem.TargetPlan = tariffTarget;
 			PlanChangerDataItem.Timeout = Timeout;
 			DbSession.Save(PlanChangerDataItem);
-			CurrentClient.WorkingStartDate = DateTime.Now.AddMonths(-3);
+			CurrentClient.PhysicalClient.LastTimePlanChanged = DateTime.Now.AddMonths(-3);
 			CurrentClient.PhysicalClient.Plan = tariffTarget;
 			DbSession.SaveOrUpdate(CurrentClient);
 			DbSession.Flush();
