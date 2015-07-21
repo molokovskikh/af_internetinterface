@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Models;
+using NHibernate.Driver;
 using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
@@ -48,8 +49,15 @@ namespace Inforoom2.Controllers
 		public ActionResult ConnectedHousesLists()
 		{
 			var addresses = DbSession.Query<SwitchAddress>().Where(i => i.House != null).OrderBy(i => i.House.Street.Name).ToList();
-
 			ViewBag.Addresses = addresses;
+
+			var curentRegion = CurrentRegion;
+			ViewBag.CurrentRegion = curentRegion.Name;
+
+			var region = DbSession.Query<Region>().FirstOrDefault(s => s.Name == CurrentRegion.Name);
+			var streets = DbSession.Query<Street>().Where(s => s.Region.Id == region.Id).ToList().OrderBy(o => o.Name);
+			ViewBag.Streets = streets;
+
 			return View();
 		}
 	}
