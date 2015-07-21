@@ -52,6 +52,11 @@ namespace Inforoom2.Models
 			}
 		}
 
+		public PhysicalClient()
+		{
+			LastTimePlanChanged = SystemTime.Now();
+		}
+
 		[ManyToOne(Column = "Tariff"), NotNull(Message = "Выберите тариф"), Description("Тариф")]
 		public virtual Plan Plan { get; set; }
 

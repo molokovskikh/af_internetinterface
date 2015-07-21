@@ -165,6 +165,9 @@ namespace InternetInterface.Models
 		[BelongsTo(Cascade = CascadeEnum.SaveUpdate), Auditable("Дом")]
 		public virtual House HouseObj { get; set; }
 
+		[Property(Column = "_LastTimePlanChanged")]
+		public virtual DateTime LastTimePlanChanged { get; set; }
+
 		[Property]
 		public virtual DateTime? DateOfBirth { get; set; }
 
