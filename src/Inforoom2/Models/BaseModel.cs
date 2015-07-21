@@ -1,22 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Web.Mvc;
-using System.Web.Services.Configuration;
 using Inforoom2.Helpers;
 using NHibernate;
-using NHibernate.Linq;
-using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
-using NHibernate.Mapping.ByCode.Impl;
 using NHibernate.Proxy;
-using NHibernate.Type;
 using NHibernate.Util;
-using NHibernate.Validator.Cfg.Loquacious.Impl;
 using NHibernate.Validator.Engine;
 
 namespace Inforoom2.Models
@@ -28,6 +17,7 @@ namespace Inforoom2.Models
 	{
 		[Id(0, Name = "Id")]
 		[Generator(1, Class = "native")]
+		[Description("Идентификатор модели в базе данных")]
 		public virtual int Id { get; set; }
 
 		//todo Ну и что это за хрень? Может пора ее выпилить?
@@ -41,7 +31,14 @@ namespace Inforoom2.Models
 				return (int)result.First() + 1;
 			return 1;
 		}
-		///TODO (для тестов!)  Не использовать 
+
+		/// <summary>
+		/// Меняет идентификатор модели в базе данных.
+		/// !!!МЕТОД ТОЛЬКО ДЛЯ ТЕСТОВ!!!
+		/// </summary>
+		/// <param name="newid">Новый идентификатор</param>
+		/// <param name="session">Сессия Nhibernate</param>
+		/// <returns></returns>
 		public virtual bool ChangeId(int newid, ISession session)
 		{
 			var attribute = Attribute.GetCustomAttribute(GetType(), typeof(ClassAttribute)) as ClassAttribute;
@@ -52,6 +49,11 @@ namespace Inforoom2.Models
 			return true;
 		}
 
+		/// <summary>
+		/// Метод снятия замещения типа Nhibernate.
+		/// С proxy типами всегда возникают проблемы при приведении типов.
+		/// </summary>
+		/// <returns></returns>
 		public virtual BaseModel Unproxy()
 		{
 			var proxy = this as INHibernateProxy;
@@ -63,6 +65,11 @@ namespace Inforoom2.Models
 			return model;
 		}
 
+		/// <summary>
+		/// Функция валидации модели
+		/// </summary>
+		/// <param name="session">Сессия Nhibernate</param>
+		/// <returns></returns>
 		public virtual InvalidValue[] Validate(ISession session)
 		{
 			return new InvalidValue[0];
@@ -80,6 +87,18 @@ namespace Inforoom2.Models
 				return strategy.TableName(attribute.Table);
 			}
 			return "No name!";
+		}
+
+		/// <summary>
+		/// Безопасный метод снятия замещения типов с объектов Nhibernate. Не выдает ошибок, даже если там null.
+		/// С proxy типами всегда возникают проблемы при приведении типов.
+		/// </summary>
+		/// <param name="model">Модель,дял которой нужно убрать Proxy</param>
+		public static BaseModel UnproxyOrDefault(BaseModel model)
+		{
+			if (model == null)
+				return null;
+			return model.Unproxy();
 		}
 	}
 }

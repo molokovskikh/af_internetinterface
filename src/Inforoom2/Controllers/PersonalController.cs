@@ -341,7 +341,10 @@ namespace Inforoom2.Controllers
 			var client = CurrentClient;
 			var services = DbSession.Query<Service>().Where(s => s.IsActivableFromWeb);
 			var blockAccountService = services.FirstOrDefault(i => i is BlockAccountService);
+			blockAccountService = BaseModel.UnproxyOrDefault(blockAccountService) as BlockAccountService;
+		
 			var deferredPayment = services.FirstOrDefault(i => i is DeferredPayment);
+			deferredPayment = BaseModel.UnproxyOrDefault(deferredPayment) as DeferredPayment;
 			var inforoomServices = new List<Service> { blockAccountService, deferredPayment };
 
 			ViewBag.Client = client;

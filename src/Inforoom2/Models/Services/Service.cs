@@ -7,7 +7,7 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models.Services
 {
-	[Class(0, Table = "Services", NameType = typeof(Service), DiscriminatorValue = "Name")]
+	[Class(0, Table = "Services", NameType = typeof(Service), DiscriminatorValue = "Name", Lazy = false)]
 	[Discriminator(Column = "Name", TypeType = typeof(string))]
 	public class Service : BaseModel
 	{
