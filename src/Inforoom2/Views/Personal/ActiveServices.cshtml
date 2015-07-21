@@ -33,7 +33,7 @@
 					@Html.DisplayFor(modelItem => clientService.EndDate)
 				</td>
 				<td>
-					@switch (clientService.Service.GetType().Name) {
+					@switch (clientService.Service.Unproxy().GetType().Name) {
 						case "BlockAccountService":
 							@Html.ActionLink("Отключить", "BlockAccount", "Service", null, new { @class = "disposalbg", })
 							break;
