@@ -196,6 +196,9 @@
     <Content Include="Images\map.png" />
     <Content Include="Images\maximum.jpg" />
     <Content Include="Images\offer.png" />
+    <Content Include="Images\OfferMini\ДоговорОферта1.png" />
+    <Content Include="Images\OfferMini\доп.соглашение об аренде оборудования.png" />
+    <Content Include="Images\OfferMini\приложение1 к договору-оферте.png" />
     <Content Include="Images\office_mini.png" />
     <Content Include="Images\ogonek.jpg" />
     <Content Include="Images\profile_offer.png" />
@@ -469,6 +472,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Service\InternetPlanChanger.cshtml" />
+    <Content Include="Images\Offer\ДоговорОферта.pdf" />
+    <Content Include="Images\Offer\Дополнительное соглашение.pdf" />
+    <Content Include="Images\Offer\Приложение1 к Договору-Оферте.pdf" />
     <None Include="Web.test2.config" />
     <None Include="Web.release.config">
       <SubType>Designer</SubType>
