@@ -472,9 +472,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Service\InternetPlanChanger.cshtml" />
-    <Content Include="Images\Offer\ДоговорОферта.pdf" />
-    <Content Include="Images\Offer\Дополнительное соглашение.pdf" />
-    <Content Include="Images\Offer\Приложение1 к Договору-Оферте.pdf" />
+    <Content Include="Images\OfferFiles\ДоговорОферта.pdf" />
+    <Content Include="Images\OfferFiles\Дополнительное соглашение.pdf" />
+    <Content Include="Images\OfferFiles\Приложение1 к Договору-Оферте.pdf" />
     <None Include="Web.test2.config" />
     <None Include="Web.release.config">
       <SubType>Designer</SubType>
