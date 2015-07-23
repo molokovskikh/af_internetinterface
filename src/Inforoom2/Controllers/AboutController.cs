@@ -52,10 +52,10 @@ namespace Inforoom2.Controllers
 			ViewBag.Addresses = addresses;
 
 			var curentRegion = CurrentRegion;
-			ViewBag.CurrentRegion = curentRegion.Name;
+			ViewBag.CurrentRegion = curentRegion.City.Name;
 
-			var region = DbSession.Query<Region>().FirstOrDefault(s => s.Name == CurrentRegion.Name);
-			var streets = DbSession.Query<Street>().Where(s => s.Region.Id == region.Id).ToList().OrderBy(o => o.Name);
+			var region = DbSession.Query<Region>().FirstOrDefault(s => s.Name == CurrentRegion.City.Name);
+			var streets = DbSession.Query<Street>().Where(s => s.Region.City.Id == region.City.Id).ToList().OrderBy(o => o.Name);
 			ViewBag.Streets = streets;
 
 			return View();
