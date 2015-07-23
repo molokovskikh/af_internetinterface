@@ -11,7 +11,8 @@
 
 <h2 class="heading">@ViewBag.Title</h2>
 <div class="paddedBlock paragraph">
-	<h3 class="font-header">Подключенные дома по городу  @ViewBag.CurrentRegion</h3>	
+	<h3 class="font-header">Подключенные дома по городу  @ViewBag.CurrentRegion<br/>
+		<i>(для просмотра списка подключенных домов других городов, необходимо изменить город на сайте в левом верхнем углу)</i></h3>	
 	@{
 		foreach (var street in ViewBag.Streets) {
 			var streets = ViewBag.Street;

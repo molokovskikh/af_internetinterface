@@ -360,9 +360,9 @@ namespace Inforoom2.Test.Infrastructure
 
 		private void GenerateRegions()
 		{
-			var vrn = new City();
-			vrn.Name = "Борисоглебск";
-			DbSession.Save(vrn);
+			var bor = new City();
+			bor.Name = "Борисоглебск";
+			DbSession.Save(bor);
 			var blg = new City();
 			blg.Name = "Белгород";
 			DbSession.Save(blg);
@@ -370,7 +370,7 @@ namespace Inforoom2.Test.Infrastructure
 			var region = new Region();
 			region.Name = "Борисоглебск";
 			region.RegionOfficePhoneNumber = "8-800-2000-600";
-			region.City = vrn;
+			region.City = bor;
 			region.OfficeAddress = "Третьяковская улица д6Б";
 			region.OfficeGeomark = "51.3663252,42.08180200000004";
 			region.ShownOnMainPage = true;
@@ -381,7 +381,7 @@ namespace Inforoom2.Test.Infrastructure
 			region = new Region();
 			region.Name = "Борисоглебск (частный сектор)";
 			region.RegionOfficePhoneNumber = "8-800-2000-800";
-			region.City = blg;
+			region.City = bor;
 			region.Parent = new List<Region>() { parent };
 			region.OfficeAddress = "улица Князя Трубецкого д26";
 			region.OfficeGeomark = "50.592548,36.59665819999998";
