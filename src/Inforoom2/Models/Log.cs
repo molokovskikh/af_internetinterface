@@ -9,7 +9,7 @@ namespace Inforoom2.Models
 	{
 		[Description("Добавление")] Insert,
 		[Description("Обновление")] Update,
-		[Description("Удалени")] Delete
+		[Description("Удаление")] Delete
 	}
 	[Description("Логирование действий связанных с моделями")]
 	[Class(0, Table = "logs", NameType = typeof(Log))]
@@ -35,5 +35,13 @@ namespace Inforoom2.Models
 		[Description("Тип события, повлекшего действие связанное с моделью")]
 		[Property]
 		public virtual LogEventType Type { get; set; }
+
+		[Description("Название модели")]
+		[Property]
+		public virtual string ModelClass { get; set; }
+
+		[Description("Id модели")]
+		[Property]
+		public virtual int ModelId { get; set; }
 	}
 }

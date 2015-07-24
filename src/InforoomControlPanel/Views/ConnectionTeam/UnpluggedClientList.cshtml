@@ -25,11 +25,11 @@
 			<tr role="row" class="odd">
 				<td>@item.Id</td>
 				<td>@item.Fullname</td>
-				<td>@item.GetAddress()</td>
+				<td>@item.Address.GetStringForPrint()</td>
 				<td>@item.CreationDate</td>
 				<td>@(item.ConnectionRequest != null && item.ConnectionRequest.ServiceMan != null ? item.ConnectionRequest.ServiceMan.Employee.Name : "Не назначен")</td>
 				<td>
-					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("AttachClient","ConnectionTeam",new {id = item.Id})">
+					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("AttachRequest", "ConnectionTeam", new { id = item.Id, type = ServicemenScheduleItem .Type.ClientConnectionRequest})">
 							<i class="entypo-plus-circled"></i>
 							Назначить в график
 					</a>

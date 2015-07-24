@@ -1516,6 +1516,7 @@
     <Compile Include="Controllers\AdminAccountController.cs" />
     <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\ServiceRequestController.cs" />
     <Compile Include="Controllers\ClientActionsController.cs" />
     <Compile Include="Controllers\ConnectionTeamController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
@@ -1812,22 +1813,10 @@
     <Content Include="Views\Client\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Client\ServiceRequest.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\ConnectionTeam\BigConnectionTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\ConnectionTeam\ServiceRequests.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\ConnectionTeam\AttachServiceRequest.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\Client\RequestsList.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\ConnectionTeam\AttachConnectionRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Client\Request.cshtml" />
@@ -1930,6 +1919,10 @@
     <Content Include="Views\Plans\InternetPlanChangerIndex.cshtml" />
     <Content Include="Views\Plans\CreateInternetPlanChanger.cshtml" />
     <Content Include="Views\Plans\EditInternetPlanChanger.cshtml" />
+    <Content Include="Views\ConnectionTeam\AttachRequest.cshtml" />
+    <Content Include="Views\ServiceRequest\ServiceRequestList.cshtml" />
+    <Content Include="Views\ServiceRequest\ServiceRequestCreate.cshtml" />
+    <Content Include="Views\ServiceRequest\ServiceRequestEdit.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <None Include="Web.release.config">

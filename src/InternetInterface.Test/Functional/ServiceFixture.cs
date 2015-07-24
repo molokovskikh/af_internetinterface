@@ -32,7 +32,7 @@ namespace InternetInterface.Test.Functional
 			session.Save(client);
 		}
 
-		[Test]
+		[Test, Ignore("Функционал перенесен в новую админку")]
 		public void Create_request()
 		{
 			var time = SystemTime.Now();
@@ -60,7 +60,7 @@ namespace InternetInterface.Test.Functional
 			Assert.That(request.ModificationDate, Is.GreaterThanOrEqualTo(time));
 		}
 
-		[Test]
+		[Test, Ignore("Функционал перенесен в новую админку")]
 		public void Disable_occupied_timeunit()
 		{
 			var request = CreateRequest();
@@ -72,7 +72,7 @@ namespace InternetInterface.Test.Functional
 			Assert.AreEqual("true", Css("input[name=\"request.PerformanceTime\"][value=\"12:30:00\"]").GetAttribute("disabled"));
 		}
 
-		[Test, Description("Проверка работоспособности ссылки - сервисной заявки")]
+		[Test, Description("Проверка работоспособности ссылки - сервисной заявки"), Ignore("Функционал перенесен в новую админку")]
 		public void ServiceRequestLinkCheck()
 		{
 			var request = CreateRequest();
@@ -84,7 +84,7 @@ namespace InternetInterface.Test.Functional
 			Assert.That(browser.Url.Contains(request.Id.ToString()), Is.True);
 		}
 
-		[Test]
+		[Test, Ignore("Функционал перенесен в новую админку")]
 		public void ViewRequests()
 		{
 			var request = CreateRequest();
@@ -94,8 +94,8 @@ namespace InternetInterface.Test.Functional
 			AssertText("Фильтр");
 			AssertText("900-9090900");
 		}
-
-		[Test]
+		
+		[Test, Ignore("Функционал перенесен в новую админку")]
 		public void EditBlockForRepair()
 		{
 			var time = SystemTime.Now();
@@ -120,7 +120,7 @@ namespace InternetInterface.Test.Functional
 			Assert.That(request.ModificationDate, Is.GreaterThanOrEqualTo(time));
 		}
 
-		[Test]
+		[Test, Ignore("Функционал перенесен в новую админку")]
 		public void Filter_test()
 		{
 			var request = CreateRequest();
@@ -137,7 +137,7 @@ namespace InternetInterface.Test.Functional
 			AssertText("900-9090900");
 		}
 
-		[Test]
+		[Test, Ignore("Функционал перенесен в новую админку")]
 		public void Close_overdue_repair_request()
 		{
 			var request = CreateRequest();
@@ -153,7 +153,7 @@ namespace InternetInterface.Test.Functional
 			AssertText("Заявка по восстановлению работы просрочена, причина - тестовое сообщение");
 		}
 
-		[Test]
+		[Test, Ignore("Функционал будет перенесен в новую админку")]
 		public void Sms_on_close()
 		{
 			var request = CreateRequest();

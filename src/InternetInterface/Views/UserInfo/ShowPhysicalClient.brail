@@ -48,7 +48,7 @@
 				<td>
 					<a href="${Siteroot}/UserInfo/Leases?filter.ClientCode=${ClientCode}" class="button ok">Статистика работы</a>
 					<a class="big-link button ok" data-reveal-id="myModal_active" href="javascript:void(0)">Управление услугами</a>
-					${app.LinkTo("Сервисная заявка", @ServiceRequest, @New, { @ClientCode: ClientCode, @attributes: {@class: "button ok"}})}
+					<a class="big-link button ok" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}ServiceRequest/ServiceRequestCreate/${ClientCode}" style="color: #00a651;">Сервисная заявка</a>
 					<a href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}HardwareRent/HardwareList?id=${ClientCode}" class="big-link button ok"
 					   style="color: #00a651;" target="_blank"><b>Аренда оборудования</b></a>
 				</td>
@@ -285,7 +285,7 @@
 						</a>
 					<% end %>
 					<% if _client.AdditionalCanUsed("AppointedToTheGraph"): %>
-						${app.LinkTo(naznach_text, @UserInfo, @AppointedToTheGraph, { @ClientCode: ClientCode, @attributes: {@class: "button"} })}
+					<a  class="button" style="color:#00A651" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}ConnectionTeam/AttachRequest/${ClientCode}?type=ClientConnectionRequest">${naznach_text}</a> 
 					<% end %>
 				 </td>
 			</tr>

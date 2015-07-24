@@ -415,7 +415,7 @@ namespace Inforoom2.Test.Infrastructure
 						if (right != null)
 							continue;
 						var newright = new Permission();
-						newright.Name = name; 
+						newright.Name = name;
 						newright.Description = name;
 						DbSession.Save(newright);
 					}
@@ -474,7 +474,8 @@ namespace Inforoom2.Test.Infrastructure
 				RatedPeriodDate = DateTime.Now,
 				FreeBlockDays = 28,
 				WorkingStartDate = DateTime.Now.AddMonths(-3),
-				Lunched = true
+				Lunched = true,
+				WhoRegistered = DbSession.Query<Employee>().FirstOrDefault(e => e.Login == Environment.UserName)
 			};
 			normalClient.Status = DbSession.Get<Status>(5);
 
@@ -543,7 +544,7 @@ namespace Inforoom2.Test.Infrastructure
 			var servicedClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.servicedClient);
 			servicedClient.SetStatus(DbSession.Get<Status>((int)StatusType.BlockedForRepair));
 			var serviceRequest = new ServiceRequest();
-			serviceRequest.BlockNetwork = true;
+			serviceRequest.BlockClientAndWriteOffs = true;
 			serviceRequest.Client = servicedClient;
 			serviceRequest.CreationDate = DateTime.Now;
 			serviceRequest.Description = "Почему-то не работает интернет";
