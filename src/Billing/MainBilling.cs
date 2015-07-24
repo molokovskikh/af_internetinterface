@@ -699,12 +699,13 @@ namespace Billing
 		{
 			// Обработка списаний за аренду конкретного оборудования
 			var phisicalClient = client.PhysicalClient;
+			//Смещение для выравнивания списаний по времени
 			var count = 1;
-			for (var i = HardwareType.TvBox; i < HardwareType.Count; i++) {
-				if (!client.HardwareIsRented(i))
-					continue;
+			foreach (var clientHardware in client.RentalHardwareList) {
+				//Неактивные аренды не сохраняет
+				if (!clientHardware.IsActive)
+					return;
 
-				var clientHardware = client.GetActiveRentalHardware(i);
 				// Если пустая дата начала аренды, деактивировать услугу
 				if (clientHardware.GiveDate == null) {
 					var msg = clientHardware.Deactivate();
