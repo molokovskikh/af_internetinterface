@@ -246,8 +246,7 @@ namespace InternetInterface.Models.Access
 				"ViewRequests",
 				"ShowRequest",
 				"AddIteration",
-				"EditServiceRequest",
-				"AddServiceComment"
+				"EditServiceRequest" 
 			};
 			return _serviceRequest.Contains(methodName) ? "SR" : string.Empty;
 		}

@@ -487,6 +487,14 @@ namespace Inforoom2.Components
 		}
 
 		/// <summary>
+		/// Создает необходимые кнопку подтверждения для формы фильтра.
+		/// </summary>
+		/// <returns></returns>
+		public HtmlString FormFilterSubmit()
+		{ 
+			return new HtmlString(GenerateInputs() + "<input type='submit' value='Поиск' class='btn btn-success btn-sm' />"); ;
+		}
+		/// <summary>
 		/// Создает необходимые инпуты для фильтрации, при помощи Get формы.
 		/// </summary>
 		/// <returns></returns>
@@ -519,12 +527,19 @@ namespace Inforoom2.Components
 				o["class"] = " datepicker " + o["class"];
 				o["date-format"] = "dd.nn.yyyy";
 				o[" data-provide"] = "datepicker-inline";
+				o[" value"] = ((DateTime)additional).ToString("dd.MM.yyyy");
 				return string.Format("<input {0} />", GetPropsValues(o));
 			}
 
 			if (type == HtmlType.text) {
 				o["class"] = " form-control " + o["class"];
 				return string.Format("<input type='text' {0} />", GetPropsValues(o));
+			}
+
+			if (type == HtmlType.Checkbox)
+			{
+				o["class"] = "c-pointer";
+				return string.Format("<input type='checkbox' {0} {1} " + (o.ContainsKey("value")?" checked=checked":"")+ "/>", GetPropsValues(o), additional);
 			}
 
 			if (type == HtmlType.Dropdown) {

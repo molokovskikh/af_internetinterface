@@ -53,10 +53,10 @@ namespace InternetInterface.Models
 		public virtual string Description { get; set; }
 
 		[Property,
-			ValidateNonEmpty,
-			ValidateRegExp(@"^\d{3}-\d{7}$", "Ошибка формата телефонного номера: мобильный телефон (***-*******)"),
-			Description("Контактный телефон"),
-			Auditable]
+		 ValidateNonEmpty,
+		 ValidateRegExp(@"^\d{3}-\d{7}$", "Ошибка формата телефонного номера: мобильный телефон (***-*******)"),
+		 Description("Контактный телефон"),
+		 Auditable]
 		public virtual string Contact { get; set; }
 
 		[Property, Auditable("Статус сервисной заявки")]
@@ -160,12 +160,17 @@ namespace InternetInterface.Models
 			return string.Empty;
 		}
 
+		public virtual string GetPerformerName()
+		{
+			return Performer != null ? Performer.Name : "Не назначена";
+		}
+
 		public virtual UserWriteOff GetWriteOff(ISession session)
 		{
 			if (Status == ServiceRequestStatus.Close
-				&& session.IsChanged(this, r => r.Status)) {
+			    && session.IsChanged(this, r => r.Status)) {
 				if (Sum != null
-					&& Sum > 0) {
+				    && Sum > 0) {
 					var comment = String.Format("Оказание дополнительных услуг, заявка №{0}", Id);
 					return new UserWriteOff(Client, Sum.Value, comment);
 				}
@@ -188,9 +193,9 @@ namespace InternetInterface.Models
 			}
 
 			if (Status == ServiceRequestStatus.Close
-				&& session.IsChanged(this, r => r.Status)
-				&& Sum > 0
-				&& Client.Type == ClientType.Phisical) {
+			    && session.IsChanged(this, r => r.Status)
+			    && Sum > 0
+			    && Client.Type == ClientType.Phisical) {
 				var text = String.Format("С Вашего счета списано {0:C} по сервисной заявке №{1} от {2:d} {3}",
 					Sum, Id, RegDate, CloseSmsMessage);
 				messages.Add(new SmsMessage(Client, Contact, text));

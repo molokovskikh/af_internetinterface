@@ -10,10 +10,10 @@ using Inforoom2.validators;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate;
-using NHibernate.Mapping.Attributes; 
-using NHibernate.Util; 
+using NHibernate.Mapping.Attributes;
+using NHibernate.Util;
 using NHibernate.Validator.Cfg.MappingSchema;
-using NHibernate.Validator.Constraints; 
+using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
@@ -21,19 +21,19 @@ namespace Inforoom2.Models
 	/// Модель пользователя
 	/// </summary>
 	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof(Client)), Description("Клиент")]
-	public class Client : BaseModel, ILogAppeal
+	public class Client : BaseModel, ILogAppeal, IServicemenScheduleItem
 	{
 		public Client()
 		{
 			Endpoints = new List<ClientEndpoint>();
 			ClientServices = new List<ClientService>();
 			Payments = new List<Payment>();
-			ConnectionRequests = new List<ConnectionRequest>();
+			ServicemenScheduleItems = new List<ServicemenScheduleItem>();
 			Contacts = new List<Contact>();
 			UserWriteOffs = new List<UserWriteOff>();
 			WriteOffs = new List<WriteOff>();
-			Appeals = new List<Appeal>(); 
-			RentalHardwareList = new List<ClientRentalHardware>(); 
+			Appeals = new List<Appeal>();
+			RentalHardwareList = new List<ClientRentalHardware>();
 
 			/// из старой админки. 
 			Disabled = true;
@@ -46,20 +46,20 @@ namespace Inforoom2.Models
 			YearCycleDate = DateTime.Now;
 		}
 
-		//todo исправить это почему-то не подцепляет маппинг когда будет решаться задача о графике подключенцев
-		[Bag(0, Table = "ConnectionRequests")]
+		[Bag(0, Table = "ServicemenScheduleItems")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof(ConnectionRequest))]
-		public virtual IList<ConnectionRequest> ConnectionRequests { get; set; }
+		[OneToMany(2, ClassType = typeof(ServicemenScheduleItem))]
+		public virtual IList<ServicemenScheduleItem> ServicemenScheduleItems { get; set; }
 
-		public virtual ConnectionRequest ConnectionRequest
+		public virtual ServicemenScheduleItem ConnectionRequest
 		{
-			get { return ConnectionRequests != null ? ConnectionRequests.FirstOrDefault() : null; }
+			get { return ServicemenScheduleItems != null ? ServicemenScheduleItems.FirstOrDefault() : null; }
 			set { }
 		}
 
 		[Property, Description("Перенесено из старой админки")]
 		public virtual DateTime ConnectedDate { get; set; }
+
 		[Property, Description("Перенесено из старой админки (в старом проекте ему ничего не присваивается.)")]
 		public virtual DateTime? BlockDate { get; set; }
 
@@ -125,7 +125,6 @@ namespace Inforoom2.Models
 		public virtual LegalClient LegalClient { get; set; }
 
 		[Bag(0, Table = "ClientServices", Cascade = "all-delete-orphan")]
-
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof(ClientService))]
 		public virtual IList<ClientService> ClientServices { get; set; }
@@ -172,10 +171,10 @@ namespace Inforoom2.Models
 		public virtual Employee WhoRegistered { get; set; }
 
 		[Property(Column = "WhoRegisteredName")]
-		public virtual string WhoRegisteredName { get; set; } 
+		public virtual string WhoRegisteredName { get; set; }
 
 		[ManyToOne(Column = "Agent", Cascade = "save-update")]
-		public virtual Agent Agent { get; set; } 
+		public virtual Agent Agent { get; set; }
 
 		public virtual bool IsNeedRecofiguration { get; set; }
 
@@ -305,21 +304,18 @@ namespace Inforoom2.Models
 
 		public virtual void SetStatus(Status status)
 		{
-			if (status.Type == StatusType.VoluntaryBlocking)
-			{
+			if (status.Type == StatusType.VoluntaryBlocking) {
 				Disabled = true;
 				DebtDays = 0;
 				AutoUnblocked = false;
 			}
-			else if (status.Type == StatusType.NoWorked)
-			{
+			else if (status.Type == StatusType.NoWorked) {
 				Disabled = true;
 				Discount = 0;
 				StartNoBlock = null;
 				AutoUnblocked = true;
 			}
-			else if (status.Type == StatusType.Worked)
-			{
+			else if (status.Type == StatusType.Worked) {
 				Disabled = false;
 				//если мы возобновили работу после поломки то дата начала периода тарификации не должна изменяться
 				//если ее сбросить списания начнутся только когда клиент получит аренду
@@ -328,18 +324,15 @@ namespace Inforoom2.Models
 				DebtDays = 0;
 				ShowBalanceWarningPage = false;
 			}
-			else if (status.Type == StatusType.BlockedForRepair)
-			{
+			else if (status.Type == StatusType.BlockedForRepair) {
 				Disabled = true;
 				AutoUnblocked = false;
 			}
-			else if (status.Type == StatusType.Dissolved)
-			{
+			else if (status.Type == StatusType.Dissolved) {
 				Discount = 0;
 			}
 
-			if (Status.Type != status.Type)
-			{
+			if (Status.Type != status.Type) {
 				StatusChangedOn = DateTime.Now;
 			}
 			Status = status;
@@ -364,6 +357,7 @@ namespace Inforoom2.Models
 			// Контакты находятся в отдельной таблице
 			//set { PhysicalClient.Email = value; }
 		}
+
 		// TODO: нужно ли оно ???
 		[Property(Column = "Name")]
 		public virtual string _Name { get; set; }
@@ -401,12 +395,13 @@ namespace Inforoom2.Models
 			get { return PhysicalClient != null ? PhysicalClient.Plan : null; }
 		}
 
-		public virtual void WriteOff(decimal sum, bool isVirtual)
+		public virtual WriteOff WriteOff(decimal sum, bool isVirtual)
 		{
 			if (PhysicalClient != null)
-				PhysicalClient.WriteOff(sum, isVirtual);
+				return PhysicalClient.WriteOff(sum, isVirtual);
 			//else
 			//LawyerPerson.Balance -= sum;
+			return null;
 		}
 
 
@@ -415,8 +410,7 @@ namespace Inforoom2.Models
 			if (PhysicalClient == null)
 				return true;
 			var hasPassportData = !string.IsNullOrEmpty(PhysicalClient.PassportNumber);
-			if (PhysicalClient.CertificateType == CertificateType.Passport)
-			{
+			if (PhysicalClient.CertificateType == CertificateType.Passport) {
 				hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportSeries);
 				hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportResidention);
 			}
@@ -450,7 +444,17 @@ namespace Inforoom2.Models
 
 		public virtual string GetAddress()
 		{
-			return _oldAdressStr;
+			return Address.GetStringForPrint();
+		}
+
+		public virtual Client GetClient()
+		{
+			return this;
+		}
+
+		public virtual string GetPhone()
+		{
+			return this.PhoneNumber;
 		}
 
 		public virtual Client GetAppealClient(ISession session)
@@ -463,11 +467,12 @@ namespace Inforoom2.Models
 			return new List<string>() {
 				"LegalClient",
 				"Status",
-				"SendSmsNotification" 
+				"SendSmsNotification"
 			};
 		}
+
 		public virtual string GetAdditionalAppealInfo(string property, object oldPropertyValue, ISession session)
-		{ 
+		{
 			return "";
 		}
 	}
@@ -475,19 +480,12 @@ namespace Inforoom2.Models
 
 	public enum StatusType
 	{
-		[Description("Зарегистрирован")]
-		BlockedAndNoConnected = 1,
-		[Description("Не подключен")]
-		BlockedAndConnected = 3,
-		[Description("Подключен")]
-		Worked = 5,
-		[Description("Заблокирован")]
-		NoWorked = 7,
-		[Description("Добровольная блокировка")]
-		VoluntaryBlocking = 9,
-		[Description("Расторгнут")]
-		Dissolved = 10,
-		[Description("Заблокирован - Восстановление работы")]
-		BlockedForRepair = 11
+		[Description("Зарегистрирован")] BlockedAndNoConnected = 1,
+		[Description("Не подключен")] BlockedAndConnected = 3,
+		[Description("Подключен")] Worked = 5,
+		[Description("Заблокирован")] NoWorked = 7,
+		[Description("Добровольная блокировка")] VoluntaryBlocking = 9,
+		[Description("Расторгнут")] Dissolved = 10,
+		[Description("Заблокирован - Восстановление работы")] BlockedForRepair = 11
 	}
 }

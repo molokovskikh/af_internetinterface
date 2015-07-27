@@ -1,4 +1,5 @@
 ﻿using System;
+using Common.Tools;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
@@ -12,6 +13,7 @@ namespace Inforoom2.Models
 			Client = client;
 			Sum = sum;
 			Comment = comment;
+			Date = SystemTime.Now();
 		}
 
 		public UserWriteOff()
@@ -32,5 +34,8 @@ namespace Inforoom2.Models
 
 		[Property(Column = "BillingAccount")]
 		public virtual bool IsProcessedByBilling { get; set; }
+
+		[ManyToOne(Column = "Registrator")]
+		public virtual Employee Employee { get; set; }
 	}
 }
