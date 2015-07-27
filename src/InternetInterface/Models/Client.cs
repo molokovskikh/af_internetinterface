@@ -518,27 +518,6 @@ namespace InternetInterface.Models
 		}
 
 		/// <summary>
-		/// Метод для проверки, арендовано ли оборудование типа hwType у клиента
-		/// </summary>
-		public virtual bool HardwareIsRented(HardwareType hwType)
-		{
-			if (RentalHardwareList == null || hwType == HardwareType.None || hwType == HardwareType.Count)
-				return false;
-			return RentalHardwareList.ToList().Exists(rh => rh.Hardware.Type == hwType && rh.IsActive);
-		}
-
-		/// <summary>
-		/// Метод получения у клиента текущей услуги "Аренда оборудования" типа hwType
-		/// </summary>
-		public virtual ClientRentalHardware GetActiveRentalHardware(HardwareType hwType)
-		{
-			if (RentalHardwareList == null || hwType == HardwareType.None || hwType == HardwareType.Count)
-				return null;
-			var thisHardware = RentalHardwareList.Where(rh => rh.Hardware.Type == hwType && rh.IsActive).ToList();
-			return thisHardware.OrderBy(h => h.BeginDate).LastOrDefault();
-		}
-
-		/// <summary>
 		/// Метод определения того, что у клиента имеется арендованное оборудование
 		/// </summary>
 		public virtual bool HasActiveRentalHardware()

@@ -18,25 +18,22 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult HardwareList(int id)
 		{
 			var client = DbSession.Get<Client>(id);
+			var rentalHardwareList = DbSession.Query<RentalHardware>().ToList();
 			ViewBag.Client = client;
-			var rentIsActive = new bool[(int)HardwareType.Count];
-			rentIsActive[(int)HardwareType.TvBox] = client.HardwareIsRented(HardwareType.TvBox);
-			for (var i = HardwareType.Switch; i < HardwareType.Count; i++) {
-				rentIsActive[(int)i] = client.HardwareIsRented(i);
-			}
-			ViewBag.ActiveRent = rentIsActive;
+			ViewBag.RentalHardwareList = rentalHardwareList;
 			return View();
 		}
 
 		/// <summary>
 		/// Отображает инф-цию об арендуемом оборудовании либо деактивирует данную аренду
 		/// </summary>
-		public ActionResult UpdateHardwareRent(int id, HardwareType hardware)
+		public ActionResult UpdateHardwareRent(int id, uint hardware)
 		{
+			var rentalHardware = DbSession.Query<RentalHardware>().First(i => i.Id == hardware);
 			var client = DbSession.Get<Client>(id);
 			// Обработка случая с деактивацией аренды
-			if (client.HardwareIsRented(hardware)) {
-				var thisHardware = client.GetActiveRentalHardware(hardware);
+			if (client.HardwareIsRented(rentalHardware)) {
+				var thisHardware = client.GetActiveRentalHardware(rentalHardware);
 				if (thisHardware == null || thisHardware.Client == null)
 					ErrorMessage("Невозможно деактивировать услугу!");
 				else {
@@ -53,7 +50,7 @@ namespace InforoomControlPanel.Controllers
 
 			// Обработка случая с активацией аренды
 			var rentHardware = DbSession.Query<RentalHardware>().ToList()
-					.Where(rh => rh.Type == hardware).ToList().FirstOrDefault();
+					.Where(rh => rh == rentalHardware).ToList().FirstOrDefault();
 			if (rentHardware == null) {
 				ErrorMessage("Невозможно арендовать данное оборудование!");
 				return RedirectToAction("HardwareList", new {@id = client.Id});

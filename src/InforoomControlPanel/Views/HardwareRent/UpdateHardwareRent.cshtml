@@ -6,7 +6,6 @@
 	ViewBag.Title = "Услуга \"Аренда оборудования\"";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	ClientRentalHardware clientRentalHardware = ViewBag.ClientHardware;
-	var hwName = (clientRentalHardware.Hardware != null ? clientRentalHardware.Hardware.Type.GetDescription() : HardwareType.None.GetDescription()).ToUpper();
 	var date = (clientRentalHardware.GiveDate.HasValue) ? clientRentalHardware.GiveDate.Value.ToShortDateString() : "";
 	ValidationRunner validationRunner = ViewBag.Validation;
 }
@@ -18,7 +17,7 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Тип оборудования:</label>
 				<div class = "col-sm-4">
-					@Html.DisplayFor(hwt => hwName, new { @class = "form-control" })
+					@Html.DisplayFor(hwt => clientRentalHardware.Hardware.Name, new { @class = "form-control" })
 				</div>
 			</div>
 			<div class="form-group">

@@ -207,22 +207,17 @@ namespace Inforoom2.Models
 		/// <summary>
 		/// Метод для проверки, арендовано ли оборудование типа hwType у клиента
 		/// </summary>
-		public virtual bool HardwareIsRented(HardwareType hwType)
+		public virtual bool HardwareIsRented(RentalHardware hw)
 		{
-			if (hwType == HardwareType.None || hwType == HardwareType.Count)
-				return false;
-			return RentalHardwareList.ToList().Exists(rh => rh.Hardware.Type == hwType && rh.IsActive);
+			return RentalHardwareList.ToList().Exists(rh => rh.Hardware == hw && rh.IsActive);
 		}
 
 		/// <summary>
-		/// Метод получения у клиента текущей услуги "Аренда оборудования" типа hwType
+		/// Метод получения у клиента текущей услуги "Аренда оборудования" 
 		/// </summary>
-		public virtual ClientRentalHardware GetActiveRentalHardware(HardwareType hwType)
+		public virtual ClientRentalHardware GetActiveRentalHardware(RentalHardware hw)
 		{
-			if (hwType == HardwareType.None || hwType == HardwareType.Count)
-				return null;
-
-			var thisHardware = RentalHardwareList.Where(rh => rh.Hardware.Type == hwType && rh.IsActive).ToList();
+			var thisHardware = RentalHardwareList.Where(rh => rh.Hardware == hw && rh.IsActive).ToList();
 			return thisHardware.OrderBy(h => h.BeginDate).LastOrDefault();
 		}
 
