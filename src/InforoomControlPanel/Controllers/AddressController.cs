@@ -288,7 +288,9 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult HouseList()
 		{
-			var pager = new ModelFilter<House>(this, orderByColumn: "Number");
+			var pager = new ModelFilter<House>(this);
+			pager.SetOrderBy("Number");
+
 			var criteria = pager.GetCriteria();
 			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());
 			if (!string.IsNullOrEmpty(pager.GetParam("Number")))

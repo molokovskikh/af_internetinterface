@@ -6,10 +6,42 @@
 	var urlRoot = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
 	ViewBag.Title = "Список пользователей";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	IList<Client> clients = ViewBag.Clients;
 	ModelFilter<Client> pager = ViewBag.Pager;
+	IList<Client> clients = pager.GetItems();
 }
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+	<form>
+		<div class="row">
+			<div class="col-sm-2">Зарегестрирован с </div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date,ComparsionType.GreaterOrEqueal, new {@class = "form-control"})</div>
+			<div class="col-sm-1">по</div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-2">Подключена услуга</div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.ClientServices.First().Service.Name, HtmlType.Dropdown,ComparsionType.Equal, new {@class = "form-control"})</div>
+			<div class="col-sm-2">Статус</div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.Status.Name, HtmlType.Dropdown,ComparsionType.Equal, new {@class = "form-control"})</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-2">Есть записи</div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.Appeals.First().AppealType, HtmlType.Dropdown,ComparsionType.Equal, new {@class = "form-control"})</div>
+			<div class="col-sm-2">Проверен</div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.PhysicalClient.Checked, HtmlType.Dropdown,ComparsionType.Equal, new {@class = "form-control"})</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-2">Фамилия</div>
+			<div class="col-sm-3">
+				@pager.FormFilter(i => i.PhysicalClient.Surname, HtmlType.text, ComparsionType.Like, new {@class = "form-control"})
+			</div>
+			<div class="col-sm-1">
+				@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+			</div>
+			<div class="col-sm-1">
+				@pager.ExportButton(new { @class = "btn btn-sm btn-blue" })
+			</div>
+		</div>
+	</form>
 	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 		<thead>
 			<tr role="row">

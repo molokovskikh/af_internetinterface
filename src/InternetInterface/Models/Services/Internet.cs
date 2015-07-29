@@ -33,8 +33,7 @@ namespace InternetInterface.Models.Services
 		public override void ForceDeactivate(ClientService assignedService)
 		{
 			var client = assignedService.Client;
-			if (!client.Disabled
-			    && !assignedService.ActivatedByUser) {
+			if (!client.Disabled && !assignedService.ActivatedByUser) {
 				//если null значит клиент не начал работать и не за что списывать
 				if (client.RatedPeriodDate != null) {
 					var comment = string.Format("Абонентская плата за {0} из-за отключения услуги {1}", DateTime.Now.ToShortDateString(), HumanName);
@@ -48,8 +47,7 @@ namespace InternetInterface.Models.Services
 
 		public override void Activate(ClientService assignedService)
 		{
-			if (assignedService.ActivatedByUser
-			    && !assignedService.Client.Disabled) {
+			if (assignedService.ActivatedByUser && !assignedService.Client.Disabled) {
 				base.Activate(assignedService);
 				assignedService.Client.CreareAppeal(String.Format("Включена услуга \"{0}\"", HumanName));
 			}
@@ -61,6 +59,6 @@ namespace InternetInterface.Models.Services
 			    || !assignedService.ActivatedByUser)
 				return 0;
 			return assignedService.Client.GetTariffPrice();
-		} 
+		}
 	}
 }

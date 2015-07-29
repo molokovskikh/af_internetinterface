@@ -48,10 +48,10 @@
 	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 		<thead>
 			<tr role="row">
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Street.Region)">Регион (Регион улицы)</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Street)">Улица</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Number)">Номер</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Confirmed)">Проверенно яндексом</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Street.Region)">Регион (Регион улицы)</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Street)">Улица</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Number)">Номер</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Confirmed)">Проверенно яндексом</a></th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
 			</tr>
 		</thead>

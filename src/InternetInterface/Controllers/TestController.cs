@@ -47,10 +47,9 @@ namespace InternetInterface.Controllers
 				PropertyBag["content"] = "";
 				//controllerContext.PropertyBag["MapPartner"] = InitializeContent.Partner;
 			};
-			AfterAction += (action, context1, controller, controllerContext) => {
-				RenderView("index");
-			};
+			AfterAction += (action, context1, controller, controllerContext) => { RenderView("index"); };
 		}
+
 		/// <summary>
 		/// Проверка обработки списаний с юридических лиц
 		/// </summary>
@@ -79,7 +78,7 @@ namespace InternetInterface.Controllers
 		public void CanBlockTest(uint id = 0)
 		{
 #if DEBUG
-			if(id == 0)
+			if (id == 0)
 				return;
 			var client = DbSession.Query<Client>().FirstOrDefault(i => i.Id == id);
 			var block = client.CanBlock();
@@ -91,14 +90,12 @@ namespace InternetInterface.Controllers
 		public void PlanChangerBinder()
 		{
 			var allClients = DbSession.Query<Client>().Where(s => s.PhysicalClient != null
-																  && !s.ClientServices.Any(d => d.Service is PlanChanger)).ToList();
+			                                                      && !s.ClientServices.Any(d => d.Service is PlanChanger)).ToList();
 			var planChangerService = DbSession.Query<Service>().FirstOrDefault(s => s.HumanName == "PlanChanger");
-			
-			foreach (var client in allClients)
-			{
+
+			foreach (var client in allClients) {
 				// создание сервиса PlanChanger для текущего клиента
-				var clientService = new ClientService()
-				{
+				var clientService = new ClientService() {
 					Client = client,
 					Service = planChangerService,
 					BeginWorkDate = SystemTime.Now(),

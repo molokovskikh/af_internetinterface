@@ -6,6 +6,7 @@ using Inforoom2.Models;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NHibernate.Transform;
+using Remotion.Linq.Clauses;
 
 namespace InforoomControlPanel.Controllers
 {
@@ -39,7 +40,8 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult CallMeBackTicketIndex()
 		{
-			var pager = new ModelFilter<CallMeBackTicket>(this, 10, orderByColumn: "CreationDate", orderDirrection: false);
+			var pager = new ModelFilter<CallMeBackTicket>(this);
+			pager.SetOrderBy("CreationDate", OrderingDirection.Desc);
 			ViewBag.Pager = pager;
 			return View();
 		}

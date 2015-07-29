@@ -11,6 +11,7 @@ using Inforoom2.Helpers;
 using Inforoom2.Intefaces;
 using Inforoom2.Models;
 using NHibernate.Linq;
+using Remotion.Linq.Clauses;
 
 namespace InforoomControlPanel.Controllers
 {
@@ -167,7 +168,8 @@ namespace InforoomControlPanel.Controllers
 		/// </summary> 
 		public ActionResult LogRegResultList()
 		{
-			var pager = new ModelFilter<Log>(this, urlBasePrefix: "/", orderByColumn:"Id",orderDirrection: false);
+			var pager = new ModelFilter<Log>(this);
+			pager.SetOrderBy("Id",OrderingDirection.Desc);
 			var logs = pager.GetCriteria().List<Log>();
 			ViewBag.Pager = pager;
 			ViewBag.Logs = logs;
