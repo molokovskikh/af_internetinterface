@@ -7,7 +7,7 @@
 	ViewBag.Title = "Заявки клиентов на регистрацию";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	List<ClientRequest> clientRequests = ViewBag.ClientRequests;
-	ModelFilter<ClientRequest> pager = ViewBag.Pager;
+	InforoomModelFilter<ClientRequest> pager = ViewBag.Pager;
 }
 
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">

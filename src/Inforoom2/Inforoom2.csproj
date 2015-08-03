@@ -48,6 +48,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Castle.Components.Validator.2.5.4\lib\net40\Castle.Components.Validator.dll</HintPath>
     </Reference>
+    <Reference Include="ExcelLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ExcelLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\NPOI.2.0.6\lib\net40\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="Iesi.Collections">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
@@ -57,7 +65,6 @@
       <HintPath>..\..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.Web.Infrastructure">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -263,6 +270,7 @@
   <ItemGroup>
     <Compile Include="Components\EmailSender.cs" />
     <Compile Include="Components\EntityBinder.cs" />
+    <Compile Include="Components\InforoomModelFilter.cs" />
     <Compile Include="Components\ModelFilter.cs" />
     <Compile Include="Components\YandexParser.cs" />
     <Compile Include="Components\HtmlTag.cs" />

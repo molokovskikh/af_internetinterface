@@ -7,7 +7,7 @@
 	ViewBag.Title = "Список логов";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	IList<Log> logs = ViewBag.Logs;
-	ModelFilter<Log> pager = ViewBag.Pager;
+	InforoomModelFilter<Log> pager = ViewBag.Pager;
 }
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
 	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">

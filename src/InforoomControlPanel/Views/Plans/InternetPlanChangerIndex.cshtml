@@ -5,7 +5,7 @@
 @{
 	ViewBag.Title = "Список правил смены тарифа услугой Internet";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	ModelFilter<PlanChangerData> pager = ViewBag.Pager;
+	InforoomModelFilter<PlanChangerData> pager = ViewBag.Pager;
 	IList<PlanChangerData> changerData = pager.GetItems();
 }
 <div class="form-group">

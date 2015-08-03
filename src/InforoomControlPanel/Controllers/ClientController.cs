@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
+using System.Web.UI;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NHibernate.Util;
+using Remotion.Linq.Clauses;
 using Agent = Inforoom2.Models.Agent;
 using Client = Inforoom2.Models.Client;
 using ClientService = Inforoom2.Models.ClientService;
@@ -50,17 +52,14 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult List()
 		{
-			var pager = new ModelFilter<Client>(this, urlBasePrefix: "/");
-			var clients = pager.GetCriteria(i => i.PhysicalClient != null).List<Client>();
-
+			var pager = new InforoomModelFilter<Client>(this);
+			var criteria = pager.GetCriteria(i => i.PhysicalClient != null);
+			if (pager.IsExportRequested()) {
+				pager.GetItems();
+				pager.SetExportFields( s => new { s, s.Surname, s.PhysicalClient.Name, s.Patronymic, Вкусняшка = s.Address, Агентище = s.Agent, Улица = s.Address.House.Street.Name, Номерок = s.Address.House.Number });
+				pager.ExportToExcelFile(ControllerContext.HttpContext);
+			}
 			ViewBag.Pager = pager;
-			ViewBag.Clients = clients;
-
-			//Пагинация
-			ViewBag.Models = clients;
-			ViewBag.Page = pager;
-			ViewBag.ModelsPerPage = pager.ItemsPerPage;
-			ViewBag.ModelsCount = DbSession.QueryOver<Client>().Where(i => i.PhysicalClient != null).RowCount();
 			return View("List");
 		}
 
@@ -231,7 +230,8 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult RequestsList()
 		{
-			var pager = new ModelFilter<ClientRequest>(this, urlBasePrefix: "/", orderByColumn: "RegDate",orderDirrection:false);
+			var pager = new InforoomModelFilter<ClientRequest>(this);
+			pager.SetOrderBy("RegDate",OrderingDirection.Desc);
 			var clientRequests = pager.GetCriteria().List<ClientRequest>();
 			ViewBag.Pager = pager;
 			ViewBag.ClientRequests = clientRequests;

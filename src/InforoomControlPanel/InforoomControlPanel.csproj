@@ -44,6 +44,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp">
       <Private>True</Private>
     </Reference>
@@ -1516,6 +1520,7 @@
     <Compile Include="Controllers\AdminAccountController.cs" />
     <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\SpreadSheetController.cs" />
     <Compile Include="Controllers\ClientActionsController.cs" />
     <Compile Include="Controllers\ConnectionTeamController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
@@ -1930,6 +1935,9 @@
     <Content Include="Views\Plans\InternetPlanChangerIndex.cshtml" />
     <Content Include="Views\Plans\CreateInternetPlanChanger.cshtml" />
     <Content Include="Views\Plans\EditInternetPlanChanger.cshtml" />
+    <Content Include="Views\SpreadSheet\Index.cshtml" />
+    <Content Include="Views\SpreadSheet\Client.cshtml" />
+    <Content Include="Views\SpreadSheet\WriteOffs.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <None Include="Web.release.config">

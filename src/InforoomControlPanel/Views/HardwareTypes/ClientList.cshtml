@@ -10,7 +10,7 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	
 	IList<RentalHardware> hardware = ViewBag.Hardware;
-	ModelFilter<Client> pager = ViewBag.Pager;
+	InforoomModelFilter<Client> pager = ViewBag.Pager;
 	IList<Client> clients = pager.GetItems();
 	var hardwarelist = new NameValueCollection();
 	hardwarelist["0"] = " ";

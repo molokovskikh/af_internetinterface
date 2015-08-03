@@ -18,6 +18,7 @@ namespace Inforoom2.Components
 		textarea =3,
 		none = 0,
 		Date = 4,
-		Dropdown = 5
+		Dropdown = 5,
+		checkbox = 3
 	}
 }

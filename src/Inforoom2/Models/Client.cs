@@ -68,9 +68,12 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual bool Disabled { get; set; }
-
+		
 		[Property(NotNull = true)]
 		public virtual int DebtDays { get; set; }
+
+		[Property(NotNull = true)]
+		public virtual ClientType Type { get; set; }
 
 		[Property(NotNull = true)]
 		public virtual bool ShowBalanceWarningPage { get; set; }
@@ -182,6 +185,11 @@ namespace Inforoom2.Models
 		public virtual bool IsWorkStarted()
 		{
 			return WorkingStartDate != null;
+		}
+
+		public virtual bool IsPhysicalClient
+		{
+			get { return PhysicalClient == null; }
 		}
 
 		public virtual ClientService Internet
@@ -444,8 +452,7 @@ namespace Inforoom2.Models
 
 		public virtual string Fullname
 		{
-			get { return PhysicalClient != null ? PhysicalClient.FullName : _Name; }
-			set { }
+			get { return PhysicalClient != null ? PhysicalClient.FullName : _Name; } 
 		}
 
 		public virtual string GetAddress()
@@ -471,8 +478,16 @@ namespace Inforoom2.Models
 			return "";
 		}
 	}
-
-
+	/// <summary>
+	/// /Тип клиента
+	/// </summary>
+	public enum ClientType
+	{
+		[Description("Физичекое лицо")]
+		PhysicalClient = 1,
+		[Description("Юридическое лицо")]
+		Lawer = 2, 
+	}
 	public enum StatusType
 	{
 		[Description("Зарегистрирован")]

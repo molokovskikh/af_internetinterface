@@ -17,7 +17,7 @@ namespace Inforoom2.Models
 	{
 		[Id(0, Name = "Id")]
 		[Generator(1, Class = "native")]
-		[Description("Идентификатор модели в базе данных")]
+		[Description("Номер")]
 		public virtual int Id { get; set; }
 
 		//todo Ну и что это за хрень? Может пора ее выпилить?

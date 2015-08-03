@@ -61,7 +61,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult ClientList()
 		{
-			var pager = new ModelFilter<Client>(this);
+			var pager = new InforoomModelFilter<Client>(this);
 			var criteria = pager.GetCriteria(i => i.PhysicalClient != null);
 			//Это эквивалентно Group By по Id. Нельзя использовать Group By в проекциях, так как это сужает селект до 1го поля
 			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());

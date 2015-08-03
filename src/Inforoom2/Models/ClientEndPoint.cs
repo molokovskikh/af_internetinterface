@@ -22,6 +22,9 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "Client", Cascade = "save-update")]
 		public virtual Client Client { get; set; }
 
+		[OneToOne(PropertyRef = "Endpoint")]
+		public virtual Lease Lease { get; set; }
+
 		[ManyToOne(Column = "Switch")]
 		public virtual Switch Switch { get; set; }
 
