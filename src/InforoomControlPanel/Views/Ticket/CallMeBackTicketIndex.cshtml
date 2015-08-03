@@ -5,7 +5,7 @@
 @{
 	ViewBag.Title = "Заявки на обратный звонок";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	ModelFilter<CallMeBackTicket> pager = ViewBag.Pager;
+	InforoomModelFilter<CallMeBackTicket> pager = ViewBag.Pager;
 	IList<CallMeBackTicket> tickets = pager.GetItems();
 }
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">

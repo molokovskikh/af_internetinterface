@@ -1520,6 +1520,7 @@
     <Compile Include="Controllers\AdminAccountController.cs" />
     <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\SpreadSheetController.cs" />
     <Compile Include="Controllers\ClientActionsController.cs" />
     <Compile Include="Controllers\ConnectionTeamController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
@@ -1934,6 +1935,9 @@
     <Content Include="Views\Plans\InternetPlanChangerIndex.cshtml" />
     <Content Include="Views\Plans\CreateInternetPlanChanger.cshtml" />
     <Content Include="Views\Plans\EditInternetPlanChanger.cshtml" />
+    <Content Include="Views\SpreadSheet\Index.cshtml" />
+    <Content Include="Views\SpreadSheet\Client.cshtml" />
+    <Content Include="Views\SpreadSheet\WriteOffs.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <None Include="Web.release.config">

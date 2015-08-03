@@ -7,7 +7,7 @@
 @{
 	ViewBag.Title = "Дома";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	ModelFilter<House> pager = ViewBag.Pager;
+	InforoomModelFilter<House> pager = ViewBag.Pager;
 	IList<House> houses = pager.GetItems();
 	List<Street> streets = ViewBag.Streets;
 	List<Region> regions = ViewBag.Regions;

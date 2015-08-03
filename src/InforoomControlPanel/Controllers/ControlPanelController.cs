@@ -22,8 +22,7 @@ namespace InforoomControlPanel.Controllers
 
 			//если клиент был залогинен по сети, то HTTPСontext не будет изменен
 			//в этом случае можно оттолкнуть от переменной CurrentClient
-			if (!filterContext.HttpContext.User.Identity.IsAuthenticated)
-			{
+			if (!filterContext.HttpContext.User.Identity.IsAuthenticated) {
 				string loginUrl = "/AdminAccount/Index"; // Default Login Url 
 				filterContext.Result = new RedirectResult(loginUrl);
 				return;
@@ -34,14 +33,13 @@ namespace InforoomControlPanel.Controllers
 			string name = ViewBag.ControllerName + "Controller_" + ViewBag.ActionName;
 			var permission = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
 			//@todo убрать проверку, на accessDenined, а вместо этого просто не генерировать его. В целом подумать
-			if (permission != null && permission.Name != "Admin_AccessDenined" && (employee==null  || !employee.HasAccess(permission.Name)))
+			if (permission != null && permission.Name != "Admin_AccessDenined" && (employee == null || !employee.HasAccess(permission.Name)))
 				filterContext.Result = new RedirectResult("/Admin/AccessDenined");
 		}
 
 		public override Employee GetCurrentEmployee()
 		{
-			if (User == null || DbSession == null || !DbSession.IsConnected)
-			{
+			if (User == null || DbSession == null || !DbSession.IsConnected) {
 				return null;
 			}
 			return DbSession.Query<Employee>().FirstOrDefault(e => e.Login == User.Identity.Name);
@@ -68,18 +66,15 @@ namespace InforoomControlPanel.Controllers
 
 			IList<TModel> models;
 			TModel targetModel;
-			if (direction == "Up")
-			{
+			if (direction == "Up") {
 				models = DbSession.Query<TModel>().OrderByDescending(k => k.Priority).ToList();
 				targetModel = models.FirstOrDefault(k => k.Priority < model.Priority);
 			}
-			else
-			{
+			else {
 				models = DbSession.Query<TModel>().OrderBy(k => k.Priority).ToList();
 				targetModel = models.FirstOrDefault(k => k.Priority > model.Priority);
 			}
-			if (targetModel != null)
-			{
+			if (targetModel != null) {
 				int targetPriority = targetModel.Priority;
 				targetModel.Priority = model.Priority;
 				model.Priority = maxIndex;
@@ -92,6 +87,5 @@ namespace InforoomControlPanel.Controllers
 			}
 			return RedirectToAction(actionName, controllerName);
 		}
-
 	}
 }

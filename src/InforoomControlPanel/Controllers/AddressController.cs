@@ -195,7 +195,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult StreetList()
 		{
-			var pager = new ModelFilter<Street>(this);
+			var pager = new InforoomModelFilter<Street>(this);
 			var criteria = pager.GetCriteria();
 			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());
 			if (!string.IsNullOrEmpty(pager.GetParam("Name")))
@@ -288,7 +288,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult HouseList()
 		{
-			var pager = new ModelFilter<House>(this);
+			var pager = new InforoomModelFilter<House>(this);
 			pager.SetOrderBy("Number");
 
 			var criteria = pager.GetCriteria();

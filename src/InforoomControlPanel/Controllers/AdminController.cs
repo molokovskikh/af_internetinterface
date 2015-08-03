@@ -168,7 +168,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary> 
 		public ActionResult LogRegResultList()
 		{
-			var pager = new ModelFilter<Log>(this);
+			var pager = new InforoomModelFilter<Log>(this);
 			pager.SetOrderBy("Id",OrderingDirection.Desc);
 			var logs = pager.GetCriteria().List<Log>();
 			ViewBag.Pager = pager;

@@ -8,7 +8,7 @@
 @{
 	ViewBag.Title = "Улицы";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	ModelFilter<Street> pager = ViewBag.Pager;
+	InforoomModelFilter<Street> pager = ViewBag.Pager;
 	IList<Street> streets = pager.GetItems();
 	List<Region> regions = ViewBag.Regions;
 	var regionList = new NameValueCollection();

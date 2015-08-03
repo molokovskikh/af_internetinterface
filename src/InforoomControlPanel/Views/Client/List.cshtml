@@ -6,7 +6,7 @@
 	var urlRoot = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
 	ViewBag.Title = "Список пользователей";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	ModelFilter<Client> pager = ViewBag.Pager;
+	InforoomModelFilter<Client> pager = ViewBag.Pager;
 	IList<Client> clients = pager.GetItems();
 }
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">

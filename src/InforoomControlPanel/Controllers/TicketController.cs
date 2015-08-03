@@ -40,7 +40,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult CallMeBackTicketIndex()
 		{
-			var pager = new ModelFilter<CallMeBackTicket>(this);
+			var pager = new InforoomModelFilter<CallMeBackTicket>(this);
 			pager.SetOrderBy("CreationDate", OrderingDirection.Desc);
 			ViewBag.Pager = pager;
 			return View();

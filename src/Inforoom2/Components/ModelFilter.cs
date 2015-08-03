@@ -3,20 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Web;
+using System.Web.Mvc;
 using Common.Tools;
+using ExcelLibrary.SpreadSheet;
 using Inforoom2.Controllers;
 using Inforoom2.Helpers;
+using Inforoom2.Models;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Engine;
 using NHibernate.Impl;
 using NHibernate.Loader.Criteria;
 using NHibernate.Persister.Entity;
+using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using Remotion.Linq.Clauses;
 
@@ -57,30 +63,19 @@ namespace Inforoom2.Components
 	/// <typeparam name="TModel">Модель данные которой будет выводиться в таблице</typeparam>
 	public class ModelFilter<TModel> : IModelFilter
 	{
+		[Description("Конструктор запросов к БД")] protected ISession DbSession;
 
-		[Description("Конструктор запросов к БД")]
-		protected ISession DbSession;
+		[Description("Конструктор запросов к БД")] protected BaseController Controller;
 
-		[Description("Конструктор запросов к БД")]
-		protected BaseController Controller;
+		[Description("Параметры фильра. Тут хранятся все параметры.")] protected NameValueCollection Params = new NameValueCollection();
 
-		[Description("Параметры фильра. Тут хранятся все параметры.")]
-		protected NameValueCollection Params = new NameValueCollection();
+		[Description("Параметры, которые были перезаписаны пользователем")] protected List<string> OverridenParams = new List<string>();
 
-		[Description("Параметры, которые были перезаписаны пользователем")]
-		protected List<string> OverridenParams = new List<string>();
+		[Description("Список полей моделей, которые уже были использованы в фильтре. Он необходим, чтобы вывести оставшиеся поля в виде инпутов, чтобы сохранить настройки фильтрации")] protected List<string> PropertiesUsedInFilter = new List<string>();
 
-		[Description("Список полей моделей, которые уже были использованы в фильтре. Он необходим, чтобы вывести оставшиеся поля в виде инпутов, чтобы сохранить настройки фильтрации")]
-		protected List<string> PropertiesUsedInFilter = new List<string>();
+		[Description("Конструктор запросов к БД")] protected ICriteria Criteria;
 
-		[Description("Список псевдонимов вложенных моделей, которые уже были использованы в фильтре. Необходим, так как для каждой модели должен быть только 1 псевдоним")]
-		protected List<string> AliasesUsedInFilter = new List<string>();
-
-		[Description("Конструктор запросов к БД")]
-		protected ICriteria Criteria;
-
-		[Description("Модели, полученные по запросу к БД")]
-		protected IList<TModel> Models;
+		[Description("Модели, полученные по запросу к БД")] protected IList<TModel> Models;
 
 		[Description("Кол-во страниц, которые могут быть отображены")]
 		public int PagesCount
@@ -102,15 +97,17 @@ namespace Inforoom2.Components
 			get
 			{
 				if (!_totalItems.HasValue) {
+					var tempCriteria = (ICriteria)Criteria.Clone();
 					Criteria.SetFirstResult(0);
 					Criteria.SetMaxResults(1000000);
-					var res = Criteria.SetProjection(Projections.CountDistinct("Id")).UniqueResult();
+					var res = tempCriteria.SetProjection(Projections.CountDistinct("Id")).UniqueResult();
 					_totalItems = int.Parse(res.ToString());
 				}
 				return _totalItems.Value;
 			}
 			protected set { }
 		}
+
 		protected int? _totalItems;
 
 		[Description("название маркера 'префикса' url параметра")]
@@ -127,6 +124,15 @@ namespace Inforoom2.Components
 			protected set { }
 		}
 
+		///////////////////////
+
+		protected NameValueCollection ExportFields = new NameValueCollection();
+
+		/// <summary>
+		/// Счетчик для имен псевдонимов. Необходим для создания уникальности имен.
+		/// </summary>
+		protected int AliasCounter = 0;
+
 		/// <summary>
 		/// Возвращает Url для страницы под определенным номером
 		/// </summary>
@@ -134,7 +140,7 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		public string GetPageUrl(int number)
 		{
-			return GenerateUrl( new { page = number });
+			return GenerateUrl(new { page = number });
 		}
 
 		/// <summary>
@@ -176,6 +182,8 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		public string GenerateUrl(object overridenParams = null)
 		{
+			var uri = new UrlHelper(Controller.HttpContext.Request.RequestContext).Content("~");
+			var urlRoot = string.Format("{0}://{1}{2}", Controller.HttpContext.Request.Url.Scheme, Controller.HttpContext.Request.Url.Authority, uri);
 			// получение наименования контроллера, при его наличии
 			var controllerName = Controller.Url.RequestContext.RouteData.Values.ContainsKey("controller")
 				? Controller.Url.RequestContext.RouteData.Values["controller"].ToString() : "";
@@ -183,17 +191,15 @@ namespace Inforoom2.Components
 			var actionName = Controller.Url.RequestContext.RouteData.Values.ContainsKey("action")
 				? Controller.Url.RequestContext.RouteData.Values["action"].ToString() : "";
 
-			//Формируем базу для Url
-			var url = new StringBuilder(string.Format("/{0}/{1}", controllerName, actionName));
+			//Формируем базу для 
+			var url = new StringBuilder(string.Format("{0}/{1}", controllerName, actionName));
 			var paramSeparator = "?";
 
 			//Клонируем параметры и добавляем туда дополнительно переданные параметры
 			var paramz = Params.Clone();
 			if (overridenParams != null) {
 				var props = overridenParams.GetType().GetProperties();
-				foreach (var prop in props) {
-					paramz[prop.Name] = prop.GetValue(overridenParams, new object[] { }).ToString();
-				}
+				foreach (var prop in props) paramz[prop.Name] = prop.GetValue(overridenParams, new object[] { }).ToString();
 			}
 
 			foreach (var key in paramz.AllKeys) {
@@ -201,7 +207,7 @@ namespace Inforoom2.Components
 				paramSeparator = "&";
 			}
 
-			return url.ToString();
+			return urlRoot + url.ToString();
 		}
 
 		/// <summary>
@@ -216,10 +222,10 @@ namespace Inforoom2.Components
 			var fieldName = ExtractFieldNameFromLambda(expression);
 			//Получаем направление сортировки
 			var param = GetParam("orderType");
-			var type = (OrderingDirection)Enum.Parse(typeof(OrderingDirection),param);
+			var type = (OrderingDirection)Enum.Parse(typeof(OrderingDirection), param);
 			//Меняем тип направления на противоположный от текущего - иначе кнопка будет сортирвать только один раз
 			type = type == OrderingDirection.Asc ? OrderingDirection.Desc : OrderingDirection.Asc;
-			var url = GenerateUrl(new { orderBy = fieldName, orderType = type});
+			var url = GenerateUrl(new { orderBy = fieldName, orderType = type });
 			return url;
 		}
 
@@ -232,18 +238,16 @@ namespace Inforoom2.Components
 		{
 			string name = ""; // Наименование поля, по которому будет сортироваться таблица 
 
-			try
-			{
+			try {
 				var body = (MemberExpression)expression.Body;
 				// получаем наименование поля, если оно не обернуто в Convert()
 				name = body.ToString().Replace(expression.Parameters[0].ToString() + ".", "");
 			}
-			catch (Exception)
-			{
+			catch (Exception) {
 				var body = expression.Body;
 				// получаем наименование поля из обертки Convert()
 				name = body.ToString().Replace("Convert(" + expression.Parameters[0].ToString() + ".", "");
-				name = name.Substring(0,name.Length - 1); //Удаляем последнюю скобку
+				name = name.Substring(0, name.Length - 1); //Удаляем последнюю скобку
 			}
 			return name;
 		}
@@ -293,7 +297,7 @@ namespace Inforoom2.Components
 			//Потому что главная критерия достает только Id, из-за ограничений группировок Nhibernate
 			criteria.SetProjection(Projections.GroupProperty("Id"));
 			var filters = ExtractFilters(Params);
-			foreach(var key in filters.AllKeys)
+			foreach (var key in filters.AllKeys)
 				AddFilterToCriteria(criteria, key, filters[key]);
 		}
 
@@ -311,7 +315,7 @@ namespace Inforoom2.Components
 			//Сначала мы получаем тип сравнения
 			var splat = key.Split('.');
 			var comparsionPart = splat[1];
-			var comparsionType = (ComparsionType) Enum.Parse(typeof(ComparsionType), comparsionPart);
+			var comparsionType = (ComparsionType)Enum.Parse(typeof(ComparsionType), comparsionPart);
 
 			//Затем мы получаем имя поля и конструктор запросов для него
 			//Воспользоваться изначальным конструктором мы не можем, так как он не умеет интуитивно делать join
@@ -357,7 +361,6 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		protected object ConvertStringToType(string value, Type propertyType)
 		{
-
 			if (propertyType.FullName.Contains(typeof(string).Name))
 				return value;
 
@@ -376,7 +379,7 @@ namespace Inforoom2.Components
 			if (propertyType.IsEnum)
 				return Enum.Parse(propertyType, value);
 
-			throw new Exception(string.Format("Не получается привести значение '{0}' к типу {1}",value,propertyType.Name));
+			throw new Exception(string.Format("Не получается привести значение '{0}' к типу {1}", value, propertyType.Name));
 		}
 
 		/// <summary>
@@ -412,17 +415,28 @@ namespace Inforoom2.Components
 				return criteria;
 
 			var joinedModelFieldName = splat[0];
-			var aliasName = "__" + joinedModelFieldName;
-			if (!AliasesUsedInFilter.Contains(aliasName)) {
-				criteria = criteria.CreateCriteria(joinedModelFieldName, aliasName);
-				AliasesUsedInFilter.Add(aliasName);
-			}
+			var alias = CreateAliasName(criteria, joinedModelFieldName);
+			//Делаем JOIN с другой таблицей и получает его конструктор запросов
+			//Join можно делать только 1 раз, так что необходимо проверить не был ли он сделан ранее
+			var joined = criteria.GetCriteriaByAlias(alias) ?? criteria.CreateCriteria(joinedModelFieldName, alias, JoinType.LeftOuterJoin);
+			criteria = joined;
 
 			if (splat.Count() == 2)
 				return criteria;
 
 			var subpath = string.Join(".", splat, 1, splat.Count() - 1);
 			return GetJoinedModelCriteria(criteria, subpath);
+		}
+
+		/// <summary>
+		/// Генерация имени алиаса для пути к полю. Если алиас не нужен, то возвращается NULL
+		/// </summary>
+		/// <param name="fieldPath"></param>
+		/// <returns></returns>
+		protected string CreateAliasName(ICriteria criteria, string fieldName)
+		{
+			var aliasName = criteria.Alias + fieldName;
+			return aliasName;
 		}
 
 		/// <summary>
@@ -433,9 +447,10 @@ namespace Inforoom2.Components
 		protected NameValueCollection ExtractFilters(NameValueCollection collection)
 		{
 			var result = new NameValueCollection();
+			var filterword = "filter.";
 			foreach (var key in collection.AllKeys) {
-				if(key.Contains("filter."))
-					result.Add(key,collection[key]);
+				if (key.Length > filterword.Length && key.Substring(0, filterword.Length) == filterword)
+					result.Add(key, collection[key]);
 			}
 			return result;
 		}
@@ -506,23 +521,16 @@ namespace Inforoom2.Components
 			return ret;
 		}
 
-		/// <summary>
-		/// Ручной фильтр. Задачет имя параметра, который необходимо будет передать на сервер
-		/// </summary>
-		/// <param name="name">Имя параметра</param>
-		/// <param name="type">Тип HTML контрола</param>
-		/// <param name="comparsionType">Тип сравнения</param>
-		/// <param name="additional">Дополнительные параметры</param>
-		/// <returns></returns>
+
 		public HtmlString FormFilter(Expression<Func<TModel, object>> expression, HtmlType type, ComparsionType comparsionType, object htmlAttributes = null, object additional = null)
 		{
 			var name = ExtractFieldNameFromLambda(expression);
 			var attrs = ObjectToDictionary(htmlAttributes);
-			var inputName =string.Format("{0}.filter.{1}.{2}", Prefix, comparsionType, name);
+			var inputName = string.Format("{0}.filter.{1}.{2}", Prefix, comparsionType, name);
 
 			if (!attrs.ContainsKey("name"))
 				attrs["name"] = inputName;
-			if(!attrs.ContainsKey("class"))
+			if (!attrs.ContainsKey("class"))
 				attrs["class"] = "form-control";
 
 			//Подставляем предыдущее отправленное значение, если оно есть
@@ -583,21 +591,21 @@ namespace Inforoom2.Components
 				return string.Format("<input type='text' {0} />", GetPropsValues(o));
 			}
 
-			if (type == HtmlType.checkbox){
+			if (type == HtmlType.checkbox) {
 				o["class"] = "c-pointer " + o["class"];
-				var selectedPart =  selectedValue != null && selectedValue.Contains("true") ? " checked=checked" : "";
+				var selectedPart = selectedValue != null && selectedValue.Contains("true") ? " checked=checked" : "";
 				return string.Format("<input type='checkbox' value = 'true' {0} {1}/><input type='hidden' value='false' {0} >", GetPropsValues(o), selectedPart);
 			}
 
 			if (type == HtmlType.Dropdown) {
 				List<string> values;
 				var attrName = o["name"];
-				
+
 				var customValueList = additional as NameValueCollection;
 				if (customValueList != null)
 					values = customValueList.AllKeys.Select(i => string.Format("<option {2} value='{0}'>{1}</option>", i, customValueList[i], selectedValue == i ? "selected='selected'" : "")).ToList();
-				else 
-					values = TryToGetDropDownValueList(attrName,selectedValue);
+				else
+					values = TryToGetDropDownValueList(attrName, selectedValue);
 
 				return string.Format("<select {0}>{1}</select>", GetPropsValues(o), string.Join("\n", values));
 			}
@@ -641,9 +649,11 @@ namespace Inforoom2.Components
 
 			var models = criteria.List();
 
-			foreach (var obj in models)
-			{
+			foreach (var obj in models) {
 				var value = prop.GetValue(obj, new object[] { });
+				if (value == null || value.GetType().Name.ToLower().IndexOf("proxy") != -1) {
+					continue;
+				}
 				var selected = value.ToString() == selectedValue ? "selected='selected'" : "";
 				values.Add(string.Format("<option {0} value='{1}'>{2}</option>", selected, value, value));
 			}
@@ -662,7 +672,7 @@ namespace Inforoom2.Components
 			var values = new List<string>();
 			values.Add("<option value=''> </option>");
 			values.Add(String.Format("<option {0} value='true'>Да</option>", selectedTrue));
-			values.Add(String.Format("<option {0} value='false'>Нет</option>",selectedFalse));
+			values.Add(String.Format("<option {0} value='false'>Нет</option>", selectedFalse));
 			return values;
 		}
 
@@ -678,7 +688,7 @@ namespace Inforoom2.Components
 			values.Add("<option value=''> </option>");
 			var names = type.GetEnumNames();
 			foreach (var name in names) {
-				var value = Enum.Parse(type,name);
+				var value = Enum.Parse(type, name);
 				var description = value.GetDescription();
 				var selected = value.ToString() == selectedValue ? "selected='selected'" : "";
 				values.Add(string.Format("<option {0} value='{1}'>{2}</option>", selected, value, description));
@@ -701,9 +711,9 @@ namespace Inforoom2.Components
 			var enumValues = Enum.GetNames(typeof(ComparsionType));
 			badValues.AddRange(enumValues);
 
-			var newValues =  new List<string>();
+			var newValues = new List<string>();
 			var splat = name.Split('.');
-			foreach(var item in splat) {
+			foreach (var item in splat) {
 				if (!badValues.Contains(item))
 					newValues.Add(item);
 			}
@@ -741,6 +751,7 @@ namespace Inforoom2.Components
 		public void Execute()
 		{
 			var criteria = GetCriteria();
+
 			var list = criteria.List();
 			//из-за ограничений группировок и возможных join'ов мы получаем только идентификаторы моделей
 			//а потом отдельным запросом забираем модели. Вот так!
@@ -807,7 +818,7 @@ namespace Inforoom2.Components
 			dic["value"] = "Поиск";
 			var htmlAttributs = GetPropsValues(dic);
 
-			var ret = string.Format("{0} <input {1} />",hiddenInputs,htmlAttributs);
+			var ret = string.Format("{0} <input {1} />", hiddenInputs, htmlAttributs);
 			return new HtmlString(ret);
 		}
 
@@ -824,7 +835,25 @@ namespace Inforoom2.Components
 			dic["value"] = "Печать";
 			var htmlAttributs = GetPropsValues(dic);
 
-			var ret = string.Format("<input {0} />",htmlAttributs);
+			var ret = string.Format("<input {0} />", htmlAttributs);
+			return new HtmlString(ret);
+		}
+
+		/// <summary>
+		/// Генерация кнопки отчистки фильтров
+		/// </summary>
+		/// <param name="currentUrl">Url путь к странице</param>
+		/// <param name="attributes">Анонимный объект заполненый HTML аттрибутами</param>
+		/// <returns></returns>
+		public HtmlString CleanButton(object attributes = null)
+		{
+			string currentUrl = "/";
+			if (Controller.ControllerContext.HttpContext.Request.Url != null) {
+				currentUrl = Controller.ControllerContext.HttpContext.Request.Url.AbsolutePath;
+			}
+			var dic = ObjectToDictionary(attributes);
+			var htmlAttributs = GetPropsValues(dic);
+			var ret = string.Format("<a href='{0}' {1}>Отчистить</a>", currentUrl, htmlAttributs);
 			return new HtmlString(ret);
 		}
 
@@ -852,9 +881,208 @@ namespace Inforoom2.Components
 			var props = obj.GetType().GetProperties();
 			foreach (var prop in props) {
 				var value = prop.GetValue(obj, new object[] { });
-				dic.Add(prop.Name,value.ToString());
+				dic.Add(prop.Name, value.ToString());
 			}
 			return dic;
+		}
+
+
+		private List<string> GetExportNames()
+		{
+			List<string> names = new List<string>();
+			for (int i = 0; i < ExportFields.Count; i++) names.Add(ExportFields.GetKey(i));
+			return names;
+		}
+
+		private List<string> GetExportPaths(object model)
+		{
+			List<string> paths = new List<string>();
+			for (int i = 0; i < ExportFields.Count; i++) paths.Add(ExportFields[i]);
+			return paths;
+		}
+
+		/// <summary>
+		/// Получение поля модели из лямбда выражения
+		/// </summary>
+		/// <param name="criteria">Критерия</param>
+		/// <param name="expression">Лямбда выражение</param>
+		/// <returns></returns>
+		public void SetExportFields(Expression<Func<TModel, object>> expression)
+		{
+			var criteria = (ICriteria)Criteria.Clone();
+			//удаление лимитов, получение данных для экспорта в файл Excel-
+			criteria.SetFirstResult(1).SetMaxResults(1000000);
+			GetItems();
+			//взврат лимитов
+			criteria.SetFirstResult(ItemsPerPage * (Page - 1)).SetMaxResults(ItemsPerPage);
+			if (Models == null || Models.Count == 0) {
+				return;
+			}
+			//получаем первую модель 
+			var modelForParams = Models[0];
+			//обработка выражения
+			var parametre = expression.Parameters[0].ToString();
+			var stringExpressionBody = expression.Body.ToString();
+			int subStringStart = stringExpressionBody.IndexOf("(") + 1;
+			int subStringLength = (stringExpressionBody.IndexOf(")") - subStringStart);
+			var stringExpressionCut = stringExpressionBody.Substring(subStringStart, subStringLength);
+			stringExpressionCut = stringExpressionCut.Replace(" " + parametre + ".", "");
+			stringExpressionCut = stringExpressionCut.Replace(" ", "");
+			var arrayExpressionCut = stringExpressionCut.Split(',');
+			ExportFields.Clear();
+			//добавление полей выгрузки
+			arrayExpressionCut.Each(s => {
+				if (s.IndexOf("=") != -1) {
+					var temp = s.ToString().Split('=');
+					temp[0] = temp[0] == parametre ? modelForParams.GetDescription() : temp[0];
+					var r = temp[1].Split('.').LastOrDefault(last => last == temp[0]);
+					temp[0] = r == null ? temp[0] :
+						temp[1].IndexOf(".") != -1 ? GetModelPropertyName(modelForParams, temp[1]) : modelForParams.GetDescription(temp[1]);
+					ExportFields.Add(temp[0], temp[1]);
+				}
+			});
+		}
+
+		private string getValueByType(object itemToReturn)
+		{
+			if (itemToReturn as IList != null) {
+				return (itemToReturn as IList).Count.ToString();
+			}
+			if (itemToReturn as BaseModel != null) {
+				return (itemToReturn as BaseModel).Id.ToString();
+			}
+			return itemToReturn != null ? itemToReturn.ToString() : "";
+		}
+
+		/// <summary>
+		/// Получение значение поля по его наименованию
+		/// </summary>
+		/// <param name="model">Модель</param>
+		/// <param name="fieldName">Наименование поля с полной дирректорией к нему. пример: 'PhysicalClient.Address.House.Number' - Номер дома у модели 'Client' </param>
+		/// <returns>Значение поля</returns>
+		private string GetModelPropertyName(object model, string fieldName)
+		{
+			var split = fieldName.Split('.');
+			if (split.Count() == 1) {
+				return model.GetDescription(fieldName);
+			}
+
+			fieldName = string.Join(".", split, 1, split.Count() - 1);
+			return GetModelPropertyName(model.GetType().GetProperty(split[0]).GetValue(model, null), fieldName);
+		}
+
+		/// <summary>
+		/// Получение значение поля по его наименованию
+		/// </summary>
+		/// <param name="model">Модель</param>
+		/// <param name="fieldName">Наименование поля с полной дирректорией к нему. пример: 'PhysicalClient.Address.House.Number' - Номер дома у модели 'Client' </param>
+		/// <returns>Значение поля</returns>
+		private string GetModelPropertyValue(object model, string fieldName)
+		{
+			var split = fieldName.Split('.');
+			if (model.GetType().GetProperty(split[0]) == null) {
+				return getValueByType(model);
+			}
+			if (model.GetType().GetProperty(split[0]) != null && model.GetType().GetProperty(split[0]).GetValue(model, null) == null) {
+				return "";
+			}
+			if (split.Count() == 1) {
+				var itemToReturn = model.GetType().GetProperty(split[0]) != null ? model.GetType().GetProperty(split[0]).GetValue(model, null) : model;
+				return getValueByType(itemToReturn);
+			}
+
+			fieldName = string.Join(".", split, 1, split.Count() - 1);
+			return GetModelPropertyValue(model.GetType().GetProperty(split[0]).GetValue(model, null), fieldName);
+		}
+
+		/// <summary>
+		/// Получение описания поля
+		/// </summary>
+		/// <param name="model">Модель</param>
+		/// <param name="fieldName">Наименование поля с полной дирректорией к нему. пример: 'PhysicalClient.Address.House.Number' - Номер дома у модели 'Client' </param>
+		/// <returns>Описания поля</returns>
+		private string GetModelFieldName(string fieldName)
+		{
+			for (int i = 0; i < ExportFields.Count; i++) {
+				if (ExportFields[i] == fieldName) {
+					return ExportFields.GetKey(i);
+				}
+			}
+			return fieldName;
+		}
+
+		/// <summary>
+		/// Получение списка для экспорта в таблицу Excel
+		/// </summary>
+		/// <returns></returns>
+		public List<string[]> ExportToList()
+		{
+			// инициализация списка
+			var propertiesToExport = new List<string[]>();
+			// формирование шапки таблицы по первой моделе в списке
+			var pathsToExportForNames = GetExportPaths(Models[0]);
+			var nameValuesToExport = new string[pathsToExportForNames.Count];
+			for (int j = 0; j < nameValuesToExport.Length; j++) nameValuesToExport[j] = GetModelFieldName(pathsToExportForNames[j]);
+			propertiesToExport.Add(nameValuesToExport);
+			// заполнение таблицы значениями
+			for (int i = 0; i < Models.Count; i++) {
+				var pathsToExport = GetExportPaths(Models[i]);
+				var valuesToExport = new string[pathsToExport.Count];
+				for (int j = 0; j < valuesToExport.Length; j++) valuesToExport[j] = GetModelPropertyValue(Models[i], pathsToExport[j]);
+				propertiesToExport.Add(valuesToExport);
+			}
+			// возврат сформированного списка
+			return propertiesToExport;
+		}
+
+		/// <summary>
+		/// Формирование Excel документа 
+		/// </summary>
+		/// <returns>Excel документ</returns>
+		public void ExportToExcelFile(System.Web.HttpContextBase context, string excelDocumentName = "excel_document")
+		{
+			if (Models == null || Models.Count == 0) {
+				return;
+			}
+			const int pixelsFont = 11;
+			const int pixelsForColumnWidth = pixelsFont * 34;
+			byte[] fileToreturn = new byte[0];
+			var propertiesToExport = ExportToList();
+			if (propertiesToExport.Count > 0) {
+				//создаем новый xls файл 
+				var workbook = new Workbook();
+				var worksheet = new Worksheet("First Sheet");
+
+				for (int i = 0; i < propertiesToExport[0].Length; i++) worksheet.Cells.ColumnWidth[(ushort)i] = 0;
+				// проходим строки
+				for (int i = 0; i < propertiesToExport.Count; i++) {
+					// столбцы
+					for (int j = 0; j < propertiesToExport[i].Length; j++) {
+						//записываем значения в ячейки
+						worksheet.Cells[i, j] = new Cell(propertiesToExport[i][j]);
+						worksheet.Cells.ColumnWidth[(ushort)j] = worksheet.Cells.ColumnWidth[(ushort)j] < propertiesToExport[i][j].Length
+							? (ushort)propertiesToExport[i][j].Length : worksheet.Cells.ColumnWidth[(ushort)j];
+					}
+				}
+				for (int i = 0; i < propertiesToExport[0].Length; i++) {
+					worksheet.Cells.ColumnWidth[(ushort)i] = (ushort)(worksheet.Cells.ColumnWidth[(ushort)i] * pixelsForColumnWidth);
+					worksheet.Cells[0, i].Style = new CellStyle() { Font = new Font("Arial", pixelsFont) { Bold = true } };
+				}
+
+				workbook.Worksheets.Add(worksheet);
+				using (var ms = new MemoryStream()) {
+					workbook.Save(ms);
+					fileToreturn = ms.ToArray();
+				}
+			}
+			else {
+				new Exception("Не заданы поля выборки! *(для этого используеться метод 'SetExportFields')");
+			}
+			context.Response.ContentType = "MS-Excel/xls";
+			context.Response.AppendHeader("Content-Disposition", "attachment; filename=" + excelDocumentName + ".xlsx");
+			context.Response.BinaryWrite(fileToreturn);
+			context.Response.Flush();
+			context.Response.Close();
 		}
 	}
 }

@@ -22,6 +22,12 @@ namespace Inforoom2.Models
 		public virtual Switch Switch { get; set; }
 
 		[Property]
+		public virtual DateTime LeaseBegin { get; set; }
+
+		[Property]
+		public virtual DateTime LeaseEnd { get; set; }
+
+		[Property]
 		public virtual int Port { get; set; }
 
 		public static Lease GetLeaseForIp(string ipstr, ISession session)

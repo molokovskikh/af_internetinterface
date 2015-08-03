@@ -52,10 +52,12 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult List()
 		{
-			var pager = new ModelFilter<Client>(this);
-			pager.GetCriteria(i => i.PhysicalClient != null);
+			var pager = new InforoomModelFilter<Client>(this);
+			var criteria = pager.GetCriteria(i => i.PhysicalClient != null);
 			if (pager.IsExportRequested()) {
-				var x = 1;
+				pager.GetItems();
+				pager.SetExportFields( s => new { s, s.Surname, s.PhysicalClient.Name, s.Patronymic, Вкусняшка = s.Address, Агентище = s.Agent, Улица = s.Address.House.Street.Name, Номерок = s.Address.House.Number });
+				pager.ExportToExcelFile(ControllerContext.HttpContext);
 			}
 			ViewBag.Pager = pager;
 			return View("List");
@@ -228,7 +230,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult RequestsList()
 		{
-			var pager = new ModelFilter<ClientRequest>(this);
+			var pager = new InforoomModelFilter<ClientRequest>(this);
 			pager.SetOrderBy("RegDate",OrderingDirection.Desc);
 			var clientRequests = pager.GetCriteria().List<ClientRequest>();
 			ViewBag.Pager = pager;
