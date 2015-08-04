@@ -256,7 +256,7 @@ namespace InternetInterface.Controllers
 
 			if (reply.Status == IPStatus.Success)
 				return string.Format("<b style='color:green'>Онлайн, скорость ответа {0} мс.</b>", reply.RoundtripTime);
-			
+
 			return string.Format("<b style='color:red'>Коммутатор ничего не ответил</b>");
 		}
 
@@ -292,6 +292,7 @@ namespace InternetInterface.Controllers
 			var needNewServiceForStaticIp = false;
 			var settings = new Settings(DbSession);
 			var client = DbSession.Load<Client>(ClientID);
+
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoint();
 
@@ -336,7 +337,7 @@ namespace InternetInterface.Controllers
 			if (!withoutEndPoint && currentEndPoint == 0) {
 				if ((ConnectInfo.static_IP != string.Empty) || (nullFlag)) {
 					if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
-						(oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
+					    (oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
 						if (client.GetClientType() == ClientType.Phisical) {
 							client.PhysicalClient.UpdatePackageId(clientEntPoint);
 						}
@@ -596,6 +597,7 @@ namespace InternetInterface.Controllers
 			Message message = null;
 			var client = DbSession.Load<Client>(ClientID);
 			var updateClient = client.PhysicalClient;
+			var oldTariff = client.PhysicalClient.Tariff;
 			var oldStatus = client.Status;
 
 			var iptv = client.Iptv;
@@ -607,7 +609,9 @@ namespace InternetInterface.Controllers
 			BindObjectInstance(internet, "internet", AutoLoadBehavior.NullIfInvalidKey);
 			BindObjectInstance(updateClient, ParamStore.Form, "Client", AutoLoadBehavior.NullIfInvalidKey);
 			BindObjectInstance(client, ParamStore.Form, "_client");
-
+			if (client.PhysicalClient != null && client.PhysicalClient.Tariff != oldTariff) {
+				client.PhysicalClient.LastTimePlanChanged = SystemTime.Now();
+			}
 			if (oldStatus != client.Status) {
 				// BlockedAndNoConnected = "зарегистрирован", BlockedAndConnected = "не подключен"
 				var isDissolved = client.Status.Type == StatusType.Dissolved;
@@ -624,7 +628,7 @@ namespace InternetInterface.Controllers
 							client.Status.Name));
 				}
 			}
-			 
+
 			if (IsValid(updateClient)) {
 				if (!string.IsNullOrEmpty(comment)) {
 					client.LogComment = comment;
