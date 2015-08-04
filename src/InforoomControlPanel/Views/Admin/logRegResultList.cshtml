@@ -2,8 +2,7 @@
 @using Inforoom2.Models 
 @model dynamic
 
-@{
-	var urlRoot = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
+@{ 
 	ViewBag.Title = "Список логов";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	IList<Log> logs = ViewBag.Logs;
@@ -21,11 +20,11 @@
 						</label>
 					</div>
 				</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.Id)">Номер</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.Employee)">Пользователь</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.Type)">Тип события</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.Date)">Дата</a></th> 
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.Message)">Содержание</a></th> 
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Id)">Номер</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Employee)">Пользователь</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Type)">Тип события</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Date)">Дата</a></th> 
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Message)">Содержание</a></th> 
 				<th  tabindex="0" aria-controls="table-2">Действие</th> 
 			</tr>
 		</thead>

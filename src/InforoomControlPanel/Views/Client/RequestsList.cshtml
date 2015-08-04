@@ -2,8 +2,7 @@
 @using System.Activities.Statements
 @using Inforoom2.Components
 @using Inforoom2.Models
-@{
-	var urlRoot = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
+@{ 
 	ViewBag.Title = "Заявки клиентов на регистрацию";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	InforoomModelFilter<ClientRequest> pager = ViewBag.Pager;
@@ -14,10 +13,10 @@
 	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 		<thead>
 			<tr role="row">
-				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@urlRoot@pager.OrderBy(s => s.Id)">#</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@urlRoot@pager.OrderBy(s => s.ApplicantName)">Имя</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@urlRoot@pager.OrderBy(s => s.Address)">Адрес</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@urlRoot@pager.OrderBy(s => s.RegDate)">Дата</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.OrderBy(s => s.Id)">#</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.OrderBy(s => s.ApplicantName)">Имя</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.OrderBy(s => s.Address)">Адрес</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.OrderBy(s => s.RegDate)">Дата</a></th>
 				<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
 			</tr>
 		</thead>
