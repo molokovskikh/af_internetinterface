@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Common.Tools;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
@@ -16,16 +17,16 @@ namespace Inforoom2.Models
 			CreationDate = SystemTime.Now();
 		}
 
-		[Property, NotNullNotEmpty(Message = "Текст вопроса должен быть заполнен")]
+		[Property, NotNullNotEmpty(Message = "Текст вопроса должен быть заполнен"), Description("Текст вопроса от пользователя")]
 		public virtual string Text { get; set; }
 
-		[Property,]
+		[Property, Description("Ответ на вопрос от пользователя")]
 		public virtual string Answer { get; set; }
 
-		[Property]
+		[Property, Description("Дата создания вопроса от пользователя")]
 		public virtual DateTime CreationDate { get; set; }
 
-		[Property]
+		[Property, Description("Дата создания ответа на вопрос от пользователя")]
 		public virtual DateTime AnswerDate { get; set; }
 
 		[Property]
@@ -37,7 +38,7 @@ namespace Inforoom2.Models
 		[ManyToOne]
 		public virtual Client Client { get; set; }
 
-		[Property]
+		[Property, Description("Электронная почта пользователя создавшего вопрос")]
 		public virtual string Email { get; set; }
 	}
 }

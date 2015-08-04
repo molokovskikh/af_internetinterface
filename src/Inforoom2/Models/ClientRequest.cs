@@ -16,25 +16,28 @@ namespace Inforoom2.Models
 		[Display(Name = "автоматическая")] Automatic = 3
 	}
 
+	/// <summary>
+	/// Модель заявки на подключение клиента
+	/// </summary>
 	[Class(0, Table = "Requests", NameType = typeof(ClientRequest))]
 	public class ClientRequest : BaseModel
 	{
-		[Property(Column = "_Comment")]
+		[Property(Column = "_Comment"), Description("Комментарий к заявке")]
 		public virtual string Comment { get; set; }
 
-		[Property, NotNullNotEmpty(Message = "Введите ФИО")]
+		[Property, NotNullNotEmpty(Message = "Введите ФИО"), Description("ФИО клиента")]
 		public virtual string ApplicantName { get; set; }
 		 
-		[Property, ApplicantPhoneValidator]
+		[Property, ApplicantPhoneValidator, Description("Номер телефона клиента")]
 		public virtual string ApplicantPhoneNumber { get; set; }
 
-		[Property(Column = "ApplicantEmail"), ValidatorEmail]
+		[Property(Column = "ApplicantEmail"), ValidatorEmail, Description("Электронная почта клиента")]
 		public virtual string Email { get; set; }
 
-		[ManyToOne(Column = "_Address", Cascade = "save-update")]
+		[ManyToOne(Column = "_Address", Cascade = "save-update"), Description("Адрес клиента")]
 		public virtual Address Address { get; set; }
 
-		[ManyToOne(Column = "Tariff"), NotNull]
+		[ManyToOne(Column = "Tariff"), NotNull, Description("Тариф клиента")]
 		public virtual Plan Plan { get; set; }
 
 		[Property]

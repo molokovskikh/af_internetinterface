@@ -2,6 +2,9 @@
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Связь тарифного плана с регионом
+	/// </summary>
 	[Class(0, Table = "RegionPlan", NameType = typeof(RegionPlan))]
 	public class RegionPlan : BaseModel
 	{

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Common.Tools;
 using Inforoom2.Intefaces;
 using NHibernate.Mapping.Attributes;
@@ -12,19 +13,19 @@ namespace Inforoom2.Models
 	[Class(Table = "questions", NameType = typeof(Question))]
 	public class Question : BaseModel, IModelWithPriority
 	{
-		[Property, NotNullNotEmpty]
+		[Property, NotNullNotEmpty, Description("Текст вопроса")]
 		public virtual string Text { get; set; }
 
-		[Property, NotNullNotEmpty]
+		[Property, NotNullNotEmpty, Description("Текст ответа")]
 		public virtual string Answer { get; set; }
 
-		[Property]
+		[Property, Description("Дата создания")]
 		public virtual DateTime CreationDate { get; set; }
 
-		[Property]
+		[Property, Description("Маркер, отражающий, опубликован ли вопрос на странице сайта или нет")]
 		public virtual bool IsPublished { get; set; }
 
-		[Property(Unique = true)]
+		[Property(Unique = true), Description("Приоритет отображения вопроса на странице сайта")]
 		public virtual int Priority { get; set; }
 
 		public Question(int priority)

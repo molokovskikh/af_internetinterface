@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.EnterpriseServices;
 using System.Linq;
 using System.Web;
 using InternetInterface.Models;
@@ -9,6 +10,9 @@ using Inforoom2.Models;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Сотрудники технической службы
+	/// </summary>
 	[Class(0, Table = "ServiceMen", NameType = typeof(ServiceMan))]
 	public class ServiceMan : BaseModel
 	{

@@ -35,13 +35,13 @@ namespace Inforoom2.Models
 			protected set { }
 		}
 
-		[Property(Column = "Price", NotNull = true), Min(1)]
+		[Property(Column = "Price", NotNull = true), Min(1), Description("Цена тарифного плана")]
 		public virtual decimal Price { get; set; }
 
-		[Property]
+		[Property, Description("Количество месяцев через после которых произойдет переход на новую цену")]
 		public virtual int FinalPriceInterval { get; set; }
 
-		[Property]
+		[Property, Description("Цена после перехода на новую цену")]
 		public virtual decimal FinalPrice { get; set; }
 
 		[Property(Column = "TextPrice")]
@@ -50,7 +50,7 @@ namespace Inforoom2.Models
 		[Property(Column = "_IsServicePlan")]
 		public virtual bool IsServicePlan { get; set; }
 
-		[Property(Column = "_IsArchived")]
+		[Property(Column = "_IsArchived"), Description("План,который не используется и находится в архиве")]
 		public virtual bool Disabled { get; set; }
 
 		[Bag(0, Table = "region_plan")]
@@ -93,10 +93,10 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual bool AvailableForOldClients { get; set; }
 
-		[Property]
+		[Property, Description("Описание тарифного плана")]
 		public virtual string Description { get; set; }
 
-		[Property]
+		[Property, Description("Комментарии к тарифному плану")]
 		public virtual string Comments { get; set; }
 
 

@@ -4,6 +4,9 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Модель оборудования
+	/// </summary>
 	[Class(0, Table = "HardwareModels", NameType = typeof(HardwareModel))]
 	public class HardwareModel: BaseModel
 	{

@@ -14,6 +14,9 @@ namespace Inforoom2.Models
 		[Description("Статистические")] Statistic = 7,
 	}
 
+	/// <summary>
+	/// Сообщение о пользователе для сотрудников техподдержки
+	/// </summary>
 	[Class(0, Table = "Appeals", NameType = typeof(Appeal))]
 	public class Appeal : BaseModel
 	{
@@ -30,10 +33,10 @@ namespace Inforoom2.Models
 			AppealType = appealType;
 		}
 
-		[Property(Column = "Appeal")]
+		[Property(Column = "Appeal"), Description("Tекст информационного сообщения для сотрудника техподдержки")]
 		public virtual string Message { get; set; }
 
-		[Property]
+		[Property, Description("Дата создания сообщения о пользователе для сотрудника техподдержки")]
 		public virtual DateTime Date { get; set; }
 
 		[ManyToOne(Column = "Partner")]
@@ -42,7 +45,7 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "Client")]
 		public virtual Client Client { get; set; }
 
-		[Property]
+		[Property, Description("Тип сообщения о пользователе для сотрудников техподдержки")]
 		public virtual AppealType AppealType { get; set; }
 
 		[Property(Column = "_Inforoom2")]

@@ -11,7 +11,7 @@ namespace Inforoom2.Models
 	[Class(0, Table = "ConnectionRequests", NameType = typeof(ConnectionRequest))]
 	public class ConnectionRequest : BaseModel
 	{
-		[Property]
+		[Property, Description("Комментарий к заявке на подключение")]
 		public virtual string Comment { get; set; }
 
 		[ManyToOne(Column = "client", NotNull = true)]
