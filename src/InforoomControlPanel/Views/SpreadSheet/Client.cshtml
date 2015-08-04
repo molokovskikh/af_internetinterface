@@ -1,8 +1,8 @@
-﻿@using Inforoom2.Components
+﻿@using Common.Tools
+@using Inforoom2.Components
 @using Inforoom2.Models
 @model dynamic
-@{
-	var urlRoot = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
+@{ 
 	ViewBag.Title = "Отчет по клиентам";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	InforoomModelFilter<Client> pager = ViewBag.Pager;
@@ -67,9 +67,9 @@
 	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 		<thead>
 			<tr role="row"> 
-			<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.Id)">ЛС</a></th>
-			<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.Surname)">Клиент</a></th>
-			<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@urlRoot@pager.OrderBy(s => s.CreationDate)">Дата регистрации</a></th>
+			<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Id)">ЛС</a></th>
+			<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Surname)">Клиент</a></th>
+			<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.CreationDate)">Дата регистрации</a></th>
 			<th class="sorting" tabindex="0" aria-controls="table-2">Тариф</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2">Адрес</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2">Статус</th>
@@ -77,7 +77,7 @@
 
 		<tbody>
 			<tr role="row" class="odd">
-				<td> </td>
+				<td><strong>Всего: @pager.TotalItems</strong></td>
 				<td></td> 
 			</tr> 
 			@foreach (var client in clients) {
@@ -87,7 +87,7 @@
 					<td><span>@client.CreationDate</span></td> 
 					<td><span>@(client.Type == ClientType.PhysicalClient ? client.Plan != null ? client.Plan.Name : "" : "")</span></td> 
 					<td><span>@(client.Type == ClientType.PhysicalClient && client.Address != null ? client.Address.FullAddress : "")</span></td> 
-					<td><span>@client.Status.Name</span></td> 
+					<td><span>@client.Status.Name</span></td>  
 				</tr>
 			}
 			<tr role="row" class="odd"> 

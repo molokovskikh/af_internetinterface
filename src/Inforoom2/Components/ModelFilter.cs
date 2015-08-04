@@ -909,10 +909,15 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		public void SetExportFields(Expression<Func<TModel, object>> expression)
 		{
-			var criteria = (ICriteria)Criteria.Clone();
+			var criteria = GetCriteria();
 			//удаление лимитов, получение данных для экспорта в файл Excel-
 			criteria.SetFirstResult(1).SetMaxResults(1000000);
-			GetItems();
+
+			//получение списка моделей
+			var list = criteria.List(); 
+			var realCriteria = DbSession.CreateCriteria(typeof(TModel));
+			Models = realCriteria.Add(Restrictions.In("Id", list)).List<TModel>();
+
 			//взврат лимитов
 			criteria.SetFirstResult(ItemsPerPage * (Page - 1)).SetMaxResults(ItemsPerPage);
 			if (Models == null || Models.Count == 0) {
