@@ -19,9 +19,9 @@
 		</div>
 		<div class="row"> 
 			<div class="col-sm-2">Дата последней сессии с </div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.Endpoints.First().Lease.LeaseEnd, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.Endpoints.First().LeaseList.First().LeaseEnd, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
 			<div class="col-sm-1">по</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.Endpoints.First().Lease.LeaseEnd, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div> 
+			<div class="col-sm-2">@pager.FormFilter(i => i.Endpoints.First().LeaseList.First().LeaseEnd, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div> 
 		</div>
 		<div class="row">
 			<div class="col-sm-2">Регистратор</div>
@@ -77,7 +77,7 @@
 
 		<tbody>
 			<tr role="row" class="odd">
-				<td><strong>Всего: @pager.TotalItems</strong></td>
+				<td> </td>
 				<td></td> 
 			</tr> 
 			@foreach (var client in clients) {
@@ -86,7 +86,7 @@
 					<td><span>@(client.Type == ClientType.PhysicalClient ? client.Fullname : client._Name)</span></td> 
 					<td><span>@client.CreationDate</span></td> 
 					<td><span>@(client.Type == ClientType.PhysicalClient ? client.Plan != null ? client.Plan.Name : "" : "")</span></td> 
-					<td><span>@(client.Type == ClientType.PhysicalClient ? client.Address.FullAddress : "")</span></td> 
+					<td><span>@(client.Type == ClientType.PhysicalClient && client.Address != null ? client.Address.FullAddress : "")</span></td> 
 					<td><span>@client.Status.Name</span></td> 
 				</tr>
 			}

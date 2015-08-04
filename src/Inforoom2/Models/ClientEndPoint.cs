@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Common.Tools;
@@ -21,9 +22,11 @@ namespace Inforoom2.Models
 
 		[ManyToOne(Column = "Client", Cascade = "save-update")]
 		public virtual Client Client { get; set; }
-
-		[OneToOne(PropertyRef = "Endpoint")]
-		public virtual Lease Lease { get; set; }
+		 
+		[Bag(0, Table = "Leases", Cascade = "all-delete-orphan")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "Endpoint")]
+		[OneToMany(2, ClassType = typeof(Lease))]
+		public virtual IList<Lease> LeaseList { get; set; }
 
 		[ManyToOne(Column = "Switch")]
 		public virtual Switch Switch { get; set; }
