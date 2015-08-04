@@ -98,8 +98,8 @@ namespace Inforoom2.Components
 			{
 				if (!_totalItems.HasValue) {
 					var tempCriteria = (ICriteria)Criteria.Clone();
-					Criteria.SetFirstResult(0);
-					Criteria.SetMaxResults(1000000);
+					tempCriteria.SetFirstResult(0);
+					tempCriteria.SetMaxResults(1000000);
 					var res = tempCriteria.SetProjection(Projections.CountDistinct("Id")).UniqueResult();
 					_totalItems = int.Parse(res.ToString());
 				}

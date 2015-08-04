@@ -231,10 +231,9 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult RequestsList()
 		{
 			var pager = new InforoomModelFilter<ClientRequest>(this);
-			pager.SetOrderBy("RegDate",OrderingDirection.Desc);
-			var clientRequests = pager.GetCriteria().List<ClientRequest>();
-			ViewBag.Pager = pager;
-			ViewBag.ClientRequests = clientRequests;
+			var criteria = pager.GetCriteria();
+			pager.SetOrderBy("RegDate", OrderingDirection.Desc); 
+			ViewBag.Pager = pager; 
 			return View();
 		}
 

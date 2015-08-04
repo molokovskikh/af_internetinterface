@@ -6,8 +6,8 @@
 	var urlRoot = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
 	ViewBag.Title = "Заявки клиентов на регистрацию";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	List<ClientRequest> clientRequests = ViewBag.ClientRequests;
 	InforoomModelFilter<ClientRequest> pager = ViewBag.Pager;
+	var clientRequests = pager.GetItems();
 }
 
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
