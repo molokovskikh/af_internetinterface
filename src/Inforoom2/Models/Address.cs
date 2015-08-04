@@ -12,6 +12,9 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Модель адреса
+	/// </summary>
 	[Class(0, Table = "address", NameType = typeof(Address)), Description("Адрес")]
 	public class Address : BaseModel, ILogAppeal
 	{

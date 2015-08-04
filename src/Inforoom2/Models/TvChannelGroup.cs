@@ -13,7 +13,7 @@ namespace Inforoom2.Models
 	[Class(0, Table = "TvChannelGroups", NameType = typeof(TvChannelGroup))]
 	public class TvChannelGroup : BaseModel
 	{
-		[Property]
+		[Property, Description("Наименование группы TV-каналов")]
 		public virtual string Name { get; set; }
 
 

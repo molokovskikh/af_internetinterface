@@ -6,6 +6,9 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Статус подключения клиента
+	/// </summary>
 	[Class(0, Table = "Status", NameType = typeof(Status))]
 	public class Status : BaseModel
 	{
@@ -19,13 +22,13 @@ namespace Inforoom2.Models
 			Name = status.GetDescription();
 		}
 
-		[Property]
+		[Property, Description("Наименование статуса")]
 		public virtual string Name { get; set; }
 
-		[Property]
+		[Property, Description("Маркер,устанавливающийся при выставлении статуса клиенту вручную")]
 		public virtual bool ManualSet { get; set; }
 
-		[Property]
+		[Property, Description("Короткое обозначение статуса")]
 		public virtual string ShortName { get; set; }
 
 		public virtual bool Visualisible()

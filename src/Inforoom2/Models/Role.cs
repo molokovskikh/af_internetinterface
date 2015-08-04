@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using NHibernate.Engine;
 using NHibernate.Mapping.Attributes;
 
@@ -10,10 +11,10 @@ namespace Inforoom2.Models
 	[Class(0, Table = "roles", NameType = typeof(Role))]
 	public class Role : BaseModel
 	{
-		[Property]
+		[Property, Description("Наименование роли")]
 		public virtual string Name { get; set; }
 
-		[Property]
+		[Property, Description("Описание роли")]
 		public virtual string Description { get; set; }
 
 		[Bag(0, Table = "perm_role", Cascade = "All", Lazy = CollectionLazy.False)]

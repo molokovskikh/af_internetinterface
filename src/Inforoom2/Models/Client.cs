@@ -63,7 +63,7 @@ namespace Inforoom2.Models
 		[Property, Description("Перенесено из старой админки (в старом проекте ему ничего не присваивается.)")]
 		public virtual DateTime? BlockDate { get; set; }
 
-		[Property(Column = "RegDate")]
+		[Property(Column = "RegDate"), Description("Дата регистрации клиента")]
 		public virtual DateTime? CreationDate { get; set; }
 
 		[Property]
@@ -93,7 +93,7 @@ namespace Inforoom2.Models
 		[Property(NotNull = true)]
 		public virtual bool PaidDay { get; set; }
 
-		[Property(NotNull = true)]
+		[Property(NotNull = true), Description("Бесплатные дни добровольной блокировки")]
 		public virtual int FreeBlockDays { get; set; }
 
 		[Property(NotNull = true, Column = "FirstLunch")]
@@ -112,10 +112,10 @@ namespace Inforoom2.Models
 		[DataType(DataType.Date)]
 		public virtual DateTime? StatusChangedOn { get; set; }
 
-		[Property(Column = "BeginWork")]
+		[Property(Column = "BeginWork"), Description("Дата первой аренды -проставляется DHCP-сервером во время получения клиентом первой аренды")]
 		public virtual DateTime? WorkingStartDate { get; set; }
 
-		[Property]
+		[Property, Description("Дата, по которой определяется когда бесплатные дни должны обновиться")]
 		public virtual DateTime? YearCycleDate { get; set; }
 
 		[ManyToOne(Cascade = "save-update"), Description("Статус")]

@@ -18,16 +18,19 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Модель физического клиента
+	/// </summary>
 	[Class(0, Table = "PhysicalClients", Schema = "internet", NameType = typeof(PhysicalClient)), Description("Клиент")]
 	public class PhysicalClient : BaseModel, ILogAppeal
 	{
-		[Property]
+		[Property, Description("Пароль физического клиента")]
 		public virtual string Password { get; set; }
 
 		[ManyToOne(Column = "_Address", Cascade = "save-update"), NotNull(Message = "Адрес указан не полностью!"), Description("Адрес")]
 		public virtual Address Address { get; set; }
 
-		[Property(Column = "_Email", NotNull = true)]
+		[Property(Column = "_Email", NotNull = true), Description("Электронаня почта физического клиента")]
 		public virtual string Email
 		{
 			get
@@ -63,19 +66,19 @@ namespace Inforoom2.Models
 		[Property(Column = "_LastTimePlanChanged")]
 		public virtual DateTime LastTimePlanChanged { get; set; }
 
-		[Property]
+		[Property, Description("Общий баланс на счете клиента,который он может потратить")]
 		public virtual decimal Balance { get; set; }
 
-		[Property]
+		[Property, Description("Сумма,которая взята с клиента за подключение(для клиентов 0,у частного сектора 5000)")]
 		public virtual decimal ConnectSum { get; set; }
 
-		[Property]
+		[Property, Description("Сумма внесенная сотрудниками клиенту")]
 		public virtual decimal VirtualBalance { get; set; }
 
 		[Property, Description("Клиент проверен. устанавливается в админке, при редактировании клиента")]
 		public virtual bool Checked { get; set; }
 
-		[Property]
+		[Property, Description("Реальные внесенные деньги клиентом на свой счет")]
 		public virtual decimal MoneyBalance { get; set; }
 
 		[Property(Column = "IdDocType"), Description("Документ, удостоверяющий личность")]
@@ -103,7 +106,7 @@ namespace Inforoom2.Models
 		[Property, Description("Номер абонента Ситилайн")]
 		public virtual int? ExternalClientId { get; set; }
 
-		[Property(Column = "_PhoneNumber", NotNull = true)]
+		[Property(Column = "_PhoneNumber", NotNull = true), Description("Номер телефона клиента")]
 		public virtual string PhoneNumber
 		{
 			get
@@ -138,7 +141,7 @@ namespace Inforoom2.Models
 		public virtual string Patronymic { get; set; }
 		 
 		[DataType(DataType.Date)]
-		[Property(Column = "DateOfBirth")]
+		[Property(Column = "DateOfBirth"), Description("Дата рождения клиента")]
 		public virtual DateTime BirthDate { get; set; }
 
 		[OneToOne(PropertyRef = "PhysicalClient")]

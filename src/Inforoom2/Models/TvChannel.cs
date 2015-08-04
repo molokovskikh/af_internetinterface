@@ -14,7 +14,7 @@ namespace Inforoom2.Models
 	public class TvChannel : PriorityModel
 	{
 
-		[Property, NotNullNotEmpty]
+		[Property, NotNullNotEmpty, Description("Наименование TV-канала")]
 		public virtual string Name { get; set; }
 
 		[ManyToOne,NotNull]
@@ -25,8 +25,8 @@ namespace Inforoom2.Models
 
 		[Property, Description("Порт"),ValidatorNumberic(0,ValidatorNumberic.Type.Greater)]
 		public virtual int? Port { get; set; }
-		
-		[Property]
+
+		[Property, Description("Маркер, отражающий, доступен ли канал полюзователю или нет")]
 		public virtual bool Enabled { get; set; }
 
 		public TvChannel()

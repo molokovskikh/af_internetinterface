@@ -9,6 +9,9 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Выданные Ip-адреса пользователям (динамические)
+	/// </summary>
 	[Class(0, Table = "Leases", NameType = typeof(Lease))]
 	public class Lease : BaseModel
 	{

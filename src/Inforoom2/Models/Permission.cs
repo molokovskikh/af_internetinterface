@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
@@ -10,10 +11,10 @@ namespace Inforoom2.Models
 	[Class(0, Table = "permissions", NameType = typeof(Permission))]
 	public class Permission : BaseModel
 	{
-		[Property]
+		[Property, Description("Наименование права")]
 		public virtual string Name { get; set; }
 
-		[Property]
+		[Property, Description("Описание права")]
 		public virtual string Description { get; set; }
 
 		[Bag(0, Table = "perm_role", Lazy = CollectionLazy.False)]

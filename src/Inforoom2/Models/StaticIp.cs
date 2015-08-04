@@ -2,6 +2,9 @@
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Постоянный Ip-адрес клиента
+	/// </summary>
 	[Class(0, Table = "StaticIps", Schema = "internet", NameType = typeof(StaticIp))]
 	public class StaticIp : BaseModel
 	{

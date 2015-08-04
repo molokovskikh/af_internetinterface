@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
@@ -7,7 +8,7 @@ using NHibernate.Validator.Constraints;
 namespace Inforoom2.Models
 {
 	/// <summary>
-	/// Модель вопроса от пользователя
+	/// Модель узла связи
 	/// </summary>
 	[Class(Table = "network_nodes")]
 	public class NetworkNode : BaseModel
@@ -20,13 +21,13 @@ namespace Inforoom2.Models
 			Addresses = new List<SwitchAddress>();
 		}
 
-		[Property]
+		[Property, Description("Наименование узла связи")]
 		public virtual string Name { get; set; }
 
-		[Property]
+		[Property, Description("Маркер обозначающий существует ли узел связи физически или отмечен как виртуальный для связи коммутаторов")]
 		public virtual bool Virtual { get; set; }
 
-		[Property]
+		[Property, Description("Комментарии к узлу связи")]
 		public virtual string Description { get; set; }
 
 		[Bag(0, Table = "NetworkSwitches", Cascade = "all-delete-orphan")]
