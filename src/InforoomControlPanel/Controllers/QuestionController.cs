@@ -9,7 +9,7 @@ namespace InforoomControlPanel.Controllers
 	/// <summary>
 	/// Страница управления вопросами и ответами
 	/// </summary>
-	public class QuestionController : AdminController
+	public class QuestionController : ControlPanelController
 	{
 		public QuestionController()
 		{

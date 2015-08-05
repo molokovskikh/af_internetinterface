@@ -399,17 +399,21 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Save(region);
 		}
 
-		private void RenewActionPermissions()
+		/// <summary>
+		/// Генерация (дополняющая) прав для админки. Создает права для каждого экшена, если такого права нет.
+		/// </summary>
+		protected void RenewActionPermissions()
 		{
 			var testOfInforoomControlPanel = GetType().Assembly.GetTypes().FirstOrDefault(i => i.Name == "ControlPanelBaseFixture");
 			if (testOfInforoomControlPanel != null) {
-				//	new .AdminController().RenewActionPermissions(); 
 
 				var controllers = Assembly.Load("InforoomControlPanel").GetTypes().Where(i => i.IsSubclassOf(typeof(InforoomControlPanel.Controllers.ControlPanelController))).ToList();
 				foreach (var controller in controllers) {
 					var methods = controller.GetMethods();
 					var actions = methods.Where(i => i.ReturnType == typeof(ActionResult)).ToList();
 					foreach (var action in actions) {
+						if (action.Name == "Index")
+							return;
 						var name = controller.Name + "_" + action.Name;
 						var right = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
 						if (right != null)
