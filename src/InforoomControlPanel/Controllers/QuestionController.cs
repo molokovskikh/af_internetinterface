@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Inforoom2.Components;
 using Inforoom2.Models;
 using NHibernate.Linq;
 
@@ -63,7 +64,7 @@ namespace InforoomControlPanel.Controllers
 		/// Изменение вопросов
 		/// </summary>
 		[ValidateInput(false), HttpPost]
-		public ActionResult UpdateQuestion(Question question)
+		public ActionResult UpdateQuestion([EntityBinder] Question question)
 		{
 			//question.Answer = HttpUtility.HtmlEncode(question.Answer);
 			ViewBag.Question = question;
