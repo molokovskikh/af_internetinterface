@@ -257,5 +257,21 @@ namespace Inforoom2.Controllers
 			// Передача полученного результата текущему действию
 			actionResult.ExecuteResult(controller.ControllerContext);
 		}
+
+		/// <summary>
+		/// Безопасное удаление модели из базы данных. Удаляет модель, выводит на экран сообщение.
+		/// В случае наличия связей у модели, выведет соответствующее сообщение.
+		/// </summary>
+		/// <typeparam name="TBaseModel">Тип модели</typeparam>
+		/// <param name="id">Идентификатор модели</param>
+		protected void SafeDelete<TBaseModel>(int id)
+		where TBaseModel : BaseModel
+		{
+			var obj = DbSession.Get<TBaseModel>(id);
+			if (DbSession.AttemptDelete(obj))
+				SuccessMessage("Объект успешно удален!");
+			else
+				ErrorMessage("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
+		}
 	}
 }
