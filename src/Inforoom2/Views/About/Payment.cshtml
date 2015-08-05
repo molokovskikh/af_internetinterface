@@ -1,28 +1,60 @@
 ﻿@{
-	ViewBag.Title = "Оплата услуг";
+	ViewBag.Title = "Способы оплаты";
 	var userAccount = ViewBag.UserAccount;
 	var paymentSum = ViewBag.PaymentSum;
 }
 <h2 class="heading" style="padding-top: 33px;">
 	@(ViewBag.Title.ToString().ToUpper())
 </h2>
-<div class="font" style="margin: auto;width: 92%;">
-	<p>
-		Оплата возможна любым способом через терминалы и отделения Сбербанка России без комиссии.
-		Так же можно оплатить наличными через терминалы Comepay и в офисе компании по адресам:
+
+<div class="payment font width-1000"> 
+	<h3 class="topic">Оплата он-лайн</h3>
+	<table style="width: 100%;">
+		<tr>
+			<td class="logoBlock">
+				<p style="text-align: center;">
+					<a href="https://online.sberbank.ru/CSAFront/index.do"><img style="width: 178px;" src="~/Images/sber_logo2.png" /></a>
+				</p>
+				<p style="text-align: center; margin: 0px;"> Оплата через <a class="docLink" href="https://online.sberbank.ru/CSAFront/index.do">Сбербанк Онлайн<sup>1</sup></a> </p>
+			</td>
+			<td class="logoBlock">
+				<p style="text-align: center; margin-top: 20px;">
+					<a href="https://autopays.ru/payment/#!search_provider/pt_search/100-2962-1/pay@(userAccount != "" ? "&amount=" + paymentSum : "")@(userAccount != "" ? "&ЛИЦЕВОЙ_СЧЕТ=" + userAccount : "")">
+						<img src="~/images/visamastercard2.jpg" alt="img" />
+					</a>
+				</p>
+				<p style="text-align: center; margin: 0px;">
+					Оплата Картами
+					<a class="docLink" href="https://autopays.ru/payment/#!search_provider/pt_search/100-2962-1/pay@(userAccount != "" ? "&amount=" + paymentSum : "")@(userAccount != "" ? "&ЛИЦЕВОЙ_СЧЕТ=" + userAccount : "")">
+						VISA и MasterCard
+					</a>
+				</p>
+			</td>
+		</tr>
+	</table>  
+	<h3 class="topic">Оплата наличными:</h3>
+	<ul style="padding-left: 14px; padding-top: 6px;">
+		<li>
+			<p>Через терминалы <a class="docLink" href="https://money.comepay.ru/">Comepay</a></p>
+		</li>
+		<li>
+			<p>В офисе компании по адресам:</p>
+			<p> <a class="addressLink" href="http://maps.yandex.ru/?text=г. Борисоглебск, ул. Третьяковская, д. 6б">г. Борисоглебск, ул. Третьяковская, д. 6б</a> (вход со двора) в будние дни с 9-00 до 18-00. </p>
+			<p> <a class="addressLink" href="http://maps.yandex.ru/?text=г. Белгород, ул. Князя Трубецкого (Воровского), д. 26">г. Белгород, ул. Князя Трубецкого (Воровского), д. 26</a> за бизнес центром “Монблан” в будние дни с 9-00 до 18-00. </p>
+		</li>
+		<li>
+			<p>Через <a class="docLink" href="http://www.sberbank.ru/ru/about/today/oib">терминалы<sup>2</sup> и отделения</a> Сбербанка России.</p>
+		</li>
+	</ul> 
+</div> 
+<div class="payment font width-1000 topline">
+	<p style="margin-left: 8px;"><strong>1</strong>
+		<span> - 
+			<a class="docLink" href="~/Images/sber_online.pdf">инструкция по оплате</a> услуг Инфорум через  Сбербанк Онлайн;<br />
+			<a class="docLink" href="~/Images/sber_terminal.pdf" style="margin-left: 24px;">инструкция по подключению</a> автоплатежа за услуги Инфорум в Сбербанк Онлайн;
+		</span>
 	</p>
-	<p> г. Борисоглебск, ул. Третьяковская, д. 6б (вход со двора) в будние дни с 9-00 до 18-00. </p>
-	<p> г. Белгород, ул. Князя Трубецкого (Воровского), д. 26 за бизнес центром “Монблан” в будние дни с 9-00 до 18-00. </p>
-	<br/>
-	<p style="margin-top: 8px;">
-		<a class="button visa" href="https://autopays.ru/payment/#!search_provider/pt_search/100-2962-1/pay@(userAccount != "" ? "&amount=" + paymentSum : "")
-		   @(userAccount != "" ? "&ЛИЦЕВОЙ_СЧЕТ=" + userAccount : "") "><span>Оплата VISA / MasterCard</span></a>
+	<p style="margin-left: 8px;">
+		<strong>2</strong><span> - <a class="docLink" href="~/Images/sber_terminal.pdf">инструкция по оплате</a> услуг Инфорум через терминал Сбербанка;</span>
 	</p>
-</div>
-
-
-
-
-
-
-
+</div>   
