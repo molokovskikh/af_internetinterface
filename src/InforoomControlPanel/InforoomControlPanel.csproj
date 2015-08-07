@@ -1938,6 +1938,10 @@
     <Content Include="Views\SpreadSheet\Index.cshtml" />
     <Content Include="Views\SpreadSheet\Client.cshtml" />
     <Content Include="Views\SpreadSheet\WriteOffs.cshtml" />
+    <Content Include="Views\Address\CreateCity.cshtml" />
+    <Content Include="Views\Address\EditCity.cshtml" />
+    <Content Include="Views\Address\CreateRegion.cshtml" />
+    <Content Include="Views\Address\EditRegion.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <None Include="Web.release.config">
