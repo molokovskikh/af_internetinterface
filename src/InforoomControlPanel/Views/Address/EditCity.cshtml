@@ -1,0 +1,31 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "Редактировать город";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	City City = ViewBag.City;
+	string action = ViewBag.ActionName;
+}
+
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+
+	@using (Html.BeginForm(action, "Address", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+	{
+		@Html.HiddenFor(i => City.Id)
+		<div class="form-group">
+			<div class="col-sm-4">
+				<label class="control-label">Наименование города:</label>
+			</div>
+			<div class="col-sm-6">
+				@Html.TextBoxFor(i => City.Name, new { @class = "form-control" })
+				@ViewBag.Validation.GetError(City, "Name")
+			</div>
+			<div class="col-sm-2">
+				<button class="btn btn-green" type="submit">Сохранить</button>
+			</div>
+		</div>
+	}
+</div>

@@ -382,7 +382,7 @@ namespace Inforoom2.Test.Infrastructure
 			region.Name = "Борисоглебск (частный сектор)";
 			region.RegionOfficePhoneNumber = "8-800-2000-800";
 			region.City = bor;
-			region.Parent = new List<Region>() { parent };
+			region.Parent = parent;
 			region.OfficeAddress = "улица Князя Трубецкого д26";
 			region.OfficeGeomark = "50.592548,36.59665819999998";
 			region.ShownOnMainPage = true;
@@ -399,27 +399,23 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Save(region);
 		}
 
-		/// <summary>
-		/// Генерация (дополняющая) прав для админки. Создает права для каждого экшена, если такого права нет.
-		/// </summary>
-		protected void RenewActionPermissions()
+		private void RenewActionPermissions()
 		{
 			var testOfInforoomControlPanel = GetType().Assembly.GetTypes().FirstOrDefault(i => i.Name == "ControlPanelBaseFixture");
 			if (testOfInforoomControlPanel != null) {
+				//	new .AdminController().RenewActionPermissions(); 
 
 				var controllers = Assembly.Load("InforoomControlPanel").GetTypes().Where(i => i.IsSubclassOf(typeof(InforoomControlPanel.Controllers.ControlPanelController))).ToList();
 				foreach (var controller in controllers) {
 					var methods = controller.GetMethods();
 					var actions = methods.Where(i => i.ReturnType == typeof(ActionResult)).ToList();
 					foreach (var action in actions) {
-						if (action.Name == "Index")
-							return;
 						var name = controller.Name + "_" + action.Name;
 						var right = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
 						if (right != null)
 							continue;
 						var newright = new Permission();
-						newright.Name = name; 
+						newright.Name = name;
 						newright.Description = name;
 						DbSession.Save(newright);
 					}
@@ -478,7 +474,8 @@ namespace Inforoom2.Test.Infrastructure
 				RatedPeriodDate = DateTime.Now,
 				FreeBlockDays = 28,
 				WorkingStartDate = DateTime.Now.AddMonths(-3),
-				Lunched = true
+				Lunched = true,
+				WhoRegistered = DbSession.Query<Employee>().FirstOrDefault(e => e.Login == Environment.UserName)
 			};
 			normalClient.Status = DbSession.Get<Status>(5);
 

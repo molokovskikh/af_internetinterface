@@ -1,0 +1,82 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "Создание нового региона";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	Region Region = ViewBag.Region;
+	List<City> City = ViewBag.Citys;
+	City city = ViewBag.City ?? new City();
+
+	List<Region> parents = new List<Region>();
+	parents.Add(new Region());
+	parents.AddRange(ViewBag.Parents);
+	
+	Region parent = ViewBag.Parent ?? new Region();
+}
+
+<div class="panel panel-default">
+	<div class="panel-body">
+		@using (Html.BeginForm(ViewBag.ActionName as string, "Address", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+		{
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Наименование региона</label>
+					<div class="col-sm-6">
+						@Html.TextBoxFor(I => Region.Name, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(Region, "Region")
+					</div>
+				</div>	
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Город</label>
+					<div class="col-sm-6">
+						@Html.DropDownListExtendedFor(i => Region.City, City, i => i.Name, null, new { @class = "form-control" }, city.Id)
+						@ViewBag.Validation.GetError(Region, "City")
+					</div>
+				</div>	
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Адрес офиса</label>
+					<div class="col-sm-6">
+						@Html.TextBoxFor(I => Region.OfficeAddress, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(Region, "_OfficeAddress")
+					</div>
+				</div>	
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Телефон офиса</label>
+					<div class="col-sm-6">
+						@Html.TextBoxFor(I => Region.RegionOfficePhoneNumber, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(Region, "_RegionOfficePhoneNumber")
+					</div>
+				</div>	
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Геометка офиса</label>
+					<div class="col-sm-6">
+						@Html.TextBoxFor(I => Region.OfficeGeomark, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(Region, "_OfficeGeomark")
+					</div>
+				</div>	
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Выводить ли регион на главной странице сайта</label>
+					<div class="col-sm-6">
+						@Html.CheckBoxFor(I => Region.ShownOnMainPage, new { @class = "form-control" })
+					</div>
+				</div>	
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Родительский регион</label>
+					<div class="col-sm-6">
+						@Html.DropDownListExtendedFor(i => Region.Parent, parents, i => i.Name, null, new { @class = "form-control" }, parent.Id,true)
+						@ViewBag.Validation.GetError(Region, "Parent")
+					</div>
+				</div>	
+				<div class="form-group">
+					<div class="col-sm-2">
+						<button class="btn btn-green" type="submit">Сохранить</button>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>
+
