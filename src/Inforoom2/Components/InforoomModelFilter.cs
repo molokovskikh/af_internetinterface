@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Drawing.Drawing2D;
+using System.Collections.Specialized; 
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
 using Inforoom2.Controllers;
 using Inforoom2.Models;
-using NHibernate;
-using NHibernate.Criterion;
-using NHibernate.SqlCommand;
+using NHibernate; 
 using Expression = NHibernate.Criterion.Expression;
 
 namespace Inforoom2.Components
@@ -22,6 +18,7 @@ namespace Inforoom2.Components
 		{
 		}
 
+		// переопредиление получения критерия для фильтрации 
 		public new ICriteria GetCriteria(Expression<Func<TModel, bool>> expression = null)
 		{
 			var criteria = base.GetCriteria(expression);
@@ -29,32 +26,42 @@ namespace Inforoom2.Components
 			return criteria;
 		}
 
+		/// <summary>
+		/// Фильтрация клиентов по регионам, с учетом их типа
+		/// </summary>
+		/// <param name="criteria">Критерия</param>
 		protected void ProcessClientRegionFilter(ICriteria criteria)
 		{
+			//фильтр срабатывает только если есть его "префикс"
 			var paramname = Params.AllKeys.FirstOrDefault(i => i.Contains("clientregionfilter"));
 			if (paramname == null)
 				return;
-
 			var path = StripParamToFieldPath(paramname.Replace("clientregionfilter.", ""));
-			var housepath = (path.Contains("Client") ? path + "." : path) + "PhysicalClient.Address.House.Region.Name";
-			var streetpath = (path.Contains("Client") ? path + "." : path) + "PhysicalClient.Address.House.Street.Region.Name";
+			path = (path.Contains("Client") ? path + "." : path);
+			//для физиков учитываем привязку дома к региону
+			var housepath = path + "PhysicalClient.Address.House.Region.Name";
+			//для физиков учитываем привязку улицы к региону
+			var streetpath = path + "PhysicalClient.Address.House.Street.Region.Name";
+			//юриков находим вот так
+			var lawerRegionPath = path + "Endpoints.Switch.NetworkNode.Addresses.House.Street.Region.Name";
 
+			//создаем псевдонимы, формируя связи
 			var housealias = GetJoinedModelCriteria(criteria, housepath).Alias;
 			var streetalias = GetJoinedModelCriteria(criteria, streetpath).Alias;
+			var lawerRegionAlias = GetJoinedModelCriteria(criteria, lawerRegionPath).Alias;
 
-			//var housecriteria = criteria.GetCriteriaByPath("PhysicalClient") ?? criteria.CreateCriteria("PhysicalClient", JoinType.LeftOuterJoin);
-			//housecriteria = housecriteria.CreateCriteria("Address", JoinType.LeftOuterJoin);
-			//housecriteria = housecriteria.CreateCriteria("House", JoinType.LeftOuterJoin);
-			//housecriteria.CreateCriteria("Region", "__houseregion", JoinType.LeftOuterJoin);
-			//housecriteria = housecriteria.CreateCriteria("Street", JoinType.LeftOuterJoin);
-			//housecriteria.CreateCriteria("Region", "__streetregion", JoinType.LeftOuterJoin);
-
+			//получаем название региона
 			var value = GetParam(paramname);
-
+			// если есть значение, формируем и добавляем условия фильтрации в критэрию фильтра
 			if (!string.IsNullOrEmpty(value)) {
+
 				var expr = Expression.And(Expression.IsNotNull(housealias + ".Name"), Expression.Eq(housealias + ".Name", value));
 				var expr2 = Expression.And(Expression.IsNull(housealias + ".Name"), Expression.Eq(streetalias + ".Name", value));
-				Criteria.Add(Expression.Or(expr, expr2));
+
+				var exprPhysicalClient = Expression.And(Expression.Eq("Type", (ClientType)1), Expression.Or(expr, expr2));
+				var exprLawerClient = Expression.And(Expression.Eq("Type", (ClientType)2), Expression.Eq(lawerRegionAlias + ".Name", value));
+
+				Criteria.Add(Expression.Or(exprPhysicalClient, exprLawerClient));
 			}
 		}
 
