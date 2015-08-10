@@ -756,6 +756,7 @@ namespace Inforoom2.Components
 			//из-за ограничений группировок и возможных join'ов мы получаем только идентификаторы моделей
 			//а потом отдельным запросом забираем модели. Вот так!
 			var realCriteria = DbSession.CreateCriteria(typeof(TModel));
+			AddOrderToCriteria(realCriteria);
 			Models = realCriteria.Add(Restrictions.In("Id", list)).List<TModel>();
 		}
 
@@ -783,6 +784,7 @@ namespace Inforoom2.Components
 		public void SetOrderBy(string column, OrderingDirection direction = OrderingDirection.Asc)
 		{
 			Params["orderBy"] = column;
+			Params["orderType"] = direction.ToString();
 		}
 
 		/// <summary>
