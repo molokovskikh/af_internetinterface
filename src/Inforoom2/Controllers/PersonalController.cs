@@ -335,7 +335,10 @@ namespace Inforoom2.Controllers
 			return RedirectToAction("Plans");
 		}
 
-
+		/// <summary>
+		/// Функция дублирована в ServiceController
+		/// Нужно удалить ее отовсюду, потому что она говно полное
+		/// </summary>
 		protected void InitServices()
 		{
 			var client = CurrentClient;
