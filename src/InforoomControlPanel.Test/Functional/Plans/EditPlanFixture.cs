@@ -80,6 +80,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 		[Test, Description("Добавление стоимости перехода тарифа на другой тариф ")]
 		public void AddPlanTransfers()
 		{
+			var planToAddPrice = DbSession.Query<Plan>().First(p => p.Name == "Оптимальный");
 			var plan = new Plan();
 			plan.Price = 500;
 			plan.Name = "Венера";
@@ -94,7 +95,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			var row = targetPlan.FindElement(By.XPath(".."));
 			var button = row.FindElement(By.CssSelector("a.btn-success"));
 			button.Click();
-			Css("#PlanDropDown").SelectByText("Оптимальный");
+			Css("#PlanDropDown").SelectByText(planToAddPrice.Name + " (" + planToAddPrice.Price + " руб.)");
 			browser.FindElementByCssSelector("input[id=PlanTransfer_Price]").Clear();
 			browser.FindElementByCssSelector("input[id=PlanTransfer_Price]").SendKeys("300");
 			browser.FindElementByCssSelector(".btn-green.addPrice").Click();

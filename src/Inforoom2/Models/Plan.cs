@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -106,8 +107,8 @@ namespace Inforoom2.Models
 		/// <param name="planTo">Тарифный план</param>
 		/// <returns>Стоимость перехода</returns>
 		public virtual decimal GetTransferPrice(Plan planTo)
-		{
-			var transfer = PlanTransfers.ToList().FirstOrDefault(i => i.PlanTo.Unproxy() == planTo);
+		{ 
+			var transfer = PlanTransfers.ToList().FirstOrDefault(i => i.PlanTo.Unproxy() == planTo.Unproxy());
 			var ret = transfer != null ? transfer.Price : 0;
 			return ret;
 		}
