@@ -672,17 +672,17 @@ namespace Billing
 		{
 			//Проверяем, существует ли уже активная задача по этому клиенту
 			var fio = string.Format("{0} {1} {2}", client.PhysicalClient.Surname, client.PhysicalClient.Name, client.PhysicalClient.Patronymic);
-			var region = client.PhysicalClient.HouseObj.Region.Name;
+			var region = client.PhysicalClient.HouseObj != null ? client.PhysicalClient.HouseObj.Region.Name : "регион не установлен";
 			var redmineIssueName = string.Format("Возврат оборудования, ЛС {0}, {1}({2})", client.Id.ToString("D5"), fio, region);
 			//АККУРАТНО, НЕЛЬЗЯ МЕНЯТЬ "Возврат оборудования, ЛС {0}," иначе задачи не будут находиться
-			var clientIssues = session.Query<RedmineIssue>().Where(ri => ri.subject.Contains(string.Format("Возврат оборудования, ЛС {0}",client.Id))).ToList();
+			var clientIssues = session.Query<RedmineIssue>().Where(ri => ri.subject.Contains(string.Format("Возврат оборудования, ЛС {0}", client.Id))).ToList();
 			var hasRedmineIssue = clientIssues.Any(i => i.status_id != 5);
 			if (hasRedmineIssue)
 				return;
 
 			var description = new StringBuilder();
 			description.AppendLine("Баланс клиента, равный " + client.Balance.ToString("F2") + " р., не пополнялся более 30 дней.");
-			description.AppendLine(String.Format("http://stat.ivrn.net/ii/UserInfo/ShowPhysicalClient?filter.ClientCode={0}",client.Id));
+			description.AppendLine(String.Format("http://stat.ivrn.net/ii/UserInfo/ShowPhysicalClient?filter.ClientCode={0}", client.Id));
 
 			description.AppendLine();
 			var redmineIssue = new RedmineIssue {

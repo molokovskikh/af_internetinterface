@@ -318,11 +318,13 @@
     <Compile Include="Models\AdditionalStatus.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Administrator.cs" />
+    <Compile Include="Models\Hardwarepart.cs" />
     <Compile Include="Models\ModelAppeal.cs" />
     <Compile Include="Models\BillingHistory.cs" />
     <Compile Include="Models\Banner.cs" />
     <Compile Include="Models\PlanChangerData.cs" />
     <Compile Include="Models\PlanHtmlContent.cs" />
+    <Compile Include="Models\ClientHardwarePart.cs" />
     <Compile Include="Models\Services\PlanChanger.cs" />
     <Compile Include="Models\Slide.cs" />
     <Compile Include="Models\City.cs" />
@@ -331,7 +333,6 @@
     <Compile Include="Models\ClientService.cs" />
     <Compile Include="Models\CallMeBackTicket.cs" />
     <Compile Include="Models\ClientRentalHardware.cs" />
-    <Compile Include="Models\HardwareModel.cs" />
     <Compile Include="Models\PriorityModel.cs" />
     <Compile Include="Models\PrivateMessage.cs" />
     <Compile Include="Models\TvProtocol.cs" />

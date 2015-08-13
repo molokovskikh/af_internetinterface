@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
+using Common.MySql;
 using Inforoom2.Components;
+using Inforoom2.Helpers;
 using Inforoom2.Models;
+using Inforoom2.validators;
 using NHibernate.Criterion;
 using NHibernate.Linq;
 using NHibernate.SqlCommand;
@@ -42,17 +45,65 @@ namespace InforoomControlPanel.Controllers
 			var errors = ValidationRunner.Validate(rentalHardware);
 			if (errors.Length == 0) {
 				var isRepeated = DbSession.Query<RentalHardware>().ToList()
-						.Exists(hw => hw.Name == rentalHardware.Name && hw.Id != rentalHardware.Id);
+					.Exists(hw => hw.Name == rentalHardware.Name && hw.Id != rentalHardware.Id);
 				if (isRepeated) {
 					ErrorMessage("Такое оборудование уже существует!");
-					return RedirectToAction("EditHardware", new {id = rentalHardware.Id});
+					return RedirectToAction("EditHardware", new { id = rentalHardware.Id });
 				}
 				DbSession.Update(rentalHardware);
 				SuccessMessage("Оборудование успешно изменено");
-				return RedirectToAction("ShowHardware");
+				return RedirectToAction("EditHardware", new { id = rentalHardware.Id });
 			}
 			ViewBag.Hardware = rentalHardware;
 			return View();
+		}
+
+		/// <summary>
+		/// Создание эл-та комплектации
+		/// </summary>
+		[HttpPost]
+		public ActionResult CreateHardwarePart(int id, string name)
+		{
+			var rentalHardware = DbSession.Query<RentalHardware>().FirstOrDefault(s => s.Id == id);
+			if (rentalHardware != null) {
+				var hardwarePart = new HardwarePart() {
+					Name = name,
+					RentalHardware = rentalHardware
+				};
+
+				var errors = ValidationRunner.Validate(hardwarePart, hardwarePart.Validate(null));
+
+				if (errors.Length == 0) {
+					rentalHardware.HardwareParts.Add(hardwarePart);
+					DbSession.Update(rentalHardware);
+					return RedirectToAction("EditHardware", new { id = rentalHardware.Id });
+				}
+
+				ViewBag.HardwarePart = hardwarePart;
+				ViewBag.Hardware = rentalHardware;
+			}
+			return View("EditHardware");
+		}
+
+		/// <summary>
+		/// Удаление эл-та комплектации
+		/// </summary>
+		public ActionResult DeleteHardwarePart(int id)
+		{
+			var hardwarePart = DbSession.Query<HardwarePart>().FirstOrDefault(s => s.Id == id);
+			if (hardwarePart != null) {
+				bool deleted = DbSession.AttemptDelete(hardwarePart);
+				if (deleted) {
+					SuccessMessage("Элемент '" + hardwarePart.Name+ "' был успешно удален из комплектации!");
+				}
+				else {
+					ErrorMessage("Элемент '" + hardwarePart.Name + "' не может быть удален из комплектации! *(вероятно он используется)");
+				}
+				return RedirectToAction("EditHardware", new { id = hardwarePart.RentalHardware.Id });
+			}
+			else {
+				return RedirectToAction("ShowHardware");
+			}
 		}
 
 		/// <summary>
@@ -62,23 +113,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult ClientList()
 		{
 			var pager = new InforoomModelFilter<Client>(this);
-			var criteria = pager.GetCriteria(i => i.PhysicalClient != null);
-			//Это эквивалентно Group By по Id. Нельзя использовать Group By в проекциях, так как это сужает селект до 1го поля
-			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());
-			var joined = criteria.CreateCriteria("RentalHardwareList", JoinType.InnerJoin);
-
-			if (!string.IsNullOrEmpty(pager.GetParam("RentBegins")))
-				joined.Add(Restrictions.Gt("BeginDate", DateTime.Parse(pager.GetParam("RentBegins"))));
-			if (!string.IsNullOrEmpty(pager.GetParam("RentEnds")))
-				joined.Add(Restrictions.Lt("BeginDate", DateTime.Parse(pager.GetParam("RentEnds"))));
-
-			if (!string.IsNullOrEmpty(pager.GetParam("HardwareType")) && pager.GetParam("HardwareType") != "0")
-				joined.CreateCriteria("Hardware").Add(Restrictions.Eq("Id", int.Parse(pager.GetParam("HardwareType"))));
-
-			pager.Execute();
-			
-			var hardware = DbSession.Query<RentalHardware>().ToList();
-			ViewBag.Hardware = hardware;
+			pager.GetCriteria(i => i.PhysicalClient != null);
 			ViewBag.Pager = pager;
 			return View();
 		}

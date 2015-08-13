@@ -1,0 +1,59 @@
+﻿@using Inforoom2.Models
+
+@{
+	Client client = ViewBag.Client;
+	List<RentalHardware> rentalHardwareList = ViewBag.RentalHardwareList;
+	ViewBag.Title = String.Format("Архив диактивированного оборудования клиента: {0} ({1}) ", client.Fullname, client.Id);
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var clientHasHardware = client.RentalHardwareList.Any(ch => !ch.IsActive);
+}
+
+<div class="form-group">
+	<button class="btn btn-blue" onclick=" location.href = '@Url.Action("HardwareList", new { @id = client.Id })' ">Назад</button>
+</div>
+<div class="panel panel-primary col-md-12">
+	<div class="panel-body">
+		@using (Html.BeginForm("UpdateHardwareRent", "HardwareRent", new { @id = client.Id }, FormMethod.Post, new { @id = "HardwareListForm" })) {
+			<table id="HardwareTable" class="table table-bordered table-striped datatable dataTable no-footer" aria-describedby="HardwareTable_info" role="grid">
+				<thead>
+					<tr>
+						@if (clientHasHardware) {
+							<th>Номер аренды</th>
+							<th>Тип</th>
+							<th>Модель, серийный номер</th>
+							<th>Дата выдачи</th>
+							<th>Данные о состоянии</th>
+							<th>Комментарий</th>
+							<th>Причина деактивации</th>
+						} 
+					</tr>
+				</thead>
+				<tbody>
+					@for (var i = 0; i < rentalHardwareList.Count; i++) {
+						foreach (var thisHw in client.RentalHardwareList.Where(s => s.IsActive == false && s.Hardware == rentalHardwareList[i])) {
+							var rentalHardware = rentalHardwareList[i];
+							var trClass = i % 2 == 1 ? "odd" : "even";
+
+							<tr class="@trClass" role="row">
+								<td><a href="@Url.Action("UpdateHardwareRent", new { id = thisHw.Id })"><b>@thisHw.Id</b></a></td>
+								<td><b>@rentalHardware.Name</b></td>
+								<td>@thisHw.Name, @thisHw.SerialNumber</td>
+								<td>@(thisHw.GiveDate.HasValue ? thisHw.GiveDate.Value.ToShortDateString() : "")</td>
+								<td>
+									@(thisHw.WasUsed ? "б/у" : "новый"),
+									@Html.Raw(thisHw.GetAbsentPartsOfRentedHardware())
+								</td>
+								s<td>@thisHw.Comment</td>
+								<td>@thisHw.DeactivateComment</td>
+							</tr>
+						}
+					}
+				</tbody>
+			</table>
+		}
+	</div>
+</div>
+<div class="form-group">
+	<button class="btn btn-blue" onclick=" location.href = '@Url.Action("HardwareList", new { @id = client.Id })' ">Назад</button>
+</div>

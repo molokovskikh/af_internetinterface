@@ -3,64 +3,138 @@
 @using Inforoom2.Models
 
 @{
-	ViewBag.Title = "Услуга \"Аренда оборудования\"";
-	Layout = "~/Views/Shared/_Layout.cshtml";
 	ClientRentalHardware clientRentalHardware = ViewBag.ClientHardware;
+	ViewBag.Title = "Услуга \"Аренда оборудования\" - " + clientRentalHardware.Id;
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	string clientName = ViewBag.ClientName;
 	var date = (clientRentalHardware.GiveDate.HasValue) ? clientRentalHardware.GiveDate.Value.ToShortDateString() : "";
 	ValidationRunner validationRunner = ViewBag.Validation;
+	var currentActionForState = clientRentalHardware.IsActive ? "UpdateHardwareRent" : "DiactivatedHardwareUpdate";
 }
 
+<script src="~/assets/js/checkAllCheckBoxes.js"></script>
 <div class="panel panel-primary col-md-12">
 	<div class="panel-body">
-		@using (Html.BeginForm("SaveHwRentService", "HardwareRent", null, FormMethod.Post, new { @id = "AddHardwareForm", @class = "form-horizontal form-groups-bordered"}))
-		{
+		@using (Html.BeginForm(currentActionForState, "HardwareRent", null, FormMethod.Post, new { @id = "AddHardwareForm", @class = "form-horizontal form-groups-bordered" })) {
+			@Html.HiddenFor(k => clientRentalHardware.Id)
+			@Html.HiddenFor(k => clientRentalHardware.Hardware.Id)
+			@Html.HiddenFor(k => clientRentalHardware.Client.Id)
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Клиент:</label>
+				<div class="col-sm-4">
+					@Html.DisplayFor(hwt => clientRentalHardware.Client.Fullname, new { @class = "form-control" })
+				</div>
+			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Тип оборудования:</label>
-				<div class = "col-sm-4">
+				<div class="col-sm-4">
 					@Html.DisplayFor(hwt => clientRentalHardware.Hardware.Name, new { @class = "form-control" })
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Модель:</label>
-				<div class = "col-sm-4">
-					@Html.ValidationEditor(validationRunner, clientRentalHardware, "ModelName", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+				<div class="col-sm-4">
+					@if (clientRentalHardware.IsActive) {
+						@Html.ValidationEditor(validationRunner, clientRentalHardware, "Name", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+					}
+					else {
+						@Html.DisplayFor(hwt => clientRentalHardware.Name, new { @class = "form-control" })
+					}
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Серийный номер:</label>
-				<div class = "col-sm-4">
-					@Html.ValidationEditor(validationRunner, clientRentalHardware, "SerialNumber", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+				<div class="col-sm-4">
+					@if (clientRentalHardware.IsActive) {
+						@Html.ValidationEditor(validationRunner, clientRentalHardware, "SerialNumber", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+					}
+					else {
+						@Html.DisplayFor(hwt => clientRentalHardware.SerialNumber, new { @class = "form-control" })
+					}
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Дата выдачи:</label>
-				<div class = "col-sm-4">
-					@Html.ValidationEditor(validationRunner, clientRentalHardware, "GiveDate", new { @value = date }, HtmlTag.date, HtmlType.none)
+				<div class="col-sm-4">
+					@if (clientRentalHardware.IsActive) {
+						@Html.ValidationEditor(validationRunner, clientRentalHardware, "GiveDate", new { @value = date }, HtmlTag.date, HtmlType.none)
+					}
+					else {
+						@(clientRentalHardware.GiveDate.HasValue ? clientRentalHardware.GiveDate.Value.ToString("dd.MM.yyyy") : "")
+					}
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Бывшее в употреблении:</label>
-				<div class = "col-sm-4">
-					@Html.CheckBoxFor(k => clientRentalHardware.WasUsed)
+				<label class="col-sm-2 control-label c-pointer" for="WasUsed">Бывшее в употреблении:</label>
+				<div class="col-sm-4">
+					@if (clientRentalHardware.IsActive) {
+						@Html.CheckBoxFor(k => clientRentalHardware.WasUsed, new { @id = "WasUsed" })
+					}
+					else {
+						@(clientRentalHardware.WasUsed ? "да" : "нет")
+					}
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Полный комплект:</label>
-				<div class = "col-sm-4">
-					@Html.CheckBoxFor(k => clientRentalHardware.IsCompleteSet)
+				<label class="col-sm-2 control-label c-pointer" onclick="CheckAllCheckBoxesWithPartId(this)">В комплекте отсуствуют:</label>
+				<div class="col-sm-4">
+					@for (int i = 0; i < clientRentalHardware.ClientHardwareParts.Count; i++) {
+						<p>
+							@Html.HiddenFor(k => clientRentalHardware.ClientHardwareParts[i].Id)
+							@Html.HiddenFor(k => clientRentalHardware.Id, new { @Name = "clientRentalHardware.ClientHardwareParts[" + i + "].ClientRentalHardware.Id" })
+							@Html.HiddenFor(k => clientRentalHardware.ClientHardwareParts[i].Part.Id)
+							@Html.CheckBoxFor(k => clientRentalHardware.ClientHardwareParts[i].Absent, new { @id = "part" + clientRentalHardware.ClientHardwareParts[i].Part.Id })
+							<label class="control-label c-pointer" for="part@(clientRentalHardware.ClientHardwareParts[i].Part.Id)">@clientRentalHardware.ClientHardwareParts[i].Part.Name</label>
+						</p>
+					}
 				</div>
 			</div>
-			<div class="form-group">
-				<label class="col-sm-2 control-label">Комментарий:</label>
-				<div class = "col-sm-4">
-					@Html.ValidationEditor(validationRunner, clientRentalHardware, "Comment", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+			if (clientRentalHardware.IsActive) {
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Комментарий:</label>
+					<div class="col-sm-4">
+						@Html.ValidationEditor(validationRunner, clientRentalHardware, "Comment", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+					</div>
 				</div>
-			</div>
-			<div class="form-group">
-				@Html.HiddenFor(k => clientRentalHardware.Client.Id)
-				@Html.HiddenFor(k => clientRentalHardware.Hardware.Id)
-				<input class="btn btn-green" type="submit" value="Активировать">
+			}
+			else {
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Комментарий:</label>
+					<div class="col-sm-4">
+						@Html.DisplayFor(hwt => clientRentalHardware.Comment, new { @class = "form-control" }) 
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Комментарий к деактивации:</label>
+					<div class="col-sm-4"> 
+						@Html.ValidationEditor(validationRunner, clientRentalHardware, "DeactivateComment", new {@class = "form-control" }, HtmlTag.input, HtmlType.text)
+					</div>
+				</div>
+			}
+			<div class="form-group"> 
+				<input class="btn btn-green" type="submit" value="Обновить"> 
 			</div>
 		}
+		@if (clientRentalHardware.IsActive) {
+			using (Html.BeginForm("DiactivateHardwareRent", "HardwareRent", null, FormMethod.Post, new { @id = "DiactivateHardwareRent", @class = "form-horizontal form-groups-bordered" })) {
+				<hr/>
+				<h3>Деактивация</h3>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Комментарий к деактивации:</label>
+					<div class="col-sm-4">
+						@Html.HiddenFor(k => clientRentalHardware.Hardware.Id, new { @Name = "hardware" })
+						@Html.HiddenFor(k => clientRentalHardware.Client.Id, new { @Name = "id" })
+						@Html.ValidationEditor(validationRunner, clientRentalHardware, "DeactivateComment", new { @Name = "deactivateReason", @class = "form-control" }, HtmlTag.input, HtmlType.text)
+					</div>
+				</div>
+				<div class="form-group">
+					<input class="btn btn-red" type="submit" value="Деактивировать">
+				</div>
+			}
+		}
+	
 	</div>
+</div>
+<div class="form-group">
+	<button class="btn btn-blue" onclick=" location.href = '@Url.Action("HardwareList", new { @id = clientRentalHardware.Client.Id })' ">Назад</button>
 </div>
