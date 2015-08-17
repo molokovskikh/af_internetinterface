@@ -28,6 +28,9 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual decimal? Sale { get; set; }
 
+		[Property]
+		public virtual string Comment { get; set; }
+
 		[Property, Description("Баланс клиента после денежного списания")]
 		public virtual decimal? BeforeWriteOffBalance { get; set; }
 	}

@@ -54,10 +54,10 @@ namespace InforoomControlPanel.Controllers
 		{
 			var pager = new InforoomModelFilter<Client>(this);
 			var criteria = pager.GetCriteria(i => i.PhysicalClient != null);
-			if (pager.IsExportRequested()) {
-				pager.GetItems();
-				pager.SetExportFields( s => new { s, s.Surname, s.PhysicalClient.Name, s.Patronymic, Вкусняшка = s.Address, Агентище = s.Agent, Улица = s.Address.House.Street.Name, Номерок = s.Address.House.Number });
+			if (pager.IsExportRequested()){
+				pager.SetExportFields(s => new { ЛС = s.Id, Клиент = s.Fullname, Тариф = s.PhysicalClient.Plan.Name, Адрес = s.PhysicalClient.Address.FullAddress, Статус = s.Status.Name });
 				pager.ExportToExcelFile(ControllerContext.HttpContext);
+				return null;
 			}
 			ViewBag.Pager = pager;
 			return View("List");
