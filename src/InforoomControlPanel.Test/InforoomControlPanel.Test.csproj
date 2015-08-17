@@ -211,6 +211,11 @@
     <Compile Include="Functional\Plans\CreateTVChannelFixture.cs" />
     <Compile Include="Functional\Plans\PlanFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
+    <Compile Include="Functional\Switch\DeleteNetworkNodeFixture.cs" />
+    <Compile Include="Functional\Switch\EditNetworkNodeFixture.cs" />
+    <Compile Include="Functional\Switch\CreateNetworkNodeFixture.cs" />
+    <Compile Include="Functional\Switch\EditSwitchFixture.cs" />
+    <Compile Include="Functional\Switch\SwitchFixture.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
