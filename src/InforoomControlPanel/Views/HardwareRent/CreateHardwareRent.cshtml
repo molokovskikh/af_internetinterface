@@ -1,0 +1,84 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "Услуга \"Аренда оборудования\"";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ClientRentalHardware clientRentalHardware = ViewBag.ClientHardware;
+	var date = (clientRentalHardware.GiveDate.HasValue) ? clientRentalHardware.GiveDate.Value.ToShortDateString() : "";
+	ValidationRunner validationRunner = ViewBag.Validation;
+}
+
+<script src="~/assets/js/checkAllCheckBoxes.js"></script>
+<div class="panel panel-primary col-md-12">
+	<div class="panel-body">
+		@using (Html.BeginForm("CreateHardwareRent", "HardwareRent", null, FormMethod.Post, new { @id = "AddHardwareForm", @class = "form-horizontal form-groups-bordered" })) {
+			@Html.HiddenFor(k => clientRentalHardware.Id)
+			@Html.HiddenFor(k => clientRentalHardware.Hardware.Id)
+			@Html.HiddenFor(k => clientRentalHardware.Client.Id)
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Клиент:</label>
+				<div class="col-sm-4">
+					@Html.DisplayFor(hwt => clientRentalHardware.Client.Fullname, new { @class = "form-control" })
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Тип оборудования:</label>
+				<div class = "col-sm-4">
+					@Html.DisplayFor(hwt => clientRentalHardware.Hardware.Name, new { @class = "form-control" })
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Модель:</label>
+				<div class = "col-sm-4">
+					@Html.ValidationEditor(validationRunner, clientRentalHardware, "Name", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Серийный номер:</label>
+				<div class = "col-sm-4">
+					@Html.ValidationEditor(validationRunner, clientRentalHardware, "SerialNumber", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Дата выдачи:</label>
+				<div class = "col-sm-4">
+					@Html.ValidationEditor(validationRunner, clientRentalHardware, "GiveDate", new { @value = date }, HtmlTag.date, HtmlType.none)
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label c-pointer" for="WasUsed">Бывшее в употреблении:</label>
+				<div class = "col-sm-4">
+					@Html.CheckBoxFor(k => clientRentalHardware.WasUsed, new { @id = "WasUsed" })
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label c-pointer" onclick="CheckAllCheckBoxesWithPartId(this)">В комплекте отсуствует:</label>
+				<div class = "col-sm-4">
+					@for (int i = 0; i < clientRentalHardware.ClientHardwareParts.Count; i++) {
+						<p>
+							@Html.HiddenFor(k => clientRentalHardware.ClientHardwareParts[i].Id)
+							@Html.HiddenFor(k => clientRentalHardware.Id, new { @Name = "clientRentalHardware.ClientHardwareParts[" + i + "].ClientRentalHardware.Id" })
+							@Html.HiddenFor(k => clientRentalHardware.ClientHardwareParts[i].Part.Id)
+							@Html.CheckBoxFor(k => clientRentalHardware.ClientHardwareParts[i].Absent, new { @id = "part" + clientRentalHardware.ClientHardwareParts[i].Part.Id })
+							<label class="control-label c-pointer" for="part@(clientRentalHardware.ClientHardwareParts[i].Part.Id)">@clientRentalHardware.ClientHardwareParts[i].Part.Name</label>
+						</p>
+					}
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Комментарий:</label>
+				<div class = "col-sm-4">
+					@Html.ValidationEditor(validationRunner, clientRentalHardware, "Comment", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+				</div>
+			</div>
+			<div class="form-group"> 				 
+				<input class="btn btn-green" type="submit" value="Активировать"> 
+			</div>
+		} 
+	</div>
+</div>
+<div class="form-group">
+	<button class="btn btn-blue" onclick=" location.href = '@Url.Action("HardwareList", new { @id = clientRentalHardware.Client.Id })' ">Назад</button>
+</div>

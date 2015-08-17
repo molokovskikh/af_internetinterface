@@ -24,6 +24,10 @@ namespace Inforoom2.Components
 			get { return this.Count; }
 		}
 
+		public ValidationErrors()
+		{
+		}
+
 		public ValidationErrors(IEnumerable<InvalidValue> ListOfErrors)
 		{
 			this.AddRange(ListOfErrors);
@@ -63,7 +67,7 @@ namespace Inforoom2.Components
 	public class ValidationRunner
 	{
 		protected ArrayList ValidatedObjectList = new ArrayList();
-
+		protected Dictionary<object, ValidationErrors> Errors = new Dictionary<object, ValidationErrors>();
 		protected ISession Session;
 
 		public ValidationRunner(ISession session)
@@ -154,10 +158,9 @@ namespace Inforoom2.Components
 			return range;
 		}
 
-		public ValidationErrors Validate(object obj)
+		public ValidationErrors Validate(object obj, ValidationErrors currentErrors = null)
 		{
 			var summary = new List<InvalidValue>();
-			ValidatedObjectList.Add(obj);
 
 			var props = obj.GetType().GetProperties().Where(i => Attribute.GetCustomAttributes(i).OfType<CustomValidator>().Any()).ToList();
 			foreach (var prop in props)
@@ -168,8 +171,16 @@ namespace Inforoom2.Components
 			var selfValidateErrors = ((BaseModel)obj).Validate(Session);
 			summary.AddRange(runnerErrors);
 			summary.AddRange(selfValidateErrors);
+			if (currentErrors!=null)
+			{
+				summary.AddRange(currentErrors); 
+			}
+			
 
-			return new ValidationErrors(summary.ToList());
+			var returnedErrors = new ValidationErrors(summary.ToList());
+			Errors.Add(obj, returnedErrors);
+			ValidatedObjectList.Add(obj);
+			return returnedErrors;
 		}
 
 		public ValidationErrors ValidateDeep(object obj, IList validatedObjects = null)
@@ -234,7 +245,11 @@ namespace Inforoom2.Components
 			if (!ValidatedObjectList.Contains(obj))
 				return new HtmlString(string.Empty);
 
-			var errors = ValidateProperty(obj, obj.GetType().GetProperty(field).Name);
+			// необходимо получить ошибоки для текущего поляS
+			//	Errors[obj]
+			var currentErrors = Errors.ContainsKey(obj) ? Errors[obj] : new ValidationErrors();
+			var errors = new ValidationErrors(currentErrors.Where(s => s.PropertyName == field).ToList());
+
 			// отображение ошибок по переданному валидатору, используется при принудительной проверке свойств
 			if (forcedValidationAttribute != null) {
 				errors.AddRange(((CustomValidator)forcedValidationAttribute).GetCurrentErrors());

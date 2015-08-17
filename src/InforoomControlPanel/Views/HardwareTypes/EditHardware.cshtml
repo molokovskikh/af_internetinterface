@@ -8,36 +8,60 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	RentalHardware rentalHardware = ViewBag.Hardware;
 	ValidationRunner validationRunner = ViewBag.Validation;
+	var newHardwarePart = (HardwarePart)ViewBag.HardwarePart ?? new HardwarePart();
 }
 
 <div class="panel panel-primary">
 	<div class="panel-body">
 		<div class="col-md-6">
-			@using (@Html.BeginForm("EditHardware", "HardwareTypes", FormMethod.Post, new {@id = "EditHardwareForm", @class = "form-horizontal form-groups-bordered"}))
-			{
+			@using (@Html.BeginForm("EditHardware", "HardwareTypes", FormMethod.Post, new { @id = "EditHardwareForm", @class = "form-horizontal form-groups-bordered" })) {
 				<div class="form-group">
 					@Html.HiddenFor(model => rentalHardware.Id)
-					<label class="col-sm-3 control-label" for="HwNameText">Название</label>
+					<label class="col-sm-3 control-label" for="HwNameText">Название:</label>
 					<div id="HwNameText" class="col-sm-5">
 						@Html.DisplayFor(modelItem => rentalHardware.Name, new { @class = "form-control" })
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-3 control-label" for="HwPriceText">Цена</label>
+					<label class="col-sm-3 control-label" for="HwPriceText">Цена:</label>
 					<div id="HwPriceText" class="col-sm-5">
 						@Html.ValidationEditor(validationRunner, rentalHardware, "Price", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-3 control-label" for="HwFreeDaysText">Бесплатные дни</label>
+					<label class="col-sm-3 control-label" for="HwFreeDaysText">Бесплатные дни:</label>
 					<div id="HwFreeDaysText" class="col-sm-5">
 						@Html.ValidationEditor(validationRunner, rentalHardware, "FreeDays", new { @class = "form-control" }, HtmlTag.input, HtmlType.text)
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" for="HwFreeDaysText">Комплектация:</label>
+					<div id="HwFreeDaysText" class="col-sm-5">
+						@foreach (var part in rentalHardware.HardwareParts) {
+							<p>@part.Name <a class="entypo-cancel-circled" style="color:#FF0000;float: left;" href="@Url.Action("DeleteHardwarePart", new { id = part.Id})"></a></p>
+						}
 					</div>
 				</div>
 				<div class="form-group">
 					<button class="btn btn-green" type="submit" id="AcceptBtn">Принять изменения</button>
 				</div>
 			}
+			@using (@Html.BeginForm("CreateHardwarePart", "HardwareTypes", FormMethod.Post, new { @id = "CreateHardwarePart", @class = "form-horizontal form-groups-bordered" })) {
+				<div class="form-group">
+					<h3>Пополнение комплектации</h3>
+				</div>
+				@Html.HiddenFor(model => rentalHardware.Id, new { @Name = "id" })
+				<div class="form-group">
+
+					<label class="col-sm-3 control-label" for="HwFreeDaysText">Название:</label>
+					<div id="HwFreeDaysText" class="col-sm-5">
+						@Html.ValidationEditor(validationRunner, newHardwarePart, "Name", new { @Name = "name", @class = "form-control" }, HtmlTag.input, HtmlType.text)
+					</div>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-green" type="submit" id="AcceptBtn">Добавить</button>
+				</div>
+			} 
 		</div>
 	</div>
 </div>
