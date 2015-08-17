@@ -128,6 +128,13 @@ namespace Billing
 							updateClient.SetStatus(StatusType.Worked, session);
 							updateClient.CreareAppeal("Клиент разблокирован", AppealType.Statistic);
 						}
+						if (payment.Agent != null && payment.Agent.Name.IndexOf("Сбербанк") != -1) {
+							//отправка сообщения в бухгалтерию о платеже юрика через Сбербанк 
+							StringBuilder messageText = new StringBuilder();
+							messageText.Append(string.Format("Лицевой счет юр. лица: {0}, Название юр. лица: {1}, Сумма платежа: {2} руб., Дата платежа: {3}.",
+								updateClient.Id, updateClient.Name, payment.Sum, payment.PaidOn));
+							EmailNotificationSender.Send(messageText, "Платеж юр. лица через Сбербанк");
+						}
 					}
 				}
 			});
