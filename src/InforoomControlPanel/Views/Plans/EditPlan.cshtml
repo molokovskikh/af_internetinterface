@@ -31,7 +31,7 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label" for="field-ta">Скорость</label>
 					<div class="col-sm-5">
-						@Html.DropDownListExtendedFor(i => plan.PackageSpeed, speed, obj => obj.GetSpeed().ToString(), null, new { @class = "form-control" }, currentSpeed.Id)
+						@Html.DropDownListExtendedFor(i => plan.PackageSpeed, speed, obj => obj.GetSpeed() + " - " + obj.Description, null, new { @class = "form-control" }, currentSpeed.Id)
 						@ViewBag.Validation.GetError(plan, "PackageSpeed")
 					</div>
 				</div>
@@ -94,7 +94,7 @@
 				<div class="form-group">
 					<button class="btn btn-green save" type="submit">Принять изменения</button>
 				</div>
-   }
+			}
 		</div>
 		<div class="col-md-6">
 			@if (plans.Count > 0) {
@@ -111,7 +111,7 @@
 						<div class="form-group">
 							@Html.HiddenFor(i => PlanTransfer.PlanFrom.Id)
 							<div class="col-sm-5">
-								@Html.DropDownListExtendedFor(i => PlanTransfer.PlanTo, plans, obj => obj.Name +" ("+ obj.Price+" руб.)", null, new { @class = "form-control" })
+								@Html.DropDownListExtendedFor(i => PlanTransfer.PlanTo, plans, obj => obj.Name + " (" + obj.Price + " руб.)", null, new { @class = "form-control" })
 								@ViewBag.Validation.GetError(PlanTransfer, "PlanTo")
 							</div>
 							<div class="col-sm-2">
@@ -186,7 +186,6 @@
 					</div>
 				}
 			}
-
 		</div>
 		<div class="col-md-6">
 			@if (tvChannelGroups.Count > 0) {

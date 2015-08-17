@@ -256,16 +256,7 @@ namespace Inforoom2.Models
 
 				password += availableChars[availableChars_elem];
 			}
-			string hash = string.Empty;
-			if (password != null)
-			{
-				byte[] bytes = Encoding.Unicode.GetBytes(password);
-				var CSP = new MD5CryptoServiceProvider();
-				byte[] byteHash = CSP.ComputeHash(bytes);
-				foreach (byte b in byteHash)
-					hash += string.Format("{0:x2}", b);
-			}
-			ph.Password = hash;
+			ph.Password = Md5.GetHash(password);
 			return password;
 		}
 

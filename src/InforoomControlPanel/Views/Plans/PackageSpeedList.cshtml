@@ -1,0 +1,90 @@
+﻿@using Inforoom2.Components 
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "Список Скоростей";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	string action = ViewBag.ActionName;
+	string controller = ViewBag.ControllerName;
+	ValidationRunner runner = ViewBag.Validation;
+
+	InforoomModelFilter<PackageSpeed> pager = ViewBag.Pager;
+	IList<PackageSpeed> packageSpeedList = pager.GetItems();
+	var packageSpeed = (PackageSpeed)ViewBag.PackageSpeed ?? new PackageSpeed();
+}
+
+<div class="col-md-6" style="padding-bottom: 40px;">
+	@using (@Html.BeginForm("CreatePackageSpeed", controller, null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
+		<div class="form-group">
+			<div class="col-sm-2">
+				<label class="control-label">Скорость (биты)</label>
+			</div>
+			<div class="col-sm-8">
+				@Html.ValidationEditor(runner, packageSpeed, "Speed", new { @class = "form-control " }, HtmlTag.input, HtmlType.none)
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-2">
+				<label class="control-label">Описание</label>
+			</div>
+			<div class="col-sm-8">
+				@Html.ValidationEditor(runner, packageSpeed, "Description", new { @class = "form-control " }, HtmlTag.input, HtmlType.none)
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-2">
+				<button class="btn btn-green" type="submit">Отправить запрос на добавление</button>
+			</div>
+			<div class="col-sm-8">
+			</div>
+		</div>
+	}
+</div> 
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+	<div class="form-group">
+
+		<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+			<thead>
+				<tr role="row">
+					<th tabindex="0"><a href="@pager.OrderBy(s => s.Id)">Номер</a></th>
+					<th tabindex="1"><a href="@pager.OrderBy(s => s.Speed)">Скорость</a></th>
+					<th tabindex="2"><a href="@pager.OrderBy(s => s.Description)">Описание</a></th>
+					<th tabindex="3"><a href="@pager.OrderBy(s => s.PackageId)">PackageId</a></th>
+					<th tabindex="4"><a href="@pager.OrderBy(s => s.Confirmed)">Подтверждена</a></th>
+					<th tabindex="5">действие</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in packageSpeedList) {
+					<tr>
+						<td class="col-sm-1">
+							<span>@item.Id</span>
+						</td>
+						<td class="col-sm-1">
+							<span>@item.GetSpeed()</span>
+						</td>
+						<td class="col-sm-1">
+							<span>@item.Description</span>
+						</td>
+						<td class="col-sm-1">
+							<span>@item.PackageId</span>
+						</td>
+						<td class="col-sm-1">
+							<span>@Html.CheckBoxFor(i => @item.Confirmed, new { @disabled = "disabled" })</span>
+						</td>
+						<td>
+							@if (!item.Confirmed) {
+								<a class="btn btn-green btn-sm btn-icon icon-left" href="@Url.Action("EditPackageSpeed", new { @id = @item.Id })">
+									<i class="entypo-cancel-circled"></i>
+									Изменить
+								</a>
+							}
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>

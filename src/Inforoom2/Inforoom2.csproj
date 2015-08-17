@@ -303,6 +303,7 @@
     </Compile>
     <Compile Include="Helpers\DescriptionHelper.cs" />
     <Compile Include="Helpers\ConfigHelper.cs" />
+    <Compile Include="Helpers\Md5Helper.cs" />
     <Compile Include="Helpers\ModelCrudListener.cs" />
     <Compile Include="Helpers\ControllerAndServiceMediator.cs" />
     <Compile Include="Helpers\SessionHelper.cs" />
@@ -317,8 +318,9 @@
     <Compile Include="Intefaces\ILogAppeal.cs" />
     <Compile Include="Models\AdditionalStatus.cs" />
     <Compile Include="Models\Address.cs" />
-    <Compile Include="Models\Administrator.cs" />
-    <Compile Include="Models\Hardwarepart.cs" />
+    <Compile Include="Models\Administrator.cs" /> 
+    <Compile Include="Models\Hardwarepart.cs" /> 
+    <Compile Include="Models\RedmineTask.cs" /> 
     <Compile Include="Models\ModelAppeal.cs" />
     <Compile Include="Models\BillingHistory.cs" />
     <Compile Include="Models\Banner.cs" />
@@ -393,6 +395,8 @@
     <Compile Include="Models\UserWriteOff.cs" />
     <Compile Include="Models\WriteOff.cs" />
     <Compile Include="validators\ApplicantPhoneValidator.cs" />
+    <Compile Include="validators\ValidatorGreaterThanZero.cs" />
+    <Compile Include="validators\ValidatorNotNull.cs" />
     <Compile Include="validators\ValidatorEmail.cs" />
     <Compile Include="validators\ValidatorFullNameOriginal.cs" />
     <Compile Include="validators\ValidatorContacts.cs" />

@@ -25,7 +25,7 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label" for="field-ta">Скорость</label>
 					<div class="col-sm-5">
-						@Html.DropDownListExtendedFor(i => plan.PackageSpeed, speed, obj => obj.GetSpeed().ToString(), null, new { @class = "form-control" }, currentSpeed.Id)
+						@Html.DropDownListExtendedFor(i => plan.PackageSpeed, speed, obj => obj.GetSpeed() + " (" + obj.Description + ")", null, new { @class = "form-control" }, currentSpeed.Id)
 						@ViewBag.Validation.GetError(plan, "PackageSpeed")
 					</div>
 				</div>
@@ -88,7 +88,7 @@
 				<div class="form-group">
 					<button class="btn btn-green" type="submit">Сохранить</button>
 				</div>
-   }
+			}
 		</div>
 
 		@*
