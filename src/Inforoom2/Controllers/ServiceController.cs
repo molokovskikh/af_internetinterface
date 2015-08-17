@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Common.Tools;
@@ -10,8 +11,32 @@ using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
 {
-	public class ServiceController : PersonalController
+	public class ServiceController : Inforoom2Controller
 	{
+		/// <summary>
+		/// Функция дублирована в PersonalController
+		/// Нужно удалить ее отовсюду, потому что она говно полное
+		/// </summary>
+		protected void InitServices()
+		{
+			var client = CurrentClient;
+			var services = DbSession.Query<Service>().Where(s => s.IsActivableFromWeb);
+			var blockAccountService = services.FirstOrDefault(i => i is BlockAccountService);
+			blockAccountService = BaseModel.UnproxyOrDefault(blockAccountService) as BlockAccountService;
+
+			var deferredPayment = services.FirstOrDefault(i => i is DeferredPayment);
+			deferredPayment = BaseModel.UnproxyOrDefault(deferredPayment) as DeferredPayment;
+			var inforoomServices = new List<Service> { blockAccountService, deferredPayment };
+
+			ViewBag.Client = client;
+			//@todo Убрать исключения для статического IP, когда будет внедрено ручное включение сервиса
+			ViewBag.ClientServices = client.ClientServices.Where(cs => (cs.Service.Name == "Фиксированный ip-адрес" || cs.Service.IsActivableFromWeb) && cs.IsActivated).ToList();
+			ViewBag.AvailableServices = inforoomServices;
+
+			ViewBag.BlockAccountService = blockAccountService;
+			ViewBag.DeferredPayment = deferredPayment;
+		}
+
 		public ActionResult BlockAccount()
 		{
 			InitServices();
