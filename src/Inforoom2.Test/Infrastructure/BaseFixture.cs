@@ -544,7 +544,7 @@ namespace Inforoom2.Test.Infrastructure
 			var servicedClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.servicedClient);
 			servicedClient.SetStatus(DbSession.Get<Status>((int)StatusType.BlockedForRepair));
 			var serviceRequest = new ServiceRequest();
-			serviceRequest.BlockNetwork = true;
+			serviceRequest.BlockClientAndWriteOffs = true;
 			serviceRequest.Client = servicedClient;
 			serviceRequest.CreationDate = DateTime.Now;
 			serviceRequest.Description = "Почему-то не работает интернет";

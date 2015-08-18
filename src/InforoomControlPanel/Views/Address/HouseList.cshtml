@@ -29,19 +29,20 @@
 		<div class="row">
 			<div class="col-sm-1"><label>Регион</label> </div>
 			<div class="col-sm-2">@pager.FormFilterManual("Region.Id", HtmlType.Dropdown, regionList)</div>
-			<input type="submit" class="btn btn-success btn-sm" />
 		</div>
 		<div class="row">
 			<div class="col-sm-1"><label>Улица</label> </div>
 			<div class="col-sm-2">@pager.FormFilterManual("Street.Id", HtmlType.Dropdown, streetList)</div>
-			<input type="submit" class="btn btn-success btn-sm" />
 		</div>
 		<div class="row">
 			<div class="col-sm-1"><label>Номер</label> </div>
 			<div class="col-sm-2">@pager.FormFilterManual("Number", HtmlType.text)</div>
-			<input type="submit" class="btn btn-success btn-sm" />
 		</div>
-		@pager.GenerateInputs()
+		<div class="row">
+			<div class="col-sm-1">
+				@pager.FormFilterSubmit() 
+			</div>
+		</div> 
 	</form>
 </panel>
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">

@@ -5,7 +5,9 @@
  .servicemen table { table-layout:fixed; overflow:hidden;}
  .servicemen td { height: 40px;}
 
-
+ body { color: #424242; }
+ body a{ color: #00A651;font-weight: bold; }
+ 
 .Client.ServiceRequest textarea {width:600px; height:200px; resize: none;}
 	.servicemen {padding:10px;}
 	.servicemen .form-horizontal {margin: 10px 0px;}
@@ -23,7 +25,10 @@
 	.servicemen td.active {color: red!important;font-weight: bold;}
 	.servicemen .hover {color: black;}
 	.page-body .servicemen tbody .ServiceRequest {background: #0fbd71; color: white;border: 1px solid #f8f8f8;}
-	.page-body .servicemen tbody .ClientRequest {background: #0072bc; color: white;border: 1px solid #f8f8f8;}
+	.page-body .servicemen tbody .ConnectionRequest {background: #55ACE4; color: white;border: 1px solid #f8f8f8;}
+	.page-body .servicemen tbody .description a {color: #2C2C2C;}
+	.page-body .servicemen tbody .description a:hover {color: #454545;}
+	.page-body .servicemen tbody .this{border: 2px dotted #004225;}
 	.servicemen td.time {font-size:11px; text-align: center;}
 	.servicemen .time.left { display: none;}
 	
@@ -33,4 +38,8 @@
 	.error .msg { color: red;}
 	.IeWaterline{ border-bottom: 3px solid #00A651;width: 1024px;}
 	.c-pointer {cursor: pointer;}
+	.c-pointer.text{ display: inline;  font-weight: bold;}
+	.c-pointer.white{ color: #ffffff;}
 	.date-picker-box input{width: 150px;text-align: center;}
+	@media print {a[href]:after {content: none !important;}
+}

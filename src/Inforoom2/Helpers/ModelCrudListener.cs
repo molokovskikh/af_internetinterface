@@ -244,7 +244,8 @@ namespace Inforoom2.Helpers
 			// сообщение
 			var messageBuilder = new StringBuilder();
 			// оформление логируемого поля модели
-			const string pattern = "{0} было: {1} <br/>{0} стало: {2} <br/>";
+			const string pattern = @"<span class='c-pointer text' title='{3}'>{0}</span> <span title='{3}'>было: {1}</span> <br/>
+<span class='c-pointer text white' title='{3}'>{0}</span><span title='{3}'> стало: {2}</span> <br/>";
 			// объявляем нужные переменные
 			Log log = null;
 			// реализуем логику обработки события  
@@ -258,36 +259,46 @@ namespace Inforoom2.Helpers
 					// так фиксируем изменение, если поле - это список
 					if ((currentState.GetValue(i) as IList) != null) {
 						// формируем сообщение, с указанием ко-ва эл. списка 
-						messageBuilder.AppendFormat(pattern, propNames[i] + " (список) ",
+						messageBuilder.AppendFormat(pattern, (postUpdate.Entity != null ? postUpdate.Entity.GetDescription(propNames[i]).Replace("Proxy", "") : propNames[i]) + " (список) ",
 							oldState.GetValue(i) == null ? "значение отсуствует" : // пустое старое значение
-								(oldState.GetValue(i) as IList).Count.ToString(), // значение - список, выводим длину прежнего списка 
+								(currentState.GetValue(i) as IList).Count.ToString(), // значение - список, выводим длину прежнего списка 
 							currentState.GetValue(i) == null ? "значение отсуствует" : // пустое новое значение
-								(currentState.GetValue(i) as IList).Count.ToString()); // значение - список, выводим длину текущего списка 
+								(currentState.GetValue(i) as IList).Count.ToString(), // значение - список, выводим длину текущего списка 
+							propNames[i]);
 					}
 					else {
 						// так фиксируем изменение, если поле - не список
 						// формируем сообщение, в случае если езмененное поле - модель - указываем разницу Id
-						messageBuilder.AppendFormat(pattern, propNames[i],
-							oldState.GetValue(i) == null ? "значение отсуствует" // пустое старое значение
-								: ((oldState.GetValue(i) as BaseModel) == null ? oldState[i] // значение старое обычное
-									: (oldState.GetValue(i) as BaseModel).Id), // значение старое - модель, выводим Id модели
-							currentState.GetValue(i) == null ? "значение отсуствует" // пустое новое значение
-								: ((currentState.GetValue(i) as BaseModel) == null ? currentState[i] // значение новое обычное
-									: (currentState.GetValue(i) as BaseModel).Id)); // значение новое - модель, выводим Id модели
+						messageBuilder.AppendFormat(pattern, (postUpdate.Entity != null ? postUpdate.Entity.GetDescription(propNames[i]).Replace("Proxy", "") : propNames[i]),
+							(oldState.GetValue(i) == null ? "значение отсуствует" // пустое старое значение
+								: ((oldState.GetValue(i) as BaseModel) == null ? // если старое значение не является моделью
+									(oldState[i] is Enum ? oldState[i].GetDescription() // если старое значение яв. перечислением, получаем его описание
+										: (oldState[i] is bool ? ((bool)oldState[i]) ? "Да" : "Нет" // если бинарное старое значение - выводим да/нет
+											: oldState[i])) // а вообще, старое значение обычное
+									: (oldState.GetValue(i) as BaseModel).Id)), // значение старое - модель, выводим Id модели
+							(currentState.GetValue(i) == null ? "значение отсуствует" // пустое новое значение
+								: ((currentState.GetValue(i) as BaseModel) == null ? // если новое значение не является моделью
+									(currentState[i] is Enum ? currentState[i].GetDescription() // если новое значение яв. перечислением, получаем его описание
+										: (currentState[i] is bool ? ((bool)currentState[i]) ? "Да" : "Нет" // если бинарное новое значение - выводим да/нет
+											: currentState[i])) // а вообще, новое значение обычное 
+									: (currentState.GetValue(i) as BaseModel).Id)),
+							propNames[i]); // значение новое - модель, выводим Id модели
 					}
 				}
 			}
 			// если существует логируемая разница между старой и новой моделями, сохраняем ее в лог 
 			if (messageBuilder.Length > 0) {
 				// добавляя в начало информацию о модели
+				int modelId = ((postUpdate.Entity as BaseModel) != null ? ((BaseModel)postUpdate.Entity).Id : 0);
 				messageBuilder.Insert(0, string.Format("Модель <strong> {0} </strong>, Id : <strong>{1}</strong> изменена :<br/>",
-					postUpdate.Entity.GetDescription(),
-					((postUpdate.Entity as BaseModel) != null ? "" + ((BaseModel)postUpdate.Entity).Id : "")));
+					"<span class='c-pointer' title='" + postUpdate.Entity.GetType().Name + "'>" + postUpdate.Entity.GetDescription() + "</span>", modelId));
 				// формируем лог 
 				log = new Log() {
 					Message = messageBuilder.ToString(),
 					Type = LogEventType.Update,
-					Employee = CurrentEmployee
+					Employee = CurrentEmployee,
+					ModelId = modelId,
+					ModelClass = postUpdate.Entity.GetType().Name
 				};
 			}
 			// если лог сформирован, сохраняем его в БД
@@ -336,14 +347,16 @@ namespace Inforoom2.Helpers
 			// сохраняем сообщение в лог 
 			if (messageBuilder.Length > 0) {
 				// добавляя в начало информацию о модели
+				int modelId = ((preInsert.Entity as BaseModel) != null ? ((BaseModel)preInsert.Entity).Id : 0);
 				messageBuilder.Insert(0, string.Format("Модель <strong> {0} </strong>, Id : <strong>{1}</strong> добавлена :<br/>",
-					preInsert.Entity.GetDescription(),
-					((preInsert.Entity as BaseModel) != null ? "" + ((BaseModel)preInsert.Entity).Id : "")));
+					preInsert.Entity.GetDescription(), modelId));
 				// формируем лог 
 				log = new Log() {
 					Message = messageBuilder.ToString(),
 					Type = LogEventType.Insert,
-					Employee = CurrentEmployee
+					Employee = CurrentEmployee,
+					ModelId = modelId,
+					ModelClass = preInsert.Entity.GetType().Name
 				};
 			}
 			// если лог сформирован, сохраняем его в БД
@@ -392,14 +405,16 @@ namespace Inforoom2.Helpers
 			// сохраняем сообщение в лог 
 			if (messageBuilder.Length > 0) {
 				// добавляя в начало информацию о модели
+				int modelId = ((preDelete.Entity as BaseModel) != null ? ((BaseModel)preDelete.Entity).Id : 0);
 				messageBuilder.Insert(0, string.Format("Модель <strong> {0} </strong>, Id : <strong>{1}</strong> удалена :<br/>",
-					preDelete.Entity.GetDescription(),
-					((preDelete.Entity as BaseModel) != null ? "" + ((BaseModel)preDelete.Entity).Id : "")));
+					preDelete.Entity.GetDescription(), modelId));
 				// формируем лог 
 				log = new Log() {
 					Message = messageBuilder.ToString(),
 					Type = LogEventType.Delete,
-					Employee = CurrentEmployee
+					Employee = CurrentEmployee,
+					ModelId = modelId,
+					ModelClass = preDelete.Entity.GetType().Name
 				};
 			}
 			// если лог сформирован, сохраняем его в БД

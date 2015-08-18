@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using NHibernate.Linq;
@@ -34,29 +35,6 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult ConnectionTable()
 		{
 			var team = DbSession.Query<ServiceMan>().ToList();
-
-			//var employees = DbSession.Query<Employee>().Take(6).ToList();
-			//foreach (var man in employees)
-			//	team.Add(new ServiceMan(man));
-			//var client = new Client();
-			//client.PhysicalClient = new PhysicalClient(); ;
-			//client.PhysicalClient.Name = "Клиент Тестович";
-			//client.PhysicalClient.PhoneNumber = "8-967-152-66-06";
-			//var request = new ServiceRequest(client);
-			//request.Description = "Мышь перегрызла провод от интернета";
-			//request.BeginTime = DateTime.Now;
-			//request.EndTime = DateTime.Now.AddHours(1).AddMinutes(23);
-			//team[0].ServiceRequests.Add(request);
-
-			//var client2 = new Client();
-			//client2.PhysicalClient = new PhysicalClient(); ;
-			//client2.PhysicalClient.Name = "Клиент Сломаевич";
-			//client2.PhysicalClient.PhoneNumber = "8-967-152-66-06";
-
-			//var request2 = new ConnectionRequest(client2);
-			//request2.BeginTime = DateTime.Now.AddHours(-5).AddMinutes(1);
-			//request2.EndTime = DateTime.Now.AddHours(-3).AddMinutes(49);
-			//team[1].ConnectionRequests.Add(request2);
 			var regions = DbSession.Query<Region>().ToList();
 			ViewBag.Regions = regions;
 			ViewBag.ServicemenDate = DateTime.Today;
@@ -68,6 +46,7 @@ namespace InforoomControlPanel.Controllers
 		/// Асинхронное получение графика подключений по дате
 		/// </summary>
 		/// <param name="date">Дата для которой отображается график</param>
+		/// <param name="regionId">Регион</param>
 		/// <returns></returns>
 		[HttpPost]
 		public ActionResult ConnectionTable(DateTime date, int regionId = 0)
@@ -86,17 +65,9 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		/// <summary>
-		/// Список сервисных заявок
+		/// Список неподключенны клиентов
 		/// </summary>
-		/// <param name="ClientRequest"></param>
 		/// <returns></returns>
-		public ActionResult ServiceRequests()
-		{
-			var serviceRequests = DbSession.Query<ServiceRequest>().OrderByDescending(i => i.Id).ToList();
-			ViewBag.ServiceRequests = serviceRequests;
-			return View();
-		}
-
 		public ActionResult UnpluggedClientList()
 		{
 			var status = DbSession.Query<Status>().First(i => i.ShortName == "BlockedAndNoConnected");
@@ -106,107 +77,98 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		/// <summary>
-		/// Прикрепление сервисной заявки в график
+		/// Прикрепление сервисной заявки в график инженеров
 		/// </summary>
-		/// <param name="ClientRequest"></param>
+		/// <param name="id">Идентификатор клиента (заявка на подключение) / сервисной заявки</param>
+		/// <param name="type">Тип записи в графике инженеров</param>
 		/// <returns></returns>
-		public ActionResult AttachClient(int id)
+		public ActionResult AttachRequest(int id, ServicemenScheduleItem.Type type)
 		{
-			var client = DbSession.Get<Client>(id);
-			var request = DbSession.Query<ConnectionRequest>().FirstOrDefault(i => i.Client == client);
-			if (request == null) {
-				request = new ConnectionRequest();
-				request.Client = client;
-				DbSession.Save(request);
-			}
-			return RedirectToAction("AttachConnectionRequest", new { requestId = request.Id });
-		}
-
-		/// <summary>
-		/// Прикрепление сервисной заявки в график
-		/// </summary>
-		/// <param name="ClientRequest"></param>
-		/// <returns></returns>
-		public ActionResult AttachServiceRequest(int requestId)
-		{
-			var serviceRequest = DbSession.Get<ServiceRequest>(requestId);
+			// получение записи в графике (новой/существующей)
+			var scheduleItem = ServicemenScheduleItem.GetSheduleItem(DbSession, id, type);
+			// получение списков для передачи на форму
 			var servicemen = DbSession.Query<ServiceMan>().ToList();
 			var regions = DbSession.Query<Region>().ToList();
 			ViewBag.Regions = regions;
-			ViewBag.ServiceRequest = serviceRequest;
-			ViewBag.Servicemen = servicemen;
-			ViewBag.ServicemenDate = DateTime.Today;
+			// получение информации о записи в графике для передачи на форму
+			if (scheduleItem != null) {
+				ViewBag.ServicemenScheduleItem = scheduleItem;
+				ViewBag.Servicemen = servicemen;
+				ViewBag.ServicemenDate = scheduleItem.BeginTime.HasValue && scheduleItem.BeginTime != Convert.ToDateTime("01.01.0001 0:00:00") ? scheduleItem.BeginTime
+					: ViewBag.ServicemenDate ?? DateTime.Today;
+				var duration = ((scheduleItem.EndTime.HasValue ? scheduleItem.EndTime.Value : Convert.ToDateTime("01.01.0001 0:00:00"))
+				                - (scheduleItem.BeginTime.HasValue ? scheduleItem.BeginTime.Value : Convert.ToDateTime("01.01.0001 0:00:00"))).TotalMinutes;
+				ViewBag.Region = (scheduleItem.ServiceMan != null ? scheduleItem.ServiceMan.Region : scheduleItem.Client.Address.Region);
+				ViewBag.Duration = duration > 0 ? duration : 60;
+			}
 			return View();
 		}
 
 		/// <summary>
-		/// Прикрепление сервисной заявки в график
+		/// Прикрепление сервисной заявки в график инженеров
 		/// </summary>
-		/// <param name="ClientRequest"></param>
+		/// <param name="scheduleItem">Запись в графике инженеров</param>
 		/// <returns></returns>
 		[HttpPost]
-		public ActionResult AttachServiceRequest([EntityBinder] ServiceRequest ServiceRequest)
+		public ActionResult AttachRequest([EntityBinder] ServicemenScheduleItem scheduleItem)
 		{
 			var duration = int.Parse(Request.Form["duration"]);
-			int hours = duration / 60;
-			int minutes = duration - hours * 60;
-			ViewBag.ServicemenDate = ServiceRequest.BeginTime.Date;
-			ServiceRequest.EndTime = ServiceRequest.BeginTime.AddHours(hours).AddMinutes(minutes);
-			var errors = ValidationRunner.Validate(ServiceRequest);
+			scheduleItem.EndTime = scheduleItem.BeginTime.Value.AddMinutes(duration);
+			ViewBag.Duration = duration;
+			ViewBag.ServicemenDate = scheduleItem.BeginTime.Value.Date;
+
+			// проверка, если назначенное время в графике исполнителя не занято
+			if ((scheduleItem.BeginTime != null
+			     || scheduleItem.BeginTime != Convert.ToDateTime("01.01.0001 0:00:00"))
+			    && (scheduleItem.EndTime != null
+			        || scheduleItem.EndTime != Convert.ToDateTime("01.01.0001 0:00:00"))
+			    && scheduleItem.ServiceMan.SheduleItems.Any(serv =>
+				    serv.Id != scheduleItem.Id && (serv.BeginTime > scheduleItem.BeginTime && serv.BeginTime < scheduleItem.EndTime ||
+												   serv.EndTime > scheduleItem.BeginTime && serv.EndTime < scheduleItem.EndTime)))
+			{
+				//вывод сообщения
+				ErrorMessage("Назначенное время в графике исполнителя уже занято!");
+				//обновление сессии (связанно с эл-ми на форме)
+				DbSession.Clear();
+				DbSession.Flush();
+				//переход к назначению заявки
+				if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest)
+					return RedirectToAction("AttachRequest", "ConnectionTeam", new { id = scheduleItem.ServiceRequest.Id, type = scheduleItem.RequestType });
+				if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest)
+					return RedirectToAction("AttachRequest", "ConnectionTeam", new { id = scheduleItem.Client.Id, type = scheduleItem.RequestType });
+			}
+			//валидация эл-та графика
+			var errors = ValidationRunner.Validate(scheduleItem);
 			if (errors.Length == 0) {
-				DbSession.Save(ServiceRequest);
-				SuccessMessage("Сервисная заявка успешно добавлена в график");
+				// проверка свободного времени исполнителя заявки
+
+				DbSession.Save(scheduleItem);
+				//вывод сообщения
+				if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest) {
+					SuccessMessage("Сервисная заявка успешно добавлена в график");
+				}
+				else {
+					SuccessMessage("Заявка на подключение успешно добавлена в график");
+				}
+				//обновление сессии (связанно с эл-ми на форме)
 				DbSession.Flush();
 				DbSession.Clear();
-				return AttachServiceRequest(ServiceRequest.Id);
+				//переход к назначенной заявке
+				if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest)
+					return RedirectToAction("AttachRequest", "ConnectionTeam", new { id = scheduleItem.ServiceRequest.Id, type = scheduleItem.RequestType });
+				if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest)
+					return RedirectToAction("AttachRequest", "ConnectionTeam", new { id = scheduleItem.Client.Id, type = scheduleItem.RequestType });
 			}
-			AttachServiceRequest(ServiceRequest.Id);
-			ViewBag.ServiceRequest = ServiceRequest;
+			//переход к назначению заявки
+			if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest)
+				return RedirectToAction("AttachRequest", "ConnectionTeam", new { id = scheduleItem.ServiceRequest.Id, type = scheduleItem.RequestType });
+			if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest)
+				return RedirectToAction("AttachRequest", "ConnectionTeam", new { id = scheduleItem.Client.Id, type = scheduleItem.RequestType });
+
+			ViewBag.ServicemenScheduleItem = scheduleItem;
 			return View();
 		}
 
-		/// <summary>
-		/// Прикрепление заявки на подключение в график
-		/// </summary>
-		/// <param name="ClientRequest"></param>
-		/// <returns></returns>
-		public ActionResult AttachConnectionRequest(int requestId)
-		{
-			var ConnectionRequest = DbSession.Get<ConnectionRequest>(requestId);
-			var servicemen = DbSession.Query<ServiceMan>().ToList();
-			var regions = DbSession.Query<Region>().ToList();
-			ViewBag.Regions = regions;
-			ViewBag.ConnectionRequest = ConnectionRequest;
-			ViewBag.Servicemen = servicemen;
-			ViewBag.ServicemenDate = DateTime.Today;
-			return View();
-		}
-
-		/// <summary>
-		/// Прикрепление заявки на подключение в график
-		/// </summary>
-		/// <param name="ClientRequest"></param>
-		/// <returns></returns>
-		[HttpPost]
-		public ActionResult AttachConnectionRequest([EntityBinder] ConnectionRequest ConnectionRequest)
-		{
-			var duration = int.Parse(Request.Form["duration"]);
-			int hours = duration / 60;
-			int minutes = duration - hours * 60;
-			ViewBag.ServicemenDate = ConnectionRequest.BeginTime.Value.Date;
-			ConnectionRequest.EndTime = ConnectionRequest.BeginTime.Value.AddHours(hours).AddMinutes(minutes);
-			var errors = ValidationRunner.Validate(ConnectionRequest);
-			if (errors.Length == 0) {
-				DbSession.Save(ConnectionRequest);
-				SuccessMessage("Сервисная заявка успешно добавлена в график");
-				DbSession.Flush();
-				DbSession.Clear();
-				return AttachConnectionRequest(ConnectionRequest.Id);
-			}
-			AttachServiceRequest(ConnectionRequest.Id);
-			ViewBag.ClientRequest = ConnectionRequest;
-			return View();
-		}
 
 		/// <summary>
 		/// График подключения бригад
@@ -227,7 +189,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult Servicemen()
 		{
-			var team = DbSession.Query<ServiceMan>().ToList();
+			var team = DbSession.Query<ServiceMan>().OrderBy(s => s.Region).ThenBy(a=>a.Employee.Name).ToList();
 			var employees = DbSession.Query<Employee>().ToList().Where(j => team.All(i => i.Employee != j)).OrderBy(i => i.Name).ToList();
 			var regions = DbSession.Query<Region>().ToList();
 			ViewBag.Regions = regions;
