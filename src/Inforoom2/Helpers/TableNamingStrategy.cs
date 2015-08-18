@@ -23,7 +23,6 @@ namespace Inforoom2.Helpers
 				|| tableName == "Tariffs".ToLower()
 				|| tableName == "Regions".ToLower()
 				|| tableName == "Services".ToLower()
-				|| tableName == "ServiceIterations".ToLower()
 				|| tableName == "ClientServices".ToLower()
 				|| tableName == "Clients".ToLower()
 				|| tableName == "UserWriteOffs".ToLower()

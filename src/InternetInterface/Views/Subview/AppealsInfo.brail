@@ -38,7 +38,7 @@
 			<% if item.Type.Equals(InternetInterface.Models.UniversalAppealType.Service): %>
 				<td>
 					Сервисная заявка №
-					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}ServiceRequest/ServiceRequestEdit/${item.Id}">${item.Id.ToString()}</a>
+					${app.LinkTo(item.Id.ToString(), @ServiceRequest, @ShowRequest,{@id: item.Id})}
 					${item.Text}
 				</td>
 			<% else: %>

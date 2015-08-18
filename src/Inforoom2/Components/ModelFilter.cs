@@ -546,14 +546,6 @@ namespace Inforoom2.Components
 		}
 
 		/// <summary>
-		/// Создает необходимые кнопку подтверждения для формы фильтра.
-		/// </summary>
-		/// <returns></returns>
-		public HtmlString FormFilterSubmit()
-		{ 
-			return new HtmlString(GenerateInputs() + "<input type='submit' value='Поиск' class='btn btn-success btn-sm' />"); ;
-		}
-		/// <summary>
 		/// Создает необходимые инпуты для фильтрации, при помощи Get формы.
 		/// </summary>
 		/// <returns></returns>
@@ -588,28 +580,24 @@ namespace Inforoom2.Components
 			if (o.ContainsKey("value"))
 				selectedValue = o["value"];
 
-			if (type == HtmlType.Date)
-			{
+			if (type == HtmlType.Date) {
 				o["class"] = " datepicker " + o["class"];
 				o["date-format"] = "dd.nn.yyyy";
 				o["data-provide"] = "datepicker-inline";
 				return string.Format("<input {0} />", GetPropsValues(o));
 			}
 
-			if (type == HtmlType.text)
-			{
+			if (type == HtmlType.text) {
 				return string.Format("<input type='text' {0} />", GetPropsValues(o));
 			}
 
-			if (type == HtmlType.checkbox)
-			{
+			if (type == HtmlType.checkbox) {
 				o["class"] = "c-pointer " + o["class"];
 				var selectedPart = selectedValue != null && selectedValue.Contains("true") ? " checked=checked" : "";
 				return string.Format("<input type='checkbox' value = 'true' {0} {1}/><input type='hidden' value='false' {0} >", GetPropsValues(o), selectedPart);
 			}
 
-			if (type == HtmlType.Dropdown)
-			{
+			if (type == HtmlType.Dropdown) {
 				List<string> values;
 				var attrName = o["name"];
 

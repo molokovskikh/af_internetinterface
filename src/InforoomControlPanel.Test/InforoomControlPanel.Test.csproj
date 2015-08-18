@@ -194,7 +194,6 @@
     <Compile Include="Functional\ClientActions\AgentListFixture.cs" />
     <Compile Include="Functional\ClientActions\agentStatusChangeFixture.cs" />
     <Compile Include="Functional\ClientActions\RequestRegistrationFixture.cs" />
-    <Compile Include="Functional\ClientActions\ConnectionTeamtFixture.cs" />
     <Compile Include="Functional\ClientActions\ServiceRequestFixture.cs" />
     <Compile Include="Functional\ClientActions\PrivateMessageFixture.cs" />
     <Compile Include="Functional\ClientActions\LogAppealFixture.cs" />

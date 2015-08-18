@@ -18,7 +18,7 @@
 		<div class="row">
 			<div class="col-sm-2">Дата регистрации с </div>
 			<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().GiveDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
-			<div class="col-sm-1">по</div> 
+			<div class="col-sm-1">по</div>
 			<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().GiveDate, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div>
 		</div>
 		<div class="row">
@@ -30,7 +30,7 @@
 				@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
 			</div>
 			<div class="col-sm-1">
-				@pager.CleanButton(new { @class = "btn btn-success btn-sm" }) 
+				@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
 			</div>
 		</div>
 	</form>

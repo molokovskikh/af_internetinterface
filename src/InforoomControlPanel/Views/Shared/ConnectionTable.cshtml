@@ -1,16 +1,15 @@
 ﻿@using System.Activities.Expressions
 @using System.Activities.Statements
-@using Inforoom2.Helpers
 @using Inforoom2.Models
 @{
 	ViewBag.Title = "График назначенных заявок";
 	var team = ViewBag.Servicemen;
 	DateTime date = ViewBag.ServicemenDate;
-	ServicemenScheduleItem scheduleItem = ViewBag.ServicemenScheduleItem;
+	ServiceRequest ServiceRequest = ViewBag.ServiceRequest;
 	var regions = new List<Region>();
-	regions.Add(new Region() { Id = 0, Name = "Все" });
+	regions.Add(new Region(){Id=0,Name = ""});
 	regions.AddRange(ViewBag.Regions);
-	Region region = ViewBag.Region ?? regions.First();
+	Region Region = ViewBag.Region ?? regions.First();
 }
 @section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/ClientController.ServiceRequest.js")"></script>}
 <div class="servicemen panel panel-primary col-md-6">
@@ -20,7 +19,7 @@
 				<label class="col-sm-1 control-label">Дата</label>
 				<iv class="col-sm-3">
 					<div class="input-group">
-						<input type="text" data-format="dd.mm.yyyy" class="form-control datepicker" value="@date.ToString("dd.MM.yyyy")">
+						<input type="text" data-format="dd.mm.yyyy" class="form-control datepicker" value="@date">
 										
 						<div class="input-group-addon">
 							<a href="#"><i class="entypo-calendar"></i></a>
@@ -28,9 +27,8 @@
 					</div>
 				</iv>
 				<label class="col-sm-2 control-label">Регион</label>
-				<div class="col-sm-4"> 
-					@Html.DropDownListExtendedFor(i => region, regions, obj => obj.Name, null,
-						new { @class = "regionId form-control", @Id = "regionId" }, region.Id)
+				<div class="col-sm-4">
+					@Html.DropDownList("regionId",new SelectList(regions,"Id","Name",Region.Id),new { @class = "regionId form-control" })
 				</div>
 			</div>
 		</form>
@@ -46,7 +44,7 @@
 			</thead>
 			<tbody>
 				@{
-					var day = scheduleItem != null && scheduleItem.BeginTime != null ? scheduleItem.BeginTime.Value.Date : date.Date;
+					var day = ServiceRequest != null ? ServiceRequest.BeginTime.Date : date;
 					var startHour = 9;
 					var endHour = 18;
 					var nowHour = startHour;
@@ -56,49 +54,63 @@
 				}
 				@while (nowHour < endHour) {
 					<tr>
-						@{ var time = day.AddHours(nowHour).AddMinutes(NowMin); }
+						@{var time = day.AddHours(nowHour).AddMinutes(NowMin);}
 						<th class="time left">@time.TimeOfDay.ToString().Substring(0, 5)</th>
 						@foreach (ServiceMan employee in team) {
 							var requestFlag = false;
 							var cl = "employee" + employee.Id;
-
 							//Отображение сервисных заявок
-							foreach (var item in employee.SheduleItems) {
-								if (Convert.ToDateTime(item.BeginTime.Value.ToString("dd.MM.yyyy HH:mm:00")) <= time
-									&& Convert.ToDateTime(item.EndTime.Value.ToString("dd.MM.yyyy HH:mm:00")) > time)
-								{
+							foreach (var request in employee.ServiceRequests) {
+								if (request.BeginTime <= time && request.EndTime >= time) {
 									requestFlag = true;
-									if (showedRequests.Contains(item)) {
+									if (showedRequests.Contains(request)) {
 										continue;
 									}
-									showedRequests.Add(item);
+									showedRequests.Add(request);
 									//Надо вычислить сколько ячеек будет занимать наша запись
-									var diff = item.EndTime.Value - item.BeginTime.Value;
+									var diff = request.EndTime - request.BeginTime;
 									double span = Math.Ceiling(diff.TotalMinutes / step);
-									<td class="@cl @item.RequestType.GetDescription() request @(item == scheduleItem ? "this" : "")" rowspan="@(span)">
+									<td class="@cl ServiceRequest request" rowspan="@span">
 										<div class="description">
-											<a href="@Url.Action("AttachRequest", "ConnectionTeam",
-												                                new {
-													                                id = (item.RequestType == ServicemenScheduleItem.Type.ServiceRequest ?
-														                                item.ServiceRequest.Id : item.Client.Id),
-													                                type = item.RequestType
-												                                })">@item.Client.PhysicalClient.FullName
-												<p>(@item.BeginTime.Value.ToString("HH:mm") - @item.EndTime.Value.ToString("HH:mm") )</p></a>
+											<a href="@Url.Action("AttachServiceRequest","ConnectionTeam",new{requestId=@request.Id})">@request.Client.PhysicalClient.FullName</a>
 										</div>
-										<div class="contact">Тел:@item.GetPhone()</div>
-										<div class="address">@item.GetAddress()</div>
-										<div class="contact">@item.Comment</div>
+										<div class="contact">Тел:@request.Contact</div>
+										<div class="address">@request.Client.GetAddress()</div>
+										<div class="contact">@request.Description</div>
+									</td>
+								}
+							}
+							//Отображение заявок на подключение
+							foreach (var request in employee.ConnectionRequests) {
+								if (request.BeginTime <= time && request.EndTime >= time) {
+									requestFlag = true;
+									if (showedRequests.Contains(request)) {
+										continue;
+									}
+									showedRequests.Add(request);
+									//Надо вычислить сколько ячеек будет занимать наша запись
+									var diff = request.EndTime.Value - request.BeginTime.Value;
+									double span = Math.Floor(diff.TotalMinutes / step);
+									<td class="@cl ClientRequest request" rowspan="@span">
+										<div  class="description">
+											<a href="@Url.Action("AttachConnectionRequest","ConnectionTeam",new{requestId=@request.Id})">@request.Client.Fullname</a>
+										</div>
+										<div  class="contact">Тел:@request.Client.PhoneNumber</div>
+										<div  class="contact">@request.Comment</div>
+										<div  class="address">@request.Client.GetAddress()</div>
 									</td>
 								}
 							}
 							if (!requestFlag) {
 								var active = "";
-								if (scheduleItem != null && scheduleItem.ServiceMan == employee && scheduleItem.BeginTime == time) {
+								if (ServiceRequest != null && ServiceRequest.ServiceMan == employee && ServiceRequest.BeginTime == time)
+								{
 									active = "active";
 								}
 								<td class="@cl time @active">@time.TimeOfDay.ToString().Substring(0, 5)</td>
 							}
 						}
+
 					</tr>
 					NowMin += step;
 					if (NowMin >= 60) {

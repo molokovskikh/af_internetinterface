@@ -70,7 +70,7 @@ ${app.Asset("service-requests.js")}
 			<tr class="requestCutInfo">
 				<td><b>Назначена</b></td>
 				<% if not Edit: %>
-				<td>${request.GetPerformerName()}</td>
+				<td>${request.Performer.Name}</td>
 				<% else: %>
 				<td>
 					${app.Edit("request.Performer", ingeners)}

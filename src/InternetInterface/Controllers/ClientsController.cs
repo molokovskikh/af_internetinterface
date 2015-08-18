@@ -77,12 +77,12 @@ namespace InternetInterface.Controllers
 				newHouse.Region = regionExists ?? new RegionHouse() { Name = (aList[8] ?? aList[0]).ToString() };
 				DbSession.Save(newHouse);
 				string streetOrHouseTown = (aList[9] ?? aList[7]).ToString();
-
-				string addressUpdateForNew = string.Format(@" UPDATE internet.physicalclients SET City='{0}',Street='{1}',House='{2}',Floor='{3}',Apartment='{4}', Entrance='{5}',HouseObj={6}, CaseHouse='{8}'  WHERE Id={7}",
-					streetOrHouseTown, aList[1], newHouse.Number, aList[3] == "" ? "0" : aList[3], aList[4] == "" ? "0" : aList[4], aList[5] == "" ? "0" : aList[5], newHouse.Id, aList[6], newHouse.Case);
-				string addressUpdateForOld = string.Format(" UPDATE internet.clients SET Address='улица {1} дом {2} квартира {4} подъезд {5} этаж {3}' " + " WHERE Id={6}", (aList[8] ?? aList[0]),
-					aList[1], newHouse.Number + newHouse.Case, aList[3] == "" ? "0" : aList[3], aList[4] == "" ? "0" : aList[4], aList[5] == "" ? "0" : aList[5], clientId);
-				DbSession.CreateSQLQuery(addressUpdateForNew + "; " + addressUpdateForOld).UniqueResult();
+				DbSession.CreateSQLQuery(string.Format(
+					@" UPDATE internet.physicalclients SET City='{0}',Street='{1}',House='{2}',Floor='{3}',Apartment='{4}', Entrance='{5}',HouseObj={6}, CaseHouse='{8}'  WHERE Id={7}",
+					streetOrHouseTown, aList[1], newHouse.Number, aList[3] == "" ? "0" : aList[3], aList[4] == "" ? "0" : aList[4],
+					aList[5] == "" ? "0" : aList[5], newHouse.Id, aList[6], newHouse.Case) + "; " +
+					string.Format(" UPDATE internet.clients SET Address='улица {1} дом {2} квартира {4} подъезд {5} этаж {3}' " + " WHERE Id={6}", (aList[8] ?? aList[0]),
+					aList[1], newHouse.Number + newHouse.Case, aList[3] == "" ? "0" : aList[3], aList[4] == "" ? "0" : aList[4], aList[5] == "" ? "0" : aList[5], clientId)).UniqueResult();
 			}
 
 			RedirectToUrl(path);

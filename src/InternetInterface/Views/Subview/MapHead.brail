@@ -24,13 +24,13 @@
 				<th>${App.LinkTo("Платежи", @Payers, @AgentFilter)}</th>
 				<% end %>
 				<% if MapPartner.AccesPartner("SSI"): %>
-				<th><a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}ConnectionTeam/ConnectionTable">График подключений</a></th>
+				<th>${App.LinkTo("График подключений", @UserInfo, @RequestGraph)}</th>
 				<% end %>
 				<% if MapPartner.AccesPartner("HMA"): %>
 				<th>${App.LinkTo("Карта дома", @HouseMap, @FindHouse)}</th>
 				<% end %>
 				<% if MapPartner.AccesPartner("SR"): %>
-				<th><a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}ServiceRequest/ServiceRequestList">Сервисные заявки</a></th>
+				<th>${App.LinkTo("Сервисные заявки", @ServiceRequest, @ViewRequests)}</th>
 				<% end %>
 				<% if MapPartner.AccesPartner("RP"): %>
 				<th>${App.LinkTo("Администрирование", @UserInfo, @Administration)}</th>

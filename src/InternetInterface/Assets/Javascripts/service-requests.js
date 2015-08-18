@@ -68,8 +68,7 @@
 		submitHandler: function (form) {
 			var id = $("#request_Id").val();
 			var flagFree = document.getElementById('request_Free').checked;
-			console.log("111");
-			if (flagFree) {
+			if (flagFree && checkFlag) {
 				var url = "${Siteroot}/ServiceRequest/AddServiceComment";
 				$.ajax({
 					url: url,
@@ -80,7 +79,6 @@
 					cache: false 
 				});
 			}
-			console.log("111");
 			form.submit();
 		}
 	});

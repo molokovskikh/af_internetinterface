@@ -9,6 +9,7 @@ var servicemenFunc = function () {
 	$(".servicemen td").on("mouseout", function() {
 		$(".servicemen th, .servicemen td").removeClass("hover");
 	});
+
 	$(".servicemen td.time").on("click", function () {
 		var val = $(this).html();
 		var picker = $(".timepicker");
@@ -19,11 +20,10 @@ var servicemenFunc = function () {
 		var cl = $(this).attr("class").split(" ")[0];
 		var id = cl.substr("employee".length);
 		console.log(id);
-		$("select[name*='ServiceMan.Id'] option").removeAttr("selected");
-		$("select[name*='ServiceMan.Id'] option[value='" + id + "']").attr("selected", "selected");
+		$("#ServiceManDropDown").val(id);
 
 		TimePickerValue = $(".timepicker").val();
-		ServiceManDropDownValue = $("#ServiceManDropDown option:selected").val();
+		ServiceManDropDownValue = $("#ServiceManDropDown").val();
 	});
 	//надо именно так
 	$(".servicemen .datepicker").get(0).onchange = refreshConnectionTable;
@@ -37,9 +37,7 @@ var refreshConnectionTable = function () {
 	$(".datepicker").each(function () {
 		$(this).val(date);
 	});
-	var regionRequest = $("#requestRegion").val();
-
-	var region = regionRequest!=null ? regionRequest : $(".regionId option:selected").val();
+	var region = $(".regionId option:selected").val();
 	$.ajax({
 		type: "POST",
 		url: cli.getParam("baseurl") + "ConnectionTeam/ConnectionTable",

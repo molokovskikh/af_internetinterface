@@ -44,7 +44,7 @@ namespace InternetInterface.Test.Integration
 			session.Clear();
 		}
 
-		[Test, Ignore("Функционал будет перенесен в новую админку")]
+		[Test]
 		public void Sms_should_contains_perform_date_time()
 		{
 			request.PerformanceDate = new DateTime(2012, 05, 21, 17, 00, 00);
@@ -52,7 +52,7 @@ namespace InternetInterface.Test.Integration
 			Assert.That(sms.Text, Is.StringStarting("$ 21.05.2012 17:00:00"));
 		}
 
-		[Test, Ignore("Функционал перенесен в новую админку")]
+		[Test]
 		public void On_close_request_make_write_off()
 		{
 			request.Sum = 200;
@@ -63,7 +63,7 @@ namespace InternetInterface.Test.Integration
 			Assert.That(writeOff.Comment, Is.StringContaining("Оказание доп"));
 		}
 
-		[Test, Ignore("Функционал будет перенесен в новую админку")]
+		[Test]
 		public void Send_cancelation_on_performer_change()
 		{
 			var engineer2 = new Partner(Guid.NewGuid().ToString(), session.Load<UserRole>(3u)) {
@@ -81,7 +81,7 @@ namespace InternetInterface.Test.Integration
 			Assert.AreEqual("+79201564189", newMessage.PhoneNumber);
 		}
 
-		[Test, Ignore("Функционал будет перенесен в новую админку")]
+		[Test]
 		public void Send_sms_on_close()
 		{
 			request.Client.Contacts.Add(new Contact(request.Client, ContactType.SmsSending, "9794561231"));

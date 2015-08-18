@@ -1,0 +1,76 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using InternetInterface.Models
+@{
+	ViewBag.Title = "Назначение заявки в график";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/ConnectionTeamController.ConnectionTable.js")"></script>}
+@model dynamic
+
+@{
+	ViewBag.Title = "Заявка на подключение";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	List<ServiceMan> servicemen = ViewBag.Servicemen;
+	ConnectionRequest ConnectionRequest = ViewBag.ConnectionRequest;
+	ValidationRunner runner = ViewBag.Validation;
+	string action = ViewBag.ActionName;
+	string controller = ViewBag.ControllerName;
+}
+
+<div class="panel panel-primary col-md-6">
+	<div class="panel-body">
+		@using (@Html.BeginForm(action, controller, new { requestId = ConnectionRequest.Id }, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+		{
+			 @Html.HiddenFor(i=>ConnectionRequest.Id, new { @class = "form-control" })
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Комментарий</label>
+				<div class="col-sm-4">
+					@Html.TextAreaFor(i=>ConnectionRequest.Comment, new { @class = "form-control" })
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Имя заявителя</label>
+				<div class="col-sm-4">
+					@Html.DisplayFor(i=>ConnectionRequest.Client.Name, new { @class = "form-control" })
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Адрес</label>
+				<div class="col-sm-4">
+					@ConnectionRequest.Client.GetAddress()
+				</div>
+			</div>
+	  		<div class="form-group">
+				<label class="col-sm-2 control-label">Исполнитель</label>
+				<div class="col-sm-4">
+						@Html.DropDownListExtendedFor(i => ConnectionRequest.ServiceMan,servicemen, obj => obj.Employee.Name,i=>i.Id, new { @class = "form-control", disabled = "disabled" },ConnectionRequest.ServiceMan  != null ? ConnectionRequest.ServiceMan.Id : 0)
+						@ViewBag.Validation.GetError(ConnectionRequest, "ServiceMan", "Поле не может быть пустым")
+				</div>
+				
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Время выполнения</label>
+				<div class="col-sm-4">
+					@Html.ValidationEditor(runner, ConnectionRequest, "BeginTime", new {disabled = "disabled"}, HtmlTag.datetime, HtmlType.none)
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Длительность выполнения (мин)</label>
+				<div class="col-sm-4">
+					<div class="input-spinner">
+						<button class="btn btn-default" type="button">-</button>
+						<input type="text" name="duration" value="60" class="form-control size-1">
+						<button class="btn btn-default" type="button">+</button>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-green" type="submit">Назначить в график</button>
+			</div>
+		}
+	</div>
+</div>
+@{ Html.RenderPartial("ConnectionTable");  }

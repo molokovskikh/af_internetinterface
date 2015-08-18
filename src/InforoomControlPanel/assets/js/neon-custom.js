@@ -701,9 +701,6 @@ var public_vars = public_vars || {};
 		{
 			$(".datepicker").each(function(i, el)
 			{
-				if ($(this).attr("readonly") != null) {
-					return;
-				}
 				var $this = $(el),
 					opts = {
 						format: attrDefault($this, 'format', 'mm/dd/yyyy'),
@@ -711,7 +708,6 @@ var public_vars = public_vars || {};
 						endDate: attrDefault($this, 'endDate', ''),
 						daysOfWeekDisabled: attrDefault($this, 'disabledDays', ''),
 						startView: attrDefault($this, 'startView', 0),
-						language:"ru",
 						rtl: rtl()
 					},
 					$n = $this.next(),
@@ -749,9 +745,6 @@ var public_vars = public_vars || {};
 		{
 			$(".timepicker").each(function(i, el)
 			{
-				if ($(this).attr("readonly") != null) {
-					return;
-				}
 				var $this = $(el),
 					opts = {
 						template: attrDefault($this, 'template', false),
