@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using Inforoom2.Components;
 using Inforoom2.Helpers;
 using NHibernate;
+using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Proxy;
 using NHibernate.Util;
@@ -17,8 +21,23 @@ namespace Inforoom2.Models
 	{
 		[Id(0, Name = "Id")]
 		[Generator(1, Class = "native")]
-		[Description("Идентификатор модели в базе данных")]
+		[Description("Номер")]
 		public virtual int Id { get; set; }
+
+		/// <summary>
+		/// Список ошибок, сгенерированных за последнюю сессию
+		/// </summary>
+		protected virtual ValidationErrors ValidationErorrsList { get; set; }
+
+		protected virtual ValidationErrors LastActionErrors
+		{
+			get
+			{
+				ValidationErorrsList = ValidationErorrsList ?? new ValidationErrors();
+				return ValidationErorrsList;
+			}
+			set { ValidationErorrsList = value; }
+		}
 
 		//todo Ну и что это за хрень? Может пора ее выпилить?
 		public virtual int GetNextPriority(ISession session)
@@ -70,9 +89,9 @@ namespace Inforoom2.Models
 		/// </summary>
 		/// <param name="session">Сессия Nhibernate</param>
 		/// <returns></returns>
-		public virtual InvalidValue[] Validate(ISession session)
+		public virtual ValidationErrors Validate(ISession session)
 		{
-			return new InvalidValue[0];
+			return new ValidationErrors();
 		}
 
 		/// <summary>
@@ -93,12 +112,56 @@ namespace Inforoom2.Models
 		/// Безопасный метод снятия замещения типов с объектов Nhibernate. Не выдает ошибок, даже если там null.
 		/// С proxy типами всегда возникают проблемы при приведении типов.
 		/// </summary>
-		/// <param name="model">Модель,дял которой нужно убрать Proxy</param>
+		/// <param name="model">Модель,для которой нужно убрать Proxy</param>
 		public static BaseModel UnproxyOrDefault(BaseModel model)
 		{
 			if (model == null)
 				return null;
 			return model.Unproxy();
 		}
+
+
+		/// <summary>
+		/// Добавление ошибки в список
+		/// </summary>
+		protected virtual void AddError(object model, string message, string propertyName, string propertyValue)
+		{
+			LastActionErrors.Add(new InvalidValue(message, model.GetType(), propertyName, propertyValue, model, new Collection<object>()));
+		}
+
+		/// <summary>
+		/// Отчистка списка ошибок
+		/// </summary>
+		public virtual void ClearErrors()
+		{
+			LastActionErrors = new ValidationErrors();
+		}
+
+		/// <summary>
+		/// Проверка наличия ошибок в моделе
+		/// </summary>
+		/// <returns></returns>
+		public virtual bool HasErrors()
+		{
+			return LastActionErrors.Count > 0;
+		}
+
+		/// <summary>
+		/// Получение последней ошибки
+		/// </summary>
+		/// <returns></returns>
+		public virtual InvalidValue GetError()
+		{
+			return LastActionErrors.LastOrDefault();
+		}
+
+		/// <summary>
+		/// Проверка на наличие ошибок в моделе ( логика ее реализации )
+		/// </summary>
+		/// <returns>Список ошибок</returns>
+		public virtual ValidationErrors GetErrors()
+		{ 
+			return LastActionErrors;
+		} 
 	}
 }

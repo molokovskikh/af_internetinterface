@@ -37,7 +37,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult ServiceRequestList()
 		{
 			// формирование фильтра
-			var pager = new ModelFilter<ServiceRequest>(this, orderByColumn: "Id", orderDirrection: false);
+			var pager = new InforoomModelFilter<ServiceRequest>(this);
 			//получение критерия для Hibernate запроса из класса ModelFilter
 			var criteria = pager.GetCriteria();
 			//объединение 'сервисной заявки' с 'клиентом'

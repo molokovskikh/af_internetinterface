@@ -7,12 +7,13 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
-
-
+	/// <summary>
+	/// Модель протокола TV-каналов
+	/// </summary>
 	[Class(0, Table = "TvProtocols", NameType = typeof(TvProtocol))]
 	public class TvProtocol : BaseModel
 	{
-		[Property]
+		[Property, Description("Наименование TV-протокола")]
 		public virtual string Name { get; set; }
 
 	}

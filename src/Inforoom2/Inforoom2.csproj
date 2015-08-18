@@ -20,6 +20,7 @@
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
     <TargetFrameworkProfile />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,6 +49,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Castle.Components.Validator.2.5.4\lib\net40\Castle.Components.Validator.dll</HintPath>
     </Reference>
+    <Reference Include="ExcelLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ExcelLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\NPOI.2.0.6\lib\net40\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="Iesi.Collections">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
@@ -57,7 +66,6 @@
       <HintPath>..\..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.Web.Infrastructure">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -181,6 +189,7 @@
     <Content Include="Images\answersuccessbg.png" />
     <Content Include="Images\arro.png" />
     <Content Include="Images\arrow.png" />
+    <Content Include="Images\b-logo_img.png" />
     <Content Include="Images\biznes.jpg" />
     <Content Include="Images\boy.png" />
     <Content Include="Images\connectionbg.png" />
@@ -263,6 +272,7 @@
   <ItemGroup>
     <Compile Include="Components\EmailSender.cs" />
     <Compile Include="Components\EntityBinder.cs" />
+    <Compile Include="Components\InforoomModelFilter.cs" />
     <Compile Include="Components\ModelFilter.cs" />
     <Compile Include="Components\YandexParser.cs" />
     <Compile Include="Components\HtmlTag.cs" />
@@ -313,10 +323,12 @@
     <Compile Include="Models\ServiceRequestComment.cs" />
     <Compile Include="Models\ServiceRequest.cs" />
     <Compile Include="Models\Log.cs" />
+    <Compile Include="Models\Hardwarepart.cs" />
     <Compile Include="Models\BillingHistory.cs" />
     <Compile Include="Models\Banner.cs" />
     <Compile Include="Models\PlanChangerData.cs" />
     <Compile Include="Models\PlanHtmlContent.cs" />
+    <Compile Include="Models\ClientHardwarePart.cs" />
     <Compile Include="Models\Services\PlanChanger.cs" />
     <Compile Include="Models\Slide.cs" />
     <Compile Include="Models\City.cs" />
@@ -325,7 +337,6 @@
     <Compile Include="Models\ClientService.cs" />
     <Compile Include="Models\CallMeBackTicket.cs" />
     <Compile Include="Models\ClientRentalHardware.cs" />
-    <Compile Include="Models\HardwareModel.cs" />
     <Compile Include="Models\PriorityModel.cs" />
     <Compile Include="Models\PrivateMessage.cs" />
     <Compile Include="Models\TvProtocol.cs" />
@@ -479,6 +490,9 @@
     <Content Include="Images\OfferMini\ДоговорОферта.pdf" />
     <Content Include="Images\OfferMini\Дополнительное соглашение.pdf" />
     <Content Include="Images\OfferMini\Приложение1 к Договору-Оферте.pdf" />
+    <Content Include="Images\sber_autopay.pdf" />
+    <Content Include="Images\sber_online.pdf" />
+    <Content Include="Images\sber_terminal.pdf" />
     <None Include="Web.test2.config" />
     <None Include="Web.release.config">
       <SubType>Designer</SubType>

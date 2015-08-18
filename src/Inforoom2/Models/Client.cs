@@ -63,14 +63,17 @@ namespace Inforoom2.Models
 		[Property, Description("Перенесено из старой админки (в старом проекте ему ничего не присваивается.)")]
 		public virtual DateTime? BlockDate { get; set; }
 
-		[Property(Column = "RegDate")]
+		[Property(Column = "RegDate"), Description("Дата регистрации клиента")]
 		public virtual DateTime? CreationDate { get; set; }
 
 		[Property]
 		public virtual bool Disabled { get; set; }
-
+		
 		[Property(NotNull = true)]
 		public virtual int DebtDays { get; set; }
+
+		[Property(NotNull = true)]
+		public virtual ClientType Type { get; set; }
 
 		[Property(NotNull = true)]
 		public virtual bool ShowBalanceWarningPage { get; set; }
@@ -90,7 +93,7 @@ namespace Inforoom2.Models
 		[Property(NotNull = true)]
 		public virtual bool PaidDay { get; set; }
 
-		[Property(NotNull = true)]
+		[Property(NotNull = true), Description("Бесплатные дни добровольной блокировки")]
 		public virtual int FreeBlockDays { get; set; }
 
 		[Property(NotNull = true, Column = "FirstLunch")]
@@ -109,10 +112,10 @@ namespace Inforoom2.Models
 		[DataType(DataType.Date)]
 		public virtual DateTime? StatusChangedOn { get; set; }
 
-		[Property(Column = "BeginWork")]
+		[Property(Column = "BeginWork"), Description("Дата первой аренды -проставляется DHCP-сервером во время получения клиентом первой аренды")]
 		public virtual DateTime? WorkingStartDate { get; set; }
 
-		[Property]
+		[Property, Description("Дата, по которой определяется когда бесплатные дни должны обновиться")]
 		public virtual DateTime? YearCycleDate { get; set; }
 
 		[ManyToOne(Cascade = "save-update"), Description("Статус")]
@@ -181,6 +184,11 @@ namespace Inforoom2.Models
 		public virtual bool IsWorkStarted()
 		{
 			return WorkingStartDate != null;
+		}
+
+		public virtual bool IsPhysicalClient
+		{
+			get { return PhysicalClient == null; }
 		}
 
 		public virtual ClientService Internet
@@ -438,8 +446,7 @@ namespace Inforoom2.Models
 
 		public virtual string Fullname
 		{
-			get { return PhysicalClient != null ? PhysicalClient.FullName : _Name; }
-			set { }
+			get { return PhysicalClient != null ? PhysicalClient.FullName : _Name; } 
 		}
 
 		public virtual string GetAddress()
@@ -476,8 +483,16 @@ namespace Inforoom2.Models
 			return "";
 		}
 	}
-
-
+	/// <summary>
+	/// /Тип клиента
+	/// </summary>
+	public enum ClientType
+	{
+		[Description("Физичекое лицо")]
+		PhysicalClient = 1,
+		[Description("Юридическое лицо")]
+		Lawer = 2, 
+	}
 	public enum StatusType
 	{
 		[Description("Зарегистрирован")] BlockedAndNoConnected = 1,

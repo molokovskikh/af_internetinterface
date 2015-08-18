@@ -1,10 +1,14 @@
-﻿using System;
-using Common.Tools;
+﻿using System; 
+using Common.Tools; 
+using System.ComponentModel; 
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Пользовательское денежное списание
+	/// </summary>
 	[Class(0, Table = "UserWriteOffs", Schema = "internet", NameType = typeof(UserWriteOff))]
 	public class UserWriteOff : BaseModel
 	{
@@ -23,16 +27,16 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "Client")]
 		public virtual Client Client { get; set; }
 
-		[Property]
+		[Property, Description("Дата денежного списания")]
 		public virtual DateTime Date { get; set; }
 
-		[Property]
+		[Property, Description("Сумма денежного списания")]
 		public virtual decimal Sum { get; set; }
 
-		[Property, NotEmpty]
+		[Property, NotEmpty, Description("Комментарий к денежному списанию")]
 		public virtual string Comment { get; set; }
 
-		[Property(Column = "BillingAccount")]
+		[Property(Column = "BillingAccount"), Description("Отметка о том,что обработано биллингом ")]
 		public virtual bool IsProcessedByBilling { get; set; }
 
 		[ManyToOne(Column = "Registrator")]

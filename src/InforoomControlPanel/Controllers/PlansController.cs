@@ -128,8 +128,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult RemovePlan(int id)
 		{
-			var plan = DbSession.Get<Plan>(id);
-			DbSession.Delete(plan);
+			SafeDelete<Plan>(id);
 			return RedirectToAction("PlanIndex");
 		}
 
@@ -393,11 +392,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult DeleteTvProtocol(int id)
 		{
-			var tvProtocol = DbSession.Get<TvProtocol>(id);
-			if (DbSession.AttemptDelete(tvProtocol))
-				SuccessMessage("Объект успешно удален!");
-			else
-				ErrorMessage("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
+			SafeDelete<TvProtocol>(id);
 			return RedirectToAction("TvProtocolList");
 		}
 
@@ -499,11 +494,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult DeleteTvChannel(int id)
 		{
-			var TvChannel = DbSession.Get<TvChannel>(id);
-			if (DbSession.AttemptDelete(TvChannel))
-				SuccessMessage("Объект успешно удален!");
-			else
-				ErrorMessage("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
+			SafeDelete<TvChannel>(id);
 			return RedirectToAction("TvChannelList");
 		}
 
@@ -584,11 +575,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult DeleteTvChannelGroup(int id)
 		{
-			var tvChannelGroup = DbSession.Get<TvChannelGroup>(id);
-			if (DbSession.AttemptDelete(tvChannelGroup))
-				SuccessMessage("Объект успешно удален!");
-			else
-				ErrorMessage("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
+			SafeDelete<TvChannelGroup>(id);
 			return RedirectToAction("TvChannelGroupList");
 		}
 
@@ -626,7 +613,8 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult InternetPlanChangerIndex()
 		{
-			var pager = new ModelFilter<PlanChangerData>(this, urlBasePrefix: "/", orderByColumn: "TargetPlan");
+			var pager = new InforoomModelFilter<PlanChangerData>(this);
+			pager.SetOrderBy("TargetPlan");
 			ViewBag.Pager = pager;
 			return View();
 		}
@@ -681,12 +669,9 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult DeleteInternetPlanChanger(int id)
 		{
-			var planChanger = DbSession.Get<PlanChangerData>(id);
-			if (DbSession.AttemptDelete(planChanger))
-				SuccessMessage("Объект успешно удален!");
-			else
-				ErrorMessage("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
+			SafeDelete<PlanChangerData>(id);
 			return RedirectToAction("InternetPlanChangerIndex");
 		}
+
 	}
 }

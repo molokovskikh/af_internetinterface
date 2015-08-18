@@ -7,10 +7,13 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Модель многопарника
+	/// </summary>
 	[Class(0, Table = "twisted_pairs", NameType = typeof(TwistedPair))]
 	public class TwistedPair : BaseModel
 	{
-		[Property]
+		[Property, Description("Количество портов")]
 		public virtual int PairCount { get; set; }
 
 		[ManyToOne]

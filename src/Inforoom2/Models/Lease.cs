@@ -9,6 +9,9 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Выданные Ip-адреса пользователям (динамические)
+	/// </summary>
 	[Class(0, Table = "Leases", NameType = typeof(Lease))]
 	public class Lease : BaseModel
 	{
@@ -20,6 +23,12 @@ namespace Inforoom2.Models
 
 		[ManyToOne(Column = "Switch")]
 		public virtual Switch Switch { get; set; }
+
+		[Property]
+		public virtual DateTime LeaseBegin { get; set; }
+
+		[Property]
+		public virtual DateTime LeaseEnd { get; set; }
 
 		[Property]
 		public virtual int Port { get; set; }

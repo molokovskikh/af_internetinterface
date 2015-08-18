@@ -6,11 +6,9 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
-
 	[Class(0, Table = "PackageSpeed", NameType = typeof(PackageSpeed))]
 	public class PackageSpeed : BaseModel
 	{
-
 		[Property]
 		public virtual int PackageId { get; set; }
 

@@ -195,7 +195,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult StreetList()
 		{
-			var pager = new ModelFilter<Street>(this);
+			var pager = new InforoomModelFilter<Street>(this);
 			var criteria = pager.GetCriteria();
 			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());
 			if (!string.IsNullOrEmpty(pager.GetParam("Name")))
@@ -208,6 +208,121 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.Pager = pager;
 			return View();
 		}
+
+		/// <summary>
+		/// Создание нового города
+		/// </summary>
+		/// <returns></returns>
+		public ActionResult CreateCity()
+		{
+			var City = new City();
+			ViewBag.City = City;
+			return View("CreateCity");
+		}
+
+		/// <summary>
+		/// Создание нового города
+		/// </summary>
+		[HttpPost]
+		public ActionResult CreateCity([EntityBinder] City Сity)
+		{
+			var errors = ValidationRunner.ValidateDeep(Сity);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(Сity);
+				SuccessMessage("Город успешно добавлен");
+				return RedirectToAction("CityList");
+			}
+
+			CreateCity();
+			ViewBag.Сity = Сity;
+			return View("CreateCity");
+		}
+
+		/// <summary>
+		/// Создание нового региона
+		/// </summary>
+		/// <returns></returns>
+		public ActionResult CreateRegion(int cityId = 0, int parentId = 0)
+		{
+			var Region = new Region();
+			ViewBag.Region = Region;
+
+			if (cityId > 0)
+				ViewBag.City = DbSession.Get<City>(cityId);
+			if (parentId > 0)
+				ViewBag.Parent = DbSession.Get<Region>(parentId);
+
+			var citys = DbSession.Query<City>().OrderBy(s => s.Name).ToList();
+			var parents = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
+			ViewBag.Citys = citys;
+			ViewBag.Parents = parents;
+			return View("CreateRegion");
+		}
+
+		/// <summary>
+		/// Создание нового региона
+		/// </summary>
+		[HttpPost]
+		public ActionResult CreateRegion([EntityBinder] Region Region)
+		{
+			var errors = ValidationRunner.ValidateDeep(Region);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(Region);
+				SuccessMessage("Регион успешно добавлен");
+				return RedirectToAction("RegionList");
+			}
+
+			CreateRegion();
+			ViewBag.Region = Region;
+			return View("CreateRegion");
+		}
+
+		/// <summary>
+		/// Удаление города
+		/// </summary>
+		/// <param name="id">Идентификатор города</param>
+		/// <returns></returns>
+		public ActionResult RemoveCity(int id)
+		{
+			SafeDelete<City>(id);
+			return RedirectToAction("CityList");
+		}
+
+		/// <summary>
+		/// Удаление региона
+		/// </summary>
+		/// <param name="id">Идентификатор региона</param>
+		/// <returns></returns>
+		public ActionResult RemoveRegion(int id)
+		{
+			SafeDelete<Region>(id);
+			return RedirectToAction("RegionList");
+		}
+
+		/// <summary>
+		/// Удаление улицы
+		/// </summary>
+		/// <param name="id">Идентификатор улицы</param>
+		/// <returns></returns>
+		public ActionResult RemoveStreet(int id)
+		{
+			SafeDelete<Street>(id);
+			return RedirectToAction("StreetList");
+		}
+
+		/// <summary>
+		/// Удаление дома
+		/// </summary>
+		/// <param name="id">Идентификатор дома</param>
+		/// <returns></returns>
+		public ActionResult RemoveHouse(int id)
+		{
+			SafeDelete<House>(id);
+			return RedirectToAction("HouseList");
+		}
+
 
 		/// <summary>
 		/// Создание нового адреса улицы
@@ -288,7 +403,9 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult HouseList()
 		{
-			var pager = new ModelFilter<House>(this, orderByColumn: "Number");
+			var pager = new InforoomModelFilter<House>(this);
+			pager.SetOrderBy("Number");
+
 			var criteria = pager.GetCriteria();
 			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());
 			if (!string.IsNullOrEmpty(pager.GetParam("Number")))
@@ -344,6 +461,66 @@ namespace InforoomControlPanel.Controllers
 			CreateHouse(House.Id);
 			ViewBag.House = House;
 			return View("CreateHouse");
+		}
+
+		/// <summary>
+		/// Изменение города
+		/// </summary>
+		public ActionResult EditCity(int id = 0)
+		{
+			var City = DbSession.Get<City>(id);
+			ViewBag.City = City;
+			return View();
+		}
+
+		[HttpPost]
+		public ActionResult EditCity([EntityBinder] City City)
+		{
+			var errors = ValidationRunner.Validate(City);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(City);
+				SuccessMessage("Город успешно изменен");
+				return RedirectToAction("CityList");
+			}
+
+			EditCity(City.Id);
+			ViewBag.City = City;
+			return View();
+		}
+
+		/// <summary>
+		/// Изменение региона
+		/// </summary>
+		public ActionResult EditRegion(int id = 0)
+		{
+			var Region = DbSession.Get<Region>(id);
+			ViewBag.Region = Region;
+			
+			var citys = DbSession.Query<City>().OrderBy(s => s.Name).ToList();
+			var parents = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
+			ViewBag.Citys = citys;
+			ViewBag.Parents = parents;
+			return View();
+		}
+
+		/// <summary>
+		/// Изменение региона
+		/// </summary>
+		[HttpPost]
+		public ActionResult EditRegion([EntityBinder] Region Region)
+		{
+			var errors = ValidationRunner.Validate(Region);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(Region);
+				SuccessMessage("Регион успешно изменен");
+				return RedirectToAction("RegionList");
+			}
+
+			EditCity(Region.Id);
+			ViewBag.Region = Region;
+			return View();
 		}
 
 		/// <summary>

@@ -10,6 +10,9 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Псевдоним улицы, для поиска улиц
+	/// </summary>
 	[Class(0, Table = "street_alias", NameType = typeof(StreetAlias))]
 	public class StreetAlias : BaseModel
 	{

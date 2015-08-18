@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Common.Tools;
 using Inforoom2.Intefaces;
 using NHibernate.Mapping.Attributes;
@@ -15,13 +16,13 @@ namespace Inforoom2.Models
 		[Property, NotNullNotEmpty]
 		public virtual string Preview { get; set; }
 
-		[Property]
+		[Property, Description("Текст-содержимое новостного блока")]
 		public virtual string Body { get; set; }
 
-		[Property, NotNullNotEmpty]
+		[Property, NotNullNotEmpty, Description("Заголовок новостного блока")]
 		public virtual string Title { get; set; }
 
-		[Property]
+		[Property, Description("Ссылка на новостной блок")]
 		public virtual string Url { get; set; }
 
 		[ManyToOne]
@@ -30,16 +31,16 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "User")]
 		public virtual Employee Employee { get; set; }
 
-		[Property]
+		[Property, Description("Дата создания новостного блока")]
 		public virtual DateTime CreationDate { get; set; }
 
-		[Property]
+		[Property, Description("Дата опубликования новостного блока на странице сайта")]
 		public virtual DateTime PublishedDate { get; set; }
 
-		[Property]
+		[Property, Description("Маркер, отражающий, опубликован ли новостной блок на странице сайта или нет")]
 		public virtual bool IsPublished { get; set; }
 
-		[Property]
+		[Property, Description("Приоритет отображения новостного блока на странице сайта")]
 		public virtual int Priority { get; set; }
 
 		public NewsBlock(int priority)

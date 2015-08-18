@@ -1,0 +1,30 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "Создание нового города";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	string controller = ViewBag.ControllerName;
+	City Сity = ViewBag.City;
+}
+
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+
+	@using (@Html.BeginForm("CreateCity", controller, null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+	{
+		<div class="form-group">
+			<div class="col-sm-4">
+				<label class="control-label">Наименование города:</label>
+			</div>
+			<div class="col-sm-6">
+				@Html.TextBoxFor(I => Сity.Name, new { @class = "form-control" })
+				@ViewBag.Validation.GetError(Сity, "Name")
+			</div>
+				<div class="col-sm-2">
+					<button class="btn btn-green" type="submit">Добавить</button>
+				</div>
+			</div>
+	}
+</div>

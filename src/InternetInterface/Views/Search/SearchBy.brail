@@ -22,6 +22,7 @@
 					<% end %>
 					<% if MapPartner.AccesPartner("SSI"): %>
 					<th>${app.Sortable("Дата регистрации", "RegDate", "head_regDate")}</th>
+					<th>${app.Sortable("Дата расторжения", "DisDate", "head_disDate")}</th>
 					<% end %>
 					<th>${app.Sortable("Тариф", "Tariff", "head_tariff")}</th>
 					<% if MapPartner.Role.ReductionName == "Office": %>
@@ -54,6 +55,13 @@
 					<% else: %>
 					<td>${item.RegDate}</td>
 					<% end %>
+
+					<% if item.Status.Type == 10 : %>
+					<td>${item.StatusChangedOn}</td>
+					<% else: %>
+					<td></td>
+					<%end %>
+
 				<% end %>
 				<% if item.PhysicalClient != null:  %>
 				<td>${?item.PhysicalClient.Tariff.Name}</td>

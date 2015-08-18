@@ -10,7 +10,7 @@ namespace InternetInterface.Models.Services
 {
 	[ActiveRecord(DiscriminatorValue = "PlanChanger")]
 	public class PlanChanger : Service
-	{ 
+	{
 		/// <summary>
 		/// Проверка надобности отключения клиента, связанной со сметой тарифа
 		/// </summary>
@@ -32,11 +32,13 @@ namespace InternetInterface.Models.Services
 					else {
 						// если услуга существует, проверка, не подошел ли срок отключения клиента.
 						if (clientService.Client.ClientServices.Any(s => s.Service.HumanName == "PlanChanger")
-							&& clientService.Client.PhysicalClient.LastTimePlanChanged != Convert.ToDateTime("01.01.0001")
+						    && clientService.Client.PhysicalClient.LastTimePlanChanged != Convert.ToDateTime("01.01.0001")
 						    && (clientService.Client.PhysicalClient.LastTimePlanChanged.AddDays(changer.Timeout) < SystemTime.Now())) {
-							clientService.Client.SetStatus(Status.Get(StatusType.NoWorked, session));
-							clientService.Client.CreareAppeal("Клиент был заблокирован в связи с прекращением действия тарифа '"
-							                                  + clientService.Client.PhysicalClient.Tariff.Name + "'.", AppealType.Statistic);
+							if (clientService.Client.Status != Status.Get(StatusType.NoWorked, session)) {
+								clientService.Client.SetStatus(Status.Get(StatusType.NoWorked, session));
+								clientService.Client.CreareAppeal("Клиент был заблокирован в связи с прекращением действия тарифа '"
+								                                  + clientService.Client.PhysicalClient.Tariff.Name + "'.", AppealType.Statistic);
+							}
 						}
 					}
 					// сохранение изменений

@@ -252,11 +252,38 @@ namespace InternetInterface.Controllers
 			string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
 			int timeout = 120;
-			PingReply reply = pingSender.Send(ip, timeout, buffer, options);
 
-			if (reply.Status == IPStatus.Success)
-				return string.Format("<b style='color:green'>Онлайн, скорость ответа {0} мс.</b>", reply.RoundtripTime);
-			
+			// отправлять 4 пакета
+			var replyArray = new PingReply[4];
+			for (int i = 0; i < replyArray.Length; i++) replyArray[i] = pingSender.Send(ip, timeout, buffer, options);
+
+			//Отобразить пользователю:
+			//-Минимальное время,
+			Int64 minRoundtripTime = 0;
+			//-Максимальное время,
+			Int64 maxRoundtripTime = 0;
+			//-Количество пакетов, которое вернулось.
+			Int64 returnedPackagesNumber = 0;
+			// проверка вернувшихся пакетов
+			for (int i = 0; i < replyArray.Length; i++) {
+				if (i == 0) {
+					minRoundtripTime = replyArray[i].RoundtripTime;
+					maxRoundtripTime = replyArray[i].RoundtripTime;
+				}
+				minRoundtripTime = minRoundtripTime > replyArray[i].RoundtripTime && replyArray[i].Status == IPStatus.Success ?
+					replyArray[i].RoundtripTime : minRoundtripTime;
+				maxRoundtripTime = maxRoundtripTime < replyArray[i].RoundtripTime && replyArray[i].RoundtripTime != 0 && replyArray[i].Status == IPStatus.Success ?
+					replyArray[i].RoundtripTime : maxRoundtripTime;
+				returnedPackagesNumber += replyArray[i].Status == IPStatus.Success ? 1 : 0;
+			}
+			//если вернулся хотя бы один пакет
+			if (returnedPackagesNumber > 0)
+				return string.Format("<b style='color:{0}'>Статус: Онлайн,<br/> Пришло пакетов: {1},<br/> Скорость ответа минимальная: {2} мс.<br/> Скорость ответамаксимальная: {3} мс.</b>",
+					returnedPackagesNumber > 1 ? "green" : "red",
+					returnedPackagesNumber + " / " + replyArray.Length,
+					minRoundtripTime,
+					maxRoundtripTime);
+			// если ни один пакет не вернулся
 			return string.Format("<b style='color:red'>Коммутатор ничего не ответил</b>");
 		}
 
@@ -292,6 +319,7 @@ namespace InternetInterface.Controllers
 			var needNewServiceForStaticIp = false;
 			var settings = new Settings(DbSession);
 			var client = DbSession.Load<Client>(ClientID);
+
 			var newFlag = false;
 			var clientEntPoint = new ClientEndpoint();
 
@@ -336,7 +364,7 @@ namespace InternetInterface.Controllers
 			if (!withoutEndPoint && currentEndPoint == 0) {
 				if ((ConnectInfo.static_IP != string.Empty) || (nullFlag)) {
 					if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
-						(oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
+					    (oldSwitch != null && ConnectInfo.Switch == oldSwitch.Id && ConnectInfo.Port == olpPort.ToString())) {
 						if (client.GetClientType() == ClientType.Phisical) {
 							client.PhysicalClient.UpdatePackageId(clientEntPoint);
 						}
@@ -596,6 +624,7 @@ namespace InternetInterface.Controllers
 			Message message = null;
 			var client = DbSession.Load<Client>(ClientID);
 			var updateClient = client.PhysicalClient;
+			var oldTariff = client.PhysicalClient.Tariff;
 			var oldStatus = client.Status;
 
 			var iptv = client.Iptv;
@@ -607,7 +636,9 @@ namespace InternetInterface.Controllers
 			BindObjectInstance(internet, "internet", AutoLoadBehavior.NullIfInvalidKey);
 			BindObjectInstance(updateClient, ParamStore.Form, "Client", AutoLoadBehavior.NullIfInvalidKey);
 			BindObjectInstance(client, ParamStore.Form, "_client");
-
+			if (client.PhysicalClient != null && client.PhysicalClient.Tariff != oldTariff) {
+				client.PhysicalClient.LastTimePlanChanged = SystemTime.Now();
+			}
 			if (oldStatus != client.Status) {
 				// BlockedAndNoConnected = "зарегистрирован", BlockedAndConnected = "не подключен"
 				var isDissolved = client.Status.Type == StatusType.Dissolved;
@@ -624,7 +655,7 @@ namespace InternetInterface.Controllers
 							client.Status.Name));
 				}
 			}
-			 
+
 			if (IsValid(updateClient)) {
 				if (!string.IsNullOrEmpty(comment)) {
 					client.LogComment = comment;

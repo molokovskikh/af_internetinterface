@@ -11,7 +11,7 @@ namespace InforoomControlPanel.Controllers
 	/// <summary>
 	/// Страница управления новостями
 	/// </summary>
-	public class NewsController : AdminController
+	public class NewsController : ControlPanelController
 	{
 		public NewsController()
 		{

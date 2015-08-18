@@ -189,7 +189,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult Servicemen()
 		{
-			var team = DbSession.Query<ServiceMan>().ToList();
+			var team = DbSession.Query<ServiceMan>().OrderBy(s => s.Region).ThenBy(a=>a.Employee.Name).ToList();
 			var employees = DbSession.Query<Employee>().ToList().Where(j => team.All(i => i.Employee != j)).OrderBy(i => i.Name).ToList();
 			var regions = DbSession.Query<Region>().ToList();
 			ViewBag.Regions = regions;

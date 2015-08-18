@@ -234,7 +234,7 @@
 						</li>
 						<li>
 							<a href="@Url.Action("InternetPlanChangerIndex", "Plans")">
-								<span class="title">Смена через услугу</span>
+								<span class="title">Смена по истечению срока</span>
 							</a>
 						</li>
 						<li>
@@ -321,6 +321,24 @@
 								<span class="title">Список клиентов</span>
 							</a>
 						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="@Url.Action("ShowHardware","HardwareTypes")">
+						<i class="entypo-mail"></i>
+						<span class="title">Отчеты</span>
+					</a>
+					<ul class="visible">
+						<li>
+							<a href="@Url.Action("Client","SpreadSheet")">
+								<span class="title">По клиентам</span>
+							</a>
+						</li>
+						<li>
+							<a href="@Url.Action("WriteOffs", "SpreadSheet")">
+								<span class="title">По списаниям</span>
+							</a>
+						</li> 
 					</ul>
 				</li>
 			</ul>

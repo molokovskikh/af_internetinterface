@@ -351,7 +351,7 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Save(switchAddress);
 
 			var networkNode = new NetworkNode();
-			networkNode.Name = "Hallo World NetworkNode";
+			networkNode.Name = "Тестовый узел";
 			networkNode.Virtual = false;
 			networkNode.Addresses.Add(switchAddress);
 			networkNode.Switches.Add(@switch);
@@ -382,7 +382,7 @@ namespace Inforoom2.Test.Infrastructure
 			region.Name = "Борисоглебск (частный сектор)";
 			region.RegionOfficePhoneNumber = "8-800-2000-800";
 			region.City = bor;
-			region.Parent = new List<Region>() { parent };
+			region.Parent = parent;
 			region.OfficeAddress = "улица Князя Трубецкого д26";
 			region.OfficeGeomark = "50.592548,36.59665819999998";
 			region.ShownOnMainPage = true;
@@ -693,7 +693,7 @@ namespace Inforoom2.Test.Infrastructure
 			IPAddress addr = IPAddress.Parse(string.Join(".", parts));
 			// создание свича
 			var newSwitch = new Switch();
-			newSwitch.Name = "Тестовый коммутатор клиента - " + client.Id;
+			newSwitch.Name = "Тестовый коммутатор по адресу " + client.Address.FullAddress;
 			newSwitch.Mac = "EC-FE-C5-36-1A-27";
 			newSwitch.Ip = addr;
 			newSwitch.PortCount = 13;
@@ -719,7 +719,7 @@ namespace Inforoom2.Test.Infrastructure
 			//CreateSwitch adding based on client address
 			var switchItem = CreateSwitch(client);
 			var networkNode = new NetworkNode();
-			networkNode.Name = "Hallo World NetworkNode";
+			networkNode.Name = string.Format("Узел связи по адресу " + switchAddress.GetFullAddress());
 			networkNode.Virtual = false;
 			networkNode.Addresses.Add(switchAddress);
 			networkNode.Switches.Add(switchItem);

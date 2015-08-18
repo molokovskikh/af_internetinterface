@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Common.Tools;
@@ -10,8 +11,32 @@ using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
 {
-	public class ServiceController : PersonalController
+	public class ServiceController : Inforoom2Controller
 	{
+		/// <summary>
+		/// Функция дублирована в PersonalController
+		/// Нужно удалить ее отовсюду, потому что она говно полное
+		/// </summary>
+		protected void InitServices()
+		{
+			var client = CurrentClient;
+			var services = DbSession.Query<Service>().Where(s => s.IsActivableFromWeb);
+			var blockAccountService = services.FirstOrDefault(i => i is BlockAccountService);
+			blockAccountService = BaseModel.UnproxyOrDefault(blockAccountService) as BlockAccountService;
+
+			var deferredPayment = services.FirstOrDefault(i => i is DeferredPayment);
+			deferredPayment = BaseModel.UnproxyOrDefault(deferredPayment) as DeferredPayment;
+			var inforoomServices = new List<Service> { blockAccountService, deferredPayment };
+
+			ViewBag.Client = client;
+			//@todo Убрать исключения для статического IP, когда будет внедрено ручное включение сервиса
+			ViewBag.ClientServices = client.ClientServices.Where(cs => (cs.Service.Name == "Фиксированный ip-адрес" || cs.Service.IsActivableFromWeb) && cs.IsActivated).ToList();
+			ViewBag.AvailableServices = inforoomServices;
+
+			ViewBag.BlockAccountService = blockAccountService;
+			ViewBag.DeferredPayment = deferredPayment;
+		}
+
 		public ActionResult BlockAccount()
 		{
 			InitServices();
@@ -145,23 +170,13 @@ namespace Inforoom2.Controllers
 		{
 			var client = CurrentClient;
 			ViewBag.Client = client;
-			//todo - наверно надо подумать как эти провеки засунуть куда следует
-			var beginDate = client.WorkingStartDate ?? new DateTime();
-			if (beginDate == DateTime.MinValue || beginDate.AddMonths(2) >= SystemTime.Now()) {
-				ErrorMessage("Нельзя менять тариф, в первые 2 месяца после подключения");
-				return View();
-			}
 			var oldPlan = client.PhysicalClient.Plan;
-			var result = client.PhysicalClient.RequestChangePlan(plan);
-			if (result == null) {
-				ErrorMessage("Не достаточно средств для смены тарифного плана");
-				return View();
-			}
+			client.PhysicalClient.LastTimePlanChanged = SystemTime.Now();
+			client.PhysicalClient.Plan = plan;
+			client.SetStatus(StatusType.Worked, DbSession);
 			DbSession.Save(client);
-			DbSession.Save(result);
-			var warning = (client.GetWorkDays() <= 3) ? " Обратите внимание, что у вас низкий баланс!" : "";
-			SuccessMessage("Тариф успешно изменен." + warning);
-			var msg = string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.", oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, result.Sum);
+			SuccessMessage("Тариф успешно изменен.");
+			var msg = string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.", oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, 0);
 			var appeal = new Appeal(msg, client, AppealType.User) {
 				Employee = GetCurrentEmployee()
 			};

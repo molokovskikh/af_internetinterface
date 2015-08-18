@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using NHibernate.Mapping.Attributes;
 
@@ -17,10 +18,10 @@ namespace Inforoom2.Models
 			PaymentEmployee = new List<PaymentSystem>();
 		}
 
-		[Property]
+		[Property, Description("Имя сотрудника")]
 		public virtual string Name { get; set; }
 
-		[Property]
+		[Property, Description("Логин сотрудника")]
 		public virtual string Login { get; set; }
 
 		[Property]

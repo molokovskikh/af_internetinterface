@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
-using Common.Tools;
+using System.Web.UI;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NHibernate.Util;
+using Remotion.Linq.Clauses;
 using Agent = Inforoom2.Models.Agent;
 using Client = Inforoom2.Models.Client;
 using ClientService = Inforoom2.Models.ClientService;
@@ -51,17 +52,15 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult List()
 		{
-			var pager = new ModelFilter<Client>(this, urlBasePrefix: "/");
-			var clients = pager.GetCriteria(i => i.PhysicalClient != null).List<Client>();
-
+			var pager = new InforoomModelFilter<Client>(this);
+			var criteria = pager.GetCriteria(i => i.PhysicalClient != null);
+			if (pager.IsExportRequested())
+			{
+				pager.GetItems();
+				pager.SetExportFields(s => new { s, s.Surname, s.PhysicalClient.Name, s.Patronymic, Вкусняшка = s.Address, Агентище = s.Agent, Улица = s.Address.House.Street.Name, Номерок = s.Address.House.Number });
+				pager.ExportToExcelFile(ControllerContext.HttpContext);
+			}
 			ViewBag.Pager = pager;
-			ViewBag.Clients = clients;
-
-			//Пагинация
-			ViewBag.Models = clients;
-			ViewBag.Page = pager;
-			ViewBag.ModelsPerPage = pager.ItemsPerPage;
-			ViewBag.ModelsCount = DbSession.QueryOver<Client>().Where(i => i.PhysicalClient != null).RowCount();
 			return View("List");
 		}
 
@@ -244,53 +243,11 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult RequestsList()
 		{
-			var pager = new ModelFilter<ClientRequest>(this, urlBasePrefix: "/", orderByColumn: "RegDate", orderDirrection: false);
-			var clientRequests = pager.GetCriteria().List<ClientRequest>();
+			var pager = new InforoomModelFilter<ClientRequest>(this);
+			var criteria = pager.GetCriteria(); 
 			ViewBag.Pager = pager;
-			ViewBag.ClientRequests = clientRequests;
 			return View();
-		}
-
-		/// <summary>
-		/// Создание заявки на подключение
-		/// </summary> 
-		/// <param name="id"></param>
-		/// <returns></returns>
-		public ActionResult ServiceRequest(int id)
-		{
-			var client = DbSession.Get<Client>(id);
-			var serviceRequest = new ServiceRequest(client);
-			var servicemen = DbSession.Query<ServiceMan>().ToList();
-			ViewBag.Client = client;
-			ViewBag.ServiceRequest = serviceRequest;
-			ViewBag.Servicemen = servicemen;
-			ViewBag.ServicemenDate = DateTime.Today;
-			return View();
-		}
-
-		/// <summary>
-		/// Создание заявки на подключение
-		/// </summary>
-		/// <param name="ServiceRequest"></param>
-		/// <returns></returns>
-		[HttpPost]
-		public ActionResult ServiceRequest([EntityBinder] ServiceRequest ServiceRequest)
-		{
-			var client = ServiceRequest.Client;
-			this.ServiceRequest(client.Id);
-			ViewBag.ServicemenDate = ServiceRequest.CreationDate.Date;
-			var errors = ValidationRunner.ValidateDeep(ServiceRequest);
-			if (errors.Length == 0)
-			{
-				ServiceRequest.CreationDate = SystemTime.Now();
-				DbSession.Save(ServiceRequest);
-				SuccessMessage("Сервисная заявка успешно добавлена");
-				return this.ServiceRequest(client.Id);
-			}
-			ViewBag.ServiceRequest = ServiceRequest;
-			return View();
-		}
-
+		}	
 
 		/// <summary>
 		///  Форма регистрации клиента по заявке

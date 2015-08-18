@@ -7,7 +7,7 @@
 @{
 	ViewBag.Title = "Дома";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	ModelFilter<House> pager = ViewBag.Pager;
+	InforoomModelFilter<House> pager = ViewBag.Pager;
 	IList<House> houses = pager.GetItems();
 	List<Street> streets = ViewBag.Streets;
 	List<Region> regions = ViewBag.Regions;
@@ -49,10 +49,10 @@
 	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 		<thead>
 			<tr role="row">
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Street.Region)">Регион (Регион улицы)</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Street)">Улица</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Number)">Номер</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.UrlRootBase@pager.OrderBy(s => s.Confirmed)">Проверенно яндексом</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Street.Region)">Регион (Регион улицы)</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Street)">Улица</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Number)">Номер</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Confirmed)">Проверенно яндексом</a></th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
 			</tr>
 		</thead>
@@ -66,6 +66,10 @@
 					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditHouse", "Address", new { id = item.Id })">
 						<i class="entypo-vcard"></i>
 						Изменить
+					</a>
+					<a class="btn btn-red btn-sm btn-icon icon-left" href="@Url.Action("RemoveHouse", "Address", new { id = item.Id })">
+						<i class="entypo-cancel-circled"></i>
+						Удалить
 					</a>
 				</td>
 			</tr>

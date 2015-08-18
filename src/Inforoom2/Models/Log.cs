@@ -11,7 +11,10 @@ namespace Inforoom2.Models
 		[Description("Обновление")] Update,
 		[Description("Удаление")] Delete
 	}
-	[Description("Логирование действий связанных с моделями")]
+
+	/// <summary>
+	/// Логирование действий связанных с моделями
+	/// </summary>
 	[Class(0, Table = "logs", NameType = typeof(Log))]
 	public class Log : BaseModel
 	{

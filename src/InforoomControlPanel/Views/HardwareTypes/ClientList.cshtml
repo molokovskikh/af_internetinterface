@@ -8,27 +8,29 @@
 @{
 	ViewBag.Title = "Список пользователей";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	
-	IList<RentalHardware> hardware = ViewBag.Hardware;
-	ModelFilter<Client> pager = ViewBag.Pager;
+
+	InforoomModelFilter<Client> pager = ViewBag.Pager;
 	IList<Client> clients = pager.GetItems();
-	var hardwarelist = new NameValueCollection();
-	hardwarelist["0"] = " ";
-	hardware.Each(i => hardwarelist[i.Id.ToString()] = i.Name.ToString());
 }
 <panel class="panel panel-default">
 	<form>
-		<div class ="row">
-			<div class="col-sm-1">Выдан с </div>
-			<div class="col-sm-2">@pager.FormFilterManual("RentBegins",HtmlType.Date)</div>
-			<div class="col-sm-1">по</div>
-			<div class="col-sm-2">@pager.FormFilterManual("RentEnds",HtmlType.Date)</div>
-			<div class="col-sm-1">Тип оборудования</div>
-			<div class="col-sm-2">	@pager.FormFilterManual("HardwareType",HtmlType.Dropdown,hardwarelist)</div>
+
+		<div class="row">
+			<div class="col-sm-2">Дата регистрации с </div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().GiveDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
+			<div class="col-sm-1">по</div> 
+			<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().GiveDate, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-2">Оборудование</div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().Hardware.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
 		</div>
 		<div class="row">
 			<div class="col-sm-1">
-				@pager.FormFilterSubmit()
+				@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+			</div>
+			<div class="col-sm-1">
+				@pager.CleanButton(new { @class = "btn btn-success btn-sm" }) 
 			</div>
 		</div>
 	</form>
@@ -53,8 +55,7 @@
 		</thead>
 
 		<tbody>
-			@foreach (var item in clients)
-			{
+			@foreach (var item in clients) {
 				<tr role="row" class="odd">
 					<td class="sorting_1">
 						<div class="checkbox checkbox-replace neon-cb-replacement">
@@ -69,7 +70,7 @@
 							<i class="entypo-plus-circled"></i>
 							Просмотреть
 						</a>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@string.Format("{0}UserInfo/ShowPhysicalClient?filter.ClientCode={1}",@ConfigHelper.GetParam("adminPanelOld"),item.Id)"> 
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@string.Format("{0}UserInfo/ShowPhysicalClient?filter.ClientCode={1}", @ConfigHelper.GetParam("adminPanelOld"), item.Id)"> 
 							<i class="entypo-plus-circled"></i>
 							ЛК в старом ИИ
 						</a>

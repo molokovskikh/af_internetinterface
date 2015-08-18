@@ -6,6 +6,9 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Модель улицы
+	/// </summary>
 	[Class(0, Table = "street", NameType = typeof(Street)), Description("Улица")]
 	public class Street : BaseModel
 	{
@@ -27,16 +30,16 @@ namespace Inforoom2.Models
 			Region = region;
 		}
 
-		[Property, NotEmpty(Message = "Введите номер улицы")]
+		[Property, NotEmpty(Message = "Введите номер улицы"), Description("Наименование улицы")]
 		public virtual string Name { get; set; }
 
-		[Property, NotNullNotEmpty(Message = "Геопозиция должна быть задана")]
+		[Property, NotNullNotEmpty(Message = "Геопозиция должна быть задана"), Description("Геометка улицы на карте")]
 		public virtual string Geomark { get; set; }
 
 		[ManyToOne(Column = "Region", Cascade = "save-update")]
 		public virtual Region Region { get; set; }
 
-		[Property]
+		[Property, Description("Маркер, отражающий, подтвержден ли дом Яндексом или нет")]
 		public virtual bool Confirmed { get; set; }
 
 		[Bag(0, Table = "House", Cascade = "all-delete-orphan")]

@@ -52,8 +52,13 @@ namespace Inforoom2.Helpers
 				DbSession.Transaction.Commit();
 				return true;
 			}
+			catch (ObjectDeletedException e) {
+				DbSession.Transaction.Rollback();
+				DbSession.Clear();
+			}
 			catch (NHibernate.Exceptions.GenericADOException e)
 			{
+				DbSession.Transaction.Rollback();
 				DbSession.Clear();
 			}
 			return false;
@@ -65,7 +70,10 @@ namespace Inforoom2.Helpers
 		/// <param name="model">Модель, поля котоой необходимо инициализировать.</param>
 		private static void InitializeModel(BaseModel model)
 		{
-			var props = model.GetType().GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(ManyToManyAttribute)));
+			var props = model.GetType().GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(ManyToManyAttribute))).ToList();
+			var props2 = model.GetType().GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(OneToManyAttribute))).ToList();
+			props.AddRange(props2);
+
 			foreach (var prop in props) {
 				var obj = prop.GetValue(model,new object[]{});
 				NHibernateUtil.Initialize(obj);

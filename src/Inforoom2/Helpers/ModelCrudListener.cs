@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Web;
+using Inforoom2.Components;
 using Inforoom2.Intefaces;
 using Inforoom2.Models;
 using NHibernate;
@@ -28,6 +29,30 @@ namespace Inforoom2.Helpers
 			CurrentEmployee = currentUser;
 		}
 
+		/// <summary>
+		/// Формирование дополнительного сообщения об ошибке (подсказки)
+		/// </summary>
+		/// <param name="exception">Исключение</param>
+		/// <returns></returns>
+		private string GetAdditionMessage(Exception exception)
+		{
+			if (exception as NullReferenceException != null) {
+				return "Вероятно, не были установлены связи с моделью. Исправлением ошибки может являтся добавление <strong>[EntityBinder]</strong> для модели в параметрах вызываемого Экшена.";
+			}
+			return "";
+		}
+		/// <summary>
+		/// Отправка сообщения на почту о возникшем исключении
+		/// </summary>
+		/// <param name="exception">Исключение</param>
+		/// <param name="errorMessage">Текст сообщения</param>
+		private void SendMailOnException(Exception exception, string errorMessage)
+		{
+			string additionMessage = GetAdditionMessage(exception);
+			additionMessage = string.IsNullOrEmpty(additionMessage) ? "" : string.Format("<br/><strong style='color:red;'>Подсказка:</strong>{0}", additionMessage);
+			errorMessage += additionMessage;
+			EmailSender.SendError(errorMessage);
+		}
 
 		/// <summary>
 		/// Обработка события перед обновлением модели
@@ -36,8 +61,24 @@ namespace Inforoom2.Helpers
 		/// <returns>veto</returns>
 		public bool OnPreUpdate(PreUpdateEvent preUpdate)
 		{
-			CreatePreUpdateLog(preUpdate);
-			CreatePreUpdateAppeal(preUpdate);
+			try {
+				CreatePreUpdateLog(preUpdate);
+			}
+			catch (Exception ex) {
+				var errorMessage = string.Format(@"<h3>Произошла ошибка при формировании {0}, во время {1} записи.</h3><br/><strong>Сообщение</strong>:<br/>{2}<br/><strong>Содержание</strong>:<br/>{3}<br/><strong>Стэк</strong>:<br/>{4}",
+					"лога", "обновления", ex.Message, ex.Data, ex.StackTrace);
+				SendMailOnException(ex, errorMessage);
+			}
+
+			try {
+				CreatePreUpdateAppeal(preUpdate);
+			}
+			catch (Exception ex) {
+				var errorMessage = string.Format(@"<h3>Произошла ошибка при формировании {0}, во время {1} записи.</h3><br/><strong>Сообщение</strong>:<br/>{2}<br/><strong>Содержание</strong>:<br/>{3}<br/><strong>Стэк</strong>:<br/>{4}",
+					"аппила", "обновления", ex.Message, ex.Data, ex.StackTrace);
+				SendMailOnException(ex, errorMessage);
+			}
+
 			return false;
 		}
 
@@ -48,7 +89,14 @@ namespace Inforoom2.Helpers
 		/// <returns></returns>
 		public void OnPostInsert(PostInsertEvent postInsert)
 		{
-			CreatePostInsertLog(postInsert);
+			try {
+				CreatePostInsertLog(postInsert);
+			}
+			catch (Exception ex) {
+				var errorMessage = string.Format(@"Произошла ошибка при формировании {0}, после {1} записи.<br/><strong>Сообщение</strong>:<br/>{2}<br/><strong>Содержание</strong>:<br/>{3}<br/><strong>Стэк</strong>:<br/>{4}",
+					"лога", "добавления", ex.Message, ex.Data, ex.StackTrace);
+				SendMailOnException(ex, errorMessage);
+			}
 		}
 
 		/// <summary>
@@ -58,7 +106,14 @@ namespace Inforoom2.Helpers
 		/// <returns>veto</returns>
 		public bool OnPreDelete(PreDeleteEvent preDelete)
 		{
-			CreatePreDeleteLog(preDelete);
+			try {
+				CreatePreDeleteLog(preDelete);
+			}
+			catch (Exception ex) {
+				var errorMessage = string.Format(@"Произошла ошибка при формировании {0}, при {1} записи.<br/><strong>Сообщение</strong>:<br/>{2}<br/><strong>Содержание</strong>:<br/>{3}<br/><strong>Стэк</strong>:<br/>{4}",
+					"лога", "удалении", ex.Message, ex.Data, ex.StackTrace);
+				SendMailOnException(ex, errorMessage);
+			}
 			return false;
 		}
 

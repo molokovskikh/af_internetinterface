@@ -6,6 +6,9 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Клиентские услуги
+	/// </summary>
 	[Class(0, Table = "ClientServices", NameType = typeof(ClientService))]
 	public class ClientService : BaseModel
 	{

@@ -111,7 +111,7 @@
 						<div class="form-group">
 							@Html.HiddenFor(i => PlanTransfer.PlanFrom.Id)
 							<div class="col-sm-5">
-								@Html.DropDownListExtendedFor(i => PlanTransfer.PlanTo, plans, obj => obj.Name, null, new { @class = "form-control" })
+								@Html.DropDownListExtendedFor(i => PlanTransfer.PlanTo, plans, obj => obj.Name +" ("+ obj.Price+" руб.)", null, new { @class = "form-control" })
 								@ViewBag.Validation.GetError(PlanTransfer, "PlanTo")
 							</div>
 							<div class="col-sm-2">
@@ -136,7 +136,7 @@
 			@foreach (var item in plan.PlanTransfers) {
 				<div class="form-group">
 					<div class="col-sm-5">
-						@item.PlanTo.Name
+						@(item.PlanTo.Name + " (" + item.PlanTo.Price + " руб.)")
 					</div>
 					<div class="col-sm-2">
 						@item.Price.ToString("F2")

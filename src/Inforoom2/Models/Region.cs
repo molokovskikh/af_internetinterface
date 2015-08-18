@@ -10,6 +10,12 @@ namespace Inforoom2.Models
 	[Class(0, Table = "Regions", NameType = typeof(Region))]
 	public class Region : BaseModel
 	{
+		public Region()
+		{
+			Streets = new List<Street>();
+			Plans = new List<Plan>();
+			Children = new List<Region>();
+		}
 
 		[Description("Наименование региона")]
 		[Property(Column = "Region")]
@@ -52,12 +58,15 @@ namespace Inforoom2.Models
 		[Bag(0, Table = "Region", Cascade = "save-update")]
 		[Key(1, Column = "Parent", ForeignKey = "Id")]
 		[OneToMany(2, ClassType = typeof(Region))]
-		public virtual IList<Region> Parent { get; set; }
+		public virtual IList<Region> Children { get; set; }
+
+		[ManyToOne(Column = "Parent", Cascade = "save-update")]
+		public virtual Region Parent { get; set; }
 
 		[Description("Маркер, отражающий, есть ли дочерние эл-ты у региона")]
 		public virtual bool HasChildren()
 		{
-			return Parent.Count > 0;
+			return Children.Count > 0;
 		}
 	}
 }

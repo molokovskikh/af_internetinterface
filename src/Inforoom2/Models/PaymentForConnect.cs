@@ -1,16 +1,20 @@
 ﻿using System;
+using System.ComponentModel;
 using Common.Tools;
 using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Платеж за подключение
+	/// </summary>
 	[Class(0, Table = "PaymentForConnect", NameType = typeof(PaymentForConnect))]
 	public class PaymentForConnect : BaseModel
 	{
 		[Property]
 		public virtual DateTime? RegDate { get; set; }
 
-		[Property]
+		[Property, Description("Сумма платежа за подключение")]
 		public virtual decimal Sum { get; set; }
 
 		[ManyToOne(Column = "Partner")]

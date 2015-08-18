@@ -4,6 +4,9 @@ using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
+	/// <summary>
+	/// Адрес коммутатора
+	/// </summary>
 	[Class(0, Table = "SwitchAddress", NameType = typeof(SwitchAddress))]
 	public class SwitchAddress : BaseModel
 	{
