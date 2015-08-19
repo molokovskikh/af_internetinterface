@@ -64,7 +64,7 @@
 					</td> 
 					<td><a href="@Url.Action("Info", "Client", new { id = item.Id })">@item.Id</a></td>
 					<td><a href="@Url.Action("Info", "Client", new { id = item.Id })">@item.PhysicalClient.FullName</a></td>
-					<td><a href="@Url.Action("Info", "Client", new { id = item.Id })">@item.RentalHardwareList.Count</a></td>
+					<td><a href="@Url.Action("Info", "Client", new { id = item.Id })">@item.RentalHardwareList.Count(s=>s.IsActive)</a></td>
 					<td>
 						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("Info", "Client", new { id = item.Id })">
 							<i class="entypo-plus-circled"></i>
