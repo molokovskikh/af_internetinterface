@@ -48,9 +48,23 @@
 				<th>Конец аренды</th>
 			</tr>
 		<% else: %>
+		<% logDataAsArchive = Leases.Count>0 %>
+		<% if logDataAsArchive == true: %>		
 			<tr>
 				<th>Данный клиент не начинал работу</th>
 			</tr>
+			<tr>
+				<th>Ip адрес</th>
+				<th>ID точки подключения</th>
+				<th>Mac адрес</th>
+				<th>Начало аренды</th>
+				<th>Конец аренды</th>
+			</tr>
+				<% else: %>
+					<tr>
+						<th>Данный клиент не начинал работу</th>
+					</tr>
+				<% end %>
 		<% end %>
 		</thead>
 		<tbody>
