@@ -86,6 +86,7 @@ namespace InternetInterface.Controllers
 			var settings = DbSession.Query<SaleSettings>().First();
 			request.Calculate(settings);
 			var isService = Partner.CategorieIs("Service");
+			PropertyBag["PerformerName"] = request.Performer != null ? request.Performer.Name : "";
 			PropertyBag["Request"] = ((isService && request.Performer == Partner) || !isService) ? request : null;
 			PropertyBag["Edit"] = edit;
 			PropertyBag["IsService"] = Partner.CategorieIs("Service");
