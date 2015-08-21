@@ -178,7 +178,10 @@ namespace Inforoom2.Components
 			
 
 			var returnedErrors = new ValidationErrors(summary.ToList());
-			Errors.Add(obj, returnedErrors);
+            if(Errors.ContainsKey(obj))
+                Errors[obj].AddRange(returnedErrors);
+            else
+			    Errors.Add(obj, returnedErrors);
 			ValidatedObjectList.Add(obj);
 			return returnedErrors;
 		}

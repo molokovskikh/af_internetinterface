@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Threading;
 using System.Web.Mvc;
 using Billing;
 using Common.Tools;
@@ -1089,5 +1090,14 @@ namespace Inforoom2.Test.Infrastructure
 				DbSession.Save(banner);
 			}
 		}
-	}
+
+        /// <summary>
+        /// Делает паузу теста, что бы карта Яндекса полностью загрузилась и отметила искомый адрес
+        /// За меньшее время карта не успевает загрузиться
+        /// </summary>
+        public void WaitForMap()
+        {
+            Thread.Sleep(9000);
+        }
+    }
 }
