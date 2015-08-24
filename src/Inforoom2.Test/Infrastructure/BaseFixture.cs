@@ -158,7 +158,7 @@ namespace Inforoom2.Test.Infrastructure
 			//Удаляем из списка таблицы, которые не надо очищать
 			var exceptions = "partners,services,status,packagespeed,networkzones,accesscategories,NetworkSwitches" +
 			                 "categoriesaccessset,connectbrigads,statuscorrelation,usercategories,additionalstatus," +
-			                 "salesettings,internetsettings";
+							 "salesettings,internetsettings,issues";
 			parts = exceptions.Split(',');
 			foreach (var part in parts)
 				tables.RemoveAll(i => i == strategy.TableName(part));

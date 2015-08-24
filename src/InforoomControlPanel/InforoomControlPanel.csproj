@@ -1942,9 +1942,12 @@
     <Content Include="Views\Address\CreateCity.cshtml" />
     <Content Include="Views\Address\EditCity.cshtml" />
     <Content Include="Views\Address\CreateRegion.cshtml" />
-    <Content Include="Views\Address\EditRegion.cshtml" />
+    <Content Include="Views\Address\EditRegion.cshtml" /> 
     <Content Include="Views\HardwareRent\CreateHardwareRent.cshtml" />
     <Content Include="Views\HardwareRent\HardwareList.cshtml" />
+    <Content Include="Views\Plans\PackageSpeedList.cshtml" />
+    <Content Include="Views\Plans\EditPackageSpeed.cshtml" />
+    <Content Include="Views\Plans\ConfirmPackageSpeed.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <None Include="Web.release.config">
