@@ -185,6 +185,22 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functional\Address\AddressFixture.cs" />
+    <Compile Include="Functional\Address\CreateRegionFixture.cs" />
+    <Compile Include="Functional\Address\CreateHouseFixture.cs" />
+    <Compile Include="Functional\Address\CreateCityFixture.cs" />
+    <Compile Include="Functional\Address\CreateStreetFixture.cs" />
+    <Compile Include="Functional\Address\CreateSwitchAddressFixture.cs" />
+    <Compile Include="Functional\Address\EditRegionFixture.cs" />
+    <Compile Include="Functional\Address\EditCityFixture.cs" />
+    <Compile Include="Functional\Address\RemoveCityFixture.cs" />
+    <Compile Include="Functional\Address\RemoveRegionFixture.cs" />
+    <Compile Include="Functional\Address\RemoveStreetFixture.cs" />
+    <Compile Include="Functional\Address\RemoveHouseFixture.cs" />
+    <Compile Include="Functional\Address\DeleteSwitchAddressFixture.cs" />
+    <Compile Include="Functional\Address\EditHouseFixture.cs" />
+    <Compile Include="Functional\Address\EditStreetFixture.cs" />
+    <Compile Include="Functional\Address\EditSwitchAddressFixture.cs" />
     <Compile Include="Functional\AdminAccount\AdminAccountFixture.cs" />
     <Compile Include="Functional\AdminAccount\LoginFixture.cs" />
     <Compile Include="Functional\Admin\EditRoleFixture.cs" />
