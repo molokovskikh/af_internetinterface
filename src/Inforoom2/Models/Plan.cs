@@ -100,6 +100,8 @@ namespace Inforoom2.Models
 		[Property, Description("Комментарии к тарифному плану")]
 		public virtual string Comments { get; set; }
 
+		[Property]
+		public virtual bool IsOnceOnly { get; set; }
 
 		/// <summary>
 		/// Получение стоимости перехода на другой тариф
