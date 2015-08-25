@@ -702,6 +702,11 @@ namespace Billing
 				description = description.ToString()
 			};
 			session.Save(redmineIssue);
+
+			//создаем сообщение на страницу клиента о созданной задачке в редмайне 
+			string appealMessage = string.Format("{0} Создана задача #{1}", redmineIssue.description, redmineIssue.Id);
+			var appeal = client.CreareAppeal(appealMessage, AppealType.System, false);
+			session.Save(appeal);
 		}
 
 		// вспомогательная
