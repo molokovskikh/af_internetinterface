@@ -527,6 +527,7 @@
     <Compile Include="Models\SmsMessage.cs" />
     <Compile Include="Models\StaticIp.cs" />
     <Compile Include="Models\Status.cs" />
+    <Compile Include="Models\PlanHistoryEntry.cs" />
     <Compile Include="Models\Street.cs" />
     <Compile Include="Models\TariffChangeRule.cs" />
     <Compile Include="Models\Timeunit.cs" />

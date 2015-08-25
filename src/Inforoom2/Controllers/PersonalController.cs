@@ -20,6 +20,7 @@ using Lease = Inforoom2.Models.Lease;
 using Payment = Inforoom2.Models.Payment;
 using PaymentForConnect = Inforoom2.Models.PaymentForConnect;
 using PhysicalClient = Inforoom2.Models.PhysicalClient;
+using PlanHistoryEntry = Inforoom2.Models.PlanHistoryEntry;
 using Service = Inforoom2.Models.Services.Service;
 using Status = Inforoom2.Models.Status;
 using StatusType = Inforoom2.Models.StatusType;
@@ -309,6 +310,13 @@ namespace Inforoom2.Controllers
 			var client = CurrentClient;
 			InitPlans(client);
 			ViewBag.Client = client;
+			var isOnceOnlyUsed = DbSession.Query<PlanHistoryEntry>().Any(s => s.PlanAfter == plan && plan.IsOnceOnly);
+
+			if (isOnceOnlyUsed)
+			{
+				ErrorMessage("На данный тариф нельзя перейти вновь.");
+				return View("Plans");
+			}
 			//todo - наверно надо подумать как эти провеки засунуть куда следует
 			var beginDate = client.WorkingStartDate ?? new DateTime();
 			if (beginDate == DateTime.MinValue || beginDate.AddMonths(2) >= SystemTime.Now()) {
@@ -327,6 +335,17 @@ namespace Inforoom2.Controllers
 			DbSession.Save(result);
 			var warning = (client.GetWorkDays() <= 3) ? " Обратите внимание, что у вас низкий баланс!" : "";
 			SuccessMessage("Тариф успешно изменен." + warning);
+			// добавление записи в историю тарифов пользователя
+			var planHistory = new PlanHistoryEntry
+			{
+				Client = CurrentClient,
+				DateOfChange = SystemTime.Now(),
+				PlanAfter = plan,
+				PlanBefore = oldPlan,
+				Price = oldPlan.GetTransferPrice(plan)
+			};
+			DbSession.Save(planHistory);
+
 			var msg = string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.", oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, result.Sum);
 			var appeal = new Appeal(msg, client, AppealType.User) {
 				Employee = GetCurrentEmployee()

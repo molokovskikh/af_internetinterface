@@ -176,6 +176,15 @@ namespace Inforoom2.Controllers
 			client.SetStatus(StatusType.Worked, DbSession);
 			DbSession.Save(client);
 			SuccessMessage("Тариф успешно изменен.");
+			// добавление записи в историю тарифов пользователя
+			var planHistory = new PlanHistoryEntry{
+				Client =  CurrentClient,
+				DateOfChange = SystemTime.Now(),
+				PlanAfter = plan,
+				PlanBefore = oldPlan,
+				Price = oldPlan.GetTransferPrice(plan)
+			};
+			DbSession.Save(planHistory);
 			var msg = string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.", oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, 0);
 			var appeal = new Appeal(msg, client, AppealType.User) {
 				Employee = GetCurrentEmployee()
