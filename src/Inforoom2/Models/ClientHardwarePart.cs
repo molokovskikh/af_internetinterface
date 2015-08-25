@@ -20,5 +20,9 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual bool Absent { get; set; }
+
+		[Property]
+		public virtual bool NotGiven { get; set; }
+		
 	}
 }

@@ -28,7 +28,6 @@
 					@for (var i = 0; i < rentalHardwareList.Count; i++) {
 						var rentalHardware = rentalHardwareList[i];
 						var trClass = i % 2 == 1 ? "odd" : "even";
-						var btnCaption = client.HardwareIsRented(rentalHardware) ? "Снять с аренды" : "Добавить в аренду";
 						var thisHw = client.GetActiveRentalHardware(rentalHardware);
 
 						<tr class="@trClass" role="row">
@@ -38,7 +37,7 @@
 									<td>@thisHw.Name, @thisHw.SerialNumber</td>
 									<td>@(thisHw.GiveDate.HasValue ? thisHw.GiveDate.Value.ToShortDateString() : "")</td>
 									<td>@(thisHw.WasUsed ? "б/у" : "новый"),
-										@Html.Raw(thisHw.GetAbsentPartsOfRentedHardware())</td>
+										Выдан @Html.Raw(thisHw.GetAbsentPartsOfRentedHardware(true))</td>
 									<td>@thisHw.Comment</td>
 								}
 								else {
