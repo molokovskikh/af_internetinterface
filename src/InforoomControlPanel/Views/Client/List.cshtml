@@ -72,11 +72,12 @@
 					<td><a href="@Url.Action("Info", "Client", new { id = client.Id })">@client.Id</a></td>
 					<td><a href="@Url.Action("Info", "Client", new { id = client.Id })">@client.PhysicalClient.FullName</a></td>
 					<td>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequest", "Client", new { id = client.Id })">
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequestCreate", "ServiceRequest", new { id = client.Id })">
 							<i class="entypo-doc-text"></i>
 							Сервисная заявка
 						</a>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ConnectionRequest", "Client", new { id = client.Id })"> 
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("AttachRequest", "ConnectionTeam", new { id = client.Id, type = ServicemenScheduleItem.Type.ClientConnectionRequest })">
+
 							<i class="entypo-briefcase"></i>
 							Заявка на подключение
 						</a>

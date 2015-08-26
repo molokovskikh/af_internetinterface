@@ -46,7 +46,8 @@ namespace Inforoom2.Helpers
 				|| tableName == "Contacts".ToLower()
 				|| tableName == "PackageSpeed".ToLower()
 				|| tableName == "MessagesForClients".ToLower()
-				|| tableName == "issues".ToLower())
+				|| tableName == "issues".ToLower()
+                || tableName == "serviceiterations".ToLower())
 			{
 				return tableName;
 			}

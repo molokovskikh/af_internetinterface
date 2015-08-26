@@ -1,56 +1,139 @@
 ﻿@using Inforoom2.Components
-@using Inforoom2.Models 
+@using Inforoom2.Models
 @model dynamic
 
-@{ 
+@{
 	ViewBag.Title = "Список логов";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	IList<Log> logs = ViewBag.Logs;
-	InforoomModelFilter<Log> pager = ViewBag.Pager;
+	InforoomModelFilter<Log> modelFilter = ViewBag.Pager;
+	var logs = modelFilter.GetItems();
 }
+<panel class="panel panel-default">
+	<form>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">Тип события</div>
+				<div class="col-sm-2">
+					@modelFilter.FormFilter(i => i.Type, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control" })
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">Id модели</div>
+				<div class="col-sm-2">
+					@modelFilter.FormFilter(i => i.ModelId, HtmlType.text, ComparsionType.Equal, new {@class = "form-control"})
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">Тип модели</div>
+				<div class="col-sm-2">
+					@modelFilter.FormFilter(i => i.ModelClass, HtmlType.text, ComparsionType.Like, new {@class = "form-control"})
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">Интервал даты с </div>
+				<div class="col-sm-2">@modelFilter.FormFilter(i => i.Date, HtmlType.Date, ComparsionType.GreaterOrEqueal, new {@class = "form-control"})</div>
+				<div class="col-sm-1">по</div>
+				<div class="col-sm-2">@modelFilter.FormFilter(i => i.Date, HtmlType.Date, ComparsionType.LowerOrEqual, new {@class = "form-control"})</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">Поисковая фраза</div>
+				<div class="col-sm-2">
+					@modelFilter.FormFilter(i => i.Message, HtmlType.text, ComparsionType.Like, new {@class = "form-control"})
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-1">
+				@modelFilter.SubmitButton(new {@class = "btn btn-success btn-sm"})
+			</div>
+			<div class="col-sm-1">
+				@modelFilter.CleanButton(new {@class = "btn btn-success"})
+			</div>
+		</div>
+	</form>
+</panel>
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+
+	<div class="row">
+		@{ Html.RenderPartial("Pagination"); }
+	</div>
 	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 		<thead>
-			<tr role="row">
-				<th class="sorting_asc" rowspan="1" colspan="1" style="width: 50px;" aria-label="">
-					<div class="checkbox checkbox-replace neon-cb-replacement">
-						<label class="cb-wrapper">
-							<input type="checkbox" id="chk-1">
-							<div class="checked"></div>
-						</label>
-					</div>
-				</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Id)">Номер</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Employee)">Пользователь</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Type)">Тип события</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Date)">Дата</a></th> 
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Message)">Содержание</a></th> 
-				<th  tabindex="0" aria-controls="table-2">Действие</th> 
-			</tr>
+		<tr role="row">
+			<th class="sorting_asc" rowspan="1" colspan="1" style="width: 50px;" aria-label="">
+				<div class="checkbox checkbox-replace neon-cb-replacement">
+					<label class="cb-wrapper">
+						<input type="checkbox" id="chk-1">
+						<div class="checked"></div>
+					</label>
+				</div>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@modelFilter.OrderBy(s => s.Id)">Номер</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@modelFilter.OrderBy(s => s.Employee)">Пользователь</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@modelFilter.OrderBy(s => s.Type)">Тип события</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@modelFilter.OrderBy(s => s.ModelId)">Id модели</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@modelFilter.OrderBy(s => s.ModelClass)">Тип модели</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@modelFilter.OrderBy(s => s.Date)">Дата</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@modelFilter.OrderBy(s => s.Message)">Содержание</a>
+			</th>
+			<th tabindex="0" aria-controls="table-2">Действие</th>
+		</tr>
 		</thead>
 
 		<tbody>
-			@foreach (var log in logs) {
-				<tr role="row" class="odd">
-					<td></td>
-					<td class="sorting_1">
-						<span>@log.Id</span>
-					</td>
-					<td><span>@(log.Employee != null ? log.Employee.Name : "none")</span></td>
-					<td><span>@log.Type.ToString()</span></td>
-					<td><span>@log.Date</span></td>
-					<td>@(log.Message.Length > 300 ? Html.Raw(log.Message.Substring(0, 300) + "...") : Html.Raw(log.Message))</td>
-					<td>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("LogRegResultInfo", "Admin", new { @Id = log.Id, @path = Request.Url.ToString() })">
-							<i class="entypo-vcard"></i>
-							Просмотреть
-						</a>
-					</td>
-				</tr>
-			}
+		@foreach (var log in logs) {
+			<tr role="row" class="odd">
+				<td></td>
+				<td class="sorting_1">
+					<span>@log.Id</span>
+				</td>
+				<td>
+					<span>@(log.Employee != null ? log.Employee.Name : "none")</span></td>
+				<td>
+					<span>@log.Type.ToString()</span></td>
+				<td>
+					<span>@log.ModelId.ToString()</span>
+				</td>
+				<td>
+					<span>@log.ModelClass</span>
+				</td>
+				<td>
+					<span>@log.Date</span></td>
+				<td>
+					<div>@(Html.Raw(log.Message))</div>
+				</td>
+				<td>
+					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("LogRegResultInfo", "Admin", new {log.Id, @path = Request.Url.ToString()})">
+						<i class="entypo-vcard"></i>
+						Просмотреть
+					</a>
+				</td>
+			</tr>
+		}
 		</tbody>
 	</table>
 	<div class="row">
 		@{ Html.RenderPartial("Pagination"); }
 	</div>
-</div>
+</div>	

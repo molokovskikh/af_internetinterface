@@ -404,7 +404,8 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult HouseList()
 		{
 			var pager = new InforoomModelFilter<House>(this);
-			pager.SetOrderBy("Number");
+			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
+				pager.SetOrderBy("Number");
 
 			var criteria = pager.GetCriteria();
 			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());

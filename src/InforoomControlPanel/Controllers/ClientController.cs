@@ -237,44 +237,6 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
-		/// <summary>
-		/// Создание заявки на подключение
-		/// </summary> 
-		/// <param name="id"></param>
-		/// <returns></returns>
-		public ActionResult ServiceRequest(int id)
-		{
-			var client = DbSession.Get<Client>(id);
-			var serviceRequest = new ServiceRequest(client);
-			var servicemen = DbSession.Query<ServiceMan>().ToList();
-			ViewBag.Client = client;
-			ViewBag.ServiceRequest = serviceRequest;
-			ViewBag.Servicemen = servicemen;
-			ViewBag.ServicemenDate = DateTime.Today;
-			return View();
-		}
-
-		/// <summary>
-		/// Создание заявки на подключение
-		/// </summary>
-		/// <param name="ServiceRequest"></param>
-		/// <returns></returns>
-		[HttpPost]
-		public ActionResult ServiceRequest([EntityBinder] ServiceRequest ServiceRequest)
-		{
-			var client = ServiceRequest.Client;
-			this.ServiceRequest(client.Id);
-			ViewBag.ServicemenDate = ServiceRequest.BeginTime.Date;
-			var errors = ValidationRunner.ValidateDeep(ServiceRequest);
-			if (errors.Length == 0) {
-				DbSession.Save(ServiceRequest);
-				SuccessMessage("Сервисная заявка успешно добавлена");
-				return this.ServiceRequest(client.Id);
-			}
-			ViewBag.ServiceRequest = ServiceRequest;
-			return View();
-		}
-
 
 		/// <summary>
 		///  Форма регистрации клиента по заявке
