@@ -1,0 +1,57 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "Добавление сервисной заявки";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ServiceRequest serviceRequest = ViewBag.ServiceRequest;
+}
+<div class="panel panel-primary">
+	<div class="panel-body">
+		<div class="col-md-6">
+			@using (@Html.BeginForm("ServiceRequestCreate", "ServiceRequest", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered", EncType = "multipart/form-data" })) {
+				@Html.HiddenFor(model => serviceRequest.Id)
+				@Html.HiddenFor(model => serviceRequest.Client.Id)
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Клиент</label>
+					<div class="col-sm-5">
+						<a href="@(ConfigHelper.GetParam("adminPanelOld") + "UserInfo/ShowPhysicalClient?filter.ClientCode=" + serviceRequest.Client.Id)">@serviceRequest.Client.Fullname</a>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Адрес</label>
+					<div class="col-sm-5">
+						<span>@serviceRequest.Client.GetAddress()</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Телефон для связи</label>
+					<div class="col-sm-5">
+						@Html.TextBoxFor(model => serviceRequest.Phone, new { @class = "form-control" }) 
+						@ViewBag.Validation.GetError(serviceRequest, "Phone")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label c-pointer" for="BlockClientAndWriteOffs">Восстановление работы</label>
+					<div class="col-md-5">
+						@Html.CheckBoxFor(model => serviceRequest.BlockClientAndWriteOffs, new { @id = "BlockClientAndWriteOffs", @class = "c-pointer" })
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Текст</label>
+					<div class="col-md-5">
+						@Html.TextAreaFor(model => serviceRequest.Description, new { @class = "form-control", @Rows = "8" })
+						@ViewBag.Validation.GetError(serviceRequest, "Description")
+					</div>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-green" type="submit">Добавить</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="form-group">
+	<button class="btn btn-blue" onclick=" location.href = '@Url.Action("ServiceRequestList", "ServiceRequest")' ">Назад</button>
+</div>

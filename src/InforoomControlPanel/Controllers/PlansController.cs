@@ -614,7 +614,8 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult InternetPlanChangerIndex()
 		{
 			var pager = new InforoomModelFilter<PlanChangerData>(this);
-			pager.SetOrderBy("TargetPlan");
+			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
+				pager.SetOrderBy("TargetPlan");
 			ViewBag.Pager = pager;
 			return View();
 		}

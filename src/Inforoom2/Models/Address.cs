@@ -144,7 +144,7 @@ namespace Inforoom2.Models
 				address = address[0] == ',' ? address.Substring(1) : address;
 				address = address.Replace(",,", ",");
 			}
-			return address;
+			return address.Replace("  "," ");
 		}
 
 		/// <summary>

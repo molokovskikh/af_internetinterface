@@ -3,7 +3,24 @@
  * Apply Here your Custom CSS
  *
 */
+.form-control, .panel-primary, .panel-default {
+ border-color: #c7c7c7;
+}
+.icon { cursor: pointer;}
+.analit-dropdown {
+ background: white none repeat scroll 0 0;
+    border: 1px solid #ccc;
+    display: block;
+    max-height: 200px;
+    overflow-y: scroll;
+    position: absolute;
+ z-index: 30000;
+}
 
-body {
-	
+.analit-dropdown div {
+ padding: 5px;
+ min-width: 100px;
+}
+.paginatorPanel {
+	padding: 16px;
 }

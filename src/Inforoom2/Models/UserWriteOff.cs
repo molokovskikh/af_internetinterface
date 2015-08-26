@@ -36,5 +36,8 @@ namespace Inforoom2.Models
 
 		[Property(Column = "BillingAccount"), Description("Отметка о том,что обработано биллингом ")]
 		public virtual bool IsProcessedByBilling { get; set; }
+
+		[ManyToOne(Column = "Registrator")]
+		public virtual Employee Employee { get; set; }
 	}
 }

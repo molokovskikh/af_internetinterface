@@ -1,15 +1,14 @@
 ﻿//обновление графика сервисных работ при смене даты
 var servicemenFunc = function () {
 	console.log("refreshing graph");
-	$(".servicemen td.time").on("mouseover", function() {
+	$(".servicemen td.time").on("mouseover", function () {
 		var cl = $(this).attr("class").split(" ")[0];
 		$(".servicemen thead th." + cl).addClass("hover");
 	});
 
-	$(".servicemen td").on("mouseout", function() {
+	$(".servicemen td").on("mouseout", function () {
 		$(".servicemen th, .servicemen td").removeClass("hover");
 	});
-
 	$(".servicemen td.time").on("click", function () {
 		var val = $(this).html();
 		var picker = $(".timepicker");
@@ -20,10 +19,11 @@ var servicemenFunc = function () {
 		var cl = $(this).attr("class").split(" ")[0];
 		var id = cl.substr("employee".length);
 		console.log(id);
-		$("#ServiceManDropDown").val(id);
+		$("select[name*='ServiceMan.Id'] option").removeAttr("selected");
+		$("select[name*='ServiceMan.Id'] option[value='" + id + "']").attr("selected", "selected");
 
 		TimePickerValue = $(".timepicker").val();
-		ServiceManDropDownValue = $("#ServiceManDropDown").val();
+		ServiceManDropDownValue = $("#ServiceManDropDown option:selected").val();
 	});
 	//надо именно так
 	$(".servicemen .datepicker").get(0).onchange = refreshConnectionTable;
@@ -37,11 +37,13 @@ var refreshConnectionTable = function () {
 	$(".datepicker").each(function () {
 		$(this).val(date);
 	});
-	var region = $(".regionId option:selected").val();
+	var regionRequest = $("#requestRegion").val();
+
+	var region = regionRequest != null ? regionRequest : $(".regionId option:selected").val();
 	$.ajax({
 		type: "POST",
 		url: cli.getParam("baseurl") + "ConnectionTeam/ConnectionTable",
-		data: { date: date, regionId : region }
+		data: { date: date, regionId: region }
 	}).done(function (msg) {
 		var div = msg.toHTML();
 		$(div).find("form").remove();
@@ -62,6 +64,6 @@ $(".ConnectionTeam  .btn-green").on("click", function () {
 	return true;
 })
 
-$(".print").on("click",function() {
+$(".print").on("click", function () {
 	window.print();
 })

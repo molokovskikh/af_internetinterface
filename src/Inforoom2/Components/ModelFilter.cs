@@ -594,7 +594,7 @@ namespace Inforoom2.Components
 			if (type == HtmlType.checkbox) {
 				o["class"] = "c-pointer " + o["class"];
 				var selectedPart = selectedValue != null && selectedValue.Contains("true") ? " checked=checked" : "";
-				return string.Format("<input type='checkbox' value = 'true' {0} {1}/><input type='hidden' value='false' {0} >", GetPropsValues(o), selectedPart);
+				return string.Format("<input type='checkbox' value = 'true' {0} {1}/><input type='hidden' value='false' {0} >", GetPropsValues(o).Replace("form-control", ""), selectedPart);
 			}
 
 			if (type == HtmlType.Dropdown) {
