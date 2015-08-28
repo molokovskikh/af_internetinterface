@@ -74,6 +74,7 @@ namespace Inforoom2.Models
 		[Property(NotNull = true)]
 		public virtual int DebtDays { get; set; }
 
+		///TODO: не использовать !!!!!!!
 		[Property(NotNull = true)]
 		public virtual ClientType Type { get; set; }
 

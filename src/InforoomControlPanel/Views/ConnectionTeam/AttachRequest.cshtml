@@ -42,7 +42,7 @@
 				<label class="col-sm-2 control-label">От</label>
 				<div class="col-sm-4">
 					<a href="@(ConfigHelper.GetParam("adminPanelOld")
-					+ (String.Format("UserInfo/{0}?filter.ClientCode=", scheduleItem.Client.Type == ClientType.PhysicalClient ? "ShowPhysicalClient" : "ShowLawyerPerson"))
+					+ (String.Format("UserInfo/{0}?filter.ClientCode=", scheduleItem.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
 					+ scheduleItem.Client.Id)">@scheduleItem.Client.Fullname</a>
 				</div>
 			</div>
