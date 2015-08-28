@@ -24,6 +24,7 @@ using NHibernate.Loader.Criteria;
 using NHibernate.Persister.Entity;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
+using NHibernate.Util;
 using Remotion.Linq.Clauses;
 
 namespace Inforoom2.Components
@@ -91,6 +92,9 @@ namespace Inforoom2.Components
 			protected set { }
 		}
 
+		[Description("Список параметров обработан фильтром")]
+		public bool ParamsProcessed { get; set; }
+
 		[Description("Общее количество записей, удовлетворяющих запросу")]
 		public int TotalItems
 		{
@@ -151,7 +155,6 @@ namespace Inforoom2.Components
 		{
 			Controller = controller;
 			DbSession = controller.DbSession;
-
 			//Назначение параметров по-умолчанию
 			Params["page"] = "1"; //Текущая страница 
 			Params["orderType"] = OrderingDirection.Asc.ToString(); //Тип сортировки (по возрастанию, по убыванию)
@@ -272,7 +275,7 @@ namespace Inforoom2.Components
 			AddFiltersToCriteria(Criteria);
 			AddOrderToCriteria(Criteria);
 			AddLimitToCriteria(Criteria);
-
+			ParamsProcessed = true;
 			return Criteria;
 		}
 
@@ -916,7 +919,7 @@ namespace Inforoom2.Components
 			criteria.SetFirstResult(1).SetMaxResults(1000000);
 
 			//получение списка моделей
-			var list = criteria.List(); 
+			var list = criteria.List();
 			var realCriteria = DbSession.CreateCriteria(typeof(TModel));
 			Models = realCriteria.Add(Restrictions.In("Id", list)).List<TModel>();
 
@@ -1090,6 +1093,54 @@ namespace Inforoom2.Components
 			context.Response.BinaryWrite(fileToreturn);
 			context.Response.Flush();
 			context.Response.Close();
+		}
+
+		/// <summary>
+		///  Фильтрация проведена пользователем (в запросе присуствуют условия фильтрации)
+		/// </summary>
+		public bool IsExecutedByUser()
+		{
+			var request = Controller.Url.RequestContext.HttpContext.Request.Params;
+			var isUsed = request.AllKeys.Any(s => s.Contains(Prefix));
+			return isUsed;
+		}
+
+		/// <summary>
+		/// Проверка наличия параметра в списке параметров фильтрации
+		/// </summary>
+		public bool ParamExists(string parametreName)
+		{
+			return Params.AllKeys.FirstOrDefault(s => s == parametreName) != null;
+		}
+
+		/// <summary>
+		/// Добавление параметра в список параметров фильтрации
+		/// </summary>
+		public void ParamSet(string parametreName, string parametreValue)
+		{
+			if (ParamsProcessed) {
+				throw new Exception("Невозможно добавить параметр: параметры уже были обработаны фильтром! *Добавление возможно только до метода GetCriteria().");
+			}
+			Params[parametreName] = parametreValue;
+		}
+
+		/// <summary>
+		/// Получение параметра из списка параметров фильтрации
+		/// </summary>
+		public string ParamGet(string parametreName)
+		{
+			return Params[parametreName];
+		}
+
+		/// <summary>
+		/// Удаление параметра из списка параметров фильтрации
+		/// </summary>
+		public void ParamDelete(string parametreName)
+		{
+			if (ParamsProcessed) {
+				throw new Exception("Невозможно удалить параметр: параметры уже были обработаны фильтром! *Удаление возможно только до метода GetCriteria().");
+			}
+			Params.Remove(parametreName);
 		}
 	}
 }

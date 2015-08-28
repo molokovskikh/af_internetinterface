@@ -15,27 +15,43 @@
 <panel class="panel panel-default">
 	<form>
 
-		<div class="row">
-			<div class="col-sm-2">Дата регистрации с </div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().GiveDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
-			<div class="col-sm-1">по</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().GiveDate, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Оборудование</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().Hardware.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-1">
-				@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Дата регистрации с </div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().GiveDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
+				<div class="col-sm-1">по</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().GiveDate, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div>
 			</div>
-			<div class="col-sm-1">
-				@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Оборудование</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().Hardware.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:230px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2"><label class="c-pointer" for="showJustActive">Хотя бы одно оборудование активно</label></div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().IsActive, HtmlType.Dropdown, ComparsionType.Equal, new { @id = "showJustActive", @class = "form-control", @style = "min-width:230px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">
+					@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+				</div>
+				<div class="col-sm-1">
+					@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+				</div>
 			</div>
 		</div>
 	</form>
 </panel>
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+
+	<div class="row">
+		@{ Html.RenderPartial("Pagination"); }
+	</div>
 	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 		<thead>
 			<tr role="row">
@@ -64,7 +80,7 @@
 					</td> 
 					<td><a href="@Url.Action("Info", "Client", new { id = item.Id })">@item.Id</a></td>
 					<td><a href="@Url.Action("Info", "Client", new { id = item.Id })">@item.PhysicalClient.FullName</a></td>
-					<td><a href="@Url.Action("Info", "Client", new { id = item.Id })">@item.RentalHardwareList.Count(s=>s.IsActive)</a></td>
+					<td><a href="@Url.Action("Info", "Client", new { id = item.Id })">@item.RentalHardwareList.Count(s => s.IsActive)</a></td>
 					<td>
 						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("Info", "Client", new { id = item.Id })">
 							<i class="entypo-plus-circled"></i>
