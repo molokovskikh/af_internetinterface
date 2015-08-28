@@ -689,7 +689,7 @@ namespace InforoomControlPanel.Controllers
 			var errors = ValidationRunner.Validate(packageSpeed);
 			if (errors.Length == 0) {
 				DbSession.Save(packageSpeed);
-				string linkToConfirm = ConfigHelper.GetParam("adminPanelNew") + Url.Action("ConfirmPackageSpeed", new { id = packageSpeed.Id });
+				string linkToConfirm = this.Request.Url.Host.ToLower()+ Url.Action("ConfirmPackageSpeed", new { id = packageSpeed.Id });
 				var redmineTask = packageSpeed.AssignRedmineTask(DbSession, linkToConfirm);
 				SuccessMessage("На Redmine создана задача по активации скорости - " + redmineTask.Id);
 				return RedirectToAction("PackageSpeedList");

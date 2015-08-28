@@ -284,9 +284,9 @@
 							<button id="NotPhoned" name="../UserInfo/NoPhoned.rails?ClientCode=${ClientCode}" class="button button_mod">Недозвон</button>
 						</a>
 					<% end %>
-					<% if _client.AdditionalCanUsed("AppointedToTheGraph"): %>
-						${app.LinkTo(naznach_text, @UserInfo, @AppointedToTheGraph, { @ClientCode: ClientCode, @attributes: {@class: "button"} })}
-					<% end %>
+					<a href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}/ConnectionTeam/AttachRequest/${ClientCode}?type=ClientConnectionRequest" class="big-link button"
+					   style="color: #00a651;" target="_blank"><b>Назначить в график</b>
+					 </a>
 				 </td>
 			</tr>
 	<% end %>

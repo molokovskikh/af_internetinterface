@@ -113,7 +113,7 @@ namespace InforoomControlPanel.Controllers
 					 - (scheduleItem.BeginTime.HasValue ? scheduleItem.BeginTime.Value : Convert.ToDateTime("01.01.0001 0:00:00")))
 						.TotalMinutes;
 
-				var clientRegion = scheduleItem.Client.Type == ClientType.PhysicalClient
+				var clientRegion = scheduleItem.Client.PhysicalClient != null
 					? scheduleItem.Client.Address.Region
 					: scheduleItem.Client.Endpoints.Select(
 						s => s.Switch.NetworkNode.Addresses.Count > 0 ? s.Switch.NetworkNode.Addresses.First().Street.Region : null)
