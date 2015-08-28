@@ -72,7 +72,8 @@ namespace InforoomControlPanel.Controllers
 			string NewFileName = System.Guid.NewGuid() + ext;
 			if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
 				try {
-					imagePath = pathFromConfig + "Images/" + NewFileName;
+                    pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
+                    imagePath = pathFromConfig + "Images/" + NewFileName;
 					uploadedFile.SaveAs(imagePath);
 				}
 				catch (Exception) {
@@ -149,7 +150,9 @@ namespace InforoomControlPanel.Controllers
 			string NewFileName = System.Guid.NewGuid() + ext;
 			if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
 				try {
-					imagePath = pathFromConfig + "Images/" + NewFileName;
+                    //если путь = корню
+                    pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
+                    imagePath = pathFromConfig + "Images/" + NewFileName;
 					uploadedFile.SaveAs(imagePath);
 				}
 				catch (Exception) {
@@ -160,7 +163,9 @@ namespace InforoomControlPanel.Controllers
 			var errors = ValidationRunner.Validate(banner);
 			if (errors.Length == 0 && imagePath != "") {
 				if (uploadedFile != null) {
-					if (System.IO.File.Exists(pathFromConfig + banner.ImagePath)) {
+                    //если путь = корню
+                    pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
+                    if (System.IO.File.Exists(pathFromConfig + banner.ImagePath)) {
 						System.IO.File.Delete(pathFromConfig + banner.ImagePath);
 					}
 					banner.ImagePath = "Images/" + NewFileName;
@@ -195,8 +200,9 @@ namespace InforoomControlPanel.Controllers
 			if (pathFromConfig == null) {
 				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
-
-			if (System.IO.File.Exists(pathFromConfig + banner.ImagePath)) {
+            //если путь = корню
+            pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
+            if (System.IO.File.Exists(pathFromConfig + banner.ImagePath)) {
 				System.IO.File.Delete(pathFromConfig + banner.ImagePath);
 			}
 			DbSession.Delete(banner);

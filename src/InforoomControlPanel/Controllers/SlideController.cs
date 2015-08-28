@@ -70,11 +70,14 @@ namespace InforoomControlPanel.Controllers
 			}
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
-				try {
+				try
+				{
+                    //если путь = корню
+				    pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
 					imagePath = pathFromConfig + "Images/" + NewFileName;
 					uploadedFile.SaveAs(imagePath);
 				}
-				catch (Exception) {
+				catch (Exception уч) {
 					imagePath = "";
 				}
 			}
@@ -134,8 +137,10 @@ namespace InforoomControlPanel.Controllers
 			var ext = uploadedFile == null ? "" : new FileInfo(uploadedFile.FileName).Extension;
 			string NewFileName = System.Guid.NewGuid() + ext;
 			if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
-				try {
-					imagePath = pathFromConfig + "Images/" + NewFileName;
+				try
+                {//если путь = корню
+                    pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
+                    imagePath = pathFromConfig + "Images/" + NewFileName;
 					uploadedFile.SaveAs(imagePath);
 				}
 				catch (Exception) {
@@ -145,8 +150,10 @@ namespace InforoomControlPanel.Controllers
 			slide.Partner = DbSession.Query<Employee>().FirstOrDefault(s => s.Login == User.Identity.Name);
 			var errors = ValidationRunner.Validate(slide);
 			if (errors.Length == 0 && imagePath != "") {
-				if (uploadedFile != null) {
-					if (System.IO.File.Exists(pathFromConfig + slide.ImagePath)) {
+				if (uploadedFile != null)
+                {//если путь = корню
+                    pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
+                    if (System.IO.File.Exists(pathFromConfig + slide.ImagePath)) {
 						System.IO.File.Delete(pathFromConfig + slide.ImagePath);
 					}
 					slide.ImagePath = "Images/" + NewFileName;
@@ -193,8 +200,9 @@ namespace InforoomControlPanel.Controllers
 				throw new Exception("Значение 'inforoom2UploadPath' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
 			var slide = DbSession.Query<Slide>().FirstOrDefault(s => s.Id == id);
-
-			if (System.IO.File.Exists(pathFromConfig + slide.ImagePath)) {
+            //если путь = корню
+            pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
+            if (System.IO.File.Exists(pathFromConfig + slide.ImagePath)) {
 				System.IO.File.Delete(pathFromConfig + slide.ImagePath);
 			}
 
