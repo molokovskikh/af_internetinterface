@@ -54,10 +54,10 @@ namespace InforoomControlPanel.Controllers
 		{
 			var pager = new InforoomModelFilter<Client>(this);
 			var criteria = pager.GetCriteria(i => i.PhysicalClient != null);
-			if (pager.IsExportRequested()) {
-				pager.GetItems();
-				pager.SetExportFields( s => new { s, s.Surname, s.PhysicalClient.Name, s.Patronymic, Вкусняшка = s.Address, Агентище = s.Agent, Улица = s.Address.House.Street.Name, Номерок = s.Address.House.Number });
+			if (pager.IsExportRequested()){
+				pager.SetExportFields(s => new { ЛС = s.Id, Клиент = s.Fullname, Тариф = s.PhysicalClient.Plan.Name, Адрес = s.PhysicalClient.Address.FullAddress, Статус = s.Status.Name });
 				pager.ExportToExcelFile(ControllerContext.HttpContext);
+				return null;
 			}
 			ViewBag.Pager = pager;
 			return View("List");
@@ -234,44 +234,6 @@ namespace InforoomControlPanel.Controllers
 			var criteria = pager.GetCriteria();
 			pager.SetOrderBy("RegDate", OrderingDirection.Desc); 
 			ViewBag.Pager = pager; 
-			return View();
-		}
-
-		/// <summary>
-		/// Создание заявки на подключение
-		/// </summary> 
-		/// <param name="id"></param>
-		/// <returns></returns>
-		public ActionResult ServiceRequest(int id)
-		{
-			var client = DbSession.Get<Client>(id);
-			var serviceRequest = new ServiceRequest(client);
-			var servicemen = DbSession.Query<ServiceMan>().ToList();
-			ViewBag.Client = client;
-			ViewBag.ServiceRequest = serviceRequest;
-			ViewBag.Servicemen = servicemen;
-			ViewBag.ServicemenDate = DateTime.Today;
-			return View();
-		}
-
-		/// <summary>
-		/// Создание заявки на подключение
-		/// </summary>
-		/// <param name="ServiceRequest"></param>
-		/// <returns></returns>
-		[HttpPost]
-		public ActionResult ServiceRequest([EntityBinder] ServiceRequest ServiceRequest)
-		{
-			var client = ServiceRequest.Client;
-			this.ServiceRequest(client.Id);
-			ViewBag.ServicemenDate = ServiceRequest.BeginTime.Date;
-			var errors = ValidationRunner.ValidateDeep(ServiceRequest);
-			if (errors.Length == 0) {
-				DbSession.Save(ServiceRequest);
-				SuccessMessage("Сервисная заявка успешно добавлена");
-				return this.ServiceRequest(client.Id);
-			}
-			ViewBag.ServiceRequest = ServiceRequest;
 			return View();
 		}
 

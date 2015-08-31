@@ -3,18 +3,17 @@ using System.Web.Mvc;
 using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Models;
-using NHibernate.Criterion;
 using NHibernate.Linq;
 
 namespace InforoomControlPanel.Controllers
 {
 	/// <summary>
-	/// Класс-контроллер для управления операциями по "Аренде оборудования" клиента
+	///     Класс-контроллер для управления операциями по "Аренде оборудования" клиента
 	/// </summary>
 	public class HardwareRentController : ControlPanelController
 	{
 		/// <summary>
-		/// Отображает список оборудования для аренды
+		///     Отображает список оборудования для аренды
 		/// </summary>
 		public ActionResult HardwareList(int id)
 		{
@@ -26,7 +25,7 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		/// <summary>
-		/// Отображает список оборудования, когда либо арендованного клиентом
+		///     Отображает список оборудования, когда либо арендованного клиентом
 		/// </summary>
 		public ActionResult HardwareArchiveList(int id)
 		{
@@ -38,7 +37,7 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		/// <summary>
-		/// Создание новой аренды оборудования
+		///     Создание новой аренды оборудования
 		/// </summary>
 		public ActionResult CreateHardwareRent(int id, uint hardware)
 		{
@@ -47,23 +46,24 @@ namespace InforoomControlPanel.Controllers
 
 			if (rentalHardware == null) {
 				ErrorMessage("Невозможно арендовать данное оборудование!");
-				return RedirectToAction("HardwareList", new { id });
+				return RedirectToAction("HardwareList", new {id});
 			}
 			var clientHardware =
-				new ClientRentalHardware {
+				new ClientRentalHardware
+				{
 					Hardware = rentalHardware,
 					Client = client,
 					GiveDate = SystemTime.Now()
 				};
 			//формирование комплектации
-			clientHardware.GetClientHardwareParts();  
+			clientHardware.GetClientHardwareParts();
 
 			ViewBag.ClientHardware = clientHardware;
 			return View();
 		}
 
 		/// <summary>
-		/// Создание новой аренды оборудования
+		///     Создание новой аренды оборудования
 		/// </summary>
 		[HttpPost]
 		public ActionResult CreateHardwareRent([EntityBinder] ClientRentalHardware clientRentalHardware)
@@ -76,19 +76,19 @@ namespace InforoomControlPanel.Controllers
 				ViewBag.ClientHardware = clientRentalHardware;
 				return View("CreateHardwareRent");
 			}
-			clientRentalHardware.Activate(DbSession, GetCurrentEmployee());
+			var currentEmployee = GetCurrentEmployee();
+			clientRentalHardware.Activate(DbSession, currentEmployee);
 
 			clientRentalHardware.GetClientHardwareParts();
 			DbSession.Save(clientRentalHardware);
 			SuccessMessage("Услуга успешно активирована!");
 
 			ViewBag.ClientHardware = clientRentalHardware;
-			return RedirectToAction("HardwareList", new { @id = clientRentalHardware.Client.Id });
+			return RedirectToAction("HardwareList", new {@id = clientRentalHardware.Client.Id});
 		}
 
-
 		/// <summary>
-		/// Обновление аренды оборудования
+		///     Обновление аренды оборудования
 		/// </summary>
 		public ActionResult UpdateHardwareRent(int id)
 		{
@@ -102,7 +102,7 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		/// <summary>
-		/// Обновление аренды оборудования
+		///     Обновление аренды оборудования
 		/// </summary>
 		[HttpPost]
 		public ActionResult UpdateHardwareRent([EntityBinder] ClientRentalHardware clientRentalHardware)
@@ -120,7 +120,7 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		/// <summary>
-		/// Деактивирует последнюю аренду клиента
+		///     Деактивирует последнюю аренду клиента
 		/// </summary>
 		[HttpPost]
 		public ActionResult DiactivateHardwareRent(int id, uint hardware, string deactivateReason)
@@ -142,8 +142,9 @@ namespace InforoomControlPanel.Controllers
 					// если нет ошибок
 					if (errors.Count == 0) {
 						//деактивация аренды
-						thisHardware.Deactivate(DbSession, GetCurrentEmployee());
-						thisHardware.DeactivateCommentSend(DbSession, GetCurrentEmployee());
+						var currentEmployee = GetCurrentEmployee();
+						thisHardware.Deactivate(DbSession, currentEmployee);
+						thisHardware.DeactivateCommentSend(DbSession, currentEmployee);
 						SuccessMessage("Услуга успешно деактивирована!");
 					}
 					else {
@@ -152,11 +153,11 @@ namespace InforoomControlPanel.Controllers
 					}
 				}
 			}
-			return RedirectToAction("HardwareList", new { @id = client.Id });
+			return RedirectToAction("HardwareList", new {@id = client.Id});
 		}
 
 		/// <summary>
-		/// Обновление аренды оборудования клиента после деактивации
+		///     Обновление аренды оборудования клиента после деактивации
 		/// </summary>
 		[HttpPost]
 		public ActionResult DiactivatedHardwareUpdate([EntityBinder] ClientRentalHardware clientRentalHardware)
@@ -168,7 +169,7 @@ namespace InforoomControlPanel.Controllers
 				clientRentalHardware.DeactivateRentUpdateAppeal(DbSession, GetCurrentEmployee());
 			}
 			ViewBag.ClientHardware = clientRentalHardware;
-			return RedirectToAction("HardwareArchiveList", new { @id = clientRentalHardware.Client.Id });
+			return RedirectToAction("HardwareArchiveList", new {@id = clientRentalHardware.Client.Id});
 		}
 	}
 }

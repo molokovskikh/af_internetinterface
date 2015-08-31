@@ -163,6 +163,16 @@
 				}
 			}
 
+			var locality = addressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.DependentLocality;
+			if (locality && locality.Thoroughfare !== undefined) {
+		        yandexStreet = locality.Thoroughfare.ThoroughfareName.toLowerCase();
+		        if (locality.Thoroughfare.Premise !== undefined) {
+		            yandexHouseDetails = locality.Thoroughfare.Premise.PremiseNumber;
+				}
+			}
+
+
+
 			console.log('Получен адрес: ', yandexCity, yandexStreet, yandexHouseDetails);
 			map.geoObjects.add(firstGeoObject);
 			map.setCenter(firstGeoObject.geometry.getCoordinates(), 17, {

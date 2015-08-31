@@ -185,10 +185,30 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functional\Address\AddressFixture.cs" />
+    <Compile Include="Functional\Address\CreateRegionFixture.cs" />
+    <Compile Include="Functional\Address\CreateHouseFixture.cs" />
+    <Compile Include="Functional\Address\CreateCityFixture.cs" />
+    <Compile Include="Functional\Address\CreateStreetFixture.cs" />
+    <Compile Include="Functional\Address\CreateSwitchAddressFixture.cs" />
+    <Compile Include="Functional\Address\EditRegionFixture.cs" />
+    <Compile Include="Functional\Address\EditCityFixture.cs" />
+    <Compile Include="Functional\Address\RemoveCityFixture.cs" />
+    <Compile Include="Functional\Address\RemoveRegionFixture.cs" />
+    <Compile Include="Functional\Address\RemoveStreetFixture.cs" />
+    <Compile Include="Functional\Address\RemoveHouseFixture.cs" />
+    <Compile Include="Functional\Address\DeleteSwitchAddressFixture.cs" />
+    <Compile Include="Functional\Address\EditHouseFixture.cs" />
+    <Compile Include="Functional\Address\EditStreetFixture.cs" />
+    <Compile Include="Functional\Address\EditSwitchAddressFixture.cs" />
     <Compile Include="Functional\AdminAccount\AdminAccountFixture.cs" />
     <Compile Include="Functional\AdminAccount\LoginFixture.cs" />
     <Compile Include="Functional\Admin\EditRoleFixture.cs" />
     <Compile Include="Functional\Admin\AdminFixture.cs" />
+    <Compile Include="Functional\Banner\BannerFixture.cs" />
+    <Compile Include="Functional\Banner\DeleteBannerFixture.cs" />
+    <Compile Include="Functional\Banner\CreateBannerFixture.cs" />
+    <Compile Include="Functional\Banner\EditBannerFixture.cs" />
     <Compile Include="Functional\ClientActions\ClientActionsFixture.cs" />
     <Compile Include="Functional\ClientActions\RegistrationFixture.cs" />
     <Compile Include="Functional\ClientActions\AgentListFixture.cs" />
@@ -211,11 +231,18 @@
     <Compile Include="Functional\Plans\CreateTVChannelFixture.cs" />
     <Compile Include="Functional\Plans\PlanFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
+    <Compile Include="Functional\Slide\CreateSlideFixture.cs" />
+    <Compile Include="Functional\Slide\EditSlideFixture.cs" />
+    <Compile Include="Functional\Slide\DeleteSlideFixture.cs" />
+    <Compile Include="Functional\Slide\SlideFixture.cs" />
     <Compile Include="Functional\Switch\DeleteNetworkNodeFixture.cs" />
     <Compile Include="Functional\Switch\EditNetworkNodeFixture.cs" />
     <Compile Include="Functional\Switch\CreateNetworkNodeFixture.cs" />
     <Compile Include="Functional\Switch\EditSwitchFixture.cs" />
     <Compile Include="Functional\Switch\SwitchFixture.cs" />
+    <Compile Include="Functional\Ticket\EditCallMeBackTicketFixture.cs" />
+    <Compile Include="Functional\Ticket\EditTicketFixture.cs" />
+    <Compile Include="Functional\Ticket\TicketFixture.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

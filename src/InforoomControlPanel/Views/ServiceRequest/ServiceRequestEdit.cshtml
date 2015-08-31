@@ -1,0 +1,144 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "Изменение сервисной заявки";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ServiceRequest serviceRequest = ViewBag.ServiceRequest;
+	List<ServiceRequestComment> serviceRequestCommentList = ViewBag.ServiceRequestCommentList;
+	ServicemenScheduleItem servicemenScheduleItem = ViewBag.ServicemenScheduleItem;
+	ServiceRequestComment commentToAdd = ViewBag.ServiceRequestComment ?? new ServiceRequestComment();
+	ServiceRequestComment reasonForFree = ViewBag.ReasonForFree ?? new ServiceRequestComment();
+	bool reasonForFreeShown = ViewBag.ReasonForFreeShown;
+	ServiceRequestStatus currentStatus = ViewBag.СurrentStatus;
+}
+<div class="panel panel-primary">
+	<div class="panel-body">
+		<div class="col-md-6">
+			@using (@Html.BeginForm("ServiceRequestEdit", "ServiceRequest", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered", EncType = "multipart/form-data" })) {
+				@Html.HiddenFor(model => serviceRequest.Id)
+				@Html.HiddenFor(model => serviceRequest.Client.Id)
+				@Html.HiddenFor(model => reasonForFreeShown)
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Клиент</label>
+					<div class="col-sm-5">
+						<a href="@(ConfigHelper.GetParam("adminPanelOld")
+				+ (String.Format("UserInfo/{0}?filter.ClientCode=", serviceRequest.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
+					+ serviceRequest.Client.Id)">@serviceRequest.Client.Fullname</a>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Адрес</label>
+					<div class="col-sm-5">
+						@serviceRequest.Client.GetAddress()
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Статус заявки</label>
+					<div class="col-sm-5"> 
+						@Html.DropDownEnumListFor(model => serviceRequest.Status, new { @class = "form-control", @Name = "currentStatus" }) 
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Телефон для связи</label>
+					<div class="col-sm-5">
+						@Html.TextBoxFor(model => serviceRequest.Phone, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(serviceRequest, "Phone")
+					</div>
+				</div>
+				if (serviceRequest.BlockClientAndWriteOffs) {
+					<div class="form-group">
+						<label class="col-sm-3 control-label c-pointer" for="BlockClientAndWriteOffs"></label>
+						<div class="col-md-5">
+							Восстановление работы
+						</div>
+					</div>
+				}
+				else {
+					<div class="form-group">
+						<label class="col-sm-3 control-label c-pointer" for="BlockClientAndWriteOffs"></label>
+						<div class="col-md-5">
+							<a class="btn btn-green" href="@Url.Action("BlockAdd", "ServiceRequest", new { serviceRequest.Id })">Восстановление работы</a>
+						</div>
+					</div>
+				}
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Состояние</label>
+					<div class="col-sm-5">
+						<a href="@Url.Action("AttachRequest", "ConnectionTeam", new { id = serviceRequest.Id, type = ServicemenScheduleItem.Type.ServiceRequest })">
+							<span>@(servicemenScheduleItem != null && servicemenScheduleItem.ServiceMan != null ? "Назначен на " + servicemenScheduleItem.ServiceMan.Employee.Name : "Не назначен")</span>
+						</a>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Сумма за оказанные услуги</label>
+					<div class="col-sm-5">
+						@Html.TextBox("Sum", serviceRequest.Sum.HasValue ? Math.Round(serviceRequest.Sum.Value, 2).ToString() : "", new { @class = "form-control", @Name = "serviceRequest.Sum" }) 
+						@ViewBag.Validation.GetError(serviceRequest, "Sum")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label c-pointer" for="Free">Бесплатная</label>
+					<div class="col-sm-5">
+						@Html.CheckBoxFor(model => serviceRequest.Free, new {
+							@id = "Free", @class = "c-pointer", @onchange =
+								"new function(){if($('#reasonForFreeBox').hasClass('hidden')){$('#reasonForFreeBox').removeClass('hidden')}else{$('#reasonForFreeBox').addClass('hidden')}}"
+						})
+					</div>
+				</div>
+				<div class="form-group @(serviceRequest.Free ? "" : "hidden")" id="reasonForFreeBox" @(reasonForFreeShown ? "" : "style=display:none;")>
+					<label class="col-sm-3 control-label">Причина отсуствия платы</label>
+					<div class="col-sm-5">
+						@Html.TextBoxFor(model => reasonForFree.Comment, new { @class = "form-control", @Name = "reasonForFree.Comment" })
+						@ViewBag.Validation.GetError(reasonForFree, "Comment")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Дата создания</label>
+					<div class="col-sm-5">
+						@serviceRequest.CreationDate.ToString("dd.MM.yyyy hh:mm")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Текст</label>
+					<div class="col-md-5">
+						@Html.DisplayFor(model => serviceRequest.Description, new { @class = "form-control" })
+					</div>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-green" id="ChangeServiceRequest" type="submit">Изменить</button>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label"><h3>Комментарии:</h3></label>
+				</div>
+				foreach (var comment in serviceRequestCommentList) {
+					<p class="form-group"> 
+						<span>Автор: <strong>@(comment.Author != null ? comment.Author.Name : "Неизвестный")</strong></span><br>	
+						<span>Дата создания: <strong>@comment.CreationDate</strong></span> <br>	
+						<span><i><strong>Сообщение: </strong></i><br/> @Html.Raw(comment.Comment)</span> 
+					</p>
+				}
+			} 
+			<br/>
+			<div style="border-bottom: 2px dashed #D0D0D0; padding-top: 18px; margin-bottom: 36px;"></div>
+			@using (@Html.BeginForm("AddComment", "ServiceRequest", FormMethod.Post)) {
+				@Html.HiddenFor(model => serviceRequest.Id)
+				<div class="form-group">
+					<label class="col-sm-3 control-label bold">Сообщение</label>
+					<div class="col-sm-5">
+						@Html.TextAreaFor(model => commentToAdd.Comment, new { @class = "form-control", @Name = "comment.Comment", rows = "6" })
+						@ViewBag.Validation.GetError(commentToAdd, "Comment")
+					</div>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-green" type="submit">Отправить</button>
+				</div>
+			}
+		</div>  
+	</div>
+</div>
+
+<div class="form-group">
+	<button class="btn btn-blue" onclick=" location.href = '@Url.Action("ServiceRequestList", "ServiceRequest")' ">Назад</button>
+</div>

@@ -13,23 +13,20 @@
 <div class="panel panel-primary">
 	<div class="panel-body">
 		<div class="col-md-6">
-			@using (@Html.BeginForm("EditHtmlPlan", "Plans", null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
-			{
+			@using (@Html.BeginForm("EditHtmlPlan", "Plans", null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
 				@Html.HiddenFor(i => planContent.Id)
 				<div class="form-group">
 					<div class="col-sm-2">
 						<label class="control-label">Регион</label>
 					</div>
 					<div class="col-sm-8">
-						@if (planContent.Region != null)
-						{
+						@if (planContent.Region != null) {
 							@Html.DropDownListExtendedFor(i => planContent.Region, regions, obj => obj.Name, null,
-														  new { @class = "form-control", @Id = "RegionDropDown", @Name = "PlanHtmlContent.Region" }, planContent.Region.Id, true)
+								new { @class = "form-control", @Id = "RegionDropDown", @Name = "PlanHtmlContent.Region" }, planContent.Region.Id, true)
 						}
-						else
-						{
+						else {
 							@Html.DropDownListExtendedFor(i => planContent.Region, regions, obj => obj.Name, null,
-														  new { @class = "form-control", @Id = "RegionDropDown", @Name = "PlanHtmlContent.Region" }, true)
+								new { @class = "form-control", @Id = "RegionDropDown", @Name = "PlanHtmlContent.Region" }, true)
 						}
 					</div>
 				</div>
@@ -53,4 +50,4 @@
 
 <div class="form-group">
 </div>
-<button class="btn btn-blue" onclick=" location.href='@Url.Action("HtmlPlanIndex", "Plans")' ">Назад</button>
+<button class="btn btn-blue" onclick=" location.href = '@Url.Action("HtmlPlanIndex", "Plans")' ">Назад</button>

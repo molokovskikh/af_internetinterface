@@ -42,7 +42,7 @@
 								<td>@(thisHw.GiveDate.HasValue ? thisHw.GiveDate.Value.ToShortDateString() : "")</td>
 								<td>
 									@(thisHw.WasUsed ? "б/у" : "новый"),
-									@Html.Raw(thisHw.GetAbsentPartsOfRentedHardware())
+									Возвращен @Html.Raw(thisHw.GetAbsentPartsOfRentedHardware())
 								</td>
 								s<td>@thisHw.Comment</td>
 								<td>@thisHw.DeactivateComment</td>

@@ -45,7 +45,9 @@ namespace Inforoom2.Helpers
 				|| tableName == "ConnectBrigads".ToLower()
 				|| tableName == "Contacts".ToLower()
 				|| tableName == "PackageSpeed".ToLower()
-				|| tableName == "MessagesForClients".ToLower())
+				|| tableName == "MessagesForClients".ToLower()
+				|| tableName == "issues".ToLower()
+                || tableName == "serviceiterations".ToLower())
 			{
 				return tableName;
 			}

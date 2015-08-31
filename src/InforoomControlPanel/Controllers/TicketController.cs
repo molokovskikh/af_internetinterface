@@ -41,7 +41,8 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult CallMeBackTicketIndex()
 		{
 			var pager = new InforoomModelFilter<CallMeBackTicket>(this);
-			pager.SetOrderBy("CreationDate", OrderingDirection.Desc);
+			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
+				pager.SetOrderBy("CreationDate", OrderingDirection.Desc);
 			ViewBag.Pager = pager;
 			return View();
 		}

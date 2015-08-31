@@ -1,0 +1,55 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using NPOI.SS.Formula.Functions
+@model dynamic
+
+@{
+	ViewBag.Title = "Подтверждение факта добавления скорости";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ValidationRunner runner = ViewBag.Validation;
+	var packageSpeed = (PackageSpeed)ViewBag.PackageSpeed;
+}
+<div class="panel panel-primary">
+	<div class="panel-body">
+		<div class="col-md-6">
+			@using (@Html.BeginForm("ConfirmPackageSpeed", "Plans", null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+			{
+				@Html.HiddenFor(i => packageSpeed.Id)
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label class="control-label">Скорость (биты)</label>
+					</div>
+
+					<div class="col-sm-8">
+						@packageSpeed.Speed
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label class="control-label">Описание</label>
+					</div>
+					<div class="col-sm-8">
+						@packageSpeed.Description
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<label class="control-label">PackageId</label>
+					</div>
+					<div class="col-sm-8">
+						@Html.ValidationEditor(runner, packageSpeed, "PackageId", new { @class = "form-control " }, HtmlTag.input, HtmlType.none)
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<button class="btn btn-green" type="submit">Подтвердить</button>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+<div class="form-group">
+</div>
+<button class="btn btn-blue" onclick=" location.href='@Url.Action("PackageSpeedList", "Plans")' ">Назад</button>

@@ -23,7 +23,7 @@ namespace InforoomControlPanel.Controllers
 			//если клиент был залогинен по сети, то HTTPСontext не будет изменен
 			//в этом случае можно оттолкнуть от переменной CurrentClient
 			if (!filterContext.HttpContext.User.Identity.IsAuthenticated) {
-				string loginUrl = "/AdminAccount/Index"; // Default Login Url 
+				string loginUrl = Url.Action("Index","AdminAccount"); // Default Login Url 
 				filterContext.Result = new RedirectResult(loginUrl);
 				return;
 			}

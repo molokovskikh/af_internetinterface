@@ -638,6 +638,18 @@ namespace InternetInterface.Controllers
 			BindObjectInstance(client, ParamStore.Form, "_client");
 			if (client.PhysicalClient != null && client.PhysicalClient.Tariff != oldTariff) {
 				client.PhysicalClient.LastTimePlanChanged = SystemTime.Now();
+
+				// добавление записи в историю тарифов пользователя
+				var planHistory = new PlanHistoryEntry
+				{
+					Client = client,
+					DateOfChange = SystemTime.Now(),
+					PlanAfter = client.PhysicalClient.Tariff,
+					PlanBefore = oldTariff,
+					//стоимость = 0, т.к. получать данные о переходе необходимо из другой таблицы, которая не используется в данной админке
+					Price = 0
+				};
+				DbSession.Save(planHistory);
 			}
 			if (oldStatus != client.Status) {
 				// BlockedAndNoConnected = "зарегистрирован", BlockedAndConnected = "не подключен"

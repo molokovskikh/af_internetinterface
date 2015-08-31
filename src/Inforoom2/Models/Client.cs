@@ -21,14 +21,14 @@ namespace Inforoom2.Models
 	/// Модель пользователя
 	/// </summary>
 	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof(Client)), Description("Клиент")]
-	public class Client : BaseModel, ILogAppeal
+	public class Client : BaseModel, ILogAppeal, IServicemenScheduleItem
 	{
 		public Client()
 		{
 			Endpoints = new List<ClientEndpoint>();
 			ClientServices = new List<ClientService>();
 			Payments = new List<Payment>();
-			ConnectionRequests = new List<ConnectionRequest>();
+			ServicemenScheduleItems = new List<ServicemenScheduleItem>();
 			Contacts = new List<Contact>();
 			UserWriteOffs = new List<UserWriteOff>();
 			WriteOffs = new List<WriteOff>();
@@ -46,20 +46,22 @@ namespace Inforoom2.Models
 			YearCycleDate = DateTime.Now;
 		}
 
-		//todo исправить это почему-то не подцепляет маппинг когда будет решаться задача о графике подключенцев
-		[Bag(0, Table = "ConnectionRequests")]
-		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof(ConnectionRequest))]
-		public virtual IList<ConnectionRequest> ConnectionRequests { get; set; }
 
-		public virtual ConnectionRequest ConnectionRequest
+
+		[Bag(0, Table = "ServicemenScheduleItems")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof(ServicemenScheduleItem))]
+		public virtual IList<ServicemenScheduleItem> ServicemenScheduleItems { get; set; }
+
+		public virtual ServicemenScheduleItem ConnectionRequest
 		{
-			get { return ConnectionRequests != null ? ConnectionRequests.FirstOrDefault() : null; }
+			get { return ServicemenScheduleItems != null ? ServicemenScheduleItems.FirstOrDefault() : null; }
 			set { }
 		}
 
 		[Property, Description("Перенесено из старой админки")]
 		public virtual DateTime ConnectedDate { get; set; }
+
 		[Property, Description("Перенесено из старой админки (в старом проекте ему ничего не присваивается.)")]
 		public virtual DateTime? BlockDate { get; set; }
 
@@ -72,6 +74,7 @@ namespace Inforoom2.Models
 		[Property(NotNull = true)]
 		public virtual int DebtDays { get; set; }
 
+		///TODO: не использовать !!!!!!!
 		[Property(NotNull = true)]
 		public virtual ClientType Type { get; set; }
 
@@ -457,7 +460,17 @@ namespace Inforoom2.Models
 
 		public virtual string GetAddress()
 		{
-			return _oldAdressStr;
+			return Address != null ? Address.GetStringForPrint() : _oldAdressStr; 
+		}
+
+		public virtual Client GetClient()
+		{
+			return this;
+		}
+
+		public virtual string GetPhone()
+		{
+			return this.PhoneNumber;
 		}
 
 		public virtual Client GetAppealClient(ISession session)

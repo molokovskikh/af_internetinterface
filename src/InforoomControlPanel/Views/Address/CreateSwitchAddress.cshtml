@@ -35,6 +35,7 @@
 				<label class="col-sm-1 control-label">Улица</label>
 				@Html.Hidden("regionId", region.Id)
 				@Html.Hidden("switchId", NetworkNode.Id)
+                @Html.HiddenFor(i => SwitchAddress.Id)
 				<div class="col-sm-3">
 					@Html.DropDownListExtendedFor(i=>house.Street,Streets, i=>i.Name,i=>new {@class= i.Region.Id.ToString() }, new { @class = "form-control" },street.Id)
 				</div>

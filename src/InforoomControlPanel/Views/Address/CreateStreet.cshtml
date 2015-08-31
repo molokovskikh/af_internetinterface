@@ -3,8 +3,8 @@
 @model dynamic
 @section JavaScript{
 	<script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
-	<script type="text/javascript"src="@Url.Content("~/Scripts/YandexMapHelper.js")"></script>
-	<script type="text/javascript"src="@Url.Content("~/Scripts/AddressController.CreateStreet.js")"></script>
+	<script type="text/javascript"src="@Url.Content("~/Scripts/YandexMapHelper.js?v3")"></script>
+    <script type="text/javascript"src="@Url.Content("~/Scripts/AddressController.CreateStreet.js?v3")"></script>
 	}
 @{
 	ViewBag.Title = "Создать новую улицу";

@@ -47,7 +47,7 @@ namespace InforoomControlPanel.Controllers
 			//Создаентся тарифный план  
 			var plan = new Plan();
 			ViewBag.Plan = plan;
-			ViewBag.PackageSpeed = DbSession.Query<PackageSpeed>().OrderBy(s => s.Speed)
+			ViewBag.PackageSpeed = DbSession.Query<PackageSpeed>().Where(s => s.Confirmed).OrderBy(s => s.Speed)
 				.GroupBy(s => s.Speed).Select(grp => grp.First()).ToList();
 
 			return View();
@@ -66,7 +66,7 @@ namespace InforoomControlPanel.Controllers
 				return RedirectToAction("PlanIndex");
 			}
 			ViewBag.Plan = plan;
-			ViewBag.PackageSpeed = DbSession.Query<PackageSpeed>().OrderBy(s => s.Speed)
+			ViewBag.PackageSpeed = DbSession.Query<PackageSpeed>().Where(s => s.Confirmed).OrderBy(s => s.Speed)
 				.GroupBy(s => s.Speed).Select(grp => grp.First()).ToList();
 
 			return View("CreatePlan");
@@ -90,7 +90,7 @@ namespace InforoomControlPanel.Controllers
 			RegionPlan.Plan = plan;
 			var regions = DbSession.Query<Region>().ToList();
 			foreach (var rp in plan.RegionPlans) regions.Remove(rp.Region);
-			ViewBag.PackageSpeed = DbSession.Query<PackageSpeed>().OrderBy(s => s.Speed)
+			ViewBag.PackageSpeed = DbSession.Query<PackageSpeed>().Where(s => s.Confirmed).OrderBy(s => s.Speed)
 				.GroupBy(s => s.Speed).Select(grp => grp.First()).ToList();
 			var channelGroups = DbSession.Query<TvChannelGroup>().ToList();
 			plan.TvChannelGroups.ForEach(i => channelGroups.Remove(i));
@@ -614,7 +614,8 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult InternetPlanChangerIndex()
 		{
 			var pager = new InforoomModelFilter<PlanChangerData>(this);
-			pager.SetOrderBy("TargetPlan");
+			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
+				pager.SetOrderBy("TargetPlan");
 			ViewBag.Pager = pager;
 			return View();
 		}
@@ -622,22 +623,22 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult CreateInternetPlanChanger()
 		{
 			var planChanger = new PlanChangerData();
-			var plans = DbSession.Query<Plan>().Where(s => s.Disabled == false).OrderBy(s=>s.Name).ToList(); 
+			var plans = DbSession.Query<Plan>().Where(s => s.Disabled == false).OrderBy(s => s.Name).ToList();
 			ViewBag.PlanChanger = planChanger;
 			ViewBag.Plans = plans;
 			return View();
 		}
+
 		[HttpPost, ValidateInput(false)]
 		public ActionResult CreateInternetPlanChanger([EntityBinder] PlanChangerData planChanger)
 		{
 			var errors = ValidationRunner.Validate(planChanger);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(planChanger);
 				SuccessMessage("Объект успешно добавлен!");
 				return RedirectToAction("InternetPlanChangerIndex", new { id = planChanger.Id });
-			} 
-			var plans = DbSession.Query<Plan>().Where(s => s.Disabled == false).OrderBy(s => s.Name).ToList(); 
+			}
+			var plans = DbSession.Query<Plan>().Where(s => s.Disabled == false).OrderBy(s => s.Name).ToList();
 			ViewBag.PlanChanger = planChanger;
 			ViewBag.Plans = plans;
 			return View();
@@ -651,12 +652,12 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.Plans = plans;
 			return View();
 		}
+
 		[HttpPost, ValidateInput(false)]
 		public ActionResult EditInternetPlanChanger([EntityBinder] PlanChangerData planChanger)
 		{
 			var errors = ValidationRunner.Validate(planChanger);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(planChanger);
 				SuccessMessage("Объект успешно изменен!");
 				return RedirectToAction("InternetPlanChangerIndex", new { id = planChanger.Id });
@@ -673,5 +674,77 @@ namespace InforoomControlPanel.Controllers
 			return RedirectToAction("InternetPlanChangerIndex");
 		}
 
+
+		public ActionResult PackageSpeedList()
+		{
+			var pager = new InforoomModelFilter<PackageSpeed>(this);
+			var criteria = pager.GetCriteria();
+			ViewBag.Pager = pager;
+			return View();
+		}
+
+		[HttpPost]
+		public ActionResult CreatePackageSpeed([EntityBinder] PackageSpeed packageSpeed)
+		{
+			var errors = ValidationRunner.Validate(packageSpeed);
+			if (errors.Length == 0) {
+				DbSession.Save(packageSpeed);
+				string linkToConfirm = this.Request.Url.Host.ToLower()+ Url.Action("ConfirmPackageSpeed", new { id = packageSpeed.Id });
+				var redmineTask = packageSpeed.AssignRedmineTask(DbSession, linkToConfirm);
+				SuccessMessage("На Redmine создана задача по активации скорости - " + redmineTask.Id);
+				return RedirectToAction("PackageSpeedList");
+			}
+			//передаем список Скоростей
+			var pager = new InforoomModelFilter<PackageSpeed>(this);
+			var criteria = pager.GetCriteria();
+			ViewBag.Pager = pager;
+			//передаем создаваемую скорость
+			ViewBag.PackageSpeed = packageSpeed;
+			return View("PackageSpeedList");
+		}
+
+		public ActionResult EditPackageSpeed(int id)
+		{
+			var packageSpeed = DbSession.Query<PackageSpeed>().FirstOrDefault(s => s.Id == id && s.Confirmed == false);
+			if (packageSpeed == null) {
+				SuccessMessage("Редактирование данной скорости невозможно *(вероятно она уже подтверждена)");
+				return RedirectToAction("PackageSpeedList");
+			}
+			ViewBag.PackageSpeed = packageSpeed;
+			return View();
+		}
+
+		[HttpPost]
+		public ActionResult EditPackageSpeed([EntityBinder] PackageSpeed packageSpeed)
+		{
+			var errors = ValidationRunner.Validate(packageSpeed);
+			if (errors.Length == 0 && packageSpeed.Confirmed == false) {
+				DbSession.Save(packageSpeed);
+				return RedirectToAction("PackageSpeedList");
+			}
+			ViewBag.PackageSpeed = packageSpeed;
+			return View();
+		}
+
+		public ActionResult ConfirmPackageSpeed(int id)
+		{
+			var packageSpeed = DbSession.Get<PackageSpeed>(id);
+			ViewBag.PackageSpeed = packageSpeed;
+			return View();
+		}
+
+		[HttpPost]
+		public ActionResult ConfirmPackageSpeed([EntityBinder] PackageSpeed packageSpeed)
+		{
+			var errors = ValidationRunner.Validate(packageSpeed);
+			if (errors.Length == 0) {
+				packageSpeed.Confirmed = true;
+				DbSession.Save(packageSpeed);
+				SuccessMessage("Скорость подтверждена!");
+				return RedirectToAction("PackageSpeedList");
+			}
+			ViewBag.PackageSpeed = packageSpeed;
+			return View();
+		}
 	}
 }

@@ -20,6 +20,7 @@
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
     <TargetFrameworkProfile />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -1521,6 +1522,7 @@
     <Compile Include="Controllers\AdminAccountController.cs" />
     <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\ServiceRequestController.cs" />
     <Compile Include="Controllers\SpreadSheetController.cs" />
     <Compile Include="Controllers\ClientActionsController.cs" />
     <Compile Include="Controllers\ConnectionTeamController.cs" />
@@ -1824,16 +1826,7 @@
     <Content Include="Views\ConnectionTeam\BigConnectionTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\ConnectionTeam\ServiceRequests.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\ConnectionTeam\AttachServiceRequest.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\Client\RequestsList.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\ConnectionTeam\AttachConnectionRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Client\Request.cshtml" />
@@ -1945,6 +1938,13 @@
     <Content Include="Views\Address\EditRegion.cshtml" />
     <Content Include="Views\HardwareRent\CreateHardwareRent.cshtml" />
     <Content Include="Views\HardwareRent\HardwareList.cshtml" />
+    <Content Include="Views\Plans\PackageSpeedList.cshtml" />
+    <Content Include="Views\Plans\EditPackageSpeed.cshtml" />
+    <Content Include="Views\Plans\ConfirmPackageSpeed.cshtml" />
+    <Content Include="Views\ServiceRequest\ServiceRequestEdit.cshtml" />
+    <Content Include="Views\ServiceRequest\ServiceRequestList.cshtml" />
+    <Content Include="Views\ServiceRequest\ServiceRequestCreate.cshtml" />
+    <Content Include="Views\ConnectionTeam\AttachRequest.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <None Include="Web.release.config">

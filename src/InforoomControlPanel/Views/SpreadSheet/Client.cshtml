@@ -83,10 +83,10 @@
 			@foreach (var client in clients) {
 				<tr role="row" class="odd"> 
 					<td><strong>@client.Id</strong></td>
-					<td><span>@(client.Type == ClientType.PhysicalClient ? client.Fullname : client._Name)</span></td> 
+					<td><span>@(client.PhysicalClient != null ? client.Fullname : client._Name)</span></td> 
 					<td><span>@client.CreationDate</span></td> 
-					<td><span>@(client.Type == ClientType.PhysicalClient ? client.Plan != null ? client.Plan.Name : "" : "")</span></td> 
-					<td><span>@(client.Type == ClientType.PhysicalClient && client.Address != null ? client.Address.FullAddress : "")</span></td> 
+					<td><span>@(client.PhysicalClient != null ? client.Plan != null ? client.Plan.Name : "" : "")</span></td> 
+					<td><span>@(client.PhysicalClient != null && client.Address != null ? client.Address.FullAddress : "")</span></td> 
 					<td><span>@client.Status.Name</span></td>  
 				</tr>
 			}

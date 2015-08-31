@@ -148,7 +148,7 @@ input.personal {padding: 5px; box-sizing: padding-box;}
 .IsMyHouseConnected .entry {
 	width: 270px;
 }
-
+.rentWriteOff{color: #8A8A8A;}
 .page.Personal.Profile .actions .actiontext { text-align: center;}
 
 .page.TestSpeed iframe { width: 800px;height: 240px; border: none;} 

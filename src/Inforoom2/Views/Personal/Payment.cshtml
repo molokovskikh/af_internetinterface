@@ -19,7 +19,7 @@
 		</tr>
 		@foreach (var entry in historyList) {
 			<tr class="menufee">
-				<td class="fistorytb">@Html.DisplayFor(k => entry.Description)</td>
+				<td class="fistorytb">@Html.Raw(entry.Description)</td>
 				<td class="fee">@Html.DisplayFor(k => entry.Sum)</td>
 				<td class="price tr">@Html.DisplayFor(k => entry.Date)</td>
 				<td class="price tr">@Html.DisplayFor(k => entry.WhoRegistered)</td>

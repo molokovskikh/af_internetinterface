@@ -94,7 +94,7 @@ namespace InforoomControlPanel.Controllers
 			if (hardwarePart != null) {
 				bool deleted = DbSession.AttemptDelete(hardwarePart);
 				if (deleted) {
-					SuccessMessage("Элемент '" + hardwarePart.Name+ "' был успешно удален из комплектации!");
+					SuccessMessage("Элемент '" + hardwarePart.Name + "' был успешно удален из комплектации!");
 				}
 				else {
 					ErrorMessage("Элемент '" + hardwarePart.Name + "' не может быть удален из комплектации! *(вероятно он используется)");
@@ -113,6 +113,9 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult ClientList()
 		{
 			var pager = new InforoomModelFilter<Client>(this);
+			if (!pager.IsExecutedByUser()) {
+				pager.ParamSet("filter.Equal.RentalHardwareList.First().IsActive", "true");
+			}
 			pager.GetCriteria(i => i.PhysicalClient != null);
 			ViewBag.Pager = pager;
 			return View();
