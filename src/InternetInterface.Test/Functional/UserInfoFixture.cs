@@ -110,7 +110,7 @@ namespace InternetInterface.Test.Functional
 			Assert.IsTrue(Client.PhysicalClient.Checked);
 		}
 
-		[Test]
+		[Test, Ignore("Ссылка отправляет в новую админку, функционал 'назначения в график' перенесен.")]
 		public void Make_reservation()
 		{
 			var brigad = new Brigad("Тестовая бригада");
