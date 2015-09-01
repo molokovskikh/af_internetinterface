@@ -35,8 +35,7 @@ namespace InforoomControlPanel.Controllers
 		{
 			var team = DbSession.Query<ServiceMan>().ToList();
 			var regions = DbSession.Query<Region>().ToList();
-			if (regionId != 0)
-			{
+			if (regionId != 0) {
 				ViewBag.Region = DbSession.Get<Region>(regionId);
 				team = team.Where(i => i.Region.Id == regionId).ToList();
 			}
@@ -56,8 +55,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult ConnectionTable(DateTime date, int regionId = 0)
 		{
 			var team = DbSession.Query<ServiceMan>().ToList();
-			if (regionId != 0)
-			{
+			if (regionId != 0) {
 				ViewBag.Region = DbSession.Get<Region>(regionId);
 				team = team.Where(i => i.Region.Id == regionId).ToList();
 			}
@@ -100,12 +98,11 @@ namespace InforoomControlPanel.Controllers
 			var regions = DbSession.Query<Region>().ToList();
 			ViewBag.Regions = regions;
 			// получение информации о записи в графике для передачи на форму
-			if (scheduleItem != null)
-			{
+			if (scheduleItem != null) {
 				ViewBag.ServicemenScheduleItem = scheduleItem;
 				ViewBag.Servicemen = servicemen;
 				ViewBag.ServicemenDate = scheduleItem.BeginTime.HasValue &&
-										 scheduleItem.BeginTime != Convert.ToDateTime("01.01.0001 0:00:00")
+				                         scheduleItem.BeginTime != Convert.ToDateTime("01.01.0001 0:00:00")
 					? scheduleItem.BeginTime
 					: ViewBag.ServicemenDate ?? DateTime.Today;
 				var duration =
@@ -144,14 +141,13 @@ namespace InforoomControlPanel.Controllers
 
 			// проверка, если назначенное время в графике исполнителя не занято
 			if ((scheduleItem.BeginTime != null
-				 || scheduleItem.BeginTime != Convert.ToDateTime("01.01.0001 0:00:00"))
-				&& (scheduleItem.EndTime != null
-					|| scheduleItem.EndTime != Convert.ToDateTime("01.01.0001 0:00:00"))
-				&& scheduleItem.ServiceMan.SheduleItems.Any(serv =>
-					serv.Id != scheduleItem.Id &&
-					(serv.BeginTime > scheduleItem.BeginTime && serv.BeginTime < scheduleItem.EndTime ||
-					 serv.EndTime > scheduleItem.BeginTime && serv.EndTime < scheduleItem.EndTime)))
-			{
+			     || scheduleItem.BeginTime != Convert.ToDateTime("01.01.0001 0:00:00"))
+			    && (scheduleItem.EndTime != null
+			        || scheduleItem.EndTime != Convert.ToDateTime("01.01.0001 0:00:00"))
+			    && scheduleItem.ServiceMan.SheduleItems.Any(serv =>
+				    serv.Id != scheduleItem.Id &&
+				    (serv.BeginTime > scheduleItem.BeginTime && serv.BeginTime < scheduleItem.EndTime ||
+				     serv.EndTime > scheduleItem.BeginTime && serv.EndTime < scheduleItem.EndTime))) {
 				//вывод сообщения
 				ErrorMessage("Назначенное время в графике исполнителя уже занято!");
 				//обновление сессии (связанно с эл-ми на форме)
@@ -167,19 +163,20 @@ namespace InforoomControlPanel.Controllers
 			}
 			//валидация эл-та графика
 			var errors = ValidationRunner.Validate(scheduleItem);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				// проверка свободного времени исполнителя заявки
 
 				DbSession.Save(scheduleItem);
 				//вывод сообщения
-				if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest)
-				{
+				if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest) {
 					SuccessMessage("Сервисная заявка успешно добавлена в график");
 				}
-				else
-				{
+				else {
 					SuccessMessage("Заявка на подключение успешно добавлена в график");
+					//отправка уведомления, о назначенном подключении
+					var appealMessage = string.Format("Подключение назначено в график.<br/>Инженер: {0}<br/>Дата / время: {1}", scheduleItem.ServiceMan.Employee.Name, scheduleItem.BeginTime);
+					var newAppeal = new Appeal(appealMessage, scheduleItem.Client, AppealType.User);
+					DbSession.Save(newAppeal);
 				}
 				//обновление сессии (связанно с эл-ми на форме)
 				DbSession.Flush();
@@ -242,8 +239,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult Servicemen([EntityBinder] ServiceMan ServiceMan)
 		{
 			var errors = ValidationRunner.ValidateDeep(ServiceMan);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(ServiceMan);
 				SuccessMessage("Сервисный инженер успешно добавлен");
 				return RedirectToAction("Servicemen");
@@ -260,19 +256,15 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult ServicemenDelete(int id)
 		{
 			var serviceManToDelete = DbSession.Query<ServiceMan>().FirstOrDefault(s => s.Id == id);
-			if (serviceManToDelete != null)
-			{
-				if (DbSession.AttemptDelete(serviceManToDelete))
-				{
+			if (serviceManToDelete != null) {
+				if (DbSession.AttemptDelete(serviceManToDelete)) {
 					SuccessMessage("Сервисный инженер успешно удален");
 				}
-				else
-				{
+				else {
 					ErrorMessage("Сервисный инженер не может быть удален");
 				}
 			}
-			else
-			{
+			else {
 				ErrorMessage("Сервисного инженера с данным номером не существует");
 			}
 			return RedirectToAction("Servicemen");
