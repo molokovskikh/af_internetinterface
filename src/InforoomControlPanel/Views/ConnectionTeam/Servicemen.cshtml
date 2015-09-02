@@ -49,7 +49,7 @@
 				<div>
 					<a class="entypo-cancel-circled" title="удалить" style="color: red" href="@Url.Action("ServicemenDelete",
 						                                                                          new {@id = serviceMan.Id})">
-					</a><span style="display: inline-block; min-width: 260px;">@serviceMan.Employee.Name </span>  <strong>(в графике @serviceMan.SheduleItems.Count)</strong>
+					</a><span style="display: inline-block; min-width: 260px;">@serviceMan.Employee.Name </span>  <strong>(в графике @serviceMan.SheduleItems.Count(s => !(s.RequestType == ServicemenScheduleItem.Type.ServiceRequest && s.ServiceRequest.Status==ServiceRequestStatus.Cancel)))</strong>
 				</div>
 			}
 		</div>

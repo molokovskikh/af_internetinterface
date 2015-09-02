@@ -145,6 +145,8 @@ namespace InforoomControlPanel.Controllers
 			    && (scheduleItem.EndTime != null
 			        || scheduleItem.EndTime != Convert.ToDateTime("01.01.0001 0:00:00"))
 			    && scheduleItem.ServiceMan.SheduleItems.Any(serv =>
+					((serv.RequestType==ServicemenScheduleItem.Type.ServiceRequest && serv.ServiceRequest.Status != ServiceRequestStatus.Cancel)
+					|| serv.RequestType==ServicemenScheduleItem.Type.ClientConnectionRequest) &&
 				    serv.Id != scheduleItem.Id &&
 				    (serv.BeginTime > scheduleItem.BeginTime && serv.BeginTime < scheduleItem.EndTime ||
 				     serv.EndTime > scheduleItem.BeginTime && serv.EndTime < scheduleItem.EndTime))) {
@@ -175,7 +177,7 @@ namespace InforoomControlPanel.Controllers
 					SuccessMessage("Заявка на подключение успешно добавлена в график");
 					//отправка уведомления, о назначенном подключении
 					var appealMessage = string.Format("Подключение назначено в график.<br/>Инженер: {0}<br/>Дата / время: {1}", scheduleItem.ServiceMan.Employee.Name, scheduleItem.BeginTime);
-					var newAppeal = new Appeal(appealMessage, scheduleItem.Client, AppealType.User);
+					var newAppeal = new Appeal(appealMessage, scheduleItem.Client, AppealType.User) { Employee = GetCurrentEmployee()};
 					DbSession.Save(newAppeal);
 				}
 				//обновление сессии (связанно с эл-ми на форме)

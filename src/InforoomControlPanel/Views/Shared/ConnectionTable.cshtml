@@ -39,8 +39,7 @@
 			<thead>
 				<tr>
 					<th class="time left"></th>
-					@foreach (var employee in team)
-					{
+					@foreach (var employee in team) {
 						var cl = "employee" + employee.Id;
 						<th class="@cl">@employee.Employee.Name</th>
 					}
@@ -56,25 +55,21 @@
 					var step = ViewBag.TableTimeStep;
 					var showedRequests = new List<object>();
 				}
-				@while (nowHour < endHour)
-				{
+				@while (nowHour < endHour) {
 					<tr>
 						@{ var time = day.AddHours(nowHour).AddMinutes(NowMin); }
 						<th class="time left">@time.TimeOfDay.ToString().Substring(0, 5)</th>
-						@foreach (ServiceMan employee in team)
-						{
+						@foreach (ServiceMan employee in team) {
 							var requestFlag = false;
 							var cl = "employee" + employee.Id;
 
 							//Отображение сервисных заявок
-							foreach (var item in employee.SheduleItems)
+							foreach (var item in employee.SheduleItems.Where(s => s.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest ||( s.RequestType == ServicemenScheduleItem.Type.ServiceRequest && s.ServiceRequest.Status != ServiceRequestStatus.Cancel)))
 							{
 								if (Convert.ToDateTime(item.BeginTime.Value.ToString("dd.MM.yyyy HH:mm:00")) <= time
-									&& Convert.ToDateTime(item.EndTime.Value.ToString("dd.MM.yyyy HH:mm:00")) > time)
-								{
+								    && Convert.ToDateTime(item.EndTime.Value.ToString("dd.MM.yyyy HH:mm:00")) > time) {
 									requestFlag = true;
-									if (showedRequests.Contains(item))
-									{
+									if (showedRequests.Contains(item)) {
 										continue;
 									}
 									showedRequests.Add(item);
@@ -84,39 +79,55 @@
 									<td class="@cl @item.RequestType.GetDescription() request @(item == scheduleItem ? "this" : "")" rowspan="@(span)">
 										<div class="description">
 											<a href="@Url.Action("AttachRequest", "ConnectionTeam",
-												                                new {
-													                                id = (item.RequestType == ServicemenScheduleItem.Type.ServiceRequest ?
-														                                item.ServiceRequest.Id : item.Client.Id),
-													                                type = item.RequestType
-												                                })">
+												         new {
+													         id = (item.RequestType == ServicemenScheduleItem.Type.ServiceRequest ?
+														         item.ServiceRequest.Id : item.Client.Id),
+													         type = item.RequestType
+												         })">
 												@(item.Client.PhysicalClient != null ? item.Client.PhysicalClient.FullName : item.Client._Name)
-																				<p>(@item.BeginTime.Value.ToString("HH:mm") - @item.EndTime.Value.ToString("HH:mm") )</p>
-																			</a>
-																		</div>
-																		<div class="contact">Тел:@item.GetPhone()</div>
-																		<div class="address">@item.GetAddress()</div>
-																		<div class="contact">@item.Comment</div>
-																	</td>
+												<p>(@item.BeginTime.Value.ToString("HH:mm") - @item.EndTime.Value.ToString("HH:mm") )</p>
+											</a>
+										</div>
+										<div class="contact">Тел:@item.GetPhone()</div>
+										<div class="address">@item.GetAddress()</div>
+										<div class="contact">@item.Comment</div>
+										@if (item.RequestType == ServicemenScheduleItem.Type.ServiceRequest) {
+											<br/>
+											<div class="contact">Коммутатор:
+												@{
+													var firstOrDefault = item.Client.Endpoints.FirstOrDefault();
+												}
+												@if (firstOrDefault != null) {
+													@firstOrDefault.Switch.Name
+												}</div>
+											<div class="contact">Порт:
+												@{
+													var clientEndpoint = item.Client.Endpoints.FirstOrDefault();
+												}
+												@if (clientEndpoint != null) {
+													@clientEndpoint.Port
+												}</div>
+											<div class="contact">ЛС:@item.Client.Id</div>
+										}
+																		
+									</td>
 								}
 							}
-							if (!requestFlag)
-							{
+							if (!requestFlag) {
 								var active = "";
-								if (scheduleItem != null && scheduleItem.ServiceMan == employee && scheduleItem.BeginTime == time)
-								{
+								if (scheduleItem != null && scheduleItem.ServiceMan == employee && scheduleItem.BeginTime == time) {
 									active = "active";
 								}
 								<td class="@cl time @active">@time.TimeOfDay.ToString().Substring(0, 5)</td>
 							}
 						}
 					</tr>
-								NowMin += step;
-								if (NowMin >= 60)
-								{
-									nowHour++;
-									NowMin = 0;
-								}
-							}
+					NowMin += step;
+					if (NowMin >= 60) {
+						nowHour++;
+						NowMin = 0;
+					}
+				}
 			</tbody>
 		</table>
 	</div>
