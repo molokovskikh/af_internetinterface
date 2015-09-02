@@ -144,7 +144,7 @@ namespace Inforoom2.Test.Infrastructure
 
 			//Приоритет удаления данных
 			var order = "planchangerdata,planhtmlcontent,perm_role,user_role,roles,permissions,lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
-			            + "physicalclients,clientendpoints,switchaddress,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
+			            + "physicalclients,clientendpoints,switchaddress,leases,NetworkSwitches,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
 
 			var parts = order.Split(',');
 			foreach (var part in parts) {
@@ -163,7 +163,7 @@ namespace Inforoom2.Test.Infrastructure
 			}
 
 			//Удаляем из списка таблицы, которые не надо очищать
-			var exceptions = "partners,services,status,packagespeed,networkzones,accesscategories,NetworkSwitches" +
+			var exceptions = "partners,services,status,packagespeed,networkzones,accesscategories" +
 			                 "categoriesaccessset,connectbrigads,statuscorrelation,usercategories,additionalstatus," +
 							 "salesettings,internetsettings,issues";
 			parts = exceptions.Split(',');
