@@ -13,7 +13,7 @@ namespace InforoomControlPanel.Test.Functional.Switch
 	{
 		//тест игнорируется из за того,что он проваливается и из за него не проходит следующий тест
 		//необходимо исправление бага при удалении узла связи со связями в БД
-		[Test, Description("Неуспешное удаление узла связи"), Ignore("Тест не проходит,при удалении узла связи с подключенными к нему колммутаторами - возникает ошибка")]
+		[Test, Description("Неуспешное удаление узла связи")]
 		public void unsuccessfulNetworkNodeDelete()
 		{
 			Open("Switch/NetworkNodeList");

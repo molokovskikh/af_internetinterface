@@ -43,7 +43,7 @@ using WriteOff = Inforoom2.Models.WriteOff;
 namespace Inforoom2.Test.Infrastructure
 {
 	[TestFixture]
-	public class BaseFixture : SeleniumFixture
+	public class BaseFixture : MySeleniumFixture
 	{
 		protected ISession DbSession;
 		protected string DefaultClientPassword = "password";
@@ -73,7 +73,14 @@ namespace Inforoom2.Test.Infrastructure
 
 			// TODO:UnusedClientAddresses
 			UnusedClientAddresses = new List<Address>();
-			SetCookie("userCity", "Белгород");
+			try
+			{
+				SetCookie("userCity", "Белгород");
+			}
+			catch (Exception e)
+			{
+				
+			}
 			GenerateObjects();
 		}
 
