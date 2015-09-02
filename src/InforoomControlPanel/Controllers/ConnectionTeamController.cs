@@ -113,7 +113,15 @@ namespace InforoomControlPanel.Controllers
 				var clientRegion = scheduleItem.Client.PhysicalClient != null
 					? scheduleItem.Client.Address.Region
 					: scheduleItem.Client.Endpoints.Select(
-						s => s.Switch.NetworkNode.Addresses.Count > 0 ? s.Switch.NetworkNode.Addresses.First().Street.Region : null)
+						s =>
+						{
+							if (s.Switch.NetworkNode.Addresses.Count > 0)
+							{
+								var item = s.Switch.NetworkNode.Addresses.FirstOrDefault();
+								if (item != null && item.Street != null && item.Street.Region != null) return item.Street.Region;
+							}
+							return null;
+						})
 						.FirstOrDefault();
 
 				clientRegion = clientRegion != null ? clientRegion : regions[0];
