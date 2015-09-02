@@ -30,7 +30,7 @@ namespace Inforoom2.Models
 		[Property, Description("Комментарии к узлу связи")]
 		public virtual string Description { get; set; }
 
-		[Bag(0, Table = "NetworkSwitches", Cascade = "all-delete-orphan")]
+		[Bag(0, Table = "NetworkSwitches", Cascade = "save-update")]
 		[Key(1, Column = "networknode")]
 		[OneToMany(2, ClassType = typeof(Switch))]
 		public virtual IList<Switch> Switches { get; set; }
