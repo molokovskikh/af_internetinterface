@@ -55,27 +55,7 @@ namespace InforoomControlPanel.Controllers
 				criteria.CreateCriteria("ServicemenScheduleItem", "serviceManFor", JoinType.LeftOuterJoin);
 				//добавление условиий фильтрации
 				criteria.Add(Restrictions.Eq("serviceManFor.ServiceMan.Id", int.Parse(pager.GetParam("ServiceMenFilter"))));
-			}
-			// для фильтра: Регион
-			if ((!string.IsNullOrEmpty(pager.GetParam("RegionFilter"))) && pager.GetParam("RegionFilter") != "0")
-			{
-				//объединение 'сервисной заявки' с 'физ.клиентом'
-				criteria.CreateCriteria("Client.PhysicalClient", "physicalClientFor", JoinType.LeftOuterJoin);
-				//объединение 'сервисной заявки' с 'адресом'
-				criteria.CreateCriteria("Client.PhysicalClient.Address", JoinType.LeftOuterJoin);
-				//объединение 'сервисной заявки' с 'домом'
-				criteria.CreateCriteria("Client.PhysicalClient.Address.House", "Region1", JoinType.LeftOuterJoin);
-				//объединение 'сервисной заявки' с 'улицей'
-				criteria.CreateCriteria("Client.PhysicalClient.Address.House.Street", "Region2", JoinType.LeftOuterJoin);
-				//добавление условиий фильтрации
-				criteria.Add(Restrictions.Or(Restrictions.Eq("Region1.Region.Id", Int32.Parse(pager.GetParam("RegionFilter"))),
-					Restrictions.And(Restrictions.IsNull("Region1.Region.Id"),
-						Restrictions.Eq("Region2.Region.Id", Int32.Parse(pager.GetParam("RegionFilter"))))));
-			}
-			// для фильтра: Заявка является бесплатной 
-			if (!string.IsNullOrEmpty(pager.GetParam("FreeFilter")))
-				//добавление условия фильтрации
-				criteria.Add(Restrictions.Eq("Free", pager.GetParam("FreeFilter") == "true,false"));
+			} 
 			// для фильтра: Поисковая фраза
 			if (!string.IsNullOrEmpty(pager.GetParam("TextSearch")))
 			{
@@ -97,6 +77,7 @@ namespace InforoomControlPanel.Controllers
 						Restrictions.Or(Restrictions.Like("physicalClientFor.Patronymic", "%" + textSearch + "%"),
 							Restrictions.Eq("Id", idValue)))));
 			}
+
 			// для фильтра: Интервал даты с / по
 			if (pager.GetParam("DataFilter") != "BeginTime") {
 				// фильтрация по датам, принадлежащих моделе сервисной заявки
@@ -112,7 +93,9 @@ namespace InforoomControlPanel.Controllers
 				//проверка, если 'сервисная заявка' еще не объединена с 'записью в графике инженеров'. Если нет, объединяем
 				var newCriteria = criteria.GetCriteriaByAlias("serviceManFor") ?? criteria.CreateCriteria("ServicemenScheduleItem", "serviceManFor", JoinType.LeftOuterJoin);
 				//добавление условиий фильтрации
-				newCriteria.Add(Restrictions.Gt("serviceManFor.BeginTime", DateTime.Parse(pager.GetParam("RequestFilterFrom"))));
+				if (!string.IsNullOrEmpty(pager.GetParam("RequestFilterFrom")))
+					newCriteria.Add(Restrictions.Gt("serviceManFor.BeginTime", DateTime.Parse(pager.GetParam("RequestFilterFrom")))); ;
+				if (!string.IsNullOrEmpty(pager.GetParam("RequestFilterTill")))
 				newCriteria.Add(Restrictions.Lt("serviceManFor.BeginTime", DateTime.Parse(pager.GetParam("RequestFilterTill"))));
 			}
 			// Сбор во ViewBag необходимых объектов

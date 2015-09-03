@@ -110,21 +110,7 @@ namespace InforoomControlPanel.Controllers
 					 - (scheduleItem.BeginTime.HasValue ? scheduleItem.BeginTime.Value : Convert.ToDateTime("01.01.0001 0:00:00")))
 						.TotalMinutes;
 
-				var clientRegion = scheduleItem.Client.PhysicalClient != null
-					? scheduleItem.Client.Address.Region
-					: scheduleItem.Client.Endpoints.Select(
-						s =>
-						{
-							if (s.Switch.NetworkNode.Addresses.Count > 0)
-							{
-								var item = s.Switch.NetworkNode.Addresses.FirstOrDefault();
-								if (item != null && item.Street != null && item.Street.Region != null) return item.Street.Region;
-							}
-							return null;
-						})
-						.FirstOrDefault();
-
-				clientRegion = clientRegion != null ? clientRegion : regions[0];
+				var clientRegion = scheduleItem.Client.GetRegion()?? regions[0];
 
 				ViewBag.Region = (scheduleItem.ServiceMan != null
 					? scheduleItem.ServiceMan.Region
