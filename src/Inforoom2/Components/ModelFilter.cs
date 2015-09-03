@@ -543,7 +543,15 @@ namespace Inforoom2.Components
 			return ret;
 		}
 
-
+		/// <summary>
+		/// Элемент фильтра
+		/// </summary>
+		/// <param name="expression">фильтруемый параметр</param>
+		/// <param name="type">Тэг</param>
+		/// <param name="comparsionType">Тип сравнения</param>
+		/// <param name="htmlAttributes">Свойства тэга</param>
+		/// <param name="additional">Опциональные настройки</param>
+		/// <returns></returns>
 		public HtmlString FormFilter(Expression<Func<TModel, object>> expression, HtmlType type, ComparsionType comparsionType, object htmlAttributes = null, object additional = null)
 		{
 			var name = ExtractFieldNameFromLambda(expression);
@@ -926,14 +934,11 @@ namespace Inforoom2.Components
 			return dic;
 		}
 
-
-		private List<string> GetExportNames()
-		{
-			List<string> names = new List<string>();
-			for (int i = 0; i < ExportFields.Count; i++) names.Add(ExportFields.GetKey(i));
-			return names;
-		}
-
+		/// <summary>
+		/// Поля которые будут выводится на экспорт в документ.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
 		private List<string> GetExportPaths(object model)
 		{
 			List<string> paths = new List<string>();
@@ -987,7 +992,11 @@ namespace Inforoom2.Components
 				}
 			});
 		}
-
+		/// <summary>
+		/// Получение значения объекта. Модель - Id, список - длина, по-умолчанию - ToString()
+		/// </summary>
+		/// <param name="itemToReturn">Значение</param>
+		/// <returns></returns>
 		private string getValueByType(object itemToReturn)
 		{
 			if (itemToReturn as IList != null) {

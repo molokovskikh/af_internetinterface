@@ -82,6 +82,8 @@ namespace InternetInterface.Controllers
 
 		public void ShowRequest(uint id, bool edit)
 		{
+			//Функционал изменен - редирект в новую админку
+			RedirectToUrl(InternetInterface.Helpers.GlobalNames.AdminPanelNew+"ServiceRequest/ServiceRequestEdit/" + id);
 			var request = DbSession.Load<ServiceRequest>(id);
 			var settings = DbSession.Query<SaleSettings>().First();
 			request.Calculate(settings);
@@ -110,6 +112,8 @@ namespace InternetInterface.Controllers
 		[AccessibleThrough(Verb.Post)]
 		public void EditServiceRequest([ARDataBind("Request", AutoLoadBehavior.NullIfInvalidKey)] ServiceRequest request)
 		{
+			//Функционал изменен - редирект в новую админку
+			RedirectToUrl(InternetInterface.Helpers.GlobalNames.AdminPanelNew + "ServiceRequest/ServiceRequestEdit/" + request.Id);
 			if (request != null) {
 				request.ModificationDate = SystemTime.Now();
 				var writeOff = request.GetWriteOff(DbSession);

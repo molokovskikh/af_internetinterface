@@ -28,6 +28,7 @@ namespace Inforoom2.Models
 
 		public Appeal(string appeal, Client client, AppealType appealType) : this()
 		{
+			Date = SystemTime.Now();
 			Message = appeal;
 			Client = client;
 			AppealType = appealType;

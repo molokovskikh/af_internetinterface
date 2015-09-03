@@ -145,7 +145,7 @@
 						<a href="@Url.Action("ServiceRequestEdit", "ServiceRequest", new { id = request.Id })">@request.Id</a>
 					</td>
 					<td>
-						<a @(request.Client.PhysicalClient == null ? "style=color:#0D98E0;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
+						<a @(request.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
 						                                                                                  + (String.Format("UserInfo/{0}?filter.ClientCode=", request.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
 						                                                                                  + request.Client.Id)">@request.Client.Id</a>
 					</td>

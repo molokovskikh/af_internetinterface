@@ -9,6 +9,7 @@ using System.Web.UI.WebControls;
 using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Controllers;
+using Inforoom2.Helpers;
 using Inforoom2.Models;
 using InternetInterface.Models;
 using NHibernate;
@@ -18,6 +19,7 @@ using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using NHibernate.Util;
 using Remotion.Linq.Clauses;
+using AppealType = Inforoom2.Models.AppealType;
 using Client = Inforoom2.Models.Client;
 using ServiceRequest = Inforoom2.Models.ServiceRequest;
 
@@ -109,8 +111,8 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult ServiceRequestCreate(int id)
 		{
-			//получение клиента
-			var client = DbSession.Query<Client>().FirstOrDefault(s => s.Id == id && s.PhysicalClient != null);
+			//получение клиента 
+			var client = DbSession.Query<Client>().FirstOrDefault(s => s.Id == id);
 			if (client != null) {
 				//получение телефона-'по умолчанию'
 				var phone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.SmsSending);
@@ -138,6 +140,11 @@ namespace InforoomControlPanel.Controllers
 				serviceRequest.ModificationDate = SystemTime.Now();
 				DbSession.Save(serviceRequest);
 				SuccessMessage("Сервисная заявка успешно создана.");
+				//Отправляем аппил о создании
+				string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> успешно создана.",
+					serviceRequest.Id, ConfigHelper.GetParam("adminPanelNew"));
+				DbSession.Save(new Appeal(appealMessage, serviceRequest.Client, AppealType.User) { Employee = serviceRequest.Employee, inforoom2 = true });
+
 				return RedirectToAction("ServiceRequestEdit", new { id = serviceRequest.Id });
 			}
 			ViewBag.ServiceRequest = serviceRequest;
@@ -192,6 +199,12 @@ namespace InforoomControlPanel.Controllers
 				serviceRequest.ModificationDate = SystemTime.Now();
 				DbSession.Save(serviceRequest);
 				SuccessMessage("Сервисная заявка успешно обновлена.");
+
+				//Отправляем аппил о редактировании
+				string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> обновлена.",
+					serviceRequest.Id, ConfigHelper.GetParam("adminPanelNew"));
+				DbSession.Save(new Appeal(appealMessage, serviceRequest.Client, AppealType.User) { Employee = GetCurrentEmployee(), inforoom2 = true });
+
 				return RedirectToAction("ServiceRequestEdit", new { id = serviceRequest.Id });
 			}
 

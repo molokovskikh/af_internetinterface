@@ -166,6 +166,10 @@ namespace InforoomControlPanel.Controllers
 				//вывод сообщения
 				if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest) {
 					SuccessMessage("Сервисная заявка успешно добавлена в график");
+					//отправка уведомления, о назначенной сервисной заявке
+					var appealMessage = string.Format("Сервисная заявка добавлена в график. <br/>Инженер: {0}<br/>Дата / время: {1}", scheduleItem.ServiceMan.Employee.Name, scheduleItem.BeginTime);
+					var newAppeal = new Appeal(appealMessage, scheduleItem.Client, AppealType.User) { Employee = GetCurrentEmployee() };
+					DbSession.Save(newAppeal);
 				}
 				else {
 					SuccessMessage("Заявка на подключение успешно добавлена в график");
