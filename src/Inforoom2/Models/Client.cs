@@ -10,10 +10,10 @@ using Inforoom2.validators;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate;
-using NHibernate.Mapping.Attributes; 
-using NHibernate.Util; 
+using NHibernate.Mapping.Attributes;
+using NHibernate.Util;
 using NHibernate.Validator.Cfg.MappingSchema;
-using NHibernate.Validator.Constraints; 
+using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
@@ -32,8 +32,8 @@ namespace Inforoom2.Models
 			Contacts = new List<Contact>();
 			UserWriteOffs = new List<UserWriteOff>();
 			WriteOffs = new List<WriteOff>();
-			Appeals = new List<Appeal>(); 
-			RentalHardwareList = new List<ClientRentalHardware>(); 
+			Appeals = new List<Appeal>();
+			RentalHardwareList = new List<ClientRentalHardware>();
 
 			/// из старой админки. 
 			Disabled = true;
@@ -45,7 +45,6 @@ namespace Inforoom2.Models
 			BlockDate = DateTime.Now;
 			YearCycleDate = DateTime.Now;
 		}
-
 
 
 		[Bag(0, Table = "ServicemenScheduleItems")]
@@ -70,7 +69,7 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual bool Disabled { get; set; }
-		
+
 		[Property(NotNull = true)]
 		public virtual int DebtDays { get; set; }
 
@@ -131,7 +130,6 @@ namespace Inforoom2.Models
 		public virtual LegalClient LegalClient { get; set; }
 
 		[Bag(0, Table = "ClientServices", Cascade = "all-delete-orphan")]
-
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof(ClientService))]
 		public virtual IList<ClientService> ClientServices { get; set; }
@@ -178,10 +176,10 @@ namespace Inforoom2.Models
 		public virtual Employee WhoRegistered { get; set; }
 
 		[Property(Column = "WhoRegisteredName")]
-		public virtual string WhoRegisteredName { get; set; } 
+		public virtual string WhoRegisteredName { get; set; }
 
 		[ManyToOne(Column = "Agent", Cascade = "save-update")]
-		public virtual Agent Agent { get; set; } 
+		public virtual Agent Agent { get; set; }
 
 		public virtual bool IsNeedRecofiguration { get; set; }
 
@@ -316,21 +314,18 @@ namespace Inforoom2.Models
 
 		public virtual void SetStatus(Status status)
 		{
-			if (status.Type == StatusType.VoluntaryBlocking)
-			{
+			if (status.Type == StatusType.VoluntaryBlocking) {
 				Disabled = true;
 				DebtDays = 0;
 				AutoUnblocked = false;
 			}
-			else if (status.Type == StatusType.NoWorked)
-			{
+			else if (status.Type == StatusType.NoWorked) {
 				Disabled = true;
 				Discount = 0;
 				StartNoBlock = null;
 				AutoUnblocked = true;
 			}
-			else if (status.Type == StatusType.Worked)
-			{
+			else if (status.Type == StatusType.Worked) {
 				Disabled = false;
 				//если мы возобновили работу после поломки то дата начала периода тарификации не должна изменяться
 				//если ее сбросить списания начнутся только когда клиент получит аренду
@@ -339,18 +334,15 @@ namespace Inforoom2.Models
 				DebtDays = 0;
 				ShowBalanceWarningPage = false;
 			}
-			else if (status.Type == StatusType.BlockedForRepair)
-			{
+			else if (status.Type == StatusType.BlockedForRepair) {
 				Disabled = true;
 				AutoUnblocked = false;
 			}
-			else if (status.Type == StatusType.Dissolved)
-			{
+			else if (status.Type == StatusType.Dissolved) {
 				Discount = 0;
 			}
 
-			if (Status.Type != status.Type)
-			{
+			if (Status.Type != status.Type) {
 				StatusChangedOn = DateTime.Now;
 			}
 			Status = status;
@@ -375,6 +367,7 @@ namespace Inforoom2.Models
 			// Контакты находятся в отдельной таблице
 			//set { PhysicalClient.Email = value; }
 		}
+
 		// TODO: нужно ли оно ???
 		[Property(Column = "Name")]
 		public virtual string _Name { get; set; }
@@ -420,14 +413,27 @@ namespace Inforoom2.Models
 			//LawyerPerson.Balance -= sum;
 		}
 
+		public virtual Region GetRegion()
+		{
+			if (PhysicalClient != null) {
+				if (PhysicalClient.Address != null) {
+					if (PhysicalClient.Address != null) {
+						return PhysicalClient.Address.House.Region ?? PhysicalClient.Address.House.Street.Region;
+					}
+				}
+			}
+			if (LegalClient != null) {
+				return LegalClient.Region;
+			}
+			return null;
+		}
 
 		public virtual bool HasPassportData()
 		{
 			if (PhysicalClient == null)
 				return true;
 			var hasPassportData = !string.IsNullOrEmpty(PhysicalClient.PassportNumber);
-			if (PhysicalClient.CertificateType == CertificateType.Passport)
-			{
+			if (PhysicalClient.CertificateType == CertificateType.Passport) {
 				hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportSeries);
 				hasPassportData = hasPassportData && !string.IsNullOrEmpty(PhysicalClient.PassportResidention);
 			}
@@ -455,12 +461,12 @@ namespace Inforoom2.Models
 
 		public virtual string Fullname
 		{
-			get { return PhysicalClient != null ? PhysicalClient.FullName : _Name; } 
+			get { return PhysicalClient != null ? PhysicalClient.FullName : _Name; }
 		}
 
 		public virtual string GetAddress()
 		{
-			return Address != null ? Address.GetStringForPrint() : _oldAdressStr; 
+			return Address != null ? Address.GetStringForPrint() : _oldAdressStr;
 		}
 
 		public virtual Client GetClient()
@@ -483,39 +489,33 @@ namespace Inforoom2.Models
 			return new List<string>() {
 				"LegalClient",
 				"Status",
-				"SendSmsNotification" 
+				"SendSmsNotification"
 			};
 		}
+
 		public virtual string GetAdditionalAppealInfo(string property, object oldPropertyValue, ISession session)
-		{ 
+		{
 			return "";
 		}
 	}
+
 	/// <summary>
 	/// /Тип клиента
 	/// </summary>
 	public enum ClientType
 	{
-		[Description("Физичекое лицо")]
-		PhysicalClient = 1,
-		[Description("Юридическое лицо")]
-		Lawer = 2, 
+		[Description("Физичекое лицо")] PhysicalClient = 1,
+		[Description("Юридическое лицо")] Lawer = 2,
 	}
+
 	public enum StatusType
 	{
-		[Description("Зарегистрирован")]
-		BlockedAndNoConnected = 1,
-		[Description("Не подключен")]
-		BlockedAndConnected = 3,
-		[Description("Подключен")]
-		Worked = 5,
-		[Description("Заблокирован")]
-		NoWorked = 7,
-		[Description("Добровольная блокировка")]
-		VoluntaryBlocking = 9,
-		[Description("Расторгнут")]
-		Dissolved = 10,
-		[Description("Заблокирован - Восстановление работы")]
-		BlockedForRepair = 11
+		[Description("Зарегистрирован")] BlockedAndNoConnected = 1,
+		[Description("Не подключен")] BlockedAndConnected = 3,
+		[Description("Подключен")] Worked = 5,
+		[Description("Заблокирован")] NoWorked = 7,
+		[Description("Добровольная блокировка")] VoluntaryBlocking = 9,
+		[Description("Расторгнут")] Dissolved = 10,
+		[Description("Заблокирован - Восстановление работы")] BlockedForRepair = 11
 	}
 }

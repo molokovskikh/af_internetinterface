@@ -1,4 +1,5 @@
 ﻿@using Inforoom2.Components 
+@using Inforoom2.Helpers
 @using Inforoom2.Models
 @model dynamic
 
@@ -41,6 +42,10 @@
 			<div class="col-sm-2">@pager.FormFilter(i => i.Type, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
 		</div>
 		<div class="row">
+			<div class="col-sm-2">ЛС</div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.Id, HtmlType.text, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
+		</div>
+		<div class="row">
 			<div class="col-sm-1">
 				@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
 			</div>
@@ -69,8 +74,18 @@
 			</tr>
 			@foreach (var client in clients) {
 				<tr role="row" class="odd"> 
-					<td><a href="@Url.Action("Info", "Client", new { id = client.Id })">@client.Id</a></td>
-					<td><a href="@Url.Action("Info", "Client", new { id = client.Id })">@client.PhysicalClient.FullName</a></td>
+					<td><a @(client.PhysicalClient == null ? "style=color:#0D98E0;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
+					                                                                              + (String.Format("UserInfo/{0}?filter.ClientCode=", client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
+					                                                                              + client.Id)">@client.Id</a></td>
+					<td>
+						<td>
+							@if (client.PhysicalClient != null) {
+								<a href="@Url.Action("Info", "Client", new { id = client.Id })">@client.Fullname</a>
+							}
+							else {
+								@client.Fullname
+							}
+						</td></td>
 					<td>
 						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequestCreate", "ServiceRequest", new { id = client.Id })">
 							<i class="entypo-doc-text"></i>

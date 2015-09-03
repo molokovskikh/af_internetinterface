@@ -15,5 +15,8 @@ namespace Inforoom2.Models
 
 		[Property(NotNull = true)]
 		public virtual DateTime PeriodEnd { get; set; }
+
+		[ManyToOne(Column = "RegionId", Cascade = "save-update")]
+		public virtual Region Region { get; set; }
 	}
 }

@@ -31,7 +31,7 @@ namespace Inforoom2.Components
 		/// </summary>
 		/// <param name="criteria">Критерия</param>
 		protected void ProcessClientRegionFilter(ICriteria criteria)
-		{
+		{ 
 			//фильтр срабатывает только если есть его "префикс"
 			var paramname = Params.AllKeys.FirstOrDefault(i => i.Contains("clientregionfilter"));
 			if (paramname == null)
@@ -39,13 +39,16 @@ namespace Inforoom2.Components
 			var path = StripParamToFieldPath(paramname.Replace("clientregionfilter.", ""));
 			path = (path.Contains("Client") ? path + "." : path);
 			//для физиков учитываем привязку дома к региону
+			var clientPath = path + "PhysicalClient";
+			//для физиков учитываем привязку дома к региону
 			var housepath = path + "PhysicalClient.Address.House.Region.Name";
 			//для физиков учитываем привязку улицы к региону
 			var streetpath = path + "PhysicalClient.Address.House.Street.Region.Name";
 			//юриков находим вот так
-			var lawerRegionPath = path + "Endpoints.Switch.NetworkNode.Addresses.House.Street.Region.Name";
+			var lawerRegionPath = path + "LegalClient.Region.Name";
 
 			//создаем псевдонимы, формируя связи
+			var clientlias = GetJoinedModelCriteria(criteria, clientPath).Alias;
 			var housealias = GetJoinedModelCriteria(criteria, housepath).Alias;
 			var streetalias = GetJoinedModelCriteria(criteria, streetpath).Alias;
 			var lawerRegionAlias = GetJoinedModelCriteria(criteria, lawerRegionPath).Alias;
@@ -58,8 +61,8 @@ namespace Inforoom2.Components
 				var expr = Expression.And(Expression.IsNotNull(housealias + ".Name"), Expression.Eq(housealias + ".Name", value));
 				var expr2 = Expression.And(Expression.IsNull(housealias + ".Name"), Expression.Eq(streetalias + ".Name", value));
 
-				var exprPhysicalClient = Expression.And(Expression.Eq("Type", (ClientType)1), Expression.Or(expr, expr2));
-				var exprLawerClient = Expression.And(Expression.Eq("Type", (ClientType)2), Expression.Eq(lawerRegionAlias + ".Name", value));
+				var exprPhysicalClient = Expression.Or(expr, expr2);
+				var exprLawerClient = Expression.Eq(lawerRegionAlias + ".Name", value);
 
 				Criteria.Add(Expression.Or(exprPhysicalClient, exprLawerClient));
 			}

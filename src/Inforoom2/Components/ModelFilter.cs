@@ -821,6 +821,7 @@ namespace Inforoom2.Components
 			var dic = ObjectToDictionary(attributes);
 			dic["type"] = "submit";
 			dic["value"] = "Поиск";
+			dic["class"] = "btn btn-success";
 			var htmlAttributs = GetPropsValues(dic);
 
 			var ret = string.Format("{0} <input {1} />", hiddenInputs, htmlAttributs);

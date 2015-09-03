@@ -53,7 +53,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult List()
 		{
 			var pager = new InforoomModelFilter<Client>(this);
-			var criteria = pager.GetCriteria(i => i.PhysicalClient != null);
+			var criteria = pager.GetCriteria();
 			if (pager.IsExportRequested()){
 				pager.SetExportFields(s => new { ЛС = s.Id, Клиент = s.Fullname, Тариф = s.PhysicalClient.Plan.Name, Адрес = s.PhysicalClient.Address.FullAddress, Статус = s.Status.Name });
 				pager.ExportToExcelFile(ControllerContext.HttpContext);
