@@ -35,19 +35,19 @@
 <form>
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-sm-1">Статус заявки</div>
+			<div class="col-sm-2">Статус заявки</div>
 			<div class="col-sm-2">@modelFilter.FormFilterManual("ServiceRequestStatus", HtmlType.Dropdown, serviceRequestStatusList)</div>
 		</div>
 	</div>
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-sm-1">Дата</div>
+			<div class="col-sm-2">Дата</div>
 			<div class="col-sm-2">@modelFilter.FormFilterManual("DataFilter", HtmlType.Dropdown, datePeriodTypeList)</div>
 		</div>
 	</div>
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-sm-1">Интервал даты с </div>
+			<div class="col-sm-2">Интервал даты с </div>
 			<div class="col-sm-2">@modelFilter.FormFilterManual("RequestFilterFrom", HtmlType.Date, SystemTime.Now().AddMonths(-1).Date)</div>
 			<div class="col-sm-1">по</div>
 			<div class="col-sm-2">@modelFilter.FormFilterManual("RequestFilterTill", HtmlType.Date, SystemTime.Now().AddDays(1).Date)</div>
@@ -55,7 +55,7 @@
 	</div>
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-sm-1">
+			<div class="col-sm-2">
 				<label class="c-pointer" style="margin-bottom: 12px;" for="filterFree">Бесплатные</label>
 			</div>
 			<div class="col-sm-2">@modelFilter.FormFilter(i => i.Free, HtmlType.checkbox,ComparsionType.Equal, new { @id = "filterFree" })</div>
@@ -63,31 +63,31 @@
 	</div>
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-sm-1">Назначена на</div>
+			<div class="col-sm-2">Назначена на</div>
 			<div class="col-sm-2">@modelFilter.FormFilterManual("ServiceMenFilter", HtmlType.Dropdown, serviceMenList)</div>
 		</div>
 	</div>
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-sm-1">Регион</div>
+			<div class="col-sm-2">Регион</div>
 			<div class="col-sm-2">@modelFilter.ClientRegionFilter(i => i.Client, new { @class = "form-control"})</div>
 		</div>
 	</div>
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-sm-1">Тип</div>
-			<div class="col-sm-2">@modelFilter.FormFilter(i => i.Client.Type, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control" })</div>
+			<div class="col-sm-2">Физ.лицо</div>
+			<div class="col-sm-2">@modelFilter.FormFilter(i => i.Client.PhysicalClient, HtmlType.Dropdown, ComparsionType.IsNotNull, new { @class = "form-control" })</div>
 		</div>
 	</div>
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-sm-1">Поисковая фраза</div>
+			<div class="col-sm-2">Поисковая фраза</div>
 			<div class="col-sm-2">@modelFilter.FormFilterManual("TextSearch", HtmlType.text)</div>
 		</div>
 	</div>
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-sm-1">
+			<div class="col-sm-2">
 				@modelFilter.SubmitButton()
 			</div>
 			<div class="col-sm-2">
@@ -169,11 +169,6 @@
 			}
 		</tbody>
 	</table>
-	<div class="panel-body">
-		<div class="row">
-			@{ Html.RenderPartial("Pagination"); }
-		</div>
-	</div>
 	<div class="row">
 		@{ Html.RenderPartial("Pagination"); }
 	</div>

@@ -116,7 +116,7 @@ namespace Inforoom2.Components
 			if (customValueList != null)
 				values = customValueList.AllKeys.Select(i => string.Format("<option {2} value='{0}'>{1}</option>", i, customValueList[i], selectedValue == i ? "selected='selected'" : "")).ToList();
 			else
-				values = TryToGetDropDownValueList(pathOfFilter, selectedValue);
+				values = TryToGetDropDownValueList(ComparsionType.Equal, pathOfFilter, selectedValue);
 
 			var html = string.Format("<select {0}>{1}</select>", GetPropsValues(attrs), string.Join("\n", values));
 

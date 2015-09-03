@@ -32,6 +32,7 @@ namespace InforoomControlPanel.Controllers
 		{
 			ViewBag.BreadCrumb = "Сервисные заявки";
 		}
+
 		/// <summary>
 		/// Список сервисных заявок
 		/// </summary> 
@@ -43,8 +44,10 @@ namespace InforoomControlPanel.Controllers
 				pager.SetOrderBy("Id", OrderingDirection.Desc);
 			//получение критерия для Hibernate запроса из класса ModelFilter
 			var criteria = pager.GetCriteria();
+
+
 			//объединение 'сервисной заявки' с 'клиентом'
-			var tempCriteria = criteria.GetCriteriaByPath("Client")?? criteria.CreateCriteria("Client", JoinType.LeftOuterJoin);
+			var tempCriteria = criteria.GetCriteriaByPath("Client") ?? criteria.CreateCriteria("Client", JoinType.LeftOuterJoin);
 			// для фильтра: Статус заявки
 			if (!string.IsNullOrEmpty(pager.GetParam("ServiceRequestStatus")))
 				//добавление условиий фильтрации
@@ -55,27 +58,20 @@ namespace InforoomControlPanel.Controllers
 				criteria.CreateCriteria("ServicemenScheduleItem", "serviceManFor", JoinType.LeftOuterJoin);
 				//добавление условиий фильтрации
 				criteria.Add(Restrictions.Eq("serviceManFor.ServiceMan.Id", int.Parse(pager.GetParam("ServiceMenFilter"))));
-			} 
+			}
+
 			// для фильтра: Поисковая фраза
-			if (!string.IsNullOrEmpty(pager.GetParam("TextSearch")))
-			{
-				//объединение 'сервисной заявки' с 'работником'
-				criteria.CreateCriteria("Employee", "employeeFor", JoinType.LeftOuterJoin);
-				//проверка, если 'сервисная заявка' еще не объединена с 'физ.клиентом'. Если нет, объединяем
-				var newCriteria = criteria.GetCriteriaByAlias("physicalClientFor") ?? criteria.CreateCriteria("Client.PhysicalClient", "physicalClientFor", JoinType.LeftOuterJoin);
+			if (!string.IsNullOrEmpty(pager.GetParam("TextSearch"))) {
 				//проверка, если поисковая фраза не является числом
 				string textSearch = pager.GetParam("TextSearch").Trim();
 				int idValue = 0;
 				Int32.TryParse(pager.GetParam("TextSearch"), out idValue);
 				//добавление условиий фильтрации
-				criteria.Add(Restrictions.Or(Restrictions.Or(Restrictions.Or(Restrictions.Like("Description", "%" + textSearch + "%"),
-					Restrictions.Like("Phone", "%" + textSearch + "%")),
-					Restrictions.Or(Restrictions.Eq("Client.Id", idValue),
-						Restrictions.Like("employeeFor.Name", "%" + textSearch + "%"))),
-					Restrictions.Or(Restrictions.Or(Restrictions.Like("physicalClientFor.Name", "%" + textSearch + "%"),
-						Restrictions.Like("physicalClientFor.Surname", "%" + textSearch + "%")),
-						Restrictions.Or(Restrictions.Like("physicalClientFor.Patronymic", "%" + textSearch + "%"),
-							Restrictions.Eq("Id", idValue)))));
+
+				criteria.Add(Restrictions.Or(
+					Restrictions.Or(Restrictions.Like("Description", "%" + textSearch + "%"), Restrictions.Like("Phone", "%" + textSearch + "%")),
+					Restrictions.Or(Restrictions.Eq("Client.Id", idValue), Restrictions.Eq("Id", idValue))
+					));
 			}
 
 			// для фильтра: Интервал даты с / по
@@ -94,9 +90,10 @@ namespace InforoomControlPanel.Controllers
 				var newCriteria = criteria.GetCriteriaByAlias("serviceManFor") ?? criteria.CreateCriteria("ServicemenScheduleItem", "serviceManFor", JoinType.LeftOuterJoin);
 				//добавление условиий фильтрации
 				if (!string.IsNullOrEmpty(pager.GetParam("RequestFilterFrom")))
-					newCriteria.Add(Restrictions.Gt("serviceManFor.BeginTime", DateTime.Parse(pager.GetParam("RequestFilterFrom")))); ;
+					newCriteria.Add(Restrictions.Gt("serviceManFor.BeginTime", DateTime.Parse(pager.GetParam("RequestFilterFrom"))));
+				;
 				if (!string.IsNullOrEmpty(pager.GetParam("RequestFilterTill")))
-				newCriteria.Add(Restrictions.Lt("serviceManFor.BeginTime", DateTime.Parse(pager.GetParam("RequestFilterTill"))));
+					newCriteria.Add(Restrictions.Lt("serviceManFor.BeginTime", DateTime.Parse(pager.GetParam("RequestFilterTill"))));
 			}
 			// Сбор во ViewBag необходимых объектов
 			ViewBag.Regions = DbSession.Query<Region>().ToList();
@@ -189,7 +186,7 @@ namespace InforoomControlPanel.Controllers
 			if (errors.Length == 0) {
 				// изменяем статус, при необходимости
 				if (serviceRequest.Status != currentStatus) {
-					serviceRequest.SetStatus(DbSession, currentStatus,GetCurrentEmployee());
+					serviceRequest.SetStatus(DbSession, currentStatus, GetCurrentEmployee());
 				}
 				// сохраняем изменения
 				serviceRequest.ModificationDate = SystemTime.Now();

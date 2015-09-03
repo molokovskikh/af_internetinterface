@@ -55,7 +55,9 @@ namespace Inforoom2.Components
 		Greater,
 		GreaterOrEqueal,
 		NotEqual,
-		Like
+		Like,
+		IsNull,
+		IsNotNull
 	}
 
 	/// <summary>
@@ -328,7 +330,18 @@ namespace Inforoom2.Components
 			criteria = GetJoinedModelCriteria(criteria, path);
 			var fieldName = GetFieldName(path);
 			var prop = GetModelPropertyInfo(typeof(TModel), path);
-			var val = ConvertStringToType(value, prop.PropertyType);
+
+			//В зависимости от типа сравнения, задаем фильтру условие
+			//проверка на значение
+			var val = !(comparsionType == ComparsionType.IsNull || comparsionType == ComparsionType.IsNotNull) ?
+				ConvertStringToType(value, prop.PropertyType) : new object();
+			//проверка на Null
+			if (comparsionType == ComparsionType.IsNull || comparsionType == ComparsionType.IsNotNull) {
+				
+				val = comparsionType == ComparsionType.IsNull && value == "1" ||
+				      comparsionType == ComparsionType.IsNotNull && value == "0"
+					? Restrictions.IsNull(fieldName) : Restrictions.IsNotNull(fieldName);
+			}
 
 			//Добавляем фильр к критерии
 			switch (comparsionType) {
@@ -352,6 +365,12 @@ namespace Inforoom2.Components
 					break;
 				case ComparsionType.Like:
 					criteria.Add(Restrictions.Like(fieldName, string.Format("%{0}%", val)));
+					break;
+				case ComparsionType.IsNull:
+					criteria.Add((AbstractCriterion)val);
+					break;
+				case ComparsionType.IsNotNull:
+					criteria.Add((AbstractCriterion)val);
 					break;
 			}
 		}
@@ -519,7 +538,7 @@ namespace Inforoom2.Components
 			attrs["name"] = Prefix + "." + name;
 			attrs["class"] = "form-control";
 			PropertiesUsedInFilter.Add(name);
-			var html = GenerateHtml(type, attrs, additional);
+			var html = GenerateHtml(type, attrs, ComparsionType.Equal, additional);
 			var ret = new HtmlString(html);
 			return ret;
 		}
@@ -543,7 +562,7 @@ namespace Inforoom2.Components
 				attrs["value"] = Params[paramName];
 
 			PropertiesUsedInFilter.Add(paramName);
-			var html = GenerateHtml(type, attrs, additional);
+			var html = GenerateHtml(type, attrs, comparsionType, additional);
 			var ret = new HtmlString(html);
 			return ret;
 		}
@@ -573,9 +592,10 @@ namespace Inforoom2.Components
 		/// </summary>
 		/// <param name="type">Тип контрола</param>
 		/// <param name="o">Словарь с html аттрибутами</param>
+		/// <param name="comparsionType"></param>
 		/// <param name="additional">Дополнительные параметры - могут принимать любую форму. Необходимы для некоторых типов элементов.</param>
 		/// <returns></returns>
-		protected string GenerateHtml(HtmlType type, Dictionary<string, string> o, object additional = null)
+		protected string GenerateHtml(HtmlType type, Dictionary<string, string> o, ComparsionType comparsionType, object additional = null)
 		{
 			o["class"] = " form-control " + o["class"];
 			//заполняем выбранное значение, если оно есть
@@ -608,7 +628,7 @@ namespace Inforoom2.Components
 				if (customValueList != null)
 					values = customValueList.AllKeys.Select(i => string.Format("<option {2} value='{0}'>{1}</option>", i, customValueList[i], selectedValue == i ? "selected='selected'" : "")).ToList();
 				else
-					values = TryToGetDropDownValueList(attrName, selectedValue);
+					values = TryToGetDropDownValueList(comparsionType, attrName, selectedValue);
 
 				return string.Format("<select {0}>{1}</select>", GetPropsValues(o), string.Join("\n", values));
 			}
@@ -618,17 +638,31 @@ namespace Inforoom2.Components
 		/// <summary>
 		/// Попытка автоматически получить значения для выпадающего списка
 		/// </summary>
+		/// <param name="comparsionType"></param>
 		/// <param name="attrName">Имя значения, которое будет использовано в аттрибует name у html тега</param>
 		/// <param name="selectedValue">Значение, которое было выбрано пользователем</param>
 		/// <returns></returns>
-		protected List<string> TryToGetDropDownValueList(string attrName, string selectedValue = null)
+		protected List<string> TryToGetDropDownValueList(ComparsionType comparsionType, string attrName, string selectedValue = null)
 		{
 			var propPath = StripParamToFieldPath(attrName);
 			var prop = GetModelPropertyInfo(typeof(TModel), propPath);
 			if (prop.PropertyType.IsEnum)
 				return GetEnumDropDownValues(prop.PropertyType, selectedValue);
-
+			if (comparsionType == ComparsionType.IsNull || comparsionType == ComparsionType.IsNotNull)
+				return GetDefaultDropDownValues(selectedValue);
 			return GetModelDropDownValues(prop, selectedValue);
+		}
+
+		private List<string> GetDefaultDropDownValues(string selectedValue)
+		{
+			var values = new List<string>();
+			var seletedString = selectedValue == null ? "selected = 'selected'" : "";
+			values.Add(string.Format("<option {0} value=''> </option>", seletedString));
+			seletedString = selectedValue == 1.ToString() ? "selected = 'selected'" : "";
+			values.Add(string.Format("<option {0} value='1'>Да</option>", seletedString));
+			seletedString = selectedValue == 0.ToString() ? "selected = 'selected'" : "";
+			values.Add(string.Format("<option {0} value='0'>Нет</option>", seletedString));
+			return values;
 		}
 
 		/// <summary>
