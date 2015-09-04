@@ -12,32 +12,37 @@
 	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 		<thead>
 			<tr role="row">
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Номер</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Номер</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">ЛС</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Эл. почта</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Вопрос</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Дата</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Отвечен</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Дата ответа</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
+				<th class="sorting maxWidth_150" tabindex="0" aria-controls="table-2">Эл. почта</th>
+				<th class="sorting maxWidth_200" tabindex="0" aria-controls="table-2">Вопрос</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Дата</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Отвечен</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Дата ответа</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
 			</tr>
 		</thead>
-
 		<tbody>
-			@foreach (var item in tickets) {
+			@foreach (var item in tickets)
+			{
 				<tr role="row" class="odd">
 					<td>@Html.DisplayFor(modelItem => item.Id)</td>
-					<td>@if (item.Client != null) {
-						    <a href="@ConfigHelper.GetParam("adminPanelOld")UserInfo/ShowPhysicalClient?filter.ClientCode=@item.Client.Id">@item.Client.Id</a>
-					    }</td>
-					<td>@Html.DisplayFor(modelItem => item.Email)</td>
-					<td>@Html.DisplayFor(modelItem => item.Text)</td>
+					<td>
+						@if (item.Client != null)
+						{
+							<a href="@ConfigHelper.GetParam("adminPanelOld")UserInfo/ShowPhysicalClient?filter.ClientCode=@item.Client.Id">@item.Client.Id</a>
+						}
+					</td>
+					<td class="maxWidth_150"><div class="maxWidth_1wordWrap">@Html.DisplayFor(modelItem => item.Email)</div></td>
+					<td class="maxWidth_200"><div class="maxWidth_1wordWrap">@Html.DisplayFor(modelItem => item.Text)</div></td>
 					<td>@Html.DisplayFor(modelItem => item.CreationDate)</td>
 					<td>@Html.DisplayFor(modelItem => item.IsNotified)</td>
-					@if(item.AnswerDate != DateTime.MinValue) {
+					@if (item.AnswerDate != DateTime.MinValue)
+					{
 						<td>@Html.DisplayFor(modelItem => item.AnswerDate)</td>
 					}
-					else {
+					else
+					{
 						<td></td>
 					}
 					<td>
