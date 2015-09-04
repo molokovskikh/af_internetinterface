@@ -189,8 +189,9 @@ namespace Inforoom2.Test.Infrastructure
 			if (!DbSession.Query<SaleSettings>().Any())
 				DbSession.Save(SaleSettings.Defaults());
 			EndpointIpCounter = 0;
-			GenerateTvProtocols();
-			GenerateTvChannels();
+		    //GenerateServices();
+            GenerateTvProtocols();
+            GenerateTvChannels();
 			GenerateTvChannelGroups();
 			GenerateRegions();
 			GenerateAddresses();
@@ -205,7 +206,90 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Flush();
 		}
 
-		private void GenerateTvProtocols()
+	    //private void GenerateServices()
+	    //{
+	    //    var deferredPayment = new DeferredPayment();
+     //       deferredPayment.Name = "Обещанный платеж";
+     //       deferredPayment.BlockingAll = false;
+     //       deferredPayment.IsActivableFromWeb = true;
+     //       deferredPayment.Price = 0;
+     //       deferredPayment.Description = "DebtWork";
+     //       DbSession.Save(deferredPayment);
+
+     //       var blockAccountService = new BlockAccountService();
+     //       blockAccountService.Name = "Добровольная блокировка";
+     //       blockAccountService.BlockingAll = true;
+     //       blockAccountService.IsActivableFromWeb = true;
+     //       blockAccountService.Price = 0;
+     //       blockAccountService.Description = "VoluntaryBlockin";
+     //       DbSession.Save(blockAccountService);
+
+     //       var workLawyer = new WorkLawyer();
+     //       workLawyer.Name = "Отключить блокировки";
+     //       workLawyer.BlockingAll = false;
+     //       workLawyer.IsActivableFromWeb = false;
+     //       workLawyer.Price = 0;
+     //       workLawyer.Description = "WorkLawyer";
+     //       DbSession.Save(workLawyer);
+
+     //       var internet = new Internet();
+     //       internet.Name = "Internet";
+     //       internet.BlockingAll = false;
+     //       internet.IsActivableFromWeb = false;
+     //       internet.Price = 0;
+     //       internet.Description = "Internet";
+     //       DbSession.Save(internet);
+
+     //       var ipTv = new IpTv();
+     //       ipTv.Name = "IpTv";
+     //       ipTv.BlockingAll = false;
+     //       ipTv.IsActivableFromWeb = false;
+     //       ipTv.Price = 0;
+     //       ipTv.Description = "IpTv";
+     //       DbSession.Save(ipTv);
+
+     //       var ipTvBoxRent = new IpTvBoxRent();
+     //       ipTvBoxRent.Name = "Аренда приставки";
+     //       ipTvBoxRent.BlockingAll = false;
+     //       ipTvBoxRent.IsActivableFromWeb = false;
+     //       ipTvBoxRent.Price = 0;
+     //       ipTvBoxRent.Description = "IpTvBoxRent";
+     //       DbSession.Save(ipTvBoxRent);
+
+     //       var fixedIp = new FixedIp();
+     //       fixedIp.Name = "Фиксированный ip-адрес";
+     //       fixedIp.BlockingAll = false;
+     //       fixedIp.IsActivableFromWeb = false;
+     //       fixedIp.Price = 200;
+     //       fixedIp.Description = "PinnedIp";
+     //       DbSession.Save(fixedIp);
+
+     //       var hardwareRent = new HardwareRent();
+     //       hardwareRent.Name = "Аренда оборудования";
+     //       hardwareRent.BlockingAll = false;
+     //       hardwareRent.IsActivableFromWeb = false;
+     //       hardwareRent.Price = 0;
+     //       hardwareRent.Description = "HardwareRent";
+     //       DbSession.Save(hardwareRent);
+
+     //       var speedBoost = new SpeedBoost();
+     //       speedBoost.Name = "Увеличить скорость";
+     //       speedBoost.BlockingAll = false;
+     //       speedBoost.IsActivableFromWeb = false;
+     //       speedBoost.Price = 0;
+     //       speedBoost.Description = "SpeedBoost";
+     //       DbSession.Save(speedBoost);
+
+     //       var planChanger = new PlanChanger();
+     //       planChanger.Name = "PlanChanger";
+     //       planChanger.BlockingAll = false;
+     //       planChanger.IsActivableFromWeb = false;
+     //       planChanger.Price = 0;
+     //       planChanger.Description = "PlanChanger";
+     //       DbSession.Save(planChanger);
+     //   }
+
+        private void GenerateTvProtocols()
 		{
 			var names = "udp,rtp,test".Split(',');
 			foreach (var name in names) {
