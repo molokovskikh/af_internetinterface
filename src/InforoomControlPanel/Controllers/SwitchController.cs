@@ -163,9 +163,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult DeleteNetworkNode(int id)
 		{
-			var NetworkNode = DbSession.Get<NetworkNode>(id);
-			SuccessMessage("Узел связи успешно удален");
-			DbSession.Delete(NetworkNode);
+			SafeDelete<NetworkNode>(id);
 			return RedirectToAction("NetworkNodeList");
 		}
 	}

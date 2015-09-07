@@ -11,13 +11,17 @@ namespace InforoomControlPanel.Test.Functional.Switch
 {
 	class DeleteNetworkNode : SwitchFixture
 	{
-		//тест игнорируется из за того,что он проваливается и из за него не проходит следующий тест
-		//необходимо исправление бага при удалении узла связи со связями в БД
-		[Test, Description("Неуспешное удаление узла связи"), Ignore("Тест не проходит,при удалении узла связи с подключенными к нему колммутаторами - возникает ошибка")]
-		public void unsuccessfulNetworkNodeDelete()
+		
+		[Test, Description("Неуспешное удаление узла связи с привязанным коммутатором")]
+		public void unsuccessfulNetworkNodeDeleteWithSwitch()
 		{
 			Open("Switch/NetworkNodeList");
+			//Удаляем адреса и аренды, чтобы оставался только подключенный к узлу связи коммутатор
 			var networkNode = DbSession.Query<NetworkNode>().First(p => p.Name == "Узел связи по адресу Борисоглебск, улица ленина, 8");
+			var sw = networkNode.Switches.First();
+			var leases = DbSession.Query<Lease>().Where(i => i.Switch == sw).ToList();
+			leases.ForEach(i => DbSession.Delete(i));
+			DbSession.Flush();
 			var targetNetworkNode = browser.FindElementByXPath("//td[contains(.,'" + networkNode.Name + "')]");
 			var row = targetNetworkNode.FindElement(By.XPath(".."));
 			var button = row.FindElement(By.CssSelector("a.btn-red"));
@@ -25,6 +29,7 @@ namespace InforoomControlPanel.Test.Functional.Switch
 			DbSession.Refresh(networkNode);
 			Assert.That(networkNode, Is.Not.Null, "Узел связи не должен удалиться");
 			AssertText("Узел связи по адресу Борисоглебск, улица ленина, 8");
+			AssertText("Объект не удалось удалить");
 		}
 
 		[Test, Description("Успешное удаление узла связи")]

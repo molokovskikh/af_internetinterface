@@ -348,7 +348,7 @@ namespace Inforoom2.Controllers
 			var client = CurrentClient;
 			InitPlans(client);
 			ViewBag.Client = client;
-			var isOnceOnlyUsed = DbSession.Query<PlanHistoryEntry>().Any(s => s.PlanAfter == plan && plan.IsOnceOnly);
+			var isOnceOnlyUsed = DbSession.Query<PlanHistoryEntry>().Any(s => s.Client == client && (s.PlanAfter == plan || s.PlanBefore == plan) && plan.IsOnceOnly);
 
 			if (isOnceOnlyUsed)
 			{

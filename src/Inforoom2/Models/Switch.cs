@@ -33,7 +33,12 @@ namespace Inforoom2.Models
 		[OneToMany(2, ClassType = typeof(ClientEndpoint))]
 		public virtual IList<ClientEndpoint> Endpoints { get; set; }
 
-		[ManyToOne]
+		[ManyToOne(Cascade = "save-update")]
 		public virtual NetworkNode NetworkNode { get; set; }
+
+		public Switch()
+		{
+			Endpoints = new List<ClientEndpoint>();
+		}
 	}
 }

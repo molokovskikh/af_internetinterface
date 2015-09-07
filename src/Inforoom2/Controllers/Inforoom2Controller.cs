@@ -289,18 +289,18 @@ namespace Inforoom2.Controllers
 		private void ProcessCallMeBackTicket()
 		{
 			var binder = new EntityBinder();
-			var callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request, typeof(CallMeBackTicket));
-			ViewBag.CallMeBackTicket = callMeBackTicket;
-			//проверка капчи 
-			if (CurrentClient == null && (callMeBackTicket.Captcha.Length < 4
-			                              || (HttpContext.Session["captcha"].ToString()).IndexOf(callMeBackTicket.Captcha) == -1)) {
-				callMeBackTicket.Captcha = "";
+			CallMeBackTicket callMeBackTicket;
+			try
+			{
+				callMeBackTicket = (CallMeBackTicket) binder.MapModel(Request, typeof (CallMeBackTicket));
 			}
-			if (Request.Params["callMeBackTicket.Name"] == null) {
-				callMeBackTicket.Captcha = "";
+			catch (Exception e)
+			{
 				return;
 			}
-
+			ViewBag.CallMeBackTicket = callMeBackTicket;
+			var filledCapcha = HttpContext.Session["captcha"] as string;
+			callMeBackTicket.SetConfirmCaptcha(filledCapcha);
 			callMeBackTicket.Client = CurrentClient;
 
 			var errors = ValidationRunner.Validate(callMeBackTicket);
@@ -320,7 +320,6 @@ namespace Inforoom2.Controllers
 				SuccessMessage("Заявка отправлена. В течении дня вам перезвонят.");
 				return;
 			}
-			callMeBackTicket.Captcha = "";
 			if (GetJavascriptParam("CallMeBack") == null)
 				AddJavascriptParam("CallMeBack", "1");
 		}

@@ -45,6 +45,14 @@
     <Reference Include="CassiniDev-lib">
       <HintPath>..\..\packages\CassiniDev.3.5.1.2\lib\net40\CassiniDev-lib.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.ActiveRecord, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Castle.ActiveRecord.3.0.4\lib\net40\Castle.ActiveRecord.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.MonoRail.Framework, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Castle.Monorail.2.1.4\lib\net40\Castle.MonoRail.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\packages\NPOI.2.0.6\lib\net40\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -219,6 +227,7 @@
     <Compile Include="Functional\Personal\VoluntaryBlockingFixture.cs" />
     <Compile Include="Functional\Personal\WarningFixture.cs" />
     <Compile Include="Integration\BaseIntegrationFixture.cs" />
+    <Compile Include="MySeleniumFixture.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

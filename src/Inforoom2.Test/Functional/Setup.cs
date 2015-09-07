@@ -14,14 +14,14 @@ namespace Inforoom2.Test.Functional
 		{
 			//Все опасные функции, должны быть вызванны до этого момента, так как исключения в сетапе
 			//оставляют невысвобожденные ресурсы браузера и веб сервера
-			SeleniumFixture.GlobalSetup();
-			_webServer = SeleniumFixture.StartServer();
+			MySeleniumFixture.GlobalSetup();
+			_webServer = MySeleniumFixture.StartServer();
 		}
 
 		[TearDown]
 		public void TeardownFixture()
 		{
-			SeleniumFixture.GlobalTearDown();
+			MySeleniumFixture.GlobalTearDown();
 			_webServer.ShutDown();
 		}
 	}

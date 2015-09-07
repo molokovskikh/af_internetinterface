@@ -221,7 +221,11 @@ namespace Inforoom2.Controllers
 		/// <param name="parameters">параметры действия</param>
 		public void ForwardToAction(string controllerString, string actionString, object[] parameters)
 		{  
-			var type = Assembly.GetExecutingAssembly().GetTypes().First(t => t.Name == controllerString + "Controller");
+			var type = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(t => t.Name == controllerString + "Controller");
+			if (type == null){
+				ForwardToAction("Home", "Index", new object[0]);
+				return;
+			}
 
 			// Получение сведений о контроллере, действиях и их параметрах
 			var module = new UrlRoutingModule(); 
