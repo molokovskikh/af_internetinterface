@@ -13,6 +13,7 @@ using Test.Support.Selenium;
 
 namespace InternetInterface.Test.Functional
 {
+	[TestFixture, Ignore("Функционал 'Сервисных заявок' перенесен в новую админку")]
 	public class ServiceFixture : SeleniumFixture
 	{
 		private Client client;
@@ -153,7 +154,7 @@ namespace InternetInterface.Test.Functional
 			AssertText("Заявка по восстановлению работы просрочена, причина - тестовое сообщение");
 		}
 
-		[Test]
+		[Test, Ignore("Функционал перенесен в новую админку")]
 		public void Sms_on_close()
 		{
 			var request = CreateRequest();

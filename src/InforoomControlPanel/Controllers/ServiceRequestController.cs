@@ -136,7 +136,7 @@ namespace InforoomControlPanel.Controllers
 			var errors = ValidationRunner.ValidateDeep(serviceRequest);
 			if (errors.Length == 0) {
 				serviceRequest.Employee = GetCurrentEmployee();
-				serviceRequest.TrySwitchClientStatusTo_BlockedForRepair(DbSession);
+				serviceRequest.TrySwitchClientStatusTo_BlockedForRepair(DbSession, GetCurrentEmployee());
 				serviceRequest.ModificationDate = SystemTime.Now();
 				DbSession.Save(serviceRequest);
 				SuccessMessage("Сервисная заявка успешно создана.");
@@ -231,7 +231,7 @@ namespace InforoomControlPanel.Controllers
 			//установление флага
 			serviceRequest.BlockClientAndWriteOffs = true;
 			//попытка изменить статус пользователя
-			serviceRequest.TrySwitchClientStatusTo_BlockedForRepair(DbSession);
+			serviceRequest.TrySwitchClientStatusTo_BlockedForRepair(DbSession, GetCurrentEmployee());
 			DbSession.Save(serviceRequest);
 			//вывод сообщения
 			SuccessMessage("Сервисная заявка успешно обновлена.");

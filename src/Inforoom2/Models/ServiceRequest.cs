@@ -193,11 +193,15 @@ namespace Inforoom2.Models
 		/// <summary>
 		/// Попытка выставить клиенту статус Worked, если для этого выполнены все условия
 		/// </summary> 
-		public virtual void TrySwitchClientStatusTo_BlockedForRepair(ISession dbSession)
+		public virtual void TrySwitchClientStatusTo_BlockedForRepair(ISession dbSession, Employee employee)
 		{
 			if (BlockClientAndWriteOffs && Client.PhysicalClient != null) {
 				ModificationDate = SystemTime.Now();
 				Client.SetStatus(Models.Status.Get(StatusType.BlockedForRepair, dbSession));
+
+				string appealMessage = string.Format("По сервисной заявке № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>необходимо восстановление работы.</strong>.",
+				Id, ConfigHelper.GetParam("adminPanelNew"));
+				dbSession.Save(new Appeal(appealMessage, Client, AppealType.User) { Employee = employee, inforoom2 = true });
 			}
 		}
 

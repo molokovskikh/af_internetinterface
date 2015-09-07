@@ -40,9 +40,9 @@ namespace InternetInterface.Controllers
 			var begin = date.Value.Date;
 			var end = date.Value.Date.AddDays(1);
 			var requests = DbSession.Query<ServiceRequest>().Where(r => r.PerformanceDate >= begin
-				&& r.PerformanceDate < end
-				&& r.Performer == partner
-				&& r.Status == ServiceRequestStatus.New)
+			                                                            && r.PerformanceDate < end
+			                                                            && r.Performer == partner
+			                                                            && r.Status == ServiceRequestStatus.New)
 				.ToList();
 			PropertyBag["timetable"] = Timeunit.FromRequests(date.Value, partner, requests);
 		}
@@ -83,7 +83,7 @@ namespace InternetInterface.Controllers
 		public void ShowRequest(uint id, bool edit)
 		{
 			//Функционал изменен - редирект в новую админку
-			RedirectToUrl(InternetInterface.Helpers.GlobalNames.AdminPanelNew+"ServiceRequest/ServiceRequestEdit/" + id);
+			RedirectToUrl(InternetInterface.Helpers.GlobalNames.AdminPanelNew + "ServiceRequest/ServiceRequestEdit/" + id);
 			var request = DbSession.Load<ServiceRequest>(id);
 			var settings = DbSession.Query<SaleSettings>().First();
 			request.Calculate(settings);
@@ -129,10 +129,10 @@ namespace InternetInterface.Controllers
 				}
 
 				if (request.BlockForRepair
-					&& request.Client.Status.Type == StatusType.BlockedForRepair
-					&& (request.Status == ServiceRequestStatus.Close || request.Status == ServiceRequestStatus.Cancel)
-					&& request.IsChanged(r => r.Status)
-					&& !DbSession.Query<ServiceRequest>().Any(r => r.Client == request.Client && r.Status == ServiceRequestStatus.New && r.BlockForRepair)) {
+				    && request.Client.Status.Type == StatusType.BlockedForRepair
+				    && (request.Status == ServiceRequestStatus.Close || request.Status == ServiceRequestStatus.Cancel)
+				    && request.IsChanged(r => r.Status)
+				    && !DbSession.Query<ServiceRequest>().Any(r => r.Client == request.Client && r.Status == ServiceRequestStatus.New && r.BlockForRepair)) {
 					request.Client.SetStatus(Status.Get(StatusType.Worked, DbSession));
 				}
 
@@ -170,9 +170,7 @@ namespace InternetInterface.Controllers
 			if (messages == null)
 				return true;
 
-			foreach (var message in messages) {
-				SendSms(request, message);
-			}
+			foreach (var message in messages) SendSms(request, message);
 			return !messages.Any(m => m.IsFaulted);
 		}
 

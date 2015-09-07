@@ -73,13 +73,10 @@ namespace Inforoom2.Test.Infrastructure
 
 			// TODO:UnusedClientAddresses
 			UnusedClientAddresses = new List<Address>();
-			try
-			{
+			try {
 				SetCookie("userCity", "Белгород");
 			}
-			catch (Exception e)
-			{
-				
+			catch (Exception e) {
 			}
 			GenerateObjects();
 		}
@@ -143,8 +140,10 @@ namespace Inforoom2.Test.Infrastructure
 			var tables = new List<string>();
 
 			//Приоритет удаления данных
+
 			var order = "planchangerdata,planhtmlcontent,perm_role,user_role,roles,permissions,lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
 			            + "physicalclients,clientendpoints,switchaddress,leases,NetworkSwitches,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
+
 
 			var parts = order.Split(',');
 			foreach (var part in parts) {
@@ -165,7 +164,7 @@ namespace Inforoom2.Test.Infrastructure
 			//Удаляем из списка таблицы, которые не надо очищать
 			var exceptions = "partners,services,status,packagespeed,networkzones,accesscategories" +
 			                 "categoriesaccessset,connectbrigads,statuscorrelation,usercategories,additionalstatus," +
-							 "salesettings,internetsettings,issues";
+			                 "salesettings,internetsettings,issues";
 			parts = exceptions.Split(',');
 			foreach (var part in parts)
 				tables.RemoveAll(i => i == strategy.TableName(part));
@@ -757,7 +756,19 @@ namespace Inforoom2.Test.Infrastructure
 			plan.AvailableForOldClients = true;
 			plan.IsServicePlan = false;
 			plan.AvailableForNewClients = true;
-			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==35000000);
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed == 35000000);
+			plan.TvChannelGroups.Add(TvChannelGroups.First(i => i.Name == "Основная"));
+			DbSession.Save(plan);
+
+			plan = new Plan();
+			plan.Price = 300;
+			plan.IsOnceOnly = true;
+			plan.Name = "Одноразовый";
+			plan.Disabled = false;
+			plan.AvailableForOldClients = true;
+			plan.IsServicePlan = false;
+			plan.AvailableForNewClients = true;
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed == 35000000);
 			plan.TvChannelGroups.Add(TvChannelGroups.First(i => i.Name == "Основная"));
 			DbSession.Save(plan);
 
@@ -766,7 +777,7 @@ namespace Inforoom2.Test.Infrastructure
 			plan.Name = "Оптимальный";
 			plan.Disabled = false;
 			plan.AvailableForOldClients = true;
-			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==30000000);
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed == 30000000);
 			plan.IsServicePlan = false;
 			plan.AvailableForNewClients = true;
 			DbSession.Save(plan);
@@ -778,7 +789,7 @@ namespace Inforoom2.Test.Infrastructure
 			plan.AvailableForOldClients = true;
 			plan.IsServicePlan = false;
 			plan.AvailableForNewClients = true;
-			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==4000000);
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed == 4000000);
 			plan.TvChannelGroups.Add(TvChannelGroups.First(i => i.Name == "Спорт"));
 			DbSession.Save(plan);
 
@@ -790,7 +801,7 @@ namespace Inforoom2.Test.Infrastructure
 			plan.AvailableForOldClients = true;
 			plan.IsServicePlan = false;
 			plan.AvailableForNewClients = true;
-			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==35000000);
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed == 35000000);
 			DbSession.Save(plan);
 
 
@@ -805,7 +816,7 @@ namespace Inforoom2.Test.Infrastructure
 				Plan = plan,
 				Region = DbSession.Query<Region>().FirstOrDefault()
 			});
-			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==30000000);
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed == 30000000);
 			DbSession.Save(plan);
 
 			plan = new Plan();
@@ -815,7 +826,7 @@ namespace Inforoom2.Test.Infrastructure
 			plan.AvailableForOldClients = true;
 			plan.IsServicePlan = false;
 			plan.AvailableForNewClients = true;
-			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==4000000);
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed == 4000000);
 			DbSession.Save(plan);
 			var RegionPlan = new RegionPlan();
 			RegionPlan.Plan = plan;
@@ -834,7 +845,7 @@ namespace Inforoom2.Test.Infrastructure
 			RegionPlan = new RegionPlan();
 			RegionPlan.Plan = plan;
 			RegionPlan.Region = DbSession.Query<Region>().First(i => i.Name == "Борисоглебск");
-			DbSession.Save(RegionPlan); 
+			DbSession.Save(RegionPlan);
 
 			plan = new Plan();
 			plan.Price = 300;
@@ -843,13 +854,13 @@ namespace Inforoom2.Test.Infrastructure
 			plan.AvailableForOldClients = false;
 			plan.IsServicePlan = false;
 			plan.AvailableForNewClients = true;
-			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==30000000);
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed == 30000000);
 			plan.Comments = "Быстрый, дешевый, есть в тарифах, нет в ЛК";
 			DbSession.Save(plan);
 			RegionPlan = new RegionPlan();
 			RegionPlan.Plan = plan;
 			RegionPlan.Region = DbSession.Query<Region>().First(i => i.Name == "Борисоглебск (частный сектор)");
-			DbSession.Save(RegionPlan); 
+			DbSession.Save(RegionPlan);
 
 			plan = new Plan();
 			plan.Price = 600;
@@ -858,7 +869,7 @@ namespace Inforoom2.Test.Infrastructure
 			plan.AvailableForOldClients = true;
 			plan.IsServicePlan = false;
 			plan.AvailableForNewClients = false;
-			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed==30000000);
+			plan.PackageSpeed = DbSession.Query<PackageSpeed>().First(i => i.Speed == 30000000);
 			plan.Comments = "Быстрый, дорогой, нет в тарифах, есть в ЛК";
 			DbSession.Save(plan);
 			RegionPlan = new RegionPlan();
@@ -867,7 +878,7 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Save(RegionPlan);
 
 			DbSession.Flush();
-			
+
 			//Переходы с тарифов
 			var plans = DbSession.Query<Plan>().ToList();
 			//var popular = plans.First(i => i.Name.Contains("Популярный"));
@@ -1098,13 +1109,13 @@ namespace Inforoom2.Test.Infrastructure
 			}
 		}
 
-        /// <summary>
-        /// Делает паузу теста, что бы карта Яндекса полностью загрузилась и отметила искомый адрес
-        /// За меньшее время карта не успевает загрузиться
-        /// </summary>
-        public void WaitForMap()
-        {
-            Thread.Sleep(9000);
-        }
-    }
+		/// <summary>
+		/// Делает паузу теста, что бы карта Яндекса полностью загрузилась и отметила искомый адрес
+		/// За меньшее время карта не успевает загрузиться
+		/// </summary>
+		public void WaitForMap()
+		{
+			Thread.Sleep(9000);
+		}
+	}
 }
