@@ -11,109 +11,126 @@
 }
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
 	<form>
-		<div class="row">
-			<div class="col-sm-2">Зарегестрирован с </div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
-			<div class="col-sm-1">по</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Подключена услуга</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.ClientServices.First().Service.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Статус</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.Status.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div> 
-		<div class="row">
-			<div class="col-sm-2">Регион</div>
-			<div class="col-sm-2">@pager.ClientRegionFilter(i => i, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Оборудование</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().Hardware.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Проверен</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.PhysicalClient.Checked, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Тип</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.Type, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">ЛС</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.Id, HtmlType.text, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-1">
-				@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Зарегестрирован с </div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
+				<div class="col-sm-1">по</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div>
 			</div>
-			<div class="col-sm-1">
-				@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Подключена услуга</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.ClientServices.First().Service.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
 			</div>
-			<div class="col-sm-1">
-				@pager.ExportButton(new { @class = "btn btn-sm btn-blue" })
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Статус</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.Status.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Регион</div>
+				<div class="col-sm-2">@pager.ClientRegionFilter(i => i, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Оборудование</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().Hardware.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Проверен</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.PhysicalClient.Checked, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Физ.лицо</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.PhysicalClient, HtmlType.Dropdown, ComparsionType.IsNotNull, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">ЛС</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.Id, HtmlType.text, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">
+					@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+				</div>
+				<div class="col-sm-1">
+					@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+				</div>
+				<div class="col-sm-1">
+					@pager.ExportButton(new { @class = "btn btn-sm btn-blue" })
+				</div>
 			</div>
 		</div>
 	</form>
-	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
-		<thead>
-			<tr role="row"> 
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Id)">Номер</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.PhysicalClient.Name)">Имя</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
-			</tr>
-		</thead>
 
-		<tbody>
-			<tr role="row" class="odd">
-				<td><strong>Всего: @pager.TotalItems</strong></td> 
-				<td></td>
-				<td></td>
-			</tr>
-			@foreach (var client in clients) {
-				<tr role="row" class="odd"> 
-					<td><a @(client.PhysicalClient == null ? "style=color:#0D98E0;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
-					                                                                              + (String.Format("UserInfo/{0}?filter.ClientCode=", client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-					                                                                              + client.Id)">@client.Id</a></td>
-					<td>
+	<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+		<div class="panel-body">
+			<div class="row">
+				@{ Html.RenderPartial("Pagination"); }
+			</div>
+		</div>
+		<table id="table-2" class="table table-bordered table-striped datatable" role="grid" aria-describedby="table-2_info">
+			<thead>
+				<tr role="row">
+					<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Id)">Номер</a></th>
+					<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.PhysicalClient.Name)">Имя</a></th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var client in clients) {
+					<tr role="row" class="odd">
 						<td>
+							<a @(client.PhysicalClient == null ? "style=color:#0D90D4;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
+							                                                                          + (String.Format("UserInfo/{0}?filter.ClientCode=", client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
+							                                                                          + client.Id)">@client.Id</a>
+						</td>
+						<td>
+							
 							@if (client.PhysicalClient != null) {
 								<a href="@Url.Action("Info", "Client", new { id = client.Id })">@client.Fullname</a>
 							}
 							else {
 								@client.Fullname
 							}
-						</td></td>
-					<td>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequestCreate", "ServiceRequest", new { id = client.Id })">
-							<i class="entypo-doc-text"></i>
-							Сервисная заявка
-						</a>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("AttachRequest", "ConnectionTeam", new { id = client.Id, type = ServicemenScheduleItem.Type.ClientConnectionRequest })">
+						</td>
+						<td>
+							<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequestCreate", "ServiceRequest", new { id = client.Id })">
+								<i class="entypo-doc-text"></i>
+								Сервисная заявка
+							</a>
+							<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("AttachRequest", "ConnectionTeam", new { id = client.Id, type = ServicemenScheduleItem.Type.ClientConnectionRequest })">
 
-							<i class="entypo-briefcase"></i>
-							Заявка на подключение
-						</a>
-						<form style="display: inline" action="@Url.Action("ApplyImpersonation", "AdminAccount")" method="post" target="_blank">
-							<input name="client.Id" type="hidden" value="@client.Id">
-							<button class="btn btn-success btn-sm btn-icon icon-left" type="submit" value="Войти">
-								<i class="entypo-key"></i>
-								Войти в личный кабинет
-							</button>
-						</form>
-					</td>
-				</tr>
-			}
-			<tr role="row" class="odd">
-				<td><strong>Всего: @pager.TotalItems</strong></td> 
-				<td></td>
-				<td></td>
-			</tr>
-		</tbody>
-	</table>
-	<div class="row">
-		@{ Html.RenderPartial("Pagination"); }
+								<i class="entypo-briefcase"></i>
+								Заявка на подключение
+							</a>
+							<form style="display: inline" action="@Url.Action("ApplyImpersonation", "AdminAccount")" method="post" target="_blank">
+								<input name="client.Id" type="hidden" value="@client.Id">
+								<button class="btn btn-success btn-sm btn-icon icon-left" type="submit" value="Войти">
+									<i class="entypo-key"></i>
+									Войти в личный кабинет
+								</button>
+							</form>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+		<div class="row">
+			@{ Html.RenderPartial("Pagination"); }
+		</div>
 	</div>
 </div>

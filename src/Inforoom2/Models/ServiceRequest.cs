@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web.Services.Description;
 using Common.MySql;
 using Common.Tools;
+using Inforoom2.Helpers;
 using Inforoom2.Intefaces;
 using Inforoom2.validators;
 using NHibernate;
@@ -134,7 +135,7 @@ namespace Inforoom2.Models
 					Status = status;
 					break;
 				case ServiceRequestStatus.Cancel:
-					if (Status != status) Cancel(dbSession);
+					if (Status != status) Cancel(dbSession,employee);
 					Status = status;
 					break;
 				default:
@@ -146,11 +147,14 @@ namespace Inforoom2.Models
 		/// <summary>
 		/// При отмене заявки
 		/// </summary>
-		private void Cancel(ISession dbSession)
+		private void Cancel(ISession dbSession, Employee employee)
 		{
 			TrySwitchClientStatusTo_Worked(dbSession);
 			// вероятно, в скором будущем отправка смс
 			CancelDate = SystemTime.Now();
+			string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>отменена</strong>.",
+				Id, ConfigHelper.GetParam("adminPanelNew"));
+			dbSession.Save(new Appeal(appealMessage, Client, AppealType.User) { Employee = employee, inforoom2 = true });
 		}
 
 		/// <summary>
@@ -165,7 +169,11 @@ namespace Inforoom2.Models
 			    && Sum > 0) {
 				var comment = String.Format("Оказание дополнительных услуг, заявка №{0}", Id);
 				dbSession.Save(new UserWriteOff(Client, Sum.Value, comment) { Employee = employee });
-			}
+				}
+
+			string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>закрыта</strong>.",
+				Id, ConfigHelper.GetParam("adminPanelNew"));
+			dbSession.Save(new Appeal(appealMessage, Client, AppealType.User){Employee = employee,inforoom2 = true});
 		}
 
 		/// <summary>
@@ -185,11 +193,15 @@ namespace Inforoom2.Models
 		/// <summary>
 		/// Попытка выставить клиенту статус Worked, если для этого выполнены все условия
 		/// </summary> 
-		public virtual void TrySwitchClientStatusTo_BlockedForRepair(ISession dbSession)
+		public virtual void TrySwitchClientStatusTo_BlockedForRepair(ISession dbSession, Employee employee)
 		{
 			if (BlockClientAndWriteOffs && Client.PhysicalClient != null) {
 				ModificationDate = SystemTime.Now();
 				Client.SetStatus(Models.Status.Get(StatusType.BlockedForRepair, dbSession));
+
+				string appealMessage = string.Format("По сервисной заявке № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>необходимо восстановление работы.</strong>.",
+				Id, ConfigHelper.GetParam("adminPanelNew"));
+				dbSession.Save(new Appeal(appealMessage, Client, AppealType.User) { Employee = employee, inforoom2 = true });
 			}
 		}
 
@@ -207,6 +219,9 @@ namespace Inforoom2.Models
 				Author = employee,
 				CreationDate = SystemTime.Now()
 			});
+			string appealMessage = string.Format("Комментарий к сервисной заявке № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> :<br/>{2}",
+				Id, ConfigHelper.GetParam("adminPanelNew"), comment);
+			dbSession.Save(new Appeal(appealMessage, Client, AppealType.User) { Employee = employee, inforoom2 = true });
 		}
 
 		/// <summary>
@@ -228,6 +243,6 @@ namespace Inforoom2.Models
 			//возврат сортированного списка комментариев
 			return commentsList.OrderBy(s => s.CreationDate).ToList();
 		}
-
+		 
 	}
 }

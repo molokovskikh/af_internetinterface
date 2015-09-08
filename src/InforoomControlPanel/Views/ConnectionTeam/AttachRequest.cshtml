@@ -24,16 +24,14 @@
 
 <div class="panel panel-primary col-md-6">
 	<div class="panel-body">
-		@using (@Html.BeginForm(action, controller, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
-		{
+		@using (@Html.BeginForm(action, controller, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
 			@Html.HiddenFor(i => scheduleItem.Id, new { @class = "form-control" })
 			@Html.HiddenFor(i => scheduleItem.RequestType, new { @class = "form-control", @Name = "scheduleItem.RequestType" })
-			if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest)
-			{
+			if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest) {
 				<div class="form-group">
 					<div class="col-sm-4">
 						<div class="form-group">
-							<a class="btn btn-green" style="width: 138px;" href="@Url.Action("ServiceRequestEdit", "ServiceRequest", new {id = scheduleItem.ServiceRequest.Id})">Прейти к заявке</a>
+							<a class="btn btn-green" style="width: 138px;" href="@Url.Action("ServiceRequestEdit", "ServiceRequest", new { id = scheduleItem.ServiceRequest.Id })">Прейти к заявке</a>
 						</div>
 					</div>
 				</div>
@@ -41,9 +39,9 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label">От</label>
 				<div class="col-sm-4">
-					<a href="@(ConfigHelper.GetParam("adminPanelOld")
-					+ (String.Format("UserInfo/{0}?filter.ClientCode=", scheduleItem.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-					+ scheduleItem.Client.Id)">@scheduleItem.Client.Fullname</a>
+					<a @(scheduleItem.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
+					                                                                                       + (String.Format("UserInfo/{0}?filter.ClientCode=", scheduleItem.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
+					                                                                                       + scheduleItem.Client.Id)">@scheduleItem.Client.Fullname</a>
 				</div>
 			</div>
 			<div class="form-group">

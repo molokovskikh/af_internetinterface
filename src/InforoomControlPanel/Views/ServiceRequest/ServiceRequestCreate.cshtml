@@ -15,7 +15,10 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Клиент</label>
 					<div class="col-sm-5">
-						<a href="@(ConfigHelper.GetParam("adminPanelOld") + "UserInfo/ShowPhysicalClient?filter.ClientCode=" + serviceRequest.Client.Id)">@serviceRequest.Client.Fullname</a>
+						<a @(serviceRequest.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
+						                                                                                         + (String.Format("UserInfo/{0}?filter.ClientCode=", serviceRequest.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
+						                                                                                         + serviceRequest.Client.Id)">@serviceRequest.Client.Fullname</a>
+
 					</div>
 				</div>
 				<div class="form-group">
