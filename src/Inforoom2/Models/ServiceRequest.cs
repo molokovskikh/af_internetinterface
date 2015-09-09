@@ -131,12 +131,17 @@ namespace Inforoom2.Models
 		{
 			switch (status) {
 				case ServiceRequestStatus.Close:
-					if (Status != status) Close(dbSession, employee);
-					Status = status;
+					if (Status != status) {
+						Status = status;
+						Close(dbSession, employee);
+					}
 					break;
 				case ServiceRequestStatus.Cancel:
-					if (Status != status) Cancel(dbSession,employee);
-					Status = status;
+					if (Status != status) {
+						Status = status;
+						Cancel(dbSession, employee);
+					}
+
 					break;
 				default:
 					Status = status;
@@ -169,11 +174,11 @@ namespace Inforoom2.Models
 			    && Sum > 0) {
 				var comment = String.Format("Оказание дополнительных услуг, заявка №{0}", Id);
 				dbSession.Save(new UserWriteOff(Client, Sum.Value, comment) { Employee = employee });
-				}
+			}
 
 			string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>закрыта</strong>.",
 				Id, ConfigHelper.GetParam("adminPanelNew"));
-			dbSession.Save(new Appeal(appealMessage, Client, AppealType.User){Employee = employee,inforoom2 = true});
+			dbSession.Save(new Appeal(appealMessage, Client, AppealType.User) { Employee = employee, inforoom2 = true });
 		}
 
 		/// <summary>
@@ -200,7 +205,7 @@ namespace Inforoom2.Models
 				Client.SetStatus(Models.Status.Get(StatusType.BlockedForRepair, dbSession));
 
 				string appealMessage = string.Format("По сервисной заявке № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>необходимо восстановление работы.</strong>.",
-				Id, ConfigHelper.GetParam("adminPanelNew"));
+					Id, ConfigHelper.GetParam("adminPanelNew"));
 				dbSession.Save(new Appeal(appealMessage, Client, AppealType.User) { Employee = employee, inforoom2 = true });
 			}
 		}
@@ -243,6 +248,5 @@ namespace Inforoom2.Models
 			//возврат сортированного списка комментариев
 			return commentsList.OrderBy(s => s.CreationDate).ToList();
 		}
-		 
 	}
 }
