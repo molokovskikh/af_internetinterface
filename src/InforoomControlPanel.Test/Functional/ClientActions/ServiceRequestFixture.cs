@@ -197,7 +197,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 
 			//переход на страницу редактирования сервисной заявки
 			Open("ServiceRequest/ServiceRequestEdit/" + newServiceRequest.Id);
-			//ввод поля: статус - заявка закрыта
+			//ввод поля: статус - заявка отменена
 			Css("#serviceRequest_Status").SelectByText("Отменена");
 			//наджатие: кнопки подтверждения изменения заявки
 			browser.FindElementByCssSelector("#ChangeServiceRequest").Click();
@@ -215,7 +215,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			Assert.That(ClientWithRequest.Status.Type, Is.EqualTo(StatusType.Worked), "Сервисная заявка была отменена с ошибкой!");
 		}
 
-		[Test, Description("Проверка изменений у клиента при смене статуса заявки - отменена")]
+		[Test, Description("Проверка изменений у клиента при статусе заявки - Восстановление работы")]
 		public void ServiceRequestEditClientBlock()
 		{
 			//выполнение стартовых условий
@@ -234,6 +234,18 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			DbSession.Refresh(ClientWithRequest);
 			//проверка соответствия: статуса Пользователя
 			Assert.That(ClientWithRequest.Status.Type, Is.EqualTo(StatusType.BlockedForRepair), "Сервисная заявка не была изменена!");
+
+			//переход на страницу редактирования сервисной заявки
+			Open("ServiceRequest/ServiceRequestEdit/" + newServiceRequest.Id);
+			//ввод поля: статус - заявка закрыта
+			Css("#serviceRequest_Status").SelectByText("Закрыта");
+			//наджатие: кнопки подтверждения изменения заявки
+			browser.FindElementByCssSelector("#ChangeServiceRequest").Click();
+
+			//обновление модели: клиент
+			DbSession.Refresh(ClientWithRequest);
+			//проверка соответствия: статуса Пользователя
+			Assert.That(ClientWithRequest.Status.Type, Is.EqualTo(StatusType.Worked), "При закрытии сервисной заявки статус не изменился!");
 		}
 	}
 }
