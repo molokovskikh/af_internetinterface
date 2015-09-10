@@ -39,14 +39,14 @@ namespace InforoomControlPanel.Test.Functional.Switch
 			var networkNode = new NetworkNode();
 			networkNode.Name = "Тестовый узел без связей";
 			DbSession.Save(networkNode);
-			DbSession.Flush();
+            DbSession.Flush();
 
-			Open("Switch/NetworkNodeList");		
-			var targetNetworkNode = browser.FindElementByXPath("//td[contains(.,'" + networkNode.Name + "')]");
+			Open("Switch/NetworkNodeList");
+            var targetNetworkNode = browser.FindElementByXPath("//td[contains(.,'" + networkNode.Name + "')]");
 			var row = targetNetworkNode.FindElement(By.XPath(".."));
 			var button = row.FindElement(By.CssSelector("a.btn-red"));
 			button.Click();
-			AssertText("Узел связи успешно удален");
+			AssertText("Объект успешно удален!");
 			var networkNodeEdit = DbSession.Query<NetworkNode>().FirstOrDefault(p => p.Name == "Тестовый узел без связей");
 			Assert.That(networkNodeEdit, Is.Null, "Узел связи должен удалиться");
 		}
