@@ -219,8 +219,11 @@
     <Compile Include="Functional\ClientActions\LogAppealFixture.cs" />
     <Compile Include="Functional\Infrastructure\ControlPanelBaseFixture.cs" />
     <Compile Include="Functional\Plans\CreatePlanFixture.cs" />
+    <Compile Include="Functional\Plans\CreateInternetPlanChangerIndexFixture.cs" />
     <Compile Include="Functional\Plans\CreateTVProtocolFixture.cs" />
     <Compile Include="Functional\Plans\CreateTVChannelGroupFixture.cs" />
+    <Compile Include="Functional\Plans\EditInternetPlanChangerFixture.cs" />
+    <Compile Include="Functional\Plans\DeleteInternetPlanChangerFixture.cs" />
     <Compile Include="Functional\Plans\DeleteTVProtocolFixture.cs" />
     <Compile Include="Functional\Plans\DeleteTVChannelGroupFixture.cs" />
     <Compile Include="Functional\Plans\DeleteTVChannelFixture .cs" />
