@@ -19,7 +19,7 @@
 	@using (@Html.BeginForm("CreatePackageSpeed", controller, null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
 		<div class="form-group">
 			<div class="col-sm-2">
-				<label class="control-label">Скорость (биты)</label>
+				<label class="control-label">Скорость (мегабиты)</label>
 			</div>
 			<div class="col-sm-8">
 				@Html.ValidationEditor(runner, packageSpeed, "Speed", new { @class = "form-control " }, HtmlTag.input, HtmlType.none)
