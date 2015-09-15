@@ -133,16 +133,37 @@ namespace Billing.Test.Integration
 			InternetPlanChangerFixtureAfter();
 		}
 
-		[Test(Description = "Проверка отработки OnTimer у услуги PlanChanger для 'просроченного' тарифа")]
+		[Test(Description = "Проверка отработки OnTimer у услуги PlanChanger для 'просроченного' тарифа, *проверка на сообщение о разблокировке")]
 		public void InternetPlanChangerFixtureBillingExecutionTimeoutTrue()
 		{
+			const int heightSumm = 10000;
 			InternetPlanChangerFixtureSettings(-1);
-
 			// проверка срока действия целевого тарифа у клиентов с услугой PlanChanger
-			// блокировка биллингом клиентов с просроченным тарифом.
+			// блокировка биллингом клиента с просроченным тарифом.
 			billing.ProcessPayments();
-			// у текущего клиента действие просрочено, он должен быть заблокирован
+
+			// блокировка биллингом клиента отключенного, с положительным балансом
+			client.AutoUnblocked = true;
+			client.Disabled = true;
+			client.PhysicalClient.Balance = heightSumm;
+			session.Save(client);
+			billing.ProcessPayments();
+			session.Refresh(client);
+			// у текущего клиента действие просрочено, он должен быть заблокирован PlanChanger(ом)
 			Assert.AreEqual(client.Status, Status.Get(StatusType.NoWorked, session), "Статус клиента ожидался 'заблокирован'.");
+			var noUnblockedAppeal = client.Appeals.FirstOrDefault(s => s.Appeal == "Клиент разблокирован. Баланс " + heightSumm + ",00.");
+			Assert.AreEqual(noUnblockedAppeal, null, "У клиента не должно быть сообщений о разблокировке, пока он не перешел на другой тариф!");
+
+			//блокировка биллингом клиента с не просроченным тарифом (если дни тарифа не сочтены).
+			var planChangerData = session.Query<PlanChangerData>().FirstOrDefault();
+			planChangerData.Timeout = 1000;
+			session.Save(planChangerData);
+			billing.ProcessPayments();
+			session.Refresh(client);
+			// у текущего клиента действие не просрочено, он не должен быть заблокирован и у него должно появиться сообщение о том, что он разблокирован.
+			Assert.AreEqual(client.Status, Status.Get(StatusType.Worked, session), "Статус клиента ожидался 'подключен'.");
+			noUnblockedAppeal = client.Appeals.FirstOrDefault(s => s.Appeal == "Клиент разблокирован. Баланс " + heightSumm + ",00.");
+			Assert.AreNotEqual(noUnblockedAppeal, null, "У клиента должно быть сообщений о разблокировке, так как PlanChanger не блокирует клиента!");
 
 			InternetPlanChangerFixtureAfter();
 		}

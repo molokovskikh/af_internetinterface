@@ -13,6 +13,7 @@ using Common.Web.Ui.ActiveRecordExtentions;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
+using InternetInterface.Models.Services;
 using NHibernate;
 using NHibernate.Linq;
 using log4net;
@@ -160,12 +161,14 @@ namespace Billing
 					.Where(c => c.PhysicalClient.Balance > c.GetPriceIgnoreDisabled() * c.PercentBalance)
 					.ToList();
 				foreach (var client in clients) {
-					client.Enable();
-					if (client.IsChanged(c => c.ShowBalanceWarningPage))
-						client.CreareAppeal("Отключена страница Warning, клиент разблокирован", AppealType.Statistic);
-					if (client.IsChanged(c => c.Disabled))
-						client.CreareAppeal("Клиент разблокирован", AppealType.Statistic);
-					SmsHelper.DeleteNoSendingMessages(client);
+					if (!PlanChanger.CheckPlanChangerClientIsBlocked(session, client)) {
+						client.Enable();
+						if (client.IsChanged(c => c.ShowBalanceWarningPage))
+							client.CreareAppeal("Отключена страница Warning, клиент разблокирован", AppealType.Statistic);
+						if (client.IsChanged(c => c.Disabled))
+							client.CreareAppeal("Клиент разблокирован", AppealType.Statistic);
+						SmsHelper.DeleteNoSendingMessages(client);
+					}
 				}
 				var lawyerPersons = session.Query<Client>().Where(c => c.LawyerPerson != null);
 				foreach (var client in lawyerPersons) {
@@ -681,7 +684,7 @@ namespace Billing
 			var fio = string.Format("{0} {1} {2}", client.PhysicalClient.Surname, client.PhysicalClient.Name, client.PhysicalClient.Patronymic);
 			var region = client.PhysicalClient.HouseObj != null ? client.PhysicalClient.HouseObj.Region.Name : "регион не установлен";
 			var cliendIdString = client.Id.ToString("D5");
-            var redmineIssueName = string.Format("Возврат оборудования, ЛС {0}, {1}({2})", cliendIdString, fio, region);
+			var redmineIssueName = string.Format("Возврат оборудования, ЛС {0}, {1}({2})", cliendIdString, fio, region);
 			//АККУРАТНО, НЕЛЬЗЯ МЕНЯТЬ "Возврат оборудования, ЛС {0}," иначе задачи не будут находиться
 			var clientIssues = session.Query<RedmineIssue>().Where(ri => ri.subject.Contains(string.Format("Возврат оборудования, ЛС {0}", cliendIdString))).ToList();
 			var hasRedmineIssue = clientIssues.Any(i => i.status_id != 5);

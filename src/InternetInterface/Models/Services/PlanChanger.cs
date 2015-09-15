@@ -3,6 +3,7 @@ using System.Linq;
 using Castle.ActiveRecord;
 using Common.Tools;
 using InternetInterface.Services;
+using MonoRail.Debugger.Toolbar;
 using NHibernate;
 using NHibernate.Linq;
 
@@ -45,6 +46,35 @@ namespace InternetInterface.Models.Services
 					session.Update(clientService.Client);
 				}
 			}
+		}
+
+		// проверка, если клиент уже заблокирован
+		public static bool CheckPlanChangerClientIsBlocked(ISession session, Client client)
+		{
+			// получение сведения об изменении тарифов
+			var planChangerList = session.Query<PlanChangerData>().ToList();
+			foreach (var changer in planChangerList) {
+				//поиск целевого тарифа
+				if (changer.TargetPlan == client.PhysicalClient.Tariff.Id) {
+					// добавление услуги
+					if (!client.ClientServices.Any(s => s.Service.HumanName == "PlanChanger")) {
+						var planChanger = session.Query<Service>().FirstOrDefault(s => s.HumanName == "PlanChanger");
+						client.ClientServices.Add(new ClientService(client, planChanger));
+					}
+					else {
+						// если услуга существует, проверка, не подошел ли срок отключения клиента.
+						if (client.ClientServices.Any(s => s.Service.HumanName == "PlanChanger")
+						    && client.PhysicalClient.LastTimePlanChanged != Convert.ToDateTime("01.01.0001")
+						    && (client.PhysicalClient.LastTimePlanChanged.AddDays(changer.Timeout) < SystemTime.Now())) {
+							if (client.Status == Status.Get(StatusType.NoWorked, session)) {
+								// клиент забокирован PlanChanger
+								return true;
+							}
+						}
+					}
+				}
+			}
+			return false;
 		}
 	}
 }
