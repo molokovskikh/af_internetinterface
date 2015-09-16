@@ -224,9 +224,6 @@ namespace Inforoom2.Models
 				Author = employee,
 				CreationDate = SystemTime.Now()
 			});
-			string appealMessage = string.Format("Комментарий к сервисной заявке № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> :<br/>{2}",
-				Id, ConfigHelper.GetParam("adminPanelNew"), comment);
-			dbSession.Save(new Appeal(appealMessage, Client, AppealType.User) { Employee = employee, inforoom2 = true });
 		}
 
 		/// <summary>
