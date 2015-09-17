@@ -1,6 +1,10 @@
 ﻿$(".connectfee").on("click", function () {
 	var self = this;
-	cli.areYouSure("Вы уверены, что хотите сменить тариф?", function () {
+	var messageText = "Вы уверены, что хотите сменить тариф?";
+	if ($(this).attr("title") != null) {
+		messageText += "<br/>" + $(this).attr("title");
+	}
+	cli.areYouSure(messageText, function () {
 		$(self).parent("form").submit();
 	}, "Подтвердите действие");
 

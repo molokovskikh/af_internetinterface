@@ -1,4 +1,4 @@
-﻿@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/Personal.Plans.js")"></script>}
+﻿@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/Personal.Plans.js?v=1")"></script>}
 @using Common.Tools
 @using Inforoom2.Models
 
@@ -44,7 +44,12 @@
 					else if (beginDate.AddMonths(2) < SystemTime.Now()) {
 						using (@Html.BeginForm("ChangePlan", "Personal", FormMethod.Post, new { id = "changeplan" })) {
 							@Html.HiddenFor(modelItem => plan.Id)
-							<input class="connectfee" type="submit" value="Сменить"/>
+							if (client.Plan.IsOnceOnly) {
+								<input class="connectfee" title="Обратный переход на текущий тариф не возможен." type="submit" value="Сменить" />
+							}
+							else {
+								<input class="connectfee" type="submit" value="Сменить" />
+							}
 						}
 					}
 				</td>
