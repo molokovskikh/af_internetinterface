@@ -5,7 +5,7 @@
 @model dynamic
 
 @{
-	ViewBag.Title = "Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё";
+	ViewBag.Title = "Редактирование скорости";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	ValidationRunner runner = ViewBag.Validation;
 	var packageSpeed = (PackageSpeed)ViewBag.PackageSpeed;
@@ -17,15 +17,15 @@
 				@Html.HiddenFor(i => packageSpeed.Id)
 				<div class="form-group">
 					<div class="col-sm-2">
-						<label class="control-label">РЎРєРѕСЂРѕСЃС‚СЊ (РјРµРіР°Р±РёС‚С‹)</label>
+						<label class="control-label">Скорость (мегабиты)</label>
 					</div>
 					<div class="col-sm-8">
-						@Html.ValidationEditor(runner, packageSpeed, "Speed", new { @class = "form-control " }, HtmlTag.input, HtmlType.none)
+						@Html.ValidationEditor(runner, packageSpeed, "SpeedInMgBit", new { @class = "form-control " }, HtmlTag.input, HtmlType.none)
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-sm-2">
-						<label class="control-label">РћРїРёСЃР°РЅРёРµ</label>
+						<label class="control-label">Описание</label>
 					</div>
 					<div class="col-sm-8">
 						@Html.ValidationEditor(runner, packageSpeed, "Description", new { @class = "form-control " }, HtmlTag.input, HtmlType.none)   
@@ -41,7 +41,7 @@
 				</div>
 				<div class="form-group">
 					<div class="col-sm-2">
-						<button class="btn btn-green" type="submit">Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ</button>
+						<button class="btn btn-green" type="submit">Редактировать</button>
 					</div>
 				</div>
 			}
@@ -50,4 +50,4 @@
 </div>
 <div class="form-group">
 </div>
-<button class="btn btn-blue" onclick=" location.href = '@Url.Action("PackageSpeedList", "Plans")' ">РќР°Р·Р°Рґ</button>
+<button class="btn btn-blue" onclick=" location.href = '@Url.Action("PackageSpeedList", "Plans")' ">Назад</button>

@@ -22,6 +22,13 @@ namespace Inforoom2.Models
 		[Property, ValidatorNotNull]
 		public virtual int? Speed { get; set; }
 
+		[ValidatorNotNull]
+		public virtual int SpeedInMgBit
+		{
+			get { return Speed.HasValue ? Speed.Value / 1000000 : 0; }
+			set { Speed = value * 1000000; }
+		}
+
 		[Property]
 		public virtual bool IsPhysic { get; set; }
 
