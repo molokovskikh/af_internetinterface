@@ -19,7 +19,7 @@
 					</div>
 					<div class="col-sm-8"> 
 						@Html.DropDownListExtendedFor(i => planChanger.TargetPlan, plans, obj => obj.Name + " (" + obj.Price.ToString() + " руб.)", null,
-							new { @class = "form-control", @Id = "TargetPlanDropDown", @Name = "planChanger.TargetPlan.Id" }, planChanger.TargetPlan == null ? 0 : planChanger.TargetPlan.Id, true)  
+							new { @class = "form-control targetPlan", @Id = "TargetPlanDropDown", @Name = "planChanger.TargetPlan.Id" }, planChanger.TargetPlan == null ? 0 : planChanger.TargetPlan.Id, true)  
 						@ViewBag.Validation.GetError(planChanger, "TargetPlan")
 					</div>
 				</div>
@@ -29,7 +29,7 @@
 					</div>
 					<div class="col-sm-8"> 
 						@Html.DropDownListExtendedFor(i => planChanger.CheapPlan, plans, obj => obj.Name + " (" + obj.Price.ToString() + " руб.)", null,
-							new { @class = "form-control", @Id = "TargetPlanDropDown", @Name = "planChanger.CheapPlan.Id" }, planChanger.CheapPlan == null ? 0 : planChanger.CheapPlan.Id, true) 
+							new { @class = "form-control cheapPlan", @Id = "TargetPlanDropDown", @Name = "planChanger.CheapPlan.Id" }, planChanger.CheapPlan == null ? 0 : planChanger.CheapPlan.Id, true) 
 						@ViewBag.Validation.GetError(planChanger, "CheapPlan")
 					</div>
 				</div>
@@ -39,7 +39,7 @@
 					</div>
 					<div class="col-sm-8"> 
 						@Html.DropDownListExtendedFor(i => planChanger.FastPlan, plans, obj => obj.Name + " (" + obj.Price.ToString() + " руб.)", null,
-							new { @class = "form-control", @Id = "TargetPlanDropDown", @Name = "planChanger.FastPlan.Id" }, planChanger.FastPlan == null ? 0 : planChanger.FastPlan.Id, true) 
+							new { @class = "form-control fastPlan", @Id = "TargetPlanDropDown", @Name = "planChanger.FastPlan.Id" }, planChanger.FastPlan == null ? 0 : planChanger.FastPlan.Id, true) 
 						@ViewBag.Validation.GetError(planChanger, "FastPlan")
 					</div>
 				</div>
