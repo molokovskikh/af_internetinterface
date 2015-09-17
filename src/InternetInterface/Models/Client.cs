@@ -61,9 +61,7 @@ namespace InternetInterface.Models
 			PercentBalance = 0.8m;
 			Status = settings.DefaultStatus;
 			Recipient = settings.DefaultRecipient;
-			foreach (var defaultService in settings.DefaultServices) {
-				ClientServices.Add(new ClientService(this, defaultService));
-			}
+			foreach (var defaultService in settings.DefaultServices) ClientServices.Add(new ClientService(this, defaultService));
 		}
 
 		public Client(LawyerPerson person, Partner partner)
@@ -238,7 +236,7 @@ namespace InternetInterface.Models
 		public virtual IList<Order> Orders { get; set; }
 
 		[HasMany(ColumnKey = "Client", OrderBy = "BeginDate", Lazy = true, Cascade = ManyRelationCascadeEnum.SaveUpdate)]
-		public virtual IList<ClientRentalHardware> RentalHardwareList { get; set; } 
+		public virtual IList<ClientRentalHardware> RentalHardwareList { get; set; }
 
 		public virtual Brigad WhoConnected
 		{
@@ -409,9 +407,7 @@ namespace InternetInterface.Models
 			var result = String.Empty;
 			if (!String.IsNullOrEmpty(query)) {
 				var contacts = Contacts.Where(c => c.Text.Contains(query));
-				foreach (var contact in contacts) {
-					doContact(contact);
-				}
+				foreach (var contact in contacts) doContact(contact);
 			}
 			if (String.IsNullOrEmpty(result)) {
 				return Contact;
@@ -477,7 +473,7 @@ namespace InternetInterface.Models
 			if (haveService != null && haveService.IsActivated)
 				return false;
 			if ((haveService != null && !haveService.IsActivated && needShowWarning) ||
-				(haveService == null && needShowWarning))
+			    (haveService == null && needShowWarning))
 				return true;
 			return needShowWarning;
 		}
@@ -1035,11 +1031,15 @@ where CE.Client = {0}", Id))
 			return appeal;
 		}
 
-		public virtual bool RemoveEndpoint(ClientEndpoint endpoint)
+		public virtual bool RemoveEndpoint(ClientEndpoint endpoint, ISession dbSession)
 		{
+			//TODO: важно! SQL запрос необходим для удаления элемента (прежний вариант с отчисткой списка удалял клиентов у endpoint(ов))
 			if (Endpoints.Count > 1 || LawyerPerson != null) {
 				ClientServices.RemoveEach(ClientServices.Where(s => s.Endpoint == endpoint));
-				return Endpoints.Remove(endpoint);
+				dbSession.Save(endpoint);
+				dbSession.Flush();
+				dbSession.CreateSQLQuery("DELETE FROM internet.clientendpoints WHERE Id = " + endpoint.Id).UniqueResult();
+				return true;
 			}
 			return false;
 		}
