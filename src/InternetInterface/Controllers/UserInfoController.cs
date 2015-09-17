@@ -640,8 +640,7 @@ namespace InternetInterface.Controllers
 				client.PhysicalClient.LastTimePlanChanged = SystemTime.Now();
 
 				// добавление записи в историю тарифов пользователя
-				var planHistory = new PlanHistoryEntry
-				{
+				var planHistory = new PlanHistoryEntry {
 					Client = client,
 					DateOfChange = SystemTime.Now(),
 					PlanAfter = client.PhysicalClient.Tariff,
@@ -1165,11 +1164,10 @@ namespace InternetInterface.Controllers
 		public void DeleteEndPoint(uint endPointForDelete)
 		{
 			var endPoint = DbSession.Get<ClientEndpoint>(endPointForDelete);
+			var client = endPoint.Client;
 			if (endPoint != null) {
-				var client = endPoint.Client;
-				if (client.RemoveEndpoint(endPoint))
-					DbSession.Save(endPoint);
-				else
+				//TODO: важно! SQL запрос необходим для удаления элемента (прежний вариант с отчисткой списка удалял клиентов у endpoint(ов))
+				if (!client.RemoveEndpoint(endPoint, DbSession))
 					Error("Последняя точка подключения не может быть удалена!");
 			}
 			RedirectToReferrer();
