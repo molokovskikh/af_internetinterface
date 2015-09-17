@@ -687,7 +687,8 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult CreatePackageSpeed([EntityBinder] PackageSpeed packageSpeed)
 		{
 			var errors = ValidationRunner.Validate(packageSpeed);
-			if (errors.Length == 0) {
+			if (errors.Length == 0)
+			{
 				DbSession.Save(packageSpeed);
 				string linkToConfirm = "http://" + this.Request.Url.Host.ToLower() + Url.Action("ConfirmPackageSpeed", new { id = packageSpeed.Id });
 				var redmineTask = packageSpeed.AssignRedmineTask(DbSession, linkToConfirm);
@@ -710,7 +711,7 @@ namespace InforoomControlPanel.Controllers
 				SuccessMessage("Редактирование данной скорости невозможно *(вероятно она уже подтверждена)");
 				return RedirectToAction("PackageSpeedList");
 			}
-			ViewBag.PackageSpeed = packageSpeed;
+			ViewBag.PackageSpeed = packageSpeed; 
 			return View();
 		}
 
@@ -730,6 +731,7 @@ namespace InforoomControlPanel.Controllers
 		{
 			var packageSpeed = DbSession.Get<PackageSpeed>(id);
 			ViewBag.PackageSpeed = packageSpeed;
+			DbSession.Refresh(packageSpeed);
 			return View();
 		}
 
