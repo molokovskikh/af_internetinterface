@@ -56,5 +56,22 @@ namespace Inforoom2.Test.Functional.Personal
 
 			AssertText("На данный тариф нельзя перейти вновь"); 
 		}
+
+		[Test(Description = "Проверка на уведомление, при смене тарифа с одноразового")]
+		public void TransitionWithOnceOnlyPlan()
+		{
+			PlanChangerFixtureOn(0);
+			LoginForClient(CurrentClient);
+			Open("Personal/Plans");
+
+			var planTo = DbSession.Query<Plan>().First(i => i.Name == "Оптимальный");
+			var targetPlan = browser.FindElementByXPath("//td[contains(.,'" + planTo.Name + "')]");
+			var row = targetPlan.FindElement(By.XPath(".."));
+			var button = row.FindElement(By.CssSelector("input.connectfee"));
+			button.Click();
+			AssertText("Обратный переход на текущий тариф не возможен.");
+			var confirm = browser.FindElementByCssSelector(".window .click.ok");
+			confirm.Click();
+		}
 	}
 }
