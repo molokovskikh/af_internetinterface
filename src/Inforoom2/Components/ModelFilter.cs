@@ -132,6 +132,7 @@ namespace Inforoom2.Components
 
 		///////////////////////
 
+		protected Expression<Func<TModel, object>> ExpressionToGetExportValues { get; set; }
 		protected NameValueCollection ExportFields = new NameValueCollection();
 
 		/// <summary>
@@ -337,7 +338,6 @@ namespace Inforoom2.Components
 				ConvertStringToType(value, prop.PropertyType) : new object();
 			//проверка на Null
 			if (comparsionType == ComparsionType.IsNull || comparsionType == ComparsionType.IsNotNull) {
-				
 				val = comparsionType == ComparsionType.IsNull && value == "1" ||
 				      comparsionType == ComparsionType.IsNotNull && value == "0"
 					? Restrictions.IsNull(fieldName) : Restrictions.IsNotNull(fieldName);
@@ -634,7 +634,7 @@ namespace Inforoom2.Components
 
 				var customValueList = additional as NameValueCollection;
 				if (customValueList != null)
-					values = customValueList.AllKeys.Select(i => string.Format("<option {2} value='{0}'>{1}</option>", i, customValueList[i], selectedValue == i ? "selected='selected'" : "")).ToList();
+					values = customValueList.AllKeys.Select(i => string.Format("<option {2} value='{0}'>{1}</option>", i, customValueList[i], selectedValue == i ? "selected='selected'" : "")).OrderBy(s => s).ToList();
 				else
 					values = TryToGetDropDownValueList(comparsionType, attrName, selectedValue);
 
@@ -686,7 +686,6 @@ namespace Inforoom2.Components
 				return GetBooleanDropDownValues(selectedValue);
 
 			var values = new List<string>();
-			values.Add("<option value=''> </option>");
 			var model = prop.DeclaringType;
 			var criteria = DbSession.CreateCriteria(model.Name);
 			//todo Тут проще будет сделать группировку, но сейчас время поджимает
@@ -702,6 +701,8 @@ namespace Inforoom2.Components
 				var selected = value.ToString() == selectedValue ? "selected='selected'" : "";
 				values.Add(string.Format("<option {0} value='{1}'>{2}</option>", selected, value, value));
 			}
+			values = values.OrderBy(s => s).ToList();
+			values.Insert(0, "<option value=''> </option>");
 			return values;
 		}
 
@@ -730,7 +731,6 @@ namespace Inforoom2.Components
 		protected List<string> GetEnumDropDownValues(Type type, string selectedValue = null)
 		{
 			var values = new List<string>();
-			values.Add("<option value=''> </option>");
 			var names = type.GetEnumNames();
 			foreach (var name in names) {
 				var value = Enum.Parse(type, name);
@@ -738,6 +738,8 @@ namespace Inforoom2.Components
 				var selected = value.ToString() == selectedValue ? "selected='selected'" : "";
 				values.Add(string.Format("<option {0} value='{1}'>{2}</option>", selected, value, description));
 			}
+			values = values.OrderBy(s => s).ToList();
+			values.Insert(0, "<option value=''> </option>");
 			return values;
 		}
 
@@ -951,23 +953,28 @@ namespace Inforoom2.Components
 		/// </summary>
 		/// <param name="criteria">Критерия</param>
 		/// <param name="expression">Лямбда выражение</param>
+		/// <param name="complexLinq">Сложное лямбда выражение (с вычислением значений, условий)</param>
 		/// <returns></returns>
-		public void SetExportFields(Expression<Func<TModel, object>> expression)
+		public void SetExportFields(Expression<Func<TModel, object>> expression, bool complexLinq = false)
 		{
 			var criteria = GetCriteria();
 			//удаление лимитов, получение данных для экспорта в файл Excel-
-			criteria.SetFirstResult(1).SetMaxResults(1000000);
-
+			criteria.SetFirstResult(0).SetMaxResults(1000000);
 			//получение списка моделей
-			var list = criteria.List();
+			var orderList = criteria.List();
 			var realCriteria = DbSession.CreateCriteria(typeof(TModel));
-			Models = realCriteria.Add(Restrictions.In("Id", list)).List<TModel>();
+			AddOrderToCriteria(realCriteria);
+			Models = realCriteria.Add(Restrictions.In("Id", orderList)).List<TModel>();
 
 			//взврат лимитов
 			criteria.SetFirstResult(ItemsPerPage * (Page - 1)).SetMaxResults(ItemsPerPage);
 			if (Models == null || Models.Count == 0) {
 				return;
 			}
+			if (complexLinq) {
+				ExpressionToGetExportValues = expression;
+				return;
+			} 
 			//получаем первую модель 
 			var modelForParams = Models[0];
 			//обработка выражения
@@ -988,10 +995,12 @@ namespace Inforoom2.Components
 					var r = temp[1].Split('.').LastOrDefault(last => last == temp[0]);
 					temp[0] = r == null ? temp[0] :
 						temp[1].IndexOf(".") != -1 ? GetModelPropertyName(modelForParams, temp[1]) : modelForParams.GetDescription(temp[1]);
-					ExportFields.Add(temp[0], temp[1]);
+					ExportFields.Add(temp[0].Replace("_", " ").Trim(), temp[1]);
 				}
 			});
 		}
+
+
 		/// <summary>
 		/// Получение значения объекта. Модель - Id, список - длина, по-умолчанию - ToString()
 		/// </summary>
@@ -1101,7 +1110,7 @@ namespace Inforoom2.Components
 			const int pixelsFont = 11;
 			const int pixelsForColumnWidth = pixelsFont * 34;
 			byte[] fileToreturn = new byte[0];
-			var propertiesToExport = ExportToList();
+			var propertiesToExport = ExpressionToGetExportValues != null ? ExportToListByLinq() : ExportToList();
 			if (propertiesToExport.Count > 0) {
 				//создаем новый xls файл 
 				var workbook = new Workbook();
@@ -1138,6 +1147,37 @@ namespace Inforoom2.Components
 			context.Response.Flush();
 			context.Response.Close();
 		}
+
+
+		/// <summary>
+		/// Получение списка для экспорта в таблицу Excel
+		/// </summary>
+		/// <returns></returns>
+		public List<string[]> ExportToListByLinq()
+		{
+			// инициализация списка
+			var propertiesToExport = new List<string[]>();
+			var exp = ExpressionToGetExportValues.Compile();
+			var valModel = exp(Models[0]);
+			var tpModel = valModel.GetType();
+			var nameValuesToExport = tpModel.GetProperties().Select(s => s.Name).ToList();
+			propertiesToExport.Add(nameValuesToExport.Select(s => s.Replace("_", " ").Trim()).ToArray());
+			// заполнение таблицы значениями
+			for (int i = 0; i < Models.Count; i++) {
+				var valuesToExport = new string[nameValuesToExport.Count];
+				for (int j = 0; j < nameValuesToExport.Count; j++) {
+					var valRe = exp(Models[i]);
+					var tp = valRe.GetType();
+					var pinfo = tp.GetProperty(nameValuesToExport[j]);
+					valuesToExport[j] = pinfo.GetValue(valRe, null).ToString();
+					;
+				}
+				propertiesToExport.Add(valuesToExport);
+			}
+			// возврат сформированного списка
+			return propertiesToExport;
+		}
+
 
 		/// <summary>
 		///  Фильтрация проведена пользователем (в запросе присуствуют условия фильтрации)

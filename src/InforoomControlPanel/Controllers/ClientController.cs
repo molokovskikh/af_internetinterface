@@ -56,7 +56,7 @@ namespace InforoomControlPanel.Controllers
 			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
 				pager.SetOrderBy("Id", OrderingDirection.Desc);
 			var criteria = pager.GetCriteria();
-			if (pager.IsExportRequested()){
+			if (pager.IsExportRequested()) {
 				pager.SetExportFields(s => new { ЛС = s.Id, Клиент = s.Fullname, Тариф = s.PhysicalClient.Plan.Name, Адрес = s.PhysicalClient.Address.FullAddress, Статус = s.Status.Name });
 				pager.ExportToExcelFile(ControllerContext.HttpContext);
 				return null;
@@ -155,8 +155,8 @@ namespace InforoomControlPanel.Controllers
 			// получаем списки тарифов по выбранному выбранному региону
 			var planList = new List<Plan>();
 			if (currentRegion != null) {
-				planList = DbSession.Query<Plan>().Where(s => s.Disabled == false && s.AvailableForNewClients 
-					&& s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
+				planList = DbSession.Query<Plan>().Where(s => s.Disabled == false && s.AvailableForNewClients
+				                                              && s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
 			}
 			// списки улиц и домов
 			var currentStreetList = currentStreet == null || currentRegion == null ? new List<Street>() : DbSession.Query<Street>()
@@ -233,9 +233,10 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult RequestsList()
 		{
 			var pager = new InforoomModelFilter<ClientRequest>(this);
+			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
+				pager.SetOrderBy("RegDate", OrderingDirection.Desc);
 			var criteria = pager.GetCriteria();
-			pager.SetOrderBy("RegDate", OrderingDirection.Desc); 
-			ViewBag.Pager = pager; 
+			ViewBag.Pager = pager;
 			return View();
 		}
 
@@ -326,8 +327,8 @@ namespace InforoomControlPanel.Controllers
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			var planList = DbSession.Query<Plan>().OrderBy(s => s.Name).ToList();
 			if (regionList.Count > 0) {
-				planList = planList.Where(s => s.Disabled == false && s.AvailableForNewClients 
-					&& s.RegionPlans.Any(d => d.Region == currentRegion)).OrderBy(s => s.Name).ToList();
+				planList = planList.Where(s => s.Disabled == false && s.AvailableForNewClients
+				                               && s.RegionPlans.Any(d => d.Region == currentRegion)).OrderBy(s => s.Name).ToList();
 			}
 			//
 			ViewBag.CurrentRegion = currentRegion;
@@ -412,7 +413,7 @@ namespace InforoomControlPanel.Controllers
 					// привязка текущего клиента к поданой им заявке
 					// отправление запроса на регистрацию в архив
 					clientRequest.Client = client;
-					clientRequest.Archived = true; 
+					clientRequest.Archived = true;
 					clientRequest.Label = 23;
 					DbSession.Save(clientRequest);
 				}
@@ -473,8 +474,8 @@ namespace InforoomControlPanel.Controllers
 			// получаем списки регионов и тарифов по выбранному выбранному региону (городу) 
 			var regionList = DbSession.Query<Region>().ToList();
 			if (currentRegion != null) {
-				planList = DbSession.Query<Plan>().Where(s => s.Disabled == false && s.AvailableForNewClients 
-					&& s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
+				planList = DbSession.Query<Plan>().Where(s => s.Disabled == false && s.AvailableForNewClients
+				                                              && s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
 			}
 			//
 			ViewBag.CurrentRegion = currentRegion;
@@ -529,9 +530,9 @@ namespace InforoomControlPanel.Controllers
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 
 			ViewBag.CurrentStreet = null;
-			ViewBag.CurrentHouse = null; 
+			ViewBag.CurrentHouse = null;
 			// получаем всех диллеров (работников) 
-			ViewBag.Agents = DbSession.Query<Agent>().Where(s => s.Active).OrderBy(s => s.Name).ToList();  
+			ViewBag.Agents = DbSession.Query<Agent>().Where(s => s.Active).OrderBy(s => s.Name).ToList();
 			ViewBag.RegionList = regionList;
 			ViewBag.CurrentStreetList = new List<Street>();
 			ViewBag.CurrentHouseList = new List<House>();
@@ -632,8 +633,8 @@ namespace InforoomControlPanel.Controllers
 			var planList = new List<Plan>();
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			if (currentRegion != null) {
-				planList = DbSession.Query<Plan>().Where(s => s.Disabled == false && s.AvailableForNewClients 
-					&& s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
+				planList = DbSession.Query<Plan>().Where(s => s.Disabled == false && s.AvailableForNewClients
+				                                              && s.RegionPlans.Any(d => d.Region == (currentRegion))).OrderBy(s => s.Name).ToList();
 			}
 			// списки улиц и домов 
 			var currentStreetList = currentStreet == null || currentRegion == null ? new List<Street>() : DbSession.Query<Street>()
@@ -650,9 +651,9 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.CurrentHouseList = currentHouseList;
 			ViewBag.PlanList = planList;
 			ViewBag.ScapeUserNameDoubling = scapeUserNameDoubling;
-			 
+
 			// получаем всех диллеров (работников) 
-			ViewBag.Agents = DbSession.Query<Agent>().Where(s => s.Active).OrderBy(s => s.Name).ToList();  
+			ViewBag.Agents = DbSession.Query<Agent>().Where(s => s.Active).OrderBy(s => s.Name).ToList();
 			ViewBag.CertificateTypeDic = CertificateTypeDic;
 			ViewBag.RedirectToCard = redirectToCard;
 			ViewBag.Client = client;

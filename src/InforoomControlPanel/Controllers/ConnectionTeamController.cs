@@ -1,10 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Routing;
+using Common.MySql;
+using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
+using InternetInterface.Helpers;
 using NHibernate.Linq;
+using NHibernate.Mapping;
+using NHibernate.Util;
+using Remotion.Linq.Clauses;
 
 namespace InforoomControlPanel.Controllers
 {
@@ -74,12 +82,28 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult UnpluggedClientList()
 		{
 			var status = DbSession.Query<Status>().First(i => i.ShortName == "BlockedAndNoConnected");
-			var clients =
-				DbSession.Query<Client>()
-					.Where(i => i.Status == status && i.PhysicalClient != null)
-					.OrderByDescending(i => i.Id)
-					.ToList();
-			ViewBag.clients = clients;
+
+			// формирование фильтра
+			var pager = new InforoomModelFilter<Client>(this);
+			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
+				pager.SetOrderBy("Id", OrderingDirection.Desc);
+			//получение критерия для Hibernate запроса из класса ModelFilter
+			var criteria = pager.GetCriteria(i => i.Status == status && i.PhysicalClient != null);
+
+			if (pager.IsExportRequested()) {
+				pager.SetExportFields(s => new {
+					ЛС = s.Id,
+					Дата_создания = s.CreationDate,
+					Дата_закрытия = (s.ServicemenScheduleItems != null && s.ServicemenScheduleItems.Count > 0 && s.ServicemenScheduleItems.Any(d => d.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest && d.ServiceMan != null)
+						? s.ServicemenScheduleItems.FirstOrDefault(d => d.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest).EndTime.ToString() : "Нет"),
+					Назначена = (s.ServicemenScheduleItems != null && s.ServicemenScheduleItems.Count > 0 && s.ServicemenScheduleItems.Any(d => d.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest && d.ServiceMan != null)
+						? s.ServicemenScheduleItems.FirstOrDefault(d => d.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest).ServiceMan.Employee.Name
+						: "Не назначена")
+				}, true);
+				pager.ExportToExcelFile(ControllerContext.HttpContext);
+				return null;
+			}
+			ViewBag.Pager = pager;
 			return View();
 		}
 
@@ -110,7 +134,7 @@ namespace InforoomControlPanel.Controllers
 					 - (scheduleItem.BeginTime.HasValue ? scheduleItem.BeginTime.Value : Convert.ToDateTime("01.01.0001 0:00:00")))
 						.TotalMinutes;
 
-				var clientRegion = scheduleItem.Client.GetRegion()?? regions[0];
+				var clientRegion = scheduleItem.Client.GetRegion() ?? regions[0];
 
 				ViewBag.Region = (scheduleItem.ServiceMan != null
 					? scheduleItem.ServiceMan.Region
@@ -139,8 +163,8 @@ namespace InforoomControlPanel.Controllers
 			    && (scheduleItem.EndTime != null
 			        || scheduleItem.EndTime != Convert.ToDateTime("01.01.0001 0:00:00"))
 			    && scheduleItem.ServiceMan.SheduleItems.Any(serv =>
-					((serv.RequestType==ServicemenScheduleItem.Type.ServiceRequest && serv.ServiceRequest.Status != ServiceRequestStatus.Cancel)
-					|| serv.RequestType==ServicemenScheduleItem.Type.ClientConnectionRequest) &&
+				    ((serv.RequestType == ServicemenScheduleItem.Type.ServiceRequest && serv.ServiceRequest.Status != ServiceRequestStatus.Cancel)
+				     || serv.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest) &&
 				    serv.Id != scheduleItem.Id &&
 				    (serv.BeginTime > scheduleItem.BeginTime && serv.BeginTime < scheduleItem.EndTime ||
 				     serv.EndTime > scheduleItem.BeginTime && serv.EndTime < scheduleItem.EndTime))) {
@@ -175,7 +199,7 @@ namespace InforoomControlPanel.Controllers
 					SuccessMessage("Заявка на подключение успешно добавлена в график");
 					//отправка уведомления, о назначенном подключении
 					var appealMessage = string.Format("Подключение назначено в график.<br/>Инженер: {0}<br/>Дата / время: {1}", scheduleItem.ServiceMan.Employee.Name, scheduleItem.BeginTime);
-					var newAppeal = new Appeal(appealMessage, scheduleItem.Client, AppealType.User) { Employee = GetCurrentEmployee()};
+					var newAppeal = new Appeal(appealMessage, scheduleItem.Client, AppealType.User) { Employee = GetCurrentEmployee() };
 					DbSession.Save(newAppeal);
 				}
 				//обновление сессии (связанно с эл-ми на форме)
@@ -199,6 +223,16 @@ namespace InforoomControlPanel.Controllers
 
 			ViewBag.ServicemenScheduleItem = scheduleItem;
 			return View();
+		}
+
+		public ActionResult CancelConnectionRequest(int id)
+		{
+			var item = DbSession.Query<ServicemenScheduleItem>().FirstOrDefault(s => s.Id == id);
+			if (item != null) {
+				DbSession.Delete(item);
+				// return RedirectToAction("AttachRequest",new {id= });
+			}
+			return RedirectToAction("UnpluggedClientList");
 		}
 
 		/// <summary>
@@ -268,6 +302,48 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage("Сервисного инженера с данным номером не существует");
 			}
 			return RedirectToAction("Servicemen");
+		}
+
+		public ActionResult PrintTimeTable(int printServicemenId = 0, int printRegionId = 0, string printDate = "", string updatePasswordsKey = "")
+		{
+			var additionalData = new Dictionary<ServicemenScheduleItem, Tuple<string, string>>();
+			var dateTime = printDate == string.Empty ? SystemTime.Now().Date : Convert.ToDateTime(printDate);
+			var servicemenScheduleQuery = DbSession.Query<ServicemenScheduleItem>().Where(s => s.BeginTime.Value.Date == dateTime.Date);
+
+			if (printServicemenId != 0) {
+				servicemenScheduleQuery = servicemenScheduleQuery.Where(s => s.ServiceMan.Id == printServicemenId);
+			}
+
+			var servicemenScheduleList = servicemenScheduleQuery.ToList();
+
+			if (printRegionId != 0) {
+				servicemenScheduleList = servicemenScheduleList.Where(s => s.Client.GetRegion().Id == printRegionId).ToList();
+			}
+
+			if (Session["printKey"] != null && Session["printKey"].ToString() == updatePasswordsKey) {
+				//обновление паролей
+				foreach (var item in servicemenScheduleList) {
+					if (item.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest) {
+						var physicalClient = item.Client.PhysicalClient;
+						var password = CryptoPass.GeneratePassword();
+						physicalClient.Password = CryptoPass.GetHashString(password);
+						DbSession.Save(physicalClient);
+						additionalData.Add(item, new Tuple<string, string>(item.Client.Id.ToString(), password));
+					}
+				}
+			}
+			//ключ для обновления паролей
+			string updateKey = Md5.GetHash(new Random().Next(1000000, 9999999).ToString());
+			ViewBag.UpdatePasswordsKey = updateKey;
+			Session.Add("printKey", updateKey);
+
+			ViewBag.PrintServicemenId = printServicemenId;
+			ViewBag.PrintRegionId = printRegionId;
+			ViewBag.PrintDate = printDate;
+			ViewBag.UpdatePasswordsKey = updateKey;
+			ViewBag.ServicemenScheduleList = servicemenScheduleList;
+			ViewBag.AdditionalData = additionalData;
+			return View();
 		}
 	}
 }

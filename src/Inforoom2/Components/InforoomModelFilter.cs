@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized; 
+using System.Collections.Specialized;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
 using Inforoom2.Controllers;
 using Inforoom2.Models;
-using NHibernate; 
+using NHibernate;
+using NHibernate.Linq;
 using Expression = NHibernate.Criterion.Expression;
 
 namespace Inforoom2.Components
@@ -23,6 +24,7 @@ namespace Inforoom2.Components
 		{
 			var criteria = base.GetCriteria(expression);
 			ProcessClientRegionFilter(criteria);
+			ProcessServiceMan(criteria);
 			return criteria;
 		}
 
@@ -31,7 +33,7 @@ namespace Inforoom2.Components
 		/// </summary>
 		/// <param name="criteria">Критерия</param>
 		protected void ProcessClientRegionFilter(ICriteria criteria)
-		{ 
+		{
 			//фильтр срабатывает только если есть его "префикс"
 			var paramname = Params.AllKeys.FirstOrDefault(i => i.Contains("clientregionfilter"));
 			if (paramname == null)
@@ -57,7 +59,6 @@ namespace Inforoom2.Components
 			var value = GetParam(paramname);
 			// если есть значение, формируем и добавляем условия фильтрации в критэрию фильтра
 			if (!string.IsNullOrEmpty(value)) {
-
 				var expr = Expression.And(Expression.IsNotNull(housealias + ".Name"), Expression.Eq(housealias + ".Name", value));
 				var expr2 = Expression.And(Expression.IsNull(housealias + ".Name"), Expression.Eq(streetalias + ".Name", value));
 
@@ -120,6 +121,75 @@ namespace Inforoom2.Components
 
 			var html = string.Format("<select {0}>{1}</select>", GetPropsValues(attrs), string.Join("\n", values));
 
+
+			var ret = new HtmlString(html);
+			return ret;
+		}
+
+
+		/// <summary>
+		/// Фильтрация клиентов по регионам, с учетом их типа
+		/// </summary>
+		/// <param name="criteria">Критерия</param>
+		protected void ProcessServiceMan(ICriteria criteria)
+		{
+			//фильтр срабатывает только если есть его "префикс"
+			var paramname = Params.AllKeys.FirstOrDefault(i => i.Contains("servicemanfilter"));
+			if (paramname == null)
+				return;
+			//для физиков учитываем привязку дома к региону
+			var ServicemenScheduleItems = "ServicemenScheduleItems";
+			//для физиков учитываем привязку дома к региону
+			var serviceMan = "ServicemenScheduleItems.ServiceMan";
+			//для физиков учитываем привязку дома к региону
+			var employee = "ServicemenScheduleItems.ServiceMan.Employee.Id";
+
+			//создаем псевдонимы, формируя связи
+			var servicemenScheduleItemslias = GetJoinedModelCriteria(criteria, ServicemenScheduleItems).Alias;
+			var serviceManalias = GetJoinedModelCriteria(criteria, serviceMan).Alias;
+			var employeeAlias = GetJoinedModelCriteria(criteria, employee).Alias;
+
+			//получаем название региона
+			var value = GetParam(paramname);
+			// если есть значение, формируем и добавляем условия фильтрации в критэрию фильтра
+			if (!string.IsNullOrEmpty(value)) {
+				var exprLawerClient = Expression.Eq(employeeAlias + ".Id", Convert.ToInt32(value));
+				Criteria.Add(exprLawerClient);
+			}
+		}
+
+		public HtmlString ServiceManFilter(Expression<Func<TModel, object>> expression, object htmlAttributes = null)
+		{
+			//Тут нужно получить тип поля, чтобы убедиться что это клиент. Если нет то кидать эксепшн
+			if (expression.Body.Type != typeof(Client)) {
+				throw new Exception("Данная функция доступна только для фильтрации клиентов (модель Client)");
+			}
+			var inputName = string.Format("{0}.servicemanfilter.{1}", Prefix, "ServicemenScheduleItems.ServiceMan");
+			var attrs = ObjectToDictionary(htmlAttributes);
+			if (!attrs.ContainsKey("name"))
+				attrs["name"] = inputName;
+			if (!attrs.ContainsKey("class"))
+				attrs["class"] = "form-control";
+
+			//Подставляем предыдущее отправленное значение, если оно есть
+			//Из него надо выдрать префикс, так как при получении параметров префикс удаляется
+			var paramName = inputName.Replace(Prefix + ".", "");
+			if (Params[paramName] != null)
+				attrs["value"] = Params[paramName];
+
+			PropertiesUsedInFilter.Add(paramName);
+
+			attrs["class"] = " form-control " + attrs["class"];
+			//заполняем выбранное значение, если оно есть
+			string selectedValue = null;
+			if (attrs.ContainsKey("value"))
+				selectedValue = attrs["value"];
+			 
+			var customValueList = DbSession.Query<ServiceMan>().OrderBy(s => s.Employee.Name).ToList();
+
+			List<string> values = customValueList.Select(i => string.Format("<option {2} value='{0}'>{1}</option>", i.Employee.Id, i.Employee.Name, selectedValue == i.Employee.Id.ToString() ? "selected='selected'" : "")).ToList();
+			values.Insert(0, "<option value=''></option>");
+			var html = string.Format("<select {0}>{1}</select>", GetPropsValues(attrs), string.Join("\n", values));
 
 			var ret = new HtmlString(html);
 			return ret;

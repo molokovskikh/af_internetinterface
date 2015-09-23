@@ -11,9 +11,7 @@
 	regions.Add(new Region() { Id = 0, Name = "Все" });
 	regions.AddRange(ViewBag.Regions);
 	Region region = ViewBag.Region ?? regions.First();
-}
-@section JavaScript{
-	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ServiceRequest.js")"></script>}
+} 
 <div class="servicemen panel panel-primary col-md-6">
 	<div class="wrapper">
 		<form class="form-horizontal form-groups-bordered">
@@ -41,7 +39,7 @@
 					<th class="time left"></th>
 					@foreach (var employee in team) {
 						var cl = "employee" + employee.Id;
-						<th class="@cl">@employee.Employee.Name</th>
+						<th class="@cl"><a class="servicemenLink" href="@Url.Action("PrintTimeTable", "ConnectionTeam", new { @printServicemenId = @employee.Id })">@employee.Employee.Name</a></th>
 					}
 				</tr>
 			</thead>

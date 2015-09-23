@@ -54,7 +54,7 @@ namespace Inforoom2.Models
 
 		public virtual ServicemenScheduleItem ConnectionRequest
 		{
-			get { return ServicemenScheduleItems != null ? ServicemenScheduleItems.FirstOrDefault() : null; }
+			get { return ServicemenScheduleItems != null ? ServicemenScheduleItems.FirstOrDefault(s=>s.RequestType==ServicemenScheduleItem.Type.ClientConnectionRequest) : null; }
 			set { }
 		}
 
@@ -461,7 +461,7 @@ namespace Inforoom2.Models
 
 		public virtual string Fullname
 		{
-			get { return PhysicalClient != null ? PhysicalClient.FullName : _Name; }
+			get { return PhysicalClient != null ? PhysicalClient.FullName ?? "" : _Name; }
 		}
 
 		public virtual string GetAddress()

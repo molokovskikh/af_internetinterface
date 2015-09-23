@@ -29,7 +29,7 @@
 			@Html.HiddenFor(i => scheduleItem.RequestType, new { @class = "form-control", @Name = "scheduleItem.RequestType" })
 			if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest) {
 				<div class="form-group">
-					<div class="col-sm-4">
+					<div class="col-sm-7">
 						<div class="form-group">
 							<a class="btn btn-green" style="width: 138px;" href="@Url.Action("ServiceRequestEdit", "ServiceRequest", new { id = scheduleItem.ServiceRequest.Id })">Прейти к заявке</a>
 						</div>
@@ -38,7 +38,7 @@
 			}
 			<div class="form-group">
 				<label class="col-sm-2 control-label">От</label>
-				<div class="col-sm-4">
+				<div class="col-sm-7">
 					<a @(scheduleItem.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
 					                                                                                       + (String.Format("UserInfo/{0}?filter.ClientCode=", scheduleItem.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
 					                                                                                       + scheduleItem.Client.Id)">@scheduleItem.Client.Fullname</a>
@@ -46,20 +46,20 @@
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Исполнитель</label>
-				<div class="col-sm-4">
+				<div class="col-sm-7">
 					@Html.DropDownListExtendedFor(i => scheduleItem.ServiceMan, servicemen, obj => obj.Employee.Name, i => i.Id, new { @class = "form-control", disabled = "disabled" }, scheduleItem.ServiceMan != null ? scheduleItem.ServiceMan.Id : 0)
 					@ViewBag.Validation.GetError(scheduleItem, "ServiceMan", "Поле не может быть пустым")
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Время выполнения</label>
-				<div class="col-sm-4">
+				<div class="col-sm-7">
 					@Html.ValidationEditor(runner, scheduleItem, "BeginTime", new { @Readonly = "", @Name = "scheduleItem.BeginTime" }, HtmlTag.datetime, HtmlType.none)
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Длительность выполнения (мин)</label>
-				<div class="col-sm-4">
+				<div class="col-sm-7">
 					<div class="input-spinner">
 
 						<button class="btn btn-default" type="button">-</button>
@@ -73,12 +73,16 @@
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Комментарии</label>
-				<div class="col-sm-4">
+				<div class="col-sm-7">
 					@Html.TextAreaFor(i => scheduleItem.Comment, new { @class = "form-control", @rows = 10 })
 				</div>
 			</div>
 			<div class="form-group">
 				<button class="btn btn-green" id="submitScheduleItem" type="submit">Назначить в график</button>
+				@if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest && scheduleItem.ServiceMan != null)
+				{
+					<a class="btn btn-red" href="@Url.Action("CancelConnectionRequest", new { id = scheduleItem .Id})">Отменить</a>
+				}
 			</div>
 		}
 	</div>
