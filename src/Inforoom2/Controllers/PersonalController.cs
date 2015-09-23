@@ -157,6 +157,7 @@ namespace Inforoom2.Controllers
 		public ActionResult Playlist()
 		{
 			var text = CurrentClient.Plan.GetPlaylist();
+			text = text.Insert(0, "#EXTM3U\n");
 			ViewBag.Content = text;
 			return View("~/Views/Shared/Empty.cshtml");
 		}
@@ -168,6 +169,7 @@ namespace Inforoom2.Controllers
 		public FileResult PlaylistLink()
 		{
 			var text = CurrentClient.Plan.GetPlaylist();
+			text = text.Insert(0, "#EXTM3U\n");
 			var fileContent = Encoding.UTF8.GetBytes(text);
 			var contentType = "audio/mpegurl";
 			var file = new FileContentResult(fileContent, contentType);
@@ -350,8 +352,7 @@ namespace Inforoom2.Controllers
 			ViewBag.Client = client;
 			var isOnceOnlyUsed = DbSession.Query<PlanHistoryEntry>().Any(s => s.Client == client && (s.PlanAfter == plan || s.PlanBefore == plan) && plan.IsOnceOnly);
 
-			if (isOnceOnlyUsed)
-			{
+			if (isOnceOnlyUsed) {
 				ErrorMessage("На данный тариф нельзя перейти вновь.");
 				return View("Plans");
 			}
@@ -374,8 +375,7 @@ namespace Inforoom2.Controllers
 			var warning = (client.GetWorkDays() <= 3) ? " Обратите внимание, что у вас низкий баланс!" : "";
 			SuccessMessage("Тариф успешно изменен." + warning);
 			// добавление записи в историю тарифов пользователя
-			var planHistory = new PlanHistoryEntry
-			{
+			var planHistory = new PlanHistoryEntry {
 				Client = CurrentClient,
 				DateOfChange = SystemTime.Now(),
 				PlanAfter = plan,
