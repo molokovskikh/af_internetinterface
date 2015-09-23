@@ -30,12 +30,12 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual bool IsDisabled { get; set; }
 
-		[Bag(0, Table = "user_role", Lazy = CollectionLazy.False)]
+		[Bag(0, Table = "roletouser", Lazy = CollectionLazy.False)]
 		[Key(1, Column = "user", NotNull = false)]
 		[ManyToMany(2, Column = "role", ClassType = typeof(Role))]
 		public virtual IList<Role> Roles { get; set; }
 
-		[Bag(0, Table = "user_role", Lazy = CollectionLazy.False)]
+		[Bag(0, Table = "permissiontouser", Lazy = CollectionLazy.False)]
 		[Key(1, Column = "user", NotNull = false)]
 		[ManyToMany(2, Column = "permission", ClassType = typeof(Permission))]
 		public virtual IList<Permission> Permissions { get; set; }

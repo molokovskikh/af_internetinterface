@@ -22,10 +22,15 @@ namespace Inforoom2.Models
 		[ManyToMany(2, Column = "permission", ClassType = typeof(Permission))]
 		public virtual IList<Permission> Permissions { get; set; }
 
-		[Bag(0, Table = "user_role")]
+		[Bag(0, Table = "roletouser")]
 		[Key(1, Column = "role", NotNull = false)]
 		[ManyToMany(2, Column = "user", ClassType = typeof(Employee))]
 		public virtual IList<Employee> Users { get; set; }
+
+		//[Bag(0, Table = "user_role")]
+		//[Key(1, Column = "role", NotNull = false)]
+		//[ManyToMany(2, Column = "user", ClassType = typeof(Employee))]
+		//public virtual IList<Employee> Users { get; set; }
 		
 	}
 }

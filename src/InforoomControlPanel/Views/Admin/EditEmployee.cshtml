@@ -5,24 +5,24 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	Employee employee = ViewBag.Employee;
 	List<Role> roles = ViewBag.Roles;
+	List<Permission> permissions = ViewBag.Permissions;
 }
 <div class="panel panel-default">
 	<div class="panel-body">
-		@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
-		{
-			@Html.HiddenFor(i=>employee.Id)
+		@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
+			@Html.HiddenFor(i => employee.Id)
 			<div class="col-sm-6">
 				<div class="form-group">
 					<label class="col-sm-4 control-label">Имя</label>
 					<div class="col-sm-8">
-						@Html.TextBoxFor(I=>employee.Name,new { @class = "form-control" })
+						@Html.TextBoxFor(I => employee.Name, new { @class = "form-control" })
 						@ViewBag.Validation.GetError(employee, "Name")
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-4 control-label">Логин</label>
 					<div class="col-sm-8">
-						@Html.TextBoxFor(I=>employee.Login,new { @class = "form-control" })
+						@Html.TextBoxFor(I => employee.Login, new { @class = "form-control" })
 						@ViewBag.Validation.GetError(employee, "Name")
 					</div>
 				</div>
@@ -33,37 +33,37 @@
 				</div>
 			</div>
 		}
-		@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
-		{
-			@Html.HiddenFor(i=>employee.Id)
+	</div>
+	<div class="panel-body">
+		@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
+			@Html.HiddenFor(i => employee.Id)
 			<div class="col-sm-6">
 				<div class="form-group">
-					Добавить право:
+					Добавить роль:
 				</div>
 				<div class="form-group">
 					<div class="col-sm-8">
-						@Html.DropDownListExtendedFor(i=> employee.Roles,roles,i => i.Name,null, new{@class="form-control"})
+						@Html.DropDownListExtendedFor(i => employee.Roles, roles, i => i.Name, null, new { @class = "form-control" })
 					</div>
 					<div class="col-sm-4">
 						<button class="btn btn-green" type="submit">Добавить</button>
 					</div>
 				</div>
-			</div>				
-		}	
+			</div>
+		}
 		<div class="col-sm-6">
 			<div class="form-group">
-				Права:
+				Роли:
 			</div>
-			@foreach (var item in employee.Roles)
-   {
+			@foreach (var item in employee.Roles.Where(s => s != null)) {
 				<div class="form-group">
 					<div class="col-sm-10">
 						@Html.Raw(item.Name)
 					</div>
 					<div class="col-sm-2">
 						@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
-							@Html.HiddenFor(i=>employee.Id)
-							@Html.HiddenForModelList(employee, i=> employee.Roles,item.Id)
+							@Html.HiddenFor(i => employee.Id)
+							@Html.HiddenForModelList(employee, i => employee.Roles, item.Id)
 							<button type="submit" class="btn-link entypo-cancel-circled" style="color: red"></button>
 						}
 					</div>
@@ -72,4 +72,41 @@
 		</div>
 	</div>
 
+	<div class="panel-body">
+		@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
+			@Html.HiddenFor(i => employee.Id)
+			<div class="col-sm-6">
+				<div class="form-group">
+					Добавить права:
+				</div>
+				<div class="form-group">
+					<div class="col-sm-8">
+						@Html.DropDownListExtendedFor(i => employee.Permissions, permissions, i => i.Description, null, new { @class = "form-control" })
+					</div>
+					<div class="col-sm-4">
+						<button class="btn btn-green" type="submit">Добавить</button>
+					</div>
+				</div>
+			</div>
+		}
+		<div class="col-sm-6">
+			<div class="form-group">
+				Права:
+			</div>
+			@foreach (var item in employee.Permissions.Where(s => s != null)) {
+				<div class="form-group">
+					<div class="col-sm-10">
+						@Html.Raw(item.Description)
+					</div>
+					<div class="col-sm-2">
+						@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
+							@Html.HiddenFor(i => employee.Id)
+							@Html.HiddenForModelList(employee, i => employee.Permissions, item.Id)
+							<button type="submit" class="btn-link entypo-cancel-circled" style="color: red"></button>
+						}
+					</div>
+				</div>
+			}
+		</div>
+	</div>
 </div>

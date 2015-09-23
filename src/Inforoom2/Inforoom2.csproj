@@ -325,7 +325,6 @@
     <Compile Include="Models\Log.cs" />
     <Compile Include="Models\AdditionalStatus.cs" />
     <Compile Include="Models\Address.cs" />
-    <Compile Include="Models\Administrator.cs" />
     <Compile Include="Models\Hardwarepart.cs" />
     <Compile Include="Models\RedmineTask.cs" />
     <Compile Include="Models\BillingHistory.cs" />

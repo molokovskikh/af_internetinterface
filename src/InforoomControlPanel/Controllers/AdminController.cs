@@ -20,6 +20,8 @@ namespace InforoomControlPanel.Controllers
 	/// </summary>
 	public class AdminController : ControlPanelController
 	{
+		private List<Role> _roles;
+
 		public AdminController()
 		{
 			ViewBag.BreadCrumb = "Панель управления";
@@ -42,7 +44,7 @@ namespace InforoomControlPanel.Controllers
 			return View();
 		}
 
-		
+
 		/// <summary>
 		/// Редактирование администратора
 		/// </summary>
@@ -51,10 +53,14 @@ namespace InforoomControlPanel.Controllers
 		{
 			var employee = DbSession.Get<Employee>(id);
 			var roles = DbSession.Query<Role>().ToList();
-			roles = roles.Where(i => !employee.Roles.Any(j => j == i)).ToList();
+			var permissions = DbSession.Query<Permission>().ToList();
+			_roles = roles = roles.Where(i => i != null && !employee.Roles.Any(j => j == i)).ToList();
+			permissions = permissions.Where(i => !employee.Permissions.Any(j => j == i) &&
+			                                     !employee.Roles.Any(s => s != null && s.Permissions.Any(k => k == i))).ToList();
 
 			ViewBag.Employee = employee;
 			ViewBag.Roles = roles;
+			ViewBag.Permissions = permissions;
 			return View("EditEmployee");
 		}
 
@@ -66,15 +72,14 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult EditEmployee([EntityBinder] Employee employee)
 		{
 			var errors = ValidationRunner.ValidateDeep(employee);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(employee);
 				SuccessMessage("Объект успешно изменен");
 				RedirectToAction("EditRole");
 			}
 			EditEmployee(employee.Id);
 			return View("EditEmployee");
-		}	
+		}
 
 		/// <summary>
 		/// Список прав, которые можно назначать администраторам
@@ -86,6 +91,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.Permissions = rights;
 			return View();
 		}
+
 		/// <summary>
 		/// Страница, отображаемая, в случае, если у пользователя нет прав
 		/// </summary>
@@ -101,19 +107,19 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult RenewActionPermissions()
 		{
-			var controllers = GetType().Assembly.GetTypes().Where(i=> i.IsSubclassOf(typeof(ControlPanelController))).ToList();
+			var controllers = GetType().Assembly.GetTypes().Where(i => i.IsSubclassOf(typeof(ControlPanelController))).ToList();
 			foreach (var controller in controllers) {
 				var methods = controller.GetMethods();
 				var actions = methods.Where(i => i.ReturnType == typeof(ActionResult)).ToList();
 				foreach (var action in actions) {
 					var name = controller.Name + "_" + action.Name;
 					var right = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
-					if(right != null)
+					if (right != null)
 						continue;
 					var newright = new Permission();
 					newright.Name = name;
-					var url = Url.Action(action.Name,controller.Name.Replace("Controller",""));
-					newright.Description = "Доступ к странице <a href='"+url+"'>"+name+"</a>";
+					var url = Url.Action(action.Name, controller.Name.Replace("Controller", ""));
+					newright.Description = "Доступ к странице <a href='" + url + "'>" + name + "</a>";
 					DbSession.Save(newright);
 				}
 			}
@@ -170,22 +176,21 @@ namespace InforoomControlPanel.Controllers
 		{
 			var pager = new InforoomModelFilter<Log>(this);
 			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
-				pager.SetOrderBy("Id",OrderingDirection.Desc);
+				pager.SetOrderBy("Id", OrderingDirection.Desc);
 			var criteria = pager.GetCriteria();
-			ViewBag.Pager = pager; 
+			ViewBag.Pager = pager;
 			return View();
 		}
 
 		/// <summary>
 		/// Логи
 		/// </summary> 
-		public ActionResult LogRegResultInfo(int Id = 0,string path="")
+		public ActionResult LogRegResultInfo(int Id = 0, string path = "")
 		{
-			var log = DbSession.Query<Log>().FirstOrDefault(s => s.Id == Id); 
+			var log = DbSession.Query<Log>().FirstOrDefault(s => s.Id == Id);
 			ViewBag.Log = log;
 			ViewBag.BackUrl = (path == string.Empty ? "/Admin/LogRegResultList" : path);
 			return View();
 		}
-		
 	}
 }
