@@ -121,7 +121,7 @@ namespace Inforoom2.Controllers
 			    && CurrentClient.StatusChangedOn.HasValue) {
 				//Отображение клиенту Варнинга, если через 3 дня начинаютс списания за аренду (и до тех пор, пока он не расчитается и не изменится статус)
 				var timeSinceStatusChanged = (SystemTime.Now() - CurrentClient.StatusChangedOn);
-				var rentFreeDaysOverCome = CurrentClient.RentalHardwareList.FirstOrDefault(s =>
+				var rentFreeDaysOverCome = CurrentClient.RentalHardwareList.FirstOrDefault(s => s.IsActive &&
 					timeSinceStatusChanged.Value.Add(TimeSpan.FromDays(3)) > TimeSpan.FromDays(s.Hardware.FreeDays));
 
 				if ((CurrentClient.Status.Type == StatusType.Dissolved || CurrentClient.Status.Type == StatusType.NoWorked) && rentFreeDaysOverCome != null) {
