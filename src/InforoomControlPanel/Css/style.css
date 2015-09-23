@@ -1,6 +1,7 @@
 ﻿ @media print {
-	.main-content > *, .ConnectionTable > *{ display: none;}
-	.main-content .servicemen.panel, .ConnectionTable{ display: block;}
+	.main-content > *, .doNotPrint > *, .doNotPrint{ display: none !important;}
+	.main-content .servicemen.panel, .PrintTimeTable{ display: block !important;}
+	.pageBreak {page-break-after: always;} 
 }
  .servicemen table { table-layout:fixed; overflow:hidden;}
  .servicemen td { height: 40px;}
@@ -31,14 +32,33 @@
 	.page-body .servicemen tbody .this{border: 2px dotted #004225;}
 	.servicemen td.time {font-size:11px; text-align: center;}
 	.servicemen .time.left { display: none;}
-	
+div.serviceManBlock {padding-bottom: 14px;border-top: 2px dashed #CECECE;}
+div.serviceManBlock:last-of-type {padding-bottom: 0px;}
+div.serviceManBlock:first-of-type{border-top: 0px;}
+div.serviceManBlock .name { margin-left: 5px; }
+div.serviceManBlock .time { font-weight: bold; }
+div.serviceManBlock .loginAndPass {color: #A20000;}
+div.serviceManBlock .item {
+	border-top: 1px solid #C7C7C7;
+	padding-top: 10px;
+	margin-left: 4px;
+	margin-right: 4px;
+}
+	div.serviceManBlock .item p{
+	font-size: 14px;
+	}
+div.doNotPrint .button-inlineBlock{display: inline-block;}
+div.serviceManBlock .item .type {
+	color: #6F6F6F;
+	font-weight: normal;
+	margin-left: 6px;
+	font-style: italic;
+}
 	.page-body .servicemen  tbody  td.request {position: relative; vertical-align: top;}
 	.servicemen .description { font-weight: bold;margin-bottom: 20px;}
-	.maxWidth_150 {
-		max-width: 150px !important;
-	}.maxWidth_200 {
-		max-width: 200px !important;
-	}
+
+	.maxWidth_150 {max-width: 150px !important;}
+	.maxWidth_200 {max-width: 200px !important;}
 	 .maxWidth_1wordWrap{ max-width: 100%; word-wrap: break-word;}
 	.error .msg { color: red;}
 	.IeWaterline{ border-bottom: 3px solid #00A651;width: 1024px;}

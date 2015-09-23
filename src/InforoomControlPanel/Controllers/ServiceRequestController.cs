@@ -84,7 +84,7 @@ namespace InforoomControlPanel.Controllers
 					criteria.Add(Restrictions.Gt(pager.GetParam("DataFilter"), DateTime.Parse(pager.GetParam("RequestFilterFrom"))));
 				if (!string.IsNullOrEmpty(pager.GetParam("RequestFilterTill")))
 					//добавление условиий фильтрации
-					criteria.Add(Restrictions.Lt(pager.GetParam("DataFilter"), DateTime.Parse(pager.GetParam("RequestFilterTill"))));
+					criteria.Add(Restrictions.Lt(pager.GetParam("DataFilter"), DateTime.Parse(pager.GetParam("RequestFilterTill")).AddDays(1)));
 			}
 			else {
 				// дату постановления заявки в график фильтруем с добавлением субкритерия
@@ -95,7 +95,13 @@ namespace InforoomControlPanel.Controllers
 					newCriteria.Add(Restrictions.Gt("serviceManFor.BeginTime", DateTime.Parse(pager.GetParam("RequestFilterFrom"))));
 				;
 				if (!string.IsNullOrEmpty(pager.GetParam("RequestFilterTill")))
-					newCriteria.Add(Restrictions.Lt("serviceManFor.BeginTime", DateTime.Parse(pager.GetParam("RequestFilterTill"))));
+					newCriteria.Add(Restrictions.Lt("serviceManFor.BeginTime", DateTime.Parse(pager.GetParam("RequestFilterTill")).AddDays(1)));
+			}
+
+			if (pager.IsExportRequested()) {
+				pager.SetExportFields(s => new { ЛС = s.Client.Id, Номер_сз = s.Id, Дата_создания = s.CreationDate, Дата_закрытия = s.ClosedDate, Сумма = s.Sum, Назначена = s.ServicemenScheduleItem.ServiceMan.Employee.Name });
+				pager.ExportToExcelFile(ControllerContext.HttpContext);
+				return null;
 			}
 			// Сбор во ViewBag необходимых объектов
 			ViewBag.Regions = DbSession.Query<Region>().ToList();

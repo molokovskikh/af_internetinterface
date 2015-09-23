@@ -1,15 +1,15 @@
 ﻿//обновление графика сервисных работ при смене даты
-var servicemenFunc = function () {
+var servicemenFunc = function() {
 	console.log("refreshing graph");
-	$(".servicemen td.time").on("mouseover", function () {
+	$(".servicemen td.time").on("mouseover", function() {
 		var cl = $(this).attr("class").split(" ")[0];
 		$(".servicemen thead th." + cl).addClass("hover");
 	});
 
-	$(".servicemen td").on("mouseout", function () {
+	$(".servicemen td").on("mouseout", function() {
 		$(".servicemen th, .servicemen td").removeClass("hover");
 	});
-	$(".servicemen td.time").on("click", function () {
+	$(".servicemen td.time").on("click", function() {
 		var val = $(this).html();
 		var picker = $(".timepicker");
 		picker.val(val);
@@ -31,10 +31,10 @@ var servicemenFunc = function () {
 }
 
 //обновление графика сервисных работ при смене даты
-var refreshConnectionTable = function () {
+var refreshConnectionTable = function() {
 
 	var date = $(".servicemen .datepicker").val();
-	$(".datepicker").each(function () {
+	$(".datepicker").each(function() {
 		$(this).val(date);
 	});
 	var regionRequest = $("#requestRegion").val();
@@ -44,7 +44,7 @@ var refreshConnectionTable = function () {
 		type: "POST",
 		url: cli.getParam("baseurl") + "ConnectionTeam/ConnectionTable",
 		data: { date: date, regionId: region }
-	}).done(function (msg) {
+	}).done(function(msg) {
 		var div = msg.toHTML();
 		$(div).find("form").remove();
 		$(".servicemen").find("table").remove();
@@ -55,15 +55,31 @@ var refreshConnectionTable = function () {
 }
 servicemenFunc();
 
-$(".ConnectionTeam  .btn-green").on("click", function () {
+$(".ConnectionTeam .btn-green").on("click", function() {
 
-	$(".ConnectionTeam input, .ConnectionTeam select").each(function () {
+	$(".ConnectionTeam input, .ConnectionTeam select").each(function() {
 		$(this).removeAttr("disabled");
 	});
 	//$(".ConnectionTeam form").submit();
 	return true;
-})
+});
 
-$(".print").on("click", function () {
-	window.print();
-})
+$("#PrintTimeTableValue, a.servicemenLink").click(function(event) {
+
+	event.preventDefault();
+	var href = $(this).attr('href');
+	var currentDate = $(".servicemen input.datepicker").val();
+	var currentRegion = $(".servicemen select.regionId").val();
+	var params = "";
+	if (href.indexOf("printServicemenId") == -1) {
+		params += "?printDate=" + currentDate;
+	} else {
+		params += "&printDate=" + currentDate;
+	}
+	if (currentRegion != 0) {
+		params += "&printRegionId=" + currentRegion;
+	}
+	href += params;
+	console.log(href);
+	location.href = href;
+});

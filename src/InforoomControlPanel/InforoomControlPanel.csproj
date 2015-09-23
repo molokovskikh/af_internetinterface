@@ -1502,6 +1502,7 @@
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\AddressController.CreateStreet.js" />
     <Content Include="Scripts\AddressController.CreateHouse.js" />
+    <Content Include="Scripts\ConnectionTeamPrintTimeTable.js" />
     <Content Include="Scripts\ConnectionTeamController.ConnectionTable.js" />
     <Content Include="Scripts\AddressController.CreateSwitchAddress.js" />
     <Content Include="Scripts\EditNewsBlock.js" />
@@ -1945,6 +1946,7 @@
     <Content Include="Views\ServiceRequest\ServiceRequestList.cshtml" />
     <Content Include="Views\ServiceRequest\ServiceRequestCreate.cshtml" />
     <Content Include="Views\ConnectionTeam\AttachRequest.cshtml" />
+    <Content Include="Views\ConnectionTeam\PrintTimeTable.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <None Include="Web.release.config">

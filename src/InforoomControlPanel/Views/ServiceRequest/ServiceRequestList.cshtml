@@ -58,7 +58,7 @@
 			<div class="col-sm-2">
 				<label class="c-pointer" style="margin-bottom: 12px;" for="filterFree">Бесплатные</label>
 			</div>
-			<div class="col-sm-2">@modelFilter.FormFilter(i => i.Free, HtmlType.checkbox,ComparsionType.Equal, new { @id = "filterFree" })</div>
+			<div class="col-sm-2">@modelFilter.FormFilter(i => i.Free, HtmlType.Dropdown, ComparsionType.Equal, new { @id = "filterFree" })</div>
 		</div>
 	</div>
 	<div class="panel-body">
@@ -85,14 +85,15 @@
 			<div class="col-sm-2">@modelFilter.FormFilterManual("TextSearch", HtmlType.text)</div>
 		</div>
 	</div>
-	<div class="panel-body">
-		<div class="row">
-			<div class="col-sm-2">
-				@modelFilter.SubmitButton()
-			</div>
-			<div class="col-sm-2">
-				<a style="position: relative; top: 8px;" href="@Url.Action("ServiceRequestList")">Полный список</a>
-			</div>
+	<div class="row">
+		<div class="col-sm-1">
+			@modelFilter.SubmitButton(new { @class = "btn btn-success btn-sm" })
+		</div>
+		<div class="col-sm-1">
+			@modelFilter.CleanButton(new { @class = "btn btn-success btn-sm" })
+		</div>
+		<div class="col-sm-1">
+			@modelFilter.ExportButton(new { @class = "btn btn-sm btn-blue" })
 		</div>
 	</div>
 </form>

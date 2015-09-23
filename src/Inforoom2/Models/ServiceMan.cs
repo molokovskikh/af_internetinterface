@@ -30,7 +30,7 @@ namespace Inforoom2.Models
 		[Description("Работник")]
 		[ManyToOne(Column = "Employee"), NotNull]
 		public virtual Employee Employee { get; set; }
-
+		
 		[Description("Регион")]
 		[ManyToOne(Column = "Region"), NotNull]
 		public virtual Region Region { get; set; }

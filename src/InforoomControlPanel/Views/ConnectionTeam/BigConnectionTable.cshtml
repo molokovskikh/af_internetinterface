@@ -1,15 +1,15 @@
 ﻿@using Inforoom2.Components
 @using Inforoom2.Helpers
 @using Inforoom2.Models
-@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/ConnectionTeamController.ConnectionTable.js")"></script>}
+@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/ConnectionTeamController.ConnectionTable.js?v=1")"></script>}
 @{
 	ViewBag.Title = "График подключений";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="panel panel-primary col-md-12">
-<button class="print btn btn-blue btn-icon icon-left" type="button">
-	Печать
-	<i class="entypo-print"></i>
-</button>
-	</div>
-@{ Html.RenderPartial("ConnectionTable");}
+	<a class="btn btn-blue btn-icon icon-left" id="PrintTimeTableValue" href="@Url.Action("PrintTimeTable")">
+		Сформировать документ
+		<i class="entypo-print"></i>
+	</a>
+</div>
+@{ Html.RenderPartial("ConnectionTable"); }
