@@ -59,8 +59,9 @@ namespace Inforoom2.Models
 		/// <returns></returns>
 		public virtual bool HasAccess(string access)
 		{
-			var hasPermission = Roles.Any(i => i.Permissions.Any(j => j.Name.ToLower() == access.ToLower()));
-			return hasPermission;
+			var hasPermissionFromRoles = Roles.Any(i => i.Permissions.Any(j => j.Name.ToLower() == access.ToLower()));
+			var hasPermissionAsIs = Permissions.Any(j => j.Name.ToLower() == access.ToLower());
+			return hasPermissionFromRoles || hasPermissionAsIs;
 		}
 	}
 }
