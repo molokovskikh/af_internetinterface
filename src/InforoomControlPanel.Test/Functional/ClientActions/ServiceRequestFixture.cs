@@ -74,7 +74,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			browser.FindElementByCssSelector("button.btn-green").Click();
 
 			//Проверка на формирование сообщений
-			var appealsToCheck = DbSession.Query<Appeal>().Where(s => s.Client == ClientWithRequest).ToList().Where(d => d.Message.IndexOf("<strong>необходимо восстановление работы.</strong>") != -1).ToList();
+			var appealsToCheck = DbSession.Query<ServiceRequestComment>().Where(s => s.ServiceRequest.Client == ClientWithRequest).ToList().Where(d => d.Comment.IndexOf("<strong>необходимо восстановление работы.</strong>") != -1).ToList();
 			Assert.That(appealsToCheck.Count, Is.Not.EqualTo(0), "У клиента должны появиться аппилы после создания заявки.");
 
 			//проверка соответствия: сообщения об успешном добавлении
@@ -134,7 +134,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			browser.FindElementByCssSelector("#ChangeServiceRequest").Click();
 
 			//Проверка на формирование сообщений
-			var appealsToCheck = DbSession.Query<Appeal>().Where(s => s.Client == ClientWithRequest).ToList().Where(d => d.Message.IndexOf("<strong>закрыта</strong>") != -1).ToList();
+			var appealsToCheck = DbSession.Query<ServiceRequestComment>().Where(s => s.ServiceRequest.Client == ClientWithRequest).ToList().Where(d => d.Comment.IndexOf("<strong>закрыта</strong>") != -1).ToList();
 			Assert.That(appealsToCheck.Count, Is.Not.EqualTo(0), "У клиента должны появиться аппилы после закрытия заявки.");
 
 			//проверка соответствия: успешное изменения заявки 
@@ -183,9 +183,9 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			Assert.That(ClientWithRequest.Status.Type, Is.EqualTo(StatusType.Worked), "Сервисная заявка была закрыта с ошибкой!");
 			//проверка соответствия: наличия сформированного списания за обслуживания по заявке
 			var userWriteOff = DbSession.Query<UserWriteOff>().FirstOrDefault(s => s.Sum == writeOffSum);
-			var userWriteOffAppeal = DbSession.Query<Appeal>().Where(s => s.Client == ClientWithRequest).ToList().FirstOrDefault(d => d.Message.IndexOf("<strong>закрыта</strong>") != -1);
+			var userWriteOffAppeal = DbSession.Query<ServiceRequestComment>().Where(s => s.ServiceRequest.Client == ClientWithRequest).ToList().FirstOrDefault(d => d.Comment.IndexOf("<strong>закрыта</strong>") != -1);
 			Assert.That(userWriteOff, Is.Null, "При закрытии бесплатной заявки была сформирована сумма списания.");
-			Assert.That(userWriteOffAppeal.Date, Is.Not.Null, "Дата списания должна быть указана.");
+			Assert.That(userWriteOffAppeal.CreationDate, Is.Not.Null, "Дата списания должна быть указана.");
 		}
 
 
@@ -203,7 +203,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			browser.FindElementByCssSelector("#ChangeServiceRequest").Click();
 
 			//Проверка на формирование сообщений
-			var appealsToCheck = DbSession.Query<Appeal>().Where(s => s.Client == ClientWithRequest).ToList().Where(d => d.Message.IndexOf("<strong>отменена</strong>") != -1).ToList();
+			var appealsToCheck = DbSession.Query<ServiceRequestComment>().Where(s => s.ServiceRequest.Client == ClientWithRequest).ToList().Where(d => d.Comment.IndexOf("<strong>отменена</strong>") != -1).ToList();
 			Assert.That(appealsToCheck.Count, Is.Not.EqualTo(0), "У клиента должны появиться аппилы после отмены заявки.");
 
 
@@ -227,7 +227,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 
 
 			//Проверка на формирование сообщений
-			var appealsToCheck = DbSession.Query<Appeal>().Where(s => s.Client == ClientWithRequest).ToList().Where(d => d.Message.IndexOf("<strong>необходимо восстановление работы.</strong>") != -1).ToList();
+			var appealsToCheck = DbSession.Query<ServiceRequestComment>().Where(s => s.ServiceRequest.Client == ClientWithRequest).ToList().Where(d => d.Comment.IndexOf("<strong>необходимо восстановление работы.</strong>") != -1).ToList();
 			Assert.That(appealsToCheck.Count, Is.Not.EqualTo(0), "У клиента должны появиться аппилы после нажатие на кнопку 'восстановление работы'.");
 
 			//обновление модели: клиент

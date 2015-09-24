@@ -130,7 +130,7 @@ namespace InternetInterface.Models
 							Id = s.Id,
 							Date = i.RegDate,
 							Partner = i.Performer != null ? i.Performer.Name : string.Empty,
-							Text = i.GetDescription(),
+							Text = i.FromNewAdminPanel ? i.Description : i.GetDescription(),
 							Type = UniversalAppealType.Service
 						})) : null
 				}).ToList();

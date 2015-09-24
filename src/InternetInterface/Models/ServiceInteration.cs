@@ -40,6 +40,9 @@ namespace InternetInterface.Models
 		[BelongsTo]
 		public virtual ServiceRequest Request { get; set; }
 
+		[Property("_inforoom2")]
+		public virtual bool FromNewAdminPanel { get; set; }
+
 		public virtual string GetDescription()
 		{
 			return AppealHelper.GetTransformedAppeal(Description);
