@@ -149,7 +149,7 @@ namespace InforoomControlPanel.Controllers
 				//Отправляем аппил о создании
 				string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> успешно создана.",
 					serviceRequest.Id, ConfigHelper.GetParam("adminPanelNew"));
-				DbSession.Save(new Appeal(appealMessage, serviceRequest.Client, AppealType.User) { Employee = serviceRequest.Employee, inforoom2 = true });
+				serviceRequest.AddComment(DbSession, appealMessage, GetCurrentEmployee());
 
 				return RedirectToAction("ServiceRequestEdit", new { id = serviceRequest.Id });
 			}
@@ -209,7 +209,7 @@ namespace InforoomControlPanel.Controllers
 				//Отправляем аппил о редактировании
 				string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> обновлена.",
 					serviceRequest.Id, ConfigHelper.GetParam("adminPanelNew"));
-				DbSession.Save(new Appeal(appealMessage, serviceRequest.Client, AppealType.User) { Employee = GetCurrentEmployee(), inforoom2 = true });
+				serviceRequest.AddComment(DbSession, appealMessage, GetCurrentEmployee());
 
 				return RedirectToAction("ServiceRequestEdit", new { id = serviceRequest.Id });
 			}

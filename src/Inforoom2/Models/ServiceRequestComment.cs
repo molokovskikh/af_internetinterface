@@ -14,6 +14,7 @@ namespace Inforoom2.Models
 		public ServiceRequestComment()
 		{
 			CreationDate = SystemTime.Now();
+			FromNewAdminPanel = true;
 		} 
 
 		[Property(Column = "Description"),NotNullNotEmpty(Message = "Поле должно быть заполнено.")]
@@ -27,6 +28,9 @@ namespace Inforoom2.Models
 
 		[ManyToOne(Column = "Request")]
 		public virtual ServiceRequest ServiceRequest { get; set; }
+
+		[Property(Column = "_inforoom2")]
+		public virtual bool FromNewAdminPanel { get; set; }
 
 	}
 }

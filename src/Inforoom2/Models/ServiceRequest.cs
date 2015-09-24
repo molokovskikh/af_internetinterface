@@ -159,7 +159,7 @@ namespace Inforoom2.Models
 			CancelDate = SystemTime.Now();
 			string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>отменена</strong>.",
 				Id, ConfigHelper.GetParam("adminPanelNew"));
-			dbSession.Save(new Appeal(appealMessage, Client, AppealType.User) { Employee = employee, inforoom2 = true });
+			AddComment(dbSession, appealMessage, employee);
 		}
 
 		/// <summary>
@@ -178,7 +178,7 @@ namespace Inforoom2.Models
 
 			string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>закрыта</strong>.",
 				Id, ConfigHelper.GetParam("adminPanelNew"));
-			dbSession.Save(new Appeal(appealMessage, Client, AppealType.User) { Employee = employee, inforoom2 = true });
+			AddComment(dbSession, appealMessage, employee);
 		}
 
 		/// <summary>
@@ -206,7 +206,7 @@ namespace Inforoom2.Models
 
 				string appealMessage = string.Format("По сервисной заявке № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>необходимо восстановление работы.</strong>.",
 					Id, ConfigHelper.GetParam("adminPanelNew"));
-				dbSession.Save(new Appeal(appealMessage, Client, AppealType.User) { Employee = employee, inforoom2 = true });
+				AddComment(dbSession, appealMessage, employee);
 			}
 		}
 
