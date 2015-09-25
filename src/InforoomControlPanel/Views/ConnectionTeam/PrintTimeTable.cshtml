@@ -55,7 +55,7 @@
 							}
 						</p>
 						<p class="content"><strong>ФИО:</strong> @item.GetClient().Fullname</p>
-						<p class="content"><strong>ЛС:</strong> @item.Client.Id</p>
+						<p class="content"><strong>ЛС:</strong> @item.GetClient().Id</p>
 						<p class="content"><strong>Телефон:</strong> @item.GetPhone()</p>
 						<p class="content"><strong>Адрес:</strong> @item.GetAddress()</p>
 						<p class="content"><strong>Комментарии:</strong> @item.Comment</p>
@@ -63,7 +63,7 @@
 							<p class="content">
 								<strong>Коммутатор:</strong>
 								@{
-									var firstOrDefault = item.Client.Endpoints.FirstOrDefault();
+									var firstOrDefault = item.GetClient().Endpoints.FirstOrDefault();
 								}
 								@if (firstOrDefault != null) {
 									@firstOrDefault.Switch.Name
@@ -78,7 +78,7 @@
 							<p class="content">
 								<strong>Порт:</strong>
 								@{
-									var clientEndpoint = item.Client.Endpoints.FirstOrDefault();
+									var clientEndpoint = item.GetClient().Endpoints.FirstOrDefault();
 								}
 								@if (clientEndpoint != null) {
 									@clientEndpoint.Port

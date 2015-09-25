@@ -54,7 +54,7 @@ namespace Inforoom2.Models
 
 		public virtual ServicemenScheduleItem ConnectionRequest
 		{
-			get { return ServicemenScheduleItems != null ? ServicemenScheduleItems.FirstOrDefault(s=>s.RequestType==ServicemenScheduleItem.Type.ClientConnectionRequest) : null; }
+			get { return ServicemenScheduleItems != null ? ServicemenScheduleItems.FirstOrDefault(s => s.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest) : null; }
 			set { }
 		}
 
@@ -476,7 +476,17 @@ namespace Inforoom2.Models
 
 		public virtual string GetPhone()
 		{
-			return this.PhoneNumber;
+			var phone = "";
+			if (this.PhoneNumber != string.Empty) {
+				phone = this.PhoneNumber;
+			}
+			else {
+				var contactPhone = this.Contacts.FirstOrDefault(s => s.Type == ContactType.SmsSending);
+				if (contactPhone != null) {
+					phone = contactPhone.ContactString;
+				}
+			}
+			return phone;
 		}
 
 		public virtual Client GetAppealClient(ISession session)

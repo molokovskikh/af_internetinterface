@@ -39,9 +39,9 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label">От</label>
 				<div class="col-sm-7">
-					<a @(scheduleItem.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
-					                                                                                       + (String.Format("UserInfo/{0}?filter.ClientCode=", scheduleItem.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-					                                                                                       + scheduleItem.Client.Id)">@scheduleItem.Client.Fullname</a>
+					<a @(scheduleItem.GetClient().PhysicalClient == null ? "style=color:#0D90D4;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
+						   + (String.Format("UserInfo/{0}?filter.ClientCode=", scheduleItem.GetClient().PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
+					  + scheduleItem.GetClient().Id)">@scheduleItem.GetClient().Fullname</a>
 				</div>
 			</div>
 			<div class="form-group">

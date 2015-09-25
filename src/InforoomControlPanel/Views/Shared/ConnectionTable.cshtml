@@ -79,10 +79,10 @@
 											<a href="@Url.Action("AttachRequest", "ConnectionTeam",
 												         new {
 													         id = (item.RequestType == ServicemenScheduleItem.Type.ServiceRequest ?
-														         item.ServiceRequest.Id : item.Client.Id),
+														         item.ServiceRequest.Id : item.GetClient().Id),
 													         type = item.RequestType
 												         })">
-												@(item.Client.PhysicalClient != null ? item.Client.PhysicalClient.FullName : item.Client._Name)
+												@(item.GetClient().PhysicalClient != null ? item.GetClient().PhysicalClient.FullName : item.Client._Name)
 												<p>(@item.BeginTime.Value.ToString("HH:mm") - @item.EndTime.Value.ToString("HH:mm") )</p>
 											</a>
 										</div>
@@ -93,19 +93,19 @@
 											<br/>
 											<div class="contact">Коммутатор:
 												@{
-													var firstOrDefault = item.Client.Endpoints.FirstOrDefault();
+													var firstOrDefault = item.GetClient().Endpoints.FirstOrDefault();
 												}
 												@if (firstOrDefault != null) {
 													@firstOrDefault.Switch.Name
 												}</div>
 											<div class="contact">Порт:
 												@{
-													var clientEndpoint = item.Client.Endpoints.FirstOrDefault();
+													var clientEndpoint = item.GetClient().Endpoints.FirstOrDefault();
 												}
 												@if (clientEndpoint != null) {
 													@clientEndpoint.Port
 												}</div>
-											<div class="contact">ЛС:@item.Client.Id</div>
+											<div class="contact">ЛС:@item.GetClient().Id</div>
 										}
 																		
 									</td>

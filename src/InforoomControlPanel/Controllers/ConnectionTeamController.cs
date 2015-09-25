@@ -134,7 +134,7 @@ namespace InforoomControlPanel.Controllers
 					 - (scheduleItem.BeginTime.HasValue ? scheduleItem.BeginTime.Value : Convert.ToDateTime("01.01.0001 0:00:00")))
 						.TotalMinutes;
 
-				var clientRegion = scheduleItem.Client.GetRegion() ?? regions[0];
+				var clientRegion = scheduleItem.GetClient().GetRegion() ?? regions[0];
 
 				ViewBag.Region = (scheduleItem.ServiceMan != null
 					? scheduleItem.ServiceMan.Region
@@ -179,7 +179,7 @@ namespace InforoomControlPanel.Controllers
 						new { id = scheduleItem.ServiceRequest.Id, type = scheduleItem.RequestType });
 				if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest)
 					return RedirectToAction("AttachRequest", "ConnectionTeam",
-						new { id = scheduleItem.Client.Id, type = scheduleItem.RequestType });
+						new { id = scheduleItem.GetClient().Id, type = scheduleItem.RequestType });
 			}
 			//валидация эл-та графика
 			var errors = ValidationRunner.Validate(scheduleItem);
@@ -192,14 +192,14 @@ namespace InforoomControlPanel.Controllers
 					SuccessMessage("Сервисная заявка успешно добавлена в график");
 					//отправка уведомления, о назначенной сервисной заявке
 					var appealMessage = string.Format("Сервисная заявка добавлена в график. <br/>Инженер: {0}<br/>Дата / время: {1}", scheduleItem.ServiceMan.Employee.Name, scheduleItem.BeginTime);
-					var newAppeal = new Appeal(appealMessage, scheduleItem.Client, AppealType.User) { Employee = GetCurrentEmployee() };
+					var newAppeal = new Appeal(appealMessage, scheduleItem.GetClient(), AppealType.User) { Employee = GetCurrentEmployee() };
 					DbSession.Save(newAppeal);
 				}
 				else {
 					SuccessMessage("Заявка на подключение успешно добавлена в график");
 					//отправка уведомления, о назначенном подключении
 					var appealMessage = string.Format("Подключение назначено в график.<br/>Инженер: {0}<br/>Дата / время: {1}", scheduleItem.ServiceMan.Employee.Name, scheduleItem.BeginTime);
-					var newAppeal = new Appeal(appealMessage, scheduleItem.Client, AppealType.User) { Employee = GetCurrentEmployee() };
+					var newAppeal = new Appeal(appealMessage, scheduleItem.GetClient(), AppealType.User) { Employee = GetCurrentEmployee() };
 					DbSession.Save(newAppeal);
 				}
 				//обновление сессии (связанно с эл-ми на форме)
@@ -211,7 +211,7 @@ namespace InforoomControlPanel.Controllers
 						new { id = scheduleItem.ServiceRequest.Id, type = scheduleItem.RequestType });
 				if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest)
 					return RedirectToAction("AttachRequest", "ConnectionTeam",
-						new { id = scheduleItem.Client.Id, type = scheduleItem.RequestType });
+						new { id = scheduleItem.GetClient().Id, type = scheduleItem.RequestType });
 			}
 			//переход к назначению заявки
 			if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest)
@@ -219,7 +219,7 @@ namespace InforoomControlPanel.Controllers
 					new { id = scheduleItem.ServiceRequest.Id, type = scheduleItem.RequestType });
 			if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest)
 				return RedirectToAction("AttachRequest", "ConnectionTeam",
-					new { id = scheduleItem.Client.Id, type = scheduleItem.RequestType });
+					new { id = scheduleItem.GetClient().Id, type = scheduleItem.RequestType });
 
 			ViewBag.ServicemenScheduleItem = scheduleItem;
 			return View();
@@ -317,18 +317,18 @@ namespace InforoomControlPanel.Controllers
 			var servicemenScheduleList = servicemenScheduleQuery.ToList();
 
 			if (printRegionId != 0) {
-				servicemenScheduleList = servicemenScheduleList.Where(s => s.Client.GetRegion().Id == printRegionId).ToList();
+				servicemenScheduleList = servicemenScheduleList.Where(s => s.GetClient().GetRegion().Id == printRegionId).ToList();
 			}
 
 			if (Session["printKey"] != null && Session["printKey"].ToString() == updatePasswordsKey) {
 				//обновление паролей
 				foreach (var item in servicemenScheduleList) {
 					if (item.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest) {
-						var physicalClient = item.Client.PhysicalClient;
+						var physicalClient = item.GetClient().PhysicalClient;
 						var password = CryptoPass.GeneratePassword();
 						physicalClient.Password = CryptoPass.GetHashString(password);
 						DbSession.Save(physicalClient);
-						additionalData.Add(item, new Tuple<string, string>(item.Client.Id.ToString(), password));
+						additionalData.Add(item, new Tuple<string, string>(item.GetClient().Id.ToString(), password));
 					}
 				}
 			}
