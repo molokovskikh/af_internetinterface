@@ -54,7 +54,7 @@ namespace Inforoom2.Models
 
 		public virtual ServicemenScheduleItem ConnectionRequest
 		{
-			get { return ServicemenScheduleItems != null ? ServicemenScheduleItems.FirstOrDefault(s=>s.RequestType==ServicemenScheduleItem.Type.ClientConnectionRequest) : null; }
+			get { return ServicemenScheduleItems != null ? ServicemenScheduleItems.FirstOrDefault(s => s.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest) : null; }
 			set { }
 		}
 
@@ -496,6 +496,30 @@ namespace Inforoom2.Models
 		public virtual string GetAdditionalAppealInfo(string property, object oldPropertyValue, ISession session)
 		{
 			return "";
+		}
+
+		public virtual bool CheckClientForWarning()
+		{
+			bool showWarning = false;
+			if (LegalClient != null) {
+				if (Disabled) {
+					showWarning = true;
+				}
+				if (Balance < 0) {
+					showWarning = true;
+				}
+			}
+			else if (PhysicalClient != null) {
+				if (Disabled) {
+					showWarning = true;
+				}
+				else if (ShowBalanceWarningPage) {
+					if (!HasPassportData()) {
+						showWarning = true;
+					}
+				}
+			}
+			return showWarning;
 		}
 	}
 

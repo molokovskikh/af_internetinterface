@@ -108,5 +108,20 @@ namespace Inforoom2.Test.Functional.Personal
 			Open("Warning?ip=" + ipstr);
 			AssertText("Протестировать скорость");
 		}
+
+		[Test(Description = "Редирект на целевую страницу, если клиент валидный")]
+		public void JustToRedirectClient()
+		{
+			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("нормальный клиент"));
+			LoginForClient(client);
+			Open("/");
+			var endpoint = client.Endpoints.First();
+			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == endpoint);
+			var ipstr = lease.Ip.ToString();
+			string testUrl = BuildTestUrl("Personal/Profile");
+			string queryString = string.Format("Warning?ip={0}&host={1}", ipstr, testUrl);
+			Open(queryString);
+			AssertText("ЛИЧНЫЙ КАБИНЕТ: ПРОФИЛЬ");
+		}
 	}
 }
