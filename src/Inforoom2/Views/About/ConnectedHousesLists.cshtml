@@ -6,7 +6,10 @@
 
 @{
 	ViewBag.Title = "Список подключенных домов";
-	List<SwitchAddress> addresses = ViewBag.Addresses;
+	string currentRegionName = ViewBag.CurrentRegion;
+	List<string> streets = ViewBag.Streets;
+	List<House> houses = ViewBag.Houses;
+	houses = houses.OrderBy(s=>s.Street.Name).ToList();
 }
 
 <h2 class="heading">@ViewBag.Title</h2>
@@ -14,21 +17,14 @@
 	<h3 class="font-header">Подключенные дома по городу  @ViewBag.CurrentRegion<br/>
 		<i>(для просмотра списка подключенных домов других городов, необходимо изменить город на сайте в левом верхнем углу)</i></h3>	
 	@{
-		foreach (var street in ViewBag.Streets) {
-			var streets = ViewBag.Street;
-			streets = street.Name + " : ";
-			var houses = (IList<House>)street.Houses;
-			//улицу,у корторой нет домов,не выводим
-			if (houses.Count > 0) {
-				@streets
-			}
-			else {
-				continue;
-			}
+		foreach (var streetName in streets) {
+			@(streetName + " : ")
+
+			var currentHouses = houses.Where(s => s.Street.Name == streetName ).ToList().GroupBy(s => s.Number).Select(group => group.First()).ToList();
 
 			//конвертируем дома для сортировки
 			//на доме с буквой,доходим до буквы и останавливаемся,возвращая только цифру
-			var houseList = houses.Select(s => {
+			var houseList = currentHouses.Select(s => {
 				string cutNumber = "";
 				for (int i = 0; i < s.Number.Length; i++) {
 					try {
@@ -38,15 +34,15 @@
 						break;
 					}
 				}
-				return new { Number = Convert.ToInt32(cutNumber), House = s };
-			} 
-			).ToList();
-	
+				return new { Number = Convert.ToInt32(cutNumber), Key = s.Number.Substring(s.Number.IndexOf(cutNumber)), House = s };
+			}
+				).ToList();
+
 			//сортируем дома по возрастанию
-			houseList = houseList.OrderBy(s => s.Number).ToList();
-	
+			houseList = houseList.OrderBy(s => s.Number).ThenBy(s=>s.Key).ToList();
+
 			//соединяем все дома в строку,разделяя запятой
-			var house = string.Join(", ", houseList.Select(s => s.House.Number));
+			var house = string.Join(", ", houseList.Select(s => s.House.Number.ToUpper()));
 			@house
 			<br/>
 		}
