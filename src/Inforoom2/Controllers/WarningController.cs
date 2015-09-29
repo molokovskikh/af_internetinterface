@@ -28,7 +28,7 @@ namespace Inforoom2.Controllers
 			return RedirectToAction("Index", "Home");
 		}
 
-		public ActionResult Index(int disable = 0, string ip = "")
+		public ActionResult Index(int disable = 0, string ip = "", string host = "")
 		{
 			var ipstring = Request.UserHostAddress;
 #if DEBUG
@@ -38,7 +38,7 @@ namespace Inforoom2.Controllers
 			if (endpoint == null) {
 				var lease = Lease.GetLeaseForIp(ipstring, DbSession);
 				if (!ipstring.Contains("172.25.0")) //Остановим спам от непонятных
-					EmailSender.SendDebugInfo("Редидеркт с варнинга на главную: " + ipstring + (lease != null ? ", есть аренда:" + lease.Id : ""), CollectDebugInfo().ToString());
+					EmailSender.SendDebugInfo("Редидект с варнинга на главную: " + ipstring + (lease != null ? ", есть аренда:" + lease.Id : ""), CollectDebugInfo().ToString());
 				return RedirectToAction("Index", "Home");
 			}
 			var client = endpoint.Client;
@@ -72,6 +72,12 @@ namespace Inforoom2.Controllers
 			var blockAccountService = services.FirstOrDefault(s => s is BlockAccountService);
 			ViewBag.Client = client;
 			ViewBag.BlockAccountService = blockAccountService.Unproxy();
+
+			client = client ?? CurrentClient;
+			if (client != null && host != "" && !client.CheckClientForWarning()) {
+				host = host.IndexOf("http://") == -1 ? host.Insert(0, "http://") : host;
+				return Redirect(host);
+			}
 			return View("Index");
 		}
 	}

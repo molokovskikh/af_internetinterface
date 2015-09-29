@@ -817,7 +817,10 @@ where CE.Client = {0}", Id))
 		{
 			SetStatus(Status.Find((uint)StatusType.Worked));
 		}
-
+		/// <summary>
+		/// Полная стоимость услуг
+		/// </summary>
+		/// <returns></returns>
 		public virtual decimal GetPriceIgnoreDisabled()
 		{
 			decimal price = 0;
