@@ -39,7 +39,7 @@ namespace Inforoom2.Controllers
 		public ActionResult Payment()
 		{
 			ViewBag.UserAccount = CurrentClient != null ? CurrentClient.Id.ToString() : "";
-			ViewBag.PaymentSum = CurrentClient != null ? Math.Round(Math.Abs(CurrentClient.Balance - CurrentClient.PhysicalClient.Plan.Price)*100).ToString() : "";
+			ViewBag.PaymentSum = CurrentClient != null ? Math.Round(Math.Abs(CurrentClient.Balance - CurrentClient.PhysicalClient.Plan.Price) * 100).ToString() : "";
 			return View();
 		}
 
@@ -48,14 +48,20 @@ namespace Inforoom2.Controllers
 		/// </summary>
 		public ActionResult ConnectedHousesLists()
 		{
-			var addresses = DbSession.Query<SwitchAddress>().Where(i => i.House != null).OrderBy(i => i.House.Street.Name).ToList();
-			ViewBag.Addresses = addresses;
-
+			var region = DbSession.Query<Region>().FirstOrDefault(s => s.Name == CurrentRegion.City.Name);
 			var curentRegion = CurrentRegion;
 			ViewBag.CurrentRegion = curentRegion.City.Name;
 
-			var region = DbSession.Query<Region>().FirstOrDefault(s => s.Name == CurrentRegion.City.Name);
-			var streets = DbSession.Query<Street>().Where(s => s.Region.City.Id == region.City.Id).ToList().OrderBy(o => o.Name);
+			var houses = DbSession.Query<Client>().Where(s =>
+				((s.PhysicalClient.Address.House.Region != null && s.PhysicalClient.Address.House.Region.City.Id == region.City.Id)
+				 || (s.PhysicalClient.Address.House.Street.Region.City.Id == region.City.Id && s.PhysicalClient.Address.House.Region == null))).ToList()
+				.Where(s => s.Status.Type != StatusType.NoWorked && s.Status.Type != StatusType.Dissolved)
+				.Select(s => s.Address.House)
+				.Distinct().ToList();
+
+			var streets = houses.Select(s => s.Street).ToList().Select(s => s.Name).Distinct().OrderBy(s => s).ToList();
+
+			ViewBag.Houses = houses;
 			ViewBag.Streets = streets;
 
 			return View();
