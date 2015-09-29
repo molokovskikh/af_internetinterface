@@ -87,7 +87,7 @@ namespace Inforoom2.Models
 				var existedItem = dbSession.Query<ServicemenScheduleItem>().FirstOrDefault(s => s.ServiceRequest.Id == id && s.RequestType == type);
 				// если не существует, создаем новый на основе заявки
 				var itemTosave = existedItem ?? dbSession.Query<ServiceRequest>().Where(s => s.Id == id)
-					.Select(s => new ServicemenScheduleItem() { RequestType = type, ServiceRequest = s, Client = s.Client, Comment = s.Description }).FirstOrDefault();
+					.Select(s => new ServicemenScheduleItem() { RequestType = type, ServiceRequest = s, Comment = s.Description }).FirstOrDefault();
 				// если элемент найден или создан сохраняем его в БД и возвращаем
 				if (itemTosave != null && itemTosave.Id == 0)
 					dbSession.Save(itemTosave);
