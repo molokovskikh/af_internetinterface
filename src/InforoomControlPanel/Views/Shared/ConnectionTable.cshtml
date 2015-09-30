@@ -82,7 +82,7 @@
 														         item.ServiceRequest.Id : item.GetClient().Id),
 													         type = item.RequestType
 												         })">
-												@(item.GetClient().PhysicalClient != null ? item.GetClient().PhysicalClient.FullName : item.Client._Name)
+												@(item.GetClient().PhysicalClient != null ? item.GetClient().PhysicalClient.FullName : item.GetClient()._Name)
 												<p>(@item.BeginTime.Value.ToString("HH:mm") - @item.EndTime.Value.ToString("HH:mm") )</p>
 											</a>
 										</div>
