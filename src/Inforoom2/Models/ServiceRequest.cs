@@ -97,7 +97,7 @@ namespace Inforoom2.Models
 
 		public virtual string GetAddress()
 		{
-			return Client.Address.GetStringForPrint();
+			return Client.GetAddress();
 		}
 
 		public virtual Client GetClient()
