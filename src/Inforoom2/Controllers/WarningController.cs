@@ -74,7 +74,7 @@ namespace Inforoom2.Controllers
 			ViewBag.BlockAccountService = blockAccountService.Unproxy();
 
 			client = client ?? CurrentClient;
-			if (client != null && host != "" && !client.CheckClientForWarning()) {
+			if (client != null && host != "" && host.ToLower().IndexOf("/warning") == -1 && !client.CheckClientForWarning()) {
 				host = host.IndexOf("http://") == -1 ? host.Insert(0, "http://") : host;
 				return Redirect(host);
 			}

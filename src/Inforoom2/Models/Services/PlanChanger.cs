@@ -18,13 +18,13 @@ namespace Inforoom2.Models.Services
 		{
 			mediator.UrlRedirectAction = "";
 			mediator.UrlRedirectController = "";
-			var rootPath = ConfigHelper.GetParam("inforoom2Url");
-			if (client != null && (mediator.UrlCurrent == null || mediator.UrlCurrent.IndexOf(rootPath + "Service/InternetPlanChanger") == -1)) {
+			var rootPath = ConfigHelper.GetParam("inforoom2Url").ToLower();
+			if (client != null && (mediator.UrlCurrent == null || mediator.UrlCurrent.ToLower().IndexOf(rootPath + "service/internetplanchanger") == -1)) {
 				// получение сведения об изменении тарифов 
 				foreach (var changer in session.Query<PlanChangerData>().ToList()) {
 					// поиск целевого тарифа, фильтрация url с разрешенными тарифными планами 
 					if (changer.TargetPlan.Id == client.PhysicalClient.Plan.Id &&
-					    mediator.UrlCurrent.IndexOf(rootPath + "Personal/InternetChangePlan") == -1) {
+					    mediator.UrlCurrent.ToLower().IndexOf(rootPath + "service/internetchangeplan") == -1) {
 						// если услуга существует,проверка, не подошел ли срок отключения клиента.
 						if (client.ClientServices.Any(s => s.Service.Name == "PlanChanger")
 						    && client.PhysicalClient.LastTimePlanChanged != Convert.ToDateTime("01.01.0001")
