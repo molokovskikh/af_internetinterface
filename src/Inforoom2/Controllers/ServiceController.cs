@@ -8,6 +8,7 @@ using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using NHibernate.Linq;
+using NHibernate.Util;
 
 namespace Inforoom2.Controllers
 {
@@ -174,11 +175,13 @@ namespace Inforoom2.Controllers
 			client.PhysicalClient.LastTimePlanChanged = SystemTime.Now();
 			client.PhysicalClient.Plan = plan;
 			client.SetStatus(StatusType.Worked, DbSession);
+			if (client.Internet.ActivatedByUser)
+				client.Endpoints.ForEach(e => e.PackageId = plan.PackageSpeed.PackageId);
 			DbSession.Save(client);
 			SuccessMessage("Тариф успешно изменен.");
 			// добавление записи в историю тарифов пользователя
-			var planHistory = new PlanHistoryEntry{
-				Client =  CurrentClient,
+			var planHistory = new PlanHistoryEntry {
+				Client = CurrentClient,
 				DateOfChange = SystemTime.Now(),
 				PlanAfter = plan,
 				PlanBefore = oldPlan,
