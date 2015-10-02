@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Web.Mvc;
 using System.Xml.Linq;
 using Common.Tools;
@@ -72,12 +73,16 @@ namespace Inforoom2.Controllers
 			var blockAccountService = services.FirstOrDefault(s => s is BlockAccountService);
 			ViewBag.Client = client;
 			ViewBag.BlockAccountService = blockAccountService.Unproxy();
-
+			
+			// если клиенту не нужно отображать варнинг и есть целевой адрес, обновляем PackageId в SCE и редиректим клиента на целевой адрес
 			client = client ?? CurrentClient;
 			if (client != null && host != "" && host.ToLower().IndexOf("/warning") == -1 && !client.CheckClientForWarning()) {
+				SceHelper.UpdatePackageId(DbSession, client);
+				Thread.SpinWait(500);
 				host = host.IndexOf("http://") == -1 ? host.Insert(0, "http://") : host;
 				return Redirect(host);
 			}
+
 			return View("Index");
 		}
 	}
