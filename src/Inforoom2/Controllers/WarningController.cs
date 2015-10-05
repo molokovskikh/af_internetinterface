@@ -75,13 +75,13 @@ namespace Inforoom2.Controllers
 			ViewBag.BlockAccountService = blockAccountService.Unproxy();
 			
 			// если клиенту не нужно отображать варнинг и есть целевой адрес, обновляем PackageId в SCE и редиректим клиента на целевой адрес
-			client = client ?? CurrentClient;
-			if (client != null && host != "" && host.ToLower().IndexOf("/warning") == -1 && !client.CheckClientForWarning()) {
-				SceHelper.UpdatePackageId(DbSession, client);
-				Thread.SpinWait(500);
-				host = host.IndexOf("http://") == -1 ? host.Insert(0, "http://") : host;
-				return Redirect(host);
-			}
+			//client = client ?? CurrentClient;
+			//if (client != null && host != "" && host.ToLower().IndexOf("/warning") == -1 && !client.CheckClientForWarning()) {
+			//	SceHelper.UpdatePackageId(DbSession, client);
+			//	Thread.SpinWait(500);
+			//	host = host.IndexOf("http://") == -1 ? host.Insert(0, "http://") : host;
+			//	return Redirect(host);
+			//}
 
 			return View("Index");
 		}

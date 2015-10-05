@@ -109,7 +109,7 @@ namespace Inforoom2.Test.Functional.Personal
 			AssertText("Протестировать скорость");
 		}
 
-		[Test(Description = "Редирект на целевую страницу, если клиент валидный")]
+		[Test(Description = "Редирект на целевую страницу, если клиент валидный"),Ignore("Временно отключен")]
 		public void JustToRedirectClient()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("нормальный клиент"));
