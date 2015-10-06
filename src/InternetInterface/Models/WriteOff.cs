@@ -32,6 +32,8 @@ namespace InternetInterface.Models
 
 		public decimal MoneySum { get; set; }
 
+		public string Sale { get; set; }
+
 		public decimal? BeforeWriteOffBalance { get; set; }
 
 		public string Comment { get; set; }
