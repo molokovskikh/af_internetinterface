@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using Inforoom2.Test.Infrastructure;
@@ -16,6 +18,14 @@ namespace Inforoom2.Test.Functional.Personal
 	/// </summary>
 	public class WarningFixture : PersonalFixture
 	{
+		protected void RunBillingProcessWriteoffs(Client client)
+		{
+			var billing = GetBilling();
+			billing.ProcessWriteoffs();
+			DbSession.Refresh(client);
+			OpenWarningPage(client);
+		}
+
 		protected void TrySetWarningForClient(Client client)
 		{
 			Assert.That(client.ShowBalanceWarningPage, Is.False, "Для чистоты данного теста, warning должен назначаться биллингом");
@@ -35,17 +45,60 @@ namespace Inforoom2.Test.Functional.Personal
 			Open("Warning?ip=" + ipstr);
 		}
 
-		[Test(Description = "Низкий баланс")]
+		[Test(Description = "Низкий баланс - варнинга нет")]
 		public void LowBalancePhysical()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
-			TrySetWarningForClient(client);
+			RunBillingProcessWriteoffs(client);
+			AssertText("НОВОСТИ");
+		}
 
-			AssertText("При непоступлении оплаты");
-			Css(".warning").Click();
-			AssertText("Протестировать скорость");
-			DbSession.Refresh(client);
-			Assert.That(client.ShowBalanceWarningPage, Is.False, "Клиенту все еще отображается страница Warning");
+		[Test(Description = "Баланс отрицательный - варнинг есть")]
+		public void NegativeBalancePhysical()
+		{
+			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
+			client.PhysicalClient.Balance = -5;
+			DbSession.Save(client);
+			DbSession.Flush();
+			RunBillingProcessWriteoffs(client);
+			AssertText("Ваша задолженность за оказанные услуги составляет");
+		}
+
+		[Test(Description = "Баланс отрицательный, есть обещанный платеж актуальный - блокировки нет")]
+		public void NegativeBalancePhysicalWithDebtWorkServiceActual()
+		{
+			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
+			client.PhysicalClient.Balance = -10;
+			var services = DbSession.Query<Service>().Where(s => s.Name == "Обещанный платеж").ToList();
+			var csDebtWorkService =
+				services.Select(service => new ClientService { Service = service, Client = client, BeginDate = DateTime.Now, IsActivated = true, ActivatedByUser = true }).FirstOrDefault();
+			client.ClientServices.Add(csDebtWorkService);
+			DbSession.Save(client);
+			DbSession.Flush();
+			RunBillingProcessWriteoffs(client);
+			AssertText("НОВОСТИ");
+		}
+
+		[Test(Description = "Баланс отрицательный, есть обещанный платеж просроченный - блокировка есть")]
+		public void NegativeBalancePhysicalWithDebtWorkServiceOverdue()
+		{
+			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
+			client.PhysicalClient.Balance = -10;
+			var services = DbSession.Query<Service>().Where(s => s.Name == "Обещанный платеж").ToList();
+			var csDebtWorkService =
+				services.Select(service => new ClientService {
+					Service = service,
+					Client = client,
+					BeginDate = DateTime.Now.AddDays(-10),
+					EndDate = DateTime.Now.AddDays(-3),
+					IsActivated = true,
+					ActivatedByUser = true
+				}).FirstOrDefault();
+			client.ClientServices.Add(csDebtWorkService);
+			DbSession.Save(client);
+			DbSession.Flush();
+			RunBillingProcessWriteoffs(client);
+			AssertText("Ваша задолженность за оказанные услуги составляет");
 		}
 
 
@@ -109,7 +162,7 @@ namespace Inforoom2.Test.Functional.Personal
 			AssertText("Протестировать скорость");
 		}
 
-		[Test(Description = "Редирект на целевую страницу, если клиент валидный"),Ignore("Временно отключен")]
+		[Test(Description = "Редирект на целевую страницу, если клиент валидный"), Ignore("Временно отключен")]
 		public void JustToRedirectClient()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("нормальный клиент"));

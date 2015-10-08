@@ -373,7 +373,7 @@ namespace Billing.Test.Integration
 			Assert.That(365, Is.EqualTo(count));
 		}
 
-		[Test]
+		[Test, Ignore("Решили оставить только блокировки, варнинг отменен")]
 		public void ShowBalWarning()
 		{
 			Client client;

@@ -359,12 +359,17 @@ namespace InternetInterface.Models
 			if (!RatedPeriodDate.HasValue)
 				return true;
 
-			return NeedShowWarning(GetSumForRegularWriteOff());
+			return NeedShowWarningCheck();
 		}
 
-		public virtual bool NeedShowWarning(decimal sumForWriteOff)
+		/// <summary>
+		/// Проверка на необходимость ИЗМЕНЕНИЯ ФЛАГА отображения Варнинга  
+		/// </summary>
+		/// <returns></returns>
+		public virtual bool NeedShowWarningCheck()
 		{
-			return (Balance - sumForWriteOff < 0) || ShowWarningBecauseNoPassport();
+			//варнинг для заполнение паспортных данных
+			return ShowWarningBecauseNoPassport();
 		}
 
 		public virtual bool ShowWarningBecauseNoPassport()
@@ -817,6 +822,7 @@ where CE.Client = {0}", Id))
 		{
 			SetStatus(Status.Find((uint)StatusType.Worked));
 		}
+
 		/// <summary>
 		/// Полная стоимость услуг
 		/// </summary>

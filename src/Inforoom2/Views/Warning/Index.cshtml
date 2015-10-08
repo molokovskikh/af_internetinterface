@@ -49,17 +49,17 @@ else if(client.PhysicalClient != null)
 				<input class="button unfreeze" type="submit" value="Отключить" />
 			}
 		}
-		else if (client.Payments.Count == 0)
-		{
-			<p class="info">
-				Для начала работы внесите первый платеж.
-			</p>
-		}
 		else if (client.Balance < 0)
 		{
 			<p class="error">
 				Ваша задолженность за оказанные услуги составляет @client.Balance.ToString("C")<br>
 				Для возобновления доступа в интернет Вам необходимо погасить задолженность и внести абонентскую плату за полный месяц<br>
+			</p>
+		}
+		else if (client.Payments.Count == 0)
+		{
+			<p class="info">
+				Для начала работы внесите первый платеж.
 			</p>
 		}
 		else

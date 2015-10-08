@@ -29,13 +29,14 @@ namespace Inforoom2.Controllers
 			return RedirectToAction("Index", "Home");
 		}
 
-		public ActionResult Index(int disable = 0, string ip = "", string host = "")
+		public ActionResult Index(int disable = 0, string ip = "")
 		{
 			var ipstring = Request.UserHostAddress;
 #if DEBUG
 			ipstring = ip;
 #endif
 			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring, DbSession);
+
 			if (endpoint == null) {
 				var lease = Lease.GetLeaseForIp(ipstring, DbSession);
 				if (!ipstring.Contains("172.25.0")) //Остановим спам от непонятных
@@ -73,7 +74,14 @@ namespace Inforoom2.Controllers
 			var blockAccountService = services.FirstOrDefault(s => s is BlockAccountService);
 			ViewBag.Client = client;
 			ViewBag.BlockAccountService = blockAccountService.Unproxy();
-			
+
+			//Редирект пользователя, если он валидный и с паспортными данными
+			client = client ?? CurrentClient;
+			if (client != null && client.Disabled == false && client.HasPassportData() && client.ShowBalanceWarningPage == false) {
+				return RedirectToAction("Index", "Home");
+			}
+
+			//TODO: распилить варнинг
 			// если клиенту не нужно отображать варнинг и есть целевой адрес, обновляем PackageId в SCE и редиректим клиента на целевой адрес
 			//client = client ?? CurrentClient;
 			//if (client != null && host != "" && host.ToLower().IndexOf("/warning") == -1 && !client.CheckClientForWarning()) {
