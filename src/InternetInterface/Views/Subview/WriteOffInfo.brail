@@ -18,6 +18,7 @@
 				<th>Физических денег</th>
 				<th>Бонусов</th>
 				<th>Баланс перед списанием</th>
+				<th>Скидка</th>
 				<th>Комментарий</th>
 				<th>Удаление</th>
 			</tr>
@@ -52,6 +53,12 @@
 					<td>${item.MoneySum.ToString("0.00")}</td>
 					<td>${item.VirtualSum.ToString("0.00")}</td>
 					<td>${item.GeBeforeWriteOffBalance(grouped)}</td>
+					<td>
+						<% if item.Sale == null : %>
+							0
+						<% end %>
+					${item.Sale} %
+					</td>
 					<td class="comment_td">${item.Comment}</td>
 					<td class="deletingField">
 						<% if (filter.grouped == null and MapPartner.AccesPartner("ClientWriteOffDelete")) : %>
