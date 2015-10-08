@@ -631,13 +631,13 @@ namespace Billing
 		/// </summary>
 		private void UpdateWarnings(Client client)
 		{
-			if (client.NeedShowWarning(client.GetSumForRegularWriteOff())) {
+			if (client.NeedShowWarningCheck()) {
 				client.ShowBalanceWarningPage = true;
 				if (client.IsChanged(c => c.ShowBalanceWarningPage))
 					if (client.ShowWarningBecauseNoPassport())
 						client.CreareAppeal("Включена страница Warning, клиент не имеет паспортных данных", AppealType.Statistic);
 					else {
-						client.CreareAppeal("Включена страница Warning, клиент имеет низкий баланс", AppealType.Statistic);
+						client.CreareAppeal("Включена страница Warning, клиент отрицательный баланс", AppealType.Statistic);
 					}
 			}
 			else {

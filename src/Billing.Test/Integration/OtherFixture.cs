@@ -38,7 +38,7 @@ namespace Billing.Test.Integration
 			Assert_warning_page(false);
 		}
 
-		[Test]
+		[Test, Ignore("Варнинг отменен")]
 		public void Show_warning_if_balance_less_than_zero()
 		{
 			client.BeginWork = DateTime.Now.AddDays(-8);
