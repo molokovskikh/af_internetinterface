@@ -376,7 +376,7 @@ namespace Billing
 		private static void WriteOffFromLawyerPerson(ISession session, Client client)
 		{
 			var person = client.LawyerPerson;
-			var writeoffs = client.LawyerPerson.Calculate(SystemTime.Today());
+			var writeoffs = client.LawyerPerson.Calculate(SystemTime.Today(), session);
 			person.Balance -= writeoffs.Sum(w => w.Sum);
 			session.Save(person);
 			session.SaveEach(writeoffs);
