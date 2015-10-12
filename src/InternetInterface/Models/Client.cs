@@ -1112,7 +1112,7 @@ where CE.Client = {0}", Id))
 			SetStatus(session.Load<Status>((uint)status));
 		}
 
-		public virtual void SetStatus(Status status)
+		public virtual void SetStatus(Status status, decimal sale = 0m)
 		{
 			if (status.Type == StatusType.VoluntaryBlocking) {
 				Disabled = true;
@@ -1121,7 +1121,7 @@ where CE.Client = {0}", Id))
 			}
 			else if (status.Type == StatusType.NoWorked) {
 				Disabled = true;
-				Sale = 0;
+				Sale = sale;
 				StartNoBlock = null;
 				AutoUnblocked = true;
 			}
@@ -1139,7 +1139,7 @@ where CE.Client = {0}", Id))
 				AutoUnblocked = false;
 			}
 			else if (status.Type == StatusType.Dissolved) {
-				Sale = 0m;
+				Sale = sale;
 			}
 
 			if (Status.Type != status.Type) {

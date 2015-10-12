@@ -31,12 +31,13 @@ namespace InternetInterface.Models.Services
 						clientService.Client.ClientServices.Add(new ClientService(clientService.Client, planChanger));
 					}
 					else {
+						var noWorkedStatus = Status.Get(StatusType.NoWorked, session);
 						// если услуга существует, проверка, не подошел ли срок отключения клиента.
 						if (clientService.Client.ClientServices.Any(s => s.Service.HumanName == "PlanChanger")
 						    && clientService.Client.PhysicalClient.LastTimePlanChanged != Convert.ToDateTime("01.01.0001")
 						    && (clientService.Client.PhysicalClient.LastTimePlanChanged.AddDays(changer.Timeout) < SystemTime.Now())) {
-							if (clientService.Client.Status != Status.Get(StatusType.NoWorked, session)) {
-								clientService.Client.SetStatus(Status.Get(StatusType.NoWorked, session));
+							if (clientService.Client.Status != noWorkedStatus) {
+								clientService.Client.SetStatus(noWorkedStatus, clientService.Client.Sale);
 								clientService.Client.CreareAppeal("Клиент был заблокирован в связи с прекращением действия тарифа '"
 								                                  + clientService.Client.PhysicalClient.Tariff.Name + "'.", AppealType.Statistic);
 							}
