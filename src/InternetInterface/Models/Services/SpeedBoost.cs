@@ -18,6 +18,11 @@ namespace InternetInterface.Models.Services
 			assignedService.Client.IsNeedRecofiguration = true;
 		}
 
+		public override bool CanDeactivate(ClientService assignedService)
+		{
+			return (assignedService.EndWorkDate != null && SystemTime.Now().Date >= assignedService.EndWorkDate.Value.Date);
+		}
+
 		public override void ForceDeactivate(ClientService assignedService)
 		{
 			base.ForceDeactivate(assignedService);
