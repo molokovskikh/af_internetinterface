@@ -176,9 +176,23 @@ namespace Billing.Test.Integration
 			// проверка срока действия целевого тарифа у клиентов с услугой PlanChanger
 			// блокировка биллингом клиентов с просроченным тарифом.
 			billing.ProcessWriteoffs();
-			// у текущего клиента действие просрочено, он должен быть заблокирован
+			// у текущего клиента действие не просрочено, он не должен быть заблокирован
 			Assert.AreEqual(client.Status, Status.Get(StatusType.Worked, session), "Статус клиента ожидался 'подключен'.");
 
+			InternetPlanChangerFixtureAfter();
+		}
+		[Test(Description = "Проверка отработки OnTimer у услуги PlanChanger - скидка остается прежней")]
+		public void InternetPlanChangerFixtureBillingCheckSale()
+		{
+			const decimal clientSale = 10m;
+			InternetPlanChangerFixtureSettings(-1);
+			client.Sale = clientSale;
+			session.Save(client);
+			session.Flush();
+			Assert.AreEqual(client.Sale, clientSale, string.Format("До работы биллинга скидка клиента должна быть = {0}.", clientSale));
+			billing.ProcessPayments();
+			session.Refresh(client);
+			Assert.AreEqual(client.Sale, clientSale, string.Format("После работы биллинга скидка клиента также должна быть = {0}.", clientSale));
 			InternetPlanChangerFixtureAfter();
 		}
 	}
