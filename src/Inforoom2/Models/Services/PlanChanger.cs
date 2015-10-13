@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Common.Tools;
+using Inforoom2.Components;
 using Inforoom2.Helpers;
 using NHibernate;
 using NHibernate.Linq;
@@ -19,12 +20,15 @@ namespace Inforoom2.Models.Services
 			mediator.UrlRedirectAction = "";
 			mediator.UrlRedirectController = "";
 			var rootPath = ConfigHelper.GetParam("inforoom2Url").ToLower();
-			if (client != null && (mediator.UrlCurrent == null || mediator.UrlCurrent.ToLower().IndexOf(rootPath + "service/internetplanchanger") == -1)) {
+			var urlToCheck = mediator.UrlCurrent == null ? "" : mediator.UrlCurrent.ToLower().Replace("/", "");
+			var urlToDrope = (rootPath + "service/internetplanchanger").Replace("/", "");
+			bool urltoRedirect = urlToCheck.IndexOf(urlToDrope) == -1;
+
+			if (client != null && urltoRedirect) {
 				// получение сведения об изменении тарифов 
 				foreach (var changer in session.Query<PlanChangerData>().ToList()) {
 					// поиск целевого тарифа, фильтрация url с разрешенными тарифными планами 
-					if (changer.TargetPlan.Id == client.PhysicalClient.Plan.Id &&
-					    mediator.UrlCurrent.ToLower().IndexOf(rootPath + "service/internetchangeplan") == -1) {
+					if (changer.TargetPlan.Id == client.PhysicalClient.Plan.Id && urltoRedirect) {
 						// если услуга существует,проверка, не подошел ли срок отключения клиента.
 						if (client.ClientServices.Any(s => s.Service.Name == "PlanChanger")
 						    && client.PhysicalClient.LastTimePlanChanged != Convert.ToDateTime("01.01.0001")

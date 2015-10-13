@@ -114,9 +114,10 @@ namespace Inforoom2.Controllers
 					if (clientService.Service.Unproxy() is PlanChanger) {
 						if (!(string.IsNullOrEmpty(mediator.UrlRedirectAction)
 						      && string.IsNullOrEmpty(mediator.UrlRedirectController))) {
-							filterContext.Result = new RedirectResult(
-								new UrlHelper(ControllerContext.RequestContext)
-									.Action(mediator.UrlRedirectAction, mediator.UrlRedirectController, null));
+							var redirectUrl = new RedirectResult(new UrlHelper(ControllerContext.RequestContext)
+								.Action(mediator.UrlRedirectAction, mediator.UrlRedirectController, null));
+							EmailSender.SendDebugInfo("Редирект PlanChanger", string.Format("Клиент {0} был переадресован с {1} на {2}.", CurrentClient.Id, mediator.UrlCurrent, redirectUrl));
+							filterContext.Result = redirectUrl;
 						}
 					}
 				}
@@ -290,12 +291,10 @@ namespace Inforoom2.Controllers
 		{
 			var binder = new EntityBinder();
 			CallMeBackTicket callMeBackTicket;
-			try
-			{
-				callMeBackTicket = (CallMeBackTicket) binder.MapModel(Request, typeof (CallMeBackTicket));
+			try {
+				callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request, typeof(CallMeBackTicket));
 			}
-			catch (Exception e)
-			{
+			catch (Exception e) {
 				return;
 			}
 			ViewBag.CallMeBackTicket = callMeBackTicket;
