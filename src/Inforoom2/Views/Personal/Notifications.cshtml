@@ -7,7 +7,6 @@
 	ViewBag.Title = "Личный кабинет: Уведомления";
 	ValidationRunner validationRunner = ViewBag.Validation;
 	object contactValidation = ViewBag.ContactValidation;
-	 
 }
 <h2 class="heading">@ViewBag.Title</h2>
 @{ Html.RenderPartial("Menu"); }
@@ -18,20 +17,19 @@
 		using (Html.BeginForm("Notifications", "Personal", FormMethod.Post)) {
 			<div>Укажите номер телефона для смс рассылки </div>
 			@Html.ValidationEditor(validationRunner, contact, "ContactString", new { @class = "personal", @placeholder = "Введите номер в десятизначном формате" }, HtmlTag.input, HtmlType.text, forcedValidationAttribute: contactValidation)
-			@Html.HiddenFor(k=>contact.Type)
-			@Html.HiddenFor(k=>contact.Date)
+			@Html.HiddenFor(k => contact.Type)
+			@Html.HiddenFor(k => contact.Date)
 			<input class="button"  type="submit" value="Подписаться">
 		}
 	}
 	else {
 		using (Html.BeginForm("Notifications", "Personal", FormMethod.Post)) {
 			<div>Вы подписаны на смс рассылку</div>
-			@Html.DisplayFor(k=>contact.ContactString)
-			@Html.HiddenFor(k=>contact.ContactString)
-			@Html.HiddenFor(k=>contact.Date)
-			@Html.HiddenFor(k=>contact.Type)
+			@Html.DisplayFor(k => contact.ContactFormatString)
+			@Html.HiddenFor(k => contact.ContactString)
+			@Html.HiddenFor(k => contact.Date)
+			@Html.HiddenFor(k => contact.Type)
 			<input class="button" type="submit" value="Отписаться">
 		}
-	
 	}
 </div>

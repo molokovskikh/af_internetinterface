@@ -48,9 +48,14 @@ namespace Inforoom2.Models
 			};
 		}
 
+		public virtual string ContactFormatString
+		{
+			get { return ContactString != null ? ContactString.Replace("-", "") : ContactString; }
+		}
+
 		public virtual string GetAdditionalAppealInfo(string property, object oldPropertyValue, ISession session)
 		{
 			return "";
-		} 
+		}
 	}
 }

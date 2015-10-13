@@ -122,7 +122,7 @@ namespace Inforoom2.Controllers
 				//Отображение клиенту Варнинга, если через 3 дня начинаютс списания за аренду (и до тех пор, пока он не расчитается и не изменится статус)
 				var timeSinceStatusChanged = (SystemTime.Now() - CurrentClient.StatusChangedOn);
 				var rentFreeDaysOverCome = CurrentClient.RentalHardwareList.FirstOrDefault(s => s.IsActive &&
-					timeSinceStatusChanged.Value.Add(TimeSpan.FromDays(3)) > TimeSpan.FromDays(s.Hardware.FreeDays));
+				                                                                                timeSinceStatusChanged.Value.Add(TimeSpan.FromDays(3)) > TimeSpan.FromDays(s.Hardware.FreeDays));
 
 				if ((CurrentClient.Status.Type == StatusType.Dissolved || CurrentClient.Status.Type == StatusType.NoWorked) && rentFreeDaysOverCome != null) {
 					var timeSinceWriteOffStarts = (CurrentClient.StatusChangedOn.Value.AddDays(rentFreeDaysOverCome.Hardware.FreeDays));
@@ -270,12 +270,7 @@ namespace Inforoom2.Controllers
 			if (smsContact == null) {
 				smsContact = new Contact();
 				smsContact.Type = ContactType.SmsSending;
-			}
-			else {
-				// удаления символа "-" при выводе номера пользователю
-				smsContact.ContactString = smsContact.ContactString.Replace("-", "");
-			}
-
+			} 
 			ViewBag.Contact = smsContact;
 			ViewBag.IsSmsNotificationActive = client.SendSmsNotification;
 			ViewBag.Title = "Уведомления";
@@ -323,11 +318,14 @@ namespace Inforoom2.Controllers
 					DbSession.Save(appeal);
 					SuccessMessage("Вы успешно подписались на смс рассылку");
 				}
-				smsContact.ContactString = contact.ContactString;
+				if (!client.Contacts.Any(s => s.ContactString.Replace("-", "") == contact.ContactString.Replace("-", "")))
+				{
+					smsContact.ContactString = contact.ContactString;
+				}
 				DbSession.Save(client);
+				ViewBag.Contact = contact;
 				return RedirectToAction("Notifications");
 			}
-
 			ViewBag.Contact = contact;
 			ViewBag.IsSmsNotificationActive = client.SendSmsNotification;
 			return View();

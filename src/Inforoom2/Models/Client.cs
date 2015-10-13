@@ -498,8 +498,9 @@ namespace Inforoom2.Models
 		{
 			return new List<string>() {
 				"LegalClient",
-				"Status",
-				"SendSmsNotification"
+				"Status"
+				// В старую админку приходит оповещение с формы (после переноса страницы клиента, можно будет раскомментить)
+				//"SendSmsNotification"
 			};
 		}
 
