@@ -64,7 +64,7 @@ namespace InternetInterface.Controllers
 			var time = date ?? SystemTime.Now();
 			time = time.AddDays(days);
 			var client = DbSession.Query<Client>().FirstOrDefault(i => i.Id == id);
-			var writeoffs = client.LawyerPerson.Calculate(time);
+			var writeoffs = client.LawyerPerson.Calculate(time, DbSession);
 			DbSession.Clear();
 			DbSession.Transaction.Rollback();
 			PropertyBag["content"] = "Количество списаний:" + writeoffs.Count;

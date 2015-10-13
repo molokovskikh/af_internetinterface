@@ -9,6 +9,7 @@ using Common.Tools;
 using Common.Tools.Calendar;
 using Common.Web.Ui.Models.Audit;
 using InternetInterface.Models.Universal;
+using NHibernate;
 
 namespace InternetInterface.Models
 {
@@ -94,8 +95,9 @@ namespace InternetInterface.Models
 		/// Обработка списаний с юридических лиц
 		/// </summary>
 		/// <param name="dateTime">Дата по которой проводится списание</param>
+		/// <param name="dbSession">Сессия Хибера ( опционально )</param>
 		/// <returns>Список списаний абонентской платы</returns>
-		public virtual List<WriteOff> Calculate(DateTime dateTime)
+		public virtual List<WriteOff> Calculate(DateTime dateTime, ISession dbSession = null)
 		{
 			//Если нет даты, когда списывается абонентская плата, то выставляем ее
 			if (PeriodEnd == DateTime.MinValue) {
@@ -117,8 +119,15 @@ namespace InternetInterface.Models
 				var endpoint = o.EndPoint;
 				if (endpoint != null) {
 					o.EndPoint = null;
-					if (!client.Orders.Select(x => x.EndPoint).Contains(endpoint))
-						client.Endpoints.Remove(endpoint);
+					if (!client.Orders.Select(x => x.EndPoint).Contains(endpoint)) {
+						if (dbSession == null) {
+							client.Endpoints.Remove(endpoint);
+						}
+						else {
+							//TODO: важно! SQL запрос необходим для удаления элемента (прежний вариант с отчисткой списка удалял клиентов у endpoint(ов))
+							dbSession.CreateSQLQuery("DELETE FROM internet.clientendpoints WHERE Id = " + endpoint.Id).UniqueResult();
+						}
+					}
 				}
 			});
 
