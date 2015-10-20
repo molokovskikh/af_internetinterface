@@ -5,7 +5,6 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	Role role = ViewBag.Role;
 	List<Permission> permissions = ViewBag.Permissions;
-	permissions = permissions.OrderBy(s => s.Description).ToList();
 }
 <div class="panel panel-default">
 	<div class="panel-body">
