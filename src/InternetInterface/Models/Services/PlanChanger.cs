@@ -31,13 +31,12 @@ namespace InternetInterface.Models.Services
 						clientService.Client.ClientServices.Add(new ClientService(clientService.Client, planChanger));
 					}
 					else {
-						var noWorkedStatus = Status.Get(StatusType.NoWorked, session);
 						// если услуга существует, проверка, не подошел ли срок отключения клиента.
 						if (clientService.Client.ClientServices.Any(s => s.Service.HumanName == "PlanChanger")
 						    && clientService.Client.PhysicalClient.LastTimePlanChanged != Convert.ToDateTime("01.01.0001")
 						    && (clientService.Client.PhysicalClient.LastTimePlanChanged.AddDays(changer.Timeout) < SystemTime.Now())) {
-							if (clientService.Client.Status != noWorkedStatus) {
-								clientService.Client.SetStatus(noWorkedStatus, clientService.Client.Sale);
+							if (!clientService.Client.ShowBalanceWarningPage) {
+								clientService.Client.ShowBalanceWarningPage = true;
 								clientService.Client.CreareAppeal("Клиент был заблокирован в связи с прекращением действия тарифа '"
 								                                  + clientService.Client.PhysicalClient.Tariff.Name + "'.", AppealType.Statistic);
 							}
@@ -50,7 +49,7 @@ namespace InternetInterface.Models.Services
 		}
 
 		// проверка, если клиент уже заблокирован
-		public static bool CheckPlanChangerClientIsBlocked(ISession session, Client client)
+		public static bool CheckPlanChangerWarningPage(ISession session, Client client)
 		{
 			// получение сведения об изменении тарифов
 			var planChangerList = session.Query<PlanChangerData>().ToList();
@@ -67,10 +66,8 @@ namespace InternetInterface.Models.Services
 						if (client.ClientServices.Any(s => s.Service.HumanName == "PlanChanger")
 						    && client.PhysicalClient.LastTimePlanChanged != Convert.ToDateTime("01.01.0001")
 						    && (client.PhysicalClient.LastTimePlanChanged.AddDays(changer.Timeout) < SystemTime.Now())) {
-							if (client.Status == Status.Get(StatusType.NoWorked, session)) {
 								// клиент забокирован PlanChanger
-								return true;
-							}
+								return client.ShowBalanceWarningPage;
 						}
 					}
 				}

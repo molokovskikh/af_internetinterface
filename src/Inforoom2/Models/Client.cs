@@ -334,14 +334,9 @@ namespace Inforoom2.Models
 				DebtDays = 0;
 				ShowBalanceWarningPage = false;
 			}
-			else if (status.Type == StatusType.BlockedForRepair) {
-				Disabled = true;
-				AutoUnblocked = false;
-			}
 			else if (status.Type == StatusType.Dissolved) {
 				Discount = 0;
 			}
-
 			if (Status.Type != status.Type) {
 				StatusChangedOn = DateTime.Now;
 			}
@@ -507,30 +502,6 @@ namespace Inforoom2.Models
 		public virtual string GetAdditionalAppealInfo(string property, object oldPropertyValue, ISession session)
 		{
 			return "";
-		}
-
-		public virtual bool CheckClientForWarning()
-		{
-			bool showWarning = false;
-			if (LegalClient != null) {
-				if (Disabled) {
-					showWarning = true;
-				}
-				if (Balance < 0) {
-					showWarning = true;
-				}
-			}
-			else if (PhysicalClient != null) {
-				if (Disabled) {
-					showWarning = true;
-				}
-				else if (ShowBalanceWarningPage) {
-					if (!HasPassportData()) {
-						showWarning = true;
-					}
-				}
-			}
-			return showWarning;
 		}
 	}
 

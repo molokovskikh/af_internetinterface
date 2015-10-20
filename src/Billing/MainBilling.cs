@@ -161,14 +161,13 @@ namespace Billing
 					.Where(c => c.PhysicalClient.Balance > c.GetPriceIgnoreDisabled() * c.PercentBalance)
 					.ToList();
 				foreach (var client in clients) {
-					if (!PlanChanger.CheckPlanChangerClientIsBlocked(session, client)) {
-						client.Enable();
-						if (client.IsChanged(c => c.ShowBalanceWarningPage))
-							client.CreareAppeal("Отключена страница Warning, клиент разблокирован", AppealType.Statistic);
-						if (client.IsChanged(c => c.Disabled))
-							client.CreareAppeal("Клиент разблокирован", AppealType.Statistic);
-						SmsHelper.DeleteNoSendingMessages(client);
-					}
+					bool showBalanceWarningPage = PlanChanger.CheckPlanChangerWarningPage(session, client);
+					client.Enable(showBalanceWarningPage);
+					if (client.IsChanged(c => c.ShowBalanceWarningPage))
+						client.CreareAppeal("Отключена страница Warning, клиент разблокирован", AppealType.Statistic);
+					if (client.IsChanged(c => c.Disabled))
+						client.CreareAppeal("Клиент разблокирован", AppealType.Statistic);
+					SmsHelper.DeleteNoSendingMessages(client);
 				}
 				var lawyerPersons = session.Query<Client>().Where(c => c.LawyerPerson != null);
 				foreach (var client in lawyerPersons) {
@@ -403,14 +402,19 @@ namespace Billing
 			//Отсылка инфы о просроченных заявках
 			AddExpiredServiceRequestNoteToRedmine(session, client);
 
-			//Обновление расчетного периода для подключенного клиента
-			UpdateRatedPeriodDate(client);
+
+			//Обновление расчетного периода для подключенного клиента, при отсутствии блокировки из-за восстановления
+			var blickForRepairStatus = Status.Get(StatusType.BlockedForRepair, session);
+			if (client.Status != blickForRepairStatus) {
+				UpdateRatedPeriodDate(client);
+			}
 
 			//Обновление (назначение заново) скидки клиента
 			UpdateDiscount(client);
 
-			//Обработка списаний с клиента
-			if (!client.PaidDay && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue && client.GetSumForRegularWriteOff() > 0) {
+			//Обработка списаний с клиента, при отсутствии блокировки из-за восстановления
+			if (!client.PaidDay && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue
+			    && client.GetSumForRegularWriteOff() > 0) {
 				if (client.StartNoBlock == null)
 					client.StartNoBlock = SystemTime.Now();
 
@@ -634,11 +638,7 @@ namespace Billing
 			if (client.NeedShowWarningCheck()) {
 				client.ShowBalanceWarningPage = true;
 				if (client.IsChanged(c => c.ShowBalanceWarningPage))
-					if (client.ShowWarningBecauseNoPassport())
-						client.CreareAppeal("Включена страница Warning, клиент не имеет паспортных данных", AppealType.Statistic);
-					else {
-						client.CreareAppeal("Включена страница Warning, клиент отрицательный баланс", AppealType.Statistic);
-					}
+					client.CreareAppeal("Включена страница Warning, клиент не имеет паспортных данных", AppealType.Statistic);
 			}
 			else {
 				client.ShowBalanceWarningPage = false;

@@ -1,0 +1,24 @@
+﻿@using Inforoom2.Models
+@using Inforoom2.Models.Services
+@model dynamic
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/warningredirect.js")"></script>}
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Предупреждение";
+	Client client = ViewBag.Client;
+}
+<div class="name-page">
+	<h1 class="header-page" >Внимание!</h1>
+</div>
+<div class="block-page">
+<p class="info">Номер лицевого счета для оплаты: @client.Id</p>
+	<p class="error">
+		Доступ в интернет заблокирован из-за проведения работ по сервисной заявке, на время работ тарификация остановлена.
+		Если работы завершены нажмите кнопку "Продолжить".
+		После нажатия кнопки "Продолжить" тарификация будет возобновлена.
+	</p>
+	<form method="post" action="@Url.Action("RepairCompleted","Warning")">
+		<input type="submit" class="repairCompleted" class="button" value="Продолжить">
+	</form>
+</div>

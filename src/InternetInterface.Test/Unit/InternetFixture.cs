@@ -15,6 +15,7 @@ namespace InternetInterface.Test.Unit
 		public void Setup()
 		{
 			client = new Client();
+			client.Status = new Status(StatusType.Worked);
 			client.PhysicalClient = new PhysicalClient();
 			client.PhysicalClient.Client = client;
 			client.PhysicalClient.Tariff = new Tariff("Тестовый тариф", 100);

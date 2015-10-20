@@ -22,10 +22,10 @@ namespace InternetInterface.Models.Services
 		}
 
 		public override bool CanDeactivate(ClientService assignedService)
-		{
+		{ 
 			return assignedService.IsActivated &&
 			       (!assignedService.ActivatedByUser
-			        || assignedService.Client.Disabled);
+					|| assignedService.Client.Disabled || assignedService.Client.Status.Type == StatusType.BlockedForRepair);
 		}
 
 		//если клиент отключил себе интернет то нужно списать абонентскую плату

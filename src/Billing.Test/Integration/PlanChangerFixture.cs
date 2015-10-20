@@ -3,6 +3,7 @@ using System.Linq;
 using Castle.ActiveRecord;
 using Common.Tools;
 using Common.Web.Ui.ActiveRecordExtentions;
+using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Controllers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
@@ -68,11 +69,12 @@ namespace Billing.Test.Integration
 			var clientService = new ClientService(client, Service.GetByType(typeof(PlanChanger)));
 			clientService.IsActivated = true;
 			//изменение статуса клиента на Подлюченный
+			client.ShowBalanceWarningPage = false;
 			client.SetStatus(Status.Get(StatusType.Worked, session));
 			client.Activate(clientService);
 			session.Flush();
 			// проверка текущего статуса клиента (должен быть Подлюченный)
-			Assert.AreEqual(client.Status, Status.Get(StatusType.Worked, session), "Статус клиента ожидался 'заблокирован'.");
+			Assert.AreEqual(client.ShowBalanceWarningPage, false, "ShowBalanceWarningPage клиента ожидался 'false'.");
 		}
 
 		// Удаление возможных связей с тарифами в этом тесте, чтобы не изменять MainBillingFixture 
@@ -94,7 +96,7 @@ namespace Billing.Test.Integration
 			// блокировка клиентов с просроченным тарифом.
 			foreach (var targetService in clientsWithTargetClientService) targetService.Service.OnTimer(session, targetService);
 			// у текущего клиента действие просрочено, он должен быть заблокирован
-			Assert.AreEqual(client.Status, Status.Get(StatusType.NoWorked, session), "Статус клиента ожидался 'заблокирован'.");
+			Assert.AreEqual(client.ShowBalanceWarningPage, true, "ShowBalanceWarningPage клиента ожидался 'true'.");
 
 			InternetPlanChangerFixtureAfter();
 		}
@@ -110,13 +112,13 @@ namespace Billing.Test.Integration
 			// проверка срока действия целевого тарифа у клиентов с услугой PlanChanger
 			// блокировка клиентов с просроченным тарифом.
 			foreach (var targetService in clientsWithTargetClientService) targetService.Service.OnTimer(session, targetService);
-			// у текущего клиента действие просрочено, он должен быть заблокирован
-			Assert.AreEqual(client.Status, Status.Get(StatusType.Worked, session), "Статус клиента ожидался 'подключен'.");
+			// у текущего клиента действие не просрочено, он не должен быть заблокирован
+			Assert.AreEqual(client.ShowBalanceWarningPage, false, "ShowBalanceWarningPage клиента ожидался 'false'.");
 
 			InternetPlanChangerFixtureAfter();
 		}
 
-		[Test(Description = "Проверка отсуствия блокировки клиентов сервисом Internet с другим тарифом")]
+		[Test(Description = "Проверка отсуствия блокировки клиентов сервисом PlanChanger с другим тарифом")]
 		public void InternetPlanChangerFixtureAnotheTariff()
 		{
 			InternetPlanChangerFixtureSettings(-1, false);
@@ -128,7 +130,7 @@ namespace Billing.Test.Integration
 			// блокировка клиентов с просроченным тарифом.
 			foreach (var targetService in clientsWithTargetClientService) targetService.Service.OnTimer(session, targetService);
 			// у текущего клиента действие просрочено, он должен быть заблокирован
-			Assert.AreEqual(client.Status, Status.Get(StatusType.Worked, session), "Статус клиента ожидался 'подключен'.");
+			Assert.AreEqual(client.ShowBalanceWarningPage, false, "ShowBalanceWarningPage клиента ожидался 'false'.");
 
 			InternetPlanChangerFixtureAfter();
 		}
@@ -146,24 +148,31 @@ namespace Billing.Test.Integration
 			client.AutoUnblocked = true;
 			client.Disabled = true;
 			client.PhysicalClient.Balance = heightSumm;
-			session.Save(client);
+			session.Flush();
 			billing.ProcessPayments();
 			session.Refresh(client);
 			// у текущего клиента действие просрочено, он должен быть заблокирован PlanChanger(ом)
-			Assert.AreEqual(client.Status, Status.Get(StatusType.NoWorked, session), "Статус клиента ожидался 'заблокирован'.");
-			var noUnblockedAppeal = client.Appeals.FirstOrDefault(s => s.Appeal == "Клиент разблокирован. Баланс " + heightSumm + ",00.");
-			Assert.AreEqual(noUnblockedAppeal, null, "У клиента не должно быть сообщений о разблокировке, пока он не перешел на другой тариф!");
+			Assert.AreEqual(client.ShowBalanceWarningPage, true, "ShowBalanceWarningPage клиента ожидался 'true'.");
+
+			var hasMessage = client.Appeals.Where(s => s.Appeal.IndexOf("Клиент был заблокирован в связи с прекращением действия тарифа") != -1).ToList();
+			Assert.AreEqual(hasMessage.Count == 1, true, "Отсутствует сообщение о блокировке клиента!");
+
+			client.AutoUnblocked = true;
+			client.Disabled = true;
+			session.Save(client);
 
 			//блокировка биллингом клиента с не просроченным тарифом (если дни тарифа не сочтены).
 			var planChangerData = session.Query<PlanChangerData>().FirstOrDefault();
 			planChangerData.Timeout = 1000;
 			session.Save(planChangerData);
+			session.Flush();
 			billing.ProcessPayments();
 			session.Refresh(client);
 			// у текущего клиента действие не просрочено, он не должен быть заблокирован и у него должно появиться сообщение о том, что он разблокирован.
-			Assert.AreEqual(client.Status, Status.Get(StatusType.Worked, session), "Статус клиента ожидался 'подключен'.");
-			noUnblockedAppeal = client.Appeals.FirstOrDefault(s => s.Appeal == "Клиент разблокирован. Баланс " + heightSumm + ",00.");
-			Assert.AreNotEqual(noUnblockedAppeal, null, "У клиента должно быть сообщений о разблокировке, так как PlanChanger не блокирует клиента!");
+			Assert.AreEqual(client.ShowBalanceWarningPage, false, "ShowBalanceWarningPage клиента ожидался 'true'.");
+
+			hasMessage = client.Appeals.Where(s => s.Appeal.IndexOf("Клиент был заблокирован в связи с прекращением действия тарифа") != -1).ToList();
+			Assert.AreEqual(hasMessage.Count == 1, true, "Кол-во сообщениео блокировке клиента больше, чем ожидалось!");
 
 			InternetPlanChangerFixtureAfter();
 		}
@@ -177,10 +186,11 @@ namespace Billing.Test.Integration
 			// блокировка биллингом клиентов с просроченным тарифом.
 			billing.ProcessWriteoffs();
 			// у текущего клиента действие не просрочено, он не должен быть заблокирован
-			Assert.AreEqual(client.Status, Status.Get(StatusType.Worked, session), "Статус клиента ожидался 'подключен'.");
+			Assert.AreEqual(client.ShowBalanceWarningPage, false, "ShowBalanceWarningPage клиента ожидался 'false'.");
 
 			InternetPlanChangerFixtureAfter();
 		}
+
 		[Test(Description = "Проверка отработки OnTimer у услуги PlanChanger - скидка остается прежней")]
 		public void InternetPlanChangerFixtureBillingCheckSale()
 		{

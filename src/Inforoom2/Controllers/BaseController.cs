@@ -150,7 +150,7 @@ namespace Inforoom2.Controllers
 
 
 			session.SafeTransactionCommit(filterContext.Exception);
-		
+
 			//Я не понимаю зачем нужна следующая команда
 			session = CurrentSessionContext.Unbind(MvcApplication.SessionFactory);
 			if (session.IsOpen)
@@ -210,7 +210,7 @@ namespace Inforoom2.Controllers
 			if (shouldRemember)
 				cookie.Expires = SystemTime.Now().AddMinutes(FormsAuthentication.Timeout.TotalMinutes);
 			Response.Cookies.Set(cookie);
-			return RedirectToAction(action, controller,RouteData);
+			return RedirectToAction(action, controller, RouteData);
 		}
 
 		/// <summary>
@@ -219,22 +219,22 @@ namespace Inforoom2.Controllers
 		/// <param name="controllerString">наименование контроллера</param>
 		/// <param name="actionString">наименование действие</param>
 		/// <param name="parameters">параметры действия</param>
-		public void ForwardToAction(string controllerString, string actionString, object[] parameters)
-		{  
+		public void ForwardToAction(string controllerString, string actionString, object[] parameters = null)
+		{
 			var type = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(t => t.Name == controllerString + "Controller");
-			if (type == null){
+			if (type == null) {
 				ForwardToAction("Home", "Index", new object[0]);
 				return;
 			}
 
 			// Получение сведений о контроллере, действиях и их параметрах
-			var module = new UrlRoutingModule(); 
+			var module = new UrlRoutingModule();
 			var col = module.RouteCollection;
 			HttpContext.RewritePath("/" + controllerString + "/" + actionString);
 			var fakeRouteData = col.GetRouteData(HttpContext);
-			 
+
 			// Создание нового контроллера, соответствующего запросу 
-			var ctxt = new RequestContext(ControllerContext.HttpContext, fakeRouteData);  
+			var ctxt = new RequestContext(ControllerContext.HttpContext, fakeRouteData);
 			var factory = ControllerBuilder.Current.GetControllerFactory();
 			var iController = factory.CreateController(ctxt, controllerString);
 
@@ -242,7 +242,7 @@ namespace Inforoom2.Controllers
 			var controller = iController as BaseController;
 			controller.DbSession = DbSession;
 			controller.ControllerContext = new ControllerContext(ctxt, this);
-			var methodTypes = parameters.Select(parameter => parameter.GetType()).ToList();
+			var methodTypes = parameters == null ? new List<Type>() : parameters.Select(parameter => parameter.GetType()).ToList();
 			var actionMethod = type.GetMethod(actionString, methodTypes.ToArray());
 			if (actionMethod == null) {
 				ForwardToAction("Home", "Index", new object[0]);
@@ -253,10 +253,10 @@ namespace Inforoom2.Controllers
 			c.HttpContext = ctxt.HttpContext;
 			c.RouteData = ctxt.RouteData;
 			controller.ViewData = ViewData;
-			controller.OnActionExecuting(c); 
+			controller.OnActionExecuting(c);
 
 			// Получение результата действия   
-			var actionResult = (ActionResult)actionMethod.Invoke(controller, parameters); 
+			var actionResult = (ActionResult)actionMethod.Invoke(controller, parameters);
 
 			// Передача полученного результата текущему действию
 			actionResult.ExecuteResult(controller.ControllerContext);
@@ -269,7 +269,7 @@ namespace Inforoom2.Controllers
 		/// <typeparam name="TBaseModel">Тип модели</typeparam>
 		/// <param name="id">Идентификатор модели</param>
 		protected void SafeDelete<TBaseModel>(int id)
-		where TBaseModel : BaseModel
+			where TBaseModel : BaseModel
 		{
 			var obj = DbSession.Get<TBaseModel>(id);
 			if (DbSession.AttemptDelete(obj))

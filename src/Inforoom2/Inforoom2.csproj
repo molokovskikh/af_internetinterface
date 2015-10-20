@@ -244,6 +244,7 @@
     <Content Include="Scripts\jquery-ui-1.11.1.js" />
     <Content Include="Scripts\ServiceController.js" />
     <Content Include="Scripts\Personal.Plans.js" />
+    <Content Include="Scripts\warningredirect.js" />
     <Content Include="Scripts\Window.js" />
     <Content Include="speedtest.swf" />
     <Content Include="speedtest\expressInstall.swf" />
@@ -304,6 +305,7 @@
     </Compile>
     <Compile Include="Helpers\DescriptionHelper.cs" />
     <Compile Include="Helpers\ConfigHelper.cs" />
+    <Compile Include="Helpers\WarningHelper.cs" />
     <Compile Include="Helpers\Md5Helper.cs" />
     <Compile Include="Helpers\ModelCrudListener.cs" />
     <Compile Include="Helpers\ControllerAndServiceMediator.cs" />
@@ -497,6 +499,12 @@
     <Content Include="Images\sber_autopay.pdf" />
     <Content Include="Images\sber_online.pdf" />
     <Content Include="Images\sber_terminal.pdf" />
+    <Content Include="Views\Warning\LawLowBalance.cshtml" />
+    <Content Include="Views\Warning\PhysBlockedForRepair.cshtml" />
+    <Content Include="Views\Warning\PhysVoluntaryBlocking.cshtml" />
+    <Content Include="Views\Warning\PhysLowBalance.cshtml" />
+    <Content Include="Views\Warning\PhysFirstPayment.cshtml" />
+    <Content Include="Views\Warning\PhysPassportData.cshtml" />
     <None Include="Web.test2.config" />
     <None Include="Web.release.config">
       <SubType>Designer</SubType>

@@ -61,7 +61,7 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession.Save(client);
 			DbSession.Flush();
 			RunBillingProcessWriteoffs(client);
-			AssertText("Ваша задолженность за оказанные услуги составляет");
+			AssertText("Ваш лицевой счет заблокирован за неуплату, для разблокировки необходимо внести");
 		}
 
 		[Test(Description = "Баланс отрицательный, есть обещанный платеж актуальный - блокировки нет")]
@@ -98,7 +98,7 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession.Save(client);
 			DbSession.Flush();
 			RunBillingProcessWriteoffs(client);
-			AssertText("Ваша задолженность за оказанные услуги составляет");
+			AssertText("Ваш лицевой счет заблокирован за неуплату, для разблокировки необходимо внести");
 		}
 
 
@@ -112,7 +112,17 @@ namespace Inforoom2.Test.Functional.Personal
 			Css(".warning").Click();
 			AssertText("паспортные данные");
 			DbSession.Refresh(client);
-			Assert.That(client.ShowBalanceWarningPage, Is.False, "Клиенту все еще отображается страница Warning");
+			Open("/Personal/Profile");
+			AssertText("паспортные данные");
+			Css(".warning").Click();
+
+			var textbox = browser.FindElement(By.CssSelector("#physicalClient_PassportNumber"));
+			textbox.SendKeys("7121551");
+			var button = browser.FindElement(By.CssSelector("form input.button"));
+			button.Click();
+			Open("/Personal/Profile");
+
+			AssertText("ЛИЧНЫЙ КАБИНЕТ: ПРОФИЛЬ");
 		}
 
 
@@ -127,7 +137,7 @@ namespace Inforoom2.Test.Functional.Personal
 			Css(".repairCompleted").Click();
 			AssertText("Работа возобновлена");
 			DbSession.Refresh(client);
-			Assert.That(client.Status.Type, Is.EqualTo(StatusType.Worked), "Клиенту все еще заблокирован");
+			Assert.That(client.Status.Type, Is.EqualTo(StatusType.Worked), "Клиент все еще заблокирован");
 		}
 
 		[Test(Description = "Клиент с услугой добровольная блокировка")]

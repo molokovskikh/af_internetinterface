@@ -37,7 +37,7 @@ namespace InforoomInternet.Test.Functional
 			AssertText("Ваша задолженность за оказанные услуги составляет");
 		}
 
-		[Test]
+		[Test, Ignore("Функционал перенесен, условия отработки изменились (флаг Disabled, при BlockedForRepair, выставлять не нужно )")]
 		public void Block_for_repair()
 		{
 			Client.SetStatus(StatusType.BlockedForRepair, session);

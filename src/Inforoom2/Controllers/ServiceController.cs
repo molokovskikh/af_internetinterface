@@ -193,6 +193,7 @@ namespace Inforoom2.Controllers
 				Employee = GetCurrentEmployee()
 			};
 			DbSession.Save(appeal);
+			SceHelper.UpdatePackageId(DbSession, client);
 			return RedirectToAction("Profile", "Personal");
 		}
 	}
