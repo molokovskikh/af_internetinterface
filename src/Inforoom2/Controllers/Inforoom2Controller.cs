@@ -19,6 +19,7 @@ using Region = Inforoom2.Models.Region;
 
 namespace Inforoom2.Controllers
 {
+	[OutputCacheAttribute(VaryByParam = "*", Duration = 0, NoStore = true)]
 	public class Inforoom2Controller : BaseController
 	{
 		protected new virtual CustomPrincipal User
@@ -103,6 +104,10 @@ namespace Inforoom2.Controllers
 				ViewBag.RegionOfficePhoneNumber = CurrentRegion.RegionOfficePhoneNumber;
 				ViewBag.CurrentRegion = CurrentRegion;
 			}
+
+			var warningHelper = new WarningHelper(filterContext);
+			warningHelper.TryWarningToRedirect();
+			
 		}
 
 		public void TrigerServices(ActionExecutingContext filterContext)
@@ -401,6 +406,19 @@ namespace Inforoom2.Controllers
 		{
 			ProcessCallMeBackTicket();
 			ForwardToAction(controllerString, actionString, new object[0]);
+		}
+
+		public Client GetCurrentClient()
+		{
+			return CurrentClient;
+		}
+
+		public ActionResult GetRedirectToAction(string action, string controller, object pasrametres = null)
+		{
+			if (pasrametres != null) {
+				return RedirectToAction(action, controller, pasrametres);
+			}
+			return RedirectToAction(action, controller);
 		}
 
 		protected override StringBuilder CollectDebugInfo()

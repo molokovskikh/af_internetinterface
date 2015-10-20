@@ -294,7 +294,7 @@ namespace InforoomInternet.Test.Functional
 			Assert.IsTrue(client.FirstLaunch);
 		}
 
-		[Test]
+		[Test, Ignore("Функционал перенесен, условия отработки изменились (флаг Disabled, при BlockedForRepair, выставлять не нужно )")]
 		public void Blocked_for_repair()
 		{
 			client.SetStatus(StatusType.BlockedForRepair, session);

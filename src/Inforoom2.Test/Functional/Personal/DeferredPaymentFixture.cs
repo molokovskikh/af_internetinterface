@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Common.Tools;
 using Inforoom2.Models;
 using Inforoom2.Test.Infrastructure;
 using Inforoom2.Test.Infrastructure.Helpers;
@@ -17,6 +18,7 @@ namespace Inforoom2.Test.Functional.Personal
 			var clientMark = ClientCreateHelper.ClientMark.disabledClient.GetDescription();
 
 			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Comment == clientMark);
+			client.Payments.Add(new Payment() { Client = client, Sum = 0, PaidOn = SystemTime.Now().AddDays(-2), RecievedOn = SystemTime.Now().AddDays(-1) });
 			Assert.IsNotNull(client, "Искомый клиент не найден");
 			Assert.AreEqual(StatusType.NoWorked, client.Status.Type, "Клиент не имеет статус 'Заблокирован'");
 			Assert.IsTrue(client.WorkingStartDate.HasValue, "У клиента не выставлена дата подключения");
@@ -65,7 +67,7 @@ namespace Inforoom2.Test.Functional.Personal
 			lastService.IsActivated = false;
 			lastService.IsDeactivated = true;
 			DbSession.SaveOrUpdate(lastService);
-
+			DbSession.Flush();
 			// Перезагрузить страницу "Услуги" у клиента
 			Open("Personal/Service");
 			// Не должно быть возм-ти подключить "Обещанный платеж"
@@ -86,7 +88,7 @@ namespace Inforoom2.Test.Functional.Personal
 			// Перезагрузить страницу "Услуги" у клиента
 			Open("Personal/Service");
 			// Пока ещё не должно быть возм-ти подключить "Обещанный платеж"
-			AssertNoText("Подключить"); 
+			AssertNoText("Подключить");
 
 			var payment2 = new Payment {
 				Sum = 0.1m * tariffPrice,

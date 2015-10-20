@@ -821,9 +821,9 @@ where CE.Client = {0}", Id))
 		/// <summary>
 		/// Разблокирует клиента
 		/// </summary>
-		public virtual void Enable()
+		public virtual void Enable(bool showBalanceWarningPage = false)
 		{
-			SetStatus(Status.Find((uint)StatusType.Worked));
+			SetStatus(Status.Find((uint)StatusType.Worked),showBalanceWarningPage:showBalanceWarningPage);
 		}
 
 		/// <summary>
@@ -1107,12 +1107,12 @@ where CE.Client = {0}", Id))
 			return SystemTime.Today().AddDays((int)(Balance / sum) + 1).Date;
 		}
 
-		public virtual void SetStatus(StatusType status, ISession session)
+		public virtual void SetStatus(StatusType status, ISession session, bool showBalanceWarningPage = false)
 		{
-			SetStatus(session.Load<Status>((uint)status));
+			SetStatus(session.Load<Status>((uint)status),showBalanceWarningPage:showBalanceWarningPage);
 		}
 
-		public virtual void SetStatus(Status status, decimal sale = 0m)
+		public virtual void SetStatus(Status status, decimal sale = 0m, bool showBalanceWarningPage = false)
 		{
 			if (status.Type == StatusType.VoluntaryBlocking) {
 				Disabled = true;
@@ -1132,12 +1132,8 @@ where CE.Client = {0}", Id))
 				if (Status.Type != StatusType.BlockedForRepair)
 					RatedPeriodDate = null;
 				DebtDays = 0;
-				ShowBalanceWarningPage = false;
-			}
-			else if (status.Type == StatusType.BlockedForRepair) {
-				Disabled = true;
-				AutoUnblocked = false;
-			}
+				ShowBalanceWarningPage = showBalanceWarningPage;
+			} 
 			else if (status.Type == StatusType.Dissolved) {
 				Sale = sale;
 			}

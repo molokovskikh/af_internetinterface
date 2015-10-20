@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.Xml.Linq;
 using Common.Tools;
 using Inforoom2.Components;
+using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using NHibernate.Linq;
@@ -16,6 +17,15 @@ namespace Inforoom2.Controllers
 	/// <summary>
 	/// Страница управления аутентификацией
 	/// </summary>
+	public class WarningBlockController : Controller
+	{
+		public JsonResult CheckRedirect()
+		{
+			var url = WarningHelper.GetForwardUrl(this);
+			return Json(url);
+		}
+	}
+
 	public class WarningController : Inforoom2Controller
 	{
 		public ActionResult RepairCompleted()
@@ -31,67 +41,60 @@ namespace Inforoom2.Controllers
 
 		public ActionResult Index(int disable = 0, string ip = "")
 		{
-			var ipstring = Request.UserHostAddress;
-#if DEBUG
-			ipstring = ip;
-#endif
-			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring, DbSession);
+			ViewBag.Client = CurrentClient;
+			return View();
+		}
 
-			if (endpoint == null) {
-				var lease = Lease.GetLeaseForIp(ipstring, DbSession);
-				if (!ipstring.Contains("172.25.0")) //Остановим спам от непонятных
-					EmailSender.SendDebugInfo("Редидект с варнинга на главную: " + ipstring + (lease != null ? ", есть аренда:" + lease.Id : ""), CollectDebugInfo().ToString());
-				return RedirectToAction("Index", "Home");
-			}
-			var client = endpoint.Client;
 
-			if (disable != 0) {
-				if (client.Status.Type == StatusType.BlockedForRepair) {
-					client.SetStatus(StatusType.Worked, DbSession);
-				}
-				else if (client.Disabled) {
-					return RedirectToAction("Index", "Home");
-				}
-				else if (client.ShowBalanceWarningPage) {
-					client.ShowBalanceWarningPage = false;
-					var appeal = new Appeal("Отключена страница Warning, клиент отключил со страницы", client, AppealType.Statistic) {
-						Employee = GetCurrentEmployee()
-					};
-					DbSession.Save(appeal);
-				}
-				DbSession.Save(client);
-				DbSession.Flush();
+		public ActionResult LawDisabled()
+		{
+			ViewBag.Client = CurrentClient;
+			return View();
+		}
 
-				SceHelper.UpdatePackageId(DbSession, client);
-				DbSession.Save(client);
+		public ActionResult LawLowBalance()
+		{
+			ViewBag.Client = CurrentClient;
+			return View();
+		}
 
-				if (!client.HasPassportData())
-					return RedirectToAction("FirstVisit", "Personal");
+		public ActionResult PhysBlockedForRepair()
+		{
+			ViewBag.Client = CurrentClient;
+			return View();
+		}
 
-				return RedirectToAction("Index", "Home");
-			}
+		public ActionResult PhysLowBalance()
+		{
+			ViewBag.Client = CurrentClient;
+			return View();
+		}
+
+		public ActionResult PhysVoluntaryBlocking()
+		{
 			var services = DbSession.Query<Service>().Where(s => s.IsActivableFromWeb);
 			var blockAccountService = services.FirstOrDefault(s => s is BlockAccountService);
-			ViewBag.Client = client;
 			ViewBag.BlockAccountService = blockAccountService.Unproxy();
+			ViewBag.Client = CurrentClient;
 
-			//Редирект пользователя, если он валидный и с паспортными данными
-			client = client ?? CurrentClient;
-			if (client != null && client.Disabled == false && client.HasPassportData() && client.ShowBalanceWarningPage == false) {
-				return RedirectToAction("Index", "Home");
-			}
+			return View();
+		}
 
-			//TODO: распилить варнинг
-			// если клиенту не нужно отображать варнинг и есть целевой адрес, обновляем PackageId в SCE и редиректим клиента на целевой адрес
-			//client = client ?? CurrentClient;
-			//if (client != null && host != "" && host.ToLower().IndexOf("/warning") == -1 && !client.CheckClientForWarning()) {
-			//	SceHelper.UpdatePackageId(DbSession, client);
-			//	Thread.SpinWait(500);
-			//	host = host.IndexOf("http://") == -1 ? host.Insert(0, "http://") : host;
-			//	return Redirect(host);
-			//}
+		public ActionResult PhysFirstPayment()
+		{
+			ViewBag.Client = CurrentClient;
+			return View();
+		}
 
-			return View("Index");
+		public ActionResult PhysPassportData()
+		{
+			ViewBag.Client = CurrentClient;
+			return View();
+		}
+
+		public ActionResult TryToDisableWarning()
+		{
+			return null;
 		}
 	}
 }

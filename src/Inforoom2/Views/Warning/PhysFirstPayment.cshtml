@@ -1,0 +1,23 @@
+﻿@using Inforoom2.Models
+@using Inforoom2.Models.Services
+@model dynamic
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/warningredirect.js")"></script>}
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Предупреждение";
+	Client client = ViewBag.Client;
+}
+<div class="name-page">
+	<h1 class="header-page" >Внимание!</h1>
+</div>
+<div class="block-page">
+<p class="info">Номер лицевого счета для оплаты: @client.Id</p>
+	<p class="info">
+		Для начала работы внесите первый платеж @client.Plan.Price.ToString("F2") руб.
+	</p>
+	<form method="post" action="@Url.Action("TryToDisableWarning","Warning")">
+		<input name="referer" type="hidden" value="!{referer}">
+		<input type="submit" class="button warning" value="Продолжить">
+	</form>
+</div>
