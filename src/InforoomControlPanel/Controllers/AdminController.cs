@@ -53,10 +53,10 @@ namespace InforoomControlPanel.Controllers
 		{
 			var employee = DbSession.Get<Employee>(id);
 			var roles = DbSession.Query<Role>().ToList();
-			var permissions = DbSession.Query<Permission>().ToList();
+			var permissions = DbSession.Query<Permission>().Where(s => !s.Hidden).ToList();
 			_roles = roles = roles.Where(i => i != null && !employee.Roles.Any(j => j == i)).ToList();
 			permissions = permissions.Where(i => !employee.Permissions.Any(j => j == i) &&
-			                                     !employee.Roles.Any(s => s != null && s.Permissions.Any(k => k == i))).ToList();
+												 !employee.Roles.Any(s => s != null && s.Permissions.Any(k => k == i))).OrderBy(s => s.Name).ToList();
 
 			ViewBag.Employee = employee;
 			ViewBag.Roles = roles;
@@ -87,7 +87,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult PermissionList()
 		{
-			var rights = DbSession.Query<Permission>().ToList();
+			var rights = DbSession.Query<Permission>().Where(s => !s.Hidden).OrderBy(s => s.Name).ToList();
 			ViewBag.Permissions = rights;
 			return View();
 		}
@@ -144,8 +144,8 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult EditRole(int id)
 		{
 			var role = DbSession.Get<Role>(id);
-			var permissions = DbSession.Query<Permission>().ToList();
-			permissions = permissions.Where(i => !role.Permissions.Any(j => j == i)).ToList();
+			var permissions = DbSession.Query<Permission>().Where(s => !s.Hidden).ToList();
+			permissions = permissions.Where(i => !role.Permissions.Any(j => j == i)).OrderBy(s => s.Name).ToList();
 
 			ViewBag.Role = role;
 			ViewBag.Permissions = permissions;

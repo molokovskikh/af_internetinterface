@@ -26,5 +26,8 @@ namespace Inforoom2.Models
 		[Key(1, Column = "permission", NotNull = false)]
 		[ManyToMany(2, Column = "user", ClassType = typeof(Employee))]
 		public virtual IList<Employee> Users { get; set; }
+
+		[Property, Description("Не показывать")]
+		public virtual bool Hidden { get; set; }
 	}
 }
