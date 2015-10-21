@@ -18,6 +18,7 @@ namespace InternetInterface.Test.Unit
 		public void Setup()
 		{
 			client = new Client();
+			client.Status = new Status(StatusType.Worked);
 			client.PhysicalClient = new PhysicalClient();
 			client.PhysicalClient.Client = client;
 			client.PhysicalClient.Tariff = new Tariff("Тестовый тариф", 100);
@@ -26,7 +27,7 @@ namespace InternetInterface.Test.Unit
 			client.PhysicalClient.MoneyBalance = 1000;
 			client.BeginWork = new DateTime(2012, 06, 01);
 			client.RatedPeriodDate = new DateTime(2012, 06, 01);
-			client.Status = new Status { ShortName = "Worked" };
+			client.Status = new Status(StatusType.Worked);
 		}
 
 		[Test]
