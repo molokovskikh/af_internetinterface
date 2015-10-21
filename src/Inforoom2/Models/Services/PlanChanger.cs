@@ -19,9 +19,8 @@ namespace Inforoom2.Models.Services
 		{
 			mediator.UrlRedirectAction = "";
 			mediator.UrlRedirectController = "";
-			var rootPath = ConfigHelper.GetParam("inforoom2Url").ToLower();
 			var urlToCheck = mediator.UrlCurrent == null ? "" : mediator.UrlCurrent.ToLower().Replace("/", "");
-			var urlToDrope = (rootPath + "service/internetplanchanger").Replace("/", "");
+			var urlToDrope = ("service/internetplanchanger").Replace("/", "");
 			bool urltoRedirect = urlToCheck.IndexOf(urlToDrope) == -1;
 
 			if (client != null && urltoRedirect) {

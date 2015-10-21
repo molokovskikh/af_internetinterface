@@ -107,13 +107,12 @@ namespace Inforoom2.Controllers
 
 			var warningHelper = new WarningHelper(filterContext);
 			warningHelper.TryWarningToRedirect();
-			
 		}
 
 		public void TrigerServices(ActionExecutingContext filterContext)
 		{
 			if (CurrentClient != null) {
-				var mediator = new ControllerAndServiceMediator(HttpContext.Request.Url.ToString());
+				var mediator = new ControllerAndServiceMediator(HttpContext.Request.Url.AbsolutePath);
 				foreach (var clientService in CurrentClient.ClientServices.Where(s => s.IsActivated)) {
 					clientService.Service.OnWebsiteVisit(mediator, DbSession, CurrentClient);
 					if (clientService.Service.Unproxy() is PlanChanger) {
@@ -121,7 +120,6 @@ namespace Inforoom2.Controllers
 						      && string.IsNullOrEmpty(mediator.UrlRedirectController))) {
 							var redirectUrl = new RedirectResult(new UrlHelper(ControllerContext.RequestContext)
 								.Action(mediator.UrlRedirectAction, mediator.UrlRedirectController, null));
-							EmailSender.SendDebugInfo("Редирект PlanChanger", string.Format("Клиент {0} был переадресован с {1} на {2}.", CurrentClient.Id, mediator.UrlCurrent, redirectUrl));
 							filterContext.Result = redirectUrl;
 						}
 					}
