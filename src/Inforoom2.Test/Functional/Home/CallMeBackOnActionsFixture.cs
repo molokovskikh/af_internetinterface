@@ -24,7 +24,7 @@ namespace Inforoom2.Test.Functional.Home
 				var actions = methods.Where(i => i.ReturnType == typeof(ActionResult)).ToList();
 				foreach (var action in actions) {
 					if (!Attribute.IsDefined(action, typeof(HttpPostAttribute)) && action.GetParameters().Length == 0
-						&& action.Name != "Logout" && controller.Name != "BussinessController" && controller.Name != "TestSpeedController" && action.Name != "Playlist")
+						&& action.Name != "TryToDisableWarning" && action.Name != "Logout" && controller.Name != "BussinessController" && controller.Name != "TestSpeedController" && action.Name != "Playlist")
 					{
 						var name = controller.Name.Replace("Controller", "");
 						Open("Account/Login");
