@@ -5,6 +5,7 @@ using Common.Tools;
 using InternetInterface.Services;
 using NHibernate;
 using NHibernate.Linq;
+using NHibernate.Proxy;
 
 namespace InternetInterface.Models.Services
 {
@@ -47,7 +48,11 @@ namespace InternetInterface.Models.Services
 
 		public override void Activate(ClientService assignedService)
 		{
-			if (assignedService.ActivatedByUser && !assignedService.Client.Disabled && assignedService.Client.Status.Type != StatusType.BlockedForRepair) {
+			var statusIsTrue = true;
+			var statusIsProxy = assignedService.Client.Status as INHibernateProxy == null;
+			if (statusIsProxy) statusIsTrue = assignedService.Client.Status.Type != StatusType.BlockedForRepair;
+
+			if (assignedService.ActivatedByUser && !assignedService.Client.Disabled && statusIsTrue) {
 				base.Activate(assignedService);
 				assignedService.Client.CreareAppeal(String.Format("Включена услуга \"{0}\"", HumanName));
 			}

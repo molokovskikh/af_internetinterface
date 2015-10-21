@@ -12,7 +12,7 @@
 </div>
 <div class="block-page">
 	<p class="info">Номер лицевого счета для оплаты: @client.Id</p>
-	<p>Доступ в интернет заблокирован.</p>+
+	<p>Доступ в интернет заблокирован.</p>
 	<p>Для продолжения работы в интернете необходимо оплатить услуги.</p>
 	<form method="post" action="@Url.Action("TryToDisableWarning", "Warning")">
 		<input name="referer" type="hidden" value="!{referer}">
