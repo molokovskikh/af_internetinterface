@@ -69,8 +69,10 @@
 									<div class="form-group">
 										<label class="col-sm-4 control-label c-pointer" for="clientToBeChecked">Проверен:</label>
 										<div class="col-sm-4">
-											@Html.CheckBoxFor(o => client.PhysicalClient.Checked, new { @Id = "clientToBeChecked", @class = "c-pointer", @disabled = "disabled" })
-											@ViewBag.Validation.GetError(client.PhysicalClient, "Checked")
+											<input class="c-pointer" data-val="true" data-val-required="Требуется поле Checked." disabled="disabled" type="checkbox" @(client.PhysicalClient.Checked?" checked=\"checked\"":"")>
+											@*	@Html.CheckBoxFor(o => client.PhysicalClient.Checked, new { @Id = "clientToBeChecked", @class = "c-pointer", @disabled = "disabled" })
+											    @ViewBag.Validation.GetError(client.PhysicalClient, "Checked")
+												*@
 										</div>
 									</div>
 								</div><!-- /.col-lg-6 -->
