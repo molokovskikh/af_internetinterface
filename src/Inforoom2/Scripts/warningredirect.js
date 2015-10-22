@@ -4,13 +4,19 @@
 		url: cli.getParam("baseurl") + "WarningBlock/CheckRedirect",
 		data: {  },
 		success: function (urlRedirect) {
+			if (urlRedirect == "*") {
+				return;
+			}
 			if (urlRedirect != "") {
 				window.location.href = urlRedirect;
+				return;
 			}
-			console.log("Проверка блокировки", urlRedirect);
+			setTimeout(checkTheBlock, 7000);
+		},
+		error: function () {
+			setTimeout(checkTheBlock, 7000);
 		}
 	});
-	setTimeout(checkTheBlock, 7000);
 }
 
 $(function () {
