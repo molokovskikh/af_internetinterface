@@ -80,7 +80,14 @@ namespace Inforoom2.Helpers
 		/// </summary>
 		public void TryWarningToRedirect()
 		{
-			if (InforoomController == null) return;
+			//проверяем на варнинг только с этих контроллов:
+			if (InforoomController == null ||
+			    (_currentController != "service" &&
+			     _currentController != "personal" &&
+			     _currentController != "warning")) {
+				return;
+			}
+
 			InforoomClient = InforoomController.GetCurrentClient();
 			WarningRedirect warningRedirect;
 			//пробуем перевести неавторизованного пользователя с варнинга (если он все таки туда зашел)
@@ -103,10 +110,14 @@ namespace Inforoom2.Helpers
 			if (HasRequestWarningExceptionGet()) {
 				return;
 			}
+
 			//целевой адрес пользователя не попал под фильтрацию, 
 			//проверка необходимости редиректа пользователя:
 			//получение объекта с набором параметров для редиректа
 			warningRedirect = CheckClientForWarning();
+			if (warningRedirect == null && InforoomController.Session["WarningBlocked"] != null) {
+				SetWarningSessionFlagOff();
+			}
 			//попытка редиректа по полученному объекту
 			TryRedirect(warningRedirect);
 		}
@@ -120,7 +131,7 @@ namespace Inforoom2.Helpers
 			var client = InforoomClient;
 			if (InforoomExecutingContext.HttpContext.Request.HttpMethod == "POST"
 			    && (_exceptionsForWarningMethodPost.Any(s => s.Action.ToLower() == _currentAction && s.Controller == _currentController && s.Disabled == false)
-					|| (client.PhysicalClient != null && client.Balance < 0 && ("deferredpayment" == _currentAction || "activatedefferedpayment" == _currentAction) && "service" == _currentController)
+			        || (client.PhysicalClient != null && client.Balance < 0 && ("deferredpayment" == _currentAction || "activatedefferedpayment" == _currentAction) && "service" == _currentController)
 			        || (client.PhysicalClient != null && client.Status.Type == StatusType.VoluntaryBlocking
 			            && "blockaccount" == _currentAction && "service" == _currentController))) {
 				return true;
@@ -145,7 +156,7 @@ namespace Inforoom2.Helpers
 			if (InforoomExecutingContext.HttpContext.Request.HttpMethod == "GET"
 			    && (_exceptionsForWarningMethodGet.Any(s => s.Action.ToLower() == _currentAction && s.Controller == _currentController && s.Disabled == false)
 			        || (client.PhysicalClient != null && (client.Status.Type == StatusType.VoluntaryBlocking || client.Balance < 0) && "service" == _currentAction && "personal" == _currentController)
-					|| (client.PhysicalClient != null && client.Balance < 0 && "deferredpayment" == _currentAction && "service" == _currentController)
+			        || (client.PhysicalClient != null && client.Balance < 0 && "deferredpayment" == _currentAction && "service" == _currentController)
 			        || (client.PhysicalClient != null && client.Status.Type == StatusType.VoluntaryBlocking && "blockaccount" == _currentAction && "service" == _currentController))) {
 				return true;
 			}
@@ -237,13 +248,7 @@ namespace Inforoom2.Helpers
 			if (client == null) {
 				return GetWarningActionResult(RedirectTarget.DefaultPage);
 			}
-			//Выставляем Флаг о блокировке варнингом в сессии
-			if (InforoomController.Session["WarningBlocked"] == null) {
-				InforoomController.Session.Add("WarningBlocked", true);
-			}
-			else {
-				InforoomController.Session["WarningBlocked"] = true;
-			}
+			SetWarningSessionFlagOn();
 			//Проверка юр.лица
 			if (client.LegalClient != null) {
 				//if (client.Disabled && client.Balance >= BalanceForWarningLegalPerson) {
@@ -284,13 +289,7 @@ namespace Inforoom2.Helpers
 					return GetWarningActionResult(RedirectTarget.PhysBlockedForRepair);
 				}
 			}
-			//Убираем Флаг о блокировке варнингом в сессии
-			if (InforoomController.Session["WarningBlocked"] == null) {
-				InforoomController.Session.Add("WarningBlocked", false);
-			}
-			else {
-				InforoomController.Session["WarningBlocked"] = false;
-			}
+			SetWarningSessionFlagOff();
 			//Редирект пользователя на главную, если он попал на варнинг случайно
 			return GetWarningActionResult(RedirectTarget.DefaultPageFromWarning);
 		}
@@ -337,6 +336,28 @@ namespace Inforoom2.Helpers
 			return null;
 		}
 
+		public void SetWarningSessionFlagOn()
+		{
+			//Выставляем Флаг о блокировке варнингом в сессии
+			if (InforoomController.Session["WarningBlocked"] == null) {
+				InforoomController.Session.Add("WarningBlocked", true);
+			}
+			else {
+				InforoomController.Session["WarningBlocked"] = true;
+			}
+		}
+
+		public void SetWarningSessionFlagOff()
+		{
+			//Убираем Флаг о блокировке варнингом в сессии
+			if (InforoomController.Session["WarningBlocked"] == null) {
+				InforoomController.Session.Add("WarningBlocked", false);
+			}
+			else {
+				InforoomController.Session["WarningBlocked"] = false;
+			}
+		}
+
 		/// <summary>
 		/// Объект с набором параметров для редиректа
 		/// </summary>
@@ -375,6 +396,7 @@ namespace Inforoom2.Helpers
 		{
 			if (controller == null) return "";
 			//Проверка, если редирект предусмотрен разблокировкой Варнинга
+			if (controller.Session["WarningBlocked"] == null) return "*";
 			if (controller.Session["WarningBlocked"] != null && ((bool)controller.Session["WarningBlocked"]) == false) {
 				//Сбор необходимых составляющий адреса из запроса
 				var parsedUrl = HttpUtility.ParseQueryString(controller.Request.UrlReferrer.Query);
@@ -383,7 +405,7 @@ namespace Inforoom2.Helpers
 				var requestParams = parsedUrl.Get("params");
 				//Формирование адреса, в случае наличии всех необходимых составляющих
 				var returnUrl = (requestHost != null && requestUrl == null) || (requestHost != null && requestUrl != null) ?
-					string.Format("http://{0}{1}{2}", requestHost, requestUrl, requestParams != null ? "?" + requestParams : "") : "";
+					string.Format("http://{0}{1}{2}", requestHost, requestUrl, requestParams != null ? "?" + requestParams : "") : "*";
 				return returnUrl;
 			}
 			return "";

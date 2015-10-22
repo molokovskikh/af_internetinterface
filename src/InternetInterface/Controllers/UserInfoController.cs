@@ -240,51 +240,56 @@ namespace InternetInterface.Controllers
 		[return: JSONReturnBinder]
 		public string PingEndpoint(int id)
 		{
-			var endpoint = DbSession.Query<ClientEndpoint>().First(i => i.Id == id);
-			var ip = endpoint.Switch.IP;
-			Ping pingSender = new Ping();
-			PingOptions options = new PingOptions();
-			// Use the default Ttl value which is 128,
-			// but change the fragmentation behavior.
-			options.DontFragment = true;
+			try {
+				var endpoint = DbSession.Query<ClientEndpoint>().First(i => i.Id == id);
+				var ip = endpoint.Switch.IP;
+				Ping pingSender = new Ping();
+				PingOptions options = new PingOptions();
+				// Use the default Ttl value which is 128,
+				// but change the fragmentation behavior.
+				options.DontFragment = true;
 
-			// Create a buffer of 32 bytes of data to be transmitted.
-			string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-			byte[] buffer = Encoding.ASCII.GetBytes(data);
-			int timeout = 120;
+				// Create a buffer of 32 bytes of data to be transmitted.
+				string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+				byte[] buffer = Encoding.ASCII.GetBytes(data);
+				int timeout = 120;
 
-			// отправлять 4 пакета
-			var replyArray = new PingReply[4];
-			for (int i = 0; i < replyArray.Length; i++) replyArray[i] = pingSender.Send(ip, timeout, buffer, options);
+				// отправлять 4 пакета
+				var replyArray = new PingReply[4];
+				for (int i = 0; i < replyArray.Length; i++) replyArray[i] = pingSender.Send(ip, timeout, buffer, options);
 
-			//Отобразить пользователю:
-			//-Минимальное время,
-			Int64 minRoundtripTime = 0;
-			//-Максимальное время,
-			Int64 maxRoundtripTime = 0;
-			//-Количество пакетов, которое вернулось.
-			Int64 returnedPackagesNumber = 0;
-			// проверка вернувшихся пакетов
-			for (int i = 0; i < replyArray.Length; i++) {
-				if (i == 0) {
-					minRoundtripTime = replyArray[i].RoundtripTime;
-					maxRoundtripTime = replyArray[i].RoundtripTime;
+				//Отобразить пользователю:
+				//-Минимальное время,
+				Int64 minRoundtripTime = 0;
+				//-Максимальное время,
+				Int64 maxRoundtripTime = 0;
+				//-Количество пакетов, которое вернулось.
+				Int64 returnedPackagesNumber = 0;
+				// проверка вернувшихся пакетов
+				for (int i = 0; i < replyArray.Length; i++) {
+					if (i == 0) {
+						minRoundtripTime = replyArray[i].RoundtripTime;
+						maxRoundtripTime = replyArray[i].RoundtripTime;
+					}
+					minRoundtripTime = minRoundtripTime > replyArray[i].RoundtripTime && replyArray[i].Status == IPStatus.Success ?
+						replyArray[i].RoundtripTime : minRoundtripTime;
+					maxRoundtripTime = maxRoundtripTime < replyArray[i].RoundtripTime && replyArray[i].RoundtripTime != 0 && replyArray[i].Status == IPStatus.Success ?
+						replyArray[i].RoundtripTime : maxRoundtripTime;
+					returnedPackagesNumber += replyArray[i].Status == IPStatus.Success ? 1 : 0;
 				}
-				minRoundtripTime = minRoundtripTime > replyArray[i].RoundtripTime && replyArray[i].Status == IPStatus.Success ?
-					replyArray[i].RoundtripTime : minRoundtripTime;
-				maxRoundtripTime = maxRoundtripTime < replyArray[i].RoundtripTime && replyArray[i].RoundtripTime != 0 && replyArray[i].Status == IPStatus.Success ?
-					replyArray[i].RoundtripTime : maxRoundtripTime;
-				returnedPackagesNumber += replyArray[i].Status == IPStatus.Success ? 1 : 0;
+				//если вернулся хотя бы один пакет
+				if (returnedPackagesNumber > 0)
+					return string.Format("<b style='color:{0}'>Статус: Онлайн,<br/> Пришло пакетов: {1},<br/> Скорость ответа минимальная: {2} мс.<br/> Скорость ответамаксимальная: {3} мс.</b>",
+						returnedPackagesNumber > 1 ? "green" : "red",
+						returnedPackagesNumber + " / " + replyArray.Length,
+						minRoundtripTime,
+						maxRoundtripTime);
+				// если ни один пакет не вернулся
+				return string.Format("<b style='color:red'>Коммутатор ничего не ответил</b>");
 			}
-			//если вернулся хотя бы один пакет
-			if (returnedPackagesNumber > 0)
-				return string.Format("<b style='color:{0}'>Статус: Онлайн,<br/> Пришло пакетов: {1},<br/> Скорость ответа минимальная: {2} мс.<br/> Скорость ответамаксимальная: {3} мс.</b>",
-					returnedPackagesNumber > 1 ? "green" : "red",
-					returnedPackagesNumber + " / " + replyArray.Length,
-					minRoundtripTime,
-					maxRoundtripTime);
-			// если ни один пакет не вернулся
-			return string.Format("<b style='color:red'>Коммутатор ничего не ответил</b>");
+			catch (Exception) {
+				return string.Format("<b style='color:red'>Коммутатор ничего не ответил</b>");
+			}
 		}
 
 		[return: JSONReturnBinder]
