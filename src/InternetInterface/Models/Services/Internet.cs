@@ -49,8 +49,10 @@ namespace InternetInterface.Models.Services
 		public override void Activate(ClientService assignedService)
 		{
 			var statusIsTrue = true;
-			var statusIsProxy = assignedService.Client.Status as INHibernateProxy == null;
-			if (statusIsProxy) statusIsTrue = assignedService.Client.Status.Type != StatusType.BlockedForRepair;
+			var statusIsProxy = assignedService.Client.Status as INHibernateProxy != null;
+			var number = statusIsProxy ? ((InternetInterface.Models.Status)(assignedService.Client.Status as INHibernateProxy)).Id : 0;
+			if (statusIsProxy) statusIsTrue = statusIsProxy? (StatusType)number != StatusType.BlockedForRepair:
+				assignedService.Client.Status.Type != StatusType.BlockedForRepair;
 
 			if (assignedService.ActivatedByUser && !assignedService.Client.Disabled && statusIsTrue) {
 				base.Activate(assignedService);
