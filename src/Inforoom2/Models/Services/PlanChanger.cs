@@ -21,7 +21,8 @@ namespace Inforoom2.Models.Services
 			mediator.UrlRedirectController = "";
 			var urlToCheck = mediator.UrlCurrent == null ? "" : mediator.UrlCurrent.ToLower().Replace("/", "");
 			var urlToDrope = ("service/internetplanchanger").Replace("/", "");
-			bool urltoRedirect = urlToCheck.IndexOf(urlToDrope) == -1;
+			var urlToDropeLogout = ("account/logout").Replace("/", "");
+			bool urltoRedirect = urlToCheck.IndexOf(urlToDrope) == -1 && urlToCheck.IndexOf(urlToDropeLogout) == -1; 
 
 			if (client != null && urltoRedirect) {
 				// получение сведения об изменении тарифов 
