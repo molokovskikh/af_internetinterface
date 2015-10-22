@@ -120,7 +120,7 @@ namespace Inforoom2.Helpers
 			var client = InforoomClient;
 			if (InforoomExecutingContext.HttpContext.Request.HttpMethod == "POST"
 			    && (_exceptionsForWarningMethodPost.Any(s => s.Action.ToLower() == _currentAction && s.Controller == _currentController && s.Disabled == false)
-			        || (client.PhysicalClient != null && client.Balance < 0 && "deferredpayment" == _currentAction && "service" == _currentController)
+					|| (client.PhysicalClient != null && client.Balance < 0 && ("deferredpayment" == _currentAction || "activatedefferedpayment" == _currentAction) && "service" == _currentController)
 			        || (client.PhysicalClient != null && client.Status.Type == StatusType.VoluntaryBlocking
 			            && "blockaccount" == _currentAction && "service" == _currentController))) {
 				return true;
@@ -144,8 +144,9 @@ namespace Inforoom2.Helpers
 			}
 			if (InforoomExecutingContext.HttpContext.Request.HttpMethod == "GET"
 			    && (_exceptionsForWarningMethodGet.Any(s => s.Action.ToLower() == _currentAction && s.Controller == _currentController && s.Disabled == false)
-			        || (client.PhysicalClient != null && (client.Status.Type == StatusType.VoluntaryBlocking || client.Balance < 0)
-			            && "service" == _currentAction && "personal" == _currentController))) {
+			        || (client.PhysicalClient != null && (client.Status.Type == StatusType.VoluntaryBlocking || client.Balance < 0) && "service" == _currentAction && "personal" == _currentController)
+					|| (client.PhysicalClient != null && client.Balance < 0 && "deferredpayment" == _currentAction && "service" == _currentController)
+			        || (client.PhysicalClient != null && client.Status.Type == StatusType.VoluntaryBlocking && "blockaccount" == _currentAction && "service" == _currentController))) {
 				return true;
 			}
 			return false;
