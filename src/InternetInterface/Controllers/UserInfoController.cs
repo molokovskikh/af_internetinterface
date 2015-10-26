@@ -828,13 +828,14 @@ namespace InternetInterface.Controllers
 							.FirstOrDefault(pr => pr.IpPool.Id == epoint.Pool);
 						orderInfo[i].ClientConnectInfo.Pool = (poolReg != null) ? (uint?)poolReg.IpPool.Id : null;
 						orderInfo[i].ClientConnectInfo.PoolDescription = (poolReg != null) ? poolReg.Description : "";
+						orderInfo[i].ClientConnectInfo.IpLeaseFinished = (orderInfo[i].ClientConnectInfo.IpLeaseEnd < SystemTime.Now());
 					}
 				}
 				else {
 					var connectSum = client.IsPhysical() ? client.PhysicalClient.ConnectSum : 0;
 					orderInfo.Add(new ClientOrderInfo {
 						Order = new Order() { Number = Order.GetNextNumber(DbSession, client.Id) },
-						ClientConnectInfo = new ClientConnectInfo { ConnectSum = connectSum }
+						ClientConnectInfo = new ClientConnectInfo { ConnectSum = connectSum}
 					});
 				}
 				PropertyBag["ClientOrdersInfo"] = orderInfo;
@@ -850,6 +851,7 @@ namespace InternetInterface.Controllers
 							.FirstOrDefault(pr => pr.IpPool.Id == epoint.Pool);
 						connectInfo[i].Pool = (poolReg != null) ? (uint?)poolReg.IpPool.Id : null;
 						connectInfo[i].PoolDescription = (poolReg != null) ? poolReg.Description : "";
+						connectInfo[i].IpLeaseFinished = (connectInfo[i].IpLeaseEnd < SystemTime.Now());
 					}
 				}
 				else {

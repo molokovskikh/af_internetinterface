@@ -716,6 +716,7 @@ where Client = :clientid and WriteOffSum > 0
 select distinctrow
 inet_ntoa(CE.Ip) as static_IP,
 inet_ntoa(L.Ip) as Leased_IP,
+L.LeaseEnd as IpLeaseEnd,
 CE.Client,
 Ce.Switch,
 NS.Name as Swith_adr,
