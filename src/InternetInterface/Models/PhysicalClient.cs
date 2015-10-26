@@ -23,6 +23,8 @@ namespace InternetInterface.Models
 	{
 		public string static_IP { get; set; }
 		public string Leased_IP { get; set; }
+		public DateTime IpLeaseEnd { get; set; }
+		public bool IpLeaseFinished { get; set; }
 		public int Client { get; set; }
 
 		public int endpointId { get; set; }
@@ -431,11 +433,11 @@ namespace InternetInterface.Models
 			}
 			else {
 				address = (city != "" ? "г. " + city : "")
-					+ (street != "" ? ", " + GetPrintStreet(street) : "")
-					+ (house != "" ?	", д. " + house : "")
-					+ (apartment != "" ? ", кв. " + apartment : "")
-					+ (entrance != "" ? ", подъезд " + entrance : "")
-					+ (floor != "" ? ", этаж " + floor : "");
+				          + (street != "" ? ", " + GetPrintStreet(street) : "")
+				          + (house != "" ? ", д. " + house : "")
+				          + (apartment != "" ? ", кв. " + apartment : "")
+				          + (entrance != "" ? ", подъезд " + entrance : "")
+				          + (floor != "" ? ", этаж " + floor : "");
 				address = address[0] == ',' ? address.Substring(1) : address;
 				address = address.Replace(",,", ",");
 			}

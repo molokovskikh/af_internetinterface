@@ -63,7 +63,12 @@
 			</tr>
 			<tr>
 				<td><span class="description">Арендованный IP </span></td>
-				<td>${ConnectInfo.Leased_IP}</td>
+
+				<% if ConnectInfo.IpLeaseFinished == true : %>
+				<td><span style='color:red;'>${ConnectInfo.Leased_IP}</span></td>
+				<% else: %>
+				<td><span style='color:black;'>${ConnectInfo.Leased_IP}</span></td>
+				<% end %>
 			</tr>
 			<tr>
 				<td><span class="description">IP-пул</span></td>
