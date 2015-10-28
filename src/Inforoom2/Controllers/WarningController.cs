@@ -26,6 +26,60 @@ namespace Inforoom2.Controllers
 		}
 	}
 
+	public class WarningLawController : BaseController
+	{
+		private bool RedirectToMain(Client client)
+		{
+			var currentController = ControllerContext.RouteData.Values["controller"].ToString().ToLower();
+			var currentAction = ControllerContext.RouteData.Values["action"].ToString().ToLower();
+			if (client.Disabled && currentController == "warninglaw" && currentAction == "lawdisabled") {
+				return false;
+			}
+			if (client.ShowBalanceWarningPage && currentController == "warninglaw" && currentAction == "lawlowbalance") {
+				return false;
+			}
+			return true;
+		}
+
+		protected override void OnActionExecuting(ActionExecutingContext filterContext)
+		{
+			base.OnActionExecuting(filterContext);
+			ViewBag.Title = "Инфорум";
+			var cityList = DbSession.Query<Region>().Where(s => s.ShownOnMainPage).Select(s => s.Name).OrderBy(s => s).ToArray();
+			ViewBag.Cities = cityList;
+			var client = WarningHelper.GetLegalClientIfExists(this);
+			if (client == null || RedirectToMain(client)) {
+				var resultUrl = Url.Action("Index", "Home");
+				filterContext.Result = new RedirectResult(resultUrl);
+				return;
+			}
+			var currentRegion = client.GetRegion();
+			if (currentRegion != null) {  
+				SetCookie("userCity", currentRegion.Name);
+				ViewBag.RegionOfficePhoneNumber = currentRegion.RegionOfficePhoneNumber;
+				ViewBag.UserCityBelongsToUs = true;
+				ViewBag.UserCity = currentRegion.Name;
+			}
+
+			var ipstring = Request.UserHostAddress;
+			#if DEBUG
+						//Можем авторизоваться по лизе за клиента
+						ipstring = Request.QueryString["ip"] ?? null;
+			#endif
+			ViewBag.CurrentIp = ipstring;
+		}
+
+		public ActionResult LawDisabled()
+		{
+			return View();
+		}
+
+		public ActionResult LawLowBalance()
+		{
+			return View();
+		}
+	}
+
 	public class WarningController : Inforoom2Controller
 	{
 		public ActionResult RepairCompleted()
@@ -45,18 +99,6 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-
-		public ActionResult LawDisabled()
-		{
-			ViewBag.Client = CurrentClient;
-			return View();
-		}
-
-		public ActionResult LawLowBalance()
-		{
-			ViewBag.Client = CurrentClient;
-			return View();
-		}
 
 		public ActionResult PhysBlockedForRepair()
 		{

@@ -5,17 +5,14 @@
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	ViewBag.Title = "Предупреждение";
-	Client client = ViewBag.Client;
+	string ip = ViewBag.CurrentIp;
 }
 <div class="name-page">
 	<h1 class="header-page" >Внимание!</h1>
 </div>
 <div class="block-page">
-	<p class="info">Номер лицевого счета для оплаты: @client.Id</p>
-	<p>Доступ в интернет заблокирован.</p>
-	<p>Для продолжения работы в интернете необходимо оплатить услуги.</p>
-	<form method="post" action="@Url.Action("TryToDisableWarning", "Warning")">
-		<input name="referer" type="hidden" value="!{referer}">
+	<p>Вам необходимо оплатить услуги, в противном случае доступ в Интернет будет заблокирован.</p>
+	<form method="post" action="@Url.Action("TryToDisableWarning", "Warning", new { @ip = ip })">
 		<input type="submit" class="button warning" value="Продолжить">
 	</form>
 </div>

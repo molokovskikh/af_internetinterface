@@ -18,14 +18,6 @@ namespace Inforoom2.Test.Functional.Personal
 	/// </summary>
 	public class WarningFixture : PersonalFixture
 	{
-		protected void RunBillingProcessWriteoffs(Client client)
-		{
-			var billing = GetBilling();
-			billing.ProcessWriteoffs();
-			DbSession.Refresh(client);
-			OpenWarningPage(client);
-		}
-
 		protected void TrySetWarningForClient(Client client)
 		{
 			Assert.That(client.ShowBalanceWarningPage, Is.False, "Для чистоты данного теста, warning должен назначаться биллингом");
@@ -36,13 +28,12 @@ namespace Inforoom2.Test.Functional.Personal
 			OpenWarningPage(client);
 		}
 
-		protected void OpenWarningPage(Client client)
+		public void CheckWarningPageText(string textToCheck)
 		{
-			LoginForClient(client);
-			var endpoint = client.Endpoints.First();
-			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == endpoint);
-			var ipstr = lease.Ip.ToString();
-			Open("Warning?ip=" + ipstr);
+			Open("/");
+			AssertText("НОВОСТИ");
+			Open("Warning");
+			AssertText(textToCheck);
 		}
 
 		[Test(Description = "Низкий баланс - варнинга нет")]
@@ -79,6 +70,7 @@ namespace Inforoom2.Test.Functional.Personal
 			AssertText("НОВОСТИ");
 		}
 
+
 		[Test(Description = "Баланс отрицательный, есть обещанный платеж просроченный - блокировка есть")]
 		public void NegativeBalancePhysicalWithDebtWorkServiceOverdue()
 		{
@@ -101,19 +93,18 @@ namespace Inforoom2.Test.Functional.Personal
 			AssertText("Ваш лицевой счет заблокирован за неуплату, для разблокировки необходимо внести");
 		}
 
-
 		[Test(Description = "Нет паспортных данных")]
 		public void NoPassport()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("без паспортных данных"));
 			TrySetWarningForClient(client);
 
-			AssertText("не заполнены паспортные данные");
+			CheckWarningPageText("У вас не заполнены паспортные данные");
 			Css(".warning").Click();
-			AssertText("паспортные данные");
+			AssertText("Просим внести свои паспортные данные:");
 			DbSession.Refresh(client);
 			Open("/Personal/Profile");
-			AssertText("паспортные данные");
+			AssertText("У вас не заполнены паспортные данные");
 			Css(".warning").Click();
 
 			var textbox = browser.FindElement(By.CssSelector("#physicalClient_PassportNumber"));
@@ -125,19 +116,19 @@ namespace Inforoom2.Test.Functional.Personal
 			AssertText("ЛИЧНЫЙ КАБИНЕТ: ПРОФИЛЬ");
 		}
 
-
 		[Test(Description = "Сервисная заявка, блокирующая работу")]
 		public void ServiceRequest()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("заблокированный по сервисной заявке"));
-			Assert.That(client.Status.Type, Is.EqualTo(StatusType.BlockedForRepair), "Клиенту не заблокирован");
+			Assert.That(client.Status.Type, Is.EqualTo(StatusType.BlockedForRepair), "Клиент не заблокирован");
 			OpenWarningPage(client);
 
-			AssertText("проведения работ по сервисной заявке");
+			CheckWarningPageText("проведения работ по сервисной заявке");
 			Css(".repairCompleted").Click();
 			AssertText("Работа возобновлена");
 			DbSession.Refresh(client);
 			Assert.That(client.Status.Type, Is.EqualTo(StatusType.Worked), "Клиент все еще заблокирован");
+			CheckWarningPageText("НОВОСТИ");
 		}
 
 		[Test(Description = "Клиент с услугой добровольная блокировка")]
@@ -150,25 +141,110 @@ namespace Inforoom2.Test.Functional.Personal
 			Assert.That(client.ClientServices.FirstOrDefault(i => i.Service == blockAccountService), Is.Not.Null, "У клиента нет услуги добровольной блокировки");
 
 			OpenWarningPage(client);
-			AssertText("Добровольная блокировка");
+			CheckWarningPageText("Добровольная блокировка");
 			Css(".unfreeze").Click();
 
 			AssertText("Работа возобновлена");
 			DbSession.Clear(); //Сервис кинет исключения, потому что связи что-то плохо вычищаются @todo подумать
 			client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с услугой добровольной блокировки"));
 			blockAccountService = DbSession.Query<Service>().OfType<BlockAccountService>().FirstOrDefault();
-			Assert.That(client.Status.Type, Is.EqualTo(StatusType.Worked), "Клиенту все еще заблокирован");
+			Assert.That(client.Status.Type, Is.EqualTo(StatusType.Worked), "Клиент все еще заблокирован");
 			Assert.That(client.ClientServices.FirstOrDefault(i => i.Service == blockAccountService), Is.Null, "У клиента все еще есть услуги добровольной блокировки");
+			CheckWarningPageText("НОВОСТИ");
 		}
 
-		[Test(Description = "Редирект на главную, в случае если точка подключения не найдена")]
+		[Test(Description = "Редирект на главную неподключенного клиента")]
 		public void BadLeaseClient()
 		{
 			//У неподключенного клиента нет точки подключения
-			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("неподключенный клиент"));
+			Logout();
 			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == null);
 			var ipstr = lease.Ip.ToString();
 			Open("Warning?ip=" + ipstr);
+			AssertText("Протестировать скорость");
+		}
+
+		[Test(Description = "Редирект на главную, в случае если клиент не авторизован")]
+		public void NotAuthorisedClient()
+		{
+			Logout();
+			Open("Warning");
+			AssertText("Протестировать скорость");
+		}
+
+		[Test(Description = "Проверка фильтрации варнингом контроллеров Personal, Service, Warning и пропуска других, например About")]
+		public void FilterCheckFixture()
+		{
+			//У неподключенного клиента нет точки подключения
+			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("без паспортных данных"));
+			const string textToCheck = "Внимание";
+			LoginForClient(client);
+			Open("Warning");
+			Open("Personal/Profile");
+			AssertText(textToCheck);
+			AssertText(textToCheck);
+			Open("Personal/Notifications");
+			AssertText(textToCheck);
+			Open("Service/BlockAccount");
+			AssertText(textToCheck);
+			//На главной варнинга быть не должно
+			Open("/");
+			AssertNoText(textToCheck);
+			//На странице "О компании" варнинга быть не должно
+			Open("About");
+			AssertNoText(textToCheck);
+		}
+
+		[Test(Description = "Проверка работы варнинга у юр. лица без флага ShowBalanceWarningPage")]
+		public void LawClientNormalFixture()
+		{
+			Logout();
+			var legalClient = DbSession.Query<Client>().ToList().First(i => i.LegalClient != null);
+			legalClient.ShowBalanceWarningPage = false;
+			legalClient.Disabled = false;
+			DbSession.Save(legalClient);
+			Assert.That(legalClient, Is.Not.EqualTo(null), "В БД отсутствует юр.лицо");
+			Assert.That(legalClient.Endpoints.Count > 0, Is.EqualTo(true), "У юр. лица отсутствует точка подключения");
+			Open("Warning?ip=" + legalClient.Endpoints.First().Ip);
+			AssertText("Протестировать скорость");
+		}
+
+		[Test(Description = "Проверка работы варнинга у юр. лица с флагом ShowBalanceWarningPage")]
+		public void LawClientLowBalanceFixture()
+		{
+			Logout();
+			var legalClient = DbSession.Query<Client>().ToList().First(i => i.LegalClient != null);
+			legalClient.ShowBalanceWarningPage = true;
+			legalClient.Disabled = false;
+			DbSession.Save(legalClient);
+			DbSession.Flush();
+			Assert.That(legalClient, Is.Not.EqualTo(null), "В БД отсутствует юр.лицо");
+			Assert.That(legalClient.Endpoints.Count > 0, Is.EqualTo(true), "У юр. лица отсутствует точка подключения");
+			Open("Warning?ip=" + legalClient.Endpoints.First().Ip);
+			AssertText("Вам необходимо оплатить услуги, в противном случае доступ в Интернет будет заблокирован");
+			var button = browser.FindElement(By.CssSelector("form input.button"));
+			button.Click();
+			AssertText("Протестировать скорость");
+			DbSession.Refresh(legalClient);
+			var hasAppealMessage = legalClient.Appeals.Any(s => s.Message.IndexOf("Отключена страница Warning, клиент отключил со страницы") != -1);
+			Assert.That(hasAppealMessage, Is.EqualTo(true), "На странице клиента (в админке) должно появиться сообщение, о том, что клиент отключил варнинг (он осведомлен).");
+			Assert.That(legalClient.ShowBalanceWarningPage, Is.EqualTo(false), "Варнинг не должен показываться после того, как пользователь сообщил, что он осведоллен (нажав на кнопку).");
+		}
+		[Test(Description = "Проверка работы варнинга у юр. лица с флагом ShowBalanceWarningPage")]
+		public void LawClientDisabledFixture()
+		{
+			Logout();
+			var legalClient = DbSession.Query<Client>().ToList().First(i => i.LegalClient != null);
+			legalClient.ShowBalanceWarningPage = true;
+			legalClient.Disabled = true;
+			DbSession.Save(legalClient);
+			DbSession.Flush();
+			Assert.That(legalClient, Is.Not.EqualTo(null), "В БД отсутствует юр.лицо");
+			Assert.That(legalClient.Endpoints.Count > 0, Is.EqualTo(true), "У юр. лица отсутствует точка подключения");
+			Open("Warning?ip=" + legalClient.Endpoints.First().Ip);
+			AssertText("Для продолжения работы в интернете необходимо оплатить услуги.");
+			var button = browser.FindElement(By.CssSelector("form input.button"));
+			button.Click();
 			AssertText("Протестировать скорость");
 		}
 

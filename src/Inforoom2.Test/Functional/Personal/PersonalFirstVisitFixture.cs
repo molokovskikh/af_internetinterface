@@ -21,6 +21,9 @@ namespace Inforoom2.Test.Functional.Personal
 
 			var clientMark = ClientCreateHelper.ClientMark.unpluggedClient.GetDescription();
 			Client = DbSession.Query<Client>().ToList().First(i => i.Comment == clientMark);
+			Client.Disabled = true;
+			DbSession.Save(Client);
+			DbSession.Flush();
 			var internet = Client.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Internet);
 			var iptv = Client.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Iptv);
 

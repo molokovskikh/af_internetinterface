@@ -82,6 +82,7 @@ namespace Inforoom2.Controllers
 
 			ViewBag.CallMeBackTicket = ViewBag.CallMeBackTicket ?? newCallMeBackTicket;
 
+			//указываем город по умолчанию для незарегистрированного пользователя (перед тем, как проверять его авторизацию через сеть, его может выкинуть и он останется без города)
 			ProcessRegionPanel();
 			ProcessPrivateMessage();
 
@@ -95,18 +96,36 @@ namespace Inforoom2.Controllers
 				ViewBag.ClientInfo = sb.ToString();
 				ViewBag.CurrentClient = CurrentClient;
 			}
+
+			//вызов у сервисов OnWebsiteVisit(),
+			// PlanChanger возвращает значение в filterContext.Result 
+			TrigerServices(filterContext);
+			//это значение нужно обработать варнингом, т.к. оно менее приоритетно.
+			var warningHelper = new WarningHelper(filterContext);
+			warningHelper.TryWarningToRedirect();
+			if (filterContext.Result != null) {
+				return;
+			}
+
 			if (!CheckNetworkClient())
 				RedirectToAction("Index", "Home");
 
-			TrigerServices(filterContext);
 
 			if (CurrentRegion != null) {
 				ViewBag.RegionOfficePhoneNumber = CurrentRegion.RegionOfficePhoneNumber;
 				ViewBag.CurrentRegion = CurrentRegion;
 			}
-
-			var warningHelper = new WarningHelper(filterContext);
-			warningHelper.TryWarningToRedirect();
+			//указываем город для зарегистрированного пользователя
+			if (CurrentClient != null) {
+				var currentClientRegion = CurrentClient.GetRegion();
+				if (currentClientRegion != null) {
+					userCity = CurrentRegion == null ? currentClientRegion.Name : CurrentRegion.Name;
+					SetCookie("userCity", userCity);
+					ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(userCity);
+					ViewBag.UserCity = userCity;
+					ViewBag.CurrentRegion = CurrentRegion ?? currentClientRegion;
+				}
+			}
 		}
 
 		public void TrigerServices(ActionExecutingContext filterContext)

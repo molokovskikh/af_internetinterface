@@ -499,12 +499,13 @@
     <Content Include="Images\sber_autopay.pdf" />
     <Content Include="Images\sber_online.pdf" />
     <Content Include="Images\sber_terminal.pdf" />
-    <Content Include="Views\Warning\LawLowBalance.cshtml" />
+    <Content Include="Views\WarningLaw\LawLowBalance.cshtml" />
     <Content Include="Views\Warning\PhysBlockedForRepair.cshtml" />
     <Content Include="Views\Warning\PhysVoluntaryBlocking.cshtml" />
     <Content Include="Views\Warning\PhysLowBalance.cshtml" />
     <Content Include="Views\Warning\PhysFirstPayment.cshtml" />
     <Content Include="Views\Warning\PhysPassportData.cshtml" />
+    <Content Include="Views\WarningLaw\LawDisabled.cshtml" />
     <None Include="Web.test2.config" />
     <None Include="Web.release.config">
       <SubType>Designer</SubType>

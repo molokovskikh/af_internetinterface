@@ -85,6 +85,10 @@ namespace Inforoom2.Controllers
 		{
 			var client = DbSession.Load<Client>(CurrentClient.Id);
 			var clientService = client.ClientServices.First(c => c.Service.Id == service.Id);
+			if (clientService == null) {
+				ErrorMessage("Услуга уже была деактивирована.");
+				return RedirectToAction("Service", "Personal");
+			}
 			SuccessMessage(clientService.DeActivateFor(CurrentClient, DbSession));
 			if (client.IsNeedRecofiguration)
 				SceHelper.UpdatePackageId(DbSession, client);

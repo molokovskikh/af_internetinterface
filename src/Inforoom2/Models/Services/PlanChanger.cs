@@ -19,12 +19,18 @@ namespace Inforoom2.Models.Services
 		{
 			mediator.UrlRedirectAction = "";
 			mediator.UrlRedirectController = "";
+			bool currentRedirectFromCurrentController = false;
+			var spletedUrl = mediator.UrlCurrent.Split('/');
+			if (spletedUrl.Length >1) {
+				var currentController = spletedUrl[1].ToLower();
+				currentRedirectFromCurrentController = currentController == "personal" || currentController == "service";
+			} 
 			var urlToCheck = mediator.UrlCurrent == null ? "" : mediator.UrlCurrent.ToLower().Replace("/", "");
 			var urlToDrope = ("service/internetplanchanger").Replace("/", "");
 			var urlToDropeLogout = ("account/logout").Replace("/", "");
 			bool urltoRedirect = urlToCheck.IndexOf(urlToDrope) == -1 && urlToCheck.IndexOf(urlToDropeLogout) == -1; 
 
-			if (client != null && urltoRedirect) {
+			if (client != null && urltoRedirect && currentRedirectFromCurrentController) {
 				// получение сведения об изменении тарифов 
 				foreach (var changer in session.Query<PlanChangerData>().ToList()) {
 					// поиск целевого тарифа, фильтрация url с разрешенными тарифными планами 
