@@ -16,7 +16,7 @@ namespace InforoomControlPanel.Test.Functional.Switch
 		public void EditSwitch()
 		{
 			Open("Switch/SwitchList");
-			var switchEdit = DbSession.Query<Inforoom2.Models.Switch>().First(p => p.Name == "Тестовый коммутатор по адресу Борисоглебск. улица ленина. 8");
+			var switchEdit = DbSession.Query<Inforoom2.Models.Switch>().First(p => p.Name == "Тестовый коммутатор по адресу г. Борисоглебск, ул. Ленина, д. 8, подъезд 1, этаж 1");
 			var targetSwitchEdit = browser.FindElementByXPath("//td[contains(.,'" + switchEdit.Name + "')]");
 			var row = targetSwitchEdit.FindElement(By.XPath(".."));
 			var button = row.FindElement(By.CssSelector("a.btn-success"));

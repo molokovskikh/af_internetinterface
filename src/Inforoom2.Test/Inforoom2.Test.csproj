@@ -214,6 +214,7 @@
     <Compile Include="Functional\Personal\ProfileFixture.cs" />
     <Compile Include="Functional\Personal\PersonalPlayList.cs" />
     <Compile Include="Functional\Personal\SpeedBoostFixture.cs" />
+    <Compile Include="Functional\Personal\ServiceRequestFixture.cs" />
     <Compile Include="Infrastructure\BaseFixture.cs" />
     <Compile Include="Infrastructure\Helpers\ClientCreateHelper.cs" />
     <Compile Include="Infrastructure\Helpers\AddressCreateHelper.cs" />

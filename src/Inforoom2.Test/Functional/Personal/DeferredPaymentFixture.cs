@@ -7,40 +7,48 @@ using Inforoom2.Test.Infrastructure.Helpers;
 using Inforoom2.Test.Functional.Personal;
 using NHibernate.Linq;
 using NUnit.Framework;
+using OpenQA.Selenium;
 
 namespace Inforoom2.Test.Functional.Personal
 {
 	internal class DeferredPaymentFixture : PersonalFixture
 	{
+		public void CheckWarningPageText(string textToCheck)
+		{
+			Open("Warning");
+			AssertText(textToCheck);
+		}
+
 		[Test(Description = "Проверка корректной активации услуги 'Обещанный платеж'- клиенту предоставляется бесплатный доступ в интернет на 3дня.")]
 		public void ActivateDeferredPayment()
 		{
 			var clientMark = ClientCreateHelper.ClientMark.disabledClient.GetDescription();
 
 			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Comment == clientMark);
+			client.Balance = -1;
 			client.Payments.Add(new Payment() { Client = client, Sum = 0, PaidOn = SystemTime.Now().AddDays(-2), RecievedOn = SystemTime.Now().AddDays(-1) });
 			Assert.IsNotNull(client, "Искомый клиент не найден");
 			Assert.AreEqual(StatusType.NoWorked, client.Status.Type, "Клиент не имеет статус 'Заблокирован'");
 			Assert.IsTrue(client.WorkingStartDate.HasValue, "У клиента не выставлена дата подключения");
 
-			client.ShowBalanceWarningPage = true;
 			DbSession.Update(client);
 			DbSession.Flush();
 
 			LoginForClient(client);
 			DbSession.Refresh(client);
-			Assert.IsTrue(client.ShowBalanceWarningPage, "Страница 'Warning' не подключена");
 
-			var button = browser.FindElementByLinkText("Услуги");
+			CheckWarningPageText("Ваш лицевой счет заблокирован за неуплату, для разблокировки необходимо внести");
+			var button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
 			button = browser.FindElementByLinkText("Подключить");
 			button.Click();
 			button = browser.FindElementByCssSelector("input[value=Подключить]");
 			button.Click();
+			AssertText("Услуга \"Обещанный платеж\" активирована на период");
 
 			DbSession.Refresh(client);
 			Assert.AreEqual(StatusType.Worked, client.Status.Type, "Клиент не имеет статус 'Подключен'");
-			Assert.IsFalse(client.ShowBalanceWarningPage, "Страница 'Warning' по-прежнему подключена");
+			CheckWarningPageText("НОВОСТИ");
 		}
 
 		/// <summary>

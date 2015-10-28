@@ -142,7 +142,7 @@ namespace Inforoom2.Test.Infrastructure
 			//Приоритет удаления данных
 
 			var order = "planchangerdata,planhtmlcontent,roletouser,perm_role,user_role,roles,permissions,lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
-			            + "physicalclients,clientendpoints,switchaddress,leases,NetworkSwitches,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
+			            + "lawyerperson,physicalclients,clientendpoints,switchaddress,leases,NetworkSwitches,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
 
 
 			var parts = order.Split(',');
@@ -188,9 +188,9 @@ namespace Inforoom2.Test.Infrastructure
 			if (!DbSession.Query<SaleSettings>().Any())
 				DbSession.Save(SaleSettings.Defaults());
 			EndpointIpCounter = 0;
-		    //GenerateServices();
-            GenerateTvProtocols();
-            GenerateTvChannels();
+			//GenerateServices();
+			GenerateTvProtocols();
+			GenerateTvChannels();
 			GenerateTvChannelGroups();
 			GenerateRegions();
 			GenerateAddresses();
@@ -199,96 +199,97 @@ namespace Inforoom2.Test.Infrastructure
 			GenerateAdmins();
 			GenerateSwitches();
 			GenerateClients();
+			GenerateLegalClient();
 			GenerateContent();
 			GeneratePaymentsAndWriteoffs();
 			GenerateAgent();
 			DbSession.Flush();
 		}
 
-	    //private void GenerateServices()
-	    //{
-	    //    var deferredPayment = new DeferredPayment();
-     //       deferredPayment.Name = "Обещанный платеж";
-     //       deferredPayment.BlockingAll = false;
-     //       deferredPayment.IsActivableFromWeb = true;
-     //       deferredPayment.Price = 0;
-     //       deferredPayment.Description = "DebtWork";
-     //       DbSession.Save(deferredPayment);
+		//private void GenerateServices()
+		//{
+		//    var deferredPayment = new DeferredPayment();
+		//       deferredPayment.Name = "Обещанный платеж";
+		//       deferredPayment.BlockingAll = false;
+		//       deferredPayment.IsActivableFromWeb = true;
+		//       deferredPayment.Price = 0;
+		//       deferredPayment.Description = "DebtWork";
+		//       DbSession.Save(deferredPayment);
 
-     //       var blockAccountService = new BlockAccountService();
-     //       blockAccountService.Name = "Добровольная блокировка";
-     //       blockAccountService.BlockingAll = true;
-     //       blockAccountService.IsActivableFromWeb = true;
-     //       blockAccountService.Price = 0;
-     //       blockAccountService.Description = "VoluntaryBlockin";
-     //       DbSession.Save(blockAccountService);
+		//       var blockAccountService = new BlockAccountService();
+		//       blockAccountService.Name = "Добровольная блокировка";
+		//       blockAccountService.BlockingAll = true;
+		//       blockAccountService.IsActivableFromWeb = true;
+		//       blockAccountService.Price = 0;
+		//       blockAccountService.Description = "VoluntaryBlockin";
+		//       DbSession.Save(blockAccountService);
 
-     //       var workLawyer = new WorkLawyer();
-     //       workLawyer.Name = "Отключить блокировки";
-     //       workLawyer.BlockingAll = false;
-     //       workLawyer.IsActivableFromWeb = false;
-     //       workLawyer.Price = 0;
-     //       workLawyer.Description = "WorkLawyer";
-     //       DbSession.Save(workLawyer);
+		//       var workLawyer = new WorkLawyer();
+		//       workLawyer.Name = "Отключить блокировки";
+		//       workLawyer.BlockingAll = false;
+		//       workLawyer.IsActivableFromWeb = false;
+		//       workLawyer.Price = 0;
+		//       workLawyer.Description = "WorkLawyer";
+		//       DbSession.Save(workLawyer);
 
-     //       var internet = new Internet();
-     //       internet.Name = "Internet";
-     //       internet.BlockingAll = false;
-     //       internet.IsActivableFromWeb = false;
-     //       internet.Price = 0;
-     //       internet.Description = "Internet";
-     //       DbSession.Save(internet);
+		//       var internet = new Internet();
+		//       internet.Name = "Internet";
+		//       internet.BlockingAll = false;
+		//       internet.IsActivableFromWeb = false;
+		//       internet.Price = 0;
+		//       internet.Description = "Internet";
+		//       DbSession.Save(internet);
 
-     //       var ipTv = new IpTv();
-     //       ipTv.Name = "IpTv";
-     //       ipTv.BlockingAll = false;
-     //       ipTv.IsActivableFromWeb = false;
-     //       ipTv.Price = 0;
-     //       ipTv.Description = "IpTv";
-     //       DbSession.Save(ipTv);
+		//       var ipTv = new IpTv();
+		//       ipTv.Name = "IpTv";
+		//       ipTv.BlockingAll = false;
+		//       ipTv.IsActivableFromWeb = false;
+		//       ipTv.Price = 0;
+		//       ipTv.Description = "IpTv";
+		//       DbSession.Save(ipTv);
 
-     //       var ipTvBoxRent = new IpTvBoxRent();
-     //       ipTvBoxRent.Name = "Аренда приставки";
-     //       ipTvBoxRent.BlockingAll = false;
-     //       ipTvBoxRent.IsActivableFromWeb = false;
-     //       ipTvBoxRent.Price = 0;
-     //       ipTvBoxRent.Description = "IpTvBoxRent";
-     //       DbSession.Save(ipTvBoxRent);
+		//       var ipTvBoxRent = new IpTvBoxRent();
+		//       ipTvBoxRent.Name = "Аренда приставки";
+		//       ipTvBoxRent.BlockingAll = false;
+		//       ipTvBoxRent.IsActivableFromWeb = false;
+		//       ipTvBoxRent.Price = 0;
+		//       ipTvBoxRent.Description = "IpTvBoxRent";
+		//       DbSession.Save(ipTvBoxRent);
 
-     //       var fixedIp = new FixedIp();
-     //       fixedIp.Name = "Фиксированный ip-адрес";
-     //       fixedIp.BlockingAll = false;
-     //       fixedIp.IsActivableFromWeb = false;
-     //       fixedIp.Price = 200;
-     //       fixedIp.Description = "PinnedIp";
-     //       DbSession.Save(fixedIp);
+		//       var fixedIp = new FixedIp();
+		//       fixedIp.Name = "Фиксированный ip-адрес";
+		//       fixedIp.BlockingAll = false;
+		//       fixedIp.IsActivableFromWeb = false;
+		//       fixedIp.Price = 200;
+		//       fixedIp.Description = "PinnedIp";
+		//       DbSession.Save(fixedIp);
 
-     //       var hardwareRent = new HardwareRent();
-     //       hardwareRent.Name = "Аренда оборудования";
-     //       hardwareRent.BlockingAll = false;
-     //       hardwareRent.IsActivableFromWeb = false;
-     //       hardwareRent.Price = 0;
-     //       hardwareRent.Description = "HardwareRent";
-     //       DbSession.Save(hardwareRent);
+		//       var hardwareRent = new HardwareRent();
+		//       hardwareRent.Name = "Аренда оборудования";
+		//       hardwareRent.BlockingAll = false;
+		//       hardwareRent.IsActivableFromWeb = false;
+		//       hardwareRent.Price = 0;
+		//       hardwareRent.Description = "HardwareRent";
+		//       DbSession.Save(hardwareRent);
 
-     //       var speedBoost = new SpeedBoost();
-     //       speedBoost.Name = "Увеличить скорость";
-     //       speedBoost.BlockingAll = false;
-     //       speedBoost.IsActivableFromWeb = false;
-     //       speedBoost.Price = 0;
-     //       speedBoost.Description = "SpeedBoost";
-     //       DbSession.Save(speedBoost);
+		//       var speedBoost = new SpeedBoost();
+		//       speedBoost.Name = "Увеличить скорость";
+		//       speedBoost.BlockingAll = false;
+		//       speedBoost.IsActivableFromWeb = false;
+		//       speedBoost.Price = 0;
+		//       speedBoost.Description = "SpeedBoost";
+		//       DbSession.Save(speedBoost);
 
-     //       var planChanger = new PlanChanger();
-     //       planChanger.Name = "PlanChanger";
-     //       planChanger.BlockingAll = false;
-     //       planChanger.IsActivableFromWeb = false;
-     //       planChanger.Price = 0;
-     //       planChanger.Description = "PlanChanger";
-     //       DbSession.Save(planChanger);
-     //   }
+		//       var planChanger = new PlanChanger();
+		//       planChanger.Name = "PlanChanger";
+		//       planChanger.BlockingAll = false;
+		//       planChanger.IsActivableFromWeb = false;
+		//       planChanger.Price = 0;
+		//       planChanger.Description = "PlanChanger";
+		//       DbSession.Save(planChanger);
+		//   }
 
-        private void GenerateTvProtocols()
+		private void GenerateTvProtocols()
 		{
 			var names = "udp,rtp,test".Split(',');
 			foreach (var name in names) {
@@ -538,6 +539,63 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Save(dealer);
 		}
 
+		private void GenerateLegalClient()
+		{
+			var legalClient = new Client {
+				LegalClient = new LegalClient() {
+					Balance = 1000,
+					Region = DbSession.Query<Region>().First(),
+				},
+				Status = Status.Get(StatusType.Worked, DbSession),
+				SendSmsNotification = false,
+				Disabled = false,
+				RatedPeriodDate = DateTime.Now,
+				FreeBlockDays = 28,
+				WorkingStartDate = DateTime.Now.AddMonths(-3),
+				Lunched = true,
+				WhoRegistered = DbSession.Query<Employee>().FirstOrDefault(e => e.Login == Environment.UserName)
+			};
+			// TODO:UnusedClientAddresses
+			AttachDefaultServices(legalClient);
+
+
+			//Создание Endpoint(а)
+			var parts = "105.168.3.3".Split('.');
+			parts[2] = (EndpointIpCounter++).ToString();
+			IPAddress addr = IPAddress.Parse(string.Join(".", parts));
+
+			//SwitchAddress adding based on client address
+			var switchAddress = new SwitchAddress();
+			switchAddress.House = DbSession.Query<House>().First();
+			switchAddress.Entrance = 1;
+			switchAddress.Street = DbSession.Query<Street>().First();
+			DbSession.Save(switchAddress);
+
+			//CreateSwitch adding based on client address
+			var switchItem = CreateSwitch(legalClient);
+			var networkNode = new NetworkNode();
+			networkNode.Name = string.Format("Узел связи по адресу " + switchAddress.GetFullAddress());
+			networkNode.Virtual = false;
+			networkNode.Addresses.Add(switchAddress);
+			networkNode.Switches.Add(switchItem);
+			DbSession.Save(networkNode);
+
+			//ClientEndpoint adding based on client address
+			var endpoint = new ClientEndpoint {
+				PackageId = 100,
+				Client = legalClient,
+				Ip = addr,
+				Port = 22,
+				Switch = switchItem
+			};
+			DbSession.Save(endpoint);
+			legalClient.Endpoints.Add(endpoint);
+			var lease = CreateLease(endpoint);
+			DbSession.Save(lease);
+			DbSession.Save(legalClient);
+			DbSession.Flush();
+		}
+
 		private void GenerateClients()
 		{
 			var normalClient = new Client {
@@ -784,7 +842,7 @@ namespace Inforoom2.Test.Infrastructure
 			IPAddress addr = IPAddress.Parse(string.Join(".", parts));
 			// создание свича
 			var newSwitch = new Switch();
-			newSwitch.Name = "Тестовый коммутатор по адресу " + client.Address.FullAddress;
+			newSwitch.Name = "Тестовый коммутатор по адресу " + client.GetAddress();
 			newSwitch.Mac = "EC-FE-C5-36-1A-27";
 			newSwitch.Ip = addr;
 			newSwitch.PortCount = 13;
@@ -1200,6 +1258,23 @@ namespace Inforoom2.Test.Infrastructure
 		public void WaitForMap()
 		{
 			Thread.Sleep(9000);
+		}
+
+		protected void RunBillingProcessWriteoffs(Client client)
+		{
+			var billing = GetBilling();
+			billing.ProcessWriteoffs();
+			DbSession.Refresh(client);
+			OpenWarningPage(client);
+		}
+
+		protected void OpenWarningPage(Client client)
+		{
+			LoginForClient(client);
+			var endpoint = client.Endpoints.First();
+			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == endpoint);
+			var ipstr = lease.Ip.ToString();
+			Open("Warning?ip=" + ipstr);
 		}
 	}
 }

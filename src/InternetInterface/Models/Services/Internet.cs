@@ -26,7 +26,9 @@ namespace InternetInterface.Models.Services
 		{
 			return assignedService.IsActivated &&
 			       (!assignedService.ActivatedByUser
-			        || assignedService.Client.Disabled || assignedService.Client.Status.Type == StatusType.BlockedForRepair);
+					|| assignedService.Client.Disabled
+				    //Статус "Заблокирован - Восстановление работы" является причиной отключения интернета, при его наличии услугу нужно деактивировать
+					|| assignedService.Client.Status.Type == StatusType.BlockedForRepair);
 		}
 
 		//если клиент отключил себе интернет то нужно списать абонентскую плату
@@ -48,6 +50,7 @@ namespace InternetInterface.Models.Services
 
 		public override void Activate(ClientService assignedService)
 		{
+			//При активации интернета у клиента не должно быть статуса "Заблокирован - Восстановление работы"
 			var statusIsTrue = true;
 			var statusIsProxy = assignedService.Client.Status as INHibernateProxy != null;
 			var number = statusIsProxy ? ((InternetInterface.Models.Status)(assignedService.Client.Status as INHibernateProxy)).Id : 0;
