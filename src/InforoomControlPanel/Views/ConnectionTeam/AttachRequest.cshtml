@@ -47,7 +47,7 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Исполнитель</label>
 				<div class="col-sm-7">
-					@Html.DropDownListExtendedFor(i => scheduleItem.ServiceMan, servicemen, obj => obj.Employee.Name, i => i.Id, new { @class = "form-control", disabled = "disabled" }, scheduleItem.ServiceMan != null ? scheduleItem.ServiceMan.Id : 0)
+					@Html.DropDownListExtendedFor(i => scheduleItem.ServiceMan, servicemen, obj => obj.Employee.Name, i => i.Id, new { @class = "form-control", disabled = "disabled" }, scheduleItem.ServiceMan != null ? scheduleItem.ServiceMan.Id : 0, true)
 					@ViewBag.Validation.GetError(scheduleItem, "ServiceMan", "Поле не может быть пустым")
 				</div>
 			</div>

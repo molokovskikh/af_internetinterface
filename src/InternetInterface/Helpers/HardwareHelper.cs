@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections;
 using Castle.Core.Logging;
 using InternetInterface.Models;
@@ -42,23 +42,23 @@ namespace InternetInterface.Helpers
 		{
 			switch (mashineName) {
 				case "Port":
-					return "Порт";
+					return "РџРѕСЂС‚";
 				case "InUcastPkts":
-					return "Получено пакетов";
+					return "РџРѕР»СѓС‡РµРЅРѕ РїР°РєРµС‚РѕРІ";
 				case "InMcastPkts":
-					return "Получено мультикаст пакетов";
+					return "РџРѕР»СѓС‡РµРЅРѕ РјСѓР»СЊС‚РёРєР°СЃС‚ РїР°РєРµС‚РѕРІ";
 				case "InBcastPkts":
-					return "Получено широковещательных пакетов";
+					return "РџРѕР»СѓС‡РµРЅРѕ С€РёСЂРѕРєРѕРІРµС‰Р°С‚РµР»СЊРЅС‹С… РїР°РєРµС‚РѕРІ";
 				case "InOctets":
-					return "Принято байт";
+					return "РџСЂРёРЅСЏС‚Рѕ Р±Р°Р№С‚";
 				case "OutUcastPkts":
-					return "Отправлено пакетов";
+					return "РћС‚РїСЂР°РІР»РµРЅРѕ РїР°РєРµС‚РѕРІ";
 				case "OutMcastPkts":
-					return "Отправлено мультикаст пакетов";
+					return "РћС‚РїСЂР°РІР»РµРЅРѕ РјСѓР»СЊС‚РёРєР°СЃС‚ РїР°РєРµС‚РѕРІ";
 				case "OutBcastPkts":
-					return "Отправлено широковещательных пакетов";
+					return "РћС‚РїСЂР°РІР»РµРЅРѕ С€РёСЂРѕРєРѕРІРµС‰Р°С‚РµР»СЊРЅС‹С… РїР°РєРµС‚РѕРІ";
 				case "OutOctets":
-					return "Отправлено байт";
+					return "РћС‚РїСЂР°РІР»РµРЅРѕ Р±Р°Р№С‚";
 				default:
 					return mashineName;
 			}

@@ -1,6 +1,7 @@
 ﻿@using System.Collections.Specialized
 @using Common.Tools
 @using Inforoom2.Components
+@using Inforoom2.Helpers
 @using Inforoom2.Models
 @model dynamic
 @{
@@ -12,58 +13,79 @@
 
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
 	<form>
-		<div class="row">
-			<div class="col-sm-2">Дата регистрации с </div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
-			<div class="col-sm-1">по</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Дата последней сессии с </div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.Endpoints.First().LeaseList.First().LeaseEnd, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
-			<div class="col-sm-1">по</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.Endpoints.First().LeaseList.First().LeaseEnd, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Регистратор</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.WhoRegistered.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Статус</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.Status.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Тариф</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.PhysicalClient.Plan.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Регион</div>
-			<div class="col-sm-2">@pager.ClientRegionFilter(i => i, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Оборудование</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().Hardware.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Проверен</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.PhysicalClient.Checked, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Физ.лицо</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.PhysicalClient, HtmlType.Dropdown, ComparsionType.IsNotNull, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-1">
-				@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Дата регистрации с </div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
+				<div class="col-sm-1">по</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div>
 			</div>
-			<div class="col-sm-1">
-				@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Дата последней сессии с </div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.Endpoints.First().LeaseList.First().LeaseEnd, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
+				<div class="col-sm-1">по</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.Endpoints.First().LeaseList.First().LeaseEnd, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div>
 			</div>
-			<div class="col-sm-1">
-				@pager.ExportButton(new { @class = "btn btn-sm btn-blue" })
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Регистратор</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.WhoRegistered.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Статус</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.Status.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Тариф</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.PhysicalClient.Plan.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" }, listItemText: i => i.PhysicalClient.Plan.NameWithPrice)</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Регион</div>
+				<div class="col-sm-2">@pager.ClientRegionFilter(i => i, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Оборудование</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.RentalHardwareList.First().Hardware.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Проверен</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.PhysicalClient.Checked, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Физ.лицо</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.PhysicalClient, HtmlType.Dropdown, ComparsionType.IsNotNull, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">
+					@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+				</div>
+				<div class="col-sm-1">
+					@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+				</div>
+				<div class="col-sm-1">
+					@pager.ExportButton(new { @class = "btn btn-sm btn-blue" })
+				</div>
 			</div>
 		</div>
 	</form>
+	<div class="totalCountOfItems">Всего: <strong>@pager.TotalItems</strong> строк</div>
 	<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
 		<div class="panel-body">
 			<div class="row">
@@ -84,11 +106,15 @@
 			<tbody>
 				@foreach (var client in clients) {
 					<tr role="row" class="odd">
-						<td><strong>@client.Id</strong></td>
+						<td>
+							<a @(client.PhysicalClient == null ? "style=color:#0D90D4;" : "") target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld")
+							                                                                                          + (String.Format("UserInfo/{0}?filter.ClientCode=", client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
+							                                                                                          + client.Id)">@client.Id</a>
+						</td>
 						<td><span>@(client.PhysicalClient != null ? client.Fullname : client._Name)</span></td>
 						<td><span>@client.CreationDate</span></td>
-						<td><span>@(client.PhysicalClient != null ? client.Plan != null ? client.Plan.Name : "" : "")</span></td>
-						<td><span>@(client.PhysicalClient != null && client.Address != null ? client.Address.FullAddress : "")</span></td>
+						<td><span>@(client.PhysicalClient != null ? client.Plan != null ? client.Plan.Name + "  ( " + client.Plan.Price + " )" : "" : "")</span></td>
+						<td><span>@(client.GetAddress())</span></td>
 						<td><span>@client.Status.Name</span></td>
 					</tr>
 				}
@@ -98,4 +124,5 @@
 			@{ Html.RenderPartial("Pagination"); }
 		</div>
 	</div>
+	<div class="totalCountOfItems">Всего: <strong>@pager.TotalItems</strong> строк</div>
 </div>

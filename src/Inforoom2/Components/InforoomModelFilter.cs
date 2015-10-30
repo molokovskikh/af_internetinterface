@@ -62,8 +62,8 @@ namespace Inforoom2.Components
 				var expr = Expression.And(Expression.IsNotNull(housealias + ".Name"), Expression.Eq(housealias + ".Name", value));
 				var expr2 = Expression.And(Expression.IsNull(housealias + ".Name"), Expression.Eq(streetalias + ".Name", value));
 
-				var exprPhysicalClient = Expression.Or(expr, expr2);
-				var exprLawerClient = Expression.Eq(lawerRegionAlias + ".Name", value);
+				var exprPhysicalClient = Expression.And(Expression.IsNotNull(clientlias + ".PhysicalClient"), Expression.Or(expr, expr2));
+				var exprLawerClient = Expression.And(Expression.IsNull(clientlias + ".PhysicalClient"), Expression.Eq(lawerRegionAlias + ".Name", value));
 
 				Criteria.Add(Expression.Or(exprPhysicalClient, exprLawerClient));
 			}
@@ -184,7 +184,7 @@ namespace Inforoom2.Components
 			string selectedValue = null;
 			if (attrs.ContainsKey("value"))
 				selectedValue = attrs["value"];
-			 
+
 			var customValueList = DbSession.Query<ServiceMan>().OrderBy(s => s.Employee.Name).ToList();
 
 			List<string> values = customValueList.Select(i => string.Format("<option {2} value='{0}'>{1}</option>", i.Employee.Id, i.Employee.Name, selectedValue == i.Employee.Id.ToString() ? "selected='selected'" : "")).ToList();

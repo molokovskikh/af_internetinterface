@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Common.MySql;
 using Common.Tools;
+using Common.Tools.Calendar;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -87,20 +88,63 @@ namespace InforoomControlPanel.Controllers
 			var pager = new InforoomModelFilter<Client>(this);
 			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
 				pager.SetOrderBy("Id", OrderingDirection.Desc);
+			if (string.IsNullOrEmpty(pager.GetParam("filter.Equal.Status.Name"))) {
+				pager.ParamDelete("filter.Equal.Status.Name");
+				pager.ParamSet("filter.Equal.Status.Name", status.Name);
+			}
+			if (string.IsNullOrEmpty(pager.GetParam("filter.GreaterOrEqueal.CreationDate")) &&
+			    string.IsNullOrEmpty(pager.GetParam("filter.LowerOrEqual.CreationDate"))) {
+				pager.ParamDelete("filter.GreaterOrEqueal.CreationDate");
+				pager.ParamDelete("filter.LowerOrEqual.CreationDate");
+				pager.ParamSet("filter.GreaterOrEqueal.CreationDate", SystemTime.Now().Date.FirstDayOfMonth().ToString("dd.MM.yyyy"));
+				pager.ParamSet("filter.LowerOrEqual.CreationDate", SystemTime.Now().Date.ToString("dd.MM.yyyy"));
+			}
 			//получение критерия для Hibernate запроса из класса ModelFilter
-			var criteria = pager.GetCriteria(i => i.Status == status && i.PhysicalClient != null);
+			var criteria = pager.GetCriteria();
 
 			if (pager.IsExportRequested()) {
+				//формирование шапки (отправляем значение строк в обратном порядке)
+				var header = new List<string>();
+				//строки между шапкой и содержанием 
+				header.Add("");
+				header.Add("Всего строк: " + pager.TotalItems);
+				header.Add("");
+				//поля шапки
+				//Тип 
+				if (pager.GetParam("filter.IsNotNull.PhysicalClient") != null)
+					header.Add(string.Format("Тип клиента: {0}", pager.GetParam("filter.IsNotNull.PhysicalClient") == "1" ? "Физ.лицо" : "Юр.лицо"));
+				//Регион
+				if (pager.GetParam("clientregionfilter.") != null)
+					header.Add(string.Format("Регион: {0}", pager.GetParam("clientregionfilter.")));
+				//Статус	
+				if (pager.GetParam("filter.Equal.Status.Name") != null)
+					header.Add(string.Format("Статус: {0}", pager.GetParam("filter.Equal.Status.Name")));
+				//Регистратор
+				if (pager.GetParam("servicemanfilter.ServicemenScheduleItems.ServiceMan") != null)
+					header.Add(string.Format("Назначен на: {0}", pager.GetParam("servicemanfilter.ServicemenScheduleItems.ServiceMan")));
+				//Дата регистрации
+				if (pager.GetParam("filter.GreaterOrEqueal.CreationDate") != null
+				    || pager.GetParam("filter.LowerOrEqual.CreationDate") != null)
+					header.Add(string.Format("Дата регистрации: с {0} по {1}",
+						pager.GetParam("filter.GreaterOrEqueal.CreationDate"), pager.GetParam("filter.LowerOrEqual.CreationDate")));
+
+				header.Add("");
+				header.Add("Отчет по подключениям - " + SystemTime.Now().ToString("dd.MM.yyyy HH:mm"));
+				pager.SetHeaderLines(header);
+				//формирование блока выгрузки 
 				pager.SetExportFields(s => new {
 					ЛС = s.Id,
-					Дата_создания = s.CreationDate,
-					Дата_закрытия = (s.ServicemenScheduleItems != null && s.ServicemenScheduleItems.Count > 0 && s.ServicemenScheduleItems.Any(d => d.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest && d.ServiceMan != null)
+					Дата_регистрации_клиента = s.CreationDate.HasValue ? s.CreationDate.Value.ToString("dd.MM.yyyy") : "",
+					Дата_назначения_в_график = (s.ServicemenScheduleItems != null && s.ServicemenScheduleItems.Count > 0 && s.ServicemenScheduleItems.Any(d => d.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest && d.ServiceMan != null)
 						? s.ServicemenScheduleItems.FirstOrDefault(d => d.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest).EndTime.ToString() : "Нет"),
-					Назначена = (s.ServicemenScheduleItems != null && s.ServicemenScheduleItems.Count > 0 && s.ServicemenScheduleItems.Any(d => d.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest && d.ServiceMan != null)
+					Статус_клиента = s.Status.Name,
+					Назначена_на = (s.ServicemenScheduleItems != null && s.ServicemenScheduleItems.Count > 0 && s.ServicemenScheduleItems.Any(d => d.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest && d.ServiceMan != null)
 						? s.ServicemenScheduleItems.FirstOrDefault(d => d.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest).ServiceMan.Employee.Name
-						: "Не назначена")
+						: "Не назначена"),
+					Тариф = s.PhysicalClient != null && s.PhysicalClient.Plan != null ? s.PhysicalClient.Plan.NameWithPrice : "Нет"
 				}, true);
-				pager.ExportToExcelFile(ControllerContext.HttpContext);
+				//выгрузка в файл
+				pager.ExportToExcelFile(ControllerContext.HttpContext, "Отчет по подключениям - " + SystemTime.Now().ToString("dd.MM.yyyy HH_mm"));
 				return null;
 			}
 			ViewBag.Pager = pager;
@@ -156,7 +200,18 @@ namespace InforoomControlPanel.Controllers
 			scheduleItem.EndTime = scheduleItem.BeginTime.Value.AddMinutes(duration);
 			ViewBag.Duration = duration;
 			ViewBag.ServicemenDate = scheduleItem.BeginTime.Value.Date;
-
+			if (scheduleItem.ServiceMan == null) {
+				ErrorMessage("Необходимо указать исполнителя!");
+				var regions = DbSession.Query<Region>().ToList();
+				ViewBag.Regions = regions;
+				var clientRegion = scheduleItem.GetClient().GetRegion() ?? regions[0];
+				ViewBag.Region = (scheduleItem.ServiceMan != null
+					? scheduleItem.ServiceMan.Region
+					: clientRegion);
+				ViewBag.Servicemen = DbSession.Query<ServiceMan>().ToList();
+				ViewBag.ServicemenScheduleItem = scheduleItem;
+				return View();
+			}
 			// проверка, если назначенное время в графике исполнителя не занято
 			if ((scheduleItem.BeginTime != null
 			     || scheduleItem.BeginTime != Convert.ToDateTime("01.01.0001 0:00:00"))
@@ -192,8 +247,7 @@ namespace InforoomControlPanel.Controllers
 					SuccessMessage("Сервисная заявка успешно добавлена в график");
 					//отправка уведомления, о назначенной сервисной заявке
 					var appealMessage = string.Format("Сервисная заявка добавлена в график. <br/>Инженер: {0}<br/>Дата / время: {1}", scheduleItem.ServiceMan.Employee.Name, scheduleItem.BeginTime);
-					var newAppeal = new Appeal(appealMessage, scheduleItem.GetClient(), AppealType.User) { Employee = GetCurrentEmployee() };
-					DbSession.Save(newAppeal);
+					scheduleItem.ServiceRequest.AddComment(DbSession, appealMessage, GetCurrentEmployee());
 				}
 				else {
 					SuccessMessage("Заявка на подключение успешно добавлена в график");
@@ -235,18 +289,19 @@ namespace InforoomControlPanel.Controllers
 			return RedirectToAction("UnpluggedClientList");
 		}
 
-		/// <summary>
-		///     График подключения бригад
-		/// </summary>
-		/// <returns></returns>
-		public ActionResult ConnectionTeams()
-		{
-			var teams = DbSession.Query<ServiceTeam>().ToList();
-			var servicemen = DbSession.Query<ServiceMan>().ToList();
-			ViewBag.Connectionteams = teams;
-			ViewBag.Servicemen = servicemen;
-			return View();
-		}
+		//TODO: удалить
+		///// <summary>
+		/////     График подключения бригад
+		///// </summary>
+		///// <returns></returns>
+		//public ActionResult ConnectionTeams()
+		//{
+		//	var teams = DbSession.Query<ServiceTeam>().ToList();
+		//	var servicemen = DbSession.Query<ServiceMan>().ToList();
+		//	ViewBag.Connectionteams = teams;
+		//	ViewBag.Servicemen = servicemen;
+		//	return View();
+		//}
 
 		/// <summary>
 		///     Список сервисных инженеров
