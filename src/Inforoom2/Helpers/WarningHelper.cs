@@ -326,6 +326,7 @@ namespace Inforoom2.Helpers
 			if (InforoomContextResult == null && client.ShowBalanceWarningPage) {
 				client.ShowBalanceWarningPage = false;
 				InforoomController.DbSession.Save(client);
+				UpdateSce();
 			}
 			//Редирект пользователя на главную, если он попал на варнинг случайно
 			return GetWarningActionResult(RedirectTarget.DefaultPageFromWarning);
