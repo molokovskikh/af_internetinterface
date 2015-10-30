@@ -321,6 +321,12 @@ namespace Inforoom2.Helpers
 				}
 			}
 			SetWarningSessionFlagOff();
+			//если предварительной переадресации не было и варнинг включен, 
+			//а все предыдущие условия не отработали, значит варнинг показывается зря - нужно убрать флаг.
+			if (InforoomContextResult == null && client.ShowBalanceWarningPage) {
+				client.ShowBalanceWarningPage = false;
+				InforoomController.DbSession.Save(client);
+			}
 			//Редирект пользователя на главную, если он попал на варнинг случайно
 			return GetWarningActionResult(RedirectTarget.DefaultPageFromWarning);
 		}
