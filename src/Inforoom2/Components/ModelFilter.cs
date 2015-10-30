@@ -134,6 +134,7 @@ namespace Inforoom2.Components
 
 		protected Expression<Func<TModel, object>> ExpressionToGetExportValues { get; set; }
 		protected NameValueCollection ExportFields = new NameValueCollection();
+		protected List<string> HeaderLines = new List<string>();
 
 		/// <summary>
 		/// Счетчик для имен псевдонимов. Необходим для создания уникальности имен.
@@ -349,7 +350,17 @@ namespace Inforoom2.Components
 					criteria.Add(Restrictions.Lt(fieldName, val));
 					break;
 				case ComparsionType.LowerOrEqual:
-					criteria.Add(Restrictions.Le(fieldName, val));
+					var isDate = new DateTime();
+					DateTime.TryParse(val.ToString(), out isDate);
+					if (isDate != new DateTime()) {
+						isDate = isDate.Date;
+						isDate = isDate.AddDays(1);
+						isDate = isDate.AddSeconds(-1);
+						criteria.Add(Restrictions.Le(fieldName, isDate));
+					}
+					else {
+						criteria.Add(Restrictions.Le(fieldName, val));
+					}
 					break;
 				case ComparsionType.Equal:
 					criteria.Add(Restrictions.Eq(fieldName, val));
@@ -549,12 +560,14 @@ namespace Inforoom2.Components
 		/// <param name="expression">фильтруемый параметр</param>
 		/// <param name="type">Тэг</param>
 		/// <param name="comparsionType">Тип сравнения</param>
+		/// <param name="listItemText">Выводимый текст</param>
 		/// <param name="htmlAttributes">Свойства тэга</param>
 		/// <param name="additional">Опциональные настройки</param>
 		/// <returns></returns>
-		public HtmlString FormFilter(Expression<Func<TModel, object>> expression, HtmlType type, ComparsionType comparsionType, object htmlAttributes = null, object additional = null)
+		public HtmlString FormFilter(Expression<Func<TModel, object>> expression, HtmlType type, ComparsionType comparsionType, object htmlAttributes = null, object additional = null, Expression<Func<TModel, object>> listItemText = null)
 		{
 			var name = ExtractFieldNameFromLambda(expression);
+			var propertyText = listItemText != null ? ExtractFieldNameFromLambda(listItemText) : "";
 			var attrs = ObjectToDictionary(htmlAttributes);
 			var inputName = string.Format("{0}.filter.{1}.{2}", Prefix, comparsionType, name);
 
@@ -568,9 +581,8 @@ namespace Inforoom2.Components
 			var paramName = inputName.Replace(Prefix + ".", "");
 			if (Params[paramName] != null)
 				attrs["value"] = Params[paramName];
-
 			PropertiesUsedInFilter.Add(paramName);
-			var html = GenerateHtml(type, attrs, comparsionType, additional);
+			var html = GenerateHtml(type, attrs, comparsionType, additional, propertyText);
 			var ret = new HtmlString(html);
 			return ret;
 		}
@@ -602,8 +614,9 @@ namespace Inforoom2.Components
 		/// <param name="o">Словарь с html аттрибутами</param>
 		/// <param name="comparsionType"></param>
 		/// <param name="additional">Дополнительные параметры - могут принимать любую форму. Необходимы для некоторых типов элементов.</param>
+		/// <param name="listItemText">Выводимый текст</param>
 		/// <returns></returns>
-		protected string GenerateHtml(HtmlType type, Dictionary<string, string> o, ComparsionType comparsionType, object additional = null)
+		protected string GenerateHtml(HtmlType type, Dictionary<string, string> o, ComparsionType comparsionType, object additional = null, string listItemText = "")
 		{
 			o["class"] = " form-control " + o["class"];
 			//заполняем выбранное значение, если оно есть
@@ -636,7 +649,7 @@ namespace Inforoom2.Components
 				if (customValueList != null)
 					values = customValueList.AllKeys.Select(i => string.Format("<option {2} value='{0}'>{1}</option>", i, customValueList[i], selectedValue == i ? "selected='selected'" : "")).OrderBy(s => s).ToList();
 				else
-					values = TryToGetDropDownValueList(comparsionType, attrName, selectedValue);
+					values = TryToGetDropDownValueList(comparsionType, attrName, selectedValue, listItemText);
 
 				return string.Format("<select {0}>{1}</select>", GetPropsValues(o), string.Join("\n", values));
 			}
@@ -649,16 +662,18 @@ namespace Inforoom2.Components
 		/// <param name="comparsionType"></param>
 		/// <param name="attrName">Имя значения, которое будет использовано в аттрибует name у html тега</param>
 		/// <param name="selectedValue">Значение, которое было выбрано пользователем</param>
+		/// <param name="listItemText">Выводимый текст</param>
 		/// <returns></returns>
-		protected List<string> TryToGetDropDownValueList(ComparsionType comparsionType, string attrName, string selectedValue = null)
+		protected List<string> TryToGetDropDownValueList(ComparsionType comparsionType, string attrName, string selectedValue = null, string listItemText = "")
 		{
 			var propPath = StripParamToFieldPath(attrName);
 			var prop = GetModelPropertyInfo(typeof(TModel), propPath);
+			var propWithText = listItemText != "" ? GetModelPropertyInfo(typeof(TModel), listItemText) : null;
 			if (prop.PropertyType.IsEnum)
 				return GetEnumDropDownValues(prop.PropertyType, selectedValue);
 			if (comparsionType == ComparsionType.IsNull || comparsionType == ComparsionType.IsNotNull)
 				return GetDefaultDropDownValues(selectedValue);
-			return GetModelDropDownValues(prop, selectedValue);
+			return GetModelDropDownValues(prop, selectedValue, propWithText);
 		}
 
 		private List<string> GetDefaultDropDownValues(string selectedValue)
@@ -679,7 +694,7 @@ namespace Inforoom2.Components
 		/// <param name="prop">Свойство модели для которого необходимо сделать перечисление</param>
 		/// <param name="selectedValue">Значение, которое было выбрано пользователем</param>
 		/// <returns></returns>
-		protected List<string> GetModelDropDownValues(PropertyInfo prop, string selectedValue = null)
+		protected List<string> GetModelDropDownValues(PropertyInfo prop, string selectedValue = null, PropertyInfo propForText = null)
 		{
 			//Для булевых типов проще сразу вернуть результат без запросов к БД
 			if (prop.PropertyType == typeof(bool))
@@ -695,11 +710,15 @@ namespace Inforoom2.Components
 
 			foreach (var obj in models) {
 				var value = prop.GetValue(obj, new object[] { });
+				var text = propForText != null ? propForText.GetValue(obj, new object[] { }) : value;
 				if (value == null || value.GetType().Name.ToLower().IndexOf("proxy") != -1) {
 					continue;
 				}
 				var selected = value.ToString() == selectedValue ? "selected='selected'" : "";
-				values.Add(string.Format("<option {0} value='{1}'>{2}</option>", selected, value, value));
+				var stringToAdd = string.Format("<option value='{1}' {0}>{2}</option>", selected, value, text);
+				if (!values.Any(s => s == stringToAdd)) {
+					values.Add(stringToAdd);
+				}
 			}
 			values = values.OrderBy(s => s).ToList();
 			values.Insert(0, "<option value=''> </option>");
@@ -882,7 +901,7 @@ namespace Inforoom2.Components
 			var dic = ObjectToDictionary(attributes);
 			dic["type"] = "submit";
 			dic["name"] = Prefix + ".export";
-			dic["value"] = "Печать";
+			dic["value"] = "Выгрузить в Excel";
 			var htmlAttributs = GetPropsValues(dic);
 
 			var ret = string.Format("<input {0} />", htmlAttributs);
@@ -903,7 +922,7 @@ namespace Inforoom2.Components
 			}
 			var dic = ObjectToDictionary(attributes);
 			var htmlAttributs = GetPropsValues(dic);
-			var ret = string.Format("<a href='{0}' {1}>Отчистить</a>", currentUrl, htmlAttributs);
+			var ret = string.Format("<a href='{0}' {1}>Сбросить фильтр</a>", currentUrl, htmlAttributs);
 			return new HtmlString(ret);
 		}
 
@@ -948,6 +967,11 @@ namespace Inforoom2.Components
 			return paths;
 		}
 
+		public void SetHeaderLines(List<string> headerLines)
+		{
+			HeaderLines = headerLines;
+		}
+
 		/// <summary>
 		/// Получение поля модели из лямбда выражения
 		/// </summary>
@@ -974,7 +998,7 @@ namespace Inforoom2.Components
 			if (complexLinq) {
 				ExpressionToGetExportValues = expression;
 				return;
-			} 
+			}
 			//получаем первую модель 
 			var modelForParams = Models[0];
 			//обработка выражения
@@ -1111,25 +1135,37 @@ namespace Inforoom2.Components
 			const int pixelsForColumnWidth = pixelsFont * 34;
 			byte[] fileToreturn = new byte[0];
 			var propertiesToExport = ExpressionToGetExportValues != null ? ExportToListByLinq() : ExportToList();
+			//Заполняем шапку, если она есть
+			int startIndex = HeaderLines.Count;
+			if (startIndex > 0) {
+				HeaderLines.ForEach(s => { propertiesToExport.Insert(0, new string[] { s }); });
+			}
 			if (propertiesToExport.Count > 0) {
 				//создаем новый xls файл 
 				var workbook = new Workbook();
-				var worksheet = new Worksheet("First Sheet");
-
-				for (int i = 0; i < propertiesToExport[0].Length; i++) worksheet.Cells.ColumnWidth[(ushort)i] = 0;
+				var worksheet = new Worksheet("Первый лист");
+				for (int i = 0; i < startIndex; i++) worksheet.Cells[i, 0] = new Cell(propertiesToExport[i][0]);
+				for (int i = 0; i < propertiesToExport[startIndex].Length; i++) worksheet.Cells.ColumnWidth[(ushort)i] = 0;
 				// проходим строки
-				for (int i = 0; i < propertiesToExport.Count; i++) {
+				for (int i = startIndex; i < propertiesToExport.Count; i++) {
 					// столбцы
 					for (int j = 0; j < propertiesToExport[i].Length; j++) {
+						//если это значение число, нужно поместить в ячейку соответствующего типа
+						decimal tryParse = 0m;
+						object valueToCell = propertiesToExport[i][j];
+						if (decimal.TryParse(propertiesToExport[i][j], out tryParse)) {
+							valueToCell = tryParse;
+							worksheet.Cells[0, i].Format = new CellFormat(CellFormatType.Number, "0.00");
+						}
 						//записываем значения в ячейки
-						worksheet.Cells[i, j] = new Cell(propertiesToExport[i][j]);
+						worksheet.Cells[i, j] = new Cell(valueToCell);
 						worksheet.Cells.ColumnWidth[(ushort)j] = worksheet.Cells.ColumnWidth[(ushort)j] < propertiesToExport[i][j].Length
 							? (ushort)propertiesToExport[i][j].Length : worksheet.Cells.ColumnWidth[(ushort)j];
 					}
 				}
-				for (int i = 0; i < propertiesToExport[0].Length; i++) {
+				for (int i = 0; i < propertiesToExport[startIndex].Length; i++) {
 					worksheet.Cells.ColumnWidth[(ushort)i] = (ushort)(worksheet.Cells.ColumnWidth[(ushort)i] * pixelsForColumnWidth);
-					worksheet.Cells[0, i].Style = new CellStyle() { Font = new Font("Arial", pixelsFont) { Bold = true } };
+					worksheet.Cells[startIndex, i].Style = new CellStyle() { Font = new Font("Arial", pixelsFont) { Bold = true } };
 				}
 
 				workbook.Worksheets.Add(worksheet);

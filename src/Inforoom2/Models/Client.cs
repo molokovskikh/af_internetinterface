@@ -345,7 +345,8 @@ namespace Inforoom2.Models
 
 		public virtual decimal Balance
 		{
-			get { return PhysicalClient != null ? PhysicalClient.Balance : 0; }
+			get { return PhysicalClient != null ? PhysicalClient.Balance : LegalClient != null ? LegalClient.Balance : 0; } 
+			//юрикам пока в новой админке ничего не присваивается*
 			set { PhysicalClient.Balance = value; }
 		}
 

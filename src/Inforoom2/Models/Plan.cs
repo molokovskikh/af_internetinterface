@@ -103,6 +103,12 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual bool IsOnceOnly { get; set; }
 
+
+		public virtual string NameWithPrice
+		{
+			get { return Name + "  ( " + Price.ToString("F") + " )"; }
+		}
+
 		/// <summary>
 		/// Получение стоимости перехода на другой тариф
 		/// </summary>

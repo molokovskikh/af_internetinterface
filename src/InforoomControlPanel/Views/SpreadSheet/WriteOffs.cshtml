@@ -3,7 +3,7 @@
 @using Inforoom2.Models
 @using NPOI.SS.Formula.Functions
 @model dynamic
-@{ 
+@{
 	ViewBag.Title = "Отчет по списаниям";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	InforoomModelFilter<WriteOff> pager = ViewBag.Pager;
@@ -12,65 +12,85 @@
 
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
 	<form>
-		<div class="row">
-			<div class="col-sm-2">Дата списания с </div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.WriteOffDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
-			<div class="col-sm-1">по</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.WriteOffDate, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div>
-		</div>  
-		<div class="row">
-			<div class="col-sm-2">Регион</div>
-			<div class="col-sm-2">@pager.ClientRegionFilter(i => i.Client, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">Тип</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.Client.Type, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
-		</div>
-		<div class="row"> 
-			<div class="col-sm-1">
-				@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Дата списания с </div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.WriteOffDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
+				<div class="col-sm-1">по</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.WriteOffDate, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div>
 			</div>
-			<div class="col-sm-1">
-				@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Регион</div>
+				<div class="col-sm-2">@pager.ClientRegionFilter(i => i.Client, new { @class = "form-control", @style = "min-width:280px;" })</div>
 			</div>
-			<div class="col-sm-1">
-				@pager.ExportButton(new { @class = "btn btn-sm btn-blue" })
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Физ.лицо</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.Client.PhysicalClient, HtmlType.Dropdown, ComparsionType.IsNotNull, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">
+					@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+				</div>
+				<div class="col-sm-1">
+					@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+				</div>
+				<div class="col-sm-1">
+					@pager.ExportButton(new { @class = "btn btn-sm btn-blue" })
+				</div>
 			</div>
 		</div>
 	</form>
 
-	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
-		<thead>
-			<tr role="row">
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Id)">Номер</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Client.Id)">Клиент</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2">Дата списания</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2">Сумма (руб)</th>
-			</tr>
-		</thead>
+	<div class="totalCountOfItems">Всего: <strong>@pager.TotalItems</strong> строк</div>
 
-		<tbody>
-			<tr role="row" class="odd">
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-			@foreach (var writeOff in writeOffs) {
-				<tr role="row" class="odd">
-					<td><strong>@(writeOff.Client != null ? writeOff.Client.Id.ToString() : "")</strong></td>
-					<td><span>@(writeOff.Client != null ? writeOff.Client.Fullname : "")</span></td>
-					<td><span>@writeOff.WriteOffDate</span></td>
-					<td><span>@writeOff.WriteOffSum</span></td>
+	<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+		<div class="row">
+			@{ Html.RenderPartial("Pagination"); }
+		</div>
+		<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+			<thead>
+				<tr role="row">
+					<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Id)">Номер</a></th>
+					<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Client.Id)">Клиент</a></th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">Регион</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">Дата списания</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">Сумма (руб)</th>
 				</tr>
-			}
-			<tr role="row" class="odd">
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-		</tbody>
-	</table>
-	<div class="row">
-		@{ Html.RenderPartial("Pagination"); }
+			</thead>
+
+			<tbody>
+				<tr role="row" class="odd">
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				@foreach (var writeOff in writeOffs) {
+					<tr role="row" class="odd">
+						<td><strong>@(writeOff.Client != null ? writeOff.Client.Id.ToString() : "")</strong></td>
+						<td><span>@(writeOff.Client != null ? writeOff.Client.Fullname : "")</span></td>
+						<td><span>@(writeOff.Client.GetRegion() != null ? writeOff.Client.GetRegion().Name : "") </span></td>
+						<td><span>@writeOff.WriteOffDate</span></td>
+						<td><span>@writeOff.WriteOffSum</span></td>
+					</tr>
+				}
+				<tr role="row" class="odd">
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="row">
+			@{ Html.RenderPartial("Pagination"); }
+		</div>
 	</div>
+	<div class="totalCountOfItems">Всего: <strong>@pager.TotalItems</strong> строк</div>
 </div>

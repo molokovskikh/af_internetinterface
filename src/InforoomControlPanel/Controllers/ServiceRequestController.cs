@@ -206,10 +206,11 @@ namespace InforoomControlPanel.Controllers
 				DbSession.Save(serviceRequest);
 				SuccessMessage("Сервисная заявка успешно обновлена.");
 
-				//Отправляем аппил о редактировании
-				string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> обновлена.",
-					serviceRequest.Id, ConfigHelper.GetParam("adminPanelNew"));
-				serviceRequest.AddComment(DbSession, appealMessage, GetCurrentEmployee());
+				//TODO: удалить, если без сообщений будет удобно.
+				////Отправляем аппил о редактировании
+				//string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> обновлена.",
+				//	serviceRequest.Id, ConfigHelper.GetParam("adminPanelNew"));
+				//serviceRequest.AddComment(DbSession, appealMessage, GetCurrentEmployee());
 
 				return RedirectToAction("ServiceRequestEdit", new { id = serviceRequest.Id });
 			}
