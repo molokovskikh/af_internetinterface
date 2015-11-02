@@ -30,6 +30,9 @@ namespace InternetInterface.Models
 
 		[Property]
 		public virtual bool IsExternalClientIdMandatory { get; set; }
+		
+		[Property(Column = "_RegionOfficePhoneNumber")]
+		public virtual string RegionOfficePhoneNumber { get; set; }
 
 		public static IList<RegionHouse> All()
 		{
