@@ -549,6 +549,8 @@ namespace InternetInterface.Controllers
 				else {
 					PropertyBag["WhoConnected"] = null;
 				}
+
+				PropertyBag["RegionTelephoneNumber"] = client.GetRegion() != null ? client.GetRegion().RegionOfficePhoneNumber : "";
 				PropertyBag["ClientIdHref"] = "../UserInfo/ShowPhysicalClient?filter.ClientCode=" + ClientID;
 				PropertyBag["Client"] = physicalClient;
 				PropertyBag["_client"] = client;
@@ -573,6 +575,7 @@ namespace InternetInterface.Controllers
 
 		public void ClientRegisteredInfo()
 		{
+			PropertyBag["RegionTelephoneNumber"] = null;
 		}
 
 		public void ClientRegisteredInfoFromDiller()
@@ -840,7 +843,7 @@ namespace InternetInterface.Controllers
 					var connectSum = client.IsPhysical() ? client.PhysicalClient.ConnectSum : 0;
 					orderInfo.Add(new ClientOrderInfo {
 						Order = new Order() { Number = Order.GetNextNumber(DbSession, client.Id) },
-						ClientConnectInfo = new ClientConnectInfo { ConnectSum = connectSum}
+						ClientConnectInfo = new ClientConnectInfo { ConnectSum = connectSum }
 					});
 				}
 				PropertyBag["ClientOrdersInfo"] = orderInfo;
