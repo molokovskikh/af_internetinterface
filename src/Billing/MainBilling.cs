@@ -728,7 +728,7 @@ namespace Billing
 			foreach (var clientHardware in client.RentalHardwareList) {
 				//Неактивные аренды не сохраняет
 				if (!clientHardware.IsActive)
-					return;
+					continue;
 
 				// Если пустая дата начала аренды, деактивировать услугу
 				if (clientHardware.GiveDate == null) {

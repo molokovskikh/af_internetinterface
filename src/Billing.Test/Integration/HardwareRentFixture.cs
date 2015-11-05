@@ -15,22 +15,31 @@ namespace Billing.Test.Integration
 		/// <summary>
 		/// Добавление нового оборудования в аренду клиенту
 		/// </summary>
-		private void AddRentalHardwareToClient()
+		private void AddRentalHardwareToClient(bool isActivated = true)
 		{
 			// Для примера в качестве арендуемого оборудования взят коммутатор
-			_hardware = ActiveRecordMediator<RentalHardware>.FindAllByProperty("Name", "Коммутатор").FirstOrDefault() ?? new RentalHardware { Name = "Коммутатор"};
+			_hardware = ActiveRecordMediator<RentalHardware>.FindAllByProperty("Name", "Коммутатор").FirstOrDefault() ??
+			            new RentalHardware {Name = "Коммутатор"};
 			_hardware.Price = (_hardware.Price == 0m) ? 150m : _hardware.Price;
 			_hardware.FreeDays = 30;
 			ActiveRecordMediator.SaveAndFlush(_hardware);
 
 			// Создать и активировать услугу "Аренда оборудования" для клиента
-			var clientHardware = new ClientRentalHardware {
+			var clientHardware = new ClientRentalHardware
+			{
 				Hardware = _hardware,
 				Client = client,
 				ModelName = "test model",
 				SerialNumber = "12345"
 			};
-			clientHardware.Activate();
+			if (isActivated) {
+				clientHardware.Activate();
+			}
+			else {
+				clientHardware.Activate();
+				clientHardware.Deactivate();
+			}
+
 			ActiveRecordMediator.SaveAndFlush(clientHardware);
 		}
 
@@ -38,12 +47,14 @@ namespace Billing.Test.Integration
 		public void Writeoff_pay_for_hardware_rent()
 		{
 			using (new SessionScope()) {
+				//одно оборудование (раннее) должно быть деактивироованным (чтобы проверить верность списаний с учетом архива)
+				AddRentalHardwareToClient(false);
 				AddRentalHardwareToClient();
 				ActiveRecordMediator.Refresh(client);
 
 				// Изменить текущий баланс и статус клиента
 				client.PhysicalClient.Balance = 1000m;
-				client.SetStatus(ActiveRecordMediator<Status>.FindByPrimaryKey((uint)StatusType.NoWorked));
+				client.SetStatus(ActiveRecordMediator<Status>.FindByPrimaryKey((uint) StatusType.NoWorked));
 				ActiveRecordMediator.UpdateAndFlush(client);
 
 				for (var i = -10; i < 30; i++) {
@@ -74,7 +85,8 @@ namespace Billing.Test.Integration
 		}
 
 		[Test(Description = "Проверка формирования задачи в RedMine в ситуации," +
-		                    " когда клиент более 30 дней находится в минусе и при этом пользуется арендованным оборудованием")]
+		                    " когда клиент более 30 дней находится в минусе и при этом пользуется арендованным оборудованием")
+		]
 		public void Create_redmine_issue_due_to_hardware_rent_debt()
 		{
 			using (new SessionScope()) {
@@ -82,7 +94,7 @@ namespace Billing.Test.Integration
 				ActiveRecordMediator.Refresh(client);
 
 				// Установить статус заблокирован десять дней назад
-				var status = ActiveRecordMediator<Status>.FindByPrimaryKey((uint)7);
+				var status = ActiveRecordMediator<Status>.FindByPrimaryKey((uint) 7);
 				client.SetStatus(status);
 				client.PaidDay = false;
 				client.StatusChangedOn = SystemTime.Now().AddDays(-10);
@@ -92,7 +104,8 @@ namespace Billing.Test.Integration
 				billing.ProcessWriteoffs();
 				ActiveRecordMediator.Refresh(client);
 				var redmineIssues = ActiveRecordMediator<RedmineIssue>.FindAll().ToList();
-				var clientIssues = redmineIssues.Where(ri => ri.subject.Contains(client.Id.ToString("D5")) && ri.status_id != 5).ToList();
+				var clientIssues =
+					redmineIssues.Where(ri => ri.subject.Contains(client.Id.ToString("D5")) && ri.status_id != 5).ToList();
 				Assert.That(clientIssues.Count, Is.EqualTo(0), "Задачи в редмайн быть не должно");
 
 				//Теперь какбудто клиент уже давно заблокирован
@@ -104,7 +117,8 @@ namespace Billing.Test.Integration
 				//Должна появиться задача в редмайн, так как бесплатные дни аренды закончились
 				ActiveRecordMediator.Refresh(client);
 				redmineIssues = ActiveRecordMediator<RedmineIssue>.FindAll().ToList();
-				clientIssues = redmineIssues.Where(ri => ri.subject.Contains(client.Id.ToString("D5")) && ri.status_id != 5).ToList();
+				clientIssues =
+					redmineIssues.Where(ri => ri.subject.Contains(client.Id.ToString("D5")) && ri.status_id != 5).ToList();
 				Assert.That(clientIssues.Count, Is.EqualTo(1), "Нет задачи в Redmine");
 
 				//Проверяем, что при повторном запуске биллинга не будет дублирования задачи
@@ -113,7 +127,8 @@ namespace Billing.Test.Integration
 				billing.ProcessWriteoffs();
 				ActiveRecordMediator.Refresh(client);
 				redmineIssues = ActiveRecordMediator<RedmineIssue>.FindAll().ToList();
-				clientIssues = redmineIssues.Where(ri => ri.subject.Contains(client.Id.ToString("D5")) && ri.status_id != 5).ToList();
+				clientIssues =
+					redmineIssues.Where(ri => ri.subject.Contains(client.Id.ToString("D5")) && ri.status_id != 5).ToList();
 				Assert.That(clientIssues.Count, Is.EqualTo(1), "Дублирование задачи в Redmine");
 			}
 		}
