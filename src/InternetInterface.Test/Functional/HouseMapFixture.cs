@@ -78,6 +78,7 @@ namespace InternetInterface.Test.Functional
 			WaitForText("Количество квартир: 10");
 			AssertText("Количество квартир: 10");
 			Click("Назначить проход");
+			WaitForVisibleCss("#date_agent");
 			Css("#date_agent").SendKeys("01.09.2014");
 			Click("Назначить в проход");
 			WaitForText("Последний проход: 01.09.2014");
