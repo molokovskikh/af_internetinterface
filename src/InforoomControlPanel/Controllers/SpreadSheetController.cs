@@ -68,7 +68,9 @@ namespace InforoomControlPanel.Controllers
 					header.Add(string.Format("Оборудование: {0}", pager.GetParam("filter.Equal.RentalHardwareList.First().Hardware.Name")));
 				//Регион
 				if (pager.GetParam("clientregionfilter.") != null)
-					header.Add(string.Format("Регион: {0}", pager.GetParam("clientregionfilter.")));
+					header.Add(string.Format("Регион: {0}",
+						string.IsNullOrEmpty(pager.GetParam("clientregionfilter.").Replace("-", "").Replace(" ", ""))
+							? pager.GetParam("clientregionfilter.") : " Все "));
 				//Тариф
 				if (pager.GetParam("filter.Equal.PhysicalClient.Plan.Name") != null)
 					header.Add(string.Format("Тариф: {0}", pager.GetParam("filter.Equal.PhysicalClient.Plan.Name")));
@@ -94,7 +96,9 @@ namespace InforoomControlPanel.Controllers
 					Адрес = s.GetAddress() ?? "",
 					Контакты = string.Join(", ", s.Contacts.OrderBy(c => c.Type).Select(c => c.ContactString).ToList()),
 					Дата_регистрации = s.CreationDate.HasValue ? s.CreationDate.Value.ToString("dd.MM.yyyy") : "",
-					Дата_расторжения = s.Status.Type == StatusType.Dissolved ? s.StatusChangedOn.HasValue ? s.StatusChangedOn.Value.ToString("dd.MM.yyyy") : "" : "",
+					Дата_расторжения = s.PhysicalClient == null && s.LegalPersonOrders != null ? (s.LegalPersonOrders.Where(o => o.IsDeactivated && o.EndDate != null).ToList().OrderByDescending(f => f.EndDate.Value).FirstOrDefault()
+					                                                                              ?? new ClientOrder() { EndDate = Convert.ToDateTime("0001-01-01 00:00:00") }).EndDate.Value.ToString("dd.MM.yyyy").Replace("01.01.0001", "") :
+						(s.Status.Type == StatusType.Dissolved ? s.StatusChangedOn.HasValue ? s.StatusChangedOn.Value.ToString("dd.MM.yyyy") : "" : ""),
 					Тариф = s.PhysicalClient != null && s.PhysicalClient.Plan != null ? s.PhysicalClient.Plan.NameWithPrice : "Нет",
 					Баланс = s.Balance,
 					Статус = s.Status.Name,

@@ -44,6 +44,10 @@ namespace Inforoom2.Models
 			/// задано по результатам анализа изменений в БД "регистрацией клиента" старой админки.
 			BlockDate = DateTime.Now;
 			YearCycleDate = DateTime.Now;
+
+			//перенесено из старой админки (нужен при проверке на необходимость показывать Варнинг)
+			LegalPersonOrders = new List<ClientOrder>();
+
 		}
 
 
@@ -182,6 +186,12 @@ namespace Inforoom2.Models
 		public virtual Agent Agent { get; set; }
 
 		public virtual bool IsNeedRecofiguration { get; set; }
+		
+		//перенесено из старой админки (нужен при проверке на необходимость показывать Варнинг)
+		[Bag(0, Table = "Orders", Cascade = "all-delete-orphan")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "ClientId")]
+		[OneToMany(2, ClassType = typeof(ClientOrder))]
+		public virtual IList<ClientOrder> LegalPersonOrders { get; set; }
 
 		public virtual bool IsWorkStarted()
 		{

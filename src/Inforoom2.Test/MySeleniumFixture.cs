@@ -38,9 +38,10 @@ namespace Inforoom2.Test
 
 			var version = Directory.GetDirectories("../../../../packages/", "*ChromeDriver*").FirstOrDefault();
 			var chromeOptions = new ChromeOptionsWithPrefs();
-			chromeOptions.prefs = new Dictionary<string, object> {
-				{ "download.prompt_for_download", "false" },
-				{ "download.default_directory", Environment.CurrentDirectory }
+			chromeOptions.prefs = new Dictionary<string, object>
+			{
+				{"download.prompt_for_download", "false"},
+				{"download.default_directory", Environment.CurrentDirectory}
 			};
 			chromeOptions.BinaryLocation = "../../../../lib/GoogleChromePortable/GoogleChromePortable.exe";
 			GlobalDriver = new ChromeDriver(String.Format("{0}/content/", version), chromeOptions);
@@ -49,8 +50,8 @@ namespace Inforoom2.Test
 
 		public static void GlobalTearDown()
 		{
-			if (GlobalDriver != null)
-			{
+			if (GlobalDriver != null) {
+				GlobalDriver.Close();
 				GlobalDriver.Quit();
 				GlobalDriver.Dispose();
 				GlobalDriver = null;
@@ -99,7 +100,7 @@ namespace Inforoom2.Test
 
 		protected virtual string GetShortUrl(object item, string action = null)
 		{
-			var dynamicItem = ((dynamic)item);
+			var dynamicItem = ((dynamic) item);
 			var id = dynamicItem.Id;
 			var controller = AppHelper.GetControllerName(item);
 			if (!String.IsNullOrEmpty(action))
@@ -120,16 +121,14 @@ namespace Inforoom2.Test
 		public RemoteWebDriver Open(string url = null)
 		{
 			url = url ?? defaultUrl;
-			if (scope != null)
-			{
+			if (scope != null) {
 				scope.Flush();
 				scope.Commit();
 			}
 
 			url = GetUri(url);
 
-			if (_browser == null)
-			{
+			if (_browser == null) {
 				_browser = GlobalDriver;
 			}
 
@@ -142,16 +141,13 @@ namespace Inforoom2.Test
 		public void SeleniumTearDown()
 		{
 			var currentContext = TestContext.CurrentContext;
-			if (currentContext.Result.Status == TestStatus.Failed)
-			{
-				if (browser != null)
-				{
+			if (currentContext.Result.Status == TestStatus.Failed) {
+				if (browser != null) {
 					Console.WriteLine(browser.Url);
-					if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("DEBUG_SELENIUM")))
-					{
+					if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("DEBUG_SELENIUM"))) {
 						var data = browser.Url + Environment.NewLine + Html;
 						File.WriteAllText(currentContext.Test.FullName + ".html", data);
-						((ITakesScreenshot)browser).GetScreenshot().SaveAsFile(currentContext.Test.FullName + ".png", ImageFormat.Png);
+						((ITakesScreenshot) browser).GetScreenshot().SaveAsFile(currentContext.Test.FullName + ".png", ImageFormat.Png);
 					}
 				}
 			}
@@ -177,8 +173,7 @@ namespace Inforoom2.Test
 
 		protected void WaitForElementByLocator(By locator, int iterations = 100)
 		{
-			for (int i = 0; i < iterations; i++)
-			{
+			for (int i = 0; i < iterations; i++) {
 				if (browser.FindElements(locator).Count > 0)
 					break;
 				Thread.Sleep(10);
@@ -188,20 +183,21 @@ namespace Inforoom2.Test
 		protected void WaitForCss(string css)
 		{
 			var wait = new WebDriverWait(browser, waitTime.Second());
-			wait.Until(d => ((RemoteWebDriver)d).FindElementsByCssSelector(css).Count > 0);
+			wait.Until(d => ((RemoteWebDriver) d).FindElementsByCssSelector(css).Count > 0);
 		}
 
 		protected void WaitForVisibleCss(string css)
 		{
 			var wait = new WebDriverWait(browser, waitTime.Second());
-			wait.Until(d => ((RemoteWebDriver)d).FindElementByCssSelector(css).Displayed);
+			wait.Until(d => ((RemoteWebDriver) d).FindElementByCssSelector(css).Displayed);
 		}
 
 		protected void WaitAnimation(string css)
 		{
 			var wait = new WebDriverWait(browser, waitTime.Second());
-			wait.Until(d => {
-				var javaScriptExecutor = (IJavaScriptExecutor)d;
+			wait.Until(d =>
+			{
+				var javaScriptExecutor = (IJavaScriptExecutor) d;
 				var isAnimated = bool.Parse(javaScriptExecutor
 					.ExecuteScript(string.Format("return $('{0}').is(':animated')", css))
 					.ToString().ToLower());
@@ -212,20 +208,21 @@ namespace Inforoom2.Test
 		protected void WaitClickable(string css)
 		{
 			var wait = new WebDriverWait(browser, waitTime.Second());
-			wait.Until(d => {
-				var el = ((RemoteWebDriver)d).FindElementByCssSelector(css);
+			wait.Until(d =>
+			{
+				var el = ((RemoteWebDriver) d).FindElementByCssSelector(css);
 				return el.Displayed
-					&& el.Enabled
+				       && el.Enabled
 					//проверяем что анимация завершилась
-					&& el.Location.X > 0
-					&& el.Location.Y > 0;
+				       && el.Location.X > 0
+				       && el.Location.Y > 0;
 			});
 		}
 
 		protected void WaitForText(string text)
 		{
 			var wait = new WebDriverWait(browser, waitTime.Second());
-			wait.Until(d => ((RemoteWebDriver)d).FindElementByCssSelector("body").Text.Contains(text));
+			wait.Until(d => ((RemoteWebDriver) d).FindElementByCssSelector("body").Text.Contains(text));
 		}
 
 		//иногда WaitForText приводит к ошибкам stale reference exception
@@ -233,18 +230,15 @@ namespace Inforoom2.Test
 		{
 			var begin = DateTime.Now;
 			var timeout = waitTime.Second();
-			while (true)
-			{
-				try
-				{
+			while (true) {
+				try {
 					var found = browser.FindElementByCssSelector("body").Text.Contains(text);
 					if (found)
 						break;
 					if ((DateTime.Now - begin) > timeout)
 						throw new Exception(String.Format("Не удалось дождаться текста '{0}'", text));
 				}
-				catch (StaleElementReferenceException)
-				{
+				catch (StaleElementReferenceException) {
 				}
 				Thread.Sleep(50);
 			}
@@ -279,7 +273,7 @@ namespace Inforoom2.Test
 
 		protected dynamic Css(dynamic parent, string selector)
 		{
-			var element = ((IFindsByCssSelector)parent).FindElementByCssSelector(selector);
+			var element = ((IFindsByCssSelector) parent).FindElementByCssSelector(selector);
 			if (element.TagName == "select")
 				return new SelectElement(element);
 			return element;
@@ -289,7 +283,8 @@ namespace Inforoom2.Test
 		{
 			var buttons = browser.FindElementsByCssSelector("a, input[type=button], input[type=submit], button");
 
-			var button = buttons.FirstOrDefault(b => String.Equals(b.GetAttribute("value"), text, StringComparison.CurrentCultureIgnoreCase)) ??
+			var button =
+				buttons.FirstOrDefault(b => String.Equals(b.GetAttribute("value"), text, StringComparison.CurrentCultureIgnoreCase)) ??
 				buttons.FirstOrDefault(b => String.Equals(b.Text, text, StringComparison.CurrentCultureIgnoreCase));
 
 			if (button == null)
@@ -302,7 +297,8 @@ namespace Inforoom2.Test
 		{
 			var buttons = el.FindElements(By.CssSelector("a, input[type=button], input[type=submit], button"));
 
-			var button = buttons.FirstOrDefault(b => String.Equals(b.GetAttribute("value"), text, StringComparison.CurrentCultureIgnoreCase)) ??
+			var button =
+				buttons.FirstOrDefault(b => String.Equals(b.GetAttribute("value"), text, StringComparison.CurrentCultureIgnoreCase)) ??
 				buttons.FirstOrDefault(b => String.Equals(b.Text, text, StringComparison.CurrentCultureIgnoreCase));
 
 			if (button == null)
@@ -350,7 +346,7 @@ namespace Inforoom2.Test
 
 		protected object Eval(string js)
 		{
-			return ((IJavaScriptExecutor)browser).ExecuteScript(js);
+			return ((IJavaScriptExecutor) browser).ExecuteScript(js);
 		}
 
 		//todo нужно ловить ошибки в js
@@ -373,23 +369,23 @@ namespace Inforoom2.Test
 			var webServer = new Server(WebPort, WebRoot, Path.GetFullPath(WebDir));
 			webServer.Start();
 
-			try
-			{
+			try {
 				SetupEnvironment(webServer);
 			}
-			catch (Exception)
-			{
-				try
-				{
-					webServer.Dispose();
+			catch (Exception) {
+				try {
+					if (GlobalDriver != null) {
+						GlobalDriver.Close();
+						GlobalDriver.Quit();
+						GlobalDriver.Dispose();
+						GlobalDriver = null;
+					}
 				}
-				catch (Exception exception)
-				{
+				catch (Exception exception) {
 					Console.WriteLine(exception);
 				}
 				throw;
 			}
-
 			return webServer;
 		}
 
