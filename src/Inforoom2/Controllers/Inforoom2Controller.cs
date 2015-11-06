@@ -160,6 +160,18 @@ namespace Inforoom2.Controllers
 			if (CurrentClient != null || string.IsNullOrEmpty(ipstring))
 				return false;
 			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring, DbSession);
+
+			var endpointIdString = Request.QueryString["n"];
+			if (endpoint == null && string.IsNullOrEmpty(endpointIdString) == false) {
+				int endpointId = 0;
+				if (!string.IsNullOrEmpty(endpointIdString)) {
+					int.TryParse(endpointIdString, out endpointId);
+				}
+				if (endpointId != 0) {
+					endpoint = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == endpointId);
+				}
+			}
+			//sce кидает опознанного пользователя на варнинг, с номером его эндпойнта 
 			if (endpoint != null && endpoint.Client.PhysicalClient != null) //Юриков авторизовывать не нужно
 			{
 				SetCookie("networkClient", "true");

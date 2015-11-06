@@ -101,6 +101,33 @@ namespace Inforoom2.Test.Functional.Personal
 			AssertText(DbSession.Query<Plan>().First(s => s == PlanChangerDataItem.FastPlan).Name);
 		}
 
+		[Test(Description = "Проверка возврата переадресации Warning(ом) с главной станицы на выбор тарифа, если отработал PlanChanger (проверка паспортных данных)")]
+		public void PlanChangerWithWarningFixtureFromMainToPlanChange()
+		{
+			CurrentClient = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("без паспортных данных"));
+			PlanChangerFixtureOn(0, false);
+			LoginForClient(CurrentClient);
+			AssertText("У вас не заполнены паспортные данные");
+			Css(".warning").Click();
+
+			Open("/");
+			AssertNoText("НОВОСТИ");
+			AssertText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
+			Open("Warning");
+			Css(".warning").Click();
+
+			var textbox = browser.FindElement(By.CssSelector("#physicalClient_PassportNumber"));
+			textbox.SendKeys("7121551");
+			var button = browser.FindElement(By.CssSelector("form input.button"));
+			button.Click();
+
+			AssertText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
+			browser.FindElementByCssSelector("#changeTariffButtonCheap").Click();
+			browser.FindElementByCssSelector(".window .click.ok").Click();
+			// клиент должен перейти на дешелый тириф
+			AssertText(DbSession.Query<Plan>().First(s => s == PlanChangerDataItem.CheapPlan).Name);
+		}
+
 		[Test(Description = "Проверка конфликта Warning с PlanChanger, отсутствие паспоротных данных")]
 		public void PlanChangerWithWarningFixturePassportData()
 		{
@@ -181,11 +208,10 @@ namespace Inforoom2.Test.Functional.Personal
 
 			AssertText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
 			browser.FindElementByCssSelector("#changeTariffButtonFast").Click();
-		//	browser.FindElementByCssSelector("#changeTariffButtonCheap").Click();
+			//	browser.FindElementByCssSelector("#changeTariffButtonCheap").Click();
 			browser.FindElementByCssSelector(".window .click.ok").Click();
 			// клиент должен перейти на дешелый тириф
 			AssertText(DbSession.Query<Plan>().First(s => s == PlanChangerDataItem.FastPlan).Name);
-
 		}
 	}
 }
