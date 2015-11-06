@@ -28,13 +28,13 @@ namespace Inforoom2.Helpers
 				throw new Exception("Контроллер должен быть наследником Inforoom2Controller!");
 			}
 			InforoomExecutingContext = filterContext;
-			InforoomController = (Inforoom2Controller)filterContext.Controller;
+			InforoomController = (Inforoom2Controller) filterContext.Controller;
 			InforoomClient = InforoomController.GetCurrentClient();
 			if (InforoomClient == null) {
 				InforoomClient = GetLegalClientIfExists(InforoomController);
 			}
 			InforoomContextResult = filterContext.Result;
-			filterContext.Result = null;
+			InforoomExecutingContext.Result = null;
 			//значения текущего маршрута 
 			_currentController = InforoomController.ControllerContext.RouteData.Values["controller"].ToString().ToLower();
 			_currentAction = InforoomController.ControllerContext.RouteData.Values["action"].ToString().ToLower();
@@ -44,27 +44,32 @@ namespace Inforoom2.Helpers
 			_requestParams = InforoomController.Request.QueryString["params"];
 		}
 
-		[Description("Контроллеры, которые проверяются на варнинг")] public readonly string[] ControllersWithWarning = new string[] { "service", "personal", "warning" };
+		[Description("Контроллеры, которые проверяются на варнинг")] public readonly string[] ControllersWithWarning =
+			new string[] {"service", "personal", "warning"};
 
-		[Description("Исключения, экшены, для которых мы не выводим варнинг для запроса POST")] private List<WarningRedirect> _exceptionsForWarningMethodPost = new List<WarningRedirect> {
-			new WarningRedirect() { Action = "TryToDisableWarning".ToLower(), Controller = "warning" },
-			new WarningRedirect() { Action = "DeactivateAccountBlocking".ToLower(), Controller = "service" },
-			new WarningRedirect() { Action = "InternetPlanChanger".ToLower(), Controller = "service" },
-			new WarningRedirect() { Action = "RepairCompleted".ToLower(), Controller = "warning" },
-			new WarningRedirect() { Action = "FirstVisit".ToLower(), Controller = "personal" },
-			new WarningRedirect() { Action = "Profile".ToLower(), Controller = "personal" },
-			new WarningRedirect() { Action = "SubmitCallMeBackTicket".ToLower(), Controller = "warning" },
-			new WarningRedirect() { Action = "Logout".ToLower(), Controller = "account" },
-			new WarningRedirect() { Action = "Login".ToLower(), Controller = "account" }
-		};
+		[Description("Исключения, экшены, для которых мы не выводим варнинг для запроса POST")] private List<WarningRedirect>
+			_exceptionsForWarningMethodPost = new List<WarningRedirect>
+			{
+				new WarningRedirect() {Action = "TryToDisableWarning".ToLower(), Controller = "warning"},
+				new WarningRedirect() {Action = "DeactivateAccountBlocking".ToLower(), Controller = "service"},
+				new WarningRedirect() {Action = "InternetPlanChanger".ToLower(), Controller = "service"},
+				new WarningRedirect() {Action = "RepairCompleted".ToLower(), Controller = "warning"},
+				new WarningRedirect() {Action = "FirstVisit".ToLower(), Controller = "personal"},
+				new WarningRedirect() {Action = "Profile".ToLower(), Controller = "personal"},
+				new WarningRedirect() {Action = "SubmitCallMeBackTicket".ToLower(), Controller = "warning"},
+				new WarningRedirect() {Action = "Logout".ToLower(), Controller = "account"},
+				new WarningRedirect() {Action = "Login".ToLower(), Controller = "account"}
+			};
 
-		[Description("Исключения, экшены, для которых мы не выводим варнинг для запроса GET")] private List<WarningRedirect> _exceptionsForWarningMethodGet = new List<WarningRedirect> {
-			new WarningRedirect() { Action = "FirstVisit".ToLower(), Controller = "personal" },
-			new WarningRedirect() { Action = "Profile".ToLower(), Controller = "personal" },
-			new WarningRedirect() { Action = "InternetPlanChanger".ToLower(), Controller = "service" },
-			new WarningRedirect() { Action = "Logout".ToLower(), Controller = "account" },
-			new WarningRedirect() { Action = "SubmitCallMeBackTicket".ToLower(), Controller = "warning" }
-		};
+		[Description("Исключения, экшены, для которых мы не выводим варнинг для запроса GET")] private List<WarningRedirect>
+			_exceptionsForWarningMethodGet = new List<WarningRedirect>
+			{
+				new WarningRedirect() {Action = "FirstVisit".ToLower(), Controller = "personal"},
+				new WarningRedirect() {Action = "Profile".ToLower(), Controller = "personal"},
+				new WarningRedirect() {Action = "InternetPlanChanger".ToLower(), Controller = "service"},
+				new WarningRedirect() {Action = "Logout".ToLower(), Controller = "account"},
+				new WarningRedirect() {Action = "SubmitCallMeBackTicket".ToLower(), Controller = "warning"}
+			};
 
 		[Description("Контроллер, наследующийся от Inforoom2Controller")]
 		protected Inforoom2Controller InforoomController { get; set; }
@@ -91,9 +96,10 @@ namespace Inforoom2.Helpers
 		/// </summary>
 		public void TryWarningToRedirect()
 		{
+			if (InforoomController == null) return;
 			//проверяем есть ли необходимость проверять экшены контроллера на варнинг 
-			if (InforoomController == null ||
-			    !ControllersWithWarning.Any(s => s == _currentController)) {
+			if (!ControllersWithWarning.Any(s => s == _currentController)) {
+				InforoomExecutingContext.Result = InforoomContextResult;
 				return;
 			}
 			WarningRedirect warningRedirect;
@@ -125,7 +131,9 @@ namespace Inforoom2.Helpers
 				SetWarningSessionFlagOff();
 			}
 			//если варнинг не собирается никуда редиректить и перед проверкой уже был задан эшен для перехода, возвращаем его в Context.Result 
-			if (InforoomContextResult != null && warningRedirect == null) {
+			RedirectTarget redirectTargetEnum;
+			Enum.TryParse(_currentAction, true, out redirectTargetEnum);
+			if (InforoomContextResult != null && warningRedirect == null && redirectTargetEnum == RedirectTarget.NoRedirect) {
 				InforoomExecutingContext.Result = InforoomContextResult;
 			}
 			//попытка редиректа по полученному объекту
@@ -141,15 +149,20 @@ namespace Inforoom2.Helpers
 			var client = InforoomClient;
 			//учитываем различные ситуации, добавляя нужные условия из списка исключений
 			if (client.PhysicalClient != null && client.Balance < 0) {
-				_exceptionsForWarningMethodPost.Add(new WarningRedirect() { Action = "deferredpayment", Controller = "service" });
-				_exceptionsForWarningMethodPost.Add(new WarningRedirect() { Action = "activatedefferedpayment", Controller = "service" });
+				_exceptionsForWarningMethodPost.Add(new WarningRedirect() {Action = "deferredpayment", Controller = "service"});
+				_exceptionsForWarningMethodPost.Add(new WarningRedirect()
+				{
+					Action = "activatedefferedpayment",
+					Controller = "service"
+				});
 			}
 			if (client.PhysicalClient != null && client.Status.Type == StatusType.VoluntaryBlocking) {
-				_exceptionsForWarningMethodPost.Add(new WarningRedirect() { Action = "blockaccount", Controller = "service" });
+				_exceptionsForWarningMethodPost.Add(new WarningRedirect() {Action = "blockaccount", Controller = "service"});
 			}
 			//Фильтрация POST запроса: проверяем, если текущий экшен и контроллер находятся в списке исключений.
 			if (InforoomExecutingContext.HttpContext.Request.HttpMethod == "POST" &&
-			    _exceptionsForWarningMethodPost.Any(s => s.Action.ToLower() == _currentAction && s.Controller == _currentController && s.Disabled == false)) {
+			    _exceptionsForWarningMethodPost.Any(
+				    s => s.Action.ToLower() == _currentAction && s.Controller == _currentController && s.Disabled == false)) {
 				return true;
 			}
 			return false;
@@ -165,23 +178,26 @@ namespace Inforoom2.Helpers
 			//учитываем различные ситуации, убирая ненужные условия из списка исключений
 			//клиенту без паспорта не показываем личный кабинет, а также если был переход к какому-то экшену до проверки варнинга (связано с PlanChanger)
 			if (client.PhysicalClient != null && (!client.HasPassportData() || InforoomContextResult != null)) {
-				var element = _exceptionsForWarningMethodGet.FirstOrDefault(s => s.Action == "Profile".ToLower() && s.Controller == "personal");
+				var element =
+					_exceptionsForWarningMethodGet.FirstOrDefault(s => s.Action == "Profile".ToLower() && s.Controller == "personal");
 				if (element != null) {
 					element.Disabled = true;
 				}
 			}
 			//учитываем различные ситуации, добавляя нужные условия из списка исключений
 			if (client.PhysicalClient != null && client.Balance < 0) {
-				_exceptionsForWarningMethodGet.Add(new WarningRedirect() { Action = "service", Controller = "personal" });
-				_exceptionsForWarningMethodGet.Add(new WarningRedirect() { Action = "deferredpayment", Controller = "service" });
+				_exceptionsForWarningMethodGet.Add(new WarningRedirect() {Action = "service", Controller = "personal"});
+				_exceptionsForWarningMethodGet.Add(new WarningRedirect() {Action = "deferredpayment", Controller = "service"});
 			}
 			if (client.PhysicalClient != null && client.Status.Type == StatusType.VoluntaryBlocking) {
-				_exceptionsForWarningMethodGet.Add(new WarningRedirect() { Action = "service", Controller = "personal" });
-				_exceptionsForWarningMethodGet.Add(new WarningRedirect() { Action = "blockaccount", Controller = "service" });
+				_exceptionsForWarningMethodGet.Add(new WarningRedirect() {Action = "service", Controller = "personal"});
+				_exceptionsForWarningMethodGet.Add(new WarningRedirect() {Action = "blockaccount", Controller = "service"});
 			}
 			//Фильтрация GET запроса: проверяем, если текущий экшен и контроллер находятся в списке исключений.
 			if (InforoomExecutingContext.HttpContext.Request.HttpMethod == "GET"
-			    && _exceptionsForWarningMethodGet.Any(s => s.Action.ToLower() == _currentAction && s.Controller == _currentController && s.Disabled == false)) {
+			    &&
+			    _exceptionsForWarningMethodGet.Any(
+				    s => s.Action.ToLower() == _currentAction && s.Controller == _currentController && s.Disabled == false)) {
 				return true;
 			}
 			return false;
@@ -208,42 +224,44 @@ namespace Inforoom2.Helpers
 		{
 			if (InforoomClient == null) return null;
 			// сбор значений для редиректа. Передается параметром.
-			var routValues = (_requestHost != null && _requestUrl == null) || (_requestHost != null && _requestUrl != null) ?
-				new { @host = _requestHost, @url = _requestUrl, @params = _requestParams } : null;
+			var routValues = (_requestHost != null && _requestUrl == null) || (_requestHost != null && _requestUrl != null)
+				? new {@host = _requestHost, @url = _requestUrl, @params = _requestParams}
+				: null;
 
 			var client = InforoomClient;
 
 			//он физ. лицо и у него незаполненны паспортные данные
 			if (client.PhysicalClient != null && !client.HasPassportData())
 				//отправляем его на страницу Профиля, раздел Заполнения паспортных данных
-				return new WarningRedirect { Action = "FirstVisit", Controller = "Personal", Parameters = routValues };
+				return new WarningRedirect {Action = "FirstVisit", Controller = "Personal", Parameters = routValues};
 
 			//если клиент - физ. лицо и у него статус "Восстановление работ"
 			if (client.PhysicalClient != null && client.Status.Type == StatusType.BlockedForRepair) {
 				//выставляем статус "Подключен"
 				client.SetStatus(StatusType.Worked, InforoomController.DbSession);
 			}
-				//иначе, если клиент деактивирован 
+			//иначе, если клиент деактивирован 
 			else if (client.Disabled) {
 				//он физ. лицо со статусом "Добровольная блокировка"
 				if (client.PhysicalClient != null && client.Status.Type == StatusType.VoluntaryBlocking) {
 					//переадресация на страницу Профиля, раздел Услуги
-					return new WarningRedirect { Action = "Service", Controller = "Personal", Parameters = routValues };
+					return new WarningRedirect {Action = "Service", Controller = "Personal", Parameters = routValues};
 				}
 				//он физ. лицо и его баланс меньше 0
 				if (client.PhysicalClient != null && client.Balance < 0) {
 					//переадресация на страницу Профиля, раздел Услуги
-					return new WarningRedirect { Action = "Service", Controller = "Personal", Parameters = routValues };
+					return new WarningRedirect {Action = "Service", Controller = "Personal", Parameters = routValues};
 				}
 				//если ничего не подошло - переадресация на главную
-				return new WarningRedirect { Action = "Index", Controller = "Home", Parameters = routValues };
+				return new WarningRedirect {Action = "Index", Controller = "Home", Parameters = routValues};
 			}
-				//иначе, если у активного клиента стоит флаг "Показ варнинга"
+			//иначе, если у активного клиента стоит флаг "Показ варнинга"
 			else if (client.ShowBalanceWarningPage) {
 				//убираем этот флаг
 				client.ShowBalanceWarningPage = false;
 				//отправляем сообщение
-				var appeal = new Appeal("Отключена страница Warning, клиент отключил со страницы", client, AppealType.Statistic) {
+				var appeal = new Appeal("Отключена страница Warning, клиент отключил со страницы", client, AppealType.Statistic)
+				{
 					Employee = InforoomController.GetCurrentEmployee()
 				};
 				InforoomController.DbSession.Save(appeal);
@@ -254,7 +272,7 @@ namespace Inforoom2.Helpers
 			UpdateSce();
 
 			//если ничего не подошло - переадресация на главную
-			return new WarningRedirect() { Action = "Index", Controller = "Home", Parameters = routValues };
+			return new WarningRedirect() {Action = "Index", Controller = "Home", Parameters = routValues};
 		}
 
 		/// <summary>
@@ -288,7 +306,7 @@ namespace Inforoom2.Helpers
 					return GetWarningActionResult(RedirectTarget.LawLowBalance);
 				}
 			}
-				//Проверка физ.лица
+			//Проверка физ.лица
 			else if (client.PhysicalClient != null) {
 				//елси заблокирован
 				if (client.Disabled) {
@@ -300,16 +318,16 @@ namespace Inforoom2.Helpers
 					if (client.Status.Type == StatusType.VoluntaryBlocking) {
 						return GetWarningActionResult(RedirectTarget.PhysVoluntaryBlocking);
 					}
-						//и баланс меньше 0
+					//и баланс меньше 0
 					else if (client.Balance < 0) {
 						return GetWarningActionResult(RedirectTarget.PhysLowBalance);
 					}
-						//и количество выплат (перечислений) = 0
+					//и количество выплат (перечислений) = 0
 					else if (client.Payments.Count == 0) {
 						return GetWarningActionResult(RedirectTarget.PhysFirstPayment);
 					}
 				}
-					//или отсутствуют паспортные данные
+				//или отсутствуют паспортные данные
 				else {
 					if (!client.HasPassportData()) {
 						return GetWarningActionResult(RedirectTarget.PhysPassportData);
@@ -322,8 +340,10 @@ namespace Inforoom2.Helpers
 			}
 			SetWarningSessionFlagOff();
 			//если предварительной переадресации не было и варнинг включен, 
-			//а все предыдущие условия не отработали, значит варнинг показывается зря - нужно убрать флаг.
-			if (InforoomContextResult == null && client.ShowBalanceWarningPage) {
+			//а все предыдущие условия не отработали, значит варнинг показывается зря - нужно убрать флаг
+			//только физ.лицам *(у юр лиц это делает только биллинг), у тоторых нет просроченного сервиса Planchanger
+			if (InforoomContextResult == null && client.ShowBalanceWarningPage
+			    && client.PhysicalClient != null && !PlanChanger.IsPlanchangerTimeOff(InforoomController.DbSession, client)) {
 				client.ShowBalanceWarningPage = false;
 				InforoomController.DbSession.Save(client);
 				UpdateSce();
@@ -349,34 +369,42 @@ namespace Inforoom2.Helpers
 			//если пользователь находится на странице варнинга, но он не авторизован
 			if (InforoomClient == null) {
 				if (_currentController == warningController && (isCurrenActionWarninig || _currentAction == indexAction)) {
-					return new WarningRedirect { Action = indexAction, Controller = homeController };
+					return new WarningRedirect {Action = indexAction, Controller = homeController};
 				}
 				return null;
 			}
 			// сбор значений для редиректа. Передается параметром.
-			object routValues = (_requestHost != null && _requestUrl == null) || (_requestHost != null && _requestUrl != null) ?
-				new { @host = _requestHost, @url = _requestUrl, @params = _requestParams } : null;
+			object routValues = (_requestHost != null && _requestUrl == null) || (_requestHost != null && _requestUrl != null)
+				? new {@host = _requestHost, @url = _requestUrl, @params = _requestParams}
+				: null;
 
 			//юр.лицо редиректим с ip адресом, для того, чтобы его распознать на небезопасном контроллере (юр. лицо не входит на сайт)
 			if (InforoomClient.LegalClient != null) {
 				var endpoint = InforoomClient.Endpoints.FirstOrDefault();
-				if (endpoint != null) routValues = new { @ip = endpoint.Ip };
+				if (endpoint != null) routValues = new {@ip = endpoint.Ip};
 			}
 
 			if (targetAction == RedirectTarget.DefaultPageFromWarning) {
 				if (_currentController == warningController) {
-					return new WarningRedirect { Action = indexAction, Controller = homeController, Parameters = routValues };
+					return new WarningRedirect {Action = indexAction, Controller = homeController, Parameters = routValues};
 				}
 				//возврат пустого значения, если пользователь не на стр. Варнинга
 				return null;
 			}
 			//если страница по умолчанию (главная)
-			if (targetAction == RedirectTarget.DefaultPage && _currentController != homeController && _currentAction != indexAction) {
-				return new WarningRedirect { Action = indexAction, Controller = homeController, Parameters = routValues };
+			if (targetAction == RedirectTarget.DefaultPage && _currentController != homeController &&
+			    _currentAction != indexAction) {
+				return new WarningRedirect {Action = indexAction, Controller = homeController, Parameters = routValues};
 			}
-				//если целевой
-			else if (redirectTargetEnum != targetAction && targetAction != RedirectTarget.DefaultPage && targetAction != RedirectTarget.DefaultPageFromWarning) {
-				return new WarningRedirect { Action = targetAction.ToString(), Controller = warningController, Parameters = routValues };
+			//если целевой
+			else if (redirectTargetEnum != targetAction && targetAction != RedirectTarget.DefaultPage &&
+			         targetAction != RedirectTarget.DefaultPageFromWarning) {
+				return new WarningRedirect
+				{
+					Action = targetAction.ToString(),
+					Controller = warningController,
+					Parameters = routValues
+				};
 			}
 			return null;
 		}
@@ -386,11 +414,13 @@ namespace Inforoom2.Helpers
 		/// </summary>
 		public void SetWarningSessionFlagOn()
 		{
-			if (InforoomController.Session["WarningBlocked"] == null) {
-				InforoomController.Session.Add("WarningBlocked", true);
-			}
-			else {
-				InforoomController.Session["WarningBlocked"] = true;
+			if (InforoomController.Session != null) {
+				if (InforoomController.Session["WarningBlocked"] == null) {
+					InforoomController.Session.Add("WarningBlocked", true);
+				}
+				else {
+					InforoomController.Session["WarningBlocked"] = true;
+				}
 			}
 		}
 
@@ -399,11 +429,13 @@ namespace Inforoom2.Helpers
 		/// </summary>
 		public void SetWarningSessionFlagOff()
 		{
-			if (InforoomController.Session["WarningBlocked"] == null) {
-				InforoomController.Session.Add("WarningBlocked", false);
-			}
-			else {
-				InforoomController.Session["WarningBlocked"] = false;
+			if (InforoomController.Session != null) {
+				if (InforoomController.Session["WarningBlocked"] == null) {
+					InforoomController.Session.Add("WarningBlocked", false);
+				}
+				else {
+					InforoomController.Session["WarningBlocked"] = false;
+				}
 			}
 		}
 
@@ -428,6 +460,18 @@ namespace Inforoom2.Helpers
 			if (!string.IsNullOrEmpty(ipstring)) {
 				var endpoint = ClientEndpoint.GetEndpointForIp(ipstring, controller.DbSession);
 				return endpoint != null && endpoint.Client != null && endpoint.Client.LegalClient != null ? endpoint.Client : null;
+			}
+			//sce кидает опознанного пользователя на варнинг, с номером его эндпойнта 
+			var endpointIdString = controller.Request.QueryString["n"];
+			if (!string.IsNullOrEmpty(endpointIdString)) {
+				int endpointId = 0;
+				if (!string.IsNullOrEmpty(endpointIdString)) {
+					int.TryParse(endpointIdString, out endpointId);
+				}
+				if (endpointId != 0) {
+					var endpoint = controller.DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == endpointId);
+					return endpoint != null && endpoint.Client != null && endpoint.Client.LegalClient != null ? endpoint.Client : null;
+				}
 			}
 			return null;
 		}
@@ -460,15 +504,17 @@ namespace Inforoom2.Helpers
 			if (controller == null) return "";
 			//Проверка, если редирект предусмотрен разблокировкой Варнинга
 			if (controller.Session["WarningBlocked"] == null) return "*";
-			if (controller.Session["WarningBlocked"] != null && ((bool)controller.Session["WarningBlocked"]) == false) {
+			if (controller.Session["WarningBlocked"] != null && ((bool) controller.Session["WarningBlocked"]) == false) {
 				//Сбор необходимых составляющий адреса из запроса
-				var parsedUrl = HttpUtility.ParseQueryString(controller.Request.UrlReferrer != null ? controller.Request.UrlReferrer.Query : "");
+				var parsedUrl =
+					HttpUtility.ParseQueryString(controller.Request.UrlReferrer != null ? controller.Request.UrlReferrer.Query : "");
 				var requestHost = parsedUrl.Get("host");
 				var requestUrl = parsedUrl.Get("url");
 				var requestParams = parsedUrl.Get("params");
 				//Формирование адреса, в случае наличии всех необходимых составляющих
-				var returnUrl = (requestHost != null && requestUrl == null) || (requestHost != null && requestUrl != null) ?
-					string.Format("http://{0}{1}{2}", requestHost, requestUrl, requestParams != null ? "?" + requestParams : "") : "*";
+				var returnUrl = (requestHost != null && requestUrl == null) || (requestHost != null && requestUrl != null)
+					? string.Format("http://{0}{1}{2}", requestHost, requestUrl, requestParams != null ? "?" + requestParams : "")
+					: "*";
 				return returnUrl;
 			}
 			return "";
