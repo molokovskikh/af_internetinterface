@@ -15,20 +15,20 @@ namespace Inforoom2.Components
 
 		public static void SendEmail(IList<PhysicalClient> users, string subject, string body)
 		{
-			foreach (var physicalClient in users) {
-				SendEmail(physicalClient.Email, subject, body);
-			}
+			foreach (var physicalClient in users) SendEmail(physicalClient.Email, subject, body);
 		}
 
 		public static void SendEmail(string[] to, string subject, string body)
 		{
-			foreach (var s in to) {
-				SendEmail(s, subject, body);
-			}
+			foreach (var s in to) SendEmail(s, subject, body);
 		}
 
 		public static void SendEmail(string to, string subject, string body)
 		{
+			var sendMailToClientFlag = ConfigurationManager.AppSettings["SendMailToClientFlag"];
+			if (string.IsNullOrEmpty(sendMailToClientFlag)) {
+				return;
+			}
 			var mail = new MailMessage();
 			mail.To.Add(to);
 			mail.From = new MailAddress(ConfigurationManager.AppSettings["MailSenderAddress"]);
@@ -39,13 +39,17 @@ namespace Inforoom2.Components
 			smtp.Host = ConfigurationManager.AppSettings["SmtpServer"];
 			smtp.Port = 25;
 			smtp.UseDefaultCredentials = false;
-			smtp.Send(mail);
+#if DEBUG
+#else
+					smtp.Send(mail);
+			#endif
 		}
 
 		public static void SendError(string message)
 		{
 			var service = ConfigurationManager.AppSettings["ErrorEmail"];
-			if (string.IsNullOrEmpty(service)) {
+			var sendMailToClientFlag = ConfigurationManager.AppSettings["SendMailToClientFlag"];
+			if (string.IsNullOrEmpty(service) || string.IsNullOrEmpty(sendMailToClientFlag)) {
 				return;
 			}
 			message = "<pre>" + message + "</pre>";
@@ -59,7 +63,11 @@ namespace Inforoom2.Components
 			smtp.Host = ConfigurationManager.AppSettings["SmtpServer"];
 			smtp.Port = 25;
 			smtp.UseDefaultCredentials = false;
-			smtp.Send(mail);
+
+#if DEBUG
+#else
+					smtp.Send(mail);
+			#endif
 		}
 
 		public static void SendDebugInfo(string title, string body)
@@ -74,7 +82,6 @@ namespace Inforoom2.Components
 			}
 			catch (Exception e) {
 			}
-			
 		}
 	}
 }
