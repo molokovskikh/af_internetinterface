@@ -85,14 +85,7 @@ namespace InternetInterface.Models
 					}
 					command = string.Format("show interfaces fastEthernet 0/{0} counters", port);
 					telnet.WriteLine(command);
-					var counterInfo = telnet.Read();
-
-					//TODO заменить кодировку counterInfo - выводится ерунда
-					//Encoding iso = Encoding.GetEncoding("ISO-8859-1");
-					//Encoding utf8 = Encoding.UTF8;
-					//byte[] utfBytes = utf8.GetBytes(Message);
-					//byte[] isoBytes = Encoding.Convert(utf8, iso, utfBytes);
-					//string msg = iso.GetString(isoBytes);
+					var counterInfo = telnet.Read(); 
 
 					propertyBag["counterInfo"] =
 						HardwareHelper.DelCommandAndHello(counterInfo, command).TrimStart('\r', '\n').TrimEnd('\r', '\n').Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)

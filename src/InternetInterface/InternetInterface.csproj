@@ -205,9 +205,15 @@
     </Content>
     <Content Include="Views\Contracts\PrintFooter.brail" />
     <Content Include="Views\Hardware\PortInfo.brail" />
-    <Content Include="Views\Hardware\PortInfoLinksys.brail" />
+    <Content Include="Views\Hardware\PortInfoLinksys.brail">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Hardware\ClientInfoView.brail" />
     <Content Include="Views\ConnectionRequest\New.brail" />
+    <Content Include="Views\Hardware\PortInfoDlink.brail" />
+    <Content Include="Views\Hardware\PortInfoHuawei.brail">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Views\Invoices\Edit.brail" />
     <None Include="Views\Invoices\Index.brail" />
     <None Include="Views\Invoices\InvoiceBody.brail" />
@@ -483,6 +489,7 @@
     <Compile Include="Models\ConnectGraph.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Contract.cs" />
+    <Compile Include="Models\HuaweiCommutateurInfo.cs" />
     <Compile Include="Models\Entrance.cs" />
     <Compile Include="Models\HardwareModel.cs" />
     <Compile Include="Models\House.cs" />
@@ -494,6 +501,7 @@
     <Compile Include="Models\Label.cs" />
     <Compile Include="Models\LawyerPerson.cs" />
     <Compile Include="Models\Lease.cs" />
+    <Compile Include="Models\DlinkCommutateurInfo.cs" />
     <Compile Include="Models\LinksysCommutateurInfo.cs" />
     <Compile Include="Models\Mailer.cs" />
     <Compile Include="Models\MessageForClient.cs" />
