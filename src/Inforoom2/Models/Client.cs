@@ -20,7 +20,7 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Модель пользователя
 	/// </summary>
-	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof(Client)), Description("Клиент")]
+	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof (Client)), Description("Клиент")]
 	public class Client : BaseModel, ILogAppeal, IServicemenScheduleItem
 	{
 		public Client()
@@ -47,18 +47,22 @@ namespace Inforoom2.Models
 
 			//перенесено из старой админки (нужен при проверке на необходимость показывать Варнинг)
 			LegalPersonOrders = new List<ClientOrder>();
-
 		}
 
 
 		[Bag(0, Table = "ServicemenScheduleItems")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof(ServicemenScheduleItem))]
+		[OneToMany(2, ClassType = typeof (ServicemenScheduleItem))]
 		public virtual IList<ServicemenScheduleItem> ServicemenScheduleItems { get; set; }
 
 		public virtual ServicemenScheduleItem ConnectionRequest
 		{
-			get { return ServicemenScheduleItems != null ? ServicemenScheduleItems.FirstOrDefault(s => s.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest) : null; }
+			get
+			{
+				return ServicemenScheduleItems != null
+					? ServicemenScheduleItems.FirstOrDefault(s => s.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest)
+					: null;
+			}
 			set { }
 		}
 
@@ -118,7 +122,8 @@ namespace Inforoom2.Models
 		[DataType(DataType.Date)]
 		public virtual DateTime? StatusChangedOn { get; set; }
 
-		[Property(Column = "BeginWork"), Description("Дата первой аренды -проставляется DHCP-сервером во время получения клиентом первой аренды")]
+		[Property(Column = "BeginWork"),
+		 Description("Дата первой аренды -проставляется DHCP-сервером во время получения клиентом первой аренды")]
 		public virtual DateTime? WorkingStartDate { get; set; }
 
 		[Property, Description("Дата, по которой определяется когда бесплатные дни должны обновиться")]
@@ -135,42 +140,42 @@ namespace Inforoom2.Models
 
 		[Bag(0, Table = "ClientServices", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof(ClientService))]
+		[OneToMany(2, ClassType = typeof (ClientService))]
 		public virtual IList<ClientService> ClientServices { get; set; }
 
 		[Bag(0, Table = "Payments", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof(Payment))]
+		[OneToMany(2, ClassType = typeof (Payment))]
 		public virtual IList<Payment> Payments { get; set; }
 
 		[Bag(0, Table = "ClientEndpoints", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "client")]
-		[OneToMany(2, ClassType = typeof(ClientEndpoint))]
+		[OneToMany(2, ClassType = typeof (ClientEndpoint))]
 		public virtual IList<ClientEndpoint> Endpoints { get; set; }
 
 		[Bag(0, Table = "Contacts", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "client")]
-		[OneToMany(2, ClassType = typeof(Contact)), ValidatorContacts]
+		[OneToMany(2, ClassType = typeof (Contact)), ValidatorContacts]
 		public virtual IList<Contact> Contacts { get; set; }
 
 		[Bag(0, Table = "UserWriteOffs", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof(UserWriteOff))]
+		[OneToMany(2, ClassType = typeof (UserWriteOff))]
 		public virtual IList<UserWriteOff> UserWriteOffs { get; set; }
 
 		[Bag(0, Table = "WriteOff", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof(WriteOff))]
+		[OneToMany(2, ClassType = typeof (WriteOff))]
 		public virtual IList<WriteOff> WriteOffs { get; set; }
 
 		[Bag(0, Table = "Appeals", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof(Appeal))]
+		[OneToMany(2, ClassType = typeof (Appeal))]
 		public virtual IList<Appeal> Appeals { get; set; }
 
 		[Bag(0, Table = "ClientRentalHardware", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof(ClientRentalHardware))]
+		[OneToMany(2, ClassType = typeof (ClientRentalHardware))]
 		public virtual IList<ClientRentalHardware> RentalHardwareList { get; set; }
 
 		[Property(Column = "SendSmsNotifocation"), Description("СМС уведомление")]
@@ -186,11 +191,11 @@ namespace Inforoom2.Models
 		public virtual Agent Agent { get; set; }
 
 		public virtual bool IsNeedRecofiguration { get; set; }
-		
+
 		//перенесено из старой админки (нужен при проверке на необходимость показывать Варнинг)
 		[Bag(0, Table = "Orders", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "ClientId")]
-		[OneToMany(2, ClassType = typeof(ClientOrder))]
+		[OneToMany(2, ClassType = typeof (ClientOrder))]
 		public virtual IList<ClientOrder> LegalPersonOrders { get; set; }
 
 		public virtual bool IsWorkStarted()
@@ -205,7 +210,7 @@ namespace Inforoom2.Models
 
 		public virtual ClientService Internet
 		{
-			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet)); }
+			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof (Internet)); }
 		}
 
 		public virtual bool HasActiveService(Service service)
@@ -215,7 +220,7 @@ namespace Inforoom2.Models
 
 		public virtual ClientService FindActiveService<T>()
 		{
-			return ClientServices.FirstOrDefault(c => c.IsActivated && NHibernateUtil.GetClass(c.Service) == typeof(T));
+			return ClientServices.FirstOrDefault(c => c.IsActivated && NHibernateUtil.GetClass(c.Service) == typeof (T));
 		}
 
 		public virtual bool HasActiveService<T>()
@@ -247,7 +252,7 @@ namespace Inforoom2.Models
 
 		public virtual decimal GetInterval()
 		{
-			return (((DateTime)RatedPeriodDate).AddMonths(1) - (DateTime)RatedPeriodDate).Days + DebtDays;
+			return (((DateTime) RatedPeriodDate).AddMonths(1) - (DateTime) RatedPeriodDate).Days + DebtDays;
 		}
 
 		/// <summary>
@@ -256,15 +261,15 @@ namespace Inforoom2.Models
 		/// <returns>Расчётное кол-во дней работы без пополнения баланса</returns>
 		public virtual int GetWorkDays()
 		{
-			var priceInDay = Plan.Price / DateTime.Now.DaysInMonth(); // ToDo Улучшить алгоритм вычисления
-			return (int)Math.Floor(Balance / priceInDay);
+			var priceInDay = Plan.Price/DateTime.Now.DaysInMonth(); // ToDo Улучшить алгоритм вычисления
+			return (int) Math.Floor(Balance/priceInDay);
 		}
 
 		public virtual decimal GetSumForRegularWriteOff()
 		{
 			var daysInInterval = GetInterval();
 			var price = GetPrice();
-			return Math.Round(price / daysInInterval, 2);
+			return Math.Round(price/daysInInterval, 2);
 		}
 
 		public virtual decimal GetPrice()
@@ -290,7 +295,8 @@ namespace Inforoom2.Models
 			if ((PhysicalClient.Plan.FinalPriceInterval == 0 || PhysicalClient.Plan.FinalPrice == 0))
 				return prePrice;
 
-			if (WorkingStartDate != null && WorkingStartDate.Value.AddMonths(PhysicalClient.Plan.FinalPriceInterval) <= SystemTime.Now())
+			if (WorkingStartDate != null &&
+			    WorkingStartDate.Value.AddMonths(PhysicalClient.Plan.FinalPriceInterval) <= SystemTime.Now())
 				return finalPrice;
 			return prePrice;
 		}
@@ -313,13 +319,13 @@ namespace Inforoom2.Models
 		private decimal AccountDiscounts(decimal price)
 		{
 			if (Discount > 0)
-				price *= 1 - Discount / 100;
+				price *= 1 - Discount/100;
 			return price;
 		}
 
 		public virtual void SetStatus(StatusType status, ISession session)
 		{
-			SetStatus(session.Load<Status>((Int32)status));
+			SetStatus(session.Load<Status>((Int32) status));
 		}
 
 		public virtual void SetStatus(Status status)
@@ -355,7 +361,7 @@ namespace Inforoom2.Models
 
 		public virtual decimal Balance
 		{
-			get { return PhysicalClient != null ? PhysicalClient.Balance : LegalClient != null ? LegalClient.Balance : 0; } 
+			get { return PhysicalClient != null ? PhysicalClient.Balance : LegalClient != null ? LegalClient.Balance : 0; }
 			//юрикам пока в новой админке ничего не присваивается*
 			set { PhysicalClient.Balance = value; }
 		}
@@ -483,13 +489,25 @@ namespace Inforoom2.Models
 		public virtual string GetPhone()
 		{
 			var phone = "";
-			if (this.PhoneNumber != string.Empty) {
+			if (!String.IsNullOrEmpty(this.PhoneNumber)) {
 				phone = this.PhoneNumber;
 			}
 			else {
 				var contactPhone = this.Contacts.FirstOrDefault(s => s.Type == ContactType.SmsSending);
 				if (contactPhone != null) {
 					phone = contactPhone.ContactString;
+				}
+				if (phone == "") {
+					var contactMobPhone = this.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
+					if (contactMobPhone != null) {
+						phone = contactMobPhone.ContactString;
+					}
+				}
+				if (phone == "") {
+					var contactMobPhone = this.Contacts.FirstOrDefault(s => s.Type == ContactType.HeadPhone);
+					if (contactMobPhone != null) {
+						phone = contactMobPhone.ContactString;
+					}
 				}
 			}
 			return phone;
@@ -502,7 +520,8 @@ namespace Inforoom2.Models
 
 		public virtual List<string> GetAppealFields()
 		{
-			return new List<string>() {
+			return new List<string>()
+			{
 				"LegalClient",
 				"Status"
 				// В старую админку приходит оповещение с формы (после переноса страницы клиента, можно будет раскомментить)

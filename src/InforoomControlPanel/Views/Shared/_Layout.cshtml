@@ -7,446 +7,450 @@
 	Employee currentEmployee = ViewBag.CurrentEmployee;
 }
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="description" content="Neon Admin Panel" />
-		<meta name="author" content="" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta name="description" content="Neon Admin Panel"/>
+	<meta name="author" content=""/>
 
-		<title>Панель управления | @ViewBag.Title</title>
+	<title>Панель управления | @ViewBag.Title</title>
 
-		<link rel="stylesheet" href="~/assets/js/jquery-ui/css/no-theme/jquery-ui-1.10.3.custom.min.css?v=1">
-		<link rel="stylesheet" href="~/assets/css/font-icons/entypo/css/entypo.css?v=1">
-		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic">
-		<link rel="stylesheet" href="~/assets/css/bootstrap.css?v=1">
-		<link rel="stylesheet" href="~/assets/css/neon-core.css?v=1">
-		<link rel="stylesheet" href="~/assets/css/neon-theme.css?v=1">
-		<link rel="stylesheet" href="~/assets/css/neon-forms.css?v=1">
-		<link rel="stylesheet" href="~/assets/css/custom.css?v=2">
+	<link rel="stylesheet" href="~/assets/js/jquery-ui/css/no-theme/jquery-ui-1.10.3.custom.min.css?v=1">
+	<link rel="stylesheet" href="~/assets/css/font-icons/entypo/css/entypo.css?v=1">
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic">
+	<link rel="stylesheet" href="~/assets/css/bootstrap.css?v=1">
+	<link rel="stylesheet" href="~/assets/css/neon-core.css?v=1">
+	<link rel="stylesheet" href="~/assets/css/neon-theme.css?v=1">
+	<link rel="stylesheet" href="~/assets/css/neon-forms.css?v=1">
+	<link rel="stylesheet" href="~/assets/css/custom.css?v=3">
+	<link rel="stylesheet" href="~/Css/style.css?v=1"></link>
 
-		<script src="~/assets/js/jquery-1.11.0.min.js?v=1"></script>
+	<script src="~/assets/js/jquery-1.11.0.min.js?v=1"></script>
 
-		<script> $.noConflict(); </script>
+	<script> $.noConflict(); </script>
 
-		<!--[if lt IE 9]><script src="~/assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+	<!--[if lt IE 9]><script src="~/assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
 
-		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-		<![endif]-->
+	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
 
 
-	</head>
-	<body class="page-body" data-url="http://neon.dev">
-		<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-	
-			<div class="sidebar-menu">
+</head>
+<body class="page-body" data-url="http://neon.dev">
+<div class="page-container">
+<!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
 
-				<div class="sidebar-menu-inner">
-			
-					<header class="logo-env">
+<div class="sidebar-menu">
 
-						<!-- logo -->
-						<div class="logo">
-							<a href="@Url.Action("Index", "AdminAccount")">
-								<img src="~/assets/images/logo@2x.png" width="120" alt="" />
-							</a>
-						</div>
+<div class="sidebar-menu-inner">
 
-						<!-- logo collapse icon -->
-						<div class="sidebar-collapse">
-							<a href="#" class="sidebar-collapse-icon"><!-- add class "with-animation" if you want sidebar to have animation during expanding/collapsing transition -->
-								<i class="entypo-menu"></i>
-							</a>
-						</div>
+<header class="logo-env">
 
-								
-						<!-- open/close menu icon (do not remove if you want to enable menu on mobile devices) -->
-						<div class="sidebar-mobile-menu visible-xs">
-							<a href="#" class="with-animation"><!-- add class "with-animation" to support animation -->
-								<i class="entypo-menu"></i>
-							</a>
-						</div>
+	<!-- logo -->
+	<div class="logo">
+		<a href="@Url.Action("Index", "AdminAccount")">
+			<img src="~/assets/images/logo@2x.png" width="120" alt=""/>
+		</a>
+	</div>
 
-					</header>
-			
-									
-					<ul id="main-menu" class="main-menu">
-						<!-- add class "multiple-expanded" to allow multiple submenus to open -->
-						<!-- class "auto-inherit-active-class" will automatically add "active" class for parent elements who are marked already with class "active" -->
-						<li>
-							<a href="http://stat.ivrn.net/ii/">
-								<i class="entypo-home"></i>
-								<span class="title">Перейти в InternetInterface</span>
-							</a>
-						</li>
-						<li>
-							<a href="@Url.Action("Index", "AdminAccount")">
-								<i class="entypo-home"></i>
-								<span class="title">Главная</span>
-							</a>
-						</li>
-						<li>
-							<a href="@Url.Action("List", "Client")">
-								<i class="entypo-users"></i>
-								<span class="title">Клиенты</span>
-							</a>
-							<ul class="visible">
-								<li>
-									<a href="@Url.Action("List", "Client")">
-										<span class="title">Список клиентов</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("Registration", "Client")">
-										<span class="title">Зарегистрировать клиента</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("Request", "Client")">
-										<span class="title">Создать заявку на подключение</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("RequestsList", "Client")">
-										<span class="title">Заявки на подключение</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("AgentList", "Client")">
-										<span class="title">Агенты</span>
-									</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a href="@Url.Action("Servicemen", "ConnectionTeam")">
-								<i class="entypo-attention"></i>
-								<span class="title">Сервисные бригады</span>
-							</a>
-							<ul class="visible">
-								<li>
-									<a href="@Url.Action("Servicemen", "ConnectionTeam")">
-										<span class="title">Сервисные инженеры</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("ServiceRequestList", "ServiceRequest")">
-										<span class="title">Сервисные заявки</span>
-									</a>
-								</li><li>
-									     <a href="@Url.Action("UnpluggedClientList", "ConnectionTeam")">
-										     <span class="title">Неподключенные клиенты</span>
-									     </a>
-								     </li>
-								<li>
-									<a href="@Url.Action("ConnectionTable", "ConnectionTeam")">
-										<span class="title">График назначенных заявок</span>
-									</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a href="@Url.Action("QuestionIndex", "Question")">
-								<i class="entypo-picture"></i>
-								<span class="title">Контент</span>
-							</a>
-							<ul class="visible">
-								<li>
-									<a href="@Url.Action("QuestionIndex", "Question")">
-										<span class="title">Вопросы и ответы</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("NewsIndex", "News")">
-										<span class="title">Новости</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("SlideIndex", "Slide")">
-										<span class="title">Слайды</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("BannerIndex", "Banner")">
-										<span class="title">Баннеры</span>
-									</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a href="@Url.Action("EmployeeList", "Admin")">
-								<i class="entypo-user"></i>
-								<span class="title">Сотрудники</span>
-							</a>
-							<ul class="visible">
-								<li>
-									<a href="@Url.Action("EmployeeList", "Admin")">
-										<span class="title">Сотрудники</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("RoleList", "Admin")">
-										<span class="title">Роли</span>
-									</a>
-								</li>						<li>
-															     <a href="@Url.Action("PermissionList", "Admin")">
-																     <span class="title">Права</span>
-															     </a>
-														     </li>
-							</ul>
-						</li>
-						<li>
-							<a href="@Url.Action("TicketIndex", "Ticket")">
-								<i class="entypo-mail"></i>
-								<span class="title">Запросы пользователей</span>
-							</a>
-							<ul class="visible">
-								<li>
-									<a href="@Url.Action("TicketIndex", "Ticket")">
-										<span class="title">Запросы в техподдержку</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("CallMeBackTicketIndex", "Ticket")">
-										<span class="title">Заявки на обратный звонок</span>
-									</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a href="@Url.Action("PlanIndex", "Plans")">
-								<i class="entypo-mail"></i>
-								<span class="title">Тарифы</span>
-							</a>
-							<ul class="visible">
-								<li>
-									<a href="@Url.Action("PlanIndex", "Plans")">
-										<span class="title">Тарифы</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("HtmlPlanIndex", "Plans")">
-										<span class="title">Тарифы HTML</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("InternetPlanChangerIndex", "Plans")">
-										<span class="title">Смена по истечению срока</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("TvChannelList", "Plans")">
-										<span class="title">ТВ каналы</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("TvChannelGroupList", "Plans")">
-										<span class="title">Группы ТВ каналов</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("TvProtocolList", "Plans")">
-										<span class="title">Протоколы для ТВ</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("PackageSpeedList", "Plans")">
-										<span class="title">Скорость</span>
-									</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a href="@Url.Action("SwitchList", "Switch")">
-								<i class="entypo-mail"></i>
-								<span class="title">Коммутаторы</span>
-							</a>
-							<ul class="visible">
-								<li>
-									<a href="@Url.Action("SwitchList", "Switch")">
-										<span class="title">Коммутаторы</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("NetworkNodeList", "Switch")">
-										<span class="title">Узлы связи</span>
-									</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a href="@Url.Action("SwitchAddressList", "Address")">
-								<i class="entypo-mail"></i>
-								<span class="title">Адреса</span>
-							</a>
-							<ul class="visible">
-								<li>
-									<a href="@Url.Action("SwitchAddressList", "Address")">
-										<span class="title">Адреса коммутаторов</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("CityList", "Address")">
-										<span class="title">Города</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("RegionList", "Address")">
-										<span class="title">Регионы</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("StreetList", "Address")">
-										<span class="title">Улицы</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("HouseList", "Address")">
-										<span class="title">Дома</span>
-									</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a href="@Url.Action("ShowHardware", "HardwareTypes")">
-								<i class="entypo-mail"></i>
-								<span class="title">Оборудование</span>
-							</a>
-							<ul class="visible">
-								<li>
-									<a href="@Url.Action("ShowHardware", "HardwareTypes")">
-										<span class="title">Список оборудования</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("ClientList", "HardwareTypes")">
-										<span class="title">Список клиентов</span>
-									</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a href="@Url.Action("ShowHardware", "HardwareTypes")">
-								<i class="entypo-mail"></i>
-								<span class="title">Отчеты</span>
-							</a>
-							<ul class="visible">
-								<li>
-									<a href="@Url.Action("Client", "SpreadSheet")">
-										<span class="title">По клиентам</span>
-									</a>
-								</li>
-								<li>
-									<a href="@Url.Action("WriteOffs", "SpreadSheet")">
-										<span class="title">По списаниям</span>
-									</a>
-								</li> 
-							</ul>
-						</li>
-					</ul>
-			
-				</div>
+	<!-- logo collapse icon -->
+	<div class="sidebar-collapse">
+		<a href="#" class="sidebar-collapse-icon">
+			<!-- add class "with-animation" if you want sidebar to have animation during expanding/collapsing transition -->
+			<i class="entypo-menu"></i>
+		</a>
+	</div>
 
-			</div>
 
-			<div class="main-content">
-				<div class="row">
-					<!-- Profile Info and Notifications -->
-					<div class="col-md-6 col-sm-8 clearfix">
-					</div>
-					<!-- Raw Links -->
-					<div class="col-md-6 col-sm-4 clearfix hidden-xs">
-		
-						<ul class="list-inline links-list pull-right">
-							<li>@currentEmployee.Name</li>
-							<li class="sep"></li>
-							<li>
-								<a href="@Url.Action("AdminLogout", "AdminAccount")">
-									Выход <i class="entypo-logout right"></i>
-								</a>
-							</li>
-						</ul>
-					</div>
-		
-				</div>
-				<hr />
-				<ol class="breadcrumb bc-3 server-message">
-					<li>
-						<a href="@Url.Action("Index", "AdminAccount")"><i class="fa-home"></i>Панель управления</a>
-					</li>
-					<li>
-						<a href="@Url.Action("Index")">@ViewBag.BreadCrumb</a>
-					</li>
-					<li class="active">
-						<strong>@ViewBag.Title</strong>
-					</li>
-				</ol>
-				<h2>@ViewBag.Title</h2>
-				<br/>
-				<div class="@ViewBag.ControllerName @ViewBag.ActionName">
-					@RenderBody()
-				</div>
-				<!-- lets do some work here... -->
-				<!-- Footer -->
-				<footer class="main">
-			
-					&copy; 2014 <strong>Neon</strong> Admin Theme by <a href="http://laborator.co" target="_blank">Laborator</a>
-		
-				</footer>
-			</div>
+	<!-- open/close menu icon (do not remove if you want to enable menu on mobile devices) -->
+	<div class="sidebar-mobile-menu visible-xs">
+		<a href="#" class="with-animation">
+			<!-- add class "with-animation" to support animation -->
+			<i class="entypo-menu"></i>
+		</a>
+	</div>
+
+</header>
+
+
+<ul id="main-menu" class="main-menu">
+<!-- add class "multiple-expanded" to allow multiple submenus to open -->
+<!-- class "auto-inherit-active-class" will automatically add "active" class for parent elements who are marked already with class "active" -->
+<li>
+	<a href="http://stat.ivrn.net/ii/">
+		<i class="entypo-home"></i>
+		<span class="title">Перейти в InternetInterface</span>
+	</a>
+</li>
+<li>
+	<a href="@Url.Action("Index", "AdminAccount")">
+		<i class="entypo-home"></i>
+		<span class="title">Главная</span>
+	</a>
+</li>
+<li>
+	<a href="@Url.Action("List", "Client")">
+		<i class="entypo-users"></i>
+		<span class="title">Клиенты</span>
+	</a>
+	<ul class="visible">
+		<li>
+			<a href="@Url.Action("List", "Client")">
+				<span class="title">Список клиентов</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("Registration", "Client")">
+				<span class="title">Зарегистрировать клиента</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("Request", "Client")">
+				<span class="title">Создать заявку на подключение</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("RequestsList", "Client")">
+				<span class="title">Заявки на подключение</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("AgentList", "Client")">
+				<span class="title">Агенты</span>
+			</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="@Url.Action("Servicemen", "ConnectionTeam")">
+		<i class="entypo-attention"></i>
+		<span class="title">Сервисные бригады</span>
+	</a>
+	<ul class="visible">
+		<li>
+			<a href="@Url.Action("Servicemen", "ConnectionTeam")">
+				<span class="title">Сервисные инженеры</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("ServiceRequestList", "ServiceRequest")">
+				<span class="title">Сервисные заявки</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("ConnectionTable", "ConnectionTeam")">
+				<span class="title">График назначенных заявок</span>
+			</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="@Url.Action("QuestionIndex", "Question")">
+		<i class="entypo-picture"></i>
+		<span class="title">Контент</span>
+	</a>
+	<ul class="visible">
+		<li>
+			<a href="@Url.Action("QuestionIndex", "Question")">
+				<span class="title">Вопросы и ответы</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("NewsIndex", "News")">
+				<span class="title">Новости</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("SlideIndex", "Slide")">
+				<span class="title">Слайды</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("BannerIndex", "Banner")">
+				<span class="title">Баннеры</span>
+			</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="@Url.Action("EmployeeList", "Admin")">
+		<i class="entypo-user"></i>
+		<span class="title">Сотрудники</span>
+	</a>
+	<ul class="visible">
+		<li>
+			<a href="@Url.Action("EmployeeList", "Admin")">
+				<span class="title">Сотрудники</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("RoleList", "Admin")">
+				<span class="title">Роли</span>
+			</a>
+		</li> <li>
+			<a href="@Url.Action("PermissionList", "Admin")">
+				<span class="title">Права</span>
+			</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="@Url.Action("TicketIndex", "Ticket")">
+		<i class="entypo-mail"></i>
+		<span class="title">Запросы пользователей</span>
+	</a>
+	<ul class="visible">
+		<li>
+			<a href="@Url.Action("TicketIndex", "Ticket")">
+				<span class="title">Запросы в техподдержку</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("CallMeBackTicketIndex", "Ticket")">
+				<span class="title">Заявки на обратный звонок</span>
+			</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="@Url.Action("PlanIndex", "Plans")">
+		<i class="entypo-mail"></i>
+		<span class="title">Тарифы</span>
+	</a>
+	<ul class="visible">
+		<li>
+			<a href="@Url.Action("PlanIndex", "Plans")">
+				<span class="title">Тарифы</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("HtmlPlanIndex", "Plans")">
+				<span class="title">Тарифы HTML</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("InternetPlanChangerIndex", "Plans")">
+				<span class="title">Смена по истечению срока</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("TvChannelList", "Plans")">
+				<span class="title">ТВ каналы</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("TvChannelGroupList", "Plans")">
+				<span class="title">Группы ТВ каналов</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("TvProtocolList", "Plans")">
+				<span class="title">Протоколы для ТВ</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("PackageSpeedList", "Plans")">
+				<span class="title">Скорость</span>
+			</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="@Url.Action("SwitchList", "Switch")">
+		<i class="entypo-mail"></i>
+		<span class="title">Коммутаторы</span>
+	</a>
+	<ul class="visible">
+		<li>
+			<a href="@Url.Action("SwitchList", "Switch")">
+				<span class="title">Коммутаторы</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("NetworkNodeList", "Switch")">
+				<span class="title">Узлы связи</span>
+			</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="@Url.Action("SwitchAddressList", "Address")">
+		<i class="entypo-mail"></i>
+		<span class="title">Адреса</span>
+	</a>
+	<ul class="visible">
+		<li>
+			<a href="@Url.Action("SwitchAddressList", "Address")">
+				<span class="title">Адреса коммутаторов</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("CityList", "Address")">
+				<span class="title">Города</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("RegionList", "Address")">
+				<span class="title">Регионы</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("StreetList", "Address")">
+				<span class="title">Улицы</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("HouseList", "Address")">
+				<span class="title">Дома</span>
+			</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="@Url.Action("ShowHardware", "HardwareTypes")">
+		<i class="entypo-mail"></i>
+		<span class="title">Оборудование</span>
+	</a>
+	<ul class="visible">
+		<li>
+			<a href="@Url.Action("ShowHardware", "HardwareTypes")">
+				<span class="title">Список оборудования</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("ClientList", "HardwareTypes")">
+				<span class="title">Список клиентов</span>
+			</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="@Url.Action("ShowHardware", "HardwareTypes")">
+		<i class="entypo-mail"></i>
+		<span class="title">Отчеты</span>
+	</a>
+	<ul class="visible">
+		<li>
+			<a href="@Url.Action("Client", "SpreadSheet")">
+				<span class="title">По клиентам</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("WriteOffs", "SpreadSheet")">
+				<span class="title">По списаниям</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("UnpluggedClientList", "ConnectionTeam")">
+				<span class="title">Отчет по подключениям</span>
+			</a>
+		</li>
+	</ul>
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div class="main-content">
+	<div class="row">
+		<!-- Profile Info and Notifications -->
+		<div class="col-md-6 col-sm-8 clearfix">
+		</div>
+		<!-- Raw Links -->
+		<div class="col-md-6 col-sm-4 clearfix hidden-xs">
+
+			<ul class="list-inline links-list pull-right">
+				<li>@currentEmployee.Name</li>
+				<li class="sep"></li>
+				<li>
+					<a href="@Url.Action("AdminLogout", "AdminAccount")">
+						Выход <i class="entypo-logout right"></i>
+					</a>
+				</li>
+			</ul>
 		</div>
 
-		<!-- Техническая информация -->
-		<div class="JavascriptParams" style="display: none">
-			@{
-				var dic = ViewBag.JavascriptParams as Dictionary<string, string>;
-				if (dic != null && dic.Count != 0) {
-					foreach (var key in dic.Keys) {
-						<div id="@key">@dic[key]</div>
-					}
-				}
+	</div>
+	<hr/>
+	<ol class="breadcrumb bc-3 server-message">
+		<li>
+			<a href="@Url.Action("Index", "AdminAccount")"><i class="fa-home"></i>Панель управления</a>
+		</li>
+		<li>
+			<a href="@Url.Action("Index")">@ViewBag.BreadCrumb</a>
+		</li>
+		<li class="active">
+			<strong>@ViewBag.Title</strong>
+		</li>
+	</ol>
+	<h2>@ViewBag.Title</h2>
+	<br/>
+	<div class="@ViewBag.ControllerName @ViewBag.ActionName">
+		@RenderBody()
+	</div>
+	<!-- lets do some work here... -->
+	<!-- Footer -->
+	<footer class="main">
+
+		&copy; 2014 <strong>Neon</strong> Admin Theme by <a href="http://laborator.co" target="_blank">Laborator</a>
+
+	</footer>
+</div>
+</div>
+
+<!-- Техническая информация -->
+<div class="JavascriptParams" style="display: none">
+	@{
+		var dic = ViewBag.JavascriptParams as Dictionary<string, string>;
+		if (dic != null && dic.Count != 0) {
+			foreach (var key in dic.Keys) {
+				<div id="@key">@dic[key]</div>
 			}
-		</div>
-		
-		<!-- Bottom scripts (common) -->
-		<script src="~/assets/js/gsap/main-gsap.js"></script>
-		<script src="~/assets/js/jquery-ui/js/jquery-ui-1.10.3.minimal.min.js"></script>
-		<script src="~/assets/js/bootstrap.js"></script>
-		<script src="~/assets/js/bootstrap-datepicker.js"></script>
-		<script src="~/assets/js/bootstrap-timepicker.min.js"></script>
-		<script src="~/assets/js/bootstrap-datepicker.ru.min.js"></script>
-		<script src="~/assets/js/joinable.js"></script>
-		<script src="~/assets/js/resizeable.js"></script>
-		<script src="~/assets/js/neon-api.js"></script>
-
-
-		<!-- JavaScripts initializations and stuff -->
-		<script src="~/assets/js/neon-custom.js"></script>
-
-
-		<!-- Demo Settings -->
-		<script src="~/assets/js/neon-demo.js"></script>
-
-		<script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
-		<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
-		<script type="text/javascript" src="~/Scripts/Helpers.js"></script>
-		<script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
-		<script type="text/javascript" src="~/Scripts/Window.js"></script>
-		<script type="text/javascript" src="~/Scripts/ControlPanel.js"></script>
-
-		<link rel="stylesheet" href="~/Css/style.css?v=1"></link>
-		@RenderSection("JavaScript", required: false)
-		@{
-			var IeWaterline = "";
-			#if DEBUG
-			IeWaterline = "<div class='IeWaterline'></div>";
-			#endif
 		}
-		@Html.Raw(IeWaterline)
+	}
+</div>
 
-	</body>
+<!-- Bottom scripts (common) -->
+<script src="~/assets/js/gsap/main-gsap.js"></script>
+<script src="~/assets/js/jquery-ui/js/jquery-ui-1.10.3.minimal.min.js"></script>
+<script src="~/assets/js/bootstrap.js"></script>
+<script src="~/assets/js/bootstrap-datepicker.js"></script>
+<script src="~/assets/js/bootstrap-timepicker.min.js"></script>
+<script src="~/assets/js/bootstrap-datepicker.ru.min.js"></script>
+<script src="~/assets/js/joinable.js"></script>
+<script src="~/assets/js/resizeable.js"></script>
+<script src="~/assets/js/neon-api.js"></script>
+
+
+<!-- JavaScripts initializations and stuff -->
+<script src="~/assets/js/neon-custom.js"></script>
+
+
+<!-- Demo Settings -->
+<script src="~/assets/js/neon-demo.js"></script>
+
+<script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
+<script type="text/javascript" src="~/Scripts/Helpers.js"></script>
+<script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
+<script type="text/javascript" src="~/Scripts/Window.js"></script>
+<script type="text/javascript" src="~/Scripts/ControlPanel.js"></script>
+
+@RenderSection("JavaScript", required: false)
+@{
+	var IeWaterline = "";
+#if DEBUG
+	IeWaterline = "<div class='IeWaterline  doNotPrint'></div>";
+	@Html.Raw(IeWaterline)
+#endif
+}
+
+</body>
 </html>

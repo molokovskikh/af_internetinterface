@@ -1,8 +1,9 @@
-﻿@using Inforoom2.Components
+﻿@using Common.Tools
+@using Inforoom2.Components
 @using Inforoom2.Helpers
 @using Inforoom2.Models
 @section JavaScript{
-	<script type="text/javascript"src="@Url.Content("~/Scripts/ConnectionTeamPrintTimeTable.js?v=1")"></script> 
+	<script type="text/javascript"src="@Url.Content("~/Scripts/ConnectionTeamPrintTimeTable.js?v=2")"></script> 
 }
 @{
 	ViewBag.Title = "Печать графика";
@@ -41,7 +42,7 @@
 <div class="panel-body">
 	<div class="servicemen panel datatable datatable panel-primary">
 		@foreach (var serviceMan in serviceMenList) {
-			<div class="serviceManBlock pageBreak">
+			<div class="serviceManBlock @(serviceMenList.LastOrDefault() == serviceMan ? "" : "pageBreak" )">
 				<h3 class="name">@serviceMan.Employee.Name</h3>
 				@foreach (var item in servicemenScheduleList.Where(s => s.ServiceMan == serviceMan).OrderBy(d => d.BeginTime).ToList()) {
 					<div class="item">
