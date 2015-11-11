@@ -25,6 +25,10 @@ namespace InternetInterface.Models
 		Catalyst = 1,
 		[Description("Линксис")]
 		Linksys = 2,
+		[Description("Д-линк")]
+		Dlink = 3,
+		[Description("Хуафей")]
+		Huawei = 4
 	}
 
 	[ActiveRecord("NetworkSwitches", Schema = "Internet", Lazy = true)]

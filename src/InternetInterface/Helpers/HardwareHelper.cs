@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Castle.Core.Logging;
 using InternetInterface.Models;
 using NHibernate;
@@ -21,7 +22,12 @@ namespace InternetInterface.Helpers
 					return new CatalystCommutateurInfo();
 				case SwitchType.Linksys:
 					return new LinksysCommutateurInfo();
-				default: return null;
+				case SwitchType.Dlink:
+					return new DlinkCommutateurInfo();
+				case SwitchType.Huawei:
+					return new HuaweiCommutateurInfo();
+				default:
+					return null;
 			}
 		}
 
@@ -35,7 +41,7 @@ namespace InternetInterface.Helpers
 		public static string[] ResultInArray(string info, string command)
 		{
 			info = DelCommandAndHello(info, command);
-			return info.Replace("\r\n", string.Empty).Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+			return info.Replace("\r\n", string.Empty).Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
 		}
 
 		public static string GetFieldName(string mashineName)
@@ -62,6 +68,52 @@ namespace InternetInterface.Helpers
 				default:
 					return mashineName;
 			}
+		}
+	}
+
+	public class CommutateurInfo
+	{
+		protected List<Tuple<bool, string>> GetDataByColumnPattern(string data, ColumnPattern patternName)
+		{
+			var dataByPattern = new List<Tuple<bool, string>>();
+
+			switch (patternName) {
+				case ColumnPattern.GeneralInformation:
+					dataByPattern = GetDataOfGeneralInformation(data);
+					break;
+				case ColumnPattern.PackageCounter:
+					dataByPattern = GetDataOfPackageCounter(data);
+					break;
+				case ColumnPattern.ErrorCounter:
+					dataByPattern = GetDataOfErrorCounter(data);
+					break;
+				default:
+					break;
+			}
+
+			return dataByPattern;
+		}
+
+		protected virtual List<Tuple<bool, string>> GetDataOfGeneralInformation(string data)
+		{
+			throw new Exception("Метод не переопределен!");
+		}
+
+		protected virtual List<Tuple<bool, string>> GetDataOfPackageCounter(string data)
+		{
+			throw new Exception("Метод не переопределен!");
+		}
+
+		protected virtual List<Tuple<bool, string>> GetDataOfErrorCounter(string data)
+		{
+			throw new Exception("Метод не переопределен!");
+		}
+
+		protected enum ColumnPattern
+		{
+			GeneralInformation,
+			PackageCounter,
+			ErrorCounter
 		}
 	}
 }

@@ -1,0 +1,142 @@
+﻿<div class="backGroundBlock">
+<div class="portLinksys">
+	<h3>Информация о клиенте</h3>
+	<% OutputSubView("ClientInfoView") %>
+
+		<% if IsDefined("countersLinesA"): %>
+		<% if IsDefined("countersLinesB"): %>
+		<div class="hardWareInfoBlock russianInfo">
+		<h3>Трафик, счетчики пакетов на порту</h3>
+			<div class="hardWareInfoBlock width600">
+				<table class="table">
+					<thead>
+						<tr>
+							<% for i, interfaceCounter in enumerate(countersLinesA): %>
+								<% if  i < 3: %>
+										<% if interfaceCounter.Item1 == true: %>
+										<th>${interfaceCounter.Item2}</th>
+										<% end %>
+								<% end %>
+							<% end %>
+						</tr>
+					</thead>
+					<tbody>
+							<% for i, interfaceCounter in enumerate(countersLinesA): %>
+								<% if  i > 2: %>
+										<% if interfaceCounter.Item1 == false: %>
+											
+												<% if (i-3) % 3  == 0 : %>
+													<tr>
+												<% end %> 
+									
+													<td>${interfaceCounter.Item2}</td>
+
+												<% if (i+1) % 3  == 0 : %>
+													</tr>
+												<% end %> 
+													
+										<% end %>
+								<% end %>
+							<% end %>
+					</tbody>
+				</table>
+				<table class="table">
+					<thead>
+						<tr>
+							<% for i, interfaceCounter in enumerate(countersLinesB): %>
+								<% if  i < 3: %>
+									<% if interfaceCounter.Item1 == true: %>
+										<th>${interfaceCounter.Item2}</th>
+									<% end %>
+								<% end %>
+							<% end %>
+						</tr>
+					</thead>
+					<tbody>
+						<% for i, interfaceCounter in enumerate(countersLinesB): %>
+							<% if  i > 2: %>
+									<% if interfaceCounter.Item1 == false: %>
+												
+												<% if (i-3) % 3  == 0 : %>
+													<tr>
+												<% end %> 
+							
+												<td>${interfaceCounter.Item2}</td>
+
+												<% if (i+1) % 3  == 0 : %>
+													</tr>
+												<% end %> 
+
+									<% end %>
+							<% end %>
+						<% end %>
+					</tbody>
+				</table>
+			</div> 
+		</div>
+		<% end %>
+		<% end %>
+		<% if IsDefined("interfaceCounters"): %>
+		<h3>Статистика ошибок порта</h3>
+		<div class="hardWareInfoBlock" id="interfaceCountersBlock">
+			<table class="table">
+				<thead>
+					<tr>
+						<% for i, interfaceCounter in enumerate(interfaceCounters): %>
+						<% if  i < 2: %>
+						<% if interfaceCounter.Item1 == true: %>
+						<th>${interfaceCounter.Item2}</th>
+						<% end %>
+						<% end %>
+						<% end %>
+					</tr>
+				</thead>
+				<tbody>
+					<% for i, interfaceCounter in enumerate(interfaceCounters): %>
+					<% if  i > 1: %>
+					<% if interfaceCounter.Item1 == false: %>
+ 
+
+						<td>${interfaceCounter.Item2}</td>
+
+					<% if (i-1) % 2  == 0 : %>
+						</tr>
+					<% end %>
+
+					<% end %>
+					<% end %>
+					<% end %>
+				</tbody>
+			</table>
+		</div>
+		<% end %>
+</div>
+
+	<div class="interfaceLines" id="portActiveBlock">
+		<% if IsDefined("interfaceLines"): %>
+		<h3>Информация об активности порта</h3>
+		<div class="hardWareInfoBlock width600">
+			<table class="table">
+				<thead>
+					<tr>
+						<% for i, interfaceCounter in enumerate(interfaceLines): %>
+						<% if interfaceCounter.Item1 == true: %>
+						<th>${interfaceCounter.Item2}</th>
+						<% end %>
+						<% end %>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<% for i, interfaceCounter in enumerate(interfaceLines): %>
+						<% if interfaceCounter.Item1 == false: %>
+						<td>${interfaceCounter.Item2}</td>
+						<% end %>
+						<% end %>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<% end %>
+	</div>
+</div>
