@@ -59,7 +59,7 @@
     </Reference>
     <Reference Include="NHibernate">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\NHibernate.4.0.2.4000\lib\net40\NHibernate.dll</HintPath>
+      <HintPath>..\..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate.Mapping.Attributes">
       <SpecificVersion>False</SpecificVersion>

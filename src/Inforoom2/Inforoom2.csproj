@@ -47,7 +47,7 @@
   <ItemGroup>
     <Reference Include="Castle.Components.Validator, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Castle.Components.Validator.2.5.4\lib\net40\Castle.Components.Validator.dll</HintPath>
+      <HintPath>..\..\packages\Castle.Components.Validator.2.6.0\lib\net40\Castle.Components.Validator.dll</HintPath>
     </Reference>
     <Reference Include="ExcelLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -76,7 +76,7 @@
     </Reference>
     <Reference Include="NHibernate">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\NHibernate.4.0.2.4000\lib\net40\NHibernate.dll</HintPath>
+      <HintPath>..\..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate.Mapping.Attributes">
       <SpecificVersion>False</SpecificVersion>
