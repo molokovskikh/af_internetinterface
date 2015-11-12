@@ -21,6 +21,7 @@ namespace InternetInterface.Models
 		}
 
 		private IDictionary PropertyBag { get; set; }
+
 		/// <summary>
 		/// Получение информации о коммутаторе
 		/// </summary>
@@ -41,7 +42,7 @@ namespace InternetInterface.Models
 			var password = ConfigurationManager.AppSettings["linksysPassword"];
 			while (attemptsToGetData > 0) {
 				try {
-					AskTheSwitch(login, password, propertyBag);
+					AskTheSwitch(point, login, password, propertyBag);
 					break;
 				}
 				catch (Exception ex) {
@@ -56,26 +57,27 @@ namespace InternetInterface.Models
 				}
 			}
 		}
+
 		/// <summary>
 		/// Опрос коммутатора
 		/// </summary>
 		/// <param name="login"></param>
 		/// <param name="password"></param>
 		/// <param name="propertyBag"></param>
-		protected void AskTheSwitch(string login, string password, IDictionary propertyBag)
+		protected void AskTheSwitch(ClientEndpoint point, string login, string password, IDictionary propertyBag)
 		{
 #if DEBUG
 			var telnet = new TelnetConnection("172.16.4.130", 23);
 #else
-							var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
+			var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
 #endif
 			try {
 #if DEBUG
 				telnet.Login(login, password, 100);
 				var port = 3.ToString();
 #else
-							telnet.Login(login, password, 100);
-							var port = point.Port.ToString();
+				telnet.Login(login, password, 100);
+				var port = point.Port.ToString();
 #endif
 				//общие сведения
 				Thread.Sleep(1000);
@@ -114,7 +116,7 @@ namespace InternetInterface.Models
 				//сведения об ошибках
 				var interfaceCounters = GetDataByColumnPattern(rowErrorCounter, ColumnPattern.ErrorCounter);
 				propertyBag["interfaceCounters"] = interfaceCounters;
-			} 
+			}
 			finally {
 				telnet.WriteLine("logout");
 			}
