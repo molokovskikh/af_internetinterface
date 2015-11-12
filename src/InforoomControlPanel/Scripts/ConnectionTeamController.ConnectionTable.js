@@ -51,9 +51,11 @@ var refreshConnectionTable = function() {
 		$(".servicemen .wrapper").append($(div).find(".wrapper").html());
 		//$(".datepicker").datepicker({format : "dd.mm.yyyy", startView : "startView"});
 		servicemenFunc();
+		attachServicemenLinkChanging();
 	});
 }
 servicemenFunc();
+attachServicemenLinkChanging();
 
 $(".ConnectionTeam .btn-green").on("click", function() {
 
@@ -63,23 +65,26 @@ $(".ConnectionTeam .btn-green").on("click", function() {
 	//$(".ConnectionTeam form").submit();
 	return true;
 });
+function attachServicemenLinkChanging() {
+	$("#PrintTimeTableValue, a.servicemenLink").off("click", "**");
+	$("#PrintTimeTableValue, a.servicemenLink").click(function (event) {
 
-$("#PrintTimeTableValue, a.servicemenLink").click(function(event) {
+		event.preventDefault();
+		var href = $(this).attr('href');
+		var currentDate = $(".servicemen input.datepicker").val();
+		var currentRegion = $(".servicemen select.regionId").val();
+		var params = "";
+		if (href.indexOf("printServicemenId") == -1) {
+			params += "?printDate=" + currentDate;
+		} else {
+			params += "&printDate=" + currentDate;
+		}
+		if (currentRegion != 0) {
+			params += "&printRegionId=" + currentRegion;
+		}
+		href += params;
+		console.log(href);
+		location.href = href;
+	});
+}
 
-	event.preventDefault();
-	var href = $(this).attr('href');
-	var currentDate = $(".servicemen input.datepicker").val();
-	var currentRegion = $(".servicemen select.regionId").val();
-	var params = "";
-	if (href.indexOf("printServicemenId") == -1) {
-		params += "?printDate=" + currentDate;
-	} else {
-		params += "&printDate=" + currentDate;
-	}
-	if (currentRegion != 0) {
-		params += "&printRegionId=" + currentRegion;
-	}
-	href += params;
-	console.log(href);
-	location.href = href;
-});

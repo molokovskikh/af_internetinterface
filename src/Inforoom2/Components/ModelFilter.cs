@@ -499,6 +499,7 @@ namespace Inforoom2.Components
 			if (path == null)
 				return;
 
+			path = StripParamToFieldPath(path);
 			//Получаем путь к полю модели
 			criteria = GetJoinedModelCriteria(criteria, path);
 			var fieldName = GetFieldName(path);

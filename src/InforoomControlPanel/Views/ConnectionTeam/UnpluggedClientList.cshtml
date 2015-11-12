@@ -5,6 +5,7 @@
 @using Inforoom2.Components
 @using Inforoom2.Helpers
 @using Inforoom2.Models
+@using NHibernate.Util
 @{
 	ViewBag.Title = "Неподключенные клиенты";
 	Layout = "~/Views/Shared/_Layout.cshtml";
@@ -17,56 +18,66 @@
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-2">Зарегестрирован с </div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control" })</div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new {@class = "form-control"})</div>
 			<div class="col-sm-1">по</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control" })</div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.LowerOrEqual, new {@class = "form-control"})</div>
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-sm-2">Дата подключения с </div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.ServicemenScheduleItems.First().BeginTime, HtmlType.Date, ComparsionType.GreaterOrEqueal, new {@class = "form-control"})</div>
+			<div class="col-sm-1">по</div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.ServicemenScheduleItems.First().BeginTime, HtmlType.Date, ComparsionType.LowerOrEqual, new {@class = "form-control"})</div>
 		</div>
 	</div>
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-2">Назначен на</div>
-			<div class="col-sm-2">@pager.ServiceManFilter(i => i, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			<div class="col-sm-2">@pager.ServiceManFilter(i => i, new {@class = "form-control", @style = "min-width:280px;"})</div>
 		</div>
 	</div>
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-2">Статус</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.Status.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.Status.Name, HtmlType.Dropdown, ComparsionType.Equal, new {@class = "form-control", @style = "min-width:280px;"})</div>
 		</div>
 	</div>
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-2">Регион</div>
-			<div class="col-sm-2">@pager.ClientRegionFilter(i => i, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			<div class="col-sm-2">@pager.ClientRegionFilter(i => i, new {@class = "form-control", @style = "min-width:280px;"})</div>
 		</div>
 	</div>
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-2">Физ.лицо</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.PhysicalClient, HtmlType.Dropdown, ComparsionType.IsNotNull, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.PhysicalClient, HtmlType.Dropdown, ComparsionType.IsNotNull, new {@class = "form-control", @style = "min-width:280px;"})</div>
 		</div>
 	</div>
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-2">ЛС</div>
-			<div class="col-sm-2">@pager.FormFilter(i => i.Id, HtmlType.text, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px;" })</div>
+			<div class="col-sm-2">@pager.FormFilter(i => i.Id, HtmlType.text, ComparsionType.Equal, new {@class = "form-control", @style = "min-width:280px;"})</div>
 		</div>
 	</div>
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-1">
-				@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+				@pager.SubmitButton(new {@class = "btn btn-success btn-sm"})
 			</div>
 			<div class="col-sm-1">
-				@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+				@pager.CleanButton(new {@class = "btn btn-success btn-sm"})
 			</div>
 			<div class="col-sm-1">
-				@pager.ExportButton(new { @class = "btn btn-sm btn-blue" })
+				@pager.ExportButton(new {@class = "btn btn-sm btn-blue"})
 			</div>
 		</div>
 	</div>
 </form>
-<div class="totalCountOfItems">Всего: <strong>@pager.TotalItems</strong> строк</div>
+<div class="totalCountOfItems">
+	Всего: <strong>@pager.TotalItems</strong> строк
+</div>
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
 	<div class="panel-body">
 		<div class="row">
@@ -75,37 +86,46 @@
 	</div>
 	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 		<thead>
-			<tr role="row">
-				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.OrderBy(s => s.Id)">Номер</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Имя</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Адрес</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.OrderBy(s => s.CreationDate)">Дата</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2">Статус</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Назначен</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
-			</tr>
+		<tr role="row">
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@pager.OrderBy(s => s.Id)">Номер</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Имя</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Адрес</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@pager.OrderBy(s => s.CreationDate)">Регистрация</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@pager.OrderBy(s => s.ServicemenScheduleItems.First().BeginTime)">Подключение назначено</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Статус</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Назначен</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
+		</tr>
 		</thead>
 		<tbody>
-			@foreach (var item in Clients) {
-				<tr role="row" class="odd">
-					<td>
-						<a @(item.PhysicalClient == null ? "style=color:#0D90D4;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
-						                                                                        + (String.Format("UserInfo/{0}?filter.ClientCode=", item.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-						                                                                        + item.Id)">@item.Id</a>
-					</td>
-					<td>@item.Fullname</td>
-					<td>@item.GetAddress()</td>
-					<td>@item.CreationDate</td>
-					<td>@item.Status.Name</td>
-					<td>@(item.ConnectionRequest != null && item.ConnectionRequest.ServiceMan != null ? item.ConnectionRequest.ServiceMan.Employee.Name : "Не назначен")</td>
-					<td>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("AttachRequest", "ConnectionTeam", new { id = item.Id, type = ServicemenScheduleItem.Type.ClientConnectionRequest })">
-							<i class="entypo-plus-circled"></i>
-							Назначить в график
-						</a>
-					</td>
-				</tr>
-			}
+		@foreach (var item in Clients) {
+			<tr role="row" class="odd">
+				<td>
+					<a @(item.PhysicalClient == null ? "style=color:#0D90D4;" : "") target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld")
+					                                                                        + (String.Format("UserInfo/{0}?filter.ClientCode=", item.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
+					                                                                        + item.Id)">
+						@item.Id</a>
+				</td>
+				<td>@item.Fullname</td>
+				<td>@item.GetAddress()</td>
+				<td>@item.CreationDate</td>
+				<td>@(item.ConnectionRequest != null ? item.ConnectionRequest.BeginTime.ToString() : "")</td>
+				<td>@item.Status.Name</td>
+				<td>@(item.ConnectionRequest != null && item.ConnectionRequest.ServiceMan != null ? item.ConnectionRequest.ServiceMan.Employee.Name : "Не назначено")</td>
+				<td>
+					<a class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="@Url.Action("AttachRequest", "ConnectionTeam", new {id = item.Id, type = ServicemenScheduleItem.Type.ClientConnectionRequest})">
+						<i class="entypo-plus-circled"></i>
+						Назначить в график
+					</a>
+				</td>
+			</tr>
+		}
 		</tbody>
 	</table>
 	<div class="panel-body">
@@ -114,4 +134,6 @@
 		</div>
 	</div>
 </div>
-<div class="totalCountOfItems">Всего: <strong>@pager.TotalItems</strong> строк</div>
+<div class="totalCountOfItems">
+	Всего: <strong>@pager.TotalItems</strong> строк
+</div>

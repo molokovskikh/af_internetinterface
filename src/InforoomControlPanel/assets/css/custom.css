@@ -27,3 +27,6 @@
 .totalCountOfItems {
 	margin-top: 16px;
 }
+.UnpluggedClientList .btn.btn-sm.btn-blue {
+	margin-left: 30px;
+}

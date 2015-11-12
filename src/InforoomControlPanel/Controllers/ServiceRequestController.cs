@@ -22,6 +22,7 @@ using Remotion.Linq.Clauses;
 using AppealType = Inforoom2.Models.AppealType;
 using Client = Inforoom2.Models.Client;
 using ServiceRequest = Inforoom2.Models.ServiceRequest;
+using ServiceRequestStatus = Inforoom2.Models.ServiceRequestStatus;
 
 namespace InforoomControlPanel.Controllers
 {
@@ -53,7 +54,8 @@ namespace InforoomControlPanel.Controllers
 			// для фильтра: Статус заявки
 			if (!string.IsNullOrEmpty(pager.GetParam("ServiceRequestStatus")))
 				//добавление условиий фильтрации
-				criteria.Add(Restrictions.Eq("Status", (Inforoom2.Models.ServiceRequestStatus)int.Parse(pager.GetParam("ServiceRequestStatus"))));
+				criteria.Add(Restrictions.Eq("Status",
+					(Inforoom2.Models.ServiceRequestStatus) int.Parse(pager.GetParam("ServiceRequestStatus"))));
 			// для фильтра: Назначения на инженера
 			if (!string.IsNullOrEmpty(pager.GetParam("ServiceMenFilter")) && pager.GetParam("ServiceMenFilter") != "0") {
 				//объединение 'сервисной заявки' с 'записью в графике инженеров'
@@ -71,7 +73,8 @@ namespace InforoomControlPanel.Controllers
 				//добавление условиий фильтрации
 
 				criteria.Add(Restrictions.Or(
-					Restrictions.Or(Restrictions.Like("Description", "%" + textSearch + "%"), Restrictions.Like("Phone", "%" + textSearch + "%")),
+					Restrictions.Or(Restrictions.Like("Description", "%" + textSearch + "%"),
+						Restrictions.Like("Phone", "%" + textSearch + "%")),
 					Restrictions.Or(Restrictions.Eq("Client.Id", idValue), Restrictions.Eq("Id", idValue))
 					));
 			}
@@ -84,22 +87,35 @@ namespace InforoomControlPanel.Controllers
 					criteria.Add(Restrictions.Gt(pager.GetParam("DataFilter"), DateTime.Parse(pager.GetParam("RequestFilterFrom"))));
 				if (!string.IsNullOrEmpty(pager.GetParam("RequestFilterTill")))
 					//добавление условиий фильтрации
-					criteria.Add(Restrictions.Lt(pager.GetParam("DataFilter"), DateTime.Parse(pager.GetParam("RequestFilterTill")).AddDays(1)));
+					criteria.Add(Restrictions.Lt(pager.GetParam("DataFilter"),
+						DateTime.Parse(pager.GetParam("RequestFilterTill")).AddDays(1)));
 			}
 			else {
 				// дату постановления заявки в график фильтруем с добавлением субкритерия
 				//проверка, если 'сервисная заявка' еще не объединена с 'записью в графике инженеров'. Если нет, объединяем
-				var newCriteria = criteria.GetCriteriaByAlias("serviceManFor") ?? criteria.CreateCriteria("ServicemenScheduleItem", "serviceManFor", JoinType.LeftOuterJoin);
+				var newCriteria = criteria.GetCriteriaByAlias("serviceManFor") ??
+				                  criteria.CreateCriteria("ServicemenScheduleItem", "serviceManFor", JoinType.LeftOuterJoin);
 				//добавление условиий фильтрации
 				if (!string.IsNullOrEmpty(pager.GetParam("RequestFilterFrom")))
 					newCriteria.Add(Restrictions.Gt("serviceManFor.BeginTime", DateTime.Parse(pager.GetParam("RequestFilterFrom"))));
 				;
 				if (!string.IsNullOrEmpty(pager.GetParam("RequestFilterTill")))
-					newCriteria.Add(Restrictions.Lt("serviceManFor.BeginTime", DateTime.Parse(pager.GetParam("RequestFilterTill")).AddDays(1)));
+					newCriteria.Add(Restrictions.Lt("serviceManFor.BeginTime",
+						DateTime.Parse(pager.GetParam("RequestFilterTill")).AddDays(1)));
 			}
 
 			if (pager.IsExportRequested()) {
-				pager.SetExportFields(s => new { ЛС = s.Client.Id, Номер_сз = s.Id, Дата_создания = s.CreationDate, Дата_закрытия = s.ClosedDate, Сумма = s.Sum, Назначена = s.ServicemenScheduleItem.ServiceMan.Employee.Name });
+				pager.SetExportFields(
+					s =>
+						new
+						{
+							ЛС = s.Client.Id,
+							Номер_сз = s.Id,
+							Дата_создания = s.CreationDate,
+							Дата_закрытия = s.ClosedDate,
+							Сумма = s.Sum,
+							Назначена = s.ServicemenScheduleItem.ServiceMan.Employee.Name
+						});
 				pager.ExportToExcelFile(ControllerContext.HttpContext);
 				return null;
 			}
@@ -123,7 +139,7 @@ namespace InforoomControlPanel.Controllers
 				//получение телефона-'по умолчанию'
 				var phone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.SmsSending);
 				//создание заявки и передача ее на форму
-				var serviceRequest = new ServiceRequest() { Client = client, Phone = phone != null ? phone.ContactString : "" };
+				var serviceRequest = new ServiceRequest() {Client = client, Phone = phone != null ? phone.ContactString : ""};
 				ViewBag.ServiceRequest = serviceRequest;
 				return View();
 			}
@@ -147,11 +163,12 @@ namespace InforoomControlPanel.Controllers
 				DbSession.Save(serviceRequest);
 				SuccessMessage("Сервисная заявка успешно создана.");
 				//Отправляем аппил о создании
-				string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> успешно создана.",
-					serviceRequest.Id, ConfigHelper.GetParam("adminPanelNew"));
+				string appealMessage =
+					string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> успешно создана.",
+						serviceRequest.Id, ConfigHelper.GetParam("adminPanelNew"));
 				serviceRequest.AddComment(DbSession, appealMessage, GetCurrentEmployee());
 
-				return RedirectToAction("ServiceRequestEdit", new { id = serviceRequest.Id });
+				return RedirectToAction("ServiceRequestEdit", new {id = serviceRequest.Id});
 			}
 			ViewBag.ServiceRequest = serviceRequest;
 			return View();
@@ -191,7 +208,9 @@ namespace InforoomControlPanel.Controllers
 			if (serviceRequest.Free && reasonForFreeShown) {
 				errors.AddRange(ValidationRunner.Validate(reasonForFree));
 				if (errors.Length == 0) {
-					serviceRequest.AddComment(DbSession, string.Format("<strong>Заявка стала бесплатной</strong>, поскольку: {0}", reasonForFree.Comment), GetCurrentEmployee());
+					serviceRequest.AddComment(DbSession,
+						string.Format("<strong>Заявка стала бесплатной</strong>, поскольку: {0}", reasonForFree.Comment),
+						GetCurrentEmployee());
 				}
 			}
 
@@ -202,17 +221,10 @@ namespace InforoomControlPanel.Controllers
 					serviceRequest.SetStatus(DbSession, currentStatus, GetCurrentEmployee());
 				}
 				// сохраняем изменения
-				serviceRequest.ModificationDate = SystemTime.Now();
 				DbSession.Save(serviceRequest);
 				SuccessMessage("Сервисная заявка успешно обновлена.");
 
-				//TODO: удалить, если без сообщений будет удобно.
-				////Отправляем аппил о редактировании
-				//string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> обновлена.",
-				//	serviceRequest.Id, ConfigHelper.GetParam("adminPanelNew"));
-				//serviceRequest.AddComment(DbSession, appealMessage, GetCurrentEmployee());
-
-				return RedirectToAction("ServiceRequestEdit", new { id = serviceRequest.Id });
+				return RedirectToAction("ServiceRequestEdit", new {id = serviceRequest.Id});
 			}
 
 			// Сбор во ViewBag необходимых объектов
@@ -243,7 +255,7 @@ namespace InforoomControlPanel.Controllers
 			//вывод сообщения
 			SuccessMessage("Сервисная заявка успешно обновлена.");
 			//переход к редактированию сервисной заяки
-			return RedirectToAction("ServiceRequestEdit", new { id = serviceRequest.Id });
+			return RedirectToAction("ServiceRequestEdit", new {id = serviceRequest.Id});
 		}
 
 		/// <summary>
@@ -251,25 +263,50 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		/// <param name="serviceRequest">модель сервисной заявки</param>
 		/// <param name="comment">модель комментария</param>
+		/// <param name="updateRequest">Если комментарий подразумевает обновление СЗ</param>
 		/// <returns></returns>
 		[HttpPost]
-		public ActionResult AddComment([EntityBinder] ServiceRequest serviceRequest, ServiceRequestComment comment)
+		public ActionResult AddComment([EntityBinder] ServiceRequest serviceRequest, ServiceRequestComment comment,
+			bool updateRequest = false)
 		{
+			if (serviceRequest == null) {
+				return RedirectToAction("ServiceRequestList");
+			}
 			ViewBag.ServiceRequestComment = comment;
-			//вализация комментария
+			ViewBag.UpdateRequest = updateRequest;
+			ViewBag.ReasonForFreeShown = false;
+			ViewBag.СurrentStatus = serviceRequest.Status;
+			//валидация комментария
 			var errors = ValidationRunner.ValidateDeep(comment);
-			if (errors.Length == 0 && serviceRequest != null && serviceRequest.Id != 0) {
-				//добавление комментария
-				serviceRequest.AddComment(DbSession, comment.Comment, GetCurrentEmployee());
+			if (errors.Length == 0 && serviceRequest.Id != 0
+			    && (updateRequest && !string.IsNullOrEmpty(comment.Comment) || updateRequest == false)) {
+				//обновление даты модификации
+				if (updateRequest) {
+					serviceRequest.ModificationDate = SystemTime.Now();
+					DbSession.Save(serviceRequest);
+					//Отправляем аппил о редактировании
+					string appealMessage =
+						string.Format(
+							"'Дата модификации' заявки изменена на {2}. <br/><strong>Причина:</strong> {3}",
+							serviceRequest.Id, ConfigHelper.GetParam("adminPanelNew"), serviceRequest.ModificationDate, comment.Comment);
+					serviceRequest.AddComment(DbSession, appealMessage, GetCurrentEmployee());
+				}
+				else {
+					//добавление комментария
+					serviceRequest.AddComment(DbSession, comment.Comment, GetCurrentEmployee());
+				}
 				//вывод сообщения
 				SuccessMessage("Комментарий был добавлен успешно.");
 				//переход к редактированию сервисной заяки
-				return RedirectToAction("ServiceRequestEdit", new { id = serviceRequest.Id });
+				return RedirectToAction("ServiceRequestEdit", new {id = serviceRequest.Id});
+			}
+			if (updateRequest && string.IsNullOrEmpty(comment.Comment)) {
+				ErrorMessage("Не указана причина изменения даты обновления.");
 			}
 			//переход к редактированию сервисной заяки
 			ViewBag.ServiceRequest = serviceRequest;
 			ViewBag.ServiceRequestCommentList = serviceRequest.GetComments(DbSession);
-			return View("ServiceRequestEdit", new { id = serviceRequest.Id });
+			return View("ServiceRequestEdit", new {id = serviceRequest.Id});
 		}
 	}
 }

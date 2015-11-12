@@ -26,6 +26,7 @@
 	<div class="panel-body">
 		@using (@Html.BeginForm(action, controller, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
 			@Html.HiddenFor(i => scheduleItem.Id, new { @class = "form-control" })
+			@Html.HiddenFor(i => scheduleItem.Client.Id, new { @class = "form-control" })
 			@Html.HiddenFor(i => scheduleItem.RequestType, new { @class = "form-control", @Name = "scheduleItem.RequestType" })
 			if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest) {
 				<div class="form-group">
