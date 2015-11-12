@@ -19,6 +19,7 @@ namespace InternetInterface.Models
 		{
 			get { return "PortInfoHuawei"; }
 		}
+
 		/// <summary>
 		/// Получение информации о коммутаторе
 		/// </summary>
@@ -39,7 +40,7 @@ namespace InternetInterface.Models
 
 			while (attemptsToGetData > 0) {
 				try {
-					AskTheSwitch(login, password, propertyBag);
+					AskTheSwitch(point, login, password, propertyBag);
 					break;
 				}
 				catch (Exception ex) {
@@ -54,18 +55,19 @@ namespace InternetInterface.Models
 				}
 			}
 		}
+
 		/// <summary>
 		/// Опрос коммутатора
 		/// </summary>
 		/// <param name="login"></param>
 		/// <param name="password"></param>
 		/// <param name="propertyBag"></param>
-		protected void AskTheSwitch(string login, string password, IDictionary propertyBag)
+		protected void AskTheSwitch(ClientEndpoint point, string login, string password, IDictionary propertyBag)
 		{
 #if DEBUG
 			var telnet = new TelnetConnection("172.16.4.74", 23);
 #else
-				var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
+			var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
 #endif
 			try {
 #if DEBUG
@@ -101,6 +103,7 @@ namespace InternetInterface.Models
 			var interfaceCounters = GetDataByColumnPattern(interfaces, ColumnPattern.ErrorCounter);
 			propertyBag["interfaceCounters"] = interfaceCounters;
 		}
+
 		/// <summary>
 		/// Обработка общих сведений
 		/// </summary>
@@ -131,6 +134,7 @@ namespace InternetInterface.Models
 			}
 			return dataList;
 		}
+
 		/// <summary>
 		/// Обработка сведений о счетчиках
 		/// </summary>
@@ -232,6 +236,7 @@ namespace InternetInterface.Models
 			}
 			return dataList;
 		}
+
 		/// <summary>
 		/// Обработка сведений об ошибках
 		/// </summary>
