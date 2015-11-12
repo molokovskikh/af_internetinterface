@@ -108,7 +108,7 @@ namespace InforoomControlPanel.Controllers
 				string setDateAHead = pager.GetParam("filter.GreaterOrEqueal.ServicemenScheduleItems.First().BeginTime") ?? "";
 				string setDateBHead = pager.GetParam("filter.LowerOrEqual.ServicemenScheduleItems.First().BeginTime") ?? "";
 				Employee registrator = null;
-                int idOfRegistrator = 0;
+				int idOfRegistrator = 0;
 				if (Int32.TryParse(registratorHead, out idOfRegistrator)) {
 					registrator = DbSession.Query<Employee>().FirstOrDefault(s => s.Id == idOfRegistrator);
 				}
@@ -301,7 +301,11 @@ namespace InforoomControlPanel.Controllers
 			var item = DbSession.Query<ServicemenScheduleItem>().FirstOrDefault(s => s.Id == id);
 			if (item != null) {
 				DbSession.Delete(item);
-				// return RedirectToAction("AttachRequest",new {id= });
+				var newAppeal = new Appeal("Заявка на подключение отменена.", item.GetClient(), AppealType.User)
+				{
+					Employee = GetCurrentEmployee()
+				};
+				DbSession.Delete(newAppeal);
 			}
 			return RedirectToAction("UnpluggedClientList");
 		}

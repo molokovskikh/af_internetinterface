@@ -27,7 +27,7 @@ namespace Inforoom2.Models
 		[Display(Name = "Отменена"), Description("Отменена")] Cancel = 5
 	}
 
-	[Class(0, Table = "ServiceRequest", NameType = typeof(ServiceRequest)), Description("Сервисная заявка")]
+	[Class(0, Table = "ServiceRequest", NameType = typeof (ServiceRequest)), Description("Сервисная заявка")]
 	public class ServiceRequest : BaseModel, IServicemenScheduleItem
 	{
 		public ServiceRequest()
@@ -55,7 +55,8 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "Client"), Description("Клиент")]
 		public virtual Client Client { get; set; }
 
-		[Property(Column = "Description"), NotNullNotEmpty(Message = "Поле необходимо заполнить"), Description("Описание заявки")]
+		[Property(Column = "Description"), NotNullNotEmpty(Message = "Поле необходимо заполнить"),
+		 Description("Описание заявки")]
 		public virtual string Description { get; set; }
 
 		// TODO: удалить это поле в скором будущем!
@@ -157,8 +158,10 @@ namespace Inforoom2.Models
 			TrySwitchClientStatusTo_Worked(dbSession);
 			// вероятно, в скором будущем отправка смс
 			CancelDate = SystemTime.Now();
-			string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>отменена</strong>.",
-				Id, ConfigHelper.GetParam("adminPanelNew"));
+			string appealMessage =
+				string.Format(
+					"Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>отменена</strong>.",
+					Id, ConfigHelper.GetParam("adminPanelNew"));
 			AddComment(dbSession, appealMessage, employee);
 		}
 
@@ -173,11 +176,13 @@ namespace Inforoom2.Models
 			if (Sum != null
 			    && Sum > 0) {
 				var comment = String.Format("Оказание дополнительных услуг, заявка №{0}", Id);
-				dbSession.Save(new UserWriteOff(Client, Sum.Value, comment) { Employee = employee });
+				dbSession.Save(new UserWriteOff(Client, Sum.Value, comment) {Employee = employee});
 			}
 
-			string appealMessage = string.Format("Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>закрыта</strong>.",
-				Id, ConfigHelper.GetParam("adminPanelNew"));
+			string appealMessage =
+				string.Format(
+					"Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>закрыта</strong>.",
+					Id, ConfigHelper.GetParam("adminPanelNew"));
 			AddComment(dbSession, appealMessage, employee);
 		}
 
@@ -189,7 +194,9 @@ namespace Inforoom2.Models
 			if (BlockClientAndWriteOffs
 			    && Client.Status.Type == StatusType.BlockedForRepair
 			    && (Status == ServiceRequestStatus.Close || Status == ServiceRequestStatus.Cancel)
-			    && !dbSession.Query<ServiceRequest>().Any(r => r.Client == Client && r.Status == ServiceRequestStatus.New && r.BlockClientAndWriteOffs)) {
+			    &&
+			    !dbSession.Query<ServiceRequest>()
+				    .Any(r => r.Client == Client && r.Status == ServiceRequestStatus.New && r.BlockClientAndWriteOffs)) {
 				ModificationDate = SystemTime.Now();
 				Client.SetStatus(Models.Status.Get(StatusType.Worked, dbSession));
 			}
@@ -204,8 +211,10 @@ namespace Inforoom2.Models
 				ModificationDate = SystemTime.Now();
 				Client.SetStatus(Models.Status.Get(StatusType.BlockedForRepair, dbSession));
 
-				string appealMessage = string.Format("По сервисной заявке № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>необходимо восстановление работы.</strong>.",
-					Id, ConfigHelper.GetParam("adminPanelNew"));
+				string appealMessage =
+					string.Format(
+						"По сервисной заявке № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>необходимо восстановление работы.</strong>.",
+						Id, ConfigHelper.GetParam("adminPanelNew"));
 				AddComment(dbSession, appealMessage, employee);
 			}
 		}
@@ -218,7 +227,8 @@ namespace Inforoom2.Models
 		public virtual void AddComment(ISession dbSession, string comment, Employee employee)
 		{
 			//формирование и сохранение комментария
-			dbSession.Save(new ServiceRequestComment() {
+			dbSession.Save(new ServiceRequestComment()
+			{
 				Comment = comment,
 				ServiceRequest = this,
 				Author = employee,
@@ -235,13 +245,22 @@ namespace Inforoom2.Models
 			var commentsList = dbSession.Query<ServiceRequestComment>().Where(s => s.ServiceRequest == this).ToList();
 			// дополнение списка комментариев событиями из логов по сервисным заявкам
 			commentsList.AddRange(dbSession.Query<Log>().Where(s => s.ModelId == this.Id
-			                                                        && s.ModelClass == this.GetType().Name && s.Type == LogEventType.Update).Select(s => new ServiceRequestComment() {
-				                                                        // убираем ModificationDate из логов т.к. запись будет дублировать CreationDate
-				                                                        Comment = s.Message.Replace("title='ModificationDate'", "title='ModificationDate' style='display:none;'"),
-				                                                        ServiceRequest = this,
-				                                                        CreationDate = s.Date,
-				                                                        Author = s.Employee
-			                                                        }).ToList());
+			                                                        && s.ModelClass == this.GetType().Name &&
+			                                                        s.Type == LogEventType.Update && (
+				                                                        s.Message.IndexOf("title='ModificationDate'") == -1
+				                                                        ||
+				                                                        (s.Message.IndexOf("title='ModificationDate'") != -1 &&
+				                                                         s.Message.Length > 4200)
+				                                                        )).Select(s => new ServiceRequestComment()
+				                                                        {
+					                                                        // убираем ModificationDate из логов т.к. запись будет дублировать CreationDate
+					                                                        Comment =
+						                                                        s.Message.Replace("title='ModificationDate'",
+							                                                        "title='ModificationDate' style='display:none;'"),
+					                                                        ServiceRequest = this,
+					                                                        CreationDate = s.Date,
+					                                                        Author = s.Employee
+				                                                        }).ToList());
 			//возврат сортированного списка комментариев
 			return commentsList.OrderBy(s => s.CreationDate).ToList();
 		}
