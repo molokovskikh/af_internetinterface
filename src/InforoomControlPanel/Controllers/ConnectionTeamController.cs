@@ -251,16 +251,16 @@ namespace InforoomControlPanel.Controllers
 			//валидация эл-та графика
 			var errors = ValidationRunner.Validate(scheduleItem);
 			if (errors.Length == 0) {
-				// проверка свободного времени исполнителя заявки
-
-				DbSession.Save(scheduleItem);
+                DbSession.Save(scheduleItem);
 				//вывод сообщения
 				if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest) {
+					scheduleItem.ServiceRequest.ModificationDate = SystemTime.Now();
 					SuccessMessage("Сервисная заявка успешно добавлена в график");
 					//отправка уведомления, о назначенной сервисной заявке
 					var appealMessage = string.Format("Сервисная заявка добавлена в график. <br/>Инженер: {0}<br/>Дата / время: {1}",
 						scheduleItem.ServiceMan.Employee.Name, scheduleItem.BeginTime);
 					scheduleItem.ServiceRequest.AddComment(DbSession, appealMessage, GetCurrentEmployee());
+					DbSession.Save(scheduleItem.ServiceRequest);
 				}
 				else {
 					SuccessMessage("Заявка на подключение успешно добавлена в график");
@@ -309,20 +309,6 @@ namespace InforoomControlPanel.Controllers
 			}
 			return RedirectToAction("UnpluggedClientList");
 		}
-
-		//TODO: удалить
-		///// <summary>
-		/////     График подключения бригад
-		///// </summary>
-		///// <returns></returns>
-		//public ActionResult ConnectionTeams()
-		//{
-		//	var teams = DbSession.Query<ServiceTeam>().ToList();
-		//	var servicemen = DbSession.Query<ServiceMan>().ToList();
-		//	ViewBag.Connectionteams = teams;
-		//	ViewBag.Servicemen = servicemen;
-		//	return View();
-		//}
 
 		/// <summary>
 		///     Список сервисных инженеров

@@ -134,18 +134,21 @@ namespace Inforoom2.Models
 				case ServiceRequestStatus.Close:
 					if (Status != status) {
 						Status = status;
+						ModificationDate = SystemTime.Now();
 						Close(dbSession, employee);
 					}
 					break;
 				case ServiceRequestStatus.Cancel:
 					if (Status != status) {
 						Status = status;
+						ModificationDate = SystemTime.Now();
 						Cancel(dbSession, employee);
 					}
 
 					break;
 				default:
 					Status = status;
+					ModificationDate = SystemTime.Now();
 					break;
 			}
 		}
