@@ -9,6 +9,7 @@ using NHibernate.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using Billing;
+using Common.Tools;
 
 namespace Inforoom2.Test.Functional.Personal
 {
@@ -48,6 +49,7 @@ namespace Inforoom2.Test.Functional.Personal
 		public void NegativeBalancePhysical()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
+			client.Payments.Add(new Payment() { Client = client, Sum = 0, PaidOn = SystemTime.Now().AddDays(-2), RecievedOn = SystemTime.Now().AddDays(-1) });
 			client.PhysicalClient.Balance = -5;
 			DbSession.Save(client);
 			DbSession.Flush();
@@ -59,6 +61,7 @@ namespace Inforoom2.Test.Functional.Personal
 		public void NegativeBalancePhysicalWithDebtWorkServiceActual()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
+			client.Payments.Add(new Payment() { Client = client, Sum = 0, PaidOn = SystemTime.Now().AddDays(-2), RecievedOn = SystemTime.Now().AddDays(-1) });
 			client.PhysicalClient.Balance = -10;
 			var services = DbSession.Query<Service>().Where(s => s.Name == "Обещанный платеж").ToList();
 			var csDebtWorkService =
@@ -75,6 +78,7 @@ namespace Inforoom2.Test.Functional.Personal
 		public void NegativeBalancePhysicalWithDebtWorkServiceOverdue()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
+			client.Payments.Add(new Payment() { Client = client, Sum = 0, PaidOn = SystemTime.Now().AddDays(-2), RecievedOn = SystemTime.Now().AddDays(-1) });
 			client.PhysicalClient.Balance = -10;
 			var services = DbSession.Query<Service>().Where(s => s.Name == "Обещанный платеж").ToList();
 			var csDebtWorkService =

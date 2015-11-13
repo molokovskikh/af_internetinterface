@@ -266,42 +266,23 @@ namespace InforoomControlPanel.Controllers
 		/// <param name="updateRequest">Если комментарий подразумевает обновление СЗ</param>
 		/// <returns></returns>
 		[HttpPost]
-		public ActionResult AddComment([EntityBinder] ServiceRequest serviceRequest, ServiceRequestComment comment,
-			bool updateRequest = false)
+		public ActionResult AddComment([EntityBinder] ServiceRequest serviceRequest, ServiceRequestComment comment)
 		{
 			if (serviceRequest == null) {
 				return RedirectToAction("ServiceRequestList");
 			}
 			ViewBag.ServiceRequestComment = comment;
-			ViewBag.UpdateRequest = updateRequest;
 			ViewBag.ReasonForFreeShown = false;
 			ViewBag.СurrentStatus = serviceRequest.Status;
 			//валидация комментария
 			var errors = ValidationRunner.ValidateDeep(comment);
-			if (errors.Length == 0 && serviceRequest.Id != 0
-			    && (updateRequest && !string.IsNullOrEmpty(comment.Comment) || updateRequest == false)) {
-				//обновление даты модификации
-				if (updateRequest) {
-					serviceRequest.ModificationDate = SystemTime.Now();
-					DbSession.Save(serviceRequest);
-					//Отправляем аппил о редактировании
-					string appealMessage =
-						string.Format(
-							"'Дата модификации' заявки изменена на {2}. <br/><strong>Причина:</strong> {3}",
-							serviceRequest.Id, ConfigHelper.GetParam("adminPanelNew"), serviceRequest.ModificationDate, comment.Comment);
-					serviceRequest.AddComment(DbSession, appealMessage, GetCurrentEmployee());
-				}
-				else {
-					//добавление комментария
-					serviceRequest.AddComment(DbSession, comment.Comment, GetCurrentEmployee());
-				}
+			if (errors.Length == 0 && serviceRequest.Id != 0 && !string.IsNullOrEmpty(comment.Comment)) {
+				//добавление комментария
+				serviceRequest.AddComment(DbSession, comment.Comment, GetCurrentEmployee());
 				//вывод сообщения
 				SuccessMessage("Комментарий был добавлен успешно.");
 				//переход к редактированию сервисной заяки
 				return RedirectToAction("ServiceRequestEdit", new {id = serviceRequest.Id});
-			}
-			if (updateRequest && string.IsNullOrEmpty(comment.Comment)) {
-				ErrorMessage("Не указана причина изменения даты обновления.");
 			}
 			//переход к редактированию сервисной заяки
 			ViewBag.ServiceRequest = serviceRequest;

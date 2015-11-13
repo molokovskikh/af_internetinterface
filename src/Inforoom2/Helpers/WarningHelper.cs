@@ -319,7 +319,7 @@ namespace Inforoom2.Helpers
 						return GetWarningActionResult(RedirectTarget.PhysVoluntaryBlocking);
 					}
 					//и баланс меньше 0
-					else if (client.Balance < 0) {
+					else if (client.Balance < 0 && client.Payments.Count != 0) {
 						return GetWarningActionResult(RedirectTarget.PhysLowBalance);
 					}
 					//и количество выплат (перечислений) = 0

@@ -99,10 +99,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate.ByteCode.Castle">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\NHibernate.ByteCode.Castle.dll</HintPath>
-    </Reference>
     <Reference Include="NPOI">
       <HintPath>..\..\packages\NPOI.1.2.5\lib\net40\NPOI.dll</HintPath>
     </Reference>

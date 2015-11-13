@@ -7,7 +7,7 @@ using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models.Services
 {
-	[Subclass(0, ExtendsType = typeof(Service), DiscriminatorValue = "DebtWork")]
+	[Subclass(0, ExtendsType = typeof (Service), DiscriminatorValue = "DebtWork")]
 	public class DeferredPayment : Service
 	{
 		public override bool CanActivate(ClientService assignedService)
@@ -46,10 +46,11 @@ namespace Inforoom2.Models.Services
 				var clientPayments =
 					(client.Payments != null) ? client.Payments.Where(p => p.PaidOn.Date >= serviceDate.Date).ToList() : null;
 				var paySum = (clientPayments != null) ? clientPayments.Sum(p => p.Sum) : 0;
-				var minSum = 0.8m * client.Plan.Price;
+				var minSum = 0.8m*client.Plan.Price;
 				if (paySum < minSum) {
-					NotActivateReason = string.Format("С последнего подключения услуги от {0} не пополнялся баланс на сумму абонентской платы тарифа.",
-						serviceDate.Date.ToShortDateString());
+					NotActivateReason =
+						string.Format("С последнего подключения услуги от {0} не пополнялся баланс на сумму абонентской платы тарифа.",
+							serviceDate.Date.ToShortDateString());
 					return false;
 				}
 			}
@@ -67,6 +68,7 @@ namespace Inforoom2.Models.Services
 			return client != null
 			       && client.Disabled
 			       && client.Balance <= 0
+			       && client.Payments.Count != 0
 			       && !client.HasActiveService<BlockAccountService>()
 			       && !client.HasActiveService<DeferredPayment>()
 			       && IsAvailableInThisTime(client)
