@@ -752,7 +752,7 @@ where CE.Client = {0}", Id))
 		public virtual decimal ToPay()
 		{
 			var toPay = GetPriceIgnoreDisabled() - PhysicalClient.Balance;
-			return toPay < 10 ? 10 : toPay;
+			return toPay <= 0m ? 0m : toPay < 10m ? 10m : toPay;
 		}
 
 		public virtual bool MinimumBalance()

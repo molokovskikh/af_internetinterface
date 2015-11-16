@@ -46,6 +46,7 @@ div.serviceManBlock .item {
 }
 	div.serviceManBlock .item p{
 	font-size: 12px;
+    margin-bottom: 1px;
 	}
 div.doNotPrint .button-inlineBlock{display: inline-block;}
 div.serviceManBlock .item .type {

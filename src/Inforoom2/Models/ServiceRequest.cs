@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web.Services.Description;
 using Common.MySql;
 using Common.Tools;
+using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Intefaces;
 using Inforoom2.validators;
@@ -178,6 +179,9 @@ namespace Inforoom2.Models
 			//списание средств
 			if (Sum != null
 			    && Sum > 0) {
+				if (Client.LegalClient != null) {
+					SendEmailAboutLawerPersonWriteOff(employee);
+				}
 				var comment = String.Format("Оказание дополнительных услуг, заявка №{0}", Id);
 				dbSession.Save(new UserWriteOff(Client, Sum.Value, comment) {Employee = employee});
 			}
@@ -187,6 +191,24 @@ namespace Inforoom2.Models
 					"Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>закрыта</strong>.",
 					Id, ConfigHelper.GetParam("adminPanelNew"));
 			AddComment(dbSession, appealMessage, employee);
+		}
+
+		private void SendEmailAboutLawerPersonWriteOff(Employee employee)
+		{
+			string reciver = ConfigHelper.GetParam("OrderNotificationMail");
+			const string topic = "Зарегистрировано разовое списание для Юр.Лица.";
+			var emailBody = string.Format(@"<strong>Зарегистрировано разовое списание для Юр.Лица.</strong>
+											<br/>Клиент: {0} - {1}
+											<br/>Списание: Сумма - {2}
+                                            <br/>Комментарий: Оказание дополнительных услуг, заявка № {3}
+											<br/>Оператор: {4}",
+				Client.Id,
+				Client.Fullname,
+				Sum,
+				Id,
+				employee.Name);
+
+			EmailSender.SendEmail(reciver, topic, emailBody);
 		}
 
 		/// <summary>
