@@ -271,21 +271,17 @@ namespace Inforoom2.Models
 			// дополнение списка комментариев событиями из логов по сервисным заявкам
 			commentsList.AddRange(dbSession.Query<Log>().Where(s => s.ModelId == this.Id
 			                                                        && s.ModelClass == this.GetType().Name &&
-			                                                        s.Type == LogEventType.Update && (
-				                                                        s.Message.IndexOf("title='ModificationDate'") == -1
-				                                                        ||
-				                                                        (s.Message.IndexOf("title='ModificationDate'") != -1 &&
-				                                                         s.Message.Length > 4200)
-				                                                        )).Select(s => new ServiceRequestComment()
-				                                                        {
-					                                                        // убираем ModificationDate из логов т.к. запись будет дублировать CreationDate
-					                                                        Comment =
-						                                                        s.Message.Replace("title='ModificationDate'",
-							                                                        "title='ModificationDate' style='display:none;'"),
-					                                                        ServiceRequest = this,
-					                                                        CreationDate = s.Date,
-					                                                        Author = s.Employee
-				                                                        }).ToList());
+			                                                        s.Type == LogEventType.Update)
+				.Select(s => new ServiceRequestComment()
+				{
+					// убираем ModificationDate из логов т.к. запись будет дублировать CreationDate
+					Comment =
+						s.Message.Replace("title='ModificationDate'",
+							"title='ModificationDate' style='display:none;'"),
+					ServiceRequest = this,
+					CreationDate = s.Date,
+					Author = s.Employee
+				}).ToList());
 			//возврат сортированного списка комментариев
 			return commentsList.OrderBy(s => s.CreationDate).ToList();
 		}
