@@ -4,7 +4,7 @@
 @model dynamic
 
 @{
-	ViewBag.Title = "Список пользователей";
+	ViewBag.Title = "Список клиентов";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	InforoomModelFilter<Client> pager = ViewBag.Pager;
 	IList<Client> clients = pager.GetItems();
@@ -70,7 +70,7 @@
 					@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
 				</div>
 				<div class="col-sm-1">
-					@pager.ExportButton(new { @class = "btn btn-sm btn-blue" })
+					@pager.ExportButton(new { @class = "btn btn-sm btn-blue margin" })
 				</div>
 			</div>
 		</div>

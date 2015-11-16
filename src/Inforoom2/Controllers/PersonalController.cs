@@ -93,9 +93,9 @@ namespace Inforoom2.Controllers
 
 					CurrentClient.SetStatus(Status.Get(StatusType.Worked, DbSession));
 
-					var internet = CurrentClient.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Internet);
+					var internet = CurrentClient.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Internet);
 					internet.ActivateFor(CurrentClient, DbSession);
-					var iptv = CurrentClient.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Iptv);
+					var iptv = CurrentClient.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Iptv);
 					iptv.ActivateFor(CurrentClient, DbSession);
 
 					if (CurrentClient.IsNeedRecofiguration)
@@ -122,9 +122,13 @@ namespace Inforoom2.Controllers
 				//Отображение клиенту Варнинга, если через 3 дня начинаютс списания за аренду (и до тех пор, пока он не расчитается и не изменится статус)
 				var timeSinceStatusChanged = (SystemTime.Now() - CurrentClient.StatusChangedOn);
 				var rentFreeDaysOverCome = CurrentClient.RentalHardwareList.FirstOrDefault(s => s.IsActive &&
-				                                                                                timeSinceStatusChanged.Value.Add(TimeSpan.FromDays(3)) > TimeSpan.FromDays(s.Hardware.FreeDays));
+				                                                                                timeSinceStatusChanged.Value.Add(
+					                                                                                TimeSpan.FromDays(3)) >
+				                                                                                TimeSpan.FromDays(
+					                                                                                s.Hardware.FreeDays));
 
-				if ((CurrentClient.Status.Type == StatusType.Dissolved || CurrentClient.Status.Type == StatusType.NoWorked) && rentFreeDaysOverCome != null) {
+				if ((CurrentClient.Status.Type == StatusType.Dissolved || CurrentClient.Status.Type == StatusType.NoWorked) &&
+				    rentFreeDaysOverCome != null) {
 					var timeSinceWriteOffStarts = (CurrentClient.StatusChangedOn.Value.AddDays(rentFreeDaysOverCome.Hardware.FreeDays));
 					string message = "С {0} {1} списания ежедневной платы за аренду";
 					if (timeSinceWriteOffStarts.Date > SystemTime.Now().Date) {
@@ -194,26 +198,35 @@ namespace Inforoom2.Controllers
 			const string writeOffRent = "ежедневная плата за аренду";
 			ViewBag.Title = "Платежи";
 			var client = CurrentClient;
-			var userWriteOffs = DbSession.Query<UserWriteOff>().Where(uwo => uwo.Client.Id == client.Id && uwo.Date > SystemTime.Now().AddMonths(-3));
-			var writeOffs = DbSession.Query<WriteOff>().Where(wo => wo.Client.Id == client.Id && wo.WriteOffDate > SystemTime.Now().AddMonths(-3));
-			var payments = DbSession.Query<Payment>().Where(p => p.Client.Id == client.Id && p.RecievedOn > SystemTime.Now().AddMonths(-3));
+			var userWriteOffs =
+				DbSession.Query<UserWriteOff>()
+					.Where(uwo => uwo.Client.Id == client.Id && uwo.Date > SystemTime.Now().AddMonths(-3));
+			var writeOffs =
+				DbSession.Query<WriteOff>()
+					.Where(wo => wo.Client.Id == client.Id && wo.WriteOffDate > SystemTime.Now().AddMonths(-3));
+			var payments =
+				DbSession.Query<Payment>().Where(p => p.Client.Id == client.Id && p.RecievedOn > SystemTime.Now().AddMonths(-3));
 
-			var historyList = userWriteOffs.Select(userWriteOff => new BillingHistory {
+			var historyList = userWriteOffs.Select(userWriteOff => new BillingHistory
+			{
 				Date = userWriteOff.Date,
 				Sum = userWriteOff.Sum,
 				Description = userWriteOff.Comment
 			}).ToList();
 
-			var userWiteOffList = writeOffs.ToList().Select(writeOff => {
+			var userWiteOffList = writeOffs.ToList().Select(writeOff =>
+			{
 				//Комментарий о списании за арендуемое оборудование, при его наличии. 
 				var commentWriteOff = "";
 				if (writeOff.Comment != null
 				    && writeOff.Comment.IndexOf(writeOffRent) != -1
 				    && writeOff.Comment.IndexOf(":") != -1) {
-					commentWriteOff = string.Format(writeOffAnaliticsFormat, writeOff.Comment.Substring(0, writeOff.Comment.IndexOf(":")));
+					commentWriteOff = string.Format(writeOffAnaliticsFormat,
+						writeOff.Comment.Substring(0, writeOff.Comment.IndexOf(":")));
 				}
 				//создаем эл-т отображаемого списка
-				return new BillingHistory {
+				return new BillingHistory
+				{
 					Date = writeOff.WriteOffDate,
 					Sum = writeOff.WriteOffSum,
 					Description = "Абонентская плата" + commentWriteOff
@@ -270,7 +283,7 @@ namespace Inforoom2.Controllers
 			if (smsContact == null) {
 				smsContact = new Contact();
 				smsContact.Type = ContactType.SmsSending;
-			} 
+			}
 			ViewBag.Contact = smsContact;
 			ViewBag.IsSmsNotificationActive = client.SendSmsNotification;
 			ViewBag.Title = "Уведомления";
@@ -284,14 +297,20 @@ namespace Inforoom2.Controllers
 			var client = CurrentClient;
 			var errors = ValidationRunner.Validate(contact);
 			//Валидация контакта
-			if (contact.ContactString != null && contact.ContactString.Length == 10) // добавление символа "-" при сохранении номера в БД
+			if (contact.ContactString != null && contact.ContactString.Length == 10)
+				// добавление символа "-" при сохранении номера в БД
 			{
-				contact.ContactString = contact.ContactString.IndexOf('-') != -1 ? contact.ContactString : contact.ContactString.Insert(3, "-");
+				contact.ContactString = contact.ContactString.IndexOf('-') != -1
+					? contact.ContactString
+					: contact.ContactString.Insert(3, "-");
 			}
 			if (client.SendSmsNotification == false) {
-				var contactValidation = new ValidatorContacts(); // Принудительная валидация модели контактов по атрибуту ValidatorContacts
+				var contactValidation = new ValidatorContacts();
+					// Принудительная валидация модели контактов по атрибуту ValidatorContacts
 				ViewBag.ContactValidation = contactValidation;
-				errors = errors.Length != 0 ? errors : ValidationRunner.ForcedValidationByAttribute<Contact>(contact, s => s.ContactString, contactValidation);
+				errors = errors.Length != 0
+					? errors
+					: ValidationRunner.ForcedValidationByAttribute<Contact>(contact, s => s.ContactString, contactValidation);
 			}
 
 			if (errors.Length == 0) {
@@ -304,7 +323,8 @@ namespace Inforoom2.Controllers
 				}
 				if (client.SendSmsNotification) {
 					client.SendSmsNotification = false;
-					var appeal = new Appeal("Клиент отписался от смс рассылки", client, AppealType.User) {
+					var appeal = new Appeal("Клиент отписался от смс рассылки", client, AppealType.User)
+					{
 						Employee = GetCurrentEmployee()
 					};
 					DbSession.Save(appeal);
@@ -312,14 +332,14 @@ namespace Inforoom2.Controllers
 				}
 				else {
 					client.SendSmsNotification = true;
-					var appeal = new Appeal("Клиент подписался на смс рассылку", client, AppealType.User) {
+					var appeal = new Appeal("Клиент подписался на смс рассылку", client, AppealType.User)
+					{
 						Employee = GetCurrentEmployee()
 					};
 					DbSession.Save(appeal);
 					SuccessMessage("Вы успешно подписались на смс рассылку");
 				}
-				if (!client.Contacts.Any(s => s.ContactString.Replace("-", "") == contact.ContactString.Replace("-", "")))
-				{
+				if (!client.Contacts.Any(s => s.ContactString.Replace("-", "") == contact.ContactString.Replace("-", ""))) {
 					smsContact.ContactString = contact.ContactString;
 				}
 				DbSession.Save(client);
@@ -348,7 +368,9 @@ namespace Inforoom2.Controllers
 			var client = CurrentClient;
 			InitPlans(client);
 			ViewBag.Client = client;
-			var isOnceOnlyUsed = DbSession.Query<PlanHistoryEntry>().Any(s => s.Client == client && (s.PlanAfter == plan || s.PlanBefore == plan) && plan.IsOnceOnly);
+			var isOnceOnlyUsed =
+				DbSession.Query<PlanHistoryEntry>()
+					.Any(s => s.Client == client && (s.PlanAfter.Id == plan.Id || s.PlanBefore.Id == plan.Id) && plan.IsOnceOnly);
 
 			if (isOnceOnlyUsed) {
 				ErrorMessage("На данный тариф нельзя перейти вновь.");
@@ -373,7 +395,8 @@ namespace Inforoom2.Controllers
 			var warning = (client.GetWorkDays() <= 3) ? " Обратите внимание, что у вас низкий баланс!" : "";
 			SuccessMessage("Тариф успешно изменен." + warning);
 			// добавление записи в историю тарифов пользователя
-			var planHistory = new PlanHistoryEntry {
+			var planHistory = new PlanHistoryEntry
+			{
 				Client = CurrentClient,
 				DateOfChange = SystemTime.Now(),
 				PlanAfter = plan,
@@ -382,8 +405,10 @@ namespace Inforoom2.Controllers
 			};
 			DbSession.Save(planHistory);
 
-			var msg = string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.", oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, result.Sum);
-			var appeal = new Appeal(msg, client, AppealType.User) {
+			var msg = string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.",
+				oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, result.Sum);
+			var appeal = new Appeal(msg, client, AppealType.User)
+			{
 				Employee = GetCurrentEmployee()
 			};
 			DbSession.Save(appeal);
@@ -403,11 +428,13 @@ namespace Inforoom2.Controllers
 
 			var deferredPayment = services.FirstOrDefault(i => i is DeferredPayment);
 			deferredPayment = BaseModel.UnproxyOrDefault(deferredPayment) as DeferredPayment;
-			var inforoomServices = new List<Service> { blockAccountService, deferredPayment };
+			var inforoomServices = new List<Service> {blockAccountService, deferredPayment};
 
 			ViewBag.Client = client;
 			//@todo Убрать исключения для статического IP, когда будет внедрено ручное включение сервиса
-			ViewBag.ClientServices = client.ClientServices.Where(cs => (cs.Service.Name == "Фиксированный ip-адрес" || cs.Service.IsActivableFromWeb) && cs.IsActivated).ToList();
+			ViewBag.ClientServices =
+				client.ClientServices.Where(
+					cs => (cs.Service.Name == "Фиксированный ip-адрес" || cs.Service.IsActivableFromWeb) && cs.IsActivated).ToList();
 			ViewBag.AvailableServices = inforoomServices;
 
 			ViewBag.BlockAccountService = blockAccountService;
@@ -421,10 +448,19 @@ namespace Inforoom2.Controllers
 			//если адреса нет, показываем все тарифы
 			if (client.PhysicalClient.Address != null) {
 				//Если у тарифа нет региона, то он доступен во всех регионах
-				plans = GetList<Plan>().Where(p => p.AvailableForOldClients && !p.Disabled && !p.IsServicePlan && (!p.RegionPlans.Any() || p.RegionPlans.Any(r => r.Region == client.PhysicalClient.Address.Region))).ToList();
+				plans =
+					GetList<Plan>()
+						.Where(
+							p =>
+								p.AvailableForOldClients && !p.Disabled && !p.IsServicePlan &&
+								(!p.RegionPlans.Any() || p.RegionPlans.Any(r => r.Region == client.PhysicalClient.Address.Region)))
+						.ToList();
 			}
 			else {
-				plans = GetList<Plan>().Where(p => p.AvailableForOldClients && !p.Disabled && !p.IsServicePlan && !p.RegionPlans.Any()).ToList();
+				plans =
+					GetList<Plan>()
+						.Where(p => p.AvailableForOldClients && !p.Disabled && !p.IsServicePlan && !p.RegionPlans.Any())
+						.ToList();
 			}
 
 			ViewBag.Plans = plans.ToList();

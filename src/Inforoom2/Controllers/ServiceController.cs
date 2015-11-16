@@ -27,11 +27,13 @@ namespace Inforoom2.Controllers
 
 			var deferredPayment = services.FirstOrDefault(i => i is DeferredPayment);
 			deferredPayment = BaseModel.UnproxyOrDefault(deferredPayment) as DeferredPayment;
-			var inforoomServices = new List<Service> { blockAccountService, deferredPayment };
+			var inforoomServices = new List<Service> {blockAccountService, deferredPayment};
 
 			ViewBag.Client = client;
 			//@todo Убрать исключения для статического IP, когда будет внедрено ручное включение сервиса
-			ViewBag.ClientServices = client.ClientServices.Where(cs => (cs.Service.Name == "Фиксированный ip-адрес" || cs.Service.IsActivableFromWeb) && cs.IsActivated).ToList();
+			ViewBag.ClientServices =
+				client.ClientServices.Where(
+					cs => (cs.Service.Name == "Фиксированный ip-адрес" || cs.Service.IsActivableFromWeb) && cs.IsActivated).ToList();
 			ViewBag.AvailableServices = inforoomServices;
 
 			ViewBag.BlockAccountService = blockAccountService;
@@ -40,6 +42,7 @@ namespace Inforoom2.Controllers
 
 		public ActionResult BlockAccount()
 		{
+			if (CurrentClient == null) return RedirectToAction("Login", "Account");
 			InitServices();
 			AddJavascriptParam("FreeBlockDays", CurrentClient.FreeBlockDays.ToString());
 			return View();
@@ -47,6 +50,7 @@ namespace Inforoom2.Controllers
 
 		public ActionResult DeferredPayment()
 		{
+			if (CurrentClient == null) return RedirectToAction("Login", "Account");
 			InitServices();
 			return View();
 		}
@@ -56,7 +60,8 @@ namespace Inforoom2.Controllers
 		{
 			var client = CurrentClient;
 			if (client.CanUseService(service) && blockingEndDate != null) {
-				var clientService = new ClientService {
+				var clientService = new ClientService
+				{
 					BeginDate = SystemTime.Now(),
 					EndDate = blockingEndDate,
 					Service = service,
@@ -68,9 +73,10 @@ namespace Inforoom2.Controllers
 					var appealText = "Услуга \"{0}\" активирована на период с {1} по {2}. Баланс {3}.";
 					var appeal = new Appeal(string.Format(appealText, service.Name, SystemTime.Now().ToShortDateString(),
 						blockingEndDate.Value.ToShortDateString(), client.Balance),
-						client, AppealType.User) {
-							Employee = GetCurrentEmployee()
-						};
+						client, AppealType.User)
+					{
+						Employee = GetCurrentEmployee()
+					};
 					DbSession.Save(appeal);
 				}
 				return RedirectToAction("Service", "Personal");
@@ -95,7 +101,8 @@ namespace Inforoom2.Controllers
 			DbSession.Update(client);
 			InitServices();
 			var appealText = "Услуга \"{0}\" деактивирована. Баланс {1}.";
-			var appeal = new Appeal(string.Format(appealText, service.Name, client.Balance), client, AppealType.User) {
+			var appeal = new Appeal(string.Format(appealText, service.Name, client.Balance), client, AppealType.User)
+			{
 				Employee = GetCurrentEmployee()
 			};
 			DbSession.Save(appeal);
@@ -108,7 +115,8 @@ namespace Inforoom2.Controllers
 		{
 			var client = CurrentClient;
 			if (client.CanUseService(service)) {
-				var clientService = new ClientService {
+				var clientService = new ClientService
+				{
 					BeginDate = SystemTime.Now(),
 					EndDate = SystemTime.Now().AddDays(3),
 					Service = service,
@@ -118,9 +126,10 @@ namespace Inforoom2.Controllers
 				if (clientService.IsActivated) {
 					var appealText = "Услуга \"{0}\" активирована на период с {1} по {2}. Баланс {3}.";
 					var appeal = new Appeal(string.Format(appealText, service.Name, SystemTime.Now().ToShortDateString(),
-						SystemTime.Now().AddDays(3).ToShortDateString(), client.Balance), client, AppealType.User) {
-							Employee = GetCurrentEmployee()
-						};
+						SystemTime.Now().AddDays(3).ToShortDateString(), client.Balance), client, AppealType.User)
+					{
+						Employee = GetCurrentEmployee()
+					};
 					DbSession.Save(appeal);
 				}
 				return RedirectToAction("Service", "Personal");
@@ -184,7 +193,8 @@ namespace Inforoom2.Controllers
 			DbSession.Save(client);
 			SuccessMessage("Тариф успешно изменен.");
 			// добавление записи в историю тарифов пользователя
-			var planHistory = new PlanHistoryEntry {
+			var planHistory = new PlanHistoryEntry
+			{
 				Client = CurrentClient,
 				DateOfChange = SystemTime.Now(),
 				PlanAfter = plan,
@@ -192,8 +202,10 @@ namespace Inforoom2.Controllers
 				Price = oldPlan.GetTransferPrice(plan)
 			};
 			DbSession.Save(planHistory);
-			var msg = string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.", oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, 0);
-			var appeal = new Appeal(msg, client, AppealType.User) {
+			var msg = string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.",
+				oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, 0);
+			var appeal = new Appeal(msg, client, AppealType.User)
+			{
 				Employee = GetCurrentEmployee()
 			};
 			DbSession.Save(appeal);

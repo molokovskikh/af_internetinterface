@@ -7,7 +7,7 @@
 @using Inforoom2.Models
 @using NHibernate.Util
 @{
-	ViewBag.Title = "Неподключенные клиенты";
+	ViewBag.Title = "Подключения клиентов";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 
 	InforoomModelFilter<Client> pager = ViewBag.Pager;
@@ -17,7 +17,7 @@
 <form>
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-sm-2">Зарегестрирован с </div>
+			<div class="col-sm-2">Зарегистрирован с </div>
 			<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new {@class = "form-control"})</div>
 			<div class="col-sm-1">по</div>
 			<div class="col-sm-2">@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.LowerOrEqual, new {@class = "form-control"})</div>
@@ -70,7 +70,7 @@
 				@pager.CleanButton(new {@class = "btn btn-success btn-sm"})
 			</div>
 			<div class="col-sm-1">
-				@pager.ExportButton(new {@class = "btn btn-sm btn-blue"})
+				@pager.ExportButton(new {@class = "btn btn-sm btn-blue margin" })
 			</div>
 		</div>
 	</div>

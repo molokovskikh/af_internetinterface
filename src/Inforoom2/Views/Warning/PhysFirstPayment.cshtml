@@ -14,7 +14,7 @@
 <div class="block-page">
 <p class="info">Номер лицевого счета для оплаты: @client.Id</p>
 	<p class="info">
-		Для начала работы внесите первый платеж @client.Plan.Price.ToString("F2") руб.
+		Для начала работы внесите первый платеж @client.GetUnlockPrice().ToString("F2") руб.
 	</p>
 	<form method="post" action="@Url.Action("TryToDisableWarning","Warning")">
 		<input name="referer" type="hidden" value="!{referer}">
