@@ -213,6 +213,18 @@
 		<tr>
 			<td>
 				<span class="description">Скидка: </span>${_client.Sale.ToString("0.00")}%
+				<div>
+					<form class="inlineForm" method="post" action="${siteroot}/UserInfo/GetLastSale">
+						<input type="hidden" name="clientId" value="${ClientCode}"/>
+                        <input type="text" name="comment" placeholder="Комментарий" style="
+                            height: 19px;
+                            border-style: none;
+                            border: 1px solid #D2D2D2;
+                            padding: 1px 5px;">
+						<button type="submit" class="editBut" style="
+                        padding: 2px 3px 2px 3px;">Вернуть скидку</button>
+					</form>
+				</div>
 			</td>
 		</tr>
 		<% if _client.AdditionalStatus != null: %>

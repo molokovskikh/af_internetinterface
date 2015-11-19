@@ -178,11 +178,73 @@ namespace InternetInterface.Controllers
 			RedirectToUrl("../Search/Redirect.rails?filter.ClientCode=" + ClientID + "&filter.EditConnectInfoFlag=" + true);
 		}
 
+		public void GetLastSale(uint clientId, string comment)
+		{
+			var client = DbSession.Load<Client>(clientId);
+			var writeOff =
+				client.WriteOffs.OrderByDescending(s => s.WriteOffDate)
+					.FirstOrDefault(s => s.Sale.HasValue && s.Sale > 0);
+			if (string.IsNullOrEmpty(comment)) {
+				Error("Заполните комментарий!");
+			}
+			if (writeOff != null) {
+				if (writeOff.Sale <= client.Sale) {
+					Error("Клиент не нуждается в восстановлении скидки!");
+				}
+				else {
+					if (string.IsNullOrEmpty(comment) == false) {
+						client.Sale = writeOff.Sale.Value;
+						var partner = Partner.GetInitPartner();
+						var appealText = string.Format("Скидка {0}% возвращена клиенту {1}. Вернул {2}. Причина: {3}",
+							client.Sale.ToString("0.00"), client.Id, partner.Name, comment);
+						client.CreareAppeal(appealText, AppealType.Statistic);
+						DbSession.Save(client);
+
+						var mailer = this.Mailer<Mailer>();
+
+						var str = ConfigurationManager.AppSettings["SaleUpdateMail"];
+						if (str == null)
+							throw new Exception("Параметр приложения SaleUpdateMail должен быть задан в config");
+
+						var emails = str.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+#if DEBUG
+#else
+						mailer.SendText("internet@ivrn.net", emails, "Уведомление о возврате скидки", appealText);
+#endif
+						Notify("Скидка возвращена!");
+					}
+				}
+			}
+			else {
+				Error("У клиента нет было скидки!");
+			}
+			RedirectTo(client);
+		}
+
 		public void ActivateService(uint clientId, uint serviceId, DateTime? startDate, DateTime? endDate)
 		{
 			var servise = DbSession.Load<Service>(serviceId);
 			var client = DbSession.Load<Client>(clientId);
 			var dtn = DateTime.Now;
+			//Валидации даты
+			if (startDate.HasValue && endDate.HasValue) {
+				var lessThanPast = DateTime.Compare(endDate.Value.Date, SystemTime.Now().Date);
+				var lessThanCurrent = DateTime.Compare(endDate.Value.Date, startDate.Value.Date);
+				if (lessThanPast != 1 || lessThanCurrent != 1) {
+					Error("Дата окончания может быть выставлена только для будущего периода");
+					RedirectTo(client);
+					return;
+				}
+			}
+			if (endDate.HasValue) {
+				var lessThanPast = DateTime.Compare(endDate.Value.Date, SystemTime.Now().Date);
+				;
+				if (lessThanPast != 1) {
+					Error("Дата окончания может быть выставлена только для будущего периода");
+					RedirectTo(client);
+					return;
+				}
+			}
 			if (servise.InterfaceControl) {
 				var clientService = new ClientService
 				{

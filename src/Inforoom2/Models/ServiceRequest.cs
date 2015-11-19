@@ -60,7 +60,7 @@ namespace Inforoom2.Models
 		 Description("Описание заявки")]
 		public virtual string Description { get; set; }
 
-		// TODO: удалить это поле в скором будущем!
+		// TODO: удалить это поле в скором будущем! // еще раз убедился, что это нужно выпилить следующим рефакторингом, заменив проверкой статуса клиента! 
 		[Property(Column = "BlockForRepair"), Description("Блокировать клиента и списание")]
 		public virtual bool BlockClientAndWriteOffs { get; set; }
 
@@ -145,8 +145,15 @@ namespace Inforoom2.Models
 						ModificationDate = SystemTime.Now();
 						Cancel(dbSession, employee);
 					}
-
 					break;
+				case ServiceRequestStatus.New:
+					if (Status != status) {
+						Status = status;
+						ModificationDate = SystemTime.Now();
+						New(dbSession, employee);
+					}
+					break;
+
 				default:
 					Status = status;
 					ModificationDate = SystemTime.Now();
@@ -157,14 +164,39 @@ namespace Inforoom2.Models
 		/// <summary>
 		/// При отмене заявки
 		/// </summary>
+		private void New(ISession dbSession, Employee employee)
+		{
+			// вероятно, в скором будущем отправка смс
+			string stPostfix = "";
+			if (BlockClientAndWriteOffs) {
+				BlockClientAndWriteOffs = false;
+				stPostfix = ", отменено восстановление работы";
+			}
+			CancelDate = null;
+			ClosedDate = null;
+			string appealMessage =
+				string.Format(
+					"Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>снова открыта" + stPostfix +
+					"</strong>.",
+					Id, ConfigHelper.GetParam("adminPanelNew"));
+			AddComment(dbSession, appealMessage, employee);
+		}
+
+		/// <summary>
+		/// При отмене заявки
+		/// </summary>
 		private void Cancel(ISession dbSession, Employee employee)
 		{
-			TrySwitchClientStatusTo_Worked(dbSession);
+			string stPostfix = "";
+			if (TrySwitchClientStatusTo_Worked(dbSession)) {
+				stPostfix = ", выполнено восстановление работы";
+			}
 			// вероятно, в скором будущем отправка смс
 			CancelDate = SystemTime.Now();
 			string appealMessage =
 				string.Format(
-					"Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>отменена</strong>.",
+					"Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>отменена" + stPostfix +
+					"</strong>.",
 					Id, ConfigHelper.GetParam("adminPanelNew"));
 			AddComment(dbSession, appealMessage, employee);
 		}
@@ -174,7 +206,10 @@ namespace Inforoom2.Models
 		/// </summary>
 		private void Close(ISession dbSession, Employee employee)
 		{
-			TrySwitchClientStatusTo_Worked(dbSession);
+			string stPostfix = "";
+			if (TrySwitchClientStatusTo_Worked(dbSession)) {
+				stPostfix = ", выполнено восстановление работы";
+			}
 			ClosedDate = SystemTime.Now();
 			//списание средств
 			if (Sum != null
@@ -188,7 +223,8 @@ namespace Inforoom2.Models
 
 			string appealMessage =
 				string.Format(
-					"Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>закрыта</strong>.",
+					"Сервисная заявка № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>закрыта" + stPostfix +
+					"</strong>.",
 					Id, ConfigHelper.GetParam("adminPanelNew"));
 			AddComment(dbSession, appealMessage, employee);
 		}
@@ -214,7 +250,7 @@ namespace Inforoom2.Models
 		/// <summary>
 		/// Попытка выставить клиенту статус Worked, если для этого выполнены все условия
 		/// </summary> 
-		public virtual void TrySwitchClientStatusTo_Worked(ISession dbSession)
+		public virtual bool TrySwitchClientStatusTo_Worked(ISession dbSession)
 		{
 			if (BlockClientAndWriteOffs
 			    && Client.Status.Type == StatusType.BlockedForRepair
@@ -223,8 +259,11 @@ namespace Inforoom2.Models
 			    !dbSession.Query<ServiceRequest>()
 				    .Any(r => r.Client == Client && r.Status == ServiceRequestStatus.New && r.BlockClientAndWriteOffs)) {
 				ModificationDate = SystemTime.Now();
+				BlockClientAndWriteOffs = false;
 				Client.SetStatus(Models.Status.Get(StatusType.Worked, dbSession));
+				return true;
 			}
+			return false;
 		}
 
 		/// <summary>
@@ -238,7 +277,7 @@ namespace Inforoom2.Models
 
 				string appealMessage =
 					string.Format(
-						"По сервисной заявке № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>необходимо восстановление работы.</strong>.",
+						"По сервисной заявке № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>необходимо восстановление работы</strong>.",
 						Id, ConfigHelper.GetParam("adminPanelNew"));
 				AddComment(dbSession, appealMessage, employee);
 			}

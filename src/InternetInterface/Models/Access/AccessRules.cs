@@ -225,6 +225,7 @@ namespace InternetInterface.Models.Access
 				"UserWriteOff",
 				"BindPhone",
 				"LoadContactEditModule",
+				"GetLastSale",
 				"SaveContacts",
 				"DeleteContact",
 				"AddOrderService",
