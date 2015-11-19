@@ -29,7 +29,8 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			//получаем клиента со статусом "нормальный клиент"
 			ClientWithRequest = DbSession.Query<Client>().FirstOrDefault(s => s.Comment == "нормальный клиент");
 
-			if (createRequest) {
+			if (createRequest)
+			{
 				//удаление похожих сервисных заявок от клиента
 				var listOfServiceRequestsToDelete = DbSession.Query<ServiceRequest>()
 					.Where(s => s.Client == ClientWithRequest && s.Description == requestText && s.Phone == requestPhone).ToList();
@@ -74,7 +75,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			browser.FindElementByCssSelector("button.btn-green").Click();
 
 			//Проверка на формирование сообщений
-			var appealsToCheck = DbSession.Query<ServiceRequestComment>().Where(s => s.ServiceRequest.Client == ClientWithRequest).ToList().Where(d => d.Comment.IndexOf("<strong>необходимо восстановление работы.</strong>") != -1).ToList();
+			var appealsToCheck = DbSession.Query<ServiceRequestComment>().Where(s => s.ServiceRequest.Client == ClientWithRequest).ToList().Where(d => d.Comment.IndexOf("<strong>необходимо восстановление работы</strong>") != -1).ToList();
 			Assert.That(appealsToCheck.Count, Is.Not.EqualTo(0), "У клиента должны появиться аппилы после создания заявки.");
 
 			//проверка соответствия: сообщения об успешном добавлении
@@ -227,7 +228,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 
 
 			//Проверка на формирование сообщений
-			var appealsToCheck = DbSession.Query<ServiceRequestComment>().Where(s => s.ServiceRequest.Client == ClientWithRequest).ToList().Where(d => d.Comment.IndexOf("<strong>необходимо восстановление работы.</strong>") != -1).ToList();
+			var appealsToCheck = DbSession.Query<ServiceRequestComment>().Where(s => s.ServiceRequest.Client == ClientWithRequest).ToList().Where(d => d.Comment.IndexOf("<strong>необходимо восстановление работы</strong>") != -1).ToList();
 			Assert.That(appealsToCheck.Count, Is.Not.EqualTo(0), "У клиента должны появиться аппилы после нажатие на кнопку 'восстановление работы'.");
 
 			//обновление модели: клиент

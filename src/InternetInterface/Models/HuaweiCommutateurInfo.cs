@@ -84,10 +84,35 @@ namespace InternetInterface.Models
 				Thread.Sleep(1000);
 				//обработка полученных сведений 
 				var interfaces = HardwareHelper.DelCommandAndHello(telnet.Read(), command);
+				telnet.WriteLine("q");
 				GetInfo(interfaces, propertyBag);
+
+				command = string.Format("display dhcp snooping user-bind interface Ethernet 0/0/{0}", port);
+				telnet.WriteLine(command);
+				Thread.Sleep(1000);
+				string macInfoString = telnet.Read();
+				var macInfo = HardwareHelper.ResultInArray(macInfoString, command);
+				GetSnoopingInfo(macInfo, propertyBag);
 			}
 			finally {
 				telnet.WriteLine("quite");
+			}
+		}
+
+		protected void GetSnoopingInfo(string[] macInfo, IDictionary propertyBag)
+		{
+			if (macInfo.Length > 30) {
+				for (int i = 0; i < macInfo.Length; i++) {
+					if (macInfo[i].IndexOf("-----------------------------------------------------------------------") != -1 &&
+					    macInfo.Length > i + 2) {
+						propertyBag["IPResult"] = macInfo[i].Replace("-", "");
+						propertyBag["MACResult"] = macInfo[++i];
+						break;
+					}
+				}
+			}
+			else {
+				propertyBag["Message"] = Message.Error("Соединение на порту отсутствует");
 			}
 		}
 
