@@ -194,6 +194,7 @@ namespace InternetInterface.Controllers
 				else {
 					if (string.IsNullOrEmpty(comment) == false) {
 						client.Sale = writeOff.Sale.Value;
+						client.StartNoBlock = SystemTime.Now();
 						var partner = Partner.GetInitPartner();
 						var appealText = string.Format("Скидка {0}% возвращена клиенту {1}. Вернул {2}. Причина: {3}",
 							client.Sale.ToString("0.00"), client.Id, partner.Name, comment);
