@@ -20,6 +20,19 @@ namespace InternetInterface.Models
 			get { return "PortInfoDlink"; }
 		}
 
+		private readonly string[] _switchModel = {"3028", "3526"};
+		private string CurrentSwitchModel { get; set; }
+
+		private void GetSwitchCurrentModel(string switchName)
+		{
+			foreach (string t in _switchModel) {
+				if (switchName.IndexOf(t) != -1) {
+					CurrentSwitchModel = t;
+					break;
+				}
+			}
+		}
+
 		private IDictionary PropertyBag { get; set; }
 
 		/// <summary>
@@ -58,6 +71,7 @@ namespace InternetInterface.Models
 			}
 		}
 
+
 		/// <summary>
 		/// Опрос коммутатора
 		/// </summary>
@@ -66,8 +80,16 @@ namespace InternetInterface.Models
 		/// <param name="propertyBag"></param>
 		protected void AskTheSwitch(ClientEndpoint point, string login, string password, IDictionary propertyBag)
 		{
+			GetSwitchCurrentModel(point.Switch.Name);
+
 #if DEBUG
+			//для модели Des-3028
 			var telnet = new TelnetConnection("172.16.4.130", 23);
+
+			//для модели Des-3526
+			if (CurrentSwitchModel == _switchModel[1]) {
+				telnet = new TelnetConnection("172.16.5.115", 23);
+			}
 #else
 			var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
 #endif
@@ -105,22 +127,32 @@ namespace InternetInterface.Models
 				Thread.Sleep(1000);
 
 				//обработка полученных сведений
-
-				//общие сведения
-				var generalInfo = GetDataByColumnPattern(rowGeneralInformation, ColumnPattern.GeneralInformation);
-				propertyBag["interfaceLines"] = generalInfo;
-
-				//сведения о счетчиках ***Состоит из двух таблиц
-				GetDataByColumnPattern(rowPackageCounter, ColumnPattern.PackageCounter);
-
-				//сведения об ошибках
-				var interfaceCounters = GetDataByColumnPattern(rowErrorCounter, ColumnPattern.ErrorCounter);
-				propertyBag["interfaceCounters"] = interfaceCounters;
+				GetDataBySwitchModel(rowGeneralInformation, rowPackageCounter, rowErrorCounter, propertyBag);
 			}
 			finally {
 				telnet.WriteLine("logout");
 			}
 		}
+
+		////для модели Des-3028
+		//	if (CurrentSwitchModel == _switchModel[0])
+		//	//для модели Des-3526
+		//	if (CurrentSwitchModel == _switchModel[1])
+		private void GetDataBySwitchModel(string rowGeneralInformation,
+			string rowPackageCounter, string rowErrorCounter, IDictionary propertyBag)
+		{
+			//общие сведения
+			var generalInfo = GetDataByColumnPattern(rowGeneralInformation, ColumnPattern.GeneralInformation);
+			propertyBag["interfaceLines"] = generalInfo;
+
+			//сведения о счетчиках ***Состоит из двух таблиц
+			GetDataByColumnPattern(rowPackageCounter, ColumnPattern.PackageCounter);
+
+			//сведения об ошибках
+			var interfaceCounters = GetDataByColumnPattern(rowErrorCounter, ColumnPattern.ErrorCounter);
+			propertyBag["interfaceCounters"] = interfaceCounters;
+		}
+
 
 		/// <summary>
 		/// Обработка общих сведений
@@ -129,8 +161,9 @@ namespace InternetInterface.Models
 		/// <returns></returns>
 		protected override List<Tuple<bool, string>> GetDataOfGeneralInformation(string data)
 		{
-			if (data.IndexOf(" Port   State/") != -1) {
-				data = data.Substring(data.IndexOf(" Port   State/"));
+			var portState = (CurrentSwitchModel == _switchModel[0]) ? " Port   State/" : "Port  State/";
+			if (data.IndexOf(portState) != -1) {
+				data = data.Substring(data.IndexOf(portState));
 			}
 			if (data.IndexOf(@"                                                              ") != -1) {
 				data = data.Substring(0, data.IndexOf(@"                                                              "));
@@ -171,8 +204,10 @@ namespace InternetInterface.Models
 		/// <returns></returns>
 		protected override List<Tuple<bool, string>> GetDataOfPackageCounter(string data)
 		{
-			if (data.IndexOf(" Frame Size") != -1) {
-				data = data.Substring(data.IndexOf(" Frame Size"));
+			var frameSize = (CurrentSwitchModel == _switchModel[0]) ? " Frame Size" : "Frame Size";
+			var reservData = "";
+			if (data.IndexOf(frameSize) != -1) {
+				data = data.Substring(data.IndexOf(frameSize));
 			}
 			if (data.IndexOf("[") != -1) {
 				data = data.Substring(0, data.IndexOf("["));
@@ -181,7 +216,11 @@ namespace InternetInterface.Models
 				data = data.Substring(0, data.IndexOf(@"                                                              "));
 			}
 			var dataList = new List<Tuple<bool, string>>();
-			var stucturedData = GetStucturedData(data);
+
+			var stucturedData = CurrentSwitchModel == _switchModel[1]
+				? GetStucturedData(data, "------------  ------------  ----------".Length)
+				: GetStucturedData(data);
+
 			var columnCount = LineData.GetColumnsCount();
 			int startIndex = 0;
 			var concatenator = new ColumnConcatenator();
@@ -211,12 +250,16 @@ namespace InternetInterface.Models
 			//певая таблица
 			PropertyBag["countersLinesA"] = dataList;
 
-			if (data.IndexOf(" Frame Type") != -1) {
-				data = data.Substring(data.IndexOf(" Frame Type"));
+
+			var frameType = (CurrentSwitchModel == _switchModel[0]) ? " Frame Type" : "Frame Type";
+			if (data.IndexOf(frameType) != -1) {
+				data = data.Substring(data.IndexOf(frameType));
 			}
 			dataList = new List<Tuple<bool, string>>();
 			concatenator = new ColumnConcatenator();
-			stucturedData = GetStucturedData(data);
+			stucturedData = CurrentSwitchModel == _switchModel[1]
+				? GetStucturedData(data, "------------  ------------  ----------".Length, true)
+				: GetStucturedData(data);
 			columnCount = LineData.GetColumnsCount();
 			startIndex = 0;
 
@@ -291,10 +334,30 @@ namespace InternetInterface.Models
 		/// </summary>
 		/// <param name="data"></param>
 		/// <returns></returns>
-		private List<LineData> GetStucturedData(string data)
+		private List<LineData> GetStucturedData(string data, int cleanNumber = 0, bool revers = false)
 		{
 			var lineList = new List<LineData>();
 			var lines = data.Split('\n');
+			if (cleanNumber != 0) {
+				if (revers)
+					for (int i = 0; i < lines.Length; i++) {
+						if (lines[i].Length > cleanNumber) {
+							lines[i] = lines[i].Substring(cleanNumber, lines[i].Length - cleanNumber);
+							while (lines[i].IndexOf(" ") == 0) {
+								lines[i] = lines[i].Substring(1);
+							}
+							if (lines[i].IndexOf("----------  ----------  ---------") != -1) {
+								lines[i] = "----------  ----------  ---------";
+							}
+						}
+					}
+				else
+					for (int i = 0; i < lines.Length; i++) {
+						if (lines[i].Length >= cleanNumber) {
+							lines[i] = lines[i].Substring(0, cleanNumber);
+						}
+					}
+			}
 			if (!lines.Any(s => s.IndexOf("----") != -1)) {
 				throw new Exception("Строка не содержит маркера нарезки '-' !");
 			}

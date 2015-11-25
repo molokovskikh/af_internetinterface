@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using Castle.Core.Logging;
 using Common.Tools;
@@ -63,7 +64,7 @@ namespace InternetInterface.Models
 		/// <param name="password"></param>
 		/// <param name="propertyBag"></param>
 		protected void AskTheSwitch(ClientEndpoint point, string login, string password, IDictionary propertyBag)
-		{
+		{ 
 #if DEBUG
 			var telnet = new TelnetConnection("172.16.4.74", 23);
 #else
@@ -106,7 +107,11 @@ namespace InternetInterface.Models
 					if (macInfo[i].IndexOf("-----------------------------------------------------------------------") != -1 &&
 					    macInfo.Length > i + 2) {
 						propertyBag["IPResult"] = macInfo[i].Replace("-", "");
-						propertyBag["MACResult"] = macInfo[++i];
+						var currentMac = macInfo[++i].Replace("-", "").ToUpper();
+						if (currentMac.Length == 12) {
+							currentMac = currentMac.Insert(2, "-").Insert(5, "-").Insert(8, "-").Insert(11, "-").Insert(14, "-");
+						}
+						propertyBag["MACResult"] = currentMac;
 						break;
 					}
 				}

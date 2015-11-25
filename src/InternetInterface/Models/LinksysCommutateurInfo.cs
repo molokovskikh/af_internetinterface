@@ -15,6 +15,20 @@ namespace InternetInterface.Models
 {
 	public class LinksysCommutateurInfo : IPortInfo
 	{
+		private readonly string[] _switchModel = {"SG300"};
+		private string CurrentSwitchModel { get; set; }
+
+		private void GetSwitchCurrentModel(string switchName)
+		{
+			CurrentSwitchModel = "";
+			foreach (string t in _switchModel) {
+				if (switchName.IndexOf(t) != -1) {
+					CurrentSwitchModel = t;
+					break;
+				}
+			}
+		}
+
 		public void GetPortInfo(ISession session, IDictionary propertyBag, ILogger logger, uint endPointId)
 		{
 			var point = session.Load<ClientEndpoint>(endPointId);
@@ -22,10 +36,10 @@ namespace InternetInterface.Models
 			propertyBag["lease"] = session.Query<Lease>().FirstOrDefault(l => l.Endpoint == point);
 			var login = ConfigurationManager.AppSettings["linksysLogin"];
 			var password = ConfigurationManager.AppSettings["linksysPassword"];
-
+			GetSwitchCurrentModel(point.Switch.Name);
 			try {
 #if DEBUG
-				var telnet = new TelnetConnection("172.16.2.112", 23);
+				var telnet = new TelnetConnection(CurrentSwitchModel == _switchModel[0] ? "172.16.5.122" : "172.16.5.105", 23);
 				telnet.Login(login, password, 100);
 				var port = 3.ToString();
 #else
@@ -35,18 +49,20 @@ namespace InternetInterface.Models
 #endif
 				telnet.WriteLine("terminal length 0");
 
-				var command = string.Format("show interfaces status FastEthernet {0}", port);
+				var command = string.Format("show interfaces status {0} {1}",
+					CurrentSwitchModel == _switchModel[0] ? "GigabitEthernet" : "FastEthernet", port);
 				telnet.WriteLine(command);
 				Thread.Sleep(500);
 				var interfaces = HardwareHelper.DelCommandAndHello(telnet.Read(), command);
 				GetInterfacesInfo(interfaces, propertyBag);
 
 
-				command = string.Format("show interfaces counters FastEthernet {0}", port);
+				command = string.Format("show interfaces counters {0} {1}",
+					CurrentSwitchModel == _switchModel[0] ? "GigabitEthernet" : "FastEthernet", port);
 				telnet.WriteLine(command);
 				Thread.Sleep(1000);
 				var counters = HardwareHelper.DelCommandAndHello(telnet.Read(), command);
-				var countersForView = counters.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+				var countersForView = counters.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).ToList();
 				GetCountersInfo(counters, propertyBag);
 
 				command = string.Format(" ");
@@ -60,7 +76,8 @@ namespace InternetInterface.Models
 				interfaceCountersItems.Add(transmittedPauseFramesText.Substring(transmittedIndex, nextTransSpace - transmittedIndex));
 				propertyBag["interfaceCounters"] = interfaceCountersItems;
 
-				command = string.Format("show ip dhcp snooping binding FastEthernet {0}", port);
+				command = string.Format("show ip dhcp snooping binding {0} {1}",
+					CurrentSwitchModel == _switchModel[0] ? "GigabitEthernet" : "FastEthernet", port);
 				telnet.WriteLine(command);
 				Thread.Sleep(500);
 				var macInfo = HardwareHelper.ResultInArray(telnet.Read(), command);
@@ -78,16 +95,17 @@ namespace InternetInterface.Models
 		{
 			var commandIndex = interfaces.LastIndexOf('>');
 			interfaces = interfaces.Substring(commandIndex + 4, interfaces.Length - commandIndex - 4);
-			var interfaceForView = interfaces.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Select(i => i.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList();
-			var firstLine = new List<string> { string.Empty, string.Empty, string.Empty, string.Empty, string.Empty };
+			var interfaceForView =
+				interfaces.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries)
+					.Select(i => i.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries))
+					.ToList();
+			var firstLine = new List<string> {string.Empty, string.Empty, string.Empty, string.Empty, string.Empty};
 			firstLine.AddRange(interfaceForView[0].ToList());
 			interfaceForView[0] = firstLine.ToArray();
 			var result = new List<string[]>();
 			var line = new List<string>();
 			var updatedData = DeleteEmptyLines(interfaceForView).ToList();
-			for (int i = 0; i < updatedData[0].Length; i++) {
-				line.Add(updatedData[0][i] + " " + updatedData[1][i]);
-			}
+			for (int i = 0; i < updatedData[0].Length; i++) line.Add(updatedData[0][i] + " " + updatedData[1][i]);
 			result.Add(line.ToArray());
 			result.Add(updatedData[2]);
 			propertyBag["interfaceLines"] = result;
@@ -95,9 +113,10 @@ namespace InternetInterface.Models
 
 		protected void GetCountersInfo(string counters, IDictionary propertyBag)
 		{
-			var countersForView = counters.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+			var countersForView = counters.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).ToList();
 			var countersToTable = countersForView.GetRange(1, 6);
-			var countersToTableForView = countersToTable.Select(i => i.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList();
+			var countersToTableForView =
+				countersToTable.Select(i => i.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries)).ToList();
 			var mashineLines = DeleteEmptyLines(countersToTableForView);
 			propertyBag["countersLines"] = RenameTable(mashineLines);
 		}
