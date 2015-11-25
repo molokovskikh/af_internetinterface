@@ -12,6 +12,7 @@ using InternetInterface.Helpers;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using log4net;
+using Task = System.Threading.Tasks.Task;
 
 namespace InternetInterface.Controllers
 {
@@ -30,7 +31,7 @@ namespace InternetInterface.Controllers
 			var point = DbSession.Get<ClientEndpoint>(endPoint);
 			var informator = HardwareHelper.GetPortInformator(point);
 			if (informator != null) {
-				informator.GetPortInfo(DbSession, PropertyBag, Logger, endPoint);
+				Task.Run(() => informator.GetPortInfo(DbSession, PropertyBag, Logger, endPoint)).Wait(); 
 				RenderView(informator.ViewName);
 			}
 			else {
