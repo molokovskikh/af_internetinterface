@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using InternetInterface.Models;
+using Inforoom2.Models;
 using Contact = Inforoom2.Models.Contact;
 
 namespace Inforoom2.validators

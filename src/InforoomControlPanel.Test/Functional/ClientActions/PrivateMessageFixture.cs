@@ -14,7 +14,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			var client = DbSession.Query<Client>().FirstOrDefault();
 			Assert.IsNotNull(client, "\nНи один клиент не найден!");
 
-			Open("Client/Info?Id=" + client.Id);
+			Open("Client/InfoPhysical?Id=" + client.Id);
 			Css("#PrivateMsgBtn").Click();
 			AssertText(client.PhysicalClient.FullName);
 			Css("#privateMessage_Text").SendKeys("Тестовое сообщение");

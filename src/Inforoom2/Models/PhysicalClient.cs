@@ -21,13 +21,14 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Модель физического клиента
 	/// </summary>
-	[Class(0, Table = "PhysicalClients", Schema = "internet", NameType = typeof(PhysicalClient)), Description("Клиент")]
-	public class PhysicalClient : BaseModel, ILogAppeal
+	[Class(0, Table = "PhysicalClients", Schema = "internet", NameType = typeof (PhysicalClient)), Description("Клиент")]
+	public class PhysicalClient : BaseModel, ILogAppeal, IClientExpander
 	{
 		[Property, Description("Пароль физического клиента")]
 		public virtual string Password { get; set; }
 
-		[ManyToOne(Column = "_Address", Cascade = "save-update"), NotNull(Message = "Адрес указан не полностью!"), Description("Адрес")]
+		[ManyToOne(Column = "_Address", Cascade = "save-update"), NotNull(Message = "Адрес указан не полностью!"),
+		 Description("Адрес")]
 		public virtual Address Address { get; set; }
 
 		[Property(Column = "_Email", NotNull = true), Description("Электронаня почта физического клиента")]
@@ -35,8 +36,7 @@ namespace Inforoom2.Models
 		{
 			get
 			{
-				if (Client != null && Client.Contacts != null)
-				{
+				if (Client != null && Client.Contacts != null) {
 					var contactMail = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.Email);
 					return contactMail != null ? contactMail.ContactString : "";
 				}
@@ -44,11 +44,9 @@ namespace Inforoom2.Models
 			}
 			set
 			{
-				if (Client != null && Client.Contacts != null)
-				{
+				if (Client != null && Client.Contacts != null) {
 					var contactMail = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.Email);
-					if (contactMail != null)
-					{
+					if (contactMail != null) {
 						contactMail.ContactString = value;
 					}
 				}
@@ -111,8 +109,7 @@ namespace Inforoom2.Models
 		{
 			get
 			{
-				if (Client != null && Client.Contacts != null)
-				{
+				if (Client != null && Client.Contacts != null) {
 					var contactPhone = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
 					return contactPhone != null ? contactPhone.ContactString : "";
 				}
@@ -120,11 +117,9 @@ namespace Inforoom2.Models
 			}
 			set
 			{
-				if (Client != null && Client.Contacts != null)
-				{
+				if (Client != null && Client.Contacts != null) {
 					var contactPhone = this.Client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
-					if (contactPhone != null)
-					{
+					if (contactPhone != null) {
 						contactPhone.ContactString = value;
 					}
 				}
@@ -139,7 +134,7 @@ namespace Inforoom2.Models
 
 		[Property(NotNull = true), NotEmpty(Message = "Введите отчество"), Description("Отчество")]
 		public virtual string Patronymic { get; set; }
-		 
+
 		[DataType(DataType.Date)]
 		[Property(Column = "DateOfBirth"), Description("Дата рождения клиента")]
 		public virtual DateTime BirthDate { get; set; }
@@ -155,8 +150,7 @@ namespace Inforoom2.Models
 		public virtual UserWriteOff RequestChangePlan(Plan planToSwitchOn)
 		{
 			var price = Plan.GetTransferPrice(planToSwitchOn);
-			if (!IsEnoughBalance(price))
-			{
+			if (!IsEnoughBalance(price)) {
 				return null;
 			}
 			return SwitchPlan(planToSwitchOn, price);
@@ -183,8 +177,7 @@ namespace Inforoom2.Models
 
 		public virtual bool IsEnoughBalance(decimal sum)
 		{
-			if (sum < 0)
-			{
+			if (sum < 0) {
 				return false;
 			}
 			return Balance - sum > 0;
@@ -212,12 +205,10 @@ namespace Inforoom2.Models
 			decimal virtualWriteoff;
 			decimal moneyWriteoff;
 
-			if (writeoffVirtualFirst)
-			{
+			if (writeoffVirtualFirst) {
 				virtualWriteoff = Math.Min(sum, VirtualBalance);
 			}
-			else
-			{
+			else {
 				virtualWriteoff = Math.Min(Math.Abs(Math.Min(MoneyBalance - sum, 0)), VirtualBalance);
 			}
 			moneyWriteoff = sum - virtualWriteoff;
@@ -241,18 +232,16 @@ namespace Inforoom2.Models
 		{
 			var availableChars = "23456789qwertyupasdfghjkzxcvbnmQWERTYUPASDFGHJKLZXCVBNM";
 			var password = String.Empty;
-			while (password.Length < 8)
-			{
+			while (password.Length < 8) {
 				int availableChars_elem = 0;
 
 				var rngCsp = new RNGCryptoServiceProvider();
 				var randomNumber = new byte[1];
-				do
-				{
+				do {
 					rngCsp.GetBytes(randomNumber);
-				} while (!(randomNumber[0] < (availableChars.Length - 1) * (Byte.MaxValue / (availableChars.Length - 1))));
+				} while (!(randomNumber[0] < (availableChars.Length - 1)*(Byte.MaxValue/(availableChars.Length - 1))));
 
-				availableChars_elem = (randomNumber[0] % (availableChars.Length - 1)) + 1;
+				availableChars_elem = (randomNumber[0]%(availableChars.Length - 1)) + 1;
 
 				password += availableChars[availableChars_elem];
 			}
@@ -266,12 +255,14 @@ namespace Inforoom2.Models
 		{
 			return session.Query<Client>().FirstOrDefault(s => s.PhysicalClient.Id == this.Id);
 		}
+
 		public virtual List<string> GetAppealFields()
 		{
-			return new List<string>() {
+			return new List<string>()
+			{
 				"Name",
 				"Surname",
-				"Patronymic", 
+				"Patronymic",
 				"CertificateType",
 				"CertificateName",
 				"PassportSeries",
@@ -284,44 +275,78 @@ namespace Inforoom2.Models
 				"Address"
 			};
 		}
+
 		public virtual string GetAdditionalAppealInfo(string property, object oldPropertyValue, ISession session)
 		{
 			string message = "";
 			// для свойства Tariff
-			if (property == "Plan")
-			{
+			if (property == "Plan") {
 				// получаем псевдоним из описания 
 				property = this.Plan.GetDescription();
-				var oldPlan = oldPropertyValue == null ? null : ((Plan)oldPropertyValue);
+				var oldPlan = oldPropertyValue == null ? null : ((Plan) oldPropertyValue);
 				var currentPlan = this.Plan;
-				if (oldPlan != null)
-				{
+				if (oldPlan != null) {
 					message += property + " было: " + oldPlan.Name + " <br/>";
 				}
-				else
-				{
+				else {
 					message += property + " было: " + "значение отсуствует <br/> ";
 				}
-				if (currentPlan != null)
-				{
+				if (currentPlan != null) {
 					message += property + " стало: " + currentPlan.Name + " <br/>";
 				}
-				else
-				{
+				else {
 					message += property + " стало: " + "значение отсуствует <br/> ";
 				}
 			}
 			return message;
 		}
+
+		public virtual object GetExtendedClient => this;
+
+		public virtual IList<Contact> GetContacts()
+		{
+			return Client.Contacts;
+		}
+
+		public virtual string GetConnetionAddress()
+		{
+			return Address.GetStringForPrint();
+		}
+
+		public virtual string GetName()
+		{
+			return FullName;
+		}
+
+		public virtual DateTime? GetRegistrationDate()
+		{
+			return Client.CreationDate;
+		}
+
+		public virtual DateTime? GetDissolveDate()
+		{
+			return ((StatusType) Client.Status.Id) == StatusType.Dissolved ? Client.StatusChangedOn : null;
+		}
+
+		public virtual string GetPlan()
+		{
+			return $"{Plan.Name}, {Plan.Price} руб.";
+		}
+
+		public virtual decimal GetBalance()
+		{
+			return Balance;
+		}
+
+		public virtual StatusType GetStatus()
+		{
+			return ((StatusType) Client.Status.Id);
+		}
 	}
 
 	public enum CertificateType
 	{
-		[Display(Name = "Паспорт РФ")]
-		[Description("Паспорт РФ")]
-		Passport = 0,
-		[Display(Name = "Иной документ")]
-		[Description("Иной документ")]
-		Other = 1
+		[Display(Name = "Паспорт РФ")] [Description("Паспорт РФ")] Passport = 0,
+		[Display(Name = "Иной документ")] [Description("Иной документ")] Other = 1
 	}
 }

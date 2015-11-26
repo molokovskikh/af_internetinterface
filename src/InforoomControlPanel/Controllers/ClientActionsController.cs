@@ -50,7 +50,7 @@ namespace InforoomControlPanel.Controllers
 			privateMessage.Registrator = GetCurrentEmployee();
 			DbSession.SaveOrUpdate(privateMessage);
 			SuccessMessage("Приватное сообщение успешно сохранено!");
-			return RedirectToAction("Info", "Client", new {id = privateMessage.Client.Id});
+			return RedirectToAction("InfoPhysical", "Client", new {id = privateMessage.Client.Id});
 		}
 	}
 }

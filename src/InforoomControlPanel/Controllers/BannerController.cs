@@ -8,7 +8,6 @@ using System.Web.UI.WebControls;
 using Inforoom2.Components;
 using Inforoom2.Controllers;
 using Inforoom2.Models;
-using InternetInterface.Models;
 using NHibernate.Linq;
 using NHibernate.Util;
 using PackageSpeed = Inforoom2.Models.PackageSpeed;

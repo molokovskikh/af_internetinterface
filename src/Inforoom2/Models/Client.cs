@@ -21,7 +21,7 @@ namespace Inforoom2.Models
 	/// Модель пользователя
 	/// </summary>
 	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof (Client)), Description("Клиент")]
-	public class Client : BaseModel, ILogAppeal, IServicemenScheduleItem
+	public class Client : BaseModel, ILogAppeal, IServicemenScheduleItem, IClientExpander
 	{
 		public Client()
 		{
@@ -46,7 +46,7 @@ namespace Inforoom2.Models
 			YearCycleDate = DateTime.Now;
 
 			//перенесено из старой админки (нужен при проверке на необходимость показывать Варнинг)
-			LegalPersonOrders = new List<ClientOrder>();
+			LegalClientOrders = new List<ClientOrder>();
 		}
 
 
@@ -138,6 +138,12 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "LawyerPerson", Cascade = "save-update"), Description("Юр. лицо")]
 		public virtual LegalClient LegalClient { get; set; }
 
+		[Property(Column = "RedmineTask")]
+		public virtual string LegalRedmineTask { get; set; }
+
+		[ManyToOne(Column = "Recipient", Cascade = "save-update")]
+		public virtual Recipient Recipient { get; set; }
+
 		[Bag(0, Table = "ClientServices", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof (ClientService))]
@@ -192,11 +198,13 @@ namespace Inforoom2.Models
 
 		public virtual bool IsNeedRecofiguration { get; set; }
 
-		//перенесено из старой админки (нужен при проверке на необходимость показывать Варнинг)
+		
+
+		//TODO: перенесено из старой админки (нужен рефакторинг)
 		[Bag(0, Table = "Orders", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "ClientId")]
 		[OneToMany(2, ClassType = typeof (ClientOrder))]
-		public virtual IList<ClientOrder> LegalPersonOrders { get; set; }
+		public virtual IList<ClientOrder> LegalClientOrders { get; set; }
 
 		public virtual bool IsWorkStarted()
 		{
@@ -466,6 +474,15 @@ namespace Inforoom2.Models
 			return null;
 		}
 
+		public virtual bool IsOnlineCheck()
+		{
+			var isOnLineFilter = Endpoints.FirstOrDefault()?.LeaseList.FirstOrDefault()?.LeaseEnd;
+			if (isOnLineFilter!=null) {
+				return isOnLineFilter.Value >= SystemTime.Now();
+			}
+            return false;
+		}
+
 		//todo исправить
 		[Property(Column = "Address")]
 		public virtual string _oldAdressStr { get; set; }
@@ -532,6 +549,48 @@ namespace Inforoom2.Models
 		public virtual string GetAdditionalAppealInfo(string property, object oldPropertyValue, ISession session)
 		{
 			return "";
+		}
+
+		public virtual object GetExtendedClient => PhysicalClient != null ? (object) PhysicalClient : LegalClient;
+
+		public virtual IList<Contact> GetContacts()
+		{
+			return ((IClientExpander) GetExtendedClient).GetContacts();
+		}
+
+		public virtual string GetConnetionAddress()
+		{
+			return ((IClientExpander) GetExtendedClient).GetConnetionAddress();
+		}
+
+		public virtual string GetName()
+		{
+			return ((IClientExpander) GetExtendedClient).GetName();
+		}
+
+		public virtual DateTime? GetRegistrationDate()
+		{
+			return ((IClientExpander) GetExtendedClient).GetRegistrationDate();
+		}
+
+		public virtual DateTime? GetDissolveDate()
+		{
+			return ((IClientExpander) GetExtendedClient).GetDissolveDate();
+		}
+
+		public virtual string GetPlan()
+		{
+			return ((IClientExpander) GetExtendedClient).GetPlan();
+		}
+
+		public virtual decimal GetBalance()
+		{
+			return ((IClientExpander) GetExtendedClient).GetBalance();
+		}
+
+		public virtual StatusType GetStatus()
+		{
+			return ((IClientExpander) GetExtendedClient).GetStatus();
 		}
 	}
 

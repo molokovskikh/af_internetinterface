@@ -41,7 +41,7 @@ function ControlPanel() {
 		this.showMessages();
 	}
 
-	this.initializeInputHelpers = function () {
+	this.initializeInputHelpers = function() {
 		var refreshDatepicker = function() {
 			console.log("Changing datepickerdate");
 			var input = $(this).parent().find("input[type='hidden']").get(0);
@@ -53,16 +53,16 @@ function ControlPanel() {
 			}
 		}
 		console.log("init datepickers");
-		$(".datepicker, .timepicker").each(function () {
+		$(".datepicker, .timepicker").each(function() {
 			var oldEvent = $(this).get(0).onchange;
-			$(this).get(0).onchange = function () {
+			$(this).get(0).onchange = function() {
 				refreshDatepicker();
 				if (oldEvent)
 					oldEvent();
 			}
 			refreshDatepicker.call(this);
 		});
-		
+
 
 	}
 
@@ -105,7 +105,7 @@ function ControlPanel() {
 
 	}
 
-	this.setCookie = function (name, value, options) {
+	this.setCookie = function(name, value, options) {
 		if (value == null) {
 			this.setCookie(name, "", { expires: -1 });
 			return;
@@ -137,7 +137,7 @@ function ControlPanel() {
 		document.cookie = updatedCookie;
 	}
 
-	this.getCookie = function (name, eraseFlag) {
+	this.getCookie = function(name, eraseFlag) {
 		var matches = document.cookie.match(new RegExp(
 			"(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
 		));
@@ -170,25 +170,25 @@ function ControlPanel() {
 	this.showMessages = function() {
 		var msg = this.getCookie("SuccessMessage", true);
 		if (msg) {
-			$('.server-message').prepend('<div class="col-md-12 alert alert-success">'+ msg +'</div>');
+			$('.server-message').prepend('<div class="col-md-12 alert alert-success">' + msg + '</div>');
 		} else {
 			msg = this.getCookie("ErrorMessage", true);
-			if(msg)
+			if (msg)
 				$('.server-message').prepend('<div class="col-md-12 alert alert-danger">' + msg + '</div>');
 		}
 	}
 
-	this.checkCity = function () {
+	this.checkCity = function() {
 		//показать выбор городов
 		$('.city .name').on("click", function(e) {
 			$('.city .cities').show();
 			e.stopPropagation();
 		});
 		//убрать выбор городов
-		$('body').on("click", function () {
+		$('body').on("click", function() {
 			$('.city .cities').hide();
 		});
-		$('.cities a').on("click", function () {
+		$('.cities a').on("click", function() {
 			$('.city .name').html($(this).html());
 			cli.setCookie("userCity", this.innerHTML);
 			window.location.reload();
@@ -226,7 +226,7 @@ function ControlPanel() {
 var Base64 = {
 	_keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
 	//метод для кодировки в base64 на javascript 
-	encode: function (input) {
+	encode: function(input) {
 		var output = "";
 		var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
 		var i = 0
@@ -245,14 +245,14 @@ var Base64 = {
 				enc4 = 64;
 			}
 			output = output +
-			 this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
-			 this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+				this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
+				this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
 		}
 		return output;
 	},
 
 	//метод для раскодировки из base64 
-	decode: function (input) {
+	decode: function(input) {
 		var output = "";
 		var chr1, chr2, chr3;
 		var enc1, enc2, enc3, enc4;
@@ -278,7 +278,7 @@ var Base64 = {
 		return output;
 	},
 	// метод для кодировки в utf8 
-	_utf8_encode: function (string) {
+	_utf8_encode: function(string) {
 		string = string.replace(/\r\n/g, "\n");
 		var utftext = "";
 		for (var n = 0; n < string.length; n++) {
@@ -299,7 +299,7 @@ var Base64 = {
 	},
 
 	//метод для раскодировки из urf8 
-	_utf8_decode: function (utftext) {
+	_utf8_decode: function(utftext) {
 		var string = "";
 		var i = 0;
 		var c = c1 = c2 = 0;
@@ -324,3 +324,26 @@ var Base64 = {
 }
 
 cli = new ControlPanel();
+
+function scrollTo(element, speed) {
+	speed = speed != null ? speed : 300;
+	$('html, body').animate({
+		scrollTop: $(element).offset().top
+	}, speed);
+}
+
+$(function() {
+
+	var cookieValue = $.cookie("ShowLargeMenu");
+	if (cookieValue != null && cookieValue == "true") {
+		$(".sidebar-menu-inner .sidebar-collapse-icon .entypo-menu").click();
+	}
+	$(".sidebar-menu-inner .sidebar-collapse-icon .entypo-menu").click(function() {
+		var cookieValue = $.cookie("ShowLargeMenu");
+		if (cookieValue != null && cookieValue == "true")
+			$.cookie("ShowLargeMenu", "false", { expires: 365, path: "/" });
+		else
+			$.cookie("ShowLargeMenu", "true", { expires: 365, path: "/" });
+	});
+
+});

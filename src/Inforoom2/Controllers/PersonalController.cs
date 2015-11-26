@@ -10,7 +10,6 @@ using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using Inforoom2.validators;
-using InternetInterface.Models;
 using NHibernate.Linq;
 using AppealType = Inforoom2.Models.AppealType;
 using Client = Inforoom2.Models.Client;

@@ -49,7 +49,8 @@ namespace Inforoom2.Helpers
 			    || tableName == "issues".ToLower()
 			    || tableName == "serviceiterations".ToLower()
 			    || tableName == "Orders".ToLower()
-			    || tableName == "OrderServices".ToLower())
+			    || tableName == "OrderServices".ToLower()
+                || tableName == "Recipients".ToLower())
 			{
 				return tableName;
 			}

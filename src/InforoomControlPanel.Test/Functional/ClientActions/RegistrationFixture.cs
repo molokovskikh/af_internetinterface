@@ -67,7 +67,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			var employeeName = Environment.UserName;
 			var employeeRegistration = DbSession.Query<Employee>().FirstOrDefault(p => p.Login == employeeName);
 			Assert.That(clientRegistration.Client.WhoRegisteredName, Is.StringContaining(employeeRegistration.Name), "В базе данных у зарегестированного клиента должен сохраниться правильно имя сотрудника,который регестрировал");
-			Open("Client/Registration");
+			Open("Client/RegistrationPhysical");
 		}
 
 		[Test, Description("Не заполнено поле Фамилия")]
@@ -206,7 +206,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			var clientRegistration = DbSession.Query<PhysicalClient>().Where(p => p.Patronymic == "нормальный клиент").ToList().Count;
 			//проверяем,что в базе сохранился клон,которого создали и дубль,который разрешили сделать
 			Assert.That(clientRegistration, Is.EqualTo(3), "В базе данных должен сохраниться дублированный клиент");
-			Open("Client/Registration");
+			Open("Client/RegistrationPhysical");
 		}
 
 		/// <summary>
@@ -307,7 +307,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 		/// </summary>
 		public void Setup()
 		{
-			Open("Client/Registration");
+			Open("Client/RegistrationPhysical");
 			var wait = new WebDriverWait(browser, 20.Second());
 			clientSurName = browser.FindElementByCssSelector("input[id=client_PhysicalClient_Surname]");
 			clientName = browser.FindElementByCssSelector("input[id=client_PhysicalClient_Name]");

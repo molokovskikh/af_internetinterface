@@ -32,6 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -85,6 +86,7 @@
     <Reference Include="System.Web.Mvc">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.Mvc.4.0.30506.0\lib\net40\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Razor">
       <SpecificVersion>False</SpecificVersion>
@@ -1503,6 +1505,7 @@
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\AddressController.CreateStreet.js" />
     <Content Include="Scripts\AddressController.CreateHouse.js" />
+    <Content Include="Scripts\ClientSearchPage.js" />
     <Content Include="Scripts\ConnectionTeamPrintTimeTable.js" />
     <Content Include="Scripts\ConnectionTeamController.ConnectionTable.js" />
     <Content Include="Scripts\AddressController.CreateSwitchAddress.js" />
@@ -1513,6 +1516,7 @@
     <Content Include="Scripts\ControlPanel.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-ui-1.11.1.js" />
+    <Content Include="assets\js\jquery.cookie.js" />
     <Content Include="Scripts\Window.js" />
     <Content Include="Scripts\YandexMapHelper.js" />
     <Content Include="Web.config">
@@ -1524,11 +1528,12 @@
     <Compile Include="Controllers\AdminAccountController.cs" />
     <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\ClientControllerPhysical.cs" />
     <Compile Include="Controllers\ServiceRequestController.cs" />
     <Compile Include="Controllers\SpreadSheetController.cs" />
     <Compile Include="Controllers\ClientActionsController.cs" />
     <Compile Include="Controllers\ConnectionTeamController.cs" />
-    <Compile Include="Controllers\ClientController.cs" />
+    <Compile Include="Controllers\ClientControllerLegal.cs" />
     <Compile Include="Controllers\HardwareTypesController.cs" />
     <Compile Include="Controllers\HardwareRentController.cs" />
     <Compile Include="Controllers\BannerController.cs" />
@@ -1542,6 +1547,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="ReportTemplates\ClientReports.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config">
@@ -1849,7 +1855,7 @@
     <Content Include="Views\Ticket\EditCallMeBackTicket.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Client\Info.cshtml" />
+    <Content Include="Views\Client\InfoPhysical.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Plans\EditPlan.cshtml" />
@@ -1894,7 +1900,7 @@
     <Content Include="Views\HardwareRent\UpdateHardwareRent.cshtml" />
     <Content Include="Views\HardwareTypes\EditHardware.cshtml" />
     <Content Include="Views\HardwareTypes\ShowHardware.cshtml" />
-    <Content Include="Views\Client\Registration.cshtml" />
+    <Content Include="Views\Client\RegistrationPhysical.cshtml" />
     <Content Include="Views\Client\Edit.cshtml" />
     <Content Include="Views\Client\RequestRegistration.cshtml" />
     <Content Include="Views\Plans\CreateTvProtocol.cshtml" />
@@ -1948,6 +1954,9 @@
     <Content Include="Views\ServiceRequest\ServiceRequestCreate.cshtml" />
     <Content Include="Views\ConnectionTeam\AttachRequest.cshtml" />
     <Content Include="Views\ConnectionTeam\PrintTimeTable.cshtml" />
+    <Content Include="assets\js\.jshintrc" />
+    <Content Include="Views\Client\InfoLegal.cshtml" />
+    <Content Include="Views\Client\RegistrationLegal.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <None Include="Web.release.config">
