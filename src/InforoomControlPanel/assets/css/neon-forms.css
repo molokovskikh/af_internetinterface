@@ -2149,7 +2149,7 @@ th {
 .table-bordered > thead > tr > td,
 .table-bordered > tbody > tr > td,
 .table-bordered > tfoot > tr > td {
-  border: 1px solid #ebebeb;
+  border: 1px solid #DCDCDC;
 }
 .table-bordered > thead > tr > th,
 .table-bordered > thead > tr > td {

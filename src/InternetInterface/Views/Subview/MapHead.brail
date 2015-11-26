@@ -4,11 +4,12 @@
 			<tr class="menuItem">
 				<% if MapPartner.AccesPartner("RC"): %>
 				<th>
-					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/Registration">Регистрация абонента</a>
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/RegistrationPhysical">Регистрация абонента</a>
 				</th>
 				<% end %>
 				<% if MapPartner.AccesPartner("RC"): %>
-				<th>${App.LinkTo("Регистрация ЮрЛица", @Register, @RegisterLegalPerson)}</th>
+				<th>
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/RegistrationLegal">Регистрация ЮрЛица</a></th>
 				<% end %>
 				<th>
 					${app.LinkTo("Заявки", @ConnectionRequest, @Index)}

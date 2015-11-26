@@ -3,7 +3,6 @@ using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
-using InternetInterface.Models;
 using NHibernate.Linq;
 using NHibernate.Transform;
 using Remotion.Linq.Clauses;

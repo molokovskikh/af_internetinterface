@@ -11,7 +11,6 @@ using Inforoom2.Components;
 using Inforoom2.Controllers;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
-using InternetInterface.Models;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Linq;

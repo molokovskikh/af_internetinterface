@@ -1,0 +1,43 @@
+﻿@using Inforoom2.Models
+
+@{
+	Client client = ViewBag.Client;
+	bool rentIsActive = ViewBag.RentIsActive;
+	ViewBag.Title = "Информация по клиенту " + client.GetName();
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	string action = ViewBag.ActionName;
+	string controller = ViewBag.ControllerName;
+	List<SwitchAddress> networkNodeList = ViewBag.networkNodeList;
+}
+
+<div class="panel panel-primary col-md-12">
+	<div class="panel-body">
+		@using (@Html.BeginForm("", controller, null, FormMethod.Get, new {@id = "BtnGroup", @class = "form-horizontal form-groups-bordered"})) {
+			<div class="form-group">
+				<a id="PrivateMsgBtn" class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("PrivateMessage", "ClientActions", new {id = client.Id})">
+					<i class="entypo-plus-circled"></i>
+					ПРИВАТНОЕ СООБЩЕНИЕ
+				</a>
+				<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequestCreate", "ServiceRequest", new {@id = client.Id})">
+					<i class="entypo-doc-text"></i>
+					Сервисная заявка
+				</a>
+				<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("AttachRequest", "ConnectionTeam", new {@id = client.Id, @type = "ClientConnectionRequest"})">
+					<i class="entypo-briefcase"></i>
+					Заявка на подключение
+				</a>
+				<form style="display: inline" action="/cp/AdminAccount/ApplyImpersonation" method="post" target="_blank">
+					<input name="client.Id" type="hidden" value="21131">
+					<button class="btn btn-success btn-sm btn-icon icon-left" type="submit" value="Войти">
+						<i class="entypo-key"></i>
+						Войти в личный кабинет
+					</button>
+				</form>
+			</div>
+		}
+	</div>
+</div>
+
+<div class="form-group">
+</div>
+<div style="clear:both;"></div>

@@ -2,18 +2,18 @@
 
 @{
 	ViewBag.Title = "title";
-	
+
 	string username = string.Empty;
 	string password = string.Empty;
 }
 <html>
-	<head>
+<head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta name="description" content="Neon Admin Panel" />
-	<meta name="author" content="" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta name="description" content="Neon Admin Panel"/>
+	<meta name="author" content=""/>
 
 	<title>Inforoom | Панель управления</title>
 
@@ -44,112 +44,113 @@
 
 <!-- This is needed when you send requests via Ajax -->
 <script type="text/javascript">
-var baseurl = '';
+	var baseurl = '';
 </script>
 
-	<div class="login-container">
+<div class="login-container">
 
-		<div class="login-header login-caret server-message">
+	<div class="login-header login-caret server-message">
 
-			<div class="login-content ">
+		<div class="login-content ">
 
-				<a href="index.html" class="logo">
-					<img src="~/assets/images/logo@2x.png" width="120" alt="" />
-				</a>
+			<a href="index.html" class="logo">
+				<img src="~/assets/images/logo@2x.png" width="120" alt=""/>
+			</a>
 
-				<p class="description">Добро пожаловать. Вам необходимо ввести пароль, чтобы получить доступ к панели управления.</p>
+			<p class="description">Добро пожаловать. Вам необходимо ввести пароль, чтобы получить доступ к панели управления.</p>
 
-				<!-- progress bar indicator -->
-				<div class="login-progressbar-indicator">
-					<h3>43%</h3>
-					<span>logging in...</span>
-				</div>
+			<!-- progress bar indicator -->
+			<div class="login-progressbar-indicator">
+				<h3>43%</h3>
+				<span>logging in...</span>
 			</div>
-
 		</div>
 
-		<div class="login-progressbar">
-			<div></div>
-		</div>
+	</div>
 
-		<div class="login-form">
+	<div class="login-progressbar">
+		<div></div>
+	</div>
 
-			<div class="login-content">
+	<div class="login-form">
 
-				<div class="form-login-error">
-					<h3>Invalid login</h3>
-					<p>Enter <strong>demo</strong>/<strong>demo</strong> as login and password.</p>
-				</div>
-				@using (Html.BeginForm("Login", "AdminAccount", new { returnUrl = @Request.Url, id = "form_login", role = "form" }, FormMethod.Post, null))
-				{
+		<div class="login-content">
 
-					<div class="form-group">
+			<div class="form-login-error">
+				<h3>Invalid login</h3>
+				<p>
+					Enter <strong>demo</strong>/<strong>demo</strong> as login and password.
+				</p>
+			</div>
+			@using (Html.BeginForm("Login", "AdminAccount", new {returnUrl = @Request.Url, id = "form_login", role = "form"}, FormMethod.Post, null)) {
+				<div class="form-group">
 
-						<div class="input-group">
-							<div class="input-group-addon">
-								<i class="entypo-user"></i>
-							</div>
-							@Html.TextBoxFor(model => username, new { @class = "form-control", placeholder = "Логин", autocomplete = "off", id = "username" })
+					<div class="input-group">
+						<div class="input-group-addon">
+							<i class="entypo-user"></i>
 						</div>
-
+						@Html.TextBoxFor(model => username, new {@class = "form-control", placeholder = "Логин", autocomplete = "off", id = "username"})
 					</div>
-
-					<div class="form-group">
-
-						<div class="input-group">
-							<div class="input-group-addon">
-								<i class="entypo-key"></i>
-							</div>
-							@Html.PasswordFor(model => password, new { @class = "form-control", placeholder = "Пароль", autocomplete = "off", id = "password" })
-						</div>
-
-					</div>
-
-					<div class="form-group">
-						<button type="submit" class="btn btn-primary btn-block btn-login">
-							<i class="entypo-login"></i>
-							Войти
-						</button>
-					</div>
-				}
-
-
-				<div class="login-bottom-links">
-
-					<a href="extra-forgot-password.html" class="link">Забыли пароль?</a>
-
-					<br />
-
-					<a href="#">Инфорум</a>  - <a href="#">2015</a>
 
 				</div>
+
+				<div class="form-group">
+
+					<div class="input-group">
+						<div class="input-group-addon">
+							<i class="entypo-key"></i>
+						</div>
+						@Html.PasswordFor(model => password, new {@class = "form-control", placeholder = "Пароль", autocomplete = "off", id = "password"})
+					</div>
+
+				</div>
+
+				<div class="form-group">
+					<button type="submit" class="btn btn-primary btn-block btn-login">
+						<i class="entypo-login"></i>
+						Войти
+					</button>
+				</div>
+			}
+
+
+			<div class="login-bottom-links">
+
+				<a href="extra-forgot-password.html" class="link">Забыли пароль?</a>
+
+				<br/>
+
+				<a href="#">Инфорум</a> - <a href="#">2015</a>
 
 			</div>
 
 		</div>
 
 	</div>
-		<script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
-		<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
-		<script type="text/javascript" src="~/Scripts/Helpers.js"></script>
-		<script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
-		<script type="text/javascript" src="~/Scripts/ControlPanel.js?v1"></script>
 
-			<!-- Bottom scripts (common) -->
-	<script src="~/assets/js/gsap/main-gsap.js"></script>
-	<script src="~/assets/js/jquery-ui/js/jquery-ui-1.10.3.minimal.min.js"></script>
-	<script src="~/assets/js/bootstrap.js"></script>
-	<script src="~/assets/js/joinable.js"></script>
-	<script src="~/assets/js/resizeable.js"></script>
-	<script src="~/assets/js/neon-api.js"></script>
-	<script src="~/assets/js/jquery.validate.min.js"></script>
-	<script src="~/assets/js/neon-login.js"></script>
+</div>
+<script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
+<script type="text/javascript" src="~/assets/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="~/Scripts/Helpers.js"></script>
+<script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
+<script type="text/javascript" src="~/Scripts/ControlPanel.js?v1"></script>
+
+<!-- Bottom scripts (common) -->
+<script src="~/assets/js/gsap/main-gsap.js"></script>
+<script src="~/assets/js/jquery-ui/js/jquery-ui-1.10.3.minimal.min.js"></script>
+<script src="~/assets/js/bootstrap.js"></script>
+<script src="~/assets/js/joinable.js"></script>
+<script src="~/assets/js/resizeable.js"></script>
+<script src="~/assets/js/neon-api.js"></script>
+<script src="~/assets/js/jquery.validate.min.js"></script>
+<script src="~/assets/js/neon-login.js"></script>
 
 
-	<!-- JavaScripts initializations and stuff -->
-	<script src="~/assets/js/neon-custom.js"></script>
+<!-- JavaScripts initializations and stuff -->
+<script src="~/assets/js/neon-custom.js"></script>
 
-	<!-- Demo Settings -->
-	<script src="~/assets/js/neon-demo.js"></script>
-	</body>
+<!-- Demo Settings -->
+<script src="~/assets/js/neon-demo.js"></script>
+</body>
 </html>

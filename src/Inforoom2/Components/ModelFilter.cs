@@ -57,7 +57,9 @@ namespace Inforoom2.Components
 		NotEqual,
 		Like,
 		IsNull,
-		IsNotNull
+		IsNotNull,
+		EarlierThanNowOrEmptyList,
+		LaterThanNowOrEmptyList
 	}
 
 	/// <summary>
@@ -70,11 +72,15 @@ namespace Inforoom2.Components
 
 		[Description("Конструктор запросов к БД")] protected BaseController Controller;
 
-		[Description("Параметры фильра. Тут хранятся все параметры.")] protected NameValueCollection Params = new NameValueCollection();
+		[Description("Параметры фильра. Тут хранятся все параметры.")] protected NameValueCollection Params =
+			new NameValueCollection();
 
-		[Description("Параметры, которые были перезаписаны пользователем")] protected List<string> OverridenParams = new List<string>();
+		[Description("Параметры, которые были перезаписаны пользователем")] protected List<string> OverridenParams =
+			new List<string>();
 
-		[Description("Список полей моделей, которые уже были использованы в фильтре. Он необходим, чтобы вывести оставшиеся поля в виде инпутов, чтобы сохранить настройки фильтрации")] protected List<string> PropertiesUsedInFilter = new List<string>();
+		[Description(
+			"Список полей моделей, которые уже были использованы в фильтре. Он необходим, чтобы вывести оставшиеся поля в виде инпутов, чтобы сохранить настройки фильтрации"
+			)] protected List<string> PropertiesUsedInFilter = new List<string>();
 
 		[Description("Конструктор запросов к БД")] protected ICriteria Criteria;
 
@@ -83,7 +89,7 @@ namespace Inforoom2.Components
 		[Description("Кол-во страниц, которые могут быть отображены")]
 		public int PagesCount
 		{
-			get { return Math.Abs(TotalItems / ItemsPerPage) + (TotalItems % ItemsPerPage > 0 ? 1 : 0); }
+			get { return Math.Abs(TotalItems/ItemsPerPage) + (TotalItems%ItemsPerPage > 0 ? 1 : 0); }
 			protected set { }
 		}
 
@@ -103,7 +109,7 @@ namespace Inforoom2.Components
 			get
 			{
 				if (!_totalItems.HasValue) {
-					var tempCriteria = (ICriteria)Criteria.Clone();
+					var tempCriteria = (ICriteria) Criteria.Clone();
 					tempCriteria.SetFirstResult(0);
 					tempCriteria.SetMaxResults(1000000);
 					var res = tempCriteria.SetProjection(Projections.CountDistinct("Id")).UniqueResult();
@@ -136,6 +142,9 @@ namespace Inforoom2.Components
 		protected NameValueCollection ExportFields = new NameValueCollection();
 		protected List<string> HeaderLines = new List<string>();
 
+		//Последний псевдоним необходим для составных условий (используется при обработке списков)
+		protected string LastAleas { get; set; }
+
 		/// <summary>
 		/// Счетчик для имен псевдонимов. Необходим для создания уникальности имен.
 		/// </summary>
@@ -148,7 +157,7 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		public string GetPageUrl(int number)
 		{
-			return GenerateUrl(new { page = number });
+			return GenerateUrl(new {page = number});
 		}
 
 		/// <summary>
@@ -190,13 +199,16 @@ namespace Inforoom2.Components
 		public string GenerateUrl(object overridenParams = null)
 		{
 			var uri = new UrlHelper(Controller.HttpContext.Request.RequestContext).Content("~");
-			var urlRoot = string.Format("{0}://{1}{2}", Controller.HttpContext.Request.Url.Scheme, Controller.HttpContext.Request.Url.Authority, uri);
+			var urlRoot = string.Format("{0}://{1}{2}", Controller.HttpContext.Request.Url.Scheme,
+				Controller.HttpContext.Request.Url.Authority, uri);
 			// получение наименования контроллера, при его наличии
 			var controllerName = Controller.Url.RequestContext.RouteData.Values.ContainsKey("controller")
-				? Controller.Url.RequestContext.RouteData.Values["controller"].ToString() : "";
+				? Controller.Url.RequestContext.RouteData.Values["controller"].ToString()
+				: "";
 			// получение наименования действия, при его наличии
 			var actionName = Controller.Url.RequestContext.RouteData.Values.ContainsKey("action")
-				? Controller.Url.RequestContext.RouteData.Values["action"].ToString() : "";
+				? Controller.Url.RequestContext.RouteData.Values["action"].ToString()
+				: "";
 
 			//Формируем базу для 
 			var url = new StringBuilder(string.Format("{0}/{1}", controllerName, actionName));
@@ -206,7 +218,7 @@ namespace Inforoom2.Components
 			var paramz = Params.Clone();
 			if (overridenParams != null) {
 				var props = overridenParams.GetType().GetProperties();
-				foreach (var prop in props) paramz[prop.Name] = prop.GetValue(overridenParams, new object[] { }).ToString();
+				foreach (var prop in props) paramz[prop.Name] = prop.GetValue(overridenParams, new object[] {}).ToString();
 			}
 
 			foreach (var key in paramz.AllKeys) {
@@ -229,10 +241,10 @@ namespace Inforoom2.Components
 			var fieldName = ExtractFieldNameFromLambda(expression);
 			//Получаем направление сортировки
 			var param = GetParam("orderType");
-			var type = (OrderingDirection)Enum.Parse(typeof(OrderingDirection), param);
+			var type = (OrderingDirection) Enum.Parse(typeof (OrderingDirection), param);
 			//Меняем тип направления на противоположный от текущего - иначе кнопка будет сортирвать только один раз
 			type = type == OrderingDirection.Asc ? OrderingDirection.Desc : OrderingDirection.Asc;
-			var url = GenerateUrl(new { orderBy = fieldName, orderType = type });
+			var url = GenerateUrl(new {orderBy = fieldName, orderType = type});
 			return url;
 		}
 
@@ -246,7 +258,7 @@ namespace Inforoom2.Components
 			string name = ""; // Наименование поля, по которому будет сортироваться таблица 
 
 			try {
-				var body = (MemberExpression)expression.Body;
+				var body = (MemberExpression) expression.Body;
 				// получаем наименование поля, если оно не обернуто в Convert()
 				name = body.ToString().Replace(expression.Parameters[0].ToString() + ".", "");
 			}
@@ -272,7 +284,7 @@ namespace Inforoom2.Components
 				return Criteria;
 
 			// создаем конструктор запросов Nhibernate и добавляем в него простую лямбду, если она имеется
-			Criteria = DbSession.CreateCriteria(typeof(TModel));
+			Criteria = DbSession.CreateCriteria(typeof (TModel));
 			if (expression != null)
 				Criteria.Add(Restrictions.Where(expression));
 
@@ -289,7 +301,7 @@ namespace Inforoom2.Components
 		/// <param name="criteria">Конструктор запросов Nhibernate</param>
 		protected void AddLimitToCriteria(ICriteria criteria)
 		{
-			var skip = ItemsPerPage * (Page - 1);
+			var skip = ItemsPerPage*(Page - 1);
 			criteria.SetFirstResult(skip).SetMaxResults(ItemsPerPage);
 		}
 
@@ -322,26 +334,74 @@ namespace Inforoom2.Components
 			//Сначала мы получаем тип сравнения
 			var splat = key.Split('.');
 			var comparsionPart = splat[1];
-			var comparsionType = (ComparsionType)Enum.Parse(typeof(ComparsionType), comparsionPart);
+			var comparsionType = (ComparsionType) Enum.Parse(typeof (ComparsionType), comparsionPart);
 
 			//Затем мы получаем имя поля и конструктор запросов для него
 			//Воспользоваться изначальным конструктором мы не можем, так как он не умеет интуитивно делать join
 			//Также необходимо не забыть сконвертировать значение к правильному типу
 			//Ну и не забыть, привести имя параметра к пути к полю модели. В имени параметра может храниться много лишней информации
+
+			string keyListWithProp = "";
+			string criteriaNullAlias = "";
+			if ((comparsionType == ComparsionType.EarlierThanNowOrEmptyList ||
+			     comparsionType == ComparsionType.LaterThanNowOrEmptyList) && value == "0") {
+				keyListWithProp = key;
+				key = key.Substring(0, (key.LastIndexOf(".")));
+			}
+
 			var path = StripParamToFieldPath(key);
-			criteria = GetJoinedModelCriteria(criteria, path);
+			var prop = GetModelPropertyInfo(typeof (TModel), path);
+
+			if (prop.PropertyType.Name.IndexOf(typeof (IList).Name) == 0
+			    && keyListWithProp != String.Empty) {
+				key += ".Id";
+				path = StripParamToFieldPath(key);
+				criteriaNullAlias = GetJoinedModelCriteria(criteria, path).Alias + ".Id";
+				//criteriaNullAlias = LastAleas;
+				path = StripParamToFieldPath(keyListWithProp);
+				criteria = GetJoinedModelCriteria(criteria, path);
+			}
+			else {
+				criteria = GetJoinedModelCriteria(criteria, path);
+			}
 			var fieldName = GetFieldName(path);
-			var prop = GetModelPropertyInfo(typeof(TModel), path);
+
 
 			//В зависимости от типа сравнения, задаем фильтру условие
 			//проверка на значение
-			var val = !(comparsionType == ComparsionType.IsNull || comparsionType == ComparsionType.IsNotNull) ?
-				ConvertStringToType(value, prop.PropertyType) : new object();
+			var val = !(comparsionType == ComparsionType.IsNull || comparsionType == ComparsionType.IsNotNull
+			            || comparsionType == ComparsionType.EarlierThanNowOrEmptyList ||
+			            comparsionType == ComparsionType.LaterThanNowOrEmptyList)
+				? ConvertStringToType(value, prop.PropertyType)
+				: new object();
 			//проверка на Null
 			if (comparsionType == ComparsionType.IsNull || comparsionType == ComparsionType.IsNotNull) {
 				val = comparsionType == ComparsionType.IsNull && value == "1" ||
 				      comparsionType == ComparsionType.IsNotNull && value == "0"
-					? Restrictions.IsNull(fieldName) : Restrictions.IsNotNull(fieldName);
+					? Restrictions.IsNull(fieldName)
+					: Restrictions.IsNotNull(fieldName);
+			}
+			//проверка даты, раньше или нет записи
+			if (comparsionType == ComparsionType.EarlierThanNowOrEmptyList) {
+				if (comparsionType == ComparsionType.EarlierThanNowOrEmptyList && value == "1") {
+					val = Restrictions.Le(fieldName, SystemTime.Now());
+				}
+				if (value == "0") {
+					if (fieldName != String.Empty) {
+						val = Restrictions.Gt(fieldName, SystemTime.Now());
+					}
+				}
+			}
+			//проверка даты, раньше или нет записи
+			if (comparsionType == ComparsionType.LaterThanNowOrEmptyList) {
+				if (value == "1") {
+					val = Restrictions.Ge(fieldName, SystemTime.Now());
+				}
+				if (value == "0") {
+					if (fieldName != String.Empty && criteriaNullAlias != String.Empty) {
+						val = Restrictions.Or(Restrictions.IsNull(criteriaNullAlias), Restrictions.Lt(fieldName, SystemTime.Now()));
+					}
+				}
 			}
 
 			//Добавляем фильр к критерии
@@ -378,10 +438,16 @@ namespace Inforoom2.Components
 					criteria.Add(Restrictions.Like(fieldName, string.Format("%{0}%", val)));
 					break;
 				case ComparsionType.IsNull:
-					criteria.Add((AbstractCriterion)val);
+					criteria.Add((AbstractCriterion) val);
 					break;
 				case ComparsionType.IsNotNull:
-					criteria.Add((AbstractCriterion)val);
+					criteria.Add((AbstractCriterion) val);
+					break;
+				case ComparsionType.EarlierThanNowOrEmptyList:
+					criteria.Add((AbstractCriterion) val);
+					break;
+				case ComparsionType.LaterThanNowOrEmptyList:
+					criteria.Add((AbstractCriterion) val);
 					break;
 			}
 		}
@@ -394,20 +460,23 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		protected object ConvertStringToType(string value, Type propertyType)
 		{
-			if (propertyType.FullName.Contains(typeof(string).Name))
+			if (propertyType.FullName.Contains(typeof (string).Name))
 				return value;
 
-			if (propertyType.FullName.Contains(typeof(bool).Name)) {
+			if (propertyType.FullName.Contains(typeof (bool).Name)) {
 				if (value.Contains("true"))
 					return true;
 				return false;
 			}
 
-			if (propertyType.FullName.Contains(typeof(DateTime).Name))
+			if (propertyType.FullName.Contains(typeof (DateTime).Name))
 				return DateTime.Parse(value);
 
-			if (propertyType.FullName.Contains(typeof(Int32).Name))
+			if (propertyType.FullName.Contains(typeof (Int32).Name))
 				return Int32.Parse(value);
+
+			if (propertyType.FullName.Contains(typeof (decimal).Name))
+				return Decimal.Parse(value);
 
 			if (propertyType.IsEnum)
 				return Enum.Parse(propertyType, value);
@@ -451,7 +520,9 @@ namespace Inforoom2.Components
 			var alias = CreateAliasName(criteria, joinedModelFieldName);
 			//Делаем JOIN с другой таблицей и получает его конструктор запросов
 			//Join можно делать только 1 раз, так что необходимо проверить не был ли он сделан ранее
-			var joined = criteria.GetCriteriaByAlias(alias) ?? criteria.CreateCriteria(joinedModelFieldName, alias, JoinType.LeftOuterJoin);
+			var joined = criteria.GetCriteriaByAlias(alias) ??
+			             criteria.CreateCriteria(joinedModelFieldName, alias, JoinType.LeftOuterJoin);
+			LastAleas = alias;
 			criteria = joined;
 
 			if (splat.Count() == 2)
@@ -504,7 +575,7 @@ namespace Inforoom2.Components
 			criteria = GetJoinedModelCriteria(criteria, path);
 			var fieldName = GetFieldName(path);
 			//Направление сортировки
-			var orderType = (OrderingDirection)Enum.Parse(typeof(OrderingDirection), GetParam("orderType"));
+			var orderType = (OrderingDirection) Enum.Parse(typeof (OrderingDirection), GetParam("orderType"));
 			if (orderType == OrderingDirection.Asc)
 				criteria.AddOrder(Order.Asc(fieldName));
 			else
@@ -521,6 +592,21 @@ namespace Inforoom2.Components
 			var splat = path.Split('.');
 			var field = splat[splat.Count() - 1];
 			return field;
+		}
+
+		/// <summary>
+		/// Получение имени поля из пути к полю
+		/// </summary>
+		/// <param name="path">Путь к полю</param>
+		/// <returns></returns>
+		protected string GetFieldParentName(string path)
+		{
+			var splat = path.Split('.');
+			if (splat.Count() - 2 >= 0) {
+				var field = splat[splat.Count() - 2];
+				return field;
+			}
+			return "";
 		}
 
 
@@ -565,7 +651,8 @@ namespace Inforoom2.Components
 		/// <param name="htmlAttributes">Свойства тэга</param>
 		/// <param name="additional">Опциональные настройки</param>
 		/// <returns></returns>
-		public HtmlString FormFilter(Expression<Func<TModel, object>> expression, HtmlType type, ComparsionType comparsionType, object htmlAttributes = null, object additional = null, Expression<Func<TModel, object>> listItemText = null)
+		public HtmlString FormFilter(Expression<Func<TModel, object>> expression, HtmlType type, ComparsionType comparsionType,
+			object htmlAttributes = null, object additional = null, Expression<Func<TModel, object>> listItemText = null)
 		{
 			var name = ExtractFieldNameFromLambda(expression);
 			var propertyText = listItemText != null ? ExtractFieldNameFromLambda(listItemText) : "";
@@ -617,7 +704,8 @@ namespace Inforoom2.Components
 		/// <param name="additional">Дополнительные параметры - могут принимать любую форму. Необходимы для некоторых типов элементов.</param>
 		/// <param name="listItemText">Выводимый текст</param>
 		/// <returns></returns>
-		protected string GenerateHtml(HtmlType type, Dictionary<string, string> o, ComparsionType comparsionType, object additional = null, string listItemText = "")
+		protected string GenerateHtml(HtmlType type, Dictionary<string, string> o, ComparsionType comparsionType,
+			object additional = null, string listItemText = "")
 		{
 			o["class"] = " form-control " + o["class"];
 			//заполняем выбранное значение, если оно есть
@@ -639,7 +727,8 @@ namespace Inforoom2.Components
 			if (type == HtmlType.checkbox) {
 				o["class"] = "c-pointer " + o["class"];
 				var selectedPart = selectedValue != null && selectedValue.Contains("true") ? " checked=checked" : "";
-				return string.Format("<input type='checkbox' value = 'true' {0} {1}/><input type='hidden' value='false' {0} >", GetPropsValues(o).Replace("form-control", ""), selectedPart);
+				return string.Format("<input type='checkbox' value = 'true' {0} {1}/><input type='hidden' value='false' {0} >",
+					GetPropsValues(o).Replace("form-control", ""), selectedPart);
 			}
 
 			if (type == HtmlType.Dropdown) {
@@ -648,7 +737,11 @@ namespace Inforoom2.Components
 
 				var customValueList = additional as NameValueCollection;
 				if (customValueList != null)
-					values = customValueList.AllKeys.Select(i => string.Format("<option {2} value='{0}'>{1}</option>", i, customValueList[i], selectedValue == i ? "selected='selected'" : "")).OrderBy(s => s).ToList();
+					values =
+						customValueList.AllKeys.Select(
+							i =>
+								string.Format("<option {2} value='{0}'>{1}</option>", i, customValueList[i],
+									selectedValue == i ? "selected='selected'" : "")).OrderBy(s => s).ToList();
 				else
 					values = TryToGetDropDownValueList(comparsionType, attrName, selectedValue, listItemText);
 
@@ -665,14 +758,17 @@ namespace Inforoom2.Components
 		/// <param name="selectedValue">Значение, которое было выбрано пользователем</param>
 		/// <param name="listItemText">Выводимый текст</param>
 		/// <returns></returns>
-		protected List<string> TryToGetDropDownValueList(ComparsionType comparsionType, string attrName, string selectedValue = null, string listItemText = "")
+		protected List<string> TryToGetDropDownValueList(ComparsionType comparsionType, string attrName,
+			string selectedValue = null, string listItemText = "")
 		{
 			var propPath = StripParamToFieldPath(attrName);
-			var prop = GetModelPropertyInfo(typeof(TModel), propPath);
-			var propWithText = listItemText != "" ? GetModelPropertyInfo(typeof(TModel), listItemText) : null;
+			var prop = GetModelPropertyInfo(typeof (TModel), propPath);
+			var propWithText = listItemText != "" ? GetModelPropertyInfo(typeof (TModel), listItemText) : null;
 			if (prop.PropertyType.IsEnum)
 				return GetEnumDropDownValues(prop.PropertyType, selectedValue);
-			if (comparsionType == ComparsionType.IsNull || comparsionType == ComparsionType.IsNotNull)
+			if (comparsionType == ComparsionType.IsNull || comparsionType == ComparsionType.IsNotNull
+			    || comparsionType == ComparsionType.EarlierThanNowOrEmptyList ||
+			    comparsionType == ComparsionType.LaterThanNowOrEmptyList)
 				return GetDefaultDropDownValues(selectedValue);
 			return GetModelDropDownValues(prop, selectedValue, propWithText);
 		}
@@ -695,10 +791,11 @@ namespace Inforoom2.Components
 		/// <param name="prop">Свойство модели для которого необходимо сделать перечисление</param>
 		/// <param name="selectedValue">Значение, которое было выбрано пользователем</param>
 		/// <returns></returns>
-		protected List<string> GetModelDropDownValues(PropertyInfo prop, string selectedValue = null, PropertyInfo propForText = null)
+		protected List<string> GetModelDropDownValues(PropertyInfo prop, string selectedValue = null,
+			PropertyInfo propForText = null)
 		{
 			//Для булевых типов проще сразу вернуть результат без запросов к БД
-			if (prop.PropertyType == typeof(bool))
+			if (prop.PropertyType == typeof (bool))
 				return GetBooleanDropDownValues(selectedValue);
 
 			var values = new List<string>();
@@ -710,8 +807,8 @@ namespace Inforoom2.Components
 			var models = criteria.List();
 
 			foreach (var obj in models) {
-				var value = prop.GetValue(obj, new object[] { });
-				var text = propForText != null ? propForText.GetValue(obj, new object[] { }) : value;
+				var value = prop.GetValue(obj, new object[] {});
+				var text = propForText != null ? propForText.GetValue(obj, new object[] {}) : value;
 				if (value == null || value.GetType().Name.ToLower().IndexOf("proxy") != -1) {
 					continue;
 				}
@@ -775,7 +872,7 @@ namespace Inforoom2.Components
 			badValues.Add(Prefix);
 			badValues.Add("First()");
 			badValues.Add("filter");
-			var enumValues = Enum.GetNames(typeof(ComparsionType));
+			var enumValues = Enum.GetNames(typeof (ComparsionType));
 			badValues.AddRange(enumValues);
 
 			var newValues = new List<string>();
@@ -818,11 +915,10 @@ namespace Inforoom2.Components
 		public void Execute()
 		{
 			var criteria = GetCriteria();
-
 			var list = criteria.List();
 			//из-за ограничений группировок и возможных join'ов мы получаем только идентификаторы моделей
 			//а потом отдельным запросом забираем модели. Вот так!
-			var realCriteria = DbSession.CreateCriteria(typeof(TModel));
+			var realCriteria = DbSession.CreateCriteria(typeof (TModel));
 			AddOrderToCriteria(realCriteria);
 			Models = realCriteria.Add(Restrictions.In("Id", list)).List<TModel>();
 		}
@@ -833,11 +929,11 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		public string GetSql(ICriteria criteria)
 		{
-			CriteriaImpl c = (CriteriaImpl)criteria;
-			SessionImpl s = (SessionImpl)c.Session;
+			CriteriaImpl c = (CriteriaImpl) criteria;
+			SessionImpl s = (SessionImpl) c.Session;
 			ISessionFactoryImplementor factory = s.Factory;
 			String[] implementors = factory.GetImplementors(c.EntityOrClassName);
-			CriteriaLoader loader = new CriteriaLoader((IOuterJoinLoadable)factory.GetEntityPersister(implementors[0]),
+			CriteriaLoader loader = new CriteriaLoader((IOuterJoinLoadable) factory.GetEntityPersister(implementors[0]),
 				factory, c, implementors[0], s.EnabledFilters);
 			var str = loader.ToString();
 			return str;
@@ -950,7 +1046,7 @@ namespace Inforoom2.Components
 
 			var props = obj.GetType().GetProperties();
 			foreach (var prop in props) {
-				var value = prop.GetValue(obj, new object[] { });
+				var value = prop.GetValue(obj, new object[] {});
 				dic.Add(prop.Name, value.ToString());
 			}
 			return dic;
@@ -987,12 +1083,12 @@ namespace Inforoom2.Components
 			criteria.SetFirstResult(0).SetMaxResults(1000000);
 			//получение списка моделей
 			var orderList = criteria.List();
-			var realCriteria = DbSession.CreateCriteria(typeof(TModel));
+			var realCriteria = DbSession.CreateCriteria(typeof (TModel));
 			AddOrderToCriteria(realCriteria);
 			Models = realCriteria.Add(Restrictions.In("Id", orderList)).List<TModel>();
 
 			//взврат лимитов
-			criteria.SetFirstResult(ItemsPerPage * (Page - 1)).SetMaxResults(ItemsPerPage);
+			criteria.SetFirstResult(ItemsPerPage*(Page - 1)).SetMaxResults(ItemsPerPage);
 			if (Models == null || Models.Count == 0) {
 				return;
 			}
@@ -1013,13 +1109,17 @@ namespace Inforoom2.Components
 			var arrayExpressionCut = stringExpressionCut.Split(',');
 			ExportFields.Clear();
 			//добавление полей выгрузки
-			arrayExpressionCut.Each(s => {
+			arrayExpressionCut.Each(s =>
+			{
 				if (s.IndexOf("=") != -1) {
 					var temp = s.ToString().Split('=');
 					temp[0] = temp[0] == parametre ? modelForParams.GetDescription() : temp[0];
 					var r = temp[1].Split('.').LastOrDefault(last => last == temp[0]);
-					temp[0] = r == null ? temp[0] :
-						temp[1].IndexOf(".") != -1 ? GetModelPropertyName(modelForParams, temp[1]) : modelForParams.GetDescription(temp[1]);
+					temp[0] = r == null
+						? temp[0]
+						: temp[1].IndexOf(".") != -1
+							? GetModelPropertyName(modelForParams, temp[1])
+							: modelForParams.GetDescription(temp[1]);
 					ExportFields.Add(temp[0].Replace("_", " ").Trim(), temp[1]);
 				}
 			});
@@ -1071,11 +1171,14 @@ namespace Inforoom2.Components
 			if (model.GetType().GetProperty(split[0]) == null) {
 				return getValueByType(model);
 			}
-			if (model.GetType().GetProperty(split[0]) != null && model.GetType().GetProperty(split[0]).GetValue(model, null) == null) {
+			if (model.GetType().GetProperty(split[0]) != null &&
+			    model.GetType().GetProperty(split[0]).GetValue(model, null) == null) {
 				return "";
 			}
 			if (split.Count() == 1) {
-				var itemToReturn = model.GetType().GetProperty(split[0]) != null ? model.GetType().GetProperty(split[0]).GetValue(model, null) : model;
+				var itemToReturn = model.GetType().GetProperty(split[0]) != null
+					? model.GetType().GetProperty(split[0]).GetValue(model, null)
+					: model;
 				return getValueByType(itemToReturn);
 			}
 
@@ -1110,13 +1213,15 @@ namespace Inforoom2.Components
 			// формирование шапки таблицы по первой моделе в списке
 			var pathsToExportForNames = GetExportPaths(Models[0]);
 			var nameValuesToExport = new string[pathsToExportForNames.Count];
-			for (int j = 0; j < nameValuesToExport.Length; j++) nameValuesToExport[j] = GetModelFieldName(pathsToExportForNames[j]);
+			for (int j = 0; j < nameValuesToExport.Length; j++)
+				nameValuesToExport[j] = GetModelFieldName(pathsToExportForNames[j]);
 			propertiesToExport.Add(nameValuesToExport);
 			// заполнение таблицы значениями
 			for (int i = 0; i < Models.Count; i++) {
 				var pathsToExport = GetExportPaths(Models[i]);
 				var valuesToExport = new string[pathsToExport.Count];
-				for (int j = 0; j < valuesToExport.Length; j++) valuesToExport[j] = GetModelPropertyValue(Models[i], pathsToExport[j]);
+				for (int j = 0; j < valuesToExport.Length; j++)
+					valuesToExport[j] = GetModelPropertyValue(Models[i], pathsToExport[j]);
 				propertiesToExport.Add(valuesToExport);
 			}
 			// возврат сформированного списка
@@ -1133,20 +1238,21 @@ namespace Inforoom2.Components
 				return;
 			}
 			const int pixelsFont = 11;
-			const int pixelsForColumnWidth = pixelsFont * 34;
+			const int pixelsForColumnWidth = pixelsFont*34;
+			const int maxColumnWidth = 12000;
 			byte[] fileToreturn = new byte[0];
 			var propertiesToExport = ExpressionToGetExportValues != null ? ExportToListByLinq() : ExportToList();
 			//Заполняем шапку, если она есть
 			int startIndex = HeaderLines.Count;
 			if (startIndex > 0) {
-				HeaderLines.ForEach(s => { propertiesToExport.Insert(0, new string[] { s }); });
+				HeaderLines.ForEach(s => { propertiesToExport.Insert(0, new string[] {s}); });
 			}
 			if (propertiesToExport.Count > 0) {
 				//создаем новый xls файл 
 				var workbook = new Workbook();
 				var worksheet = new Worksheet("Первый лист");
 				for (int i = 0; i < startIndex; i++) worksheet.Cells[i, 0] = new Cell(propertiesToExport[i][0]);
-				for (int i = 0; i < propertiesToExport[startIndex].Length; i++) worksheet.Cells.ColumnWidth[(ushort)i] = 0;
+				for (int i = 0; i < propertiesToExport[startIndex].Length; i++) worksheet.Cells.ColumnWidth[(ushort) i] = 0;
 				// проходим строки
 				for (int i = startIndex; i < propertiesToExport.Count; i++) {
 					// столбцы
@@ -1160,13 +1266,19 @@ namespace Inforoom2.Components
 						}
 						//записываем значения в ячейки
 						worksheet.Cells[i, j] = new Cell(valueToCell);
-						worksheet.Cells.ColumnWidth[(ushort)j] = worksheet.Cells.ColumnWidth[(ushort)j] < propertiesToExport[i][j].Length
-							? (ushort)propertiesToExport[i][j].Length : worksheet.Cells.ColumnWidth[(ushort)j];
-					}
+						worksheet.Cells.ColumnWidth[(ushort) j] = worksheet.Cells.ColumnWidth[(ushort) j] <
+						                                          propertiesToExport[i][j].Length
+							? (ushort) propertiesToExport[i][j].Length
+							: worksheet.Cells.ColumnWidth[(ushort) j];
+						worksheet.Cells[i, j].Style = new CellStyle() {Warp = true};
+                    }
 				}
 				for (int i = 0; i < propertiesToExport[startIndex].Length; i++) {
-					worksheet.Cells.ColumnWidth[(ushort)i] = (ushort)(worksheet.Cells.ColumnWidth[(ushort)i] * pixelsForColumnWidth);
-					worksheet.Cells[startIndex, i].Style = new CellStyle() { Font = new Font("Arial", pixelsFont) { Bold = true } };
+					worksheet.Cells.ColumnWidth[(ushort) i] =
+						(ushort) (worksheet.Cells.ColumnWidth[(ushort) i]*pixelsForColumnWidth < maxColumnWidth
+							? worksheet.Cells.ColumnWidth[(ushort) i]*pixelsForColumnWidth
+							: maxColumnWidth);
+					worksheet.Cells[startIndex, i].Style = new CellStyle() {Font = new Font("Arial", pixelsFont) {Bold = true}};
 				}
 
 				workbook.Worksheets.Add(worksheet);
@@ -1240,7 +1352,8 @@ namespace Inforoom2.Components
 		public void ParamSet(string parametreName, string parametreValue)
 		{
 			if (ParamsProcessed) {
-				throw new Exception("Невозможно добавить параметр: параметры уже были обработаны фильтром! *Добавление возможно только до метода GetCriteria().");
+				throw new Exception(
+					"Невозможно добавить параметр: параметры уже были обработаны фильтром! *Добавление возможно только до метода GetCriteria().");
 			}
 			Params[parametreName] = parametreValue;
 		}
@@ -1259,7 +1372,8 @@ namespace Inforoom2.Components
 		public void ParamDelete(string parametreName)
 		{
 			if (ParamsProcessed) {
-				throw new Exception("Невозможно удалить параметр: параметры уже были обработаны фильтром! *Удаление возможно только до метода GetCriteria().");
+				throw new Exception(
+					"Невозможно удалить параметр: параметры уже были обработаны фильтром! *Удаление возможно только до метода GetCriteria().");
 			}
 			Params.Remove(parametreName);
 		}

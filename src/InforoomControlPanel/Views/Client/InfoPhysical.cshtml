@@ -18,6 +18,21 @@
 					<i class="entypo-plus-circled"></i>
 					ПРИВАТНОЕ СООБЩЕНИЕ
 				</a>
+				<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequestCreate", "ServiceRequest", new {@id = client.Id})">
+					<i class="entypo-doc-text"></i>
+					Сервисная заявка
+				</a>
+				<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("AttachRequest", "ConnectionTeam", new {@id = client.Id, @type = "ClientConnectionRequest"})">
+					<i class="entypo-briefcase"></i>
+					Заявка на подключение
+				</a>
+				<form style="display: inline" action="/cp/AdminAccount/ApplyImpersonation" method="post" target="_blank">
+					<input name="client.Id" type="hidden" value="21131">
+					<button class="btn btn-success btn-sm btn-icon icon-left" type="submit" value="Войти">
+						<i class="entypo-key"></i>
+						Войти в личный кабинет
+					</button>
+				</form>
 			</div>
 		}
 	</div>

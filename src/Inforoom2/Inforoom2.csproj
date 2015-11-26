@@ -5,7 +5,8 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion></ProductVersion>
+    <ProductVersion>
+    </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
@@ -317,9 +318,11 @@
     <Compile Include="Helpers\SceHelper.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Helpers\ViewHelper.cs" />
+    <Compile Include="Intefaces\IClientExpander.cs" />
     <Compile Include="Intefaces\IModelWithPriority.cs" />
     <Compile Include="Intefaces\ILogAppeal.cs" />
     <Compile Include="Intefaces\IServicemenScheduleItem.cs" />
+    <Compile Include="Models\Recipient.cs" />
     <Compile Include="Models\ClientOrder.cs" />
     <Compile Include="Models\ServiceRequestComment.cs" />
     <Compile Include="Models\ServiceRequest.cs" />
@@ -544,7 +547,8 @@
           <IISUrl>http://localhost:50392/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
-          <CustomServerUrl></CustomServerUrl>
+          <CustomServerUrl>
+          </CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>

@@ -211,6 +211,7 @@
     <Compile Include="Functional\Banner\CreateBannerFixture.cs" />
     <Compile Include="Functional\Banner\EditBannerFixture.cs" />
     <Compile Include="Functional\ClientActions\ClientActionsFixture.cs" />
+    <Compile Include="Functional\ClientActions\RegistrationLegalFixture.cs" />
     <Compile Include="Functional\ClientActions\RegistrationFixture.cs" />
     <Compile Include="Functional\ClientActions\AgentListFixture.cs" />
     <Compile Include="Functional\ClientActions\agentStatusChangeFixture.cs" />

@@ -23,7 +23,7 @@
 	<link rel="stylesheet" href="~/assets/css/bootstrap.css?v=1">
 	<link rel="stylesheet" href="~/assets/css/neon-core.css?v=1">
 	<link rel="stylesheet" href="~/assets/css/neon-theme.css?v=1">
-	<link rel="stylesheet" href="~/assets/css/neon-forms.css?v=1">
+	<link rel="stylesheet" href="~/assets/css/neon-forms.css?v=2">
 	<link rel="stylesheet" href="~/assets/css/custom.css?v=4">
 	<link rel="stylesheet" href="~/Css/style.css?v=3"></link>
 
@@ -105,8 +105,13 @@
 			</a>
 		</li>
 		<li>
-			<a href="@Url.Action("Registration", "Client")">
-				<span class="title">Зарегистрировать клиента</span>
+			<a href="@Url.Action("RegistrationPhysical", "Client")">
+				<span class="title">Зарегистрировать физ. лицо</span>
+			</a>
+		</li>
+		<li>
+			<a href="@Url.Action("RegistrationLegal", "Client")">
+				<span class="title">Зарегистрировать юр. лицо</span>
 			</a>
 		</li>
 		<li>
@@ -438,10 +443,11 @@
 
 <script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
 <script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
+<script type="text/javascript" src="~/assets/js/jquery.cookie.js"></script>
 <script type="text/javascript" src="~/Scripts/Helpers.js"></script>
 <script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
 <script type="text/javascript" src="~/Scripts/Window.js"></script>
-<script type="text/javascript" src="~/Scripts/ControlPanel.js"></script>
+<script type="text/javascript" src="~/Scripts/ControlPanel.js?v=1"></script>
 
 @RenderSection("JavaScript", required: false)
 @{

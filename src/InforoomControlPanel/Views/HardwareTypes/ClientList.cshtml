@@ -78,11 +78,11 @@
 							<label class="cb-wrapper"><input type="checkbox" id="chk-1"><div class="checked"></div></label>
 						</div>
 					</td> 
-					<td><a href="@Url.Action("Info", "Client", new { id = item.Id })">@item.Id</a></td>
-					<td><a href="@Url.Action("Info", "Client", new { id = item.Id })">@item.PhysicalClient.FullName</a></td>
-					<td><a href="@Url.Action("Info", "Client", new { id = item.Id })">@item.RentalHardwareList.Count(s => s.IsActive)</a></td>
+					<td><a href="@Url.Action("InfoPhysical", "Client", new { id = item.Id })">@item.Id</a></td>
+					<td><a href="@Url.Action("InfoPhysical", "Client", new { id = item.Id })">@item.PhysicalClient.FullName</a></td>
+					<td><a href="@Url.Action("InfoPhysical", "Client", new { id = item.Id })">@item.RentalHardwareList.Count(s => s.IsActive)</a></td>
 					<td>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("Info", "Client", new { id = item.Id })">
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("InfoPhysical", "Client", new { id = item.Id })">
 							<i class="entypo-plus-circled"></i>
 							Просмотреть
 						</a>

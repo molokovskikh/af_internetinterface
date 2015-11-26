@@ -1,0 +1,115 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "Регистрация юр. лица";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var client = ViewBag.Client as Client ?? new Client();
+	client.LegalClient = client.LegalClient ?? new LegalClient();
+	Employee currentEmployee = ViewBag.CurrentEmployee;
+	var regionList = ViewBag.RegionList as List<Region>;
+}
+
+<div class="panel panel-primary col-md-8">
+	<div class="panel-body">
+		@using (@Html.BeginForm("RegistrationLegal", "Client", FormMethod.Post, new {@class = "form-horizontal form-groups-bordered"})) {
+			<div class="panel-body">
+				<div class="row">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Полное наименование:</label>
+						<div class="col-sm-4">
+							@Html.TextBoxFor(o => client.LegalClient.Name, new {@class = "form-control"})
+							@ViewBag.Validation.GetError(client.LegalClient, "Name")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Краткое наименование:</label>
+						<div class="col-sm-4">
+							@Html.TextBoxFor(o => client.LegalClient.ShortName, new {@class = "form-control"})
+							@ViewBag.Validation.GetError(client.LegalClient, "ShortName")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Юридический адрес:</label>
+						<div class="col-sm-4">
+							@Html.TextBoxFor(o => client.LegalClient.LegalAdress, new {@class = "form-control"})
+							@ViewBag.Validation.GetError(client.LegalClient, "LegalAdress")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Фактический адрес:</label>
+						<div class="col-sm-4">
+							@Html.TextBoxFor(o => client.LegalClient.ActualAdress, new {@class = "form-control"})
+							@ViewBag.Validation.GetError(client.LegalClient, "ActualAdress")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Почтовый адрес:</label>
+						<div class="col-sm-4">
+							@Html.TextBoxFor(o => client.LegalClient.MailingAddress, new {@class = "form-control"})
+							@ViewBag.Validation.GetError(client.LegalClient, "MailingAddress")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Мобильный телефон:</label>
+						<div class="col-sm-4">
+							@if (client.Contacts.Any(s => s.Type == ContactType.MobilePhone)) {
+								@Html.TextBoxFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone).ContactString, new {@Name = "client.Contacts[0].ContactString", @Id = "ContactString_1", @class = "form-control"})
+								@ViewBag.Validation.GetError(client, "Contacts")
+								@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone).Type, new {@Name = "client.Contacts[0].Type"})
+								@Html.HiddenFor(o => client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone).Date, new {@Name = "client.Contacts[0].Date"})
+							}
+							else {
+								<input id="ContactString_1" name="client.Contacts[0].ContactString" class="form-control" type="text" value="">
+								<input name="client.Contacts[0].Type" type="hidden" value="MobilePhone">
+								<input name="client.Contacts[0].Date" type="hidden" value="@DateTime.Now">
+							}
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Регион:</label>
+						<div class="col-sm-4">
+							@Html.DropDownListExtendedFor(i => client.LegalClient.Region, regionList, obj => obj.Name, null,
+								new {@class = "form-control", @Id = "RegionDropDown"}, client.LegalClient.Region != null ? client.LegalClient.Region.Id.ToString() : "", true)
+							@ViewBag.Validation.GetError(client.LegalClient, "Region")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">ИНН:</label>
+						<div class="col-sm-4">
+							@Html.TextBoxFor(o => client.LegalClient.Inn, new {@class = "form-control"})
+							@ViewBag.Validation.GetError(client.LegalClient, "Inn")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Контактное лицо:</label>
+						<div class="col-sm-4">
+							@Html.TextBoxFor(o => client.LegalClient.ContactPerson, new {@class = "form-control"})
+							@ViewBag.Validation.GetError(client.LegalClient, "ContactPerson")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Задача в Redmine для клиента:</label>
+						<div class="col-sm-4">
+							@Html.TextBoxFor(o => client.LegalRedmineTask, new {@class = "form-control"})
+							@ViewBag.Validation.GetError(client.LegalClient, "LegalRedmineTask")
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-4 control-label"></label>
+						<div class="col-sm-4">
+							<input type="submit" class="btn btn-green save" value="Зарегистрировать"/>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+
+</div>
+
+<div class="form-group">
+</div>
+<div style="clear: both;"></div>

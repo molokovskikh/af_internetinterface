@@ -88,7 +88,7 @@ namespace Inforoom2.Components
 			//Кастомная валидация
 			var validators = Attribute.GetCustomAttributes(prop).OfType<CustomValidator>().ToList();
 			foreach (var validator in validators) {
-				errors = validator.Start((BaseModel)obj, prop);
+				errors = validator.Start((BaseModel) obj, prop);
 				summary.AddRange(errors);
 			}
 			return new ValidationErrors(summary.ToList());
@@ -112,7 +112,7 @@ namespace Inforoom2.Components
 			var propertyInfo = member.Member as PropertyInfo;
 			if (propertyInfo != null) {
 				var attribute = customValidatorAttribute as CustomValidator;
-				var errors = attribute.ModelForcedValidation((BaseModel)obj, propertyInfo, validateJustModel);
+				var errors = attribute.ModelForcedValidation((BaseModel) obj, propertyInfo, validateJustModel);
 				summary.AddRange(errors);
 			}
 			return new ValidationErrors(summary.ToList());
@@ -133,7 +133,7 @@ namespace Inforoom2.Components
 			var summary = new List<InvalidValue>();
 			if (instableProperty != null) {
 				var attribute = customValidatorAttribute as CustomValidator;
-				var errors = attribute.ModelForcedValidation((BaseModel)obj, instableProperty, validateJustModel);
+				var errors = attribute.ModelForcedValidation((BaseModel) obj, instableProperty, validateJustModel);
 				summary.AddRange(errors);
 			}
 			if (currentErrors != null) {
@@ -154,7 +154,9 @@ namespace Inforoom2.Components
 				return null;
 			}
 			range = new ValidationErrors(range.Where(s => !errors
-				.Any(d => s.Message == d.Message && s.PropertyName == d.PropertyName && s.Entity == d.Entity)).ToList().Concat(errors));
+				.Any(d => s.Message == d.Message && s.PropertyName == d.PropertyName && s.Entity == d.Entity))
+				.ToList()
+				.Concat(errors));
 			return range;
 		}
 
@@ -162,26 +164,26 @@ namespace Inforoom2.Components
 		{
 			var summary = new List<InvalidValue>();
 
-			var props = obj.GetType().GetProperties().Where(i => Attribute.GetCustomAttributes(i).OfType<CustomValidator>().Any()).ToList();
+			var props =
+				obj.GetType().GetProperties().Where(i => Attribute.GetCustomAttributes(i).OfType<CustomValidator>().Any()).ToList();
 			foreach (var prop in props)
 				summary.AddRange(ValidateProperty(obj, prop.Name));
 
 			var runner = new ValidatorEngine();
 			var runnerErrors = runner.Validate(obj);
-			var selfValidateErrors = ((BaseModel)obj).Validate(Session);
+			var selfValidateErrors = ((BaseModel) obj).Validate(Session);
 			summary.AddRange(runnerErrors);
 			summary.AddRange(selfValidateErrors);
-			if (currentErrors!=null)
-			{
-				summary.AddRange(currentErrors); 
+			if (currentErrors != null) {
+				summary.AddRange(currentErrors);
 			}
-			
+
 
 			var returnedErrors = new ValidationErrors(summary.ToList());
-            if(Errors.ContainsKey(obj))
-                Errors[obj].AddRange(returnedErrors);
-            else
-			    Errors.Add(obj, returnedErrors);
+			if (Errors.ContainsKey(obj))
+				Errors[obj].AddRange(returnedErrors);
+			else
+				Errors.Add(obj, returnedErrors);
 			ValidatedObjectList.Add(obj);
 			return returnedErrors;
 		}
@@ -197,12 +199,12 @@ namespace Inforoom2.Components
 
 			var allprops = obj.GetType().GetProperties();
 			//HasMany атрибуты
-			var props = allprops.Where(prop => Attribute.IsDefined(prop, typeof(OneToManyAttribute)));
+			var props = allprops.Where(prop => Attribute.IsDefined(prop, typeof (OneToManyAttribute)));
 			foreach (var p in props) {
 				var value = p.GetValue(obj, null);
 				if (!NHibernateUtil.IsInitialized(value))
 					continue;
-				var list = (ICollection)value;
+				var list = (ICollection) value;
 				foreach (var o in list) {
 					if (validatedObjects.Contains(o))
 						continue;
@@ -213,11 +215,11 @@ namespace Inforoom2.Components
 			}
 
 			//OneToOne and Nested атрибуты
-			props = allprops.Where(prop => Attribute.IsDefined(prop, typeof(OneToOneAttribute)));
+			props = allprops.Where(prop => Attribute.IsDefined(prop, typeof (OneToOneAttribute)));
 			foreach (var p in props) {
 				var value = p.GetValue(obj, null);
 				//Если поля нет, но оно необязательное, то и хрен с ним
-				if (value == null && !Attribute.IsDefined(p, typeof(NHibernate.Validator.Constraints.NotNullAttribute)))
+				if (value == null && !Attribute.IsDefined(p, typeof (NHibernate.Validator.Constraints.NotNullAttribute)))
 					continue;
 				if (!NHibernateUtil.IsInitialized(value) || validatedObjects.Contains(value))
 					continue;
@@ -226,7 +228,7 @@ namespace Inforoom2.Components
 					summary.AddRange(errors);
 			}
 
-			props = allprops.Where(prop => Attribute.IsDefined(prop, typeof(ManyToOneAttribute)));
+			props = allprops.Where(prop => Attribute.IsDefined(prop, typeof (ManyToOneAttribute)));
 			foreach (var p in props) {
 				var value = p.GetValue(obj, null);
 				if (value == null || !NHibernateUtil.IsInitialized(value))
@@ -239,14 +241,26 @@ namespace Inforoom2.Components
 			return summary;
 		}
 
-		public HtmlString GetError(object obj, string field, string message = null, string html = "", bool IsValidated = false, object forcedValidationAttribute = null)
+		public HtmlString GetError(object obj, string field, string message = null, string html = "", bool IsValidated = false,
+			object forcedValidationAttribute = null)
 		{
 			if (IsValidated) {
 				return WrapSuccess(message);
 			}
-
-			if (!ValidatedObjectList.Contains(obj))
-				return new HtmlString(string.Empty);
+			if (!ValidatedObjectList.Contains(obj) && (obj as IEnumerable != null)) {
+				var listObj = obj;
+                foreach (var item in listObj as IEnumerable) {
+	                if (ValidatedObjectList.Contains(item)) {
+						obj = item;
+					}
+					break;
+				}
+			}
+			else {
+				if (!ValidatedObjectList.Contains(obj))
+					return new HtmlString(string.Empty);
+			}
+			
 
 			// необходимо получить ошибоки для текущего поляS
 			//	Errors[obj]
@@ -254,8 +268,8 @@ namespace Inforoom2.Components
 			var errors = new ValidationErrors(currentErrors.Where(s => s.PropertyName == field).ToList());
 
 			// отображение ошибок по переданному валидатору, используется при принудительной проверке свойств
-			if (forcedValidationAttribute != null) {
-				errors.AddRange(((CustomValidator)forcedValidationAttribute).GetCurrentErrors());
+			 if (forcedValidationAttribute != null) {
+				errors.AddRange(((CustomValidator) forcedValidationAttribute).GetCurrentErrors());
 			}
 			if (errors.Length > 0) {
 				var ret = errors.First().Message;
@@ -268,7 +282,8 @@ namespace Inforoom2.Components
 
 		protected HtmlString WrapError(string element, string msg = "")
 		{
-			var html = "<div class=\"error\">" + element + "<div class=\"msg\">" + msg + "</div><div class=\"icon\"></div>" + "</div>";
+			var html = "<div class=\"error\">" + element + "<div class=\"msg\">" + msg + "</div><div class=\"icon\"></div>" +
+			           "</div>";
 			var ret = new HtmlString(html);
 			return ret;
 		}
