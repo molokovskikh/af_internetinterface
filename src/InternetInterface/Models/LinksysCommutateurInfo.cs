@@ -45,7 +45,7 @@ namespace InternetInterface.Models
 #else
 				var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
 				telnet.Login(login, password, 100);
-				var port = point.Port.ToString();
+				var port = (CurrentSwitchModel == _switchModel[0] ? point.Port-49 : point.Port).ToString();
 #endif
 				telnet.WriteLine("terminal length 0");
 
