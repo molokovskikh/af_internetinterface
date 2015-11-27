@@ -48,7 +48,7 @@
 <div class="panel-body">
 	<div class="row">
 		<div class="col-sm-2">Дата регистрации с </div>
-		<div class="col-sm-3">
+		<div class="col-sm-3 fix400">
 			@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new {@class = "form-control", @style = "width:101px;"})
 			<span style="display: inline-block; width: 22px; margin-left: 50px;">по</span>
 			@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.LowerOrEqual, new {@class = "form-control", @style = "width:101px;"})
@@ -59,7 +59,7 @@
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-2">Дата рождения с</div>
-			<div class="col-sm-3">
+			<div class="col-sm-3 fix400">
 				@pager.FormFilter(i => i.PhysicalClient.BirthDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new {@Id = "FilterCondition_PhysBirthDateFrom", @class = "form-control filterCondition", @style = "width:101px;"})
 				<span style="display: inline-block; width: 22px; margin-left: 50px;">по</span>
 				@pager.FormFilter(i => i.PhysicalClient.BirthDate, HtmlType.Date, ComparsionType.LowerOrEqual, new {@Id = "FilterCondition_PhysBirthDateTo", @class = "form-control filterCondition", @style = "width:101px;"})
@@ -81,7 +81,7 @@
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-2">Баланс от </div>
-			<div class="col-sm-3">
+			<div class="col-sm-3 fix400">
 				@pager.FormFilter(i => i.PhysicalClient.Balance, HtmlType.text, ComparsionType.GreaterOrEqueal, new {@Id = "FilterCondition_PhysBalance", @class = "form-control filterCondition", @style = "width:101px;"})
 				<span style="display: inline-block; width: 22px; margin-left: 50px;">до</span>
 				@pager.FormFilter(i => i.PhysicalClient.Balance, HtmlType.text, ComparsionType.LowerOrEqual, new {@Id = "FilterCondition_PhysBalance", @class = "form-control filterCondition", @style = "width:101px;"})
@@ -99,7 +99,7 @@
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-2">Баланс от </div>
-			<div class="col-sm-3">
+			<div class="col-sm-3 fix400">
 				@pager.FormFilter(i => i.LegalClient.Balance, HtmlType.text, ComparsionType.GreaterOrEqueal, new {@Id = "FilterCondition_LegalBalance", @class = "form-control filterCondition", @style = "width:101px;"})
 				<span style="display: inline-block; width: 22px; margin-left: 50px;">до</span>
 				@pager.FormFilter(i => i.LegalClient.Balance, HtmlType.text, ComparsionType.LowerOrEqual, new {@Id = "FilterCondition_LegalBalance", @class = "form-control filterCondition", @style = "width:101px;"})
@@ -128,11 +128,11 @@
 <div class="panel-body addressFilterBlock">
 	<div class="panel-body" style="padding: 0px;">
 		<div class="row">
-			<div class="col-sm-3 addressDetailsBlock left">
+			<div class="col-sm-3 fix230 addressDetailsBlock left">
 				<span class="addressDetails">Улица</span> <input type="text" name="" value="" id="searchStreet" class="form-control addressSearch">
 				<span class="addressDetails">Дом</span> <input type="text" name="" value="" id="searchHouse" class="form-control addressSearch">
 			</div>
-			<div class="col-sm-3 addressDetailsBlock">
+			<div class="col-sm-3 fix230 addressDetailsBlock">
 				<span class="addressDetails">Квартира</span> <input type="text" name="" value="" id="searchApartment" class="form-control addressSearch">
 				<span class="addressDetails">Подъезд</span> <input type="text" name="" value="" id="searchEntrance" class="form-control addressSearch">
 				<span class="addressDetails">Этаж</span> <input type="text" name="" value="" id="searchFloor" class="form-control addressSearch">
@@ -151,7 +151,7 @@
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-2">Дата изменения статуса с </div>
-			<div class="col-sm-3">
+			<div class="col-sm-3 fix400">
 				@pager.FormFilter(i => i.StatusChangedOn, HtmlType.Date, ComparsionType.GreaterOrEqueal, new {@class = "form-control", @style = "width:101px;"})
 				<span style="display: inline-block; width: 22px; margin-left: 50px;">по</span>
 				@pager.FormFilter(i => i.StatusChangedOn, HtmlType.Date, ComparsionType.LowerOrEqual, new {@class = "form-control", @style = "width:101px;"})

@@ -3,6 +3,7 @@
 	.main-content .servicemen.panel, .PrintTimeTable{ display: block !important;}
 	.pageBreak {page-break-after: always;} 
 }
+ .error{color:red; font-weight:600 !important;}
  .servicemen table { table-layout:fixed; overflow:hidden;}
  .servicemen td { height: 40px;}
  .table thead a.checked {
@@ -29,12 +30,14 @@
     margin: 10px;
     border-radius: 6px;
  }
+div.fix230{width: 230px !important;}
+div.fix400{width: 400px !important;}
 .clientTableFilter .idColumn {background: #FFF;padding: 4px;border-radius: 3px;}
 .clientTableFilter .idColumn:hover {background: #E8E8E8;}
 .clientTableFilter .cleanButton {
-	background: #ECECEC;
+    background: #FFFFFF;
     border-radius: 2px;
-    border: 1px solid #BBB;
+    border: 1px solid #ECECEC;
     padding: 7px;
     color: #B7B7B7;
     display: block;
