@@ -2,11 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
+using Inforoom2.Controllers;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using log4net.Appender;
@@ -22,9 +26,27 @@ namespace Inforoom2.Components
 	/// </summary>
 	public class EntityBinderAttribute : CustomModelBinderAttribute
 	{
+		//список разрешенных полей
+		private string paramsInclude { get; set; }
+		//список запрещенных полей
+		private string paramsExclude { get; set; }
+
+		/// <summary>
+		/// Атрибут байндера
+		/// </summary>
+		/// <param name="include">список разрешенных полей</param>
+		/// <param name="exclude">список запрещенных полей</param>
+		public EntityBinderAttribute(string include = "", string exclude = "")
+		{
+			paramsInclude = include;
+			paramsExclude = exclude;
+		}
+
 		public override IModelBinder GetBinder()
 		{
-			return new EntityBinder();
+			var Include = paramsInclude.ToLower().Split(',').Where(s => s.Replace(" ", "").Length != 0).ToArray();
+			var Exclude = paramsInclude.ToLower().Split(',').Where(s => s.Replace(" ", "").Length != 0).ToArray();
+			return new EntityBinder(Include, Exclude);
 		}
 	}
 
@@ -36,16 +58,30 @@ namespace Inforoom2.Components
 	/// </summary>
 	public class EntityBinder : IModelBinder
 	{
-		protected static ISession Session;
+		//флаг отменяющий проверку "разрешенных полей"
+		public static bool EnableBinderProtection = false;
+		//название тэга, добавляемого байндером в html-документ
+		public const string BinderPropertyHtmlName = "ListOfPermitted";
+		//список разрешенных полей
+		private string[] paramsInclude { get; set; }
+		//список запрещенных полей
+		private string[] paramsExclude { get; set; }
+		//результирующий список разрешенных полей
+		private List<string> propertiesToBind { get; set; }
+		//сессия хибера
+		private ISession dbSession { get; set; }
+		//база шифрования
+		private const string passwordBase = "ea8hpymwixz43gk96wqh";
+		//флаг отменяющий генерацию шифруемого списка полей
+		private bool enableAutoProtection { get; set; }
 
-		/// <summary>
-		/// Устанавливает сессию. 
-		/// Так как использование двух сессий является опасным, следует вызывать эту функцию там где создается сессия для контроллеров.
-		/// </summary>
-		/// <param name="dbsession">Сессия Nhibernate</param>
-		public static void SetSession(ISession dbsession)
+		public EntityBinder(string[] include, string[] exclude, bool enableAutoProtection = true)
 		{
-			Session = dbsession;
+			paramsInclude = include;
+			paramsExclude = exclude;
+			this.enableAutoProtection = enableAutoProtection;
+			propertiesToBind = new List<string>();
+			propertiesToBind.AddRange(paramsInclude);
 		}
 
 		/// <summary>
@@ -56,12 +92,56 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
 		{
+#if DEBUG
+			if (controllerContext.HttpContext != null
+			    && controllerContext.HttpContext.Request.Form != null) {
+				if (controllerContext.HttpContext.Request.Form["binderTestOff"] != null)
+				{
+					EntityBinder.EnableBinderProtection = false;
+				}
+				if (controllerContext.HttpContext.Request.Form["binderTestOn"] != null)
+				{
+					EntityBinder.EnableBinderProtection = true;
+				}
+			}
+#else
+#endif
+
 			var modelName = bindingContext.ModelName;
 			var type = bindingContext.ModelType;
-
+			var baseController = controllerContext.Controller as BaseController;
+			if (baseController == null) {
+				throw new Exception("В EntityBinder попал контроллер, не наследуемый от BaseController!");
+			}
+			if (baseController.HttpContext.Request.HttpMethod != "POST") {
+				return null;
+			}
+			dbSession = baseController.DbSession;
 			//Так как мы удаляем использованные элементы из коллекции, во время байндинга
 			//Форму необходимо скопировать
 			var collection = new NameValueCollection(controllerContext.HttpContext.Request.Form);
+
+
+			if (EnableBinderProtection) {
+				//Получаем список допустимых полей (по добавленному байндером тэгу)
+				if (enableAutoProtection) GetBinderProps(controllerContext, collection);
+				//Отсеиваем исключенные из списка поля 
+				propertiesToBind = propertiesToBind.Where(s => !paramsExclude.Any(d => d == s)).ToList();
+				if (propertiesToBind.Count == 0) {
+					collection.Clear();
+				}
+				else {
+					for (int i = 0; i < propertiesToBind.Count; i++) {
+						for (int j = 0; j < collection.Count; j++) {
+							if (!propertiesToBind.Any(s => s == collection.GetKey(j).ToLower())) {
+								collection.Remove(collection.GetKey(j));
+								break;
+							}
+						}
+					}
+				}
+			}
+			//получаем из списка поля модели
 			var values = SliceValues(collection, modelName);
 			var res = MapModel(values, type);
 			return res;
@@ -78,11 +158,9 @@ namespace Inforoom2.Components
 			var form = request.Form;
 			var keys = form.AllKeys;
 			string name = null;
-			foreach (var key in keys)
-			{
+			foreach (var key in keys) {
 				var split = key.Split('.');
-				if (split.Length > 1)
-				{
+				if (split.Length > 1) {
 					name = split.First();
 					break;
 				}
@@ -93,6 +171,77 @@ namespace Inforoom2.Components
 			var values = SliceValues(new NameValueCollection(request.Form), name);
 			var ret = MapModel(values, type);
 			return ret;
+		}
+
+		/// <summary>
+		/// Обработка html документа 
+		/// </summary>
+		/// <param name="controller">Контроллер</param>
+		/// <param name="html">Документ</param>
+		/// <returns></returns>
+		public static string HtmlProcessing(Controller controller, string html)
+		{
+			//получение списка редактируемых в документе полей 
+			var nameList = EntityBinder.GetHtmlPropertyValuesByName(html, new string[] {"input", "select"}, "name");
+			if (nameList == null || nameList.Count == 0) return html;
+			//шифрование списка полей
+			var cryptedValue = Cryptographer.EncryptString(String.Join(",", nameList), passwordBase);
+			var cryptedValueBase = cryptedValue.Substring(cryptedValue.Length - 7);
+			cryptedValue = Cryptographer.EncryptString(cryptedValue, cryptedValueBase);
+			cryptedValue = controller.HttpContext.Server.HtmlEncode(cryptedValue + cryptedValueBase);
+			//добавление в документ тэга со значением зашифрованного списка полей
+			var binderInput = new TagBuilder("input");
+			binderInput.MergeAttribute("name", EntityBinder.BinderPropertyHtmlName);
+			binderInput.MergeAttribute("value", cryptedValue);
+			binderInput.MergeAttribute("type", "hidden");
+			html = binderInput.ToString(TagRenderMode.SelfClosing);
+
+			var binderScript = new TagBuilder("script");
+			binderScript.MergeAttribute("type", "text/javascript");
+			binderScript.InnerHtml = "$(function(){$('form').append($('input[name=\"" + EntityBinder.BinderPropertyHtmlName +
+			                         "\"]').clone());})";
+			html += binderScript.ToString(TagRenderMode.Normal);
+			return html;
+		}
+
+
+		/// <summary>
+		/// Получение полей, доступных для ввода с формы
+		/// </summary>
+		/// <param name="html">Документ</param>
+		/// <param name="tags">Тэги, содержащие значения</param>
+		/// <param name="propertyName">Свойство, по которому получаем список полей</param>
+		/// <returns></returns>
+		public static List<string> GetHtmlPropertyValuesByName(string html, string[] tags, string propertyName)
+		{
+			if (html == String.Empty || html.IndexOf("<") == -1 || html.IndexOf(">") == -1) return null;
+			var nameList = new List<string>();
+			string formatSub1 = propertyName + "=\"";
+			string formatSub2 = propertyName + "='";
+
+			while (html.IndexOf("<") != -1 || html.IndexOf(">") != -1) {
+				var firstIndex = html.IndexOf("<");
+				var lastIndex = html.IndexOf(">") + 1;
+				var subStr = html.Substring(firstIndex, lastIndex - firstIndex);
+				if (tags.Any(s => subStr.IndexOf(s) != -1)) {
+					subStr = subStr.Replace(" ", "").ToLower();
+					if (subStr.IndexOf(propertyName) != -1) {
+						if (subStr.IndexOf(formatSub1) != -1) {
+							subStr = subStr.Substring(subStr.IndexOf(formatSub1) + formatSub1.Length);
+							subStr = subStr.Substring(0, subStr.IndexOf("\""));
+						}
+						else {
+							if (subStr.IndexOf(formatSub2) != -1) {
+								subStr = subStr.Substring(subStr.IndexOf(formatSub2) + formatSub2.Length);
+								subStr = subStr.Substring(0, subStr.IndexOf("\'"));
+							}
+						}
+						nameList.Add(subStr);
+					}
+				}
+				html = html.Substring(html.IndexOf(">") + 1);
+			}
+			return nameList;
 		}
 
 		/// <summary>
@@ -108,15 +257,13 @@ namespace Inforoom2.Components
 			// в пустом значении списка
 			if (values["id"] == "") return null;
 
-			if (values["id"] == null || int.Parse(values["id"]) == 0)
-			{
+			if (values["id"] == null || int.Parse(values["id"]) == 0) {
 				// создание пустой переменной указанного типа
 				return Activator.CreateInstance(entityType);
 			}
-			else
-			{
+			else {
 				// создание переменной указанного типа с переданным значением
-				return Session.Get(entityType, int.Parse(values["id"]));
+				return dbSession.Get(entityType, int.Parse(values["id"]));
 			}
 		}
 
@@ -135,8 +282,7 @@ namespace Inforoom2.Components
 			if (instance == null)
 				return null;
 
-			while (values.HasKeys())
-			{
+			while (values.HasKeys()) {
 				var key = values.Keys.First() as string;
 				object newValue;
 				//Получаем имя поля из параметров
@@ -144,10 +290,9 @@ namespace Inforoom2.Components
 				//Получаем поле
 				var property = instance.GetType().GetProperty(propName);
 
-				if (property.PropertyType.IsSubclassOf(typeof(BaseModel)))
-				{
+				if (property.PropertyType.IsSubclassOf(typeof (BaseModel))) {
 					//Если это модель то мапим модель
-					var oldValue = property.GetValue(instance, new object[] { }) as BaseModel;
+					var oldValue = property.GetValue(instance, new object[] {}) as BaseModel;
 					var idKey = property.Name + ".Id";
 					//Если нет идентификатора вложенной модели, то мы его создаем в параметрах
 					//То есть если не было дано никаких специальных указаний, что модель надо затереть или подгрузить другую
@@ -155,16 +300,18 @@ namespace Inforoom2.Components
 						values[idKey] = oldValue.Id.ToString();
 					var subvalues = SliceValues(values, property.Name);
 					newValue = MapModel(subvalues, property.PropertyType);
-					property.SetValue(instance, newValue, new object[] { });
-					if (values[key] != null) throw new Exception("Не удается назначить поле! \n Вероятная причина: значени в свойстве name тэга обрабатываемого представления *view* указывает на объект ( на модель '" + key + "' ), а не на его поле!");
+					property.SetValue(instance, newValue, new object[] {});
+					if (values[key] != null)
+						throw new Exception(
+							"Не удается назначить поле! \n Вероятная причина: значени в свойстве name тэга обрабатываемого представления *view* указывает на объект ( на модель '" +
+							key + "' ), а не на его поле!");
 				}
-				else if (property.PropertyType.IsGenericType && property.PropertyType.GetInterfaces().Contains(typeof(IEnumerable)))
-				{
+				else if (property.PropertyType.IsGenericType && property.PropertyType.GetInterfaces().Contains(typeof (IEnumerable))) {
 					//Если поле это коллекция, то получаем набор параметров для каждого элемента и закидываем их в список
 					//Получаем тип элемента коллекции
 					var subType = property.PropertyType.GetGenericArguments().FirstOrDefault();
 					//Получаем поле объекта
-					var collection = (IList)property.GetValue(instance, new object[] { });
+					var collection = (IList) property.GetValue(instance, new object[] {});
 					//Получаем словарь с коллекциями значений для элементов списка
 					var subCollections = SliceMultipleValues(values, property.Name);
 
@@ -176,8 +323,7 @@ namespace Inforoom2.Components
 					else
 						ChangeCollection(collection, subType, subCollections);
 				}
-				else
-				{
+				else {
 					//Если это простое поле, то просто присваиваем его специальной функцией
 					//Которая хорошо конвертирует строки в значения полей модели
 					newValue = values[key];
@@ -190,19 +336,18 @@ namespace Inforoom2.Components
 
 		private void RemoveFromCollection(IList collection, Dictionary<string, NameValueCollection> subCollections)
 		{
-			
-			foreach (var pair in subCollections)
-			{
+			foreach (var pair in subCollections) {
 				//Получаем коллекцию из коллекции коллекций
 				var subcollection = pair.Value;
 				//Находим id, модели, которую нужно удалить из коллекции
 				//а затем саму модель
 				var id = int.Parse(subcollection["Id"]);
-				foreach (var model in collection)
+				foreach (var model in collection) {
 					if ((model as BaseModel).Id == id) {
 						collection.Remove(model);
 						break;
 					}
+				}
 			}
 		}
 
@@ -217,8 +362,7 @@ namespace Inforoom2.Components
 		{
 			//Очищаем
 			collection.Clear();
-			foreach (var pair in subCollections)
-			{
+			foreach (var pair in subCollections) {
 				//Получаем коллекцию из коллекции коллекций
 				var subcollection = pair.Value;
 				//Натягиваем параметры
@@ -267,8 +411,7 @@ namespace Inforoom2.Components
 		private Dictionary<string, NameValueCollection> SliceMultipleValues(NameValueCollection values, string name)
 		{
 			var dictionary = new Dictionary<string, NameValueCollection>();
-			while (values.AllKeys.Any(i => i.Contains(name)))
-			{
+			while (values.AllKeys.Any(i => i.Contains(name))) {
 				var key = values.AllKeys.First(i => i.Contains(name));
 				//получаем значения индекса элемента из верстки
 				var index = key.Split('[')[1].Split(']')[0];
@@ -292,11 +435,9 @@ namespace Inforoom2.Components
 		{
 			name = name.ToLower();
 			var collection = new NameValueCollection();
-			foreach (var key in values.AllKeys)
-			{
+			foreach (var key in values.AllKeys) {
 				//Проверяем, является ли ключ объектом с полями
-				if (key.ToLower().IndexOf(name + ".") == 0)
-				{
+				if (key.ToLower().IndexOf(name + ".") == 0) {
 					collection.Add(key.Substring(name.Length + 1), values[key]);
 					values.Remove(key);
 				}
@@ -321,35 +462,30 @@ namespace Inforoom2.Components
 				: propertyInfo.PropertyType;
 
 			//Для булевых типов, строчное "True" конвертируется в True
-			if (targetType == typeof(Boolean))
+			if (targetType == typeof (Boolean))
 				propertyVal = propertyVal.ToString().ToLower().Contains("true");
-			else if (targetType == typeof(DateTime))
-			{
+			else if (targetType == typeof (DateTime)) {
 				//Пустые даты приводятся в минимальному значению
 				DateTime date;
 				if (!DateTime.TryParse(propertyVal.ToString(), out date))
 					date = DateTime.MinValue;
 				propertyVal = date;
 			}
-			else if (targetType.BaseType == typeof(Enum))
-			{
+			else if (targetType.BaseType == typeof (Enum)) {
 				//Значения перечислений задаются через их строчное обозначение
 				propertyVal = Enum.Parse(targetType, propertyVal.ToString());
 			}
 
-			if (IsNullableType(propertyInfo.PropertyType) && targetType != typeof(String) && propertyVal == "")
-			{
+			if (IsNullableType(propertyInfo.PropertyType) && targetType != typeof (String) && propertyVal == "") {
 				propertyVal = null;
 			}
 
-			try
-			{
+			try {
 				if (propertyVal != null)
 					propertyVal = Convert.ChangeType(propertyVal, targetType);
 				propertyInfo.SetValue(inputObject, propertyVal, null);
 			}
-			catch (Exception e)
-			{
+			catch (Exception e) {
 			}
 		}
 
@@ -360,7 +496,35 @@ namespace Inforoom2.Components
 		/// <returns>True, если это Nullable тип</returns>
 		private static bool IsNullableType(Type type)
 		{
-			return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+			return type.IsGenericType && type.GetGenericTypeDefinition() == typeof (Nullable<>);
+		}
+
+		/// <summary>
+		/// Получение списка полей по значению тэга с формы
+		/// </summary>
+		/// <param name="controllerContext"></param>
+		/// <param name="propCollection"></param>
+		private void GetBinderProps(ControllerContext controllerContext, NameValueCollection propCollection)
+		{
+			//Расшифровка списка полей
+			var PropsPermittedToBeBoundEnc = propCollection[BinderPropertyHtmlName];
+			if (!string.IsNullOrEmpty(PropsPermittedToBeBoundEnc)) {
+				PropsPermittedToBeBoundEnc = controllerContext.HttpContext.Server.HtmlDecode(PropsPermittedToBeBoundEnc);
+				var cryptedValueBase = PropsPermittedToBeBoundEnc.Substring(PropsPermittedToBeBoundEnc.Length - 7);
+				PropsPermittedToBeBoundEnc = PropsPermittedToBeBoundEnc.Substring(0, PropsPermittedToBeBoundEnc.Length - 7);
+				PropsPermittedToBeBoundEnc = Cryptographer.DecryptString(PropsPermittedToBeBoundEnc, cryptedValueBase);
+				var PropsPermittedToBeBoundDec = Cryptographer.DecryptString(PropsPermittedToBeBoundEnc, passwordBase);
+				//Получение массива полей
+				var permittedPropArray =
+					PropsPermittedToBeBoundDec.ToLower().Split(',').Where(s => s.Replace(" ", "").Length != 0).ToArray();
+				//Удаление из массива ненужных полей
+				permittedPropArray.ForEach(s =>
+				{
+					if (!propertiesToBind.Any(f => f == s)) {
+						propertiesToBind.Add(s);
+					}
+				});
+			}
 		}
 	}
 }

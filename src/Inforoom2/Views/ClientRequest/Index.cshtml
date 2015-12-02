@@ -18,7 +18,7 @@
 <script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
 
 <div class="heading">ЗАЯВКА НА ПОДКЛЮЧЕНИЕ</div>
-@using (@Html.BeginForm("Index", "ClientRequest", FormMethod.Post)) {
+@using (@Html.BeginForm("Index", "ClientRequest", FormMethod.Post, new {@Id= "ClientRequest" })) {
 	<div class="leftpersonal">
 		<div>
 			<div class="personals">Ф.И.О:</div>
