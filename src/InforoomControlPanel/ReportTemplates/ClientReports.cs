@@ -108,7 +108,7 @@ namespace InforoomControlPanel.ReportTemplates
 					ЛС = s.Id,
 					Клиент = s.Fullname,
 					Адрес = s.GetAddress() ?? "",
-					Контакты = string.Join(", ", s.Contacts.OrderBy(c => c.Type).Select(c => c.ContactString).ToList()),
+					Контакты = "' "+string.Join(", ", s.Contacts.OrderBy(c => c.Type).Select(c => c.ContactString).ToList()),
 					Дата_регистрации = s.CreationDate.HasValue ? s.CreationDate.Value.ToString("dd.MM.yyyy") : "",
 					Дата_расторжения =
 						s.PhysicalClient == null && s.LegalClientOrders != null

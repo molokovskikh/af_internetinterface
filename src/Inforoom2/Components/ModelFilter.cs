@@ -1270,15 +1270,37 @@ namespace Inforoom2.Components
 						                                          propertiesToExport[i][j].Length
 							? (ushort) propertiesToExport[i][j].Length
 							: worksheet.Cells.ColumnWidth[(ushort) j];
-						worksheet.Cells[i, j].Style = new CellStyle() {Warp = true};
-                    }
+						worksheet.Cells[i, j].Style = new CellStyle()
+						{
+							Warp = true,
+							Borders = new Borders()
+							{
+								Top = BorderStyle.Thin,
+								Right = BorderStyle.Thin,
+								Bottom = BorderStyle.Thin,
+								Left = BorderStyle.Thin,
+							}
+						};
+					}
 				}
 				for (int i = 0; i < propertiesToExport[startIndex].Length; i++) {
 					worksheet.Cells.ColumnWidth[(ushort) i] =
 						(ushort) (worksheet.Cells.ColumnWidth[(ushort) i]*pixelsForColumnWidth < maxColumnWidth
 							? worksheet.Cells.ColumnWidth[(ushort) i]*pixelsForColumnWidth
 							: maxColumnWidth);
-					worksheet.Cells[startIndex, i].Style = new CellStyle() {Font = new Font("Arial", pixelsFont) {Bold = true}};
+					worksheet.Cells[startIndex, i].Style = new CellStyle()
+					{
+						Font = new Font("Arial", pixelsFont) {Bold = true}
+						,
+						VerticalAlignment = VerticalAlignment.Center,
+						Borders = new Borders()
+						{
+							Top = BorderStyle.Thin,
+							Right = BorderStyle.Thin,
+							Bottom = BorderStyle.Thin,
+							Left = BorderStyle.Thin,
+						}
+					};
 				}
 
 				workbook.Worksheets.Add(worksheet);
@@ -1291,7 +1313,7 @@ namespace Inforoom2.Components
 				new Exception("Не заданы поля выборки! *(для этого используеться метод 'SetExportFields')");
 			}
 			context.Response.ContentType = "MS-Excel/xls";
-			context.Response.AppendHeader("Content-Disposition", "attachment; filename=" + excelDocumentName + ".xlsx");
+			context.Response.AppendHeader("Content-Disposition", "attachment; filename=" + excelDocumentName + ".xls");
 			context.Response.BinaryWrite(fileToreturn);
 			context.Response.Flush();
 			context.Response.Close();

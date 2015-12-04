@@ -277,7 +277,7 @@
 					                                                                                                           + client.Id)">
 						@client.Id</a>
 				</td>
-				<td @(client.IsOnlineCheck() ? " class='online' " : "")>
+				<td @(client.IsOnlineCheck() ? " class=online " : "")>
 					<a class="clientName" target="_blank" href="@(client.PhysicalClient == null ? Url.Action("InfoLegal", new {id = client.Id}) : Url.Action("InfoPhysical", new {id = client.Id}))">
 						<span>@(clientItem.GetName())</span>
 					</a>
