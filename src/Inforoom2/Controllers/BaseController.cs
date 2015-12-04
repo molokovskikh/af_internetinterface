@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -9,7 +8,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
-using System.Web.UI;
 using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
@@ -27,7 +25,8 @@ namespace Inforoom2.Controllers
 	public class BaseController : Controller
 	{
 		public ISession DbSession;
-		protected static readonly ILog log = LogManager.GetLogger(typeof (BaseController));
+		protected static readonly ILog log = LogManager.GetLogger(typeof(BaseController));
+
 		protected ValidationRunner ValidationRunner;
 
 		public BaseController()
@@ -44,20 +43,21 @@ namespace Inforoom2.Controllers
 			else if (controller.DbSession == null)
 				controller.DbSession = MvcApplication.SessionFactory.GetCurrentSession();
 
+			EntityBinder.SetSession(DbSession);
+
 			//Additional
 			ValidationRunner = ViewBag.Validation ?? new ValidationRunner(DbSession);
 			ViewBag.Validation = ValidationRunner;
 
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
-			var currentDate = (Int32) (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+			var currentDate = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 			AddJavascriptParam("Timestamp", currentDate.ToString());
 		}
 
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
 			base.OnActionExecuting(filterContext);
-			ViewBag.JavascriptParams["baseurl"] = String.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority,
-				UrlHelper.GenerateContentUrl("~/", HttpContext));
+			ViewBag.JavascriptParams["baseurl"] = String.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, UrlHelper.GenerateContentUrl("~/", HttpContext));
 			ViewBag.ActionName = filterContext.RouteData.Values["action"].ToString();
 			ViewBag.ControllerName = GetType().Name.Replace("Controller", "");
 		}
@@ -119,7 +119,7 @@ namespace Inforoom2.Controllers
 			if (showErrorPage) {
 				filterContext.Result = new RedirectToRouteResult(
 					new RouteValueDictionary
-					{{"controller", "StaticContent"}, {"action", "Error"}});
+					{ { "controller", "StaticContent" }, { "action", "Error" } });
 				filterContext.ExceptionHandled = true;
 			}
 
@@ -140,6 +140,7 @@ namespace Inforoom2.Controllers
 			return new StringBuilder("");
 		}
 
+
 		protected override void OnResultExecuted(ResultExecutedContext filterContext)
 		{
 			base.OnResultExecuted(filterContext);
@@ -154,8 +155,8 @@ namespace Inforoom2.Controllers
 			session = CurrentSessionContext.Unbind(MvcApplication.SessionFactory);
 			if (session.IsOpen)
 				session.Close();
-
 		}
+
 
 		protected List<TModel> GetList<TModel>()
 		{
@@ -181,12 +182,12 @@ namespace Inforoom2.Controllers
 		public void SetCookie(string name, string value)
 		{
 			if (value == null) {
-				Response.Cookies.Add(new HttpCookie(name, "false") {Path = "/", Expires = SystemTime.Now()});
+				Response.Cookies.Add(new HttpCookie(name, "false") { Path = "/", Expires = SystemTime.Now() });
 				return;
 			}
 			var plainTextBytes = Encoding.UTF8.GetBytes(value);
 			var text = Convert.ToBase64String(plainTextBytes);
-			Response.Cookies.Add(new HttpCookie(name, text) {Path = "/"});
+			Response.Cookies.Add(new HttpCookie(name, text) { Path = "/" });
 		}
 
 		public void DeleteCookie(string name)
@@ -241,9 +242,7 @@ namespace Inforoom2.Controllers
 			var controller = iController as BaseController;
 			controller.DbSession = DbSession;
 			controller.ControllerContext = new ControllerContext(ctxt, this);
-			var methodTypes = parameters == null
-				? new List<Type>()
-				: parameters.Select(parameter => parameter.GetType()).ToList();
+			var methodTypes = parameters == null ? new List<Type>() : parameters.Select(parameter => parameter.GetType()).ToList();
 			var actionMethod = type.GetMethod(actionString, methodTypes.ToArray());
 			if (actionMethod == null) {
 				ForwardToAction("Home", "Index", new object[0]);
@@ -257,7 +256,7 @@ namespace Inforoom2.Controllers
 			controller.OnActionExecuting(c);
 
 			// Получение результата действия   
-			var actionResult = (ActionResult) actionMethod.Invoke(controller, parameters);
+			var actionResult = (ActionResult)actionMethod.Invoke(controller, parameters);
 
 			// Передача полученного результата текущему действию
 			actionResult.ExecuteResult(controller.ControllerContext);

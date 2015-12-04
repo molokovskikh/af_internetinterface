@@ -203,7 +203,6 @@
   <ItemGroup>
     <Compile Include="Functional\Account\AccountFixture.cs" />
     <Compile Include="Functional\Account\LogoutFixture.cs" />
-    <Compile Include="Functional\BinderTest\BinderFixture.cs" />
     <Compile Include="Functional\Home\CallMeBackOnActionsFixture.cs" />
     <Compile Include="Functional\Home\CallMeBackFixtureUnregistered.cs" />
     <Compile Include="Functional\Home\HomeFixture.cs" />

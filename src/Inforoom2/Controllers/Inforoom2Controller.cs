@@ -67,7 +67,6 @@ namespace Inforoom2.Controllers
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
 			base.OnActionExecuting(filterContext);
-
 			var cookieCity = GetCookie("userCity");
 			if (!string.IsNullOrEmpty(cookieCity)) {
 				userCity = cookieCity;
@@ -76,8 +75,7 @@ namespace Inforoom2.Controllers
 			var CityList = DbSession.Query<Region>().Where(s => s.ShownOnMainPage).Select(s => s.Name).OrderBy(s => s).ToArray();
 			ViewBag.Cities = CityList;
 			//todo куда это девать?
-			var newCallMeBackTicket = new CallMeBackTicket()
-			{
+			var newCallMeBackTicket = new CallMeBackTicket() {
 				Name = (CurrentClient == null) ? "" : CurrentClient.Name,
 				PhoneNumber = (CurrentClient == null) ? "" : CurrentClient.PhoneNumber
 			};
@@ -128,18 +126,6 @@ namespace Inforoom2.Controllers
 					ViewBag.CurrentRegion = CurrentRegion ?? currentClientRegion;
 				}
 			}
-		}
-
-		protected override void OnResultExecuted(ResultExecutedContext filterContext)
-		{
-			base.OnResultExecuted(filterContext);
-
-			//по возможности (при совпадении условий), запускаем проверку выходного html кода 
-			var snifferForBinder = new HtmlSniffer(this);
-			//создание списка методов, вызываемых при возможности радактирования html-документа
-			HtmlSniffer.GetChangedHtml snifferMethodsList = EntityBinder.HtmlProcessing;
-			//попытка редактирования html-документа 
-			snifferForBinder.TryActivate(filterContext.HttpContext, snifferMethodsList);
 		}
 
 		public void TrigerServices(ActionExecutingContext filterContext)
@@ -219,8 +205,7 @@ namespace Inforoom2.Controllers
 			//больше ничего делать не надо - он может продолжить работку
 			if (CurrentClient == null || string.IsNullOrEmpty(ipstring)) {
 				SetCookie("networkClient", null);
-				EmailSender.SendDebugInfo("Снимаем куку залогиненного автоматически клиента так как он не найден: " + ipstring,
-					CollectDebugInfo().ToString());
+				EmailSender.SendDebugInfo("Снимаем куку залогиненного автоматически клиента так как он не найден: " + ipstring, CollectDebugInfo().ToString());
 				return true;
 			}
 
@@ -240,8 +225,7 @@ namespace Inforoom2.Controllers
 					//Снимаем куку и выкидываем клиента из ЛК
 					//Возможно нужен еще редирект
 					SetCookie("networkClient", null);
-					var msg = "Выкидываем неправильно залогиненного клиента: " + ipstring + "," + endpoint.Client.Id + ", " +
-					          CurrentClient.Id;
+					var msg = "Выкидываем неправильно залогиненного клиента: " + ipstring + "," + endpoint.Client.Id + ", " + CurrentClient.Id;
 					EmailSender.SendDebugInfo(msg, CollectDebugInfo().ToString());
 					FormsAuthentication.SignOut();
 					return false;
@@ -317,7 +301,7 @@ namespace Inforoom2.Controllers
 			drawing.Dispose();
 
 			//create a new image of the right size
-			img = new Bitmap((int) textSize.Width, (int) textSize.Height);
+			img = new Bitmap((int)textSize.Width, (int)textSize.Height);
 
 			drawing = Graphics.FromImage(img);
 
@@ -339,10 +323,10 @@ namespace Inforoom2.Controllers
 
 		private void ProcessCallMeBackTicket()
 		{
-			var binder = new EntityBinder(new string[] {}, new string[] {});
+			var binder = new EntityBinder();
 			CallMeBackTicket callMeBackTicket;
 			try {
-				callMeBackTicket = (CallMeBackTicket) binder.MapModel(Request, typeof (CallMeBackTicket));
+				callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request, typeof(CallMeBackTicket));
 			}
 			catch (Exception e) {
 				return;
@@ -360,10 +344,9 @@ namespace Inforoom2.Controllers
 				DbSession.Save(callMeBackTicket);
 				if (callMeBackTicket.Client != null) {
 					var appeal = new Appeal("Клиент создал запрос на обратный звонок № " + callMeBackTicket.Id,
-						callMeBackTicket.Client, AppealType.FeedBack)
-					{
-						Employee = GetCurrentEmployee()
-					};
+						callMeBackTicket.Client, AppealType.FeedBack) {
+							Employee = GetCurrentEmployee()
+						};
 					DbSession.Save(appeal);
 				}
 				ViewBag.CallMeBackTicket = new CallMeBackTicket();
