@@ -65,7 +65,7 @@ div.fix400{width: 400px !important;}
  table tr td.grayBack { background: #FF3F3F !important; }
  table tr td.redBack { background: #FFA097 !important; }
  table tr.leg td.zeroBack, table tr.phys td.zeroBack ,table tr td.zeroBack   { background: #CBF1EF !important;}
- table tr.leg td.online, table tr.phys td.online ,table tr td.online   { background: #AEE0AE !important;}
+ .clientTable tr.phys td.online   { background: #AEE0AE !important;}
  table tr td.goldenBack { background: #FFFEEC !important;}
  .legend-mark-panel {margin-top: 19px; margin-bottom: 6px;}
  .legend-mark-panel table{margin-left: 4px;}
