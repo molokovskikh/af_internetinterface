@@ -23,6 +23,10 @@ namespace Inforoom2.Controllers
 		[HttpPost]
 		public ActionResult Index([EntityBinder] ClientRequest clientRequest)
 		{
+			if (clientRequest.Plan == null) {
+				return RedirectToAction("Index");
+			}
+
 			var tariff = InitRequestPlans().FirstOrDefault(k => k.Id == clientRequest.Plan.Id);
 			clientRequest.Plan = tariff;
 			clientRequest.ActionDate = clientRequest.RegDate = SystemTime.Now();
@@ -30,27 +34,29 @@ namespace Inforoom2.Controllers
 
 			if (!clientRequest.IsContractAccepted) {
 				ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
-			} 
+			}
 			if (errors.Length == 0 && clientRequest.IsContractAccepted) {
-				clientRequest.City = (DbSession.Query<Region>().FirstOrDefault(s => s.Id == Convert.ToInt32(clientRequest.City)) ?? new Region()).Name;
+				clientRequest.City =
+					(DbSession.Query<Region>().FirstOrDefault(s => s.Id == Convert.ToInt32(clientRequest.City)) ?? new Region()).Name;
 				clientRequest.Address = GetAddressByYandexData(clientRequest);
 				DbSession.Save(clientRequest);
 				SuccessMessage(string.Format("Спасибо, Ваша заявка принята. Номер заявки {0}", clientRequest.Id));
 				return RedirectToAction("Index", "Home");
 			}
+
 			ViewBag.IsRedirected = false;
 			ViewBag.IsCityValidated = false;
 			ViewBag.IsStreetValidated = false;
 			ViewBag.IsHouseValidated = false;
 			ViewBag.Regions = DbSession.Query<Region>().ToList();
-			ViewBag.ClientRequest = clientRequest; 
+			ViewBag.ClientRequest = clientRequest;
 			return View("Index");
 		}
 
 		[HttpPost]
 		public JsonResult CheckForUnusualAddress(string city, string street, string house, string address)
 		{
-			object result = new { };
+			object result = new {};
 			var dbCity = DbSession.Query<City>().FirstOrDefault(i => i.Name.ToLower().Contains(city.ToLower()));
 			if (dbCity == null || string.IsNullOrEmpty(street))
 				return Json(result);
@@ -59,22 +65,35 @@ namespace Inforoom2.Controllers
 			var dbStreetAlias = StreetAlias.FindAlias(address, DbSession);
 			Street dbStreet;
 			if (dbStreetAlias == null)
-				dbStreet = DbSession.Query<Street>().FirstOrDefault(i => i.Region.City == dbCity && i.Name.ToLower().Contains(street.ToLower()));
+				dbStreet =
+					DbSession.Query<Street>()
+						.FirstOrDefault(i => i.Region.City == dbCity && i.Name.ToLower().Contains(street.ToLower()));
 			else
 				dbStreet = dbStreetAlias.Street;
 
 			if (dbStreet == null)
 				return Json(result);
 			house = house ?? "";
-			var dbHouse = DbSession.Query<House>().FirstOrDefault(i => i.Street == dbStreet && i.Number.ToLower().Contains(house.ToLower()));
+			var dbHouse =
+				DbSession.Query<House>().FirstOrDefault(i => i.Street == dbStreet && i.Number.ToLower().Contains(house.ToLower()));
 			if (dbHouse != null && !string.IsNullOrEmpty(house)) {
 				//Если дом найден то ищем, имеется ли там коммутатор
 				var addr = DbSession.Query<SwitchAddress>().FirstOrDefault(i => i.House == dbHouse);
 				var availible = addr != null;
-				result = new { streetAlias = dbStreetAlias != null, city = dbCity.Name, street = dbStreet.Name, house = dbHouse.Number, geomark = dbHouse.Geomark, available = availible };
+				result =
+					new
+					{
+						streetAlias = dbStreetAlias != null,
+						city = dbCity.Name,
+						street = dbStreet.Name,
+						house = dbHouse.Number,
+						geomark = dbHouse.Geomark,
+						available = availible
+					};
 			}
 			else
-				result = new { streetAlias = dbStreetAlias != null, city = dbCity.Name, street = dbStreet.Name, geomark = dbStreet.Geomark };
+				result =
+					new {streetAlias = dbStreetAlias != null, city = dbCity.Name, street = dbStreet.Name, geomark = dbStreet.Geomark};
 
 			return Json(result);
 		}
@@ -110,7 +129,7 @@ namespace Inforoom2.Controllers
 				ViewBag.IsRedirected = true;
 			}
 
-			ViewBag.Regions = DbSession.Query<Region>().Where(s=>s.ShownOnMainPage).OrderBy(s => s.Name).ToList();
+			ViewBag.Regions = DbSession.Query<Region>().Where(s => s.ShownOnMainPage).OrderBy(s => s.Name).ToList();
 			ViewBag.ClientRequest = clientRequest;
 			InitRequestPlans();
 		}
@@ -118,7 +137,8 @@ namespace Inforoom2.Controllers
 		private List<Plan> InitRequestPlans()
 		{
 			// Получаем список всех неархивных планов
-			var plans = DbSession.Query<Plan>().Where(p => p.Disabled==false && p.AvailableForNewClients).OrderBy(s=>s.Name).ToList();
+			var plans =
+				DbSession.Query<Plan>().Where(p => p.Disabled == false && p.AvailableForNewClients).OrderBy(s => s.Name).ToList();
 			// Закоментил т.к. изменился метод ввода
 			// Забираем не архивные планы, которые не имеют региона или соответсвуют текущему региону
 			// plans = plans.Where(p => !p.Disabled && (p.RegionPlans.Count == 0 || p.RegionPlans.Select(i => i.Region).Contains(CurrentRegion))).ToList(); 
@@ -128,23 +148,30 @@ namespace Inforoom2.Controllers
 
 		protected Address GetAddressByYandexData(ClientRequest clientRequest)
 		{
-			var city = GetList<City>().FirstOrDefault(c => c.Name.Equals(clientRequest.YandexCity, StringComparison.InvariantCultureIgnoreCase));
+			var city =
+				GetList<City>()
+					.FirstOrDefault(c => c.Name.Equals(clientRequest.YandexCity, StringComparison.InvariantCultureIgnoreCase));
 
 			if (city == null || !clientRequest.IsYandexAddressValid()) {
 				return null;
 			}
 			var region = GetList<Region>().FirstOrDefault(r => r.City == city);
 
-			var street = GetList<Street>().FirstOrDefault(s => s.Name.Equals(clientRequest.YandexStreet, StringComparison.InvariantCultureIgnoreCase)
-			                                                   && s.Region.Equals(region));
+			var street =
+				GetList<Street>()
+					.FirstOrDefault(s => s.Name.Equals(clientRequest.YandexStreet, StringComparison.InvariantCultureIgnoreCase)
+					                     && s.Region.Equals(region));
 
 			if (street == null) {
 				street = new Street(clientRequest.YandexStreet);
 			}
 
-			var house = GetList<House>().FirstOrDefault(h => h.Number.Equals(clientRequest.YandexHouse, StringComparison.InvariantCultureIgnoreCase)
-			                                                 && h.Street.Name.Equals(clientRequest.YandexStreet, StringComparison.InvariantCultureIgnoreCase)
-			                                                 && h.Street.Region.Equals(region));
+			var house =
+				GetList<House>()
+					.FirstOrDefault(h => h.Number.Equals(clientRequest.YandexHouse, StringComparison.InvariantCultureIgnoreCase)
+					                     &&
+					                     h.Street.Name.Equals(clientRequest.YandexStreet, StringComparison.InvariantCultureIgnoreCase)
+					                     && h.Street.Region.Equals(region));
 
 			if (house == null) {
 				house = new House(clientRequest.YandexHouse);

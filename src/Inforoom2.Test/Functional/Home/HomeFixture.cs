@@ -13,15 +13,25 @@ using OpenQA.Selenium;
 namespace Inforoom2.Test.Functional.Home
 {
 	/// <summary>
-	/// Проверка определения города
+	/// Проверка на главной странице
 	/// </summary>
 	[TestFixture]
-	[Ignore]
 	public class HomeIndexFixture : BaseFixture
 	{
 		protected Question Question;
 
+		[Test, Description("Проверка переадресации на 'Заявка на подключение'")]
+		public void CheckRedirectToClientRequest()
+		{
+			Open();
+			var link = browser.FindElement(By.CssSelector("div[class='header'] input.connect"));
+			link.Click();
+
+			AssertText("ЗАЯВКА НА ПОДКЛЮЧЕНИЕ");
+		}
+
 		[Test, Description("Проверка определения города")]
+		[Ignore]
 		public void CitySelectTest()
 		{
 			Open();
@@ -41,6 +51,7 @@ namespace Inforoom2.Test.Functional.Home
 		///  получает город по ip и сохраняет в cookie). 
 		/// </summary>
 		[Test]
+		[Ignore]
 		public void CheckRegionDefinitionByIp()
 		{
 			// получение IP клиента
@@ -58,7 +69,8 @@ namespace Inforoom2.Test.Functional.Home
 			// получение текущего города клиента из cookie
 			var cookie = GetCookie("userCity");
 			// сравнение значения из cookie с привязанным к Ip адресом (городом)
-			Assert.That(cookie, Is.EqualTo(currentClient.Address.House.Street.Region.Name), "Город клиента определен и хранится в cookie.");
+			Assert.That(cookie, Is.EqualTo(currentClient.Address.House.Street.Region.Name),
+				"Город клиента определен и хранится в cookie.");
 		}
 	}
 }

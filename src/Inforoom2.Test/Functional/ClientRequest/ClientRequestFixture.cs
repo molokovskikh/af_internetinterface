@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using Common.Tools.Calendar;
+using Inforoom2.Components;
 using Inforoom2.Models;
 using Inforoom2.Test.Infrastructure;
 using NHibernate.Linq;
@@ -36,7 +37,6 @@ namespace Inforoom2.Test.Functional.ClientRequest
 		public void SendRequest()
 		{
 			browser.FindElementByCssSelector(".resend").Click();
-			;
 		}
 
 		/// <summary>
@@ -125,13 +125,14 @@ namespace Inforoom2.Test.Functional.ClientRequest
 			AssertText("Введите номер телефона");
 			AssertFail();
 		}
+
 		[Test, Description("Введен номер не в десятизначном формате")]
 		public void ClientRequestWrongPhone()
 		{
 			Phone.Clear();
 			Phone.SendKeys("01234567890");
 			SendRequest();
-			AssertText("Введите номер в десятизначном формате"); 
+			AssertText("Введите номер в десятизначном формате");
 			AssertFail();
 		}
 
@@ -151,7 +152,8 @@ namespace Inforoom2.Test.Functional.ClientRequest
 			AssertText("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
 		}
 
-		[Test, Description("Если не заполнены поля наименования улицы и дома формата Яндекс, но заявка все-равно принимается")]
+		[Test, Description("Если не заполнены поля наименования улицы и дома формата Яндекс, но заявка все-равно принимается")
+		]
 		public void ClientRequestNoYandexAddress()
 		{
 			//ожидания для карты Яндекс не было, соответсвенно поля улицы и дома не успели корректно заполниться
@@ -164,5 +166,6 @@ namespace Inforoom2.Test.Functional.ClientRequest
 			//проверяем, что в заявке поля Яндекс сохранились некорректно (не так как должны были быть заполнены)
 			Assert.That(request.YandexHouse, Is.Not.EqualTo("2"));
 		}
+		
 	}
 }
