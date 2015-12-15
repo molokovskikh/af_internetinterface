@@ -134,7 +134,9 @@ namespace Inforoom2.Components
 						for (int j = 0; j < collection.Count; j++) {
 							if (!propertiesToBind.Any(s => s == collection.GetKey(j).ToLower())) {
 								var currentKey = collection.GetKey(j);
-								listWithForbiddenFields.Add(currentKey);
+								if (currentKey != BinderPropertyHtmlName) {
+									listWithForbiddenFields.Add(currentKey);
+								}
 								collection.Remove(currentKey);
 								break;
 							}
@@ -223,7 +225,8 @@ namespace Inforoom2.Components
 
 			var binderScript = new TagBuilder("script");
 			binderScript.MergeAttribute("type", "text/javascript");
-			binderScript.InnerHtml = "$(function(){$('form[method=\"post\"]').append($('input[name=\"" + EntityBinder.BinderPropertyHtmlName +
+			binderScript.InnerHtml = "$(function(){$('form[method=\"post\"]').append($('input[name=\"" +
+			                         EntityBinder.BinderPropertyHtmlName +
 			                         "\"]').clone());})";
 			html += binderScript.ToString(TagRenderMode.Normal);
 			return html;
