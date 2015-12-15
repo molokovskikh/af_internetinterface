@@ -21,7 +21,8 @@ namespace Inforoom2.Test.Functional.Personal
 	{
 		protected void TrySetWarningForClient(Client client)
 		{
-			Assert.That(client.ShowBalanceWarningPage, Is.False, "Для чистоты данного теста, warning должен назначаться биллингом");
+			Assert.That(client.ShowBalanceWarningPage, Is.False,
+				"Для чистоты данного теста, warning должен назначаться биллингом");
 			var billing = GetBilling();
 			billing.ProcessWriteoffs();
 			DbSession.Refresh(client);
@@ -49,7 +50,13 @@ namespace Inforoom2.Test.Functional.Personal
 		public void NegativeBalancePhysical()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
-			client.Payments.Add(new Payment() { Client = client, Sum = 0, PaidOn = SystemTime.Now().AddDays(-2), RecievedOn = SystemTime.Now().AddDays(-1) });
+			client.Payments.Add(new Payment()
+			{
+				Client = client,
+				Sum = 0,
+				PaidOn = SystemTime.Now().AddDays(-2),
+				RecievedOn = SystemTime.Now().AddDays(-1)
+			});
 			client.PhysicalClient.Balance = -5;
 			DbSession.Save(client);
 			DbSession.Flush();
@@ -61,11 +68,26 @@ namespace Inforoom2.Test.Functional.Personal
 		public void NegativeBalancePhysicalWithDebtWorkServiceActual()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
-			client.Payments.Add(new Payment() { Client = client, Sum = 0, PaidOn = SystemTime.Now().AddDays(-2), RecievedOn = SystemTime.Now().AddDays(-1) });
+			client.Payments.Add(new Payment()
+			{
+				Client = client,
+				Sum = 0,
+				PaidOn = SystemTime.Now().AddDays(-2),
+				RecievedOn = SystemTime.Now().AddDays(-1)
+			});
 			client.PhysicalClient.Balance = -10;
 			var services = DbSession.Query<Service>().Where(s => s.Name == "Обещанный платеж").ToList();
 			var csDebtWorkService =
-				services.Select(service => new ClientService { Service = service, Client = client, BeginDate = DateTime.Now, IsActivated = true, ActivatedByUser = true }).FirstOrDefault();
+				services.Select(
+					service =>
+						new ClientService
+						{
+							Service = service,
+							Client = client,
+							BeginDate = DateTime.Now,
+							IsActivated = true,
+							ActivatedByUser = true
+						}).FirstOrDefault();
 			client.ClientServices.Add(csDebtWorkService);
 			DbSession.Save(client);
 			DbSession.Flush();
@@ -78,11 +100,18 @@ namespace Inforoom2.Test.Functional.Personal
 		public void NegativeBalancePhysicalWithDebtWorkServiceOverdue()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
-			client.Payments.Add(new Payment() { Client = client, Sum = 0, PaidOn = SystemTime.Now().AddDays(-2), RecievedOn = SystemTime.Now().AddDays(-1) });
+			client.Payments.Add(new Payment()
+			{
+				Client = client,
+				Sum = 0,
+				PaidOn = SystemTime.Now().AddDays(-2),
+				RecievedOn = SystemTime.Now().AddDays(-1)
+			});
 			client.PhysicalClient.Balance = -10;
 			var services = DbSession.Query<Service>().Where(s => s.Name == "Обещанный платеж").ToList();
 			var csDebtWorkService =
-				services.Select(service => new ClientService {
+				services.Select(service => new ClientService
+				{
 					Service = service,
 					Client = client,
 					BeginDate = DateTime.Now.AddDays(-10),
@@ -115,15 +144,18 @@ namespace Inforoom2.Test.Functional.Personal
 			textbox.SendKeys("7121551");
 			var button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
+			AssertText("Данные успешно заполнены");
 			Open("/Personal/Profile");
-
-			AssertText("ЛИЧНЫЙ КАБИНЕТ: ПРОФИЛЬ");
+			AssertText("Для заполнения недостающих паспортных данных необходимо обратиться в офис компании");
+			Css(".warning").Click();
+			AssertText("НОВОСТИ");
 		}
 
 		[Test(Description = "Сервисная заявка, блокирующая работу")]
 		public void ServiceRequest()
 		{
-			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("заблокированный по сервисной заявке"));
+			var client =
+				DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("заблокированный по сервисной заявке"));
 			Assert.That(client.Status.Type, Is.EqualTo(StatusType.BlockedForRepair), "Клиент не заблокирован");
 			OpenWarningPage(client);
 
@@ -139,10 +171,13 @@ namespace Inforoom2.Test.Functional.Personal
 		public void FrozenClient()
 		{
 			var blockAccountService = DbSession.Query<Service>().OfType<BlockAccountService>().FirstOrDefault();
-			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с услугой добровольной блокировки"));
+			var client = DbSession.Query<Client>()
+				.ToList()
+				.First(i => i.Patronymic.Contains("с услугой добровольной блокировки"));
 
 			Assert.That(client.Status.Type, Is.EqualTo(StatusType.VoluntaryBlocking), "Клиент не заблокирован");
-			Assert.That(client.ClientServices.FirstOrDefault(i => i.Service == blockAccountService), Is.Not.Null, "У клиента нет услуги добровольной блокировки");
+			Assert.That(client.ClientServices.FirstOrDefault(i => i.Service == blockAccountService), Is.Not.Null,
+				"У клиента нет услуги добровольной блокировки");
 
 			OpenWarningPage(client);
 			CheckWarningPageText("Добровольная блокировка");
@@ -153,7 +188,8 @@ namespace Inforoom2.Test.Functional.Personal
 			client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с услугой добровольной блокировки"));
 			blockAccountService = DbSession.Query<Service>().OfType<BlockAccountService>().FirstOrDefault();
 			Assert.That(client.Status.Type, Is.EqualTo(StatusType.Worked), "Клиент все еще заблокирован");
-			Assert.That(client.ClientServices.FirstOrDefault(i => i.Service == blockAccountService), Is.Null, "У клиента все еще есть услуги добровольной блокировки");
+			Assert.That(client.ClientServices.FirstOrDefault(i => i.Service == blockAccountService), Is.Null,
+				"У клиента все еще есть услуги добровольной блокировки");
 			CheckWarningPageText("НОВОСТИ");
 		}
 
@@ -176,7 +212,9 @@ namespace Inforoom2.Test.Functional.Personal
 			AssertText("Протестировать скорость");
 		}
 
-		[Test(Description = "Проверка фильтрации варнингом контроллеров Personal, Service, Warning и пропуска других, например About")]
+		[Test(
+			Description =
+				"Проверка фильтрации варнингом контроллеров Personal, Service, Warning и пропуска других, например About")]
 		public void FilterCheckFixture()
 		{
 			//У неподключенного клиента нет точки подключения
@@ -230,10 +268,14 @@ namespace Inforoom2.Test.Functional.Personal
 			button.Click();
 			AssertText("Протестировать скорость");
 			DbSession.Refresh(legalClient);
-			var hasAppealMessage = legalClient.Appeals.Any(s => s.Message.IndexOf("Отключена страница Warning, клиент отключил со страницы") != -1);
-			Assert.That(hasAppealMessage, Is.EqualTo(true), "На странице клиента (в админке) должно появиться сообщение, о том, что клиент отключил варнинг (он осведомлен).");
-			Assert.That(legalClient.ShowBalanceWarningPage, Is.EqualTo(false), "Варнинг не должен показываться после того, как пользователь сообщил, что он осведоллен (нажав на кнопку).");
+			var hasAppealMessage =
+				legalClient.Appeals.Any(s => s.Message.IndexOf("Отключена страница Warning, клиент отключил со страницы") != -1);
+			Assert.That(hasAppealMessage, Is.EqualTo(true),
+				"На странице клиента (в админке) должно появиться сообщение, о том, что клиент отключил варнинг (он осведомлен).");
+			Assert.That(legalClient.ShowBalanceWarningPage, Is.EqualTo(false),
+				"Варнинг не должен показываться после того, как пользователь сообщил, что он осведоллен (нажав на кнопку).");
 		}
+
 		[Test(Description = "Проверка работы варнинга у юр. лица с флагом ShowBalanceWarningPage")]
 		public void LawClientDisabledFixture()
 		{

@@ -651,11 +651,6 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Save(clientWithPlanOfRegion);
 
 
-			//без паспортных данных
-			var nopassportClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.nopassportClient);
-			nopassportClient.PhysicalClient.PassportNumber = "";
-			DbSession.Save(nopassportClient);
-
 			//Заблокированный
 			var disabledClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.disabledClient);
 			disabledClient.Balance = 0;
@@ -671,10 +666,22 @@ namespace Inforoom2.Test.Infrastructure
 			unpluggedClient.PhysicalClient.PassportSeries = "";
 			unpluggedClient.PhysicalClient.PassportResidention = "";
 			unpluggedClient.PhysicalClient.RegistrationAddress = "";
+			unpluggedClient.PhysicalClient.BirthDate = DateTime.MinValue;
+			unpluggedClient.PhysicalClient.PassportDate = DateTime.MinValue;
 			unpluggedClient.SetStatus(StatusType.BlockedAndConnected, DbSession);
 			foreach (var service in unpluggedClient.ClientServices)
 				service.IsActivated = false;
 			DbSession.Save(unpluggedClient);
+
+			//без паспортных данных
+			var nopassportClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.nopassportClient);
+			nopassportClient.PhysicalClient.PassportNumber = "";
+			nopassportClient.PhysicalClient.PassportSeries = "";
+			nopassportClient.PhysicalClient.PassportResidention = "";
+			nopassportClient.PhysicalClient.RegistrationAddress = "";
+			nopassportClient.PhysicalClient.BirthDate = DateTime.MinValue;
+			nopassportClient.PhysicalClient.PassportDate = DateTime.MinValue;
+			DbSession.Save(nopassportClient);
 
 			//У неподключенного клиента уже есть аренда ip
 			//Но нет точки подключения

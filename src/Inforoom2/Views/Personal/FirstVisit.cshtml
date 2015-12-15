@@ -14,56 +14,64 @@
 
 <h2 class="heading">@ViewBag.Title</h2>
 @{ Html.RenderPartial("Menu"); }
-@using(@Html.BeginForm("FirstVisit", "Personal", null, FormMethod.Post)) {
-<div class="right-block">
-	<h4 class="secondary-header">Добрый день. Система обнаружила, что у вас не полностью заполнены данные. Просим внести свои паспортные данные:</h4>
-	@Html.HiddenFor(i=>physicalClient.Id)
-	<div>
-		<div class="personals">Фамилия:</div>
-		@Html.ValidationEditor(validationRunner, physicalClient, "Surname", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
+@using (@Html.BeginForm("FirstVisit", "Personal", null, FormMethod.Post)) {
+	<div class="right-block">
+		<h4 class="secondary-header">Добрый день. Система обнаружила, что у вас не полностью заполнены данные. Просим внести свои паспортные данные:</h4>
+		@Html.HiddenFor(i => physicalClient.Id)
+		@if (physicalClient.Client.AbsentPassportData(true)) {
+			<div>
+				<div class="personals">Фамилия:</div>
+				@Html.ValidationEditor(validationRunner, physicalClient, "Surname", new {@class = "personal"}, HtmlTag.input, HtmlType.text)
+			</div>
+			<div>
+				<div class="personals">Имя:</div>
+				@Html.ValidationEditor(validationRunner, physicalClient, "Name", new {@class = "personal"}, HtmlTag.input, HtmlType.text)
+			</div>
+			<div>
+				<div class="personals">Отчество:</div>
+				@Html.ValidationEditor(validationRunner, physicalClient, "Patronymic", new {@class = "personal"}, HtmlTag.input, HtmlType.text)
+			</div>
+			<div>
+				<div class="personals">Дата рождения:</div>
+				@Html.ValidationEditor(validationRunner, physicalClient, "BirthDate", new {@class = "personal yearDatePicker", @readonly = "readonly"}, HtmlTag.input, HtmlType.text)
+			</div>
+			<div>
+				<div class="personals">Документ, удост. личн.:</div>
+				@Html.DropDownEnumListFor(k => physicalClient.CertificateType, new {@class = "personal"})
+			</div>
+			<div id="PassportData">
+				<div>
+					<div class="personals">Серия паспорта:</div>
+					@Html.ValidationEditor(validationRunner, physicalClient, "PassportSeries", new {@class = "personal"}, HtmlTag.input, HtmlType.text)
+				</div>
+				<div>
+					<div class="personals">Номер паспорта:</div>
+					@Html.ValidationEditor(validationRunner, physicalClient, "PassportNumber", new {@class = "personal"}, HtmlTag.input, HtmlType.text)
+				</div>
+			</div>
+			<div id="OtherDocData">
+				<div class="personals">Название документа:</div>
+				@Html.ValidationEditor(validationRunner, physicalClient, "CertificateName", new {@class = "personal"}, HtmlTag.input, HtmlType.text)
+			</div>
+			<div>
+				<div class="personals">Кем выдан:</div>
+				@Html.ValidationEditor(validationRunner, physicalClient, "PassportResidention", new {@class = "personal"}, HtmlTag.input, HtmlType.text)
+			</div>
+			<div>
+				<div class="personals">Дата выдачи:</div>
+				@Html.ValidationEditor(validationRunner, physicalClient, "PassportDate", new {@class = "personal yearDatePicker", @readonly = "readonly"}, HtmlTag.input, HtmlType.text)
+			</div>
+			<div>
+				<div class="personals">Адрес регистрации:</div>
+				@Html.ValidationEditor(validationRunner, physicalClient, "RegistrationAddress", new {@class = "personal"}, HtmlTag.input, HtmlType.text)
+			</div>
+		}
+		else {
+			<div>
+				<div class="personals">Дата рождения:</div>
+				@Html.ValidationEditor(validationRunner, physicalClient, "BirthDate", new {@class = "personal yearDatePicker", @readonly = "readonly"}, HtmlTag.input, HtmlType.text)
+			</div>
+		}
+		<input class="button" type="submit" value="Отправить">
 	</div>
-	<div>
-		<div class="personals">Имя:</div>
-		@Html.ValidationEditor(validationRunner, physicalClient, "Name", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
-	</div>
-	<div>
-		<div class="personals">Отчество:</div>
-		@Html.ValidationEditor(validationRunner, physicalClient, "Patronymic", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
-	</div>
-	<div>
-		<div class="personals">Дата рождения:</div>
-		@Html.ValidationEditor(validationRunner, physicalClient, "BirthDate", new { @class = "personal yearDatePicker", @readonly="readonly" }, HtmlTag.input, HtmlType.text)
-	</div>
-	<div>
-		<div class="personals">Документ, удост. личн.:</div>
-		@Html.DropDownEnumListFor(k => physicalClient.CertificateType, new { @class = "personal" })
-	</div>
-	<div id="PassportData">
-		<div>
-			<div class="personals">Серия паспорта:</div>
-			@Html.ValidationEditor(validationRunner, physicalClient, "PassportSeries", new {@class = "personal"}, HtmlTag.input, HtmlType.text)
-		</div>
-		<div>
-			<div class="personals">Номер паспорта:</div>
-			@Html.ValidationEditor(validationRunner, physicalClient, "PassportNumber", new {@class = "personal"}, HtmlTag.input, HtmlType.text)
-		</div>
-	</div>
-	<div id="OtherDocData">
-		<div class="personals">Название документа:</div>
-		@Html.ValidationEditor(validationRunner, physicalClient, "CertificateName", new {@class = "personal"}, HtmlTag.input, HtmlType.text)
-	</div>
-	<div>
-		<div class="personals">Кем выдан:</div>
-		@Html.ValidationEditor(validationRunner, physicalClient, "PassportResidention", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
-	</div>
-	<div>
-		<div class="personals">Дата выдачи:</div>
-		@Html.ValidationEditor(validationRunner, physicalClient, "PassportDate", new { @class = "personal yearDatePicker", @readonly="readonly" }, HtmlTag.input, HtmlType.text)
-	</div>
-	<div>
-		<div class="personals">Адрес регистрации:</div>
-		@Html.ValidationEditor(validationRunner, physicalClient, "RegistrationAddress", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
-	</div>
-	<input class="button" type="submit" value="Отправить">
-</div>
 }
