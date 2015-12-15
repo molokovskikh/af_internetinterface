@@ -219,16 +219,16 @@ function setCleanFilterButtonAtPlace() {
 //сброса значения фильтра
 function cleanFilter(cleanIndex) {
 	$(cleanIndex).val("");
+	$(cleanIndex).change();
 	//обновление фильтра адреса
 	setAddressFilter("#AddressHidenElement");
 }
-
 //получение значения фильтра по адресам (полнотекстовый поиск)
 function getAddressFilter(addressHidenElement) {
 	var s = $(addressHidenElement).val();
 	s = s == "" ? "улица %дом %квартира %подъезд %этаж%" : s;
 	var splitedAddress = s.split('%');
-	var addressStreet = "", addressHouse = "", addressApartment = "", addressEntrance = "", addressFloor = "";
+	var addressStreet = "", addressHouse = "", addressHousePart = "", addressApartment = "", addressEntrance = "", addressFloor = "";
 	//проверяем отформатировани ли адрес
 	for (var i = 0; i < splitedAddress.length; i++) {
 		if (splitedAddress[i].lastIndexOf("улица") != -1) {
@@ -238,6 +238,10 @@ function getAddressFilter(addressHidenElement) {
 		if (splitedAddress[i].lastIndexOf("дом") != -1) {
 			addressHouse = splitedAddress[i].substring(splitedAddress[i].lastIndexOf("дом") + "дом".length);
 			addressHouse = addressHouse.replace(" ", "").length == 0 ? "" : addressHouse;
+		}
+		if (splitedAddress[i].lastIndexOf("корпус") != -1) {
+			addressHousePart = splitedAddress[i].substring(splitedAddress[i].lastIndexOf("корпус") + "корпус".length);
+			addressHousePart = addressHousePart.replace(" ", "").length == 0 ? "" : addressHousePart;
 		}
 		if (splitedAddress[i].lastIndexOf("квартира") != -1) {
 			addressApartment = splitedAddress[i].substring(splitedAddress[i].lastIndexOf("квартира") + "квартира".length);
@@ -255,6 +259,7 @@ function getAddressFilter(addressHidenElement) {
 	//собираем адрес из "форматированных частей", если такие имеются
 	var currentAddress = addressStreet;
 	currentAddress += addressHouse;
+	currentAddress += addressHousePart;
 	currentAddress += addressApartment;
 	currentAddress += addressEntrance;
 	currentAddress += addressFloor;
@@ -266,6 +271,7 @@ function getAddressFilter(addressHidenElement) {
 
 	$("#searchStreet").val(addressStreet);
 	$("#searchHouse").val(addressHouse);
+	$("#searchHousePart").val(addressHousePart);
 	$("#searchApartment").val(addressApartment);
 	$("#searchEntrance").val(addressEntrance);
 	$("#searchFloor").val(addressFloor);
@@ -292,12 +298,14 @@ function setAddressFilter(addressHidenElement) {
 
 	var addressStreet = $("#searchStreet").val();
 	var addressHouse = $("#searchHouse").val();
+	var addressHousePart = $("#searchHousePart").val();
 	var addressApartment = $("#searchApartment").val();
 	var addressEntrance = $("#searchEntrance").val();
 	var addressFloor = $("#searchFloor").val();
 
 	var currentAddress = addressStreet != "" ? "улица " + addressStreet + "%" : "%";
 	currentAddress += addressHouse != "" ? "дом " + addressHouse + "%" : "%";
+	currentAddress += addressHousePart != "" ? "корпус " + addressHousePart + "%" : "%";
 	currentAddress += addressApartment != "" ? "квартира " + addressApartment + "%" : "%";
 	currentAddress += addressEntrance != "" ? "подъезд " + addressEntrance + "%" : "%";
 	currentAddress += addressFloor != "" ? "этаж " + addressFloor + "%" : "%";
@@ -395,7 +403,6 @@ $(function() {
 
 });
 
-
 //Добавление в куки сведений о необходимости открывать единственную запись в новой вкладке 
 $(function() {
 	var cookieValue = $.cookie("OpenInANewTab");
@@ -409,5 +416,65 @@ $(function() {
 	$("#OpenInANewTab").click(function() {
 		var valueOfCookie = $("#OpenInANewTab").is(":checked") + "";
 		$.cookie("OpenInANewTab", valueOfCookie, { expires: 365, path: "/" });
+	});
+});
+
+
+//IP=>Число
+function dot2num(dot) {
+	var ipVal = "";
+	console.log(isNaN(dot) + " | " + dot); 
+	try {
+		var d = dot.split('.');
+		ipVal = ((((((+d[0]) * 256) + (+d[1])) * 256) + (+d[2])) * 256) + (+d[3])
+	} catch (e) {
+		ipVal = "";
+	}
+	if (isNaN(ipVal) == true) {
+		return "";
+	}
+	return ipVal;
+}
+
+//Число=>IP
+function num2dot(num) {
+	var d = "";
+	try {
+		d = num % 256;
+		for (var i = 3; i > 0; i--) {
+			num = Math.floor(num / 256);
+			d = num % 256 + '.' + d;
+		}
+	} catch (e) {
+		d = "";
+	}
+	return d;
+}
+
+
+//Добавление в куки сведений о необходимости открывать единственную запись в новой вкладке 
+var ipRentSerchName = "input[name='mfilter.filter.Equal.Endpoints.First().LeaseList.First().Ip']";
+$(function () {
+	var ipEqualValue = $(ipRentSerchName).val();
+	if (ipEqualValue != "" && ipEqualValue != null) {
+		ipEqualValue = num2dot(ipEqualValue);
+		$("#ipEqualShown").val(ipEqualValue);
+	}
+	$("#ipEqualShown").change(function() {
+		var ipEqualText = $("#ipEqualShown").val(); 
+		if (ipEqualText != "" && ipEqualText != null && ipEqualText != undefined) {
+			ipEqualText = dot2num(ipEqualText);
+			if (ipEqualText == "") {
+				console.log("1|" + ipEqualText);
+				$("#ipEqualShown").css("background", "#FB7C7C");
+				$(ipRentSerchName).val("");
+			} else {
+				console.log("2|" + ipEqualText);
+				$("#ipEqualShown").css("background", "none");
+				$(ipRentSerchName).val(ipEqualText);
+			}
+		} else {
+			$(ipRentSerchName).val("");
+		}
 	});
 });

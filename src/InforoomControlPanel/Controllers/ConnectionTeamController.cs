@@ -379,8 +379,10 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			var servicemenScheduleList = servicemenScheduleQuery.ToList();
-
-			if (printRegionId != 0) {
+			servicemenScheduleList =
+				servicemenScheduleList.Where(
+					s => s.ServiceRequest == null || (s.ServiceRequest.Status != ServiceRequestStatus.Cancel)).ToList();
+            if (printRegionId != 0) {
 				servicemenScheduleList = servicemenScheduleList.Where(s => s.GetClient().GetRegion().Id == printRegionId).ToList();
 			}
 
