@@ -232,8 +232,12 @@ namespace Inforoom2.Helpers
 
 			//он физ. лицо и у него незаполненны паспортные данные
 			if (client.PhysicalClient != null && !client.HasPassportData())
-				//отправляем его на страницу Профиля, раздел Заполнения паспортных данных
-				return new WarningRedirect {Action = "FirstVisit", Controller = "Personal", Parameters = routValues};
+				if (client.AbsentPassportData(true))
+					//отправляем его на страницу Профиля, раздел Заполнения паспортных данных
+					return new WarningRedirect {Action = "FirstVisit", Controller = "Personal", Parameters = routValues};
+				else
+				//если не подошло - переадресация на главную
+					return new WarningRedirect() {Action = "Index", Controller = "Home", Parameters = routValues};
 
 			//если клиент - физ. лицо и у него статус "Восстановление работ"
 			if (client.PhysicalClient != null && client.Status.Type == StatusType.BlockedForRepair) {

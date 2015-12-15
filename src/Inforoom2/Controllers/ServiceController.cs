@@ -183,6 +183,9 @@ namespace Inforoom2.Controllers
 		public ActionResult InternetPlanChanger([EntityBinder] Plan plan)
 		{
 			var client = CurrentClient;
+			if (client == null || client.PhysicalClient == null || client.PhysicalClient.Plan == null) {
+				return RedirectToAction("InternetPlanChanger");
+			}
 			ViewBag.Client = client;
 			var oldPlan = client.PhysicalClient.Plan;
 			client.PhysicalClient.LastTimePlanChanged = SystemTime.Now();

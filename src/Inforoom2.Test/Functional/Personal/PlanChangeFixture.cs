@@ -104,6 +104,11 @@ namespace Inforoom2.Test.Functional.Personal
 		[Test(Description = "Проверка возврата переадресации Warning(ом) с главной станицы на выбор тарифа, если отработал PlanChanger (проверка паспортных данных)")]
 		public void PlanChangerWithWarningFixtureFromMainToPlanChange()
 		{
+			var passportSeries = "1234";
+			var passportNumber = "123456";
+			var passportResidention = "УФМС россии по гор. Воронежу, по райнону Северный"; // "Паспортно-визовое отделение по району северный гор. Воронежа";
+			var passportAddress = "г. Борисоглебск, улица ленина, 20"; //"г. Воронеж, студенческая ул, д12";
+
 			CurrentClient = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("без паспортных данных"));
 			PlanChangerFixtureOn(0, false);
 			LoginForClient(CurrentClient);
@@ -116,15 +121,38 @@ namespace Inforoom2.Test.Functional.Personal
 			Open("Warning");
 			Css(".warning").Click();
 
-			var textbox = browser.FindElement(By.CssSelector("#physicalClient_PassportNumber"));
-			textbox.SendKeys("7121551");
-			var button = browser.FindElement(By.CssSelector("form input.button"));
+			var series = browser.FindElementByCssSelector("input[name='physicalClient.PassportSeries']");
+			series.SendKeys(passportSeries);
+
+			var number = browser.FindElementByCssSelector("input[name='physicalClient.PassportNumber']");
+			number.SendKeys(passportNumber);
+
+			var date = browser.FindElementByCssSelector("input[name='physicalClient.PassportDate']");
+			date.Click();
+			var popup = browser.FindElementByCssSelector("a.ui-state-default");
+			popup.Click();
+
+			date = browser.FindElementByCssSelector("input[name='physicalClient.BirthDate']");
+			date.Click();
+			popup = browser.FindElementByCssSelector("a.ui-state-default");
+			popup.Click();
+			//date.SendKeys("18.12.2014");
+
+			var residention = browser.FindElementByCssSelector("input[name='physicalClient.PassportResidention']");
+			residention.SendKeys(passportResidention);
+
+			var address = browser.FindElementByCssSelector("input[name='physicalClient.RegistrationAddress']");
+			address.SendKeys(passportAddress);
+
+			var button = browser.FindElementByCssSelector(".right-block .button");
 			button.Click();
 
+			AssertText("Данные успешно заполнены");
 			AssertText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
 			browser.FindElementByCssSelector("#changeTariffButtonCheap").Click();
 			browser.FindElementByCssSelector(".window .click.ok").Click();
 			// клиент должен перейти на дешелый тириф
+			AssertText("Тариф успешно изменен");
 			AssertText(DbSession.Query<Plan>().First(s => s == PlanChangerDataItem.CheapPlan).Name);
 		}
 
@@ -141,12 +169,19 @@ namespace Inforoom2.Test.Functional.Personal
 			textbox.SendKeys("7121551");
 			var button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
-
+			
+            AssertText("Для заполнения недостающих паспортных данных необходимо обратиться в офис компании");
+			Css(".warning").Click();
 			AssertText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
 			browser.FindElementByCssSelector("#changeTariffButtonCheap").Click();
 			browser.FindElementByCssSelector(".window .click.ok").Click();
 			// клиент должен перейти на дешелый тириф
-			AssertText(DbSession.Query<Plan>().First(s => s == PlanChangerDataItem.CheapPlan).Name);
+
+			AssertText("Тариф успешно изменен");
+			Open("/");
+			AssertText("НОВОСТИ");
+			Open("Warning");
+			AssertText("Для заполнения недостающих паспортных данных необходимо обратиться в офис компании");
 		}
 
 		[Test(Description = "Проверка конфликта Warning с PlanChanger, низкий баланс")]

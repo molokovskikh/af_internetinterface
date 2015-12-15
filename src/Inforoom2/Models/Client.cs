@@ -198,7 +198,6 @@ namespace Inforoom2.Models
 
 		public virtual bool IsNeedRecofiguration { get; set; }
 
-		
 
 		//TODO: перенесено из старой админки (нужен рефакторинг)
 		[Bag(0, Table = "Orders", Cascade = "all-delete-orphan")]
@@ -466,6 +465,25 @@ namespace Inforoom2.Models
 			return hasPassportData;
 		}
 
+		public virtual bool AbsentPassportData(bool allExceptDateOfBirth = false)
+		{
+			if (PhysicalClient == null)
+				return true;
+			var hasNoPassportData = string.IsNullOrEmpty(PhysicalClient.PassportNumber);
+			if (PhysicalClient.CertificateType == CertificateType.Passport) {
+				hasNoPassportData = hasNoPassportData && string.IsNullOrEmpty(PhysicalClient.PassportSeries);
+				hasNoPassportData = hasNoPassportData && string.IsNullOrEmpty(PhysicalClient.PassportResidention);
+			}
+			else
+				hasNoPassportData = hasNoPassportData && string.IsNullOrEmpty(PhysicalClient.CertificateName);
+
+			hasNoPassportData = hasNoPassportData && PhysicalClient.PassportDate == DateTime.MinValue;
+			hasNoPassportData = hasNoPassportData &&
+			                    (allExceptDateOfBirth || (hasNoPassportData && PhysicalClient.BirthDate == DateTime.MinValue));
+			hasNoPassportData = hasNoPassportData && string.IsNullOrEmpty(PhysicalClient.RegistrationAddress);
+			return hasNoPassportData;
+		}
+
 		public static Client GetClientForIp(string ipstr, ISession dbSession)
 		{
 			var endpoint = ClientEndpoint.GetEndpointForIp(ipstr, dbSession);
@@ -477,10 +495,10 @@ namespace Inforoom2.Models
 		public virtual bool IsOnlineCheck()
 		{
 			var isOnLineFilter = Endpoints.FirstOrDefault()?.LeaseList.FirstOrDefault()?.LeaseEnd;
-			if (isOnLineFilter!=null) {
+			if (isOnLineFilter != null) {
 				return isOnLineFilter.Value >= SystemTime.Now();
 			}
-            return false;
+			return false;
 		}
 
 		//todo исправить
