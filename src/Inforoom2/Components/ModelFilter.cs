@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Web;
@@ -474,6 +475,9 @@ namespace Inforoom2.Components
 
 			if (propertyType.FullName.Contains(typeof (Int32).Name))
 				return Int32.Parse(value);
+
+			if (propertyType.FullName.Contains(typeof(IPAddress).Name))
+				return IPAddress. Parse(value);
 
 			if (propertyType.FullName.Contains(typeof (decimal).Name))
 				return Decimal.Parse(value);

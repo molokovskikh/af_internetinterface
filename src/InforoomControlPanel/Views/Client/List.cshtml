@@ -14,7 +14,7 @@
 	var emptyAddressString = "";
 }
 @section JavaScript{
-	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js")"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=1")"></script>
 	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js")"></script>
 }
 
@@ -128,9 +128,10 @@
 <div class="panel-body addressFilterBlock">
 	<div class="panel-body" style="padding: 0px;">
 		<div class="row">
-			<div class="col-sm-3 fix230 addressDetailsBlock left">
+			<div class="col-sm-3 fix230 addressDetailsBlock">
 				<span class="addressDetails">Улица</span> <input type="text" name="" value="" id="searchStreet" class="form-control addressSearch">
 				<span class="addressDetails">Дом</span> <input type="text" name="" value="" id="searchHouse" class="form-control addressSearch">
+				<span class="addressDetails">Корпус</span> <input type="text" name="" value="" id="searchHousePart" class="form-control addressSearch">
 			</div>
 			<div class="col-sm-3 fix230 addressDetailsBlock">
 				<span class="addressDetails">Квартира</span> <input type="text" name="" value="" id="searchApartment" class="form-control addressSearch">
@@ -178,6 +179,16 @@
 	</div>
 	<div class="panel-body">
 		<div class="row">
+			<div class="col-sm-2">Арендованный IP</div>
+			<div class="col-sm-3">
+					@pager.FormFilter(i => i.Endpoints.First().LeaseList.First().Ip, HtmlType.text, ComparsionType.Equal, new { Id = "ipEqualHidden", @class = "form-control hidden hid", @style = "min-width:280px; max-width:280px;" })
+				
+				<input type="text" name="" value="" id="ipEqualShown" class="form-control" style="min-width: 280px; max-width: 280px;">
+			</div>
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="row">
 			<div class="col-sm-2">Регистратор</div>
 			<div class="col-sm-3">@pager.FormFilter(i => i.WhoRegistered.Name, HtmlType.Dropdown, ComparsionType.Equal, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
 		</div>
@@ -192,6 +203,12 @@
 		<div class="row">
 			<div class="col-sm-2">Оборудование</div>
 			<div class="col-sm-3">@pager.FormFilter(i => i.RentalHardwareList.First().Hardware.Name, HtmlType.Dropdown, ComparsionType.Equal, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-sm-2">Наименование коммутатора</div>
+			<div class="col-sm-3">@pager.FormFilter(i => i.Endpoints.First().Switch.Name, HtmlType.text, ComparsionType.Like, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
 		</div>
 	</div>
 	<div class="panel-body">
