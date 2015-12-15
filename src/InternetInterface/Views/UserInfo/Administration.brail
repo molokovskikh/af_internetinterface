@@ -25,7 +25,7 @@
 		<% end %>
 		<tr>
 			<td>
-				${app.LinkTo("Бригады", @Brigads, @Index)}
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}ConnectionTeam/Servicemen">Бригады</a>
 				<div class="comment_text">
 					Просмотр и создание бригад. Бригады осуществляют физическое подключение абонентов, на них составляется расписание и разначаются заявки.
 				</div>
@@ -79,7 +79,7 @@
 		<% end %>
 		<tr>
 			<td>
-				${app.LinkTo("Пакеты каналов", @ChannelGroups, @Index)}
+				<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Plans/TvChannelList">ТВ каналы</a>
 			</td>
 		</tr>
 		<tr>
@@ -89,17 +89,12 @@
 		</tr>
 		<tr>
 			<td>
-				${app.LinkTo("Тарифы", @Tariffs, @Index)}
+				<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Plans/PlanIndex">Тарифы</a>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				${app.LinkTo("Стоимость изменения тарифов", @Tariffs, @ChangeRules)}
-			</td>
-		</tr>
-		<tr>
-			<td>
-				${app.LinkTo("Регионы", @UserInfo, @ShowRegions)}
+				<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Address/RegionList">Регионы</a>
 			</td>
 		</tr>
 		<tr>
@@ -109,9 +104,9 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
-				${app.LinkTo("Аренда оборудования", @RentableHardwares, @Index)}
-			</td>
+				<td>
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}HardwareTypes/ShowHardware">Арендуемое оборудование</a>
+				</td>
 		</tr>
 	</tbody>
 </table>

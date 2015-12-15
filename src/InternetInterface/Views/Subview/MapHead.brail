@@ -15,7 +15,9 @@
 					${app.LinkTo("Заявки", @ConnectionRequest, @Index)}
 				</th>
 				<% if MapPartner.AccesPartner("GCI"): %>
-				<th>${App.LinkTo("Клиенты", @Search, @SearchUsers)}</th>
+				<th>
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/List">Клиенты</a>
+				</th>
 				<% end %>
 				<% if MapPartner.AccesPartner("DHCP"): %>
 				<th>${App.LinkTo("OnLine клиенты", @Switches, @OnLineClient, {"filter.Zone" : "4"})}</th>
