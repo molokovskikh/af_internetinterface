@@ -10,6 +10,7 @@ using Test.Support.Selenium;
 namespace InternetInterface.Test.Functional
 {
 	[TestFixture]
+	[Ignore("Данный функционал перенесен в новую админку")]
 	public class TariffFixture : SeleniumFixture
 	{
 		[Test]
