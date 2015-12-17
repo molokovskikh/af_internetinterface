@@ -81,9 +81,9 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.RentIsActive = activeServices.Count > 0;
 			if (client.Status != null && client.Status.Type != StatusType.BlockedAndConnected) {
 				// Find Switches
-				var networkNodeList = DbSession.QueryOver<SwitchAddress>().Where(s =>
-					s.House == client.PhysicalClient.Address.House && s.Entrance.ToString() == client.PhysicalClient.Address.Entrance ||
-					s.House == client.PhysicalClient.Address.House && s.Entrance == null).List();
+				var networkNodeList = DbSession.Query<SwitchAddress>().Where(s =>
+                    s.House == client.PhysicalClient.Address.House && s.Entrance.ToString() == client.PhysicalClient.Address.Entrance ||
+					s.House == client.PhysicalClient.Address.House && s.Entrance == null).ToList();
 				if (networkNodeList.Count > 0) {
 					ViewBag.NetworkNodeList = networkNodeList;
 				}
