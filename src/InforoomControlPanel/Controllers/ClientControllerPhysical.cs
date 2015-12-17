@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using System.Web.UI;
+using Common.Tools;
+using Common.Tools.Calendar;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -95,7 +97,7 @@ namespace InforoomControlPanel.Controllers
 			DbSession.Update(client);
 			return View();
 		}
-		 
+
 		/// <summary>
 		/// Отображает форму новой заявки
 		/// </summary>
@@ -604,7 +606,8 @@ namespace InforoomControlPanel.Controllers
 		///  Форма регистрации клиента POST
 		/// </summary> 
 		[HttpPost]
-		public ActionResult RegistrationPhysical([EntityBinder] Client client, bool redirectToCard, bool scapeUserNameDoubling = false)
+		public ActionResult RegistrationPhysical([EntityBinder] Client client, bool redirectToCard,
+			bool scapeUserNameDoubling = false)
 		{
 			// удаление неиспользованного контакта *иначе в БД лишняя запись  
 			client.Contacts = client.Contacts.Where(s => s.ContactString != string.Empty).ToList();
@@ -920,6 +923,38 @@ namespace InforoomControlPanel.Controllers
 				DbSession.Delete(Agent);
 			}
 			return RedirectToAction("AgentList");
+		}
+
+		/// <summary>
+		/// Страница списка клиентов
+		/// </summary>
+		public ActionResult Appeals(bool openInANewTab = true)
+		{
+			var pager = new InforoomModelFilter<Appeal>(this);
+			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
+				pager.SetOrderBy("Id", OrderingDirection.Desc);
+			if (string.IsNullOrEmpty(pager.GetParam("filter.GreaterOrEqueal.Date")) &&
+			    string.IsNullOrEmpty(pager.GetParam("filter.LowerOrEqual.Date"))) {
+				pager.ParamDelete("filter.GreaterOrEqueal.Date");
+				pager.ParamDelete("filter.LowerOrEqual.Date");
+				pager.ParamSet("filter.GreaterOrEqueal.Date", SystemTime.Now().Date.FirstDayOfMonth().ToString("dd.MM.yyyy"));
+				pager.ParamSet("filter.LowerOrEqual.Date", SystemTime.Now().Date.ToString("dd.MM.yyyy"));
+			}
+			var criteria = pager.GetCriteria();
+			ViewBag.Pager = pager;
+			return View();
+		}
+
+		/// <summary>
+		/// Страница списка клиентов
+		/// </summary>
+		public ActionResult ListOnline(bool openInANewTab = true)
+		{
+			var pager = new InforoomModelFilter<Lease>(this);
+			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
+				pager.SetOrderBy("Id", OrderingDirection.Desc);
+			ViewBag.Pager = pager;
+			return View();
 		}
 	}
 }

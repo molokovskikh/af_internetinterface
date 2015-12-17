@@ -1957,6 +1957,8 @@
     <Content Include="assets\js\.jshintrc" />
     <Content Include="Views\Client\InfoLegal.cshtml" />
     <Content Include="Views\Client\RegistrationLegal.cshtml" />
+    <Content Include="Views\Client\Appeals.cshtml" />
+    <Content Include="Views\Client\ListOnline.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <None Include="Web.release.config">

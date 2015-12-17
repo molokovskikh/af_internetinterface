@@ -1,4 +1,5 @@
-﻿@using Inforoom2.Models
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
 
 @{
 	Client client = ViewBag.Client;
@@ -8,6 +9,7 @@
 	string action = ViewBag.ActionName;
 	string controller = ViewBag.ControllerName;
 	List<SwitchAddress> networkNodeList = ViewBag.networkNodeList;
+	Employee currentEmployeeForUserName = ViewBag.CurrentEmployee;
 }
 
 <div class="panel panel-primary col-md-12">
@@ -26,13 +28,10 @@
 					<i class="entypo-briefcase"></i>
 					Заявка на подключение
 				</a>
-				<form style="display: inline" action="/cp/AdminAccount/ApplyImpersonation" method="post" target="_blank">
-					<input name="client.Id" type="hidden" value="21131">
-					<button class="btn btn-success btn-sm btn-icon icon-left" type="submit" value="Войти">
-						<i class="entypo-key"></i>
-						Войти в личный кабинет
-					</button>
-				</form>
+				<a class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="@ConfigHelper.GetParam("inforoom2Url")Account/AdminLogin?clientId=@(client.Id)&username=@(currentEmployeeForUserName.Login)">
+					<i class="entypo-key"></i>
+					Войти в личный кабинет
+				</a> 
 			</div>
 		}
 	</div>

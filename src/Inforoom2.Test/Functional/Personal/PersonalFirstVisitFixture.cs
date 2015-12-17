@@ -31,6 +31,7 @@ namespace Inforoom2.Test.Functional.Personal
 			Assert.That(Client.Endpoints.Count, Is.EqualTo(0));
 			Assert.That(internet.IsActivated, Is.False);
 			Assert.That(iptv.IsActivated, Is.False);
+
 			LoginForClient(Client);
 			//Появляется варнинг, первое, что необходимо сделать - ввести паспортные данные.
 			Css(".warning").Click();

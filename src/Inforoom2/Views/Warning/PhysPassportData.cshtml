@@ -14,7 +14,7 @@
 <div class="block-page">
 	<p class="info">Номер лицевого счета: @client.Id</p>
 	<p>У вас не заполнены паспортные данные</p>
-	@if (client.AbsentPassportData(true) == false) {
+	@if (!client.AbsentPassportData(true)) {
 		<p>Для заполнения недостающих паспортных данных необходимо обратиться в офис компании:</p>
 		<p>
 			<a style="color:#7b0c10;" href="http://maps.yandex.ru/?text=г. Борисоглебск, ул. Третьяковская, д. 6б">г. Борисоглебск, ул. Третьяковская, д. 6б</a> (вход со двора) в будние дни с 9-00 до 18-00.

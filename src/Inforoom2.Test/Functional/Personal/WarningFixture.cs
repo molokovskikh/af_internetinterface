@@ -146,6 +146,13 @@ namespace Inforoom2.Test.Functional.Personal
 			button.Click();
 			AssertText("Данные успешно заполнены");
 			Open("/Personal/Profile");
+			Css(".warning").Click();
+			var date = browser.FindElementByCssSelector("input[name='physicalClient.BirthDate']");
+			date.Click();
+			var popup = browser.FindElementByCssSelector("a.ui-state-default");
+			popup.Click();
+			button = browser.FindElement(By.CssSelector("form input.button"));
+			button.Click();
 			AssertText("Для заполнения недостающих паспортных данных необходимо обратиться в офис компании");
 			Css(".warning").Click();
 			AssertText("НОВОСТИ");

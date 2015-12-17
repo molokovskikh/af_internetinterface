@@ -465,7 +465,7 @@ namespace Inforoom2.Models
 			return hasPassportData;
 		}
 
-		public virtual bool AbsentPassportData(bool allExceptDateOfBirth = false)
+		public virtual bool AbsentPassportData(bool checkDateOfBirth = false)
 		{
 			if (PhysicalClient == null)
 				return true;
@@ -478,9 +478,8 @@ namespace Inforoom2.Models
 				hasNoPassportData = hasNoPassportData && string.IsNullOrEmpty(PhysicalClient.CertificateName);
 
 			hasNoPassportData = hasNoPassportData && PhysicalClient.PassportDate == DateTime.MinValue;
-			hasNoPassportData = hasNoPassportData &&
-			                    (allExceptDateOfBirth || (hasNoPassportData && PhysicalClient.BirthDate == DateTime.MinValue));
 			hasNoPassportData = hasNoPassportData && string.IsNullOrEmpty(PhysicalClient.RegistrationAddress);
+			hasNoPassportData = hasNoPassportData || (checkDateOfBirth && (PhysicalClient.BirthDate == DateTime.MinValue));
 			return hasNoPassportData;
 		}
 
