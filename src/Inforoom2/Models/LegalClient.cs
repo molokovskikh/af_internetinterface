@@ -94,7 +94,7 @@ namespace Inforoom2.Models
 					.OrderByDescending(f => f.EndDate.Value)
 					.FirstOrDefault();
 
-			return lastClosedOrder?.EndDate;
+			return ((StatusType) Client.Status.Id) != StatusType.Dissolved ? null : lastClosedOrder?.EndDate;
 		}
 
 		public virtual string GetPlan()

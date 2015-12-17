@@ -82,52 +82,54 @@ function SetFilterCondition(clientType) {
 
 //установка сортировки в завсимости от типа клиента
 function SetFilterOrder(clientType) {
-	//для Физ.лиц
-	if (clientType == 1) {
-		for (var i = 0; i < FilterOrderItemsList.length; i++) {
-			if (FilterOrderItemsList[i].PhysName != "") {
-				$("a" + FilterOrderItemsList[i].Id).attr("href", $("#orderId").attr("href").replace(/&mfilter.orderBy=Id/g, "&mfilter.orderBy=" + FilterOrderItemsList[i].PhysName));
-				if ($("span" + FilterOrderItemsList[i].Id).hasClass('hid') == false)
-					$("span" + FilterOrderItemsList[i].Id).addClass('hid');
-				if ($("a" + FilterOrderItemsList[i].Id).hasClass('hid'))
-					$("a" + FilterOrderItemsList[i].Id).removeClass('hid');
-			} else {
-				$("a" + FilterOrderItemsList[i].Id).attr("href", "");
+	try {
+		//для Физ.лиц
+		if (clientType == 1) {
+			for (var i = 0; i < FilterOrderItemsList.length; i++) {
+				if (FilterOrderItemsList[i].PhysName != "") {
+					$("a" + FilterOrderItemsList[i].Id).attr("href", $("#orderId").attr("href").replace(/&mfilter.orderBy=Id/g, "&mfilter.orderBy=" + FilterOrderItemsList[i].PhysName));
+					if ($("span" + FilterOrderItemsList[i].Id).hasClass('hid') == false)
+						$("span" + FilterOrderItemsList[i].Id).addClass('hid');
+					if ($("a" + FilterOrderItemsList[i].Id).hasClass('hid'))
+						$("a" + FilterOrderItemsList[i].Id).removeClass('hid');
+				} else {
+					$("a" + FilterOrderItemsList[i].Id).attr("href", "");
+					if ($("span" + FilterOrderItemsList[i].Id).hasClass('hid'))
+						$("span" + FilterOrderItemsList[i].Id).removeClass('hid');
+					if ($("a" + FilterOrderItemsList[i].Id).hasClass('hid') == false)
+						$("a" + FilterOrderItemsList[i].Id).addClass('hid');
+				}
+			}
+		}
+		//для Юр.лиц
+		if (clientType == 0) {
+			for (var i = 0; i < FilterOrderItemsList.length; i++) {
+				if (FilterOrderItemsList[i].LegalName != "") {
+					$("a" + FilterOrderItemsList[i].Id).attr("href", $("#orderId").attr("href").replace(/&mfilter.orderBy=Id/g, "&mfilter.orderBy=" + FilterOrderItemsList[i].LegalName));
+					if ($("span" + FilterOrderItemsList[i].Id).hasClass('hid') == false)
+						$("span" + FilterOrderItemsList[i].Id).addClass('hid');
+					if ($("a" + FilterOrderItemsList[i].Id).hasClass('hid'))
+						$("a" + FilterOrderItemsList[i].Id).removeClass('hid');
+				} else {
+					$("a" + FilterOrderItemsList[i].Id).attr("href", "");
+					if ($("span" + FilterOrderItemsList[i].Id).hasClass('hid'))
+						$("span" + FilterOrderItemsList[i].Id).removeClass('hid');
+					if ($("a" + FilterOrderItemsList[i].Id).hasClass('hid') == false)
+						$("a" + FilterOrderItemsList[i].Id).addClass('hid');
+				}
+			}
+		}
+		//для Всех 
+		if (clientType == "") {
+			for (var i = 0; i < FilterOrderItemsList.length; i++) {
 				if ($("span" + FilterOrderItemsList[i].Id).hasClass('hid'))
 					$("span" + FilterOrderItemsList[i].Id).removeClass('hid');
 				if ($("a" + FilterOrderItemsList[i].Id).hasClass('hid') == false)
 					$("a" + FilterOrderItemsList[i].Id).addClass('hid');
 			}
 		}
+	} catch (ex) {
 	}
-	//для Юр.лиц
-	if (clientType == 0) {
-		for (var i = 0; i < FilterOrderItemsList.length; i++) {
-			if (FilterOrderItemsList[i].LegalName != "") {
-				$("a" + FilterOrderItemsList[i].Id).attr("href", $("#orderId").attr("href").replace(/&mfilter.orderBy=Id/g, "&mfilter.orderBy=" + FilterOrderItemsList[i].LegalName));
-				if ($("span" + FilterOrderItemsList[i].Id).hasClass('hid') == false)
-					$("span" + FilterOrderItemsList[i].Id).addClass('hid');
-				if ($("a" + FilterOrderItemsList[i].Id).hasClass('hid'))
-					$("a" + FilterOrderItemsList[i].Id).removeClass('hid');
-			} else {
-				$("a" + FilterOrderItemsList[i].Id).attr("href", "");
-				if ($("span" + FilterOrderItemsList[i].Id).hasClass('hid'))
-					$("span" + FilterOrderItemsList[i].Id).removeClass('hid');
-				if ($("a" + FilterOrderItemsList[i].Id).hasClass('hid') == false)
-					$("a" + FilterOrderItemsList[i].Id).addClass('hid');
-			}
-		}
-	}
-	//для Всех 
-	if (clientType == "") {
-		for (var i = 0; i < FilterOrderItemsList.length; i++) {
-			if ($("span" + FilterOrderItemsList[i].Id).hasClass('hid'))
-				$("span" + FilterOrderItemsList[i].Id).removeClass('hid');
-			if ($("a" + FilterOrderItemsList[i].Id).hasClass('hid') == false)
-				$("a" + FilterOrderItemsList[i].Id).addClass('hid');
-		}
-	}
-
 }
 
 //установка фильтра по типу клиента в начальное состояние
@@ -220,99 +222,10 @@ function setCleanFilterButtonAtPlace() {
 function cleanFilter(cleanIndex) {
 	$(cleanIndex).val("");
 	$(cleanIndex).change();
-	//обновление фильтра адреса
-	setAddressFilter("#AddressHidenElement");
 }
-//получение значения фильтра по адресам (полнотекстовый поиск)
-function getAddressFilter(addressHidenElement) {
-	var s = $(addressHidenElement).val();
-	s = s == "" ? "улица %дом %квартира %подъезд %этаж%" : s;
-	var splitedAddress = s.split('%');
-	var addressStreet = "", addressHouse = "", addressHousePart = "", addressApartment = "", addressEntrance = "", addressFloor = "";
-	//проверяем отформатировани ли адрес
-	for (var i = 0; i < splitedAddress.length; i++) {
-		if (splitedAddress[i].lastIndexOf("улица") != -1) {
-			addressStreet = splitedAddress[i].substring(splitedAddress[i].lastIndexOf("улица") + "улица".length);
-			addressStreet = addressStreet.replace(" ", "").length == 0 ? "" : addressStreet;
-		}
-		if (splitedAddress[i].lastIndexOf("дом") != -1) {
-			addressHouse = splitedAddress[i].substring(splitedAddress[i].lastIndexOf("дом") + "дом".length);
-			addressHouse = addressHouse.replace(" ", "").length == 0 ? "" : addressHouse;
-		}
-		if (splitedAddress[i].lastIndexOf("корпус") != -1) {
-			addressHousePart = splitedAddress[i].substring(splitedAddress[i].lastIndexOf("корпус") + "корпус".length);
-			addressHousePart = addressHousePart.replace(" ", "").length == 0 ? "" : addressHousePart;
-		}
-		if (splitedAddress[i].lastIndexOf("квартира") != -1) {
-			addressApartment = splitedAddress[i].substring(splitedAddress[i].lastIndexOf("квартира") + "квартира".length);
-			addressApartment = addressApartment.replace(" ", "").length == 0 ? "" : addressApartment;
-		}
-		if (splitedAddress[i].lastIndexOf("подъезд") != -1) {
-			addressEntrance = splitedAddress[i].substring(splitedAddress[i].lastIndexOf("подъезд") + "подъезд".length);
-			addressEntrance = addressEntrance.replace(" ", "").length == 0 ? "" : addressEntrance;
-		}
-		if (splitedAddress[i].lastIndexOf("этаж") != -1) {
-			addressFloor = splitedAddress[i].substring(splitedAddress[i].lastIndexOf("этаж") + "этаж".length);
-			addressFloor = addressFloor.replace(" ", "").length == 0 ? "" : addressFloor;
-		}
-	}
-	//собираем адрес из "форматированных частей", если такие имеются
-	var currentAddress = addressStreet;
-	currentAddress += addressHouse;
-	currentAddress += addressHousePart;
-	currentAddress += addressApartment;
-	currentAddress += addressEntrance;
-	currentAddress += addressFloor;
-	//если значения не форматированны, используем полнотекстный поиск
-	if (currentAddress == null || currentAddress == "") {
-		$("#searchAutoAddress").val(replaceAll($(addressHidenElement).val(), "%", "."));
-		return;
-	}
-
-	$("#searchStreet").val(addressStreet);
-	$("#searchHouse").val(addressHouse);
-	$("#searchHousePart").val(addressHousePart);
-	$("#searchApartment").val(addressApartment);
-	$("#searchEntrance").val(addressEntrance);
-	$("#searchFloor").val(addressFloor);
-}
-
 //замена знаков
 function replaceAll(str, find, replace) {
 	return str.replace(new RegExp(find, 'g'), replace);
-}
-
-//задание значения фильтра по адресам (полнотекстовый поиск)
-function setAddressFilter(addressHidenElement) {
-	var addressAuto = $("#searchAutoAddress").val();
-	if (addressAuto != null && addressAuto != "") {
-		while (addressAuto.indexOf(".") != -1) {
-			addressAuto = addressAuto.replace(".", "%");
-		}
-		while (addressAuto.indexOf(",") != -1) {
-			addressAuto = addressAuto.replace(",", "%");
-		}
-		$(addressHidenElement).val(addressAuto);
-		return;
-	}
-
-	var addressStreet = $("#searchStreet").val();
-	var addressHouse = $("#searchHouse").val();
-	var addressHousePart = $("#searchHousePart").val();
-	var addressApartment = $("#searchApartment").val();
-	var addressEntrance = $("#searchEntrance").val();
-	var addressFloor = $("#searchFloor").val();
-
-	var currentAddress = addressStreet != "" ? "улица " + addressStreet + "%" : "%";
-	currentAddress += addressHouse != "" ? "дом " + addressHouse + "%" : "%";
-	currentAddress += addressHousePart != "" ? "корпус " + addressHousePart + "%" : "%";
-	currentAddress += addressApartment != "" ? "квартира " + addressApartment + "%" : "%";
-	currentAddress += addressEntrance != "" ? "подъезд " + addressEntrance + "%" : "%";
-	currentAddress += addressFloor != "" ? "этаж " + addressFloor + "%" : "%";
-
-	currentAddress = currentAddress.replace("%%%%", "%").replace("%%%", "%").replace("%%", "%");
-	currentAddress = replaceAll(currentAddress, "  ", " ");
-	$(addressHidenElement).val(currentAddress);
 }
 
 //добавление скролла на таблицу при сортировке
@@ -386,21 +299,22 @@ $(function() {
 	checkCurrentOrderUrlCorrespond();
 	addScrollBackToLinks();
 
-	///Формирование адреса клиента
-	getAddressFilter("#AddressHidenElement");
-	$(".addressSearch").change(function() {
-		setAddressFilter("#AddressHidenElement");
-		if ($(this).attr("id") == $("#searchAutoAddress").attr("id")) {
-			$(".addressSearch").each(function() {
-				if ($(this).attr("id") != $("#searchAutoAddress").attr("id")) {
-					$(this).val("");
-				}
-			});
-		} else {
-			$("#searchAutoAddress").val("");
+	/////Формирование адреса клиента
+	$(".addressFilterBlock input,.addressFilterBlock select").change(function () {
+		if ($(this).val() != "") {
+			$("#fullAdressSearch").val("");
 		}
 	});
+	$("#fullAdressSearch").change(function () {
+		if ($(this).val() != "") {
+			$(".addressFilterBlock input,.addressFilterBlock select").val("");
+		}
+	});
+	$("#StreetDropDown").html("");
+	$("#HouseDropDown").html("");
 
+	$('select[name="mfilter.filter.Equal.AppealType"] option[value="All"]').remove();
+	
 });
 
 //Добавление в куки сведений о необходимости открывать единственную запись в новой вкладке 

@@ -111,32 +111,32 @@
 <div class="panel-body">
 	<div class="row">
 		<div class="col-sm-2">Регион</div>
-		<div class="col-sm-3">@pager.ClientRegionFilter(i => i, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
+		<div class="col-sm-3">@pager.ClientRegionFilter(i => i, new {@class = "form-control", @Id = "RegionDropDown", @style = "min-width:280px; max-width:280px;"},
+							  propertyText: "PhysicalClient.Address.House.Region.Name", propertyValue: "PhysicalClient.Address.House.Region.Id")</div>
 	</div>
 </div>
 <div class="panel-body">
 	<div class="row">
 		<div class="col-sm-2">Полнотекстовый поиск<span style="color: #808080;"> *( можно использовать '%' вместо неизвестных символов)</span></div>
 		<div class="col-sm-3">
-			<input type="text" name="" value="" id="searchAutoAddress" style="min-width: 280px; max-width: 280px;" class="form-control addressSearch">
+			@pager.FormFilter(i => i._oldAdressStr, HtmlType.text, ComparsionType.Like, new {@class = "form-control", @Id = "fullAdressSearch", @style = "min-width:280px; max-width:280px;" })
 		</div>
-	</div>
-	<div class="row hid">
-		@pager.FormFilter(i => i._oldAdressStr, HtmlType.text, ComparsionType.Like, new {Id = "AddressHidenElement", @class = "form-control", @style = "min-width:280px; max-width:280px;"})
-	</div>
+	</div> 
 </div>
 <div class="panel-body addressFilterBlock">
 	<div class="panel-body" style="padding: 0px;">
 		<div class="row">
-			<div class="col-sm-3 fix230 addressDetailsBlock">
-				<span class="addressDetails">Улица</span> <input type="text" name="" value="" id="searchStreet" class="form-control addressSearch">
-				<span class="addressDetails">Дом</span> <input type="text" name="" value="" id="searchHouse" class="form-control addressSearch">
-				<span class="addressDetails">Корпус</span> <input type="text" name="" value="" id="searchHousePart" class="form-control addressSearch">
+			<div class="col-sm-3 fix230 addressDetailsBlock left">
+				
+				<span class="addressDetails">Улица</span> @pager.FormFilter(i => i.PhysicalClient.Address.House.Street.Id, HtmlType.Dropdown, ComparsionType.Equal, new { @Id = "StreetDropDown", @class = "form-control addressSearch" },
+															  listItemText:c => c.PhysicalClient.Address.House.Street.Name, listItemValue: c => c.PhysicalClient.Address.House.Street.Id)
+				<span class="addressDetails">Дом</span> @pager.FormFilter(i => i.PhysicalClient.Address.House.Id, HtmlType.Dropdown, ComparsionType.Equal, new { @Id = "HouseDropDown", @class = "form-control addressSearch" },
+													   listItemText: c => c.PhysicalClient.Address.House.Number, listItemValue: c => c.PhysicalClient.Address.House.Id)
 			</div>
 			<div class="col-sm-3 fix230 addressDetailsBlock">
-				<span class="addressDetails">Квартира</span> <input type="text" name="" value="" id="searchApartment" class="form-control addressSearch">
-				<span class="addressDetails">Подъезд</span> <input type="text" name="" value="" id="searchEntrance" class="form-control addressSearch">
-				<span class="addressDetails">Этаж</span> <input type="text" name="" value="" id="searchFloor" class="form-control addressSearch">
+				<span class="addressDetails">Квартира</span>  @pager.FormFilter(i => i.PhysicalClient.Address.Apartment, HtmlType.text, ComparsionType.Like, new { @class = "form-control addressSearch" })
+				<span class="addressDetails">Подъезд</span> @pager.FormFilter(i => i.PhysicalClient.Address.Entrance, HtmlType.text, ComparsionType.Like, new { @class = "form-control addressSearch" })
+				<span class="addressDetails">Этаж</span> @pager.FormFilter(i => i.PhysicalClient.Address.Floor, HtmlType.text, ComparsionType.Equal, new { @class = "form-control addressSearch" })
 			</div>
 		</div>
 	</div>

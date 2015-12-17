@@ -162,15 +162,22 @@ namespace Inforoom2.Test.Functional.Personal
 			CurrentClient = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("без паспортных данных"));
 			PlanChangerFixtureOn(0, false);
 			LoginForClient(CurrentClient);
+
 			AssertText("У вас не заполнены паспортные данные");
 			Css(".warning").Click();
-
 			var textbox = browser.FindElement(By.CssSelector("#physicalClient_PassportNumber"));
 			textbox.SendKeys("7121551");
 			var button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
-			
-            AssertText("Для заполнения недостающих паспортных данных необходимо обратиться в офис компании");
+			Css(".warning").Click();
+			var date = browser.FindElementByCssSelector("input[name='physicalClient.BirthDate']");
+			date.Click();
+			var popup = browser.FindElementByCssSelector("a.ui-state-default");
+			popup.Click();
+			button = browser.FindElement(By.CssSelector("form input.button"));
+			button.Click();
+
+			AssertText("Для заполнения недостающих паспортных данных необходимо обратиться в офис компании");
 			Css(".warning").Click();
 			AssertText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
 			browser.FindElementByCssSelector("#changeTariffButtonCheap").Click();

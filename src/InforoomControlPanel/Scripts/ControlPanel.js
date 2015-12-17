@@ -43,7 +43,6 @@ function ControlPanel() {
 
 	this.initializeInputHelpers = function() {
 		var refreshDatepicker = function() {
-			console.log("Changing datepickerdate");
 			var input = $(this).parent().find("input[type='hidden']").get(0);
 			var timepicker = $(this).parent().find(".timepicker").val();
 			var datepicker = $(this).parent().find(".datepicker").val();

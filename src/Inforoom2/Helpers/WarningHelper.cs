@@ -232,12 +232,11 @@ namespace Inforoom2.Helpers
 
 			//он физ. лицо и у него незаполненны паспортные данные
 			if (client.PhysicalClient != null && !client.HasPassportData())
+				//если не заполнено все
 				if (client.AbsentPassportData(true))
 					//отправляем его на страницу Профиля, раздел Заполнения паспортных данных
-					return new WarningRedirect {Action = "FirstVisit", Controller = "Personal", Parameters = routValues};
-				else
-				//если не подошло - переадресация на главную
-					return new WarningRedirect() {Action = "Index", Controller = "Home", Parameters = routValues};
+					return new WarningRedirect { Action = "FirstVisit", Controller = "Personal", Parameters = routValues };
+
 
 			//если клиент - физ. лицо и у него статус "Восстановление работ"
 			if (client.PhysicalClient != null && client.Status.Type == StatusType.BlockedForRepair) {
@@ -260,16 +259,21 @@ namespace Inforoom2.Helpers
 				return new WarningRedirect {Action = "Index", Controller = "Home", Parameters = routValues};
 			}
 			//иначе, если у активного клиента стоит флаг "Показ варнинга"
-			else if (client.ShowBalanceWarningPage) {
-				//убираем этот флаг
-				client.ShowBalanceWarningPage = false;
-				//отправляем сообщение
-				var appeal = new Appeal("Отключена страница Warning, клиент отключил со страницы", client, AppealType.Statistic)
-				{
-					Employee = InforoomController.GetCurrentEmployee()
-				};
-				InforoomController.DbSession.Save(appeal);
+			else {
+				if (client.ShowBalanceWarningPage) {
+					//убираем этот флаг
+					client.ShowBalanceWarningPage = false;
+					//отправляем сообщение
+					var appeal = new Appeal("Отключена страница Warning, клиент отключил со страницы", client, AppealType.Statistic)
+					{
+						Employee = InforoomController.GetCurrentEmployee()
+					};
+					InforoomController.DbSession.Save(appeal);
+				}
 			}
+
+		
+
 			InforoomController.DbSession.Save(client);
 			InforoomController.DbSession.Flush();
 			//обновляем значение PackageId у CSE
@@ -314,10 +318,6 @@ namespace Inforoom2.Helpers
 			else if (client.PhysicalClient != null) {
 				//елси заблокирован
 				if (client.Disabled) {
-					//клиенту со статусом "Зарегистрирован" необходимо заполнить паспортные данные 
-					if (client.Status.Type == StatusType.BlockedAndNoConnected && !client.HasPassportData()) {
-						return GetWarningActionResult(RedirectTarget.PhysPassportData);
-					}
 					//и статус VoluntaryBlocking
 					if (client.Status.Type == StatusType.VoluntaryBlocking) {
 						return GetWarningActionResult(RedirectTarget.PhysVoluntaryBlocking);
@@ -325,6 +325,10 @@ namespace Inforoom2.Helpers
 					//и баланс меньше 0
 					else if (client.Balance < 0 && client.Payments.Count != 0) {
 						return GetWarningActionResult(RedirectTarget.PhysLowBalance);
+					}
+					//клиенту со статусом "Зарегистрирован" необходимо заполнить паспортные данные 
+					if (client.Status.Type == StatusType.BlockedAndNoConnected && !client.HasPassportData()) {
+						return GetWarningActionResult(RedirectTarget.PhysPassportData);
 					}
 					//и количество выплат (перечислений) = 0
 					else if (client.Payments.Count == 0) {

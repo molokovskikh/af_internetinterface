@@ -476,8 +476,8 @@ namespace Inforoom2.Components
 			if (propertyType.FullName.Contains(typeof (Int32).Name))
 				return Int32.Parse(value);
 
-			if (propertyType.FullName.Contains(typeof(IPAddress).Name))
-				return IPAddress. Parse(value);
+			if (propertyType.FullName.Contains(typeof (IPAddress).Name))
+				return IPAddress.Parse(value);
 
 			if (propertyType.FullName.Contains(typeof (decimal).Name))
 				return Decimal.Parse(value);
@@ -656,10 +656,12 @@ namespace Inforoom2.Components
 		/// <param name="additional">Опциональные настройки</param>
 		/// <returns></returns>
 		public HtmlString FormFilter(Expression<Func<TModel, object>> expression, HtmlType type, ComparsionType comparsionType,
-			object htmlAttributes = null, object additional = null, Expression<Func<TModel, object>> listItemText = null)
+			object htmlAttributes = null, object additional = null, Expression<Func<TModel, object>> listItemText = null,
+			Expression<Func<TModel, object>> listItemValue = null)
 		{
 			var name = ExtractFieldNameFromLambda(expression);
 			var propertyText = listItemText != null ? ExtractFieldNameFromLambda(listItemText) : "";
+			var propertyValue = listItemValue != null ? ExtractFieldNameFromLambda(listItemValue) : "";
 			var attrs = ObjectToDictionary(htmlAttributes);
 			var inputName = string.Format("{0}.filter.{1}.{2}", Prefix, comparsionType, name);
 
@@ -674,7 +676,7 @@ namespace Inforoom2.Components
 			if (Params[paramName] != null)
 				attrs["value"] = Params[paramName];
 			PropertiesUsedInFilter.Add(paramName);
-			var html = GenerateHtml(type, attrs, comparsionType, additional, propertyText);
+			var html = GenerateHtml(type, attrs, comparsionType, additional, propertyText, propertyValue);
 			var ret = new HtmlString(html);
 			return ret;
 		}
@@ -709,7 +711,7 @@ namespace Inforoom2.Components
 		/// <param name="listItemText">Выводимый текст</param>
 		/// <returns></returns>
 		protected string GenerateHtml(HtmlType type, Dictionary<string, string> o, ComparsionType comparsionType,
-			object additional = null, string listItemText = "")
+			object additional = null, string listItemText = "", string listItemValue = "")
 		{
 			o["class"] = " form-control " + o["class"];
 			//заполняем выбранное значение, если оно есть
@@ -747,7 +749,7 @@ namespace Inforoom2.Components
 								string.Format("<option {2} value='{0}'>{1}</option>", i, customValueList[i],
 									selectedValue == i ? "selected='selected'" : "")).OrderBy(s => s).ToList();
 				else
-					values = TryToGetDropDownValueList(comparsionType, attrName, selectedValue, listItemText);
+					values = TryToGetDropDownValueList(comparsionType, attrName, selectedValue, listItemText, listItemValue);
 
 				return string.Format("<select {0}>{1}</select>", GetPropsValues(o), string.Join("\n", values));
 			}
@@ -763,10 +765,12 @@ namespace Inforoom2.Components
 		/// <param name="listItemText">Выводимый текст</param>
 		/// <returns></returns>
 		protected List<string> TryToGetDropDownValueList(ComparsionType comparsionType, string attrName,
-			string selectedValue = null, string listItemText = "")
+			string selectedValue = null, string listItemText = "", string listItemValue = "")
 		{
 			var propPath = StripParamToFieldPath(attrName);
+			propPath = propPath;
 			var prop = GetModelPropertyInfo(typeof (TModel), propPath);
+			var propWithValue = listItemValue != "" ? GetModelPropertyInfo(typeof (TModel), listItemValue) : null;
 			var propWithText = listItemText != "" ? GetModelPropertyInfo(typeof (TModel), listItemText) : null;
 			if (prop.PropertyType.IsEnum)
 				return GetEnumDropDownValues(prop.PropertyType, selectedValue);
@@ -774,7 +778,7 @@ namespace Inforoom2.Components
 			    || comparsionType == ComparsionType.EarlierThanNowOrEmptyList ||
 			    comparsionType == ComparsionType.LaterThanNowOrEmptyList)
 				return GetDefaultDropDownValues(selectedValue);
-			return GetModelDropDownValues(prop, selectedValue, propWithText);
+			return GetModelDropDownValues(prop, selectedValue, propWithText, propWithValue);
 		}
 
 		private List<string> GetDefaultDropDownValues(string selectedValue)
@@ -796,14 +800,15 @@ namespace Inforoom2.Components
 		/// <param name="selectedValue">Значение, которое было выбрано пользователем</param>
 		/// <returns></returns>
 		protected List<string> GetModelDropDownValues(PropertyInfo prop, string selectedValue = null,
-			PropertyInfo propForText = null)
+			PropertyInfo propForText = null, PropertyInfo propForValue = null)
 		{
 			//Для булевых типов проще сразу вернуть результат без запросов к БД
 			if (prop.PropertyType == typeof (bool))
 				return GetBooleanDropDownValues(selectedValue);
 
 			var values = new List<string>();
-			var model = prop.DeclaringType;
+
+			var model = prop.DeclaringType == typeof (BaseModel) ? prop.ReflectedType : prop.DeclaringType;
 			var criteria = DbSession.CreateCriteria(model.Name);
 			//todo Тут проще будет сделать группировку, но сейчас время поджимает
 			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());
@@ -811,8 +816,8 @@ namespace Inforoom2.Components
 			var models = criteria.List();
 
 			foreach (var obj in models) {
-				var value = prop.GetValue(obj, new object[] {});
-				var text = propForText != null ? propForText.GetValue(obj, new object[] {}) : value;
+				var value = propForValue != null ? propForValue.GetValue(obj, new object[] {}) : prop.GetValue(obj, new object[] {});
+				var text = propForText != null ? propForText.GetValue(obj) : value;
 				if (value == null || value.GetType().Name.ToLower().IndexOf("proxy") != -1) {
 					continue;
 				}
