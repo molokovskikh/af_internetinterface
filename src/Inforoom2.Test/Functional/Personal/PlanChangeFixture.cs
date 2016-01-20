@@ -225,7 +225,15 @@ namespace Inforoom2.Test.Functional.Personal
 			PlanChangerFixtureOn(0, false);
 			CurrentClient.SetStatus(StatusType.NoWorked, DbSession);
 			CurrentClient.Balance = -1;
-			CurrentClient.Payments.Add(new Payment() { Client = CurrentClient, Sum = 0, PaidOn = SystemTime.Now().AddDays(-2), RecievedOn = SystemTime.Now().AddDays(-1) });
+			var payment = new Payment()
+			{
+				Client = CurrentClient,
+				Sum = 0,
+				PaidOn = SystemTime.Now().AddDays(-2),
+				RecievedOn = SystemTime.Now().AddDays(-1)
+			};
+            CurrentClient.Payments.Add(payment);
+			DbSession.Save(payment);
 			Assert.IsNotNull(CurrentClient, "Искомый клиент не найден");
 			Assert.AreEqual(StatusType.NoWorked, CurrentClient.Status.Type, "Клиент не имеет статус 'Заблокирован'");
 			Assert.IsTrue(CurrentClient.WorkingStartDate.HasValue, "У клиента не выставлена дата подключения");

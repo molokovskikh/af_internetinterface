@@ -1,0 +1,226 @@
+﻿@model Client
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	Client client = Model;
+	int writeOffState = ViewBag.WriteOffState;
+	List<object> writeoffsAndUserWriteOff = ViewBag.WriteoffsAndUserWriteOff;
+	var totalWriteOffSum = writeoffsAndUserWriteOff.Count > 0 ? writeoffsAndUserWriteOff.Sum(s => (s as WriteOff != null ? ((WriteOff) s).WriteOffSum : ((UserWriteOff) s).Sum)) : 0m;
+}
+<div class="panel panel-default blockJsLockControll">
+	@using (@Html.BeginForm("InfoPhysical", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
+		@Html.HiddenFor(o => client.Id)
+		<input id="subViewName" name="subViewName" type="hidden" value="_WriteOffs">
+		@* Блок пустой *@
+		<div id="emptyBlock_writeoffs" class="emptyBlock"></div>
+	}
+	@* Блок просмотра *@
+	<div id="defaultBlock_writeoffs" class="defaultBlock hid">
+		<div class="panel-heading">
+			<h3 class="panel-title bold">
+				<a class="c-pointer" onclick="changeVisibility('emptyBlock_writeoffs')">Абонентская плата</a><span style="padding-left: 10px; font-weight: bold; color: #C70E0E;">всего: @totalWriteOffSum.ToString("0.00") руб.</span>
+			</h3>
+			<p class="navbar-text navbar-right" style="margin: 0px; margin-top: 4px; margin-right: 5px;">
+				<a class="btn btn-white  btn-sm btn-icon icon-right" style="font-size: 12px;" data-toggle="modal" data-target="#ModelForWriteOffsAdd">
+					<i class="entypo-box" style="background: #0072BC;"></i>
+					Списание средств
+				</a>
+			</p>
+		</div>
+		<div class="panel-body">
+			<span>Группировка:</span>
+			<a class="btn btn-@(writeOffState == 0 ? "gold" : "white")" href="@Url.Action("InfoPhysical", new {@id = client.Id, @writeOffState = 0})">Месяц</a>
+			<a class="btn btn-@(writeOffState == 1 ? "gold" : "white")" href="@Url.Action("InfoPhysical", new {@id = client.Id, @writeOffState = 1})">Год</a>
+		</div>
+		<div class="panel-body">
+			<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable border-right-white writeOffTable" role="grid" aria-describedby="table-2_info">
+				<thead>
+				<tr role="row">
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						Дата списания
+					</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						Полная сумма
+					</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						Физических денег
+					</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						Бонусов
+					</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						Баланс перед списанием
+					</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						Скидка
+					</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						Комментарий
+					</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						Удаление
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+				@{
+					int currentYear = 0;
+					int currentMonth = 0;
+					while (writeoffsAndUserWriteOff.Count != 0) {
+						var writeOff = writeoffsAndUserWriteOff[0];
+						var currentDate = writeOff as UserWriteOff != null ? ((UserWriteOff) writeOff).Date : writeOff as WriteOff != null ? ((WriteOff) writeOff).WriteOffDate : DateTime.MinValue;
+
+						if ((writeOffState != 1 && (currentYear != currentDate.Year || currentMonth != currentDate.Month)) ||
+						    (writeOffState == 1 && (currentYear != currentDate.Year))) {
+							currentYear = currentDate.Year;
+							currentMonth = currentDate.Month;
+							var sum = writeoffsAndUserWriteOff.Where(s =>
+							{
+								var sdate = (s as WriteOff != null ? ((WriteOff) s).WriteOffDate : ((UserWriteOff) s).Date);
+								if ((writeOffState != 1 && sdate.Year == currentYear && sdate.Month == currentMonth) ||
+								    (writeOffState == 1 && sdate.Year == currentYear)
+									) {
+									return true;
+								}
+								else {
+									return false;
+								}
+							}).Sum(s => (s as WriteOff != null ? ((WriteOff) s).WriteOffSum : ((UserWriteOff) s).Sum));
+							<tr>
+								<td>
+									@if (writeOffState != 1) {
+										<a class="c-pointer entypo-right-open-mini" onclick="showWriteOffByMonth('@currentYear', '@currentMonth')">@currentDate.ToString("MM.yyyy")</a>
+									}
+									else {
+										<a class="c-pointer entypo-right-open-mini" onclick="showWriteOffByYear('@currentYear')">@currentDate.ToString("yyyy")</a>
+									}
+								</td>
+								<td>@sum.ToString("0.00")</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+						}
+						if (writeOff as UserWriteOff != null) {
+							var wOff = ((UserWriteOff) writeOff);
+							<tr class="uwf wr-group hid" writeOff="@wOff.Id" year="@currentYear" month="@currentMonth">
+								<td class="wdate">@wOff.Date</td>
+								<td class="wsum">@wOff.Sum.ToString("0.00")</td>
+								<td>0,00</td>
+								<td>0,00</td>
+								<td>Нет данных</td>
+								<td>0 %</td>
+								<td>@wOff.Comment</td>
+								<td>
+									@if (wOff.IsProcessedByBilling) {
+										<a class="c-pointer" title="удаление списания" data-toggle="modal" data-target="#ModelForWriteOffs" onclick="writeoffDelete('@wOff.Id',1)">удалить</a>
+									}
+									else {
+										<span title="Списание ожидает обработки">удалить</span>
+									}
+								</td>
+							</tr>
+						}
+						else if (writeOff as WriteOff != null) {
+							var wOff = ((WriteOff) writeOff);
+							<tr class="wf wr-group hid" writeOff="@wOff.Id" year="@currentYear" month="@currentMonth">
+								<td class="wdate">@wOff.WriteOffDate</td>
+								<td class="wsum">@wOff.WriteOffSum.ToString("0.00")</td>
+								<td>@wOff.MoneySum.ToString("0.00")</td>
+								<td>@wOff.VirtualSum.ToString("0.00")</td>
+								<td>@(wOff.BeforeWriteOffBalance.HasValue ? wOff.BeforeWriteOffBalance.Value.ToString("0.00") : "")</td>
+								<td>@(wOff.Sale.HasValue ? wOff.Sale.Value.ToString("0") + " %" : "" )</td>
+								<td>@wOff.Comment</td>
+								<td>
+									<a class="c-pointer" title="удаление списания" data-toggle="modal" data-target="#ModelForWriteOffs" onclick="writeoffDelete('@wOff.Id',0)">удалить</a>
+								</td>
+							</tr>
+						}
+
+						writeoffsAndUserWriteOff.RemoveAt(0);
+					}
+				}
+
+
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<!-- Modal For WriteOffs Cancel-->
+<div class="modal fade" id="ModelForWriteOffs" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			@using (@Html.BeginForm("DeleteWriteOff", "Client", null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+			{
+				@Html.HiddenFor(o => client.Id)
+				<input id="subViewName" name="subViewName" type="hidden" value="_WriteOffs">
+				<input id="writeoffToDelete" type="hidden" name="writeOffId" value="">
+				<input id="writeoffType" type="hidden" name="user" value="">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Удаление списания</h4>
+				</div>
+				<div class="modal-body">
+					<p><span id="writeOffDeleteMessage"></span></p>
+					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
+						<tbody>
+							<tr>
+								<td style="max-width: 60px;">Причина</td>
+								<td>
+									<input class="form-control" name="comment" type="text" value="">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+					<button type="submit" class="btn btn-red">Удалить</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+<!-- Modal For WriteOffs Add-->
+<div class="modal fade" id="ModelForWriteOffsAdd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			@using (@Html.BeginForm("AddWriteOff", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
+				@Html.HiddenFor(o => client.Id)
+				<input id="subViewName" name="subViewName" type="hidden" value="_WriteOffs">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Добавление списания</h4>
+				</div>
+				<div class="modal-body">
+					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
+						<tbody>
+						<tr>
+							<td>Сумма</td>
+							<td>
+								<input class="form-control" name="sum" min="0" type="number" value="" step="any">
+							</td>
+						</tr>
+						<tr>
+							<td style="max-width: 60px;">Комментарий</td>
+							<td>
+								<input class="form-control" name="comment" type="text" value="">
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+					<button type="submit" class="btn btn-success">Добавить</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>

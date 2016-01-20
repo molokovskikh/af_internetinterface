@@ -1,10 +1,10 @@
 ﻿@using Inforoom2.Components
 @{
-	IModelFilter pager = ViewBag.Pager; // получение объекта листалки
+	IModelFilter pager = ViewBag.PagerTemplate ?? ViewBag.Pager; // получение объекта листалки
 	var perpage = pager.ItemsPerPage; // присвоение значения кол-ва за раз выводимых страниц из объекта листалки
 
 	var page = 1; // присвоение текущего номера страницы по умолчанию
-		page = pager.Page; // присвоение текущего номера страницы по умолчанию объекта листалки
+	page = pager.Page; // присвоение текущего номера страницы по умолчанию объекта листалки
 
 	var count = pager.TotalItems; // общее кол-во элементов
 	var pageCount = pager.PagesCount; // общее кол-во страниц

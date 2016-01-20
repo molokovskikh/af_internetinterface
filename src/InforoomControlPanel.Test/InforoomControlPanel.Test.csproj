@@ -175,6 +175,9 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="..\global.local.config">
+      <Link>global.local.config</Link>
+    </None>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
@@ -219,6 +222,7 @@
     <Compile Include="Functional\ClientActions\ServiceRequestFixture.cs" />
     <Compile Include="Functional\ClientActions\PrivateMessageFixture.cs" />
     <Compile Include="Functional\ClientActions\LogAppealFixture.cs" />
+    <Compile Include="Functional\ClientPhysical\ClientPhysicalFixture.cs" />
     <Compile Include="Functional\Infrastructure\ControlPanelBaseFixture.cs" />
     <Compile Include="Functional\News\CreateNewsBlockFixture.cs" />
     <Compile Include="Functional\News\DeleteNewsBlockFixture.cs" />

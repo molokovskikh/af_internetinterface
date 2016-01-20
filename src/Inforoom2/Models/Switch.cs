@@ -40,5 +40,7 @@ namespace Inforoom2.Models
 		{
 			Endpoints = new List<ClientEndpoint>();
 		}
+		[ManyToOne(Cascade = "save-update")]
+		public virtual Zone Zone { get; set; }
 	}
 }

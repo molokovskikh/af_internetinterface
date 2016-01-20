@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Common.Tools;
+using Inforoom2.Helpers;
 using Inforoom2.Intefaces;
 using Inforoom2.Models.Services;
 using Inforoom2.validators;
@@ -34,6 +35,7 @@ namespace Inforoom2.Models
 			WriteOffs = new List<WriteOff>();
 			Appeals = new List<Appeal>();
 			RentalHardwareList = new List<ClientRentalHardware>();
+			ServiceRequests = new List<ServiceRequest>();
 
 			/// из старой админки. 
 			Disabled = true;
@@ -54,6 +56,14 @@ namespace Inforoom2.Models
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof (ServicemenScheduleItem))]
 		public virtual IList<ServicemenScheduleItem> ServicemenScheduleItems { get; set; }
+
+		/// <summary>
+		/// Поле необходимо для получения статистики СЗ до добавления ServicemenScheduleItems 
+		/// </summary>
+		[Bag(0, Table = "ServiceRequest")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
+		[OneToMany(2, ClassType = typeof (ServiceRequest))]
+		public virtual IList<ServiceRequest> ServiceRequests { get; protected set; }
 
 		public virtual ServicemenScheduleItem ConnectionRequest
 		{
@@ -135,11 +145,14 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "PhysicalClient", Cascade = "save-update")]
 		public virtual PhysicalClient PhysicalClient { get; set; }
 
+		[OneToOne(PropertyRef = "Client")]
+		public virtual ClientRequest ClientRequest { get; set; }
+
 		[ManyToOne(Column = "LawyerPerson", Cascade = "save-update"), Description("Юр. лицо")]
 		public virtual LegalClient LegalClient { get; set; }
 
 		[Property(Column = "RedmineTask")]
-		public virtual string LegalRedmineTask { get; set; }
+		public virtual string RedmineTask { get; set; }
 
 		[ManyToOne(Column = "Recipient", Cascade = "save-update")]
 		public virtual Recipient Recipient { get; set; }
@@ -149,7 +162,7 @@ namespace Inforoom2.Models
 		[OneToMany(2, ClassType = typeof (ClientService))]
 		public virtual IList<ClientService> ClientServices { get; set; }
 
-		[Bag(0, Table = "Payments", Cascade = "all-delete-orphan")]
+		[Bag(0, Table = "Payments")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
 		[OneToMany(2, ClassType = typeof (Payment))]
 		public virtual IList<Payment> Payments { get; set; }
@@ -198,12 +211,16 @@ namespace Inforoom2.Models
 
 		public virtual bool IsNeedRecofiguration { get; set; }
 
-
 		//TODO: перенесено из старой админки (нужен рефакторинг)
 		[Bag(0, Table = "Orders", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "ClientId")]
 		[OneToMany(2, ClassType = typeof (ClientOrder))]
 		public virtual IList<ClientOrder> LegalClientOrders { get; set; }
+
+		public virtual bool HasRentalHardWare
+		{
+			get { return RentalHardwareList != null && RentalHardwareList.Count(s => s.IsActive) > 0; }
+		}
 
 		public virtual bool IsWorkStarted()
 		{
@@ -234,6 +251,7 @@ namespace Inforoom2.Models
 		{
 			return FindActiveService<T>() != null;
 		}
+
 
 		/// <summary>
 		/// Метод для проверки, арендовано ли оборудование типа hwType у клиента
@@ -323,7 +341,7 @@ namespace Inforoom2.Models
 		/// <summary>
 		/// Применяет скидку клиента к некоторой цене price
 		/// </summary>
-		private decimal AccountDiscounts(decimal price)
+		protected virtual decimal AccountDiscounts(decimal price)
 		{
 			if (Discount > 0)
 				price *= 1 - Discount/100;
@@ -360,6 +378,7 @@ namespace Inforoom2.Models
 			else if (status.Type == StatusType.Dissolved) {
 				Discount = 0;
 			}
+
 			if (Status.Type != status.Type) {
 				StatusChangedOn = DateTime.Now;
 			}
@@ -428,8 +447,8 @@ namespace Inforoom2.Models
 		{
 			if (PhysicalClient != null)
 				PhysicalClient.WriteOff(sum, isVirtual);
-			//else
-			//LawyerPerson.Balance -= sum;
+			else
+				LegalClient.Balance -= sum;
 		}
 
 		public virtual Region GetRegion()
@@ -608,6 +627,139 @@ namespace Inforoom2.Models
 		public virtual StatusType GetStatus()
 		{
 			return ((IClientExpander) GetExtendedClient).GetStatus();
+		}
+
+		public virtual List<string> GetFreePorts()
+		{
+			var result = new List<string>();
+			if (Endpoints.Count == 0 || Endpoints[0].Switch == null)
+				return result;
+			var deniedPorts = Endpoints[0].Switch.Endpoints.Select(e => e.Port);
+			for (int i = 1; i <= Endpoints[0].Switch.PortCount; i++) {
+				if (!deniedPorts.Contains(i))
+					result.Add(i.ToString());
+			}
+			return result;
+		}
+
+		public virtual bool HaveService<T>()
+		{
+			return ClientServices.Any(c => NHibernateUtil.GetClass(c.Service) == typeof (T));
+		}
+
+		public virtual bool TryActivate(ISession dbSession, Service service, ClientEndpoint endpoint = null)
+		{
+			if (ClientServices.Any(s => s.Client.Endpoints.Contains(endpoint) && s.Service == service))
+				return false;
+			var clientService = new ClientService()
+			{
+				Client = this,
+				Service = service,
+				Endpoint = endpoint
+			};
+			ClientServices.Add(clientService);
+			return clientService.TryActivate(dbSession);
+		}
+
+		public virtual bool TryDeactivate(ISession dbSession, Service service, ClientEndpoint endpoint = null)
+		{
+			var clientService = ClientServices.FirstOrDefault(s => s.Endpoint == endpoint && s.Service == service);
+			if (clientService == null)
+				return false;
+			clientService.Deactivate(dbSession);
+			return true;
+		}
+
+		//TODO: Это нужно будет удалить после того, как старая админка прекратит свое существование. НЕЛЬЗЯ УДАЛЯТЬ ЭНДПОИНТЫ - нужен ФЛАГ!
+		public virtual bool RemoveEndpoint(ClientEndpoint endpoint, ISession dbSession)
+		{
+			//TODO: важно! SQL запрос необходим для удаления элемента (прежний вариант с отчисткой списка удалял клиентов у endpoint(ов))
+			if (Endpoints.Count > 1 || LegalClient != null) {
+				ClientServices.RemoveEach(ClientServices.Where(s => s.Endpoint == endpoint));
+				dbSession.Save(endpoint);
+				dbSession.Flush();
+				dbSession.CreateSQLQuery("DELETE FROM internet.clientendpoints WHERE Id = " + endpoint.Id).UniqueResult();
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Изменение статуса.  ВАЖНО! ОТКАТ DbSession.Refresh(client) невозможен: TODO: Нужно избавиться от CreateSQLQuery после полного перехода в новую админку!  
+		/// </summary>
+		/// <param name="dbSession"></param>
+		/// <param name="NewStatus"></param>
+		/// <param name="employee"></param>
+		/// <returns></returns>
+		public virtual string TryToChangeStatus(ISession dbSession, Status NewStatus, Employee employee,  ref bool updateSce)
+		{
+			string message = "";
+			var oldStatus = Status;
+			if (oldStatus != null && oldStatus != NewStatus) {
+				// BlockedAndNoConnected = "зарегистрирован", BlockedAndConnected = "не подключен"
+				var isDissolved = NewStatus.Type == StatusType.Dissolved;
+				var setStatusToDissolved = isDissolved &&
+				                           (oldStatus.Type == StatusType.BlockedAndNoConnected ||
+				                            oldStatus.Type == StatusType.VoluntaryBlocking);
+
+				if (oldStatus.ManualSet || oldStatus.Type == StatusType.BlockedAndConnected || setStatusToDissolved) {
+					if (isDissolved && HasRentalHardWare) {
+						message =
+							"Договор не может быть расторгнут, т.к. у клиента имеется арендованное оборудование. Перед расторжением договора нужно изъять оборудование.";
+					}
+				}
+				else {
+					///!		client.Status = oldStatus;
+					message =
+						string.Format(
+							"Статус не был изменен, т.к. нельзя изменить статус '{0}' вручную. Остальные данные были сохранены.",
+							NewStatus.Name);
+				}
+				if (!string.IsNullOrEmpty(message)) {
+					return message;
+				}
+
+				if (NewStatus.Type == StatusType.NoWorked && !Disabled) {
+					Appeals.Add(new Appeal("Клиент был заблокирован оператором", this, AppealType.Statistic, employee));
+				}
+				if (NewStatus.Type != StatusType.Dissolved) {
+					AutoUnblocked = true;
+					if (Disabled) Appeals.Add(new Appeal("Клиент был заблокирован оператором", this, AppealType.Statistic, employee));
+					if (ShowBalanceWarningPage)
+						Appeals.Add(new Appeal("Оператором отключена страница Warning", this, AppealType.Statistic, employee));
+					Disabled = false;
+					ShowBalanceWarningPage = false;
+				}
+
+				if (NewStatus.Type == StatusType.Dissolved) {
+					if (HaveService<BlockAccountService>()) {
+						var thisService = ClientServices
+							.Where(cs => NHibernateUtil.GetClass(cs.Service) == typeof (BlockAccountService) && cs.IsActivated)
+							.ToList().FirstOrDefault();
+
+						if (thisService != null) {
+							thisService.Deactivate(dbSession);
+							SetStatus(StatusType.Dissolved, dbSession);
+						}
+					}
+					//Endpoints удалять не нужно TODO: после перехода на новую админку поправить!
+					var endpointLog =
+						Endpoints.Where(e => e.Switch != null)
+							.Implode(e => String.Format("Коммутатор {0} порт {1}", e.Switch.Name, e.Port), Environment.NewLine);
+					Appeals.Add(new Appeal(endpointLog, this, AppealType.System, employee));
+					Endpoints.Clear();
+					Discount = 0;
+					Disabled = true;
+					AutoUnblocked = false;
+				}
+				SetStatus(NewStatus.Type, dbSession);
+
+				if (Status.Type == StatusType.NoWorked) {
+					AutoUnblocked = false;
+				}
+				updateSce = true;
+			}
+			return message;
 		}
 	}
 

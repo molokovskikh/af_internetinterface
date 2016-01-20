@@ -454,6 +454,7 @@
     <Compile Include="Helpers\Statistic.cs" />
     <Compile Include="Helpers\TelnetInterface.cs" />
     <Compile Include="Helpers\TextHelper.cs" />
+    <Compile Include="Helpers\UpdateOldAddressHelper.cs" />
     <Compile Include="Helpers\UsersParsers.cs" />
     <Compile Include="Helpers\Validation.cs" />
     <Compile Include="Helpers\ValidationHelper.cs" />

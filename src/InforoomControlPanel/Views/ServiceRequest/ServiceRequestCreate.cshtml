@@ -9,7 +9,7 @@
 <div class="panel panel-primary">
 	<div class="panel-body">
 		<div class="col-md-6">
-			@using (@Html.BeginForm("ServiceRequestCreate", "ServiceRequest", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered", EncType = "multipart/form-data" })) {
+			@using (@Html.BeginForm("ServiceRequestCreate", "ServiceRequest", FormMethod.Post, new {@class = "form-horizontal form-groups-bordered", EncType = "multipart/form-data"})) {
 				@Html.HiddenFor(model => serviceRequest.Id)
 				@Html.HiddenFor(model => serviceRequest.Client.Id)
 				<div class="form-group">
@@ -17,7 +17,8 @@
 					<div class="col-sm-5">
 						<a @(serviceRequest.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
 						                                                                                         + (String.Format("UserInfo/{0}?filter.ClientCode=", serviceRequest.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-						                                                                                         + serviceRequest.Client.Id)">@serviceRequest.Client.Fullname</a>
+						                                                                                         + serviceRequest.Client.Id)">
+							@serviceRequest.Client.Fullname</a>
 
 					</div>
 				</div>
@@ -30,20 +31,20 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Телефон для связи</label>
 					<div class="col-sm-5">
-						@Html.TextBoxFor(model => serviceRequest.Phone, new { @class = "form-control" }) 
+						@Html.TextBoxFor(model => serviceRequest.Phone, new {@class = "form-control"})
 						@ViewBag.Validation.GetError(serviceRequest, "Phone")
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-3 control-label c-pointer" for="BlockClientAndWriteOffs">Восстановление работы</label>
 					<div class="col-md-5">
-						@Html.CheckBoxFor(model => serviceRequest.BlockClientAndWriteOffs, new { @id = "BlockClientAndWriteOffs", @class = "c-pointer" })
+						@Html.CheckBoxFor(model => serviceRequest.BlockClientAndWriteOffs, new {@id = "BlockClientAndWriteOffs", @class = "c-pointer"})
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Текст</label>
 					<div class="col-md-5">
-						@Html.TextAreaFor(model => serviceRequest.Description, new { @class = "form-control", @Rows = "8" })
+						@Html.TextAreaFor(model => serviceRequest.Description, new {@class = "form-control", @Rows = "8"})
 						@ViewBag.Validation.GetError(serviceRequest, "Description")
 					</div>
 				</div>
@@ -58,3 +59,41 @@
 <div class="form-group">
 	<button class="btn btn-blue" onclick=" location.href = '@Url.Action("ServiceRequestList", "ServiceRequest")' ">Назад</button>
 </div>
+
+<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+	<thead>
+	<tr role="row">
+		<th class="sorting" tabindex="0" aria-controls="table-2">Номер заявки</th>
+		<th class="sorting" tabindex="0" aria-controls="table-2">Клиент</th>
+		<th class="sorting" tabindex="0" aria-controls="table-2">Краткое описание</th>
+		<th class="sorting" tabindex="0" aria-controls="table-2">Контакт</th>
+		<th class="sorting" tabindex="0" aria-controls="table-2">Создана</th>
+		<th class="sorting" tabindex="0" aria-controls="table-2">Закрыта</th>
+		<th class="sorting" tabindex="0" aria-controls="table-2">Стоимость</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	@foreach (var request in serviceRequest.Client.ServiceRequests.ToList()) {
+		<tr role="row" class="odd">
+			<td>
+				<a href="@Url.Action("ServiceRequestEdit", "ServiceRequest", new {id = request.Id})" target="_blank">@request.Id</a>
+			</td>
+			<td>
+				<a @(request.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld")
+				                                                                                  + (String.Format("UserInfo/{0}?filter.ClientCode=", request.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
+				                                                                                  + request.Client.Id)">
+					@request.Client.Id</a>
+			</td>
+			<td>@(request.Client.PhysicalClient != null ? request.Client.PhysicalClient.FullName : request.Client._Name)</td>
+			<td>@(request.Description != null ? request.Description : "")</td>
+			<td>@(request.Phone != null ? request.Phone : "")</td>
+			<td>@(request.Status.GetDescription())</td>
+			<td>@(request.CreationDate != null ? request.CreationDate.ToString() : "")</td>
+			<td>@(request.ClosedDate != null ? request.ClosedDate.ToString() : "")</td>
+			<td>@(request.Sum != null ? request.Sum.ToString() : "")</td>
+
+		</tr>
+	}
+	</tbody>
+</table>

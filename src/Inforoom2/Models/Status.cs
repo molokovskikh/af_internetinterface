@@ -14,12 +14,14 @@ namespace Inforoom2.Models
 	{
 		public Status()
 		{
-		}
+			Additional = new List<AdditionalStatus>();
+        }
 
 		public Status(StatusType status)
 		{
 			ShortName = status.ToString();
 			Name = status.GetDescription();
+			Additional = new List<AdditionalStatus>();
 		}
 
 		[Property, Description("Наименование статуса")]

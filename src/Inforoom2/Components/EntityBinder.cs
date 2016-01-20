@@ -168,6 +168,29 @@ namespace Inforoom2.Components
 					}
 				}
 			}
+			else {
+				for (int i = 0; i < paramsExclude.Length; i++) {
+					for (int j = 0; j < collection.Count; j++) {
+						if (paramsExclude.Any(s => s == collection.GetKey(j).ToLower())) {
+							var currentKey = collection.GetKey(j);
+							collection.Remove(currentKey);
+							break;
+						}
+					}
+				}
+				for (int i = 0; i < paramsInclude.Length; i++)
+				{
+					for (int j = 0; j < collection.Count; j++)
+					{
+						if (!paramsInclude.Any(s => s == collection.GetKey(j).ToLower()))
+						{
+							var currentKey = collection.GetKey(j);
+							collection.Remove(currentKey);
+							break;
+						}
+					}
+				}
+			}
 			//получаем из списка поля модели
 			var values = SliceValues(collection, modelName);
 			var res = MapModel(values, type);

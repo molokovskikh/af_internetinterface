@@ -8,6 +8,7 @@ using System.Text;
 using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers;
+using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Services;
 using NHibernate;
@@ -67,13 +68,9 @@ namespace InternetInterface.Background
 		{
 			var clients = Session.Query<Client>().Where(s => s.PhysicalClient != null && s.PhysicalClient.HouseObj == null && s.Status.Id != 10 && s.Status.Id != 3 && s.Status.Id != 1).Select(s => s.Id).ToList();
 			if (clients.Count == 0)
-				return;
-
-			string message = "Найдены физики без HouseObj со следующими Clinet.Id: <br/>";
-			var url = "http://stat.ivrn.net/ii/UserInfo/ShowPhysicalClient?filter.ClientCode=";
-			for (int i = 0; i < clients.Count; i++) 
-				message += "<a href='" + url + clients[i] + "'>" + clients[i] + "</a><br/>";
-			SendReport("Найдены клиенты без HouseObj", message);
+				return; 
+			for (int i = 0; i < clients.Count; i++)
+				UpdateOldAddressHelper.UpdateOldAddressOfPhysicByClientId(Convert.ToInt32(clients[i]), Session); 
 		}
 
 		/// <summary>

@@ -44,13 +44,20 @@ namespace Inforoom2.Helpers
 			    || tableName == "ServiceRequest".ToLower()
 			    || tableName == "ConnectBrigads".ToLower()
 			    || tableName == "Contacts".ToLower()
-			    || tableName == "PackageSpeed".ToLower()
+				|| tableName == "IpPoolRegions".ToLower()
+				|| tableName == "ippools".ToLower()
+				|| tableName == "PackageSpeed".ToLower()
 			    || tableName == "MessagesForClients".ToLower()
 			    || tableName == "issues".ToLower()
 			    || tableName == "serviceiterations".ToLower()
 			    || tableName == "Orders".ToLower()
-			    || tableName == "OrderServices".ToLower()
-                || tableName == "Recipients".ToLower())
+				|| tableName == "Internetsessionslogs".ToLower()
+				|| tableName == "clientendpointinternetlogs".ToLower()
+				|| tableName == "OrderServices".ToLower()
+				|| tableName == "UnresolvedPhone".ToLower()
+				|| tableName == "bankpayments".ToLower()
+				|| tableName == "NetworkZones".ToLower()
+				|| tableName == "Recipients".ToLower())
 			{
 				return tableName;
 			}

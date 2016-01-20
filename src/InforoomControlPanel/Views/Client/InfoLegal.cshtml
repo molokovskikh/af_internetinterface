@@ -10,6 +10,9 @@
 	List<SwitchAddress> networkNodeList = ViewBag.networkNodeList;
 }
 
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/InfoClientPage.js?v=1")"></script>
+}
 <div class="panel panel-primary col-md-12">
 	<div class="panel-body">
 		@using (@Html.BeginForm("", controller, null, FormMethod.Get, new {@id = "BtnGroup", @class = "form-horizontal form-groups-bordered"})) {
@@ -25,6 +28,10 @@
 				<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("AttachRequest", "ConnectionTeam", new {@id = client.Id, @type = "ClientConnectionRequest"})">
 					<i class="entypo-briefcase"></i>
 					Заявка на подключение
+				</a>
+				<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("LeasesLog", "Client", new {@id = client.Id})">
+					<i class="entypo-chart-area"></i>
+					Статистика работы
 				</a>
 				<form style="display: inline" action="/cp/AdminAccount/ApplyImpersonation" method="post" target="_blank">
 					<input name="client.Id" type="hidden" value="21131">

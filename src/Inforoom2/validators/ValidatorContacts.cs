@@ -25,8 +25,8 @@ namespace Inforoom2.validators
 				RunContact(currentContact);
 			}
 			// обработка списка
-			if (value is List<Contact>) {
-				var contactList = (List<Contact>)value;
+			if (value is List<Contact> || value is IList<Contact>) {
+				var contactList = (IList<Contact>)value;
 				if (contactList.Count==0)
 				{
 					AddError("<strong class='msg'>Введите номер телефона</strong>");

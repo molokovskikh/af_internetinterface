@@ -37,6 +37,12 @@ namespace Inforoom2.Models.Services
 			get { return false; }
 		}
 
+		//TODO:не переписано в сервисах
+		public virtual bool SupportUserAcivation
+		{
+			get { return false; }
+		}
+
 		/// <summary>
 		/// Возвращает суммарную цену услуги
 		/// </summary>
@@ -75,7 +81,9 @@ namespace Inforoom2.Models.Services
 		/// </summary>
 		public virtual void Deactivate(ClientService assignedService, ISession session)
 		{
+			assignedService.IsActivated = false;
 		}
+
 
 		public virtual bool IsActiveFor(ClientService assignedService)
 		{
@@ -89,6 +97,17 @@ namespace Inforoom2.Models.Services
 		{
 			return true;
 		}
+
+		//TODO:не переписано в сервисах
+						public virtual bool CanDeactivate(ClientService assignedService)
+						{
+							return false;
+						}
+
+						public virtual bool CanDelete(ClientService assignedService)
+						{
+							return true;
+						}
 
 		/// <summary>
 		/// Проверяет, доступна ли клиенту client услуга для активации 

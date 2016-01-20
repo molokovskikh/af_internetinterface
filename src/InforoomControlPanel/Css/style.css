@@ -6,23 +6,69 @@
  .error{color:red; font-weight:600 !important;}
  .servicemen table { table-layout:fixed; overflow:hidden;}
  .servicemen td { height: 40px;}
- .table thead a.checked {
-	 color: #00ACF1;
- }
- .table thead a.checked.asc {
-	 color: #ff0000;
- }
+ .table thead a.checked {color: #00ACF1;}
+ .table thead a.checked.asc {color: #ff0000;}
  .hid{ display: none;}
  body { color: #424242; }
  body a{ color: #00A651;font-weight: bold; }
+ .hiddenOverflow {display: block;overflow: hidden;}
+ .border-right-white tr td:last-child{border-right-color: #fff;}
 
+ #switchPorts tbody.large{  border: 1px solid #808080;border-bottom: none;border-left: none;border-top: 4px solid #333;}
+ #switchPorts tbody.large tr:nth-child(2n) {border-bottom: 4px solid #333;}
+
+ #switchPorts tbody{  border: 1px solid #808080;border-bottom: none;border-left: none;}
+ #switchPorts .port {display: block;width: 23px;height: 23px;text-align: center;background: #FFF9B3;cursor: pointer;border-bottom: 1px solid #808080;border-left: 1px solid #808080;}
+ #switchPorts .port.free{background: #A8DAB3;}
+ #switchPorts .port.free:hover{background: #86D497;}
+ #switchPorts .port.free:hover span{ color: #000;}
+ #switchPorts .port.client{background: #F7ADAD;}
+ #switchPorts .port.client:hover{background: #FF7878;}
+ #switchPorts .port span{ position: relative;top: 12%;font-size: 13px;color:#333;}
+ .table .fixedIp{ display: inline-block;}
+ .table .fixedIp.text{ width: 120px !important;}
+ .table .fixedIp.value{ width: 80px !important; margin-left: 3px;}
+ 
+ table .staticIpElement a.delete span:first-child{color: #005CB5;font-size: 16px;}
+ table .staticIpElement a.delete span:last-child{color: #006BCA;top: -2px;position: relative;margin-left: 2px;cursor: pointer; border-bottom: 1px dashed #00549E;}
+ table .staticIpElement a.delete:hover span:last-child { border-bottom: none;}
+
+ a.addStaticIpElement span:first-child{color: #940000;font-size: 16px;}
+ a.addStaticIpElement span:last-child{color: #E40000;top: -2px;position: relative;margin-left: 2px;cursor: pointer; border-bottom: 1px dashed #DA0000;}
+ a.addStaticIpElement:hover span:last-child { border-bottom: none;}
+
+ #clientReciverMessage{padding-top: 8px;margin-bottom: 0px;color: #1C9407;}
+ #ClientEditorForm .addressDetails.top-bottom{padding-top: 6px;padding-bottom: 5px;display: block;}
+ #ModelForWriteOffsAdd table,  #ModelForPaymentsAdd table{margin-bottom: 0px;}
+ #ModelForWriteOffsAdd .modal-body,  #ModelForPaymentsAdd .modal-body{padding-bottom: 4px;}
+ .markerTable td{ padding: 2px; }
+ .InfoPhysicalNaviPan a.btn{ font-size: 12px;}
+.blockJsLockControll a.blue{ color: #0072BC;}
+.blockJsLockControll a.blue:hover{ color: #626A6F;}
+ table .payment .buttons {padding: 0px;}
+ table .payment .buttons a{display: block;padding: 3px 5px 3px 5px;cursor: pointer;    text-align: right; }
+ table .payment .buttons a span{border-bottom: 1px dashed #B3B3B3;}
+ table .payment .buttons a:hover span{border-bottom: none;}
+ table .payment .buttons .cancel{color: #DE4444;}
+ table .payment .buttons .move{border-top: 1px solid #E0E0E0;    padding-top: 4px;}
+ table .payment.green td{background: #D9FBDC !important;}
+ table .payment.red td{background: #FFCFCF !important;}
+ table .payment a{color: #333;cursor: pointer;}
+ table .payment a:hover{color: #000;}
+ 
+ .appeal.Block td{background: #FFAEAE !important;}
+ .appeal.User td{background: #FDEFDB !important;}
+ .appeal.Statistic td{background: #DEF4F5 !important;}
+ .appeal.System td{background: #e3e7f7 !important;}
+ .appeal.FeedBack td{background: #FCD9D9 !important;}
+ .appeal.Service td{background: #E1EFDD !important;}
  .clientMainTable .panel-body {padding-top: 7px;padding-bottom: 7px;}
  .clientTable tr.leg td{background: #f5efdf !important;}
  .clientTable tr.phys td{background: #e3e7f7 !important;}
  .clientTable td.date{width: 50px;}
  .clientTable a.clientName{ color: #000000;font-weight: 300;}
  .clientTable a.clientName:hover{ border-bottom: 1px dashed #949494;}
- 
+ .tableFullWidth{display: table !important;}
  .FilterSubPanel.PhysicalClient, .FilterSubPanel.LegalClient {
 	border: 1px solid #D2D2D2;
     padding: 12px;
@@ -30,8 +76,11 @@
     margin: 10px;
     border-radius: 6px;
  }
+ .switchStatusUpdater{    display: block;width: 100%;height: 20px; overflow: hidden;}
+ .writeOffTable .uwf td{background: #FDEFDB !important;}
 div.fix230{width: 230px !important;}
 div.fix400{width: 400px !important;}
+div.fix700{width: 700px !important;}
 .clientTableFilter .idColumn {background: #FFF;padding: 4px;border-radius: 3px;}
 .clientTableFilter .idColumn:hover {background: #E8E8E8;}
 .clientTableFilter .cleanButton {

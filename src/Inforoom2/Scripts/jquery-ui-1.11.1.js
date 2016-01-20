@@ -264,7 +264,8 @@ $.fn.extend({
 					// other browsers return a string
 					// we ignore the case of nested elements with an explicit value of 0
 					// <div style="z-index: -10;"><div style="z-index: 0;"></div></div>
-					value = parseInt( elem.css( "zIndex" ), 10 );
+					value = parseInt(elem.css("zIndex"), 10);
+					value = value <= 9999 ? 9999 : value;
 					if ( !isNaN( value ) && value !== 0 ) {
 						return value;
 					}
@@ -3740,7 +3741,7 @@ $.extend($.ui, { datepicker: { version: "1.11.1" } });
 
 var datepicker_instActive;
 
-function datepicker_getZindex( elem ) {
+function datepicker_getZindex(elem) { 
 	var position, value;
 	while ( elem.length && elem[ 0 ] !== document ) {
 		// Ignore z-index if position is set to a value where z-index is ignored by the browser
@@ -3752,7 +3753,8 @@ function datepicker_getZindex( elem ) {
 			// other browsers return a string
 			// we ignore the case of nested elements with an explicit value of 0
 			// <div style="z-index: -10;"><div style="z-index: 0;"></div></div>
-			value = parseInt( elem.css( "zIndex" ), 10 );
+			value = parseInt(elem.css("zIndex"), 10);
+			value = value <= 9999 ? 9999 : value;
 			if ( !isNaN( value ) && value !== 0 ) {
 				return value;
 			}
@@ -3760,7 +3762,8 @@ function datepicker_getZindex( elem ) {
 		elem = elem.parent();
 	}
 
-	return 0;
+
+	return 9999;
 }
 /* Date picker manager.
    Use the singleton instance of this class, $.datepicker, to interact with the date picker.
@@ -4489,7 +4492,9 @@ $.extend(Datepicker.prototype, {
 		if (!inst.inline) {
 			showAnim = $.datepicker._get(inst, "showAnim");
 			duration = $.datepicker._get(inst, "duration");
-			inst.dpDiv.css( "z-index", datepicker_getZindex( $( input ) ) + 1 );
+			valueZ_Index = (datepicker_getZindex($(input)) + 1);
+			valueZ_Index = valueZ_Index <= 9999 ? 9999 : valueZ_Index;
+			inst.dpDiv.css("z-index", valueZ_Index);
 			$.datepicker._datepickerShowing = true;
 
 			if ( $.effects && $.effects.effect[ showAnim ] ) {
@@ -8173,12 +8178,12 @@ var dialog = $.widget( "ui.dialog", {
 	_moveToTop: function( event, silent ) {
 		var moved = false,
 			zIndicies = this.uiDialog.siblings( ".ui-front:visible" ).map(function() {
-				return +$( this ).css( "z-index" );
+				return $(this).css("z-index") <= 9999 ? 9999 : +$(this).css("z-index");
 			}).get(),
 			zIndexMax = Math.max.apply( null, zIndicies );
 
 		if ( zIndexMax >= +this.uiDialog.css( "z-index" ) ) {
-			this.uiDialog.css( "z-index", zIndexMax + 1 );
+			this.uiDialog.css( "z-index", (zIndexMax + 1 ) <= 9999 ? 9999 : (zIndexMax + 1 ));
 			moved = true;
 		}
 
@@ -8209,7 +8214,7 @@ var dialog = $.widget( "ui.dialog", {
 		// opening. The overlay shouldn't move after the dialog is open so that
 		// modeless dialogs opened after the modal dialog stack properly.
 		if ( this.overlay ) {
-			this.overlay.css( "z-index", this.uiDialog.css( "z-index" ) - 1 );
+			this.overlay.css("z-index", (this.uiDialog.css("z-index") - 1) <= 9999 ? 9999 : (this.uiDialog.css("z-index") - 1));
 		}
 
 		this._show( this.uiDialog, this.options.show, function() {

@@ -16,29 +16,37 @@
 
 <div class="panel panel-primary col-md-12">
 	<div class="panel-body">
-		@using (Html.BeginForm(action, controller, null, FormMethod.Post, new {@id = "PrivateMsgForm", @class = "form-horizontal form-groups-bordered"})) {
+		@using (Html.BeginForm(action, controller, null, FormMethod.Post, new { @id = "PrivateMsgForm", @class = "form-horizontal form-groups-bordered" })) {
 			<div class="form-group">
 				<label class="col-sm-2 control-label">ФИО клиента:</label>
 				<div>
-					<b>@Html.DisplayFor(n => client.PhysicalClient.FullName, new {@class = "form-control"})</b>
+					<b>@Html.DisplayFor(n => client.PhysicalClient.FullName, new { @class = "form-control" })</b>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Текст сообщения:</label>
 				<div class = "col-sm-4">
-					@Html.ValidationEditor(validationRunner, privateMessage, "Text", new {@class = "form-control"}, HtmlTag.textarea, HtmlType.none)
+					@Html.ValidationEditor(validationRunner, privateMessage, "Text", new { @class = "form-control" }, HtmlTag.textarea, HtmlType.none)
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Дата отключения:</label>
 				<div class = "col-sm-4">
-					@Html.ValidationEditor(validationRunner, privateMessage, "EndDate", new {@value = endDate}, HtmlTag.date, HtmlType.none)
+					@Html.TextBoxFor(o => privateMessage.EndDate, privateMessage.EndDate.ToString("dd.MM.yyyy"),
+				 new
+				 {
+					 @Value = (privateMessage.EndDate.Year > 1900 ? privateMessage.EndDate.ToString("dd.MM.yyyy") : ""),
+					 @data_format = "dd.mm.yyyy",
+					 @class = "form-control",
+					 @data_provide = "datepicker-inline"
+				 })
+					@ViewBag.Validation.GetError(privateMessage, "EndDate")
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Показывать</label>
+				<label class="col-sm-2 control-label c-pointer" for="privateMessage_Enabled">Показывать</label>
 				<div class="col-sm-4">
-					@Html.CheckBoxFor(h => privateMessage.Enabled)
+					@Html.CheckBoxFor(h => privateMessage.Enabled, new {@id= "privateMessage_Enabled", @class= "c-pointer"})
 				</div>
 			</div>
 			<div class="form-group">

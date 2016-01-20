@@ -154,7 +154,7 @@ namespace InforoomControlPanel.Controllers
 		[HttpPost]
 		public ActionResult ServiceRequestCreate([EntityBinder] ServiceRequest serviceRequest)
 		{
-			var errors = ValidationRunner.ValidateDeep(serviceRequest);
+			var errors = ValidationRunner.Validate(serviceRequest);
 			if (errors.Length == 0) {
 				serviceRequest.Employee = GetCurrentEmployee();
 				serviceRequest.TrySwitchClientStatusTo_BlockedForRepair(DbSession, GetCurrentEmployee());

@@ -1,0 +1,149 @@
+﻿@model Client
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	Client client = Model;
+}
+<div class="panel panel-default blockJsLockControll">
+	@using (@Html.BeginForm("InfoPhysical", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
+		@Html.HiddenFor(o => client.Id)
+		<input id="subViewName" name="subViewName" type="hidden" value="_PassportData">
+		@* Блок пустой *@
+		<div id="emptyBlock_documents" class="emptyBlock"></div>
+	}
+	@* Блок просмотра *@
+	<div id="defaultBlock_documents" class="defaultBlock hid">
+		<div class="panel-heading">
+			<h3 class="panel-title bold">
+				<a class="c-pointer" onclick="changeVisibility('emptyBlock_documents')">Паспортные данные</a>
+			</h3>
+		</div>
+		<div class="panel-body">
+			<table id="table-2" class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable border-right-white" role="grid" aria-describedby="table-2_info">
+				<tbody>
+				<tr>
+					<td>Дата рождения</td>
+					<td>
+						<span>@client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy")</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Документ удостоверяющий личность</td>
+					<td style="width: 60%;">
+						<span>@client.PhysicalClient.CertificateType.GetDescription()</span></td>
+				</tr>
+				<tr>
+					<td>Название документа удостоверяющего личность</td>
+					<td>
+						<span>@client.PhysicalClient.CertificateName</span></td>
+				</tr>
+				<tr>
+					<td>Серия \ Номер паспорта</td>
+					<td>
+						<span>@client.PhysicalClient.PassportSeries</span><span>@(string.IsNullOrEmpty(client.PhysicalClient.PassportNumber) ? "" : @" \ " + client.PhysicalClient.PassportNumber) </span></td>
+				</tr>
+				<tr>
+					<td>Дата выдачи паспорта</td>
+					<td>
+						<span>@client.PhysicalClient.PassportDate.ToString("dd.MM.yyyy")</span></td>
+				</tr>
+				<tr>
+					<td>Кем выдан</td>
+					<td>
+						<span>@client.PhysicalClient.PassportResidention</span></td>
+				</tr>
+				<tr>
+					<td>Адрес регистрации</td>
+					<td>
+						<span>@client.PhysicalClient.RegistrationAddress</span></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="panel-body" style="padding-top: 0px;">
+			<a class="btn btn-blue lockButton">Редактировать</a>
+		</div>
+	</div>
+	@* Блок редактирования *@
+	<div id="editBlock_documents" class="editBlock hid">
+		<div class="panel-heading">
+			<h3 class="panel-title bold">
+				<a class="c-pointer" onclick="changeVisibility('emptyBlock_documents')">Паспортные данные (редактирование)</a>
+			</h3>
+		</div>
+		<div class="panel-body">
+			<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
+				<tbody>
+				<tr>
+					<td style="max-width: 60px;">Дата рождения</td>
+					<td>
+						<div class="col-sm-4 date-picker-box" style="padding-left: 0px;">
+							@Html.TextBoxFor(o => client.PhysicalClient.BirthDate, client.PhysicalClient.BirthDate.ToString("dd.MM.yyyy"), new {@data_format = "dd.mm.yyyy", @class = "form-control", @data_provide = "datepicker-inline"})
+							@ViewBag.Validation.GetError(client.PhysicalClient, "BirthDate")
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td style="max-width: 60px;">Документ удостоверяющий личность</td>
+					<td>@Html.DropDownEnumListFor(o => client.PhysicalClient.CertificateType, new {@class = "form-control"})</td>
+				</tr>
+				<tr>
+					<td style="max-width: 80px;">Название документа удостоверяющего личность</td>
+					<td>
+						@Html.TextBoxFor(o => client.PhysicalClient.CertificateName, new {@class = "form-control"})
+						@ViewBag.Validation.GetError(client.PhysicalClient, "CertificateName")</td>
+				</tr>
+				<tr>
+					<td style="max-width: 60px;">Серия паспорта</td>
+					<td>
+						@Html.TextBoxFor(o => client.PhysicalClient.PassportSeries, new {@class = "form-control"})
+						@ViewBag.Validation.GetError(client.PhysicalClient, "PassportSeries")</td>
+				</tr>
+				<tr>
+					<td style="max-width: 60px;">Номер паспорта</td>
+					<td>
+						@Html.TextBoxFor(o => client.PhysicalClient.PassportNumber, new {@class = "form-control"})
+						@ViewBag.Validation.GetError(client.PhysicalClient, "PassportNumber")</td>
+				</tr>
+				<tr>
+					<td style="max-width: 60px;">Дата выдачи паспорта</td>
+					<td>
+						<div class="col-sm-4 date-picker-box" style="padding-left: 0px;">
+							@Html.TextBoxFor(o => client.PhysicalClient.PassportDate, client.PhysicalClient.PassportDate.ToString("dd.MM.yyyy"),
+								new
+								{
+									@Value = (client.PhysicalClient.PassportDate.Year > 1900 ? client.PhysicalClient.PassportDate.ToString("dd.MM.yyyy") : ""),
+									@data_format = "dd.mm.yyyy",
+									@class = "form-control",
+									@data_provide = "datepicker-inline"
+								})
+							@ViewBag.Validation.GetError(client.PhysicalClient, "PassportDate")
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td style="max-width: 60px;">Кем выдан</td>
+					<td>
+						@Html.TextBoxFor(o => client.PhysicalClient.PassportResidention, new {@class = "form-control"})
+						@ViewBag.Validation.GetError(client.PhysicalClient, "PassportResidention")
+					</td>
+				</tr>
+				<tr>
+					<td style="max-width: 60px;">Адрес регистрации</td>
+					<td>
+						@Html.TextBoxFor(o => client.PhysicalClient.RegistrationAddress, new {@class = "form-control"})
+						@ViewBag.Validation.GetError(client.PhysicalClient, "RegistrationAddress")</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="panel-body" style="padding-top: 0px;">
+			<div class="col">
+				<button type="submit" class="btn btn-green">Сохранить</button>
+				<a class="btn btn-red unlockButton">Отмена</a>
+			</div>
+		</div>
+	</div>
+</div>

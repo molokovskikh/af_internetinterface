@@ -22,16 +22,19 @@ namespace InternetInterface.Test.Integration.Tasks
 	[TestFixture]
 	public class AuditFixture : IntegrationFixture
 	{
-		[Test(Description = "Проверка на формирование сообщения при наличии физика с пустым полем HouseObj.")]
+		[Test(Description = "Проверка добавления физикам отсутствующего HouseObj.")]
 		public void CheckForHouseObjAbsenceFixtureExists()
 		{
+			//ТЕСТИРОВАТЬ НУЖНО, СОЗДАВАЯ КЛИЕНТА В НОВЫМИ ТЕСТАМИ ~~~
 			// Создаем необходимые данные 
 			if (session.Query<Status>().Count() < 5) {
-				for (int i = 0; i < 10; i++) session.Save(new Status() { Name = "ssdsd" + i, ShortName = "sdsd" });
+				for (int i = 0; i < 10; i++) session.Save(new Status() {Name = "ssdsd" + i, ShortName = "sdsd"});
 				session.Flush();
 			}
-			var clientWithEmptyHouseObj = new Client {
-				PhysicalClient = new PhysicalClient {
+			var clientWithEmptyHouseObj = new Client
+			{
+				PhysicalClient = new PhysicalClient
+				{
 					Password = "sdcsdcsdcsdcsdscfv",
 					PhoneNumber = "4951234567",
 					Email = "test@client.ru",
@@ -54,27 +57,45 @@ namespace InternetInterface.Test.Integration.Tasks
 			session.Save(clientWithEmptyHouseObj);
 			session.Flush();
 
+			session.CreateSQLQuery(
+				string.Format(@"INSERT INTO internet.inforoom2_city(Name) VALUES({0});", "'Городок'")).UniqueResult();
+			var LastItemInforoom2_city =
+				session.CreateSQLQuery(string.Format(@"SELECT Id FROM internet.inforoom2_city order by Id DESC  limit 1;")).UniqueResult();
+			
+			session.CreateSQLQuery(
+				string.Format(@"INSERT INTO internet.regions(Region,_City) VALUES({0},{1});", "'ПодГородок'", LastItemInforoom2_city))
+				.UniqueResult();
+			var LastItemRegion =
+				session.CreateSQLQuery(string.Format(@"SELECT Id FROM internet.regions order by Id DESC  limit 1;")).UniqueResult();
+
+			session.CreateSQLQuery(
+				string.Format(@"INSERT INTO internet.inforoom2_street(Name,Region) VALUES({0},{1});", "'Первомайская'", LastItemRegion))
+				.UniqueResult();
+			var LastItemInforoom2_street =
+				session.CreateSQLQuery(string.Format(@"SELECT Id FROM internet.inforoom2_street order by Id DESC  limit 1;")).UniqueResult();
+
+			session.CreateSQLQuery(
+				string.Format(@"INSERT INTO internet.inforoom2_house(Number,Street) VALUES({0},{1});", "'13'", LastItemInforoom2_street))
+				.UniqueResult();
+			var LastItemInforoom2_house =
+				session.CreateSQLQuery(string.Format(@"SELECT Id FROM internet.inforoom2_house order by Id DESC  limit 1;")).UniqueResult();
+
+			session.CreateSQLQuery(
+				string.Format(@"INSERT INTO internet.inforoom2_address(house,Floor,Apartment,Entrance) VALUES({0},{1},{2},{3});", LastItemInforoom2_house,3,"'4'","'1'")).UniqueResult();
+			var LastItemInforoom2_address =
+				session.CreateSQLQuery(string.Format(@"SELECT Id FROM internet.inforoom2_address order by Id DESC  limit 1;")).UniqueResult();
+
+			session.CreateSQLQuery(
+				string.Format(@"UPDATE internet.physicalclients AS p SET p._Address = {1} WHERE p.Id = {0};", clientWithEmptyHouseObj.PhysicalClient.Id, LastItemInforoom2_address)).UniqueResult();
+
+			
+
 			// проводим тестирвоание
 			var dataAudit = new DataAudit(session);
 			dataAudit.CheckForHouseObjAbsence();
-			Assert.That(dataAudit.Reports.First(), Is.Not.EqualTo(""));
-		}
 
-		[Test(Description = "Проверка на формирование сообщения при отсуствии физика с пустым полем HouseObj.")]
-		public void CheckForHouseObjAbsenceFixtureExistsNot()
-		{
-			var clientWithEmptyHouseObj = session.Query<Client>().Where(s => s.PhysicalClient != null && s.PhysicalClient.HouseObj == null && s.Status.Id != 10 && s.Status.Id != 3 && s.Status.Id != 1).ToList();
-			var houseObj = session.Query<House>().FirstOrDefault();
-			var statusFive = session.Query<Status>().FirstOrDefault(s => s.Id == 5);
-			foreach (var item in clientWithEmptyHouseObj) {
-				item.PhysicalClient.HouseObj = houseObj;
-				item.Status = statusFive;
-				session.Update(item);
-			}
-			session.Flush();
-			var dataAudit = new DataAudit(session);
-			dataAudit.CheckForHouseObjAbsence();
-			Assert.That(dataAudit.Reports.Count, Is.EqualTo(0));
+			session.Refresh(clientWithEmptyHouseObj.PhysicalClient);
+			Assert.That(clientWithEmptyHouseObj.PhysicalClient.HouseObj, Is.Not.Null);
 		}
 
 		[Test(Description = "Проверка на формирование сообщения при наличии подозрительного клиента.")]
@@ -83,14 +104,14 @@ namespace InternetInterface.Test.Integration.Tasks
 			// Создаем необходимые данные 
 			var settings = session.Query<InternetSettings>().First();
 			if (session.Query<Status>().Count() < 5) {
-				for (int i = 0; i < 10; i++) session.Save(new Status() { Name = "ssdsd" + i, ShortName = "sdsd" });
+				for (int i = 0; i < 10; i++) session.Save(new Status() {Name = "ssdsd" + i, ShortName = "sdsd"});
 				session.Flush();
 			}
 			if (settings == null) {
-				settings = new InternetSettings() { NextBillingDate = DateTime.Now };
+				settings = new InternetSettings() {NextBillingDate = DateTime.Now};
 				session.Save(settings);
 			}
-			var status = session.Load<Status>((uint)StatusType.Worked);
+			var status = session.Load<Status>((uint) StatusType.Worked);
 			var clientSuspiciousClient = session.Query<Client>().FirstOrDefault();
 			if (clientSuspiciousClient != null) {
 				clientSuspiciousClient.Status = status;
@@ -108,9 +129,12 @@ namespace InternetInterface.Test.Integration.Tasks
 		[Test(Description = "Проверка на формирование сообщения при отсуствии подозрительного клиента.")]
 		public void CheckForSuspiciousClientFixtureExistsNot()
 		{
-			var status = session.Load<Status>((uint)StatusType.Worked);
-			var clientSuspiciousClients = session.Query<Client>().Where(i => i.PhysicalClient != null && i.Disabled == false && i.Status == status && i.RatedPeriodDate == null).ToList();
-			status = session.Load<Status>((uint)StatusType.BlockedAndNoConnected);
+			var status = session.Load<Status>((uint) StatusType.Worked);
+			var clientSuspiciousClients =
+				session.Query<Client>()
+					.Where(i => i.PhysicalClient != null && i.Disabled == false && i.Status == status && i.RatedPeriodDate == null)
+					.ToList();
+			status = session.Load<Status>((uint) StatusType.BlockedAndNoConnected);
 			foreach (var item in clientSuspiciousClients) {
 				item.Status = status;
 				item.Disabled = true;

@@ -67,6 +67,7 @@ var addressChangeFlagTimerSpeed = 100;
 
 // AJAX-Ззапросы
 getStreetChangedFlag = function (regionId, countStreet) {
+	if ($(".addressAjaxRunner.stop").length != 0) return;
 	if (regionId == null || countStreet == null
 		|| (regionId == "" && regionId != "0") || (countStreet == "" && countStreet != "0")) {
 		setTimeout(function() { streetChangedCheck(false); }, addressChangeFlagTimerSpeed);
@@ -86,6 +87,7 @@ getStreetChangedFlag = function (regionId, countStreet) {
 	});
 }
 getHouseChangedFlag = function (streetId, regionId, countHouse) {
+	if ($(".addressAjaxRunner.stop").length != 0) return;
 	if (regionId == null || streetId == null || countHouse == null
 		|| (regionId == "" && regionId != "0") || (streetId == "" && streetId != "0") || (countHouse == "" && countHouse != "0")) {
 		setTimeout(function() { houseChangedCheck(false); }, addressChangeFlagTimerSpeed);
@@ -106,7 +108,8 @@ getHouseChangedFlag = function (streetId, regionId, countHouse) {
 }
 
 
-getStreetList = function(regionId, funcAfter, countStreet) {
+getStreetList = function (regionId, funcAfter, countStreet) {
+	if ($(".addressAjaxRunner.stop").length != 0) return;
 	if (regionId == null || countStreet == null) {
 		setTimeout(function() { streetChangedCheck(false); }, addressChangeFlagTimerSpeed);
 		return;
@@ -118,7 +121,7 @@ getStreetList = function(regionId, funcAfter, countStreet) {
 		success: function(data) {
 			//функция заполнения списка улиц
 			funcAfter(data);
-			setTimeout(function () { streetChangedCheck(false); }, addressChangeFlagTimerSpeed);
+			setTimeout(function() { streetChangedCheck(false); }, addressChangeFlagTimerSpeed);
 			var pastVal = $("#StreetDropDown").attr("value");
 			if (pastVal != undefined && pastVal != null) {
 				var pastValElement = $("#StreetDropDown option[value='" + pastVal + "']");
@@ -134,7 +137,8 @@ getStreetList = function(regionId, funcAfter, countStreet) {
 		}
 	});
 }
-getHouseList = function(streetId, regionId, funcAfter, countHouse) {
+getHouseList = function (streetId, regionId, funcAfter, countHouse) {
+	if ( $(".addressAjaxRunner.stop").length != 0) return;
 	if (regionId == null || streetId == null || countHouse == null) {
 		setTimeout(function() { houseChangedCheck(false); }, addressChangeFlagTimerSpeed);
 		return;
@@ -146,7 +150,7 @@ getHouseList = function(streetId, regionId, funcAfter, countHouse) {
 		success: function(data) {
 			//функция заполнения списка домов  
 			funcAfter(data);
-			setTimeout(function () { houseChangedCheck(false); }, addressChangeFlagTimerSpeed);
+			setTimeout(function() { houseChangedCheck(false); }, addressChangeFlagTimerSpeed);
 
 			var pastVal = $("#HouseDropDown").attr("value");
 			if (pastVal != undefined && pastVal != null) {
@@ -266,11 +270,22 @@ $("#RegionDropDown").change(function() {
 // при изменении значения улицы
 $("#StreetDropDown").change(function() {
 	$("#HouseDropDown").html("<option selected='selected'></option>");
+
+	if ($("#StreetDropDown").attr("pastValue") == null && $("#StreetDropDown").attr("value") != null) {
+		$("#StreetDropDown").attr("pastValue", $("#StreetDropDown").attr("value"));
+	}
+	if ($("#HouseDropDown").attr("pastValue") == null && $("#HouseDropDown").attr("value") != null) {
+		$("#HouseDropDown").attr("pastValue", $("#HouseDropDown").attr("value"));
+	}
 	$("#StreetDropDown").removeAttr("value");
+	$("#HouseDropDown").removeAttr("value");
 });
 // при изменении значения улицы
-$("#HouseDropDown").change(function () {
+$("#HouseDropDown").change(function() {
 	$("#HouseDropDown").removeAttr("value");
+	if ($("#HouseDropDown").attr("pastValue") == null && $("#HouseDropDown").attr("value") != null) {
+		$("#HouseDropDown").attr("pastValue", $("#HouseDropDown").attr("value"));
+	}
 });
 
 if ($("#StreetDropDown option:first").attr("val") != null) {
@@ -302,5 +317,38 @@ $("#addHouseButton").click(function(event) {
 		$(this).attr("href", $(this).attr("href_temp") + "?streetId=" + value);
 	}
 });
-streetChangedCheck(false);
-houseChangedCheck(false);
+
+if ($(".addressAjaxRunner").length == 0) {
+	streetChangedCheck(false);
+	houseChangedCheck(false);
+}
+
+function StartAddressAjaxRunner(obj) {
+	if ($(".addressAjaxRunner").length == 0 && obj != null && obj!=undefined) {
+		$(obj).addClass("addressAjaxRunner");
+	} else {
+		$(".addressAjaxRunner").removeClass("stop");
+	}
+
+	if ($("#StreetDropDown").attr("pastValue") != null) {
+		$("#StreetDropDown").attr("value", $("#StreetDropDown").attr("pastValue"));
+	}
+	if ($("#HouseDropDown").attr("pastValue") != null) {
+		$("#HouseDropDown").attr("value", $("#HouseDropDown").attr("pastValue"));
+	}
+	$("#StreetDropDown").html("<option selected='selected'></option>");
+	$("#HouseDropDown").html("<option selected='selected'></option>");
+	$("#HouseDropDown").val($("#HouseDropDown option:first"));
+	$("#StreetDropDown").val($("#StreetDropDown option:first"));
+	streetChangedCheck(false);
+	houseChangedCheck(false);
+}
+
+function StopAddressAjaxRunner(obj) {
+	if ($(".addressAjaxRunner").length == 0 && obj != null && obj != undefined) {
+		$(obj).addClass("addressAjaxRunner");
+	}
+	if ($(".addressAjaxRunner.stop").length == 0) {
+		$(".addressAjaxRunner").addClass("stop");
+	}  
+}

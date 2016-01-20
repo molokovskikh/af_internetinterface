@@ -8,13 +8,13 @@ using System.Text;
 using Common.Tools;
 using Inforoom2.Helpers;
 using Inforoom2.Intefaces;
-using InternetInterface.Models;
 using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Mapping;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Util;
 using NHibernate.Validator.Constraints;
+using System.Net;
 
 namespace Inforoom2.Models
 {
@@ -341,6 +341,175 @@ namespace Inforoom2.Models
 		public virtual StatusType GetStatus()
 		{
 			return ((StatusType) Client.Status.Id);
+		}
+
+		/// <summary>
+		/// ///							
+		/// синхронизирует состояние услуг и состояние точки подключения. Вызывается иногда из Background.
+		/// ///
+		/// </summary>
+		public virtual void SyncServices(ISession session, SettingsHelper settings)
+		{
+			var service = settings.Services.OfType<FixedIp>().FirstOrDefault();
+			if (service == null)
+				return;
+
+			foreach (var endpoint in Client.Endpoints) {
+				if (endpoint.Ip != null) {
+					Client.TryActivate(session, service, endpoint);
+				}
+				else {
+					Client.TryDeactivate(session, service, endpoint);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Добавление точки подключения клиенту
+		/// </summary>
+		/// <param name="dbSession">Хибер Сессия</param>
+		/// <param name="endpointId">Id точки подключения</param>
+		/// <param name="connectSum">сумма за подключение</param>
+		/// <param name="connection">Параметры подключения</param>
+		/// <param name="staticAddress">Статические адреса</param>
+		/// <param name="errorMessage">Выходая ошибка</param>
+		public virtual void SaveSwitchForClient(ISession dbSession, int endpointId, string connectSum,
+			ConnectionHelper connection, StaticIp[] staticAddress, out string errorMessage)
+		{
+			var client = this.Client;
+			//получаем базовые значения
+			var settings = new SettingsHelper(dbSession);
+			staticAddress = staticAddress ?? new StaticIp[0];
+            var newFlag = false;
+			var clientEntPoint = new ClientEndpoint();
+
+			//если нет эндпоинта в БД, это новое подключение
+			var endPoint = dbSession.Get<ClientEndpoint>(endpointId);
+			if (endPoint != null)
+				clientEntPoint = endPoint;
+			else
+				newFlag = true;
+			
+			//сохраняем начальные значения точки подключения
+			var oldPort = clientEntPoint.Port;
+			var oldSwitch = clientEntPoint.Switch;
+
+			var nullFlag = false;
+			if (!string.IsNullOrEmpty(connection.staticIp)) {
+				clientEntPoint.Ip = null;
+				nullFlag = true;
+			}
+			errorMessage = connection.Validate(dbSession, true, endpointId);
+
+			decimal _connectSum = -1;
+			var validateSum =
+				!(!string.IsNullOrEmpty(connectSum) &&
+				  (!decimal.TryParse(connectSum, out _connectSum) || (_connectSum <= 0 && client.PhysicalClient != null)));
+			if (!validateSum)
+				errorMessage = "Введена невалидная сумма. ";
+
+			if (string.IsNullOrEmpty(connection.staticIp) || nullFlag) {
+				if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
+				    (oldSwitch != null && connection.Switch == oldSwitch.Id && connection.Port == oldPort.ToString())) {
+
+					//обновляем PackageId у SCE клиента
+					SceHelper.UpdatePackageId(dbSession, client);
+
+					//обновляем/задаем поля точки подключения
+					if (clientEntPoint.Ip == null && !string.IsNullOrEmpty(connection.staticIp)) {
+						dbSession.Save(new UserWriteOff(client, 200,
+							string.Format("Плата за фиксированный Ip адрес ({0})", connection.staticIp)));
+					}
+					clientEntPoint.Client = client;
+					clientEntPoint.Port = connection.GetPortNumber().Value;
+					clientEntPoint.Pool = connection.GetPool(dbSession);
+					clientEntPoint.Switch = connection.GetSwitch(dbSession);
+					clientEntPoint.Monitoring = connection.Monitoring;
+
+					//сохраняем значение фиксированного Ip для точки подкючения
+					IPAddress address;
+					if (connection.staticIp != null && IPAddress.TryParse(connection.staticIp, out address))
+						clientEntPoint.Ip = address;
+					else
+						clientEntPoint.Ip = null;
+
+					//если подключение новое, добавляем точку подключения клиенту и активируем необходимые сервисы по "базовым значениям"
+					if (newFlag) {
+						AddEndpoint(dbSession, clientEntPoint, settings);
+						if (client.Status.Additional.Count > 0 && client.Status.Additional.Any(s => s.ShortName == "Refused")) {
+							client.Status.Additional.Clear();
+						}
+					}
+
+					//назначение обслуживания отдельно вроде бы как - нужно уточнить
+					//if (newFlag || clientEntPoint.WhoConnected == null)
+					//{
+					//	if (client.IsPhysical() && client.ConnectGraph != null)
+					//	{
+					//		clientEntPoint.WhoConnected = client.ConnectGraph.Brigad;
+					//	}
+					//	else
+					//	{
+					//		var brigad = DbSession.Get<Brigad>(BrigadForConnect);
+					//		clientEntPoint.WhoConnected = brigad;
+					//	}
+					//}
+
+					//обновляем значение даты подключения клиента
+					client.ConnectedDate = DateTime.Now;
+					if (client.Status.Id == (uint) StatusType.BlockedAndNoConnected)
+						client.Status = dbSession.Load<Status>((int) StatusType.BlockedAndConnected);
+
+					//синхронизируем сервисы клиента на основе settings(ов)
+					SyncServices(dbSession, settings);
+
+					//Если клиент не включался и ему сразу был дан статический IP
+					//То данные, которые проставляются DHCP сервисом, необходимо проставлять вручную, если их нет
+					if (staticAddress.Length > 0) {
+						if (client.WorkingStartDate == null)
+							client.WorkingStartDate = DateTime.Now;
+						if (client.RatedPeriodDate == null)
+							client.RatedPeriodDate = DateTime.Now;
+					}
+					dbSession.Save(client);
+
+					//обновляем статические адреса для клиентской точки подключения
+					dbSession.Query<StaticIp>().Where(s => s.EndPoint == clientEntPoint).ToList().Where(
+						s => !staticAddress.Select(f => f.Id).Contains(s.Id)).ToList()
+						.ForEach(s => dbSession.Delete(s));
+					foreach (var s in staticAddress) {
+						IPAddress ipAddress = null;
+						if (!string.IsNullOrEmpty(s.Ip))
+							if (IPAddress.TryParse(s.Ip, out ipAddress)) {
+								s.EndPoint = clientEntPoint;
+								dbSession.Save(s);
+							}
+					}
+				//	_connectSum = 0m;
+
+					//создаем платеж за подключение
+					if (!string.IsNullOrEmpty(connectSum) && _connectSum != -1) {
+						var payments = dbSession.Query<PaymentForConnect>().Where(p => p.EndPoint == clientEntPoint).ToList();
+						if (!payments.Any())
+							dbSession.Save(new PaymentForConnect(_connectSum, clientEntPoint));
+						else {
+							var payment = payments.First();
+							payment.Sum = _connectSum;
+							dbSession.Save(payment);
+						}
+					}
+				}
+				else {
+					errorMessage = string.Empty;
+					errorMessage += "Ошибка ввода IP адреса. ";
+				}
+			}
+		}
+
+		public virtual void AddEndpoint(ISession dbSession, ClientEndpoint endpoint, SettingsHelper settings)
+		{
+			Client.Endpoints.Add(endpoint);
+			SyncServices(dbSession, settings);
 		}
 	}
 

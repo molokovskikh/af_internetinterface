@@ -180,15 +180,16 @@ namespace Inforoom2.Test
 			}
 		}
 
-		protected void WaitForCss(string css)
+		protected void WaitForCss(string css, int seconds = 5)
 		{
-			var wait = new WebDriverWait(browser, waitTime.Second());
+			var wait = new WebDriverWait(browser, seconds.Second());
 			wait.Until(d => ((RemoteWebDriver) d).FindElementsByCssSelector(css).Count > 0);
 		}
 
-		protected void WaitForVisibleCss(string css)
+		protected void WaitForVisibleCss(string css, int seconds = 5)
 		{
-			var wait = new WebDriverWait(browser, waitTime.Second());
+
+			var wait = new WebDriverWait(browser, seconds.Second());
 			wait.Until(d => ((RemoteWebDriver) d).FindElementByCssSelector(css).Displayed);
 		}
 
@@ -219,17 +220,17 @@ namespace Inforoom2.Test
 			});
 		}
 
-		protected void WaitForText(string text)
+		protected void WaitForText(string text, int seconds = 5)
 		{
-			var wait = new WebDriverWait(browser, waitTime.Second());
+			var wait = new WebDriverWait(browser, seconds.Second());
 			wait.Until(d => ((RemoteWebDriver) d).FindElementByCssSelector("body").Text.Contains(text));
 		}
 
 		//иногда WaitForText приводит к ошибкам stale reference exception
-		public void SafeWaitText(string text)
+		public void SafeWaitText(string text, int seconds = 5)
 		{
 			var begin = DateTime.Now;
-			var timeout = waitTime.Second();
+			var timeout = seconds.Second();
 			while (true) {
 				try {
 					var found = browser.FindElementByCssSelector("body").Text.Contains(text);
@@ -259,6 +260,28 @@ namespace Inforoom2.Test
 		{
 			var body = browser.FindElementByCssSelector("body").Text;
 			Assert.That(body, Is.Not.StringContaining(text));
+		}
+
+		protected void AssertText(string text, string cssSelector, string errorMessage = "")
+		{
+			var body = browser.FindElementByCssSelector(cssSelector).Text;
+			if (string.IsNullOrEmpty(errorMessage)) {
+				Assert.That(body, Is.StringContaining(text));
+			}
+			else {
+				Assert.That(body, Is.StringContaining(text), errorMessage);
+			}
+		}
+
+		protected void AssertNoText(string text, string cssSelector, string errorMessage = "")
+		{
+			var body = browser.FindElementByCssSelector(cssSelector).Text;
+			if (string.IsNullOrEmpty(errorMessage)) {
+				Assert.That(body, Is.Not.StringContaining(text));
+			}
+			else {
+				Assert.That(body, Is.Not.StringContaining(text), errorMessage);
+			}
 		}
 
 		protected bool IsPresent(string selector)
@@ -400,9 +423,9 @@ namespace Inforoom2.Test
 			domain.SetData("environment", "test");
 		}
 
-		public void WaitAjax()
+		public void WaitAjax(int seconds = 5)
 		{
-			new WebDriverWait(browser, 5.Second())
+			new WebDriverWait(browser, seconds.Second())
 				.Until(d => Convert.ToInt32(Eval("return $.active")) == 0);
 		}
 	}

@@ -10,7 +10,7 @@
 	BlockAccountService service = ViewBag.BlockAccountService;
 	var nowDate = SystemTime.Now();
 	var blockingEndDate = nowDate.AddDays(client.FreeBlockDays > 0 ? client.FreeBlockDays : 1).ToShortDateString();
-	var blockService = client.ClientServices.FirstOrDefault(c => c.Service.GetType() == typeof(BlockAccountService)) ?? new ClientService();
+	var blockService = client.ClientServices.FirstOrDefault(c => c.Service.GetType() == typeof (BlockAccountService)) ?? new ClientService();
 }
 
 <h2 class="heading"> @ViewBag.Title </h2>
@@ -18,49 +18,63 @@
 <div class="right-block">
 
 	@if (client.CanUseService(service)) {
-		<p class="font">В течении года Вам предоставляется 28 дней бесплатного использования данной услуги.<br/>
-				По истечении этого времени абонентская плата составляет 3 руб/день, а стоимость активации равна 50 руб.</p>
+		<p class="font">
+			В течении года Вам предоставляется 28 дней бесплатного использования данной услуги.<br/>
+			По истечении этого времени абонентская плата составляет 3 руб/день, а стоимость активации равна 50 руб.
+		</p>
 		<p> Количество бесплатных дней: @client.FreeBlockDays </p>
 
 		using (@Html.BeginForm("ActivateAccountBlocking", "Service", FormMethod.Post)) {
 			@Html.HiddenFor(modelItem => service.Id)
-			<p>Заблокировать до: @Html.TextBoxFor(modelItem => blockingEndDate, null, new {@class = "datePicker personal"})
+			<p>
+				Заблокировать до: @Html.TextBoxFor(modelItem => blockingEndDate, null, new {@class = "datePicker personal"})
 				<input id="ConnectBtn" class="button" type="submit" value="Подключить"/>
 			</p>
 		}
 		if (client.YearCycleDate != null) {
 			if (client.FreeBlockDays > 0) {
-				<p>Ваши бесплатные дни доступны в период с 
-					@nowDate.Date.ToShortDateString() по 
+				<p>
+					Ваши бесплатные дни доступны в период с
+					@nowDate.Date.ToShortDateString() по
 					@client.YearCycleDate.Value.AddYears(1).AddDays(-1).ToShortDateString()
 				</p>
 			}
 			else {
-				<p>Ваши 28 бесплатных дней станут доступны с 
+				<p>
+					Ваши 28 бесплатных дней станут доступны с
 					@client.YearCycleDate.Value.AddYears(1).ToShortDateString()
 				</p>
 			}
 		}
 	}
-	else if (client.HasActiveService(service))
-	{
+	else if (client.HasActiveService(service)) {
 		<p>Услуга активирована до @blockService.EndDate</p>
-		using (@Html.BeginForm("DeactivateAccountBlocking", "Service", null, FormMethod.Post))
-		{
-			@Html.HiddenFor(modelItem => service.Id)
-			<input id="DisconnectBtn" class="button" type="submit" value="Отключить" />
+		if (blockService.Service as BlockAccountService != null && blockService.BeginDate.HasValue &&
+		    SystemTime.Now() < blockService.BeginDate.Value.Date.AddDays(3)) {
+			var error = String.Format("Услуга может быть деактивирована не ранее {0}.",
+				blockService.BeginDate.Value.Date.AddDays(3).ToString("dd.MM.yyyy HH:mm"));
+			<h4>@error</h4>
 		}
+		else {
+			using (@Html.BeginForm("DeactivateAccountBlocking", "Service", null, FormMethod.Post)) {
+				@Html.HiddenFor(modelItem => service.Id)
+				<input id="DisconnectBtn" class="button" type="submit" value="Отключить"/>
+			}
+		}
+
 
 		<p>Доступно @client.FreeBlockDays бесплатных дней.</p>
 		if (client.YearCycleDate != null) {
 			if (client.FreeBlockDays > 0) {
-				<p>Ваши бесплатные дни доступны в период с 
-					@nowDate.Date.ToShortDateString() по 
+				<p>
+					Ваши бесплатные дни доступны в период с
+					@nowDate.Date.ToShortDateString() по
 					@client.YearCycleDate.Value.AddYears(1).AddDays(-1).ToShortDateString()
 				</p>
 			}
 			else {
-				<p>Ваши 28 бесплатных дней станут доступны с 
+				<p>
+					Ваши 28 бесплатных дней станут доступны с
 					@client.YearCycleDate.Value.AddYears(1).ToShortDateString()
 				</p>
 			}

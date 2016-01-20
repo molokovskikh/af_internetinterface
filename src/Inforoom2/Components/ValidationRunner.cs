@@ -55,9 +55,9 @@ namespace Inforoom2.Components
 		public ValidationErrors RemoveErrors(List<string> ErrorsToRemove)
 		{
 			foreach (var item in ErrorsToRemove) {
-				var ElementToRemove = this.FirstOrDefault(s => s.RootEntity + "." + s.PropertyName == item);
-				if (ElementToRemove != null) {
-					this.Remove(ElementToRemove);
+				var ElementToRemove = this.Where(s => s.RootEntity + "." + s.PropertyName == item).ToList();
+				if (ElementToRemove.Count > 0) {
+					foreach (var error in ElementToRemove) this.Remove(error);
 				}
 			}
 			return this;
@@ -249,8 +249,9 @@ namespace Inforoom2.Components
 			}
 			if (!ValidatedObjectList.Contains(obj) && (obj as IEnumerable != null)) {
 				var listObj = obj;
-                foreach (var item in listObj as IEnumerable) {
-	                if (ValidatedObjectList.Contains(item)) {
+				var listOfErrors = new List<string>();
+				foreach (var item in listObj as IEnumerable) {
+					if (ValidatedObjectList.Contains(item)) {
 						obj = item;
 					}
 					break;
@@ -260,7 +261,7 @@ namespace Inforoom2.Components
 				if (!ValidatedObjectList.Contains(obj))
 					return new HtmlString(string.Empty);
 			}
-			
+
 
 			// необходимо получить ошибоки для текущего поляS
 			//	Errors[obj]
@@ -268,7 +269,7 @@ namespace Inforoom2.Components
 			var errors = new ValidationErrors(currentErrors.Where(s => s.PropertyName == field).ToList());
 
 			// отображение ошибок по переданному валидатору, используется при принудительной проверке свойств
-			 if (forcedValidationAttribute != null) {
+			if (forcedValidationAttribute != null) {
 				errors.AddRange(((CustomValidator) forcedValidationAttribute).GetCurrentErrors());
 			}
 			if (errors.Length > 0) {

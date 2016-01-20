@@ -4,10 +4,11 @@
 @using Inforoom2.Helpers
 @using Inforoom2.Models
 @{
-	ViewBag.Title = "Обращения";
+	ViewBag.Title = "Онлайн клиенты";
 	Layout = "~/Views/Shared/_Layout.cshtml";
+	IList<PackageSpeed> packageSpeedList = ViewBag.PackageSpeedList;
 	InforoomModelFilter<Lease> pager = ViewBag.Pager;
-	var appeals = pager.GetItems();
+	var leases = pager.GetItems();
 }
 @section JavaScript{
 	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=1")"></script>
@@ -16,51 +17,51 @@
 	<form>
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-sm-2">Дата c</div>
-				<div class="col-sm-3 fix400">
-					@pager.FormFilter(i => i.Date, HtmlType.Date, ComparsionType.GreaterOrEqueal, new {@class = "form-control", @style = "width:101px;"})
-					<span style="display: inline-block; width: 22px; margin-left: 50px;">по</span>
-					@pager.FormFilter(i => i.Date, HtmlType.Date, ComparsionType.LowerOrEqual, new {@class = "form-control", @style = "width:101px;"})
-				</div>
+				<div class="col-sm-2">ЛС</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Endpoint.Client.Id, HtmlType.text, ComparsionType.Equal, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
 			</div>
 		</div>
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-sm-2">Тип сообщения</div>
-				<div class="col-sm-3">@pager.FormFilter(i => i.AppealType, HtmlType.Dropdown, ComparsionType.Equal, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
+				<div class="col-sm-2">Имя</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Endpoint.Client._Name, HtmlType.text, ComparsionType.Like, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
 			</div>
 		</div>
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-sm-2">Поисковая фраза</div>
-				<div class="col-sm-3">@pager.FormFilter(i => i.Message, HtmlType.text, ComparsionType.Like, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
+				<div class="col-sm-2">Зона</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Endpoint.Switch.Zone.Name, HtmlType.Dropdown, ComparsionType.Equal, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
 			</div>
 		</div>
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-sm-2">Зарегистрировал</div>
-				<div class="col-sm-3">@pager.FormFilter(i => i.Employee.Name, HtmlType.Dropdown, ComparsionType.Equal, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
+				<div class="col-sm-2">Коммутатор</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Endpoint.Switch.Name, HtmlType.Dropdown, ComparsionType.Equal, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
 			</div>
 		</div>
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-sm-2">Тип клиента</div>
-				<div class="col-sm-3">@pager.FormFilter(i => i.Client.PhysicalClient, HtmlType.Dropdown, ComparsionType.IsNotNull, new {@Id = "FilterCondition_ClientType", @class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Endpoint.Client.PhysicalClient, HtmlType.Dropdown, ComparsionType.IsNotNull, new {@Id = "FilterCondition_ClientType", @class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
 			</div>
 		</div>
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-sm-2">ЛС клиента</div>
-				<div class="col-sm-3">@pager.FormFilter(i => i.Client.Id, HtmlType.text, ComparsionType.Equal, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
+				<div class="col-sm-2">Арендованный IP</div>
+				<div class="col-sm-3">
+					@pager.FormFilter(i => i.Endpoint.LeaseList.First().Ip, HtmlType.text, ComparsionType.Equal, new {Id = "ipEqualHidden", @class = "form-control hidden hid", @style = "min-width:280px; max-width:280px;"})
+
+					<input type="text" name="" value="" id="ipEqualShown" class="form-control" style="min-width: 280px; max-width: 280px;">
+				</div>
 			</div>
 		</div>
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-sm-1">
-					@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+					@pager.SubmitButton(new {@class = "btn btn-success btn-sm"})
 				</div>
 				<div class="col-sm-1">
-					@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+					@pager.CleanButton(new {@class = "btn btn-success btn-sm"})
 				</div>
 			</div>
 		</div>
@@ -79,37 +80,80 @@
 		<thead>
 		<tr role="row">
 			<th class="sorting" tabindex="0" aria-controls="table-2">
-				<a href="@pager.OrderBy(s => s.Employee.Name)">Зарегистрировал</a>
+				<a href="@pager.OrderBy(s => s.Id)">Аренда</a>
 			</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2">
-				<a href="@pager.OrderBy(s => s.Date)">Дата</a>
+				<a href="@pager.OrderBy(s => s.Endpoint.Ip)">Фиксированный IP</a>
 			</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2">
-				<a href="@pager.OrderBy(s => s.AppealType)">Тип</a>
+				<a href="@pager.OrderBy(s => s.Ip)">Арендованный IP</a>
 			</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2">
-				<a href="@pager.OrderBy(s => s.Client.Id)">ЛС</a>
+				<a href="@pager.OrderBy(s => s.LeaseBegin)">Начало аренды</a>
 			</th>
-			<th class="sorting" tabindex="0" aria-controls="table-2">Клиент</th>
-			<th class="sorting" tabindex="0" aria-controls="table-2">Текст обращения</th> 
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@pager.OrderBy(s => s.Endpoint.Client.Id)">Клиент</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@pager.OrderBy(s => s.Endpoint.Id)">Endpoint ID</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@pager.OrderBy(s => s.Endpoint.Client._Name)">Имя</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@pager.OrderBy(s => s.Switch.Id)">Коммутатор</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@pager.OrderBy(s => s.Switch.Name)">Название коммутатора</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@pager.OrderBy(s => s.Switch.Ip)">IP коммутатора</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@pager.OrderBy(s => s.Port)">Порт</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				<a href="@pager.OrderBy(s => s.Endpoint.PackageId)">PackageId</a>
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				 Скорость 
+			</th>
 		</tr>
 		</thead>
 
 		<tbody>
-		@foreach (var request in appeals) {
+		@foreach (var lease in leases) {
 			<tr role="row" class="odd">
-				<td>@(request.Employee != null ? request.Employee.Name : "")</td>
-				<td>@request.Date</td>
-				<td>@EnumExtension.GetDescription(request.AppealType)</td>
+				<td>@(lease.Id)</td>
+				<td>@(lease.Endpoint != null ? lease.Endpoint.Ip != null ? lease.Endpoint.Ip.MapToIPv4().ToString() : "" : "")</td>
+				<td>@(lease.Ip)</td>
+				<td>@(lease.LeaseBegin)</td>
 				<td>
-					<a @(request.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") class="idColumn" target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld")
-					                                                                                                           + (String.Format("UserInfo/{0}?filter.ClientCode=", request.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-					                                                                                                           + request.Client.Id)">
-						@request.Client.Id
-					</a>
+					@if (lease.Endpoint != null) {
+						<a @(lease.Endpoint.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") class="idColumn" target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld")
+						                                                                                                                          + (String.Format("UserInfo/{0}?filter.ClientCode=", lease.Endpoint.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
+						                                                                                                                          + lease.Endpoint.Client.Id)">
+							@lease.Endpoint.Client.Id
+						</a>
+					}
 				</td>
-				<td>@request.Client.GetName()</td>
-				<td>@request.Message</td>
+				<td>@(lease.Endpoint != null ? lease.Endpoint.Id.ToString() : "")</td>
+				<td>@(lease.Endpoint != null ? lease.Endpoint.Client._Name.ToString() : "")</td>
+				<td>@(lease.Switch != null ? lease.Switch.Id.ToString() : "")</td>
+				<td>
+					@if (lease.Switch != null) {
+						<a style="color: #1A5979;" class="idColumn" target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld") + String.Format("/Switches/MakeSwitch?Switch={0}", lease.Switch.Id))">
+							@lease.Switch.Name
+						</a>
+					}
+				</td>
+				<td>@(lease.Switch != null ? lease.Switch.Ip.ToString() : "")</td>
+				<td>@(lease.Port)</td>
+				<td>@(lease.Endpoint != null ? lease.Endpoint.PackageId != null ? lease.Endpoint.PackageId.ToString() : "" : "")</td>
+				<td>
+					@(lease.Endpoint != null ? lease.Endpoint.PackageId != null ? PackageSpeed.GetSpeedForPackageId(packageSpeedList, lease.Endpoint.PackageId.Value).ToString() + " мб/с" : "" : "" )
+				</td>
+
 			</tr>
 		}
 		</tbody>

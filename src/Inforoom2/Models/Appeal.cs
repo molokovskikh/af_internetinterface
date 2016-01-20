@@ -17,7 +17,7 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Сообщение о пользователе для сотрудников техподдержки
 	/// </summary>
-	[Class(0, Table = "Appeals", NameType = typeof(Appeal))]
+	[Class(0, Table = "Appeals", NameType = typeof (Appeal))]
 	public class Appeal : BaseModel
 	{
 		public Appeal()
@@ -26,12 +26,13 @@ namespace Inforoom2.Models
 			inforoom2 = true;
 		}
 
-		public Appeal(string appeal, Client client, AppealType appealType) : this()
+		public Appeal(string appeal, Client client, AppealType appealType, Employee employee = null) : this()
 		{
 			Date = SystemTime.Now();
 			Message = appeal;
 			Client = client;
 			AppealType = appealType;
+			Employee = employee;
 		}
 
 		[Property(Column = "Appeal"), Description("Tекст информационного сообщения для сотрудника техподдержки")]

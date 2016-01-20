@@ -1,0 +1,100 @@
+﻿@using System.Activities.Expressions
+@using System.Activities.Statements
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using InforoomControlPanel.ReportTemplates
+@{
+	ViewBag.Title = "Обращения";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	var client = (Client) ViewBag.Client;
+	FilterReport<Internetsessionslog> pager = ViewBag.Pager;
+	List<Internetsessionslog> result = ViewBag.Result;
+}
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=1")"></script>
+}
+<div id="table-2_wrapper" class="clientMainTable dataTables_wrapper form-inline">
+	<form>
+		@Html.HiddenFor(s => client.Id, new {@name = "Id"})
+		<h4>
+			Статистика работы клиента:
+			<a @(client.PhysicalClient == null ? "style=color:#0D90D4;" : "") class="idColumn" target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld")
+			                                                                                                           + (String.Format("UserInfo/{0}?filter.ClientCode=", client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
+			                                                                                                           + client.Id)">
+				@client.Id
+			</a> -
+			<a class="clientName" target="_blank" href="@(client.PhysicalClient == null ? Url.Action("InfoLegal", new {id = client.Id}) : Url.Action("InfoPhysical", new {id = client.Id}))">
+				<span>@(client.GetName())</span>
+			</a>
+		</h4>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-3 fix700" style="padding-bottom: 4px;">
+					<span style="display: inline-block; width: 100px; margin-left: 14px;">Начало сессии с</span>
+					@pager.FormFilter(i => i.LeaseBegin, HtmlType.Date, ComparsionType.GreaterOrEqueal, new {@class = "form-control", @style = "width:101px;"})
+					<span style="display: inline-block; width: 100px; margin-left: 14px;">по</span>
+					@pager.FormFilter(i => i.LeaseBegin, HtmlType.Date, ComparsionType.LowerOrEqual, new {@class = "form-control", @style = "width:101px;"})
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">
+					@pager.SubmitButton(new {@class = "btn btn-success btn-sm"})
+				</div>
+				<div class="col-sm-1">
+					<a href="/Client/LeasesLog/@client.Id" class="btn btn-success btn-sm">Сбросить фильтр</a>
+				</div>
+			</div>
+		</div>
+	</form>
+	<div class="totalCountOfItems">
+		Всего: <strong>@pager.TotalItems</strong> строк
+	</div>
+	<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+		<div class="panel-body">
+			<div class="row">
+				@{ Html.RenderPartial("Pagination"); }
+			</div>
+		</div>
+	</div>
+	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+		<thead>
+		<tr role="row">
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				Ip адрес
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				Номер точки подключения
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				Mac адрес
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				Начало аренды
+			</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">
+				Конец аренды
+			</th>
+
+		</tr>
+		</thead>
+
+		<tbody>
+		@foreach (var lease in result) {
+			<tr role="row" class="odd">
+				<td>@Html.Raw(lease.IP != null && lease.GetIpString() != null ? lease.GetIpString().MapToIPv4().ToString() : lease.IP)</td>
+				<td>@(lease.EndpointId.ToString() )</td>
+				<td>@Html.Raw(lease.HwId)</td>
+				<td>@(lease.LeaseBegin)</td>
+				<td>@(lease.LeaseEnd)</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+	<div class="row">
+		@{ Html.RenderPartial("Pagination"); }
+	</div>
+</div>

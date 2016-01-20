@@ -50,13 +50,15 @@ namespace Inforoom2.Test.Functional.Personal
 		public void NegativeBalancePhysical()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
-			client.Payments.Add(new Payment()
+			var payment = new Payment()
 			{
 				Client = client,
 				Sum = 0,
 				PaidOn = SystemTime.Now().AddDays(-2),
 				RecievedOn = SystemTime.Now().AddDays(-1)
-			});
+			};
+            client.Payments.Add(payment);
+			DbSession.Save(payment);
 			client.PhysicalClient.Balance = -5;
 			DbSession.Save(client);
 			DbSession.Flush();
@@ -68,13 +70,15 @@ namespace Inforoom2.Test.Functional.Personal
 		public void NegativeBalancePhysicalWithDebtWorkServiceActual()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
-			client.Payments.Add(new Payment()
+			var payment = new Payment()
 			{
 				Client = client,
 				Sum = 0,
 				PaidOn = SystemTime.Now().AddDays(-2),
 				RecievedOn = SystemTime.Now().AddDays(-1)
-			});
+			};
+            client.Payments.Add(payment);
+			DbSession.Save(payment);
 			client.PhysicalClient.Balance = -10;
 			var services = DbSession.Query<Service>().Where(s => s.Name == "Обещанный платеж").ToList();
 			var csDebtWorkService =
@@ -100,13 +104,15 @@ namespace Inforoom2.Test.Functional.Personal
 		public void NegativeBalancePhysicalWithDebtWorkServiceOverdue()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
-			client.Payments.Add(new Payment()
+			var payment = new Payment()
 			{
 				Client = client,
 				Sum = 0,
 				PaidOn = SystemTime.Now().AddDays(-2),
 				RecievedOn = SystemTime.Now().AddDays(-1)
-			});
+			};
+            client.Payments.Add(payment);
+			DbSession.Save(payment);
 			client.PhysicalClient.Balance = -10;
 			var services = DbSession.Query<Service>().Where(s => s.Name == "Обещанный платеж").ToList();
 			var csDebtWorkService =
@@ -178,18 +184,20 @@ namespace Inforoom2.Test.Functional.Personal
 		public void FrozenClient()
 		{
 			var blockAccountService = DbSession.Query<Service>().OfType<BlockAccountService>().FirstOrDefault();
+		 
 			var client = DbSession.Query<Client>()
 				.ToList()
 				.First(i => i.Patronymic.Contains("с услугой добровольной блокировки"));
-
+			var clientService = client.ClientServices.FirstOrDefault(i => i.Service == blockAccountService);
 			Assert.That(client.Status.Type, Is.EqualTo(StatusType.VoluntaryBlocking), "Клиент не заблокирован");
-			Assert.That(client.ClientServices.FirstOrDefault(i => i.Service == blockAccountService), Is.Not.Null,
+			Assert.That(clientService, Is.Not.Null,
 				"У клиента нет услуги добровольной блокировки");
-
+			clientService.BeginDate = SystemTime.Now().AddDays(-4);
+			DbSession.Save(clientService);
+			DbSession.Flush();
 			OpenWarningPage(client);
 			CheckWarningPageText("Добровольная блокировка");
 			Css(".unfreeze").Click();
-
 			AssertText("Работа возобновлена");
 			DbSession.Clear(); //Сервис кинет исключения, потому что связи что-то плохо вычищаются @todo подумать
 			client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с услугой добровольной блокировки"));

@@ -15,7 +15,7 @@ namespace Inforoom2.Test.Functional.Personal
 		private MainBilling _billing;
 
 		[TestCase(arg: true, Description = "Проверка подключения клиенту услуги 'Добровольная блокировка'")]
-		public void SetBlockAccountToClient(bool isFree)
+		public void SetBlockAccountToClient(bool isFree, bool fullCheck = true)
 		{
 			Assert.IsNotNull(Client.PhysicalClient, "Клиент должен быть подключен");
 			SystemTime.Now = () => DateTime.Now;            // Для независимого выполнения каждого тест-кейса
@@ -69,18 +69,37 @@ namespace Inforoom2.Test.Functional.Personal
 				var paySum = abonentPay.Sum + activatePay.Sum;
 				Assert.AreEqual(paySum, oldBalance - Client.Balance, "\nClient.Balance=" + Client.Balance);
 			}
+			if (fullCheck) {
+			Open("Personal/Service");
+			btnConnect = browser.FindElementByLinkText("Отключить");
+            btnConnect.Click();
+			var error = String.Format("Услуга может быть деактивирована не ранее {0}.",
+				blockAccountService.BeginDate.Value.Date.AddDays(3).ToString("dd.MM.yyyy HH:mm"));
+			AssertText(error);
+			blockAccountService.BeginDate = SystemTime.Now().Date.AddDays(-3).AddMinutes(-1);
+			DbSession.Save(blockAccountService);
+			DbSession.Flush();
+			Open("Personal/Service");
+			btnConnect = browser.FindElementByLinkText("Отключить");
+			btnConnect.Click();
+			AssertNoText(error);
+			btnConnect = browser.FindElementById("DisconnectBtn");
+			btnConnect.Click();
+			AssertText("Работа возобновлена");
+			}
+
 		}
 
 		[Test(Description = "Проверка списания с клиента платы за подключение услуги 'Добровольная блокировка'")]
 		public void WriteoffBlockingPayWithClient()
 		{
-			SetBlockAccountToClient(isFree: false);
+			SetBlockAccountToClient(isFree: false, fullCheck:false);
 		}
 
 		[Test(Description = "Проверка списаний с клиента за пользование услугой 'Добровольная блокировка' по истечении бесплатных дней")]
 		public void CheckWriteoffsWithClientAfterFreeBlockDays()
 		{
-			SetBlockAccountToClient(isFree: true);
+			SetBlockAccountToClient(isFree: true, fullCheck: false);
 
 			Client.FreeBlockDays = 0;
 			// Чтобы формировались списания: 50 р.(разово) + 3 р.(ежедневно)
@@ -114,7 +133,7 @@ namespace Inforoom2.Test.Functional.Personal
 		public void CheckNoStrongWriteoffsWithClient()
 		{
 			// Чтобы был списан разовый платеж за услугу = 50 р.
-			SetBlockAccountToClient(isFree: false);
+			SetBlockAccountToClient(isFree: false, fullCheck: false);
 			var myClient = DbSession.Get<Client>(Client.Id);
 
 			for (var i = 1; i < 31; i++) {

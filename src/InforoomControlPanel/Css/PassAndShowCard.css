@@ -1,0 +1,194 @@
+﻿@font-face {
+	font-family: "Cambria Math";
+	mso-font-charset: 1;
+	mso-font-format: other;
+	mso-font-pitch: variable;
+	mso-font-signature: 0 0 0 0 0 0;
+	mso-generic-font-family: roman;
+	panose-1: 2 4 5 3 5 4 6 3 2 4;
+}
+
+@font-face {
+	font-family: Calibri;
+	mso-font-charset: 204;
+	mso-font-pitch: variable;
+	mso-font-signature: -520092929 1073786111 9 0 415 0;
+	mso-generic-font-family: swiss;
+	panose-1: 2 15 5 2 2 2 4 3 2 4;
+}
+
+@font-face {
+	font-family: Tahoma;
+	mso-font-charset: 0;
+	mso-font-format: other;
+	mso-font-pitch: variable;
+	mso-font-signature: 3 0 0 0 1 0;
+	mso-generic-font-family: swiss;
+	panose-1: 2 11 6 4 3 5 4 4 2 4;
+}
+
+/* Style Definitions */
+
+p.MsoNormal, li.MsoNormal, div.MsoNormal {
+	font-family: "Calibri", "sans-serif";
+	font-size: 10pt;
+	line-height: 100%;
+	margin-bottom: 6.0pt;
+	margin-left: 0cm;
+	margin-right: 0cm;
+	margin-top: 0cm;
+	mso-ascii-font-family: Calibri;
+	mso-ascii-theme-font: minor-latin;
+	mso-bidi-font-family: "Times New Roman";
+	mso-bidi-theme-font: minor-bidi;
+	mso-fareast-font-family: Calibri;
+	mso-fareast-language: EN-US;
+	mso-fareast-theme-font: minor-latin;
+	mso-hansi-font-family: Calibri;
+	mso-hansi-theme-font: minor-latin;
+	mso-pagination: widow-orphan;
+	mso-style-parent: "";
+	mso-style-qformat: yes;
+	mso-style-unhide: no;
+}
+
+a:link, span.MsoHyperlink {
+	color: blue;
+	mso-style-priority: 99;
+	mso-themecolor: hyperlink;
+	text-decoration: underline;
+	text-underline: single;
+}
+
+a:visited, span.MsoHyperlinkFollowed {
+	color: purple;
+	mso-style-noshow: yes;
+	mso-style-priority: 99;
+	mso-themecolor: followedhyperlink;
+	text-decoration: underline;
+	text-underline: single;
+}
+
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate {
+	font-family: "Tahoma", "sans-serif";
+	font-size: 8.0pt;
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	mso-bidi-font-family: Tahoma;
+	mso-fareast-font-family: Calibri;
+	mso-fareast-language: EN-US;
+	mso-fareast-theme-font: minor-latin;
+	mso-pagination: widow-orphan;
+	mso-style-link: "Текст выноски Знак";
+	mso-style-noshow: yes;
+	mso-style-priority: 99;
+}
+
+p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing {
+	font-family: "Calibri", "sans-serif";
+	font-size: 11.0pt;
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	mso-ascii-font-family: Calibri;
+	mso-ascii-theme-font: minor-latin;
+	mso-bidi-font-family: "Times New Roman";
+	mso-bidi-theme-font: minor-bidi;
+	mso-fareast-font-family: Calibri;
+	mso-fareast-language: EN-US;
+	mso-fareast-theme-font: minor-latin;
+	mso-hansi-font-family: Calibri;
+	mso-hansi-theme-font: minor-latin;
+	mso-pagination: widow-orphan;
+	mso-style-parent: "";
+	mso-style-priority: 1;
+	mso-style-qformat: yes;
+	mso-style-unhide: no;
+}
+
+span.a {
+	font-family: "Tahoma", "sans-serif";
+	mso-ansi-font-size: 8.0pt;
+	mso-ascii-font-family: Tahoma;
+	mso-bidi-font-family: Tahoma;
+	mso-bidi-font-size: 8.0pt;
+	mso-hansi-font-family: Tahoma;
+	mso-style-link: "Текст выноски";
+	mso-style-locked: yes;
+	mso-style-name: "Текст выноски Знак";
+	mso-style-noshow: yes;
+	mso-style-priority: 99;
+	mso-style-unhide: no;
+}
+
+span.apple-style-span {
+	mso-style-name: apple-style-span;
+	mso-style-unhide: no;
+}
+
+span.apple-converted-space {
+	mso-style-name: apple-converted-space;
+	mso-style-unhide: no;
+}
+
+span.GramE {
+	mso-gram-e: yes;
+	mso-style-name: "";
+}
+
+.MsoChpDefault {
+	mso-ascii-font-family: Calibri;
+	mso-ascii-theme-font: minor-latin;
+	mso-bidi-font-family: "Times New Roman";
+	mso-bidi-theme-font: minor-bidi;
+	mso-default-props: yes;
+	mso-fareast-font-family: Calibri;
+	mso-fareast-language: EN-US;
+	mso-fareast-theme-font: minor-latin;
+	mso-hansi-font-family: Calibri;
+	mso-hansi-theme-font: minor-latin;
+	mso-style-type: export-only;
+}
+
+.MsoPapDefault {
+	line-height: 115%;
+	margin-bottom: 10.0pt;
+	mso-style-type: export-only;
+}
+
+@page WordSection1 {
+	margin: 21.3pt 28.3pt 0cm 1.0cm;
+	mso-footer-margin: 35.4pt;
+	mso-header-margin: 35.4pt;
+	mso-paper-source: 0;
+	size: 595.3pt 841.9pt;
+}
+
+div.WordSection1 { page: WordSection1; }
+
+.style1 { width: 566pt; }
+
+.style2 { height: 6px; }
+
+.style3 {
+	height: 19pt;
+	width: 537.9pt;
+}
+
+.style4 {
+	height: 5pt;
+	width: 537.9pt;
+}
+
+.buttonUpdateCardPassword {
+border-style: none;
+    background: none;
+    color: blue;
+    border-bottom: 1px solid blue;
+    height: 13px;
+    margin-top: 1px;
+    padding: 1px;
+    display: inline-block;
+    cursor: pointer;
+    position: relative;
+    top: 2px;
+} 

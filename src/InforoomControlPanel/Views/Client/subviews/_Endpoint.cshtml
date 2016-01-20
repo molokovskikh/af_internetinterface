@@ -1,0 +1,431 @@
+﻿@model Client
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	Client client = Model;
+	List<Switch> switchList = ViewBag.SwitchList;
+	ClientEndpoint endpoint = client.Endpoints.FirstOrDefault();
+	var lease = endpoint != null ? endpoint.LeaseList.LastOrDefault() : null;
+	IList<PackageSpeed> packageSpeedList = ViewBag.PackageSpeedList;
+	IList<IpPoolRegion> ipPoolRegionList = ViewBag.IpPoolRegionList;
+	StaticIp[] staticAddress = ViewBag.StaticAddressArray ?? new StaticIp[0];
+	Inforoom2.Helpers.ConnectionHelper connection = ViewBag.Connection ?? new Inforoom2.Helpers.ConnectionHelper();
+	var newEndpoint = endpoint == null;
+}
+<div class="panel panel-default blockJsLockControll">
+
+@using (@Html.BeginForm("UpdateConnection", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
+	@Html.HiddenFor(o => client.Id)
+	@Html.Hidden("endpointId", endpoint != null ? endpoint.Id : 0)
+	<input id="subViewName" name="subViewName" type="hidden" value="_Endpoint">
+	@Html.Hidden("clientUrlExampleA", Url.Action("InfoPhysical", new {@Id = ""}))
+	@Html.Hidden("clientUrlExampleB", Url.Action("InfoLegal", new {@Id = ""}))
+		@* Блок пустой *@
+	<div id="emptyBlock_endpoint" class="emptyBlock"></div>
+}
+@* Блок просмотра *@
+<div id="defaultBlock_endpoint" class="defaultBlock hid">
+	@if (endpoint == null && newEndpoint) {
+		endpoint = ViewBag.NewEndPoint ?? new ClientEndpoint();
+		<div class="panel-heading">
+			<h3 class="panel-title bold">
+				<a class="c-pointer" onclick="changeVisibility('emptyBlock_endpoint')">Подключения нет</a>
+			</h3>
+		</div>
+		<div class="panel-body">
+			<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth" role="grid" aria-describedby="table-2_info">
+				<tbody>
+				<tr>
+					<td>IP-пул</td>
+					<td>
+						@Html.DropDownListExtendedFor(o => endpoint.Pool, ipPoolRegionList, obj => obj.Description, f => new {@value = f.IpPool.Id}, new {@Name = "connection.Pool", @class = "form-control"}, endpoint != null && endpoint.Pool != null ? endpoint.Pool.Id : 0, true)
+						@ViewBag.Validation.GetError(endpoint, "Pool")
+					</td>
+				</tr>
+				<tr>
+					<td>Коммутатор</td>
+					<td>
+						@Html.DropDownListExtendedFor(o => endpoint.Switch, switchList, obj => obj.Name + " (портов: " + obj.PortCount + ")", f => new {@maxPorts = f.PortCount}, new {@Name = "connection.Switch", @class = "form-control"}, endpoint != null && endpoint.Switch != null ? endpoint.Switch.Id : 0, true)
+						@ViewBag.Validation.GetError(client.PhysicalClient, "PassportNumber")
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<table id="switchPorts" role="grid">
+							<tbody>
+							@{
+								int columns = 24;
+								int itemsInRow = 2; //(endpoint.Switch.PortCount/columns) + ((endpoint.Switch.PortCount%columns > 0) ? 1 : 0);
+								int currentPort = 1;
+							}
+							@for (int j = 0; j < itemsInRow; j++) {
+								<tr>
+									@for (int i = 0; i < columns; i++) {
+										Inforoom2.Models.ClientEndpoint currentEndpoint = endpoint != null && endpoint.Switch != null ? endpoint.Switch.Endpoints.FirstOrDefault(s => s.Port == currentPort) : null;
+
+										if (currentEndpoint != null) {
+											<td>
+												<a class="port client" target="_blank" onclick="updatePort(this)" href="@(ConfigHelper.GetParam("adminPanelNew") + Url.Action("InfoPhysical", new {@Id = currentEndpoint.Client.Id}))">
+													<span>@currentPort</span>
+												</a>
+											</td>
+										}
+										else {
+											<td>
+												<a class="port free" target="_blank" onclick="updatePort(this)">
+													<span>@currentPort</span>
+												</a>
+											</td>
+										}
+										currentPort++;
+									}
+								</tr>
+							}
+							</tbody>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td>Порт</td>
+					<td>
+						<div class="col-sm-4 date-picker-box" style="padding-left: 0px;">
+							@Html.Hidden("endpointId", endpoint != null ? endpoint.Port : 0, new {@Name = "connection.Port", @id = "endpoint_PortVal"})
+							@Html.TextBoxFor(o => endpoint.Port, new {@Name = "", @class = "form-control", @type = "number", @min = "0", @max = (columns*itemsInRow).ToString(), @disabled = "disabled"})
+							@ViewBag.Validation.GetError(client.PhysicalClient, "PassportDate")
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="c-pointer" for="endpointToBeChecked">Мониторинг</label>
+					</td>
+					<td>
+						@Html.CheckBoxFor(o => endpoint.Monitoring, new {@Name = "connection.Monitoring", @class = "c-pointer", id = "endpointToBeChecked"})
+					</td>
+				</tr>
+				<tr>
+					<td>Сумма за подключение</td>
+					<td>
+						<input class="form-control" name="connectSum" min="0" type="number" value="" step="any">
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="panel-body" style="padding-top: 0px;">
+			<div class="col">
+				<button type="submit" class="btn btn-green">Назначить</button>
+				<button type="reset" class="btn btn-red">Отмена</button>
+			</div>
+		</div>
+	}
+	else {
+		<div class="panel-heading">
+			<h3 class="panel-title bold">
+				<a class="c-pointer" onclick="changeVisibility('emptyBlock_endpoint')">Информация по подключению - точка № </a><span style="padding-left: 10px; font-weight: bold; color: #C70E0E;">@endpoint.Id</span>
+			</h3>
+		</div>
+		<div class="panel-body">
+			<table id="table-2" class="table hiddenOverflow table-bordered table-striped datatable no-footer clientTable border-right-white tableFullWidth" role="grid" aria-describedby="table-2_info">
+				<tbody>
+				<tr>
+					<td>Статус коммутатора</td>
+					<td style="width: 60%;">
+						<span class="switchstatus">нет ответа</span>
+					</td>
+				</tr>
+				@if (endpoint.Ip != null) {
+					<tr>
+						<td>Фиксированный IP</td>
+						<td>
+							<span>@endpoint.Ip.MapToIPv4().ToString()</span>
+						</td>
+					</tr>
+				}
+				<tr>
+					<td>Арендованный IP</td>
+					<td>
+						<span @(lease != null && lease.LeaseEnd < SystemTime.Now() ? "style=color:#E60000;font-weight:bold;" : "")>@(lease != null ? lease.Ip.MapToIPv4().ToString() : "")</span>
+					</td>
+				</tr>
+				<tr>
+					<td>IP-пул</td>
+					<td>
+						<span>@(endpoint.Pool != null ? endpoint.Pool.GetBeginIp() : "")</span>	<span>@(endpoint.Pool != null ? " - " + endpoint.Pool.GetEndIp() : "")</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld") + "Switches/MakeSwitch?Switch=" + endpoint.Switch.Id)"> Коммутатор</a>
+					</td>
+					<td>
+						<a href="@(ConfigHelper.GetParam("adminPanelOld") + "Hardware/PortInfo?endPoint=" + endpoint.Id)">@(endpoint.Switch.Name + " (" + endpoint.Switch.Ip.ToString() + ")")</a>
+					</td>
+				</tr>
+				<tr>
+					<td>Порт</td>
+					<td>
+						<span>@endpoint.Port</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Скорость</td>
+					<td>
+						<span>@(endpoint.PackageId.HasValue ? PackageSpeed.GetSpeedForPackageId(packageSpeedList, endpoint.PackageId.Value).ToString() : "0 ") мбит/с</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Мониторинг</td>
+					<td>
+						<span>@(endpoint.Monitoring ? "да" : "нет")</span>
+					</td>
+				</tr>
+				@if (endpoint.StaticIpList.Count > 0) {
+					<tr>
+						<td>Статические адреса</td>
+						<td>
+							<div class="ipStaticList" id="switchPorts">
+								<table class="table table-bordered table-striped datatable no-footer tableFullWidth" role="grid">
+									<thead>
+									<tr role="row">
+										<th tabindex="0" aria-controls="table-2">IP адрес / маска</th>
+										<th tabindex="0" aria-controls="table-2">Маска</th>
+									</tr>
+									</thead>
+									<tbody>
+									@foreach (var item in endpoint.StaticIpList) {
+										<tr>
+											<td>
+												<span>@item.Ip</span>
+												<span> / </span>
+												<span>@item.Mask</span>
+											</td>
+											<td>
+												<span>@item.GetSubnet()</span>
+											</td>
+										</tr>
+									}
+									</tbody>
+								</table>
+							</div>
+						</td>
+					</tr>
+				}
+				</tbody>
+			</table>
+		</div>
+		<div class="panel-body" style="padding-top: 0px;">
+			<a class="btn btn-blue lockButton">Редактировать</a>
+		</div>
+	}
+</div>
+
+@if (endpoint != null && newEndpoint == false) {
+	 @* Блок редактирования *@
+	<div id="editBlock_endpoint" class="editBlock hid">
+		<div class="panel-heading">
+			<h3 class="panel-title bold">
+				<a class="c-pointer" onclick="changeVisibility('emptyBlock_endpoint')">Информация по подключению - точка № <span style="padding-left: 10px; font-weight: bold; color: #C70E0E;">@endpoint.Id</span> (редактирование)</a>
+			</h3>
+		</div>
+		<div class="panel-body">
+			<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth" role="grid" aria-describedby="table-2_info">
+				<tbody>
+				<tr>
+					<td>Статус коммутатора</td>
+					<td style="width: 60%;">
+						<span class="switchstatus">нет ответа</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Фиксированный IP</td>
+					<td>
+						@if (endpoint.Id != 0) {
+							@Html.Hidden("connection.staticIp", endpoint.Ip, new {@Id = "fixedIp"})
+							<span class="fixedIp">@(endpoint != null && endpoint.Ip != null ? endpoint.Ip.ToString() : "")</span>
+							<a class="createFixedIp c-pointer @(endpoint.Ip == null ? "" : "hid")" onclick="createFixedIp('@endpoint.Id')">назначить</a>
+							<a class="removeFixedIp c-pointer @(endpoint.Ip != null ? "" : "hid")" onclick="removeFixedIp();">удалить</a>
+						}
+					</td>
+				</tr>
+				<tr>
+					<td>Арендованный IP</td>
+					<td>
+						<span @(lease != null && lease.LeaseEnd < SystemTime.Now() ? "style=color:#E60000;font-weight:bold;" : "")>@(lease != null ? lease.Ip.MapToIPv4().ToString() : "")</span>
+					</td>
+				</tr>
+				<tr>
+					<td>IP-пул</td>
+					<td>
+						@Html.DropDownListExtendedFor(o => endpoint.Pool, ipPoolRegionList, obj => obj.Description, f => new {@value = f.IpPool.Id}, new {@Name = "connection.Pool", @class = "form-control"}, endpoint != null && endpoint.Pool != null ? endpoint.Pool.Id : 0, true)
+						@ViewBag.Validation.GetError(endpoint, "Pool")
+					</td>
+				</tr>
+				<tr>
+					<td>Коммутатор</td>
+					<td>
+						@Html.DropDownListExtendedFor(o => endpoint.Switch, switchList, obj => obj.Name + " (портов: " + obj.PortCount + ")", f => new {@maxPorts = f.PortCount}, new {@Name = "connection.Switch", @class = "form-control"}, endpoint != null && endpoint.Switch != null ? endpoint.Switch.Id : 0, true)
+						@ViewBag.Validation.GetError(endpoint, "endpoint")
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<table id="switchPorts" role="grid">
+							<tbody>
+							@{
+								int columns = 24;
+								int itemsInRow = 2; //(endpoint.Switch.PortCount/columns) + ((endpoint.Switch.PortCount%columns > 0) ? 1 : 0);
+								int currentPort = 1;
+							}
+							@for (int j = 0; j < itemsInRow; j++) {
+								<tr>
+									@for (int i = 0; i < columns; i++) {
+										var currentEndpoint = endpoint.Switch.Endpoints.FirstOrDefault(s => s.Port == currentPort);
+
+										if (currentEndpoint != null) {
+											<td>
+												<a class="port client" target="_blank" onclick="updatePort(this)" href="@(ConfigHelper.GetParam("adminPanelNew") + Url.Action("InfoPhysical", new {@Id = currentEndpoint.Client.Id}))">
+													<span>@currentPort</span>
+												</a>
+											</td>
+										}
+										else {
+											<td>
+												<a class="port free" onclick="updatePort(this)">
+													<span>@currentPort</span></a>
+											</td>
+										}
+										currentPort++;
+									}
+								</tr>
+							}
+							</tbody>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td>Порт</td>
+					<td>
+						<div class="col-sm-4 date-picker-box" style="padding-left: 0px;">
+							@Html.Hidden("endpointId", endpoint != null ? endpoint.Port : 0, new {@Name = "connection.Port", @id = "endpoint_PortVal"})
+							@Html.TextBoxFor(o => endpoint.Port, new {@Name = "connection_Port", @class = "form-control", @type = "number", @min = "0", @max = (columns*itemsInRow).ToString(), @disabled = "disabled"})
+							@ViewBag.Validation.GetError(endpoint, "Port")
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>Скорость</td>
+					<td>
+						<span>@(endpoint.PackageId.HasValue ? PackageSpeed.GetSpeedForPackageId(packageSpeedList, endpoint.PackageId.Value).ToString() : "0 ") мбит/с</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="c-pointer" for="endpointToBeChecked">Мониторинг</label>
+					</td>
+					<td>
+						@Html.CheckBoxFor(o => endpoint.Monitoring, new {@Name = "connection.Monitoring", @class = "c-pointer", id = "endpointToBeChecked"})
+					</td>
+				</tr>
+				<tr>
+					<td>Сумма за подключение</td>
+					<td>
+						<input class="form-control" name="connectSum" min="0" type="number" value="" step="any">
+					</td>
+				</tr>
+				<tr>
+					<td>Статические адреса</td>
+					<td>
+						<div class="ipStaticList">
+							<table class="table table-bordered table-striped datatable no-footer tableFullWidth" role="grid" id="ipStaticTable" style="margin-bottom: 8px;">
+								<thead>
+								<tr role="row">
+									<th tabindex="0" aria-controls="table-2">IP адрес / маска</th>
+									<th tabindex="0" aria-controls="table-2">Маска</th>
+									<th tabindex="0" aria-controls="table-2">Действие</th>
+								</tr>
+								</thead>
+								<tbody>
+								<tr class="staticIpRaw hid">
+									<td>
+										<div>
+											<input name="fixedIp_text" class="form-control fixedIp text" type="text" placeholder="0.0.0.0" disabled="disabled" required="required" minlength="7" data-minlength="7">
+											<input name="fixedIp_value" class="form-control fixedIp value" data-val="true" data-val-number="The field Mask must be a number." min="8" max="30" type="number" value="0" disabled="disabled">
+										</div>
+									</td>
+									<td>
+										<span class="subnet"></span>
+									</td>
+									<td>
+										<a onclick="deleteStaticIp(this);" class="delete">
+											<span>-</span><span>Удалить</span></a>
+									</td>
+								</tr>
+								@for (int i = 0; i < endpoint.StaticIpList.Count; i++) {
+									<tr class="staticIpElement">
+										<td>
+											<div>
+												@Html.TextBoxFor(o => endpoint.StaticIpList[i].Ip, new {@Name = "staticAddress[" + i + "].Ip", @class = "form-control fixedIp text", @type = "text", data_minlength = "7", maxlength = "15", required = "required"})
+												@Html.TextBoxFor(o => endpoint.StaticIpList[i].Mask, new {@Name = "staticAddress[" + i + "].Mask", @class = "form-control fixedIp value", @type = "number", @max = "30"})
+											</div>
+											@ViewBag.Validation.GetError(staticAddress, "Ip")
+											@ViewBag.Validation.GetError(staticAddress, "Mask")
+										</td>
+										<td>
+											<span class="subnet">@endpoint.StaticIpList[i].GetSubnet()</span>
+										</td>
+										<td>
+											<a onclick="deleteStaticIp(this);" class="delete">
+												<span>-</span><span>Удалить</span></a>
+										</td>
+									</tr>
+								}
+								</tbody>
+							</table>
+							<a onclick="addStaticIp(this);" class="addStaticIpElement">
+								<span>+</span><span>Добавить</span></a>
+						</div>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="panel-body" style="padding-top: 0px;">
+			<div class="col">
+				<button type="submit" class="btn btn-green">Сохранить</button>
+				<a class="btn btn-red unlockButton">Отмена</a>
+			</div>
+		</div>
+	</div>
+}
+</div>
+
+@*Modal For Payments Cancel
+<div class="modal fade" id="ModelForSwitchRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			@using (@Html.BeginForm("RemoveEndpoint", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))
+			{
+				@Html.HiddenFor(o => client.Id)
+				<input id="subViewName" name="subViewName" type="hidden" value="_Endpoint">
+				<input id="endpointToRemoveId" name="endpointId" type="hidden" value="">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Удаление подключения</h4>
+				</div>
+					<div class="modal-body">
+						<p><span id="endpointDeleteMessage"></span></p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+						<button type="submit" class="btn btn-red">Удалить подключения</button>
+					</div>
+			}
+		</div>
+	</div>
+</div>*@

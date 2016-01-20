@@ -49,8 +49,34 @@ namespace Inforoom2.Models
 			};
 		}
 
+		//Формат номера для вывода
+		public virtual string ContactPhoneSplitFormat
+		{
+			get
+			{
+				return (Type == ContactType.ConnectedPhone || Type == ContactType.HeadPhone || Type == ContactType.HousePhone ||
+				        Type == ContactType.FinancePhone
+				        || Type == ContactType.MobilePhone || Type == ContactType.SmsSending || Type == ContactType.TechPhone)
+				       && ContactString != null && ContactString.IndexOf("-") == -1 && ContactString.Length > 4
+					? ContactString.Insert(3, "-").ToString()
+					: ContactString;
+			}
+		}
+
 		public virtual string ContactFormatString
 		{
+			set
+			{
+				if ((Type == ContactType.ConnectedPhone || Type == ContactType.HeadPhone || Type == ContactType.HousePhone ||
+				     Type == ContactType.FinancePhone
+				     || Type == ContactType.MobilePhone || Type == ContactType.SmsSending || Type == ContactType.TechPhone)
+				    && ContactString != null && value.IndexOf("-") == -1 && value.Length > 4) {
+					ContactString = value.Insert(3, "-").ToString();
+				}
+				else {
+					ContactString = value;
+				}
+			}
 			get { return ContactString != null ? ContactString.Replace("-", "") : ContactString; }
 		}
 

@@ -366,8 +366,41 @@ function num2dot(num) {
 }
 
 
+
+function GetSwitchesByZone(zoneDropdownName, switchesDropdownName) {
+	var zoneItem = $("[name='" + zoneDropdownName + "']");
+	var switchItem = $("[name='" + switchesDropdownName + "']");
+	if (zoneItem.length > 0 && switchItem.length > 0) {
+		zoneItem.change(function () {
+			switchItem.html("");
+			$.ajax({
+				url: cli.getParam("baseurl") + "Client/getSwitchesByZone?name=" + zoneItem.val(),
+				type: 'POST',
+				dataType: "json",
+				success: function (data) {
+					var htmlOptopns = "<option value=\"\"> </option>";
+					if (data != null) {
+						for (var i = 0; i < data.length; i++) {
+							htmlOptopns += "<option value=\"" + data[i] + "\">" + data[i] + "</option>";
+						}
+					}
+					switchItem.html(htmlOptopns);
+				},
+				error: function (data) {
+					switchItem.html("");
+				},
+				statusCode: {
+					404: function () {
+						switchItem.html("");
+					}
+				}
+			});
+		});
+	}
+}
+
 //Добавление в куки сведений о необходимости открывать единственную запись в новой вкладке 
-var ipRentSerchName = "input[name='mfilter.filter.Equal.Endpoints.First().LeaseList.First().Ip']";
+var ipRentSerchName = "input[name='mfilter.filter.Equal.Endpoints.First().LeaseList.First().Ip'],input[name='mfilter.filter.Equal.Endpoint.LeaseList.First().Ip']";
 $(function () {
 	var ipEqualValue = $(ipRentSerchName).val();
 	if (ipEqualValue != "" && ipEqualValue != null) {
@@ -391,4 +424,5 @@ $(function () {
 			$(ipRentSerchName).val("");
 		}
 	});
+	GetSwitchesByZone("mfilter.filter.Equal.Endpoint.Switch.Zone.Name", "mfilter.filter.Equal.Endpoint.Switch.Name");
 });
