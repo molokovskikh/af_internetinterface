@@ -33,6 +33,9 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual int Port { get; set; }
 
+		[ManyToOne(Column = "Pool", Cascade = "save-update")]
+		public virtual IpPool Pool { get; set; }
+
 		public static Lease GetLeaseForIp(string ipstr, ISession session)
 		{
 			try {

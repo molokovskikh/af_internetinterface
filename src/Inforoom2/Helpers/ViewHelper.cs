@@ -307,7 +307,7 @@ namespace Inforoom2.Helpers
 			return (from object item in Enum.GetValues(enumType)
 				let fi = enumType.GetField(item.ToString())
 				let attribute = fi.GetCustomAttributes(typeof(DisplayAttribute), true).FirstOrDefault()
-				let title = attribute == null ? item.ToString() : ((DisplayAttribute)attribute).Name
+				let title = attribute == null ? item.GetDescription() : ((DisplayAttribute)attribute).Name
 				select new SelectListItem {
 					Value = item.ToString(),
 					Text = title,

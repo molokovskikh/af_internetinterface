@@ -14,8 +14,8 @@
 	var emptyAddressString = "";
 }
 @section JavaScript{
-	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=1")"></script>
-	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js")"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=2")"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js?v=2")"></script>
 }
 
 <div id="table-2_wrapper" class="clientMainTable dataTables_wrapper form-inline no-footer  clientTableFilter">
@@ -35,7 +35,7 @@
 </div>
 <div class="panel-body">
 	<div class="row">
-		<div class="col-sm-2">ФИО</div>
+		<div class="col-sm-2">ФИО / Наименование</div>
 		<div class="col-sm-3">@pager.FormFilter(i => i._Name, HtmlType.text, ComparsionType.Like, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
 	</div>
 </div>
@@ -134,8 +134,8 @@
 													   listItemText: c => c.PhysicalClient.Address.House.Number, listItemValue: c => c.PhysicalClient.Address.House.Id)
 			</div>
 			<div class="col-sm-3 fix230 addressDetailsBlock">
-				<span class="addressDetails">Квартира</span>  @pager.FormFilter(i => i.PhysicalClient.Address.Apartment, HtmlType.text, ComparsionType.Like, new { @class = "form-control addressSearch" })
-				<span class="addressDetails">Подъезд</span> @pager.FormFilter(i => i.PhysicalClient.Address.Entrance, HtmlType.text, ComparsionType.Like, new { @class = "form-control addressSearch" })
+				<span class="addressDetails">Квартира</span>  @pager.FormFilter(i => i.PhysicalClient.Address.Apartment, HtmlType.text, ComparsionType.Equal, new { @class = "form-control addressSearch" })
+				<span class="addressDetails">Подъезд</span> @pager.FormFilter(i => i.PhysicalClient.Address.Entrance, HtmlType.text, ComparsionType.Equal, new { @class = "form-control addressSearch" })
 				<span class="addressDetails">Этаж</span> @pager.FormFilter(i => i.PhysicalClient.Address.Floor, HtmlType.text, ComparsionType.Equal, new { @class = "form-control addressSearch" })
 			</div>
 		</div>

@@ -92,7 +92,7 @@ namespace InforoomControlPanel.Controllers
 		{
 			newsBlock.Employee = GetCurrentEmployee();
 			ViewBag.NewsBlock = newsBlock;
-			var errors = ValidationRunner.ValidateDeep(newsBlock);
+			var errors = ValidationRunner.Validate(newsBlock);
 			if (errors.Length == 0) {
 				DbSession.Save(newsBlock);
 				SuccessMessage("Новость успешно сохранена");

@@ -251,7 +251,7 @@ namespace InforoomControlPanel.Controllers
 			//валидация эл-та графика
 			var errors = ValidationRunner.Validate(scheduleItem);
 			if (errors.Length == 0) {
-                DbSession.Save(scheduleItem);
+				DbSession.Save(scheduleItem);
 				//вывод сообщения
 				if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest) {
 					scheduleItem.ServiceRequest.ModificationDate = SystemTime.Now();
@@ -305,9 +305,23 @@ namespace InforoomControlPanel.Controllers
 				{
 					Employee = GetCurrentEmployee()
 				};
-				DbSession.Delete(newAppeal);
+				DbSession.Save(newAppeal);
 			}
 			return RedirectToAction("UnpluggedClientList");
+		}
+
+		public ActionResult CancelServiceRequest(int id)
+		{
+			var item = DbSession.Query<ServicemenScheduleItem>().FirstOrDefault(s => s.Id == id);
+			if (item != null) {
+				var serviceRequest = item.ServiceRequest;
+				serviceRequest.AddComment(DbSession,
+					string.Format("Сервисная заявка снята с инженера ({0}).", item.ServiceMan.Employee.Name), GetCurrentEmployee());
+				DbSession.Save(serviceRequest);
+				DbSession.Delete(item);
+				return RedirectToAction("ServiceRequestEdit", "ServiceRequest", new {id = serviceRequest.Id});
+			}
+			return RedirectToAction("ServiceRequestList", "ServiceRequest");
 		}
 
 		/// <summary>
@@ -382,8 +396,11 @@ namespace InforoomControlPanel.Controllers
 			servicemenScheduleList =
 				servicemenScheduleList.Where(
 					s => s.ServiceRequest == null || (s.ServiceRequest.Status != ServiceRequestStatus.Cancel)).ToList();
-            if (printRegionId != 0) {
-				servicemenScheduleList = servicemenScheduleList.Where(s => s.GetClient().GetRegion().Id == printRegionId).ToList();
+			if (printRegionId != 0) {
+				var reg = DbSession.Query<Region>().FirstOrDefault(s => s.Id == printRegionId);
+				if (reg != null) {
+					servicemenScheduleList = servicemenScheduleList.Where(s => s.GetClient().GetRegion().City == reg.City).ToList();
+				}
 			}
 
 			if (Session["printKey"] != null && Session["printKey"].ToString() == updatePasswordsKey) {
@@ -392,8 +409,8 @@ namespace InforoomControlPanel.Controllers
 					if (item.RequestType == ServicemenScheduleItem.Type.ClientConnectionRequest) {
 						var physicalClient = item.GetClient().PhysicalClient;
 						if (physicalClient != null) {
-							var password = CryptoPass.GeneratePassword();
-							physicalClient.Password = CryptoPass.GetHashString(password);
+							var password = Inforoom2.Helpers.CryptoPass.GeneratePassword();
+							physicalClient.Password = Inforoom2.Helpers.CryptoPass.GetHashString(password);
 							DbSession.Save(physicalClient);
 							additionalData.Add(item, new Tuple<string, string>(item.GetClient().Id.ToString(), password));
 						}

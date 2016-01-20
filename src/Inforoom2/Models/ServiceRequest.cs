@@ -36,6 +36,7 @@ namespace Inforoom2.Models
 			CreationDate = SystemTime.Now();
 			ModificationDate = SystemTime.Now();
 			Status = ServiceRequestStatus.New;
+			ServiceRequestComments = new List<ServiceRequestComment>();
 		}
 
 		public ServiceRequest(Client client)
@@ -44,6 +45,7 @@ namespace Inforoom2.Models
 			CreationDate = SystemTime.Now();
 			ModificationDate = SystemTime.Now();
 			Status = ServiceRequestStatus.New;
+			ServiceRequestComments = new List<ServiceRequestComment>();
 			Client = client;
 		}
 
@@ -96,6 +98,11 @@ namespace Inforoom2.Models
 
 		[Property, Description("Дата закрытия заявки")]
 		public virtual DateTime? ClosedDate { get; set; }
+
+		[Bag(0, Table = "ServiceIterations", Cascade = "all-delete-orphan")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "Request")]
+		[OneToMany(2, ClassType = typeof (ServiceRequestComment))]
+		public virtual IList<ServiceRequestComment> ServiceRequestComments { get; set; }
 
 		public virtual string GetAddress()
 		{
@@ -274,7 +281,8 @@ namespace Inforoom2.Models
 			if (BlockClientAndWriteOffs && Client.PhysicalClient != null) {
 				ModificationDate = SystemTime.Now();
 				Client.SetStatus(Models.Status.Get(StatusType.BlockedForRepair, dbSession));
-
+				Client.ShowBalanceWarningPage = true;
+				SceHelper.UpdatePackageId(dbSession, Client);
 				string appealMessage =
 					string.Format(
 						"По сервисной заявке № <a href='{1}ServiceRequest/ServiceRequestEdit/{0}'>{0}</a> <strong>необходимо восстановление работы</strong>.",
@@ -320,6 +328,10 @@ namespace Inforoom2.Models
 					ServiceRequest = this,
 					CreationDate = s.Date,
 					Author = s.Employee
+				}).ToList().Select(s =>
+				{
+					s.Comment = s.Comment.Replace("<strong>"+s.ServiceRequest.Id+"</strong> изменена :", "<strong>" + s.ServiceRequest.Id + "</strong> обновлена ");
+					return s;
 				}).ToList());
 			//возврат сортированного списка комментариев
 			return commentsList.OrderBy(s => s.CreationDate).ToList();

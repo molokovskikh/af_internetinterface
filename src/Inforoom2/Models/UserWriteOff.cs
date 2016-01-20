@@ -41,5 +41,17 @@ namespace Inforoom2.Models
 
 		[ManyToOne(Column = "Registrator")]
 		public virtual Employee Employee { get; set; }
+
+		public virtual Appeal Cancel(Employee employee, string reason)
+		{
+			if (Client.PhysicalClient != null)
+			{
+				Client.PhysicalClient.MoneyBalance += Sum;
+				Client.PhysicalClient.Balance += Sum;
+			}
+			else
+				Client.LegalClient.Balance += Sum;
+			return new Appeal(String.Format("Удалено списание на сумму {0}. Причина: ", Sum.ToString("0.00"), reason), Client, AppealType.System) { Employee = employee }; 
+		}
 	}
 }

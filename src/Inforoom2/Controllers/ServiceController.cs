@@ -90,9 +90,16 @@ namespace Inforoom2.Controllers
 		public ActionResult DeactivateAccountBlocking([EntityBinder] Service service)
 		{
 			var client = DbSession.Load<Client>(CurrentClient.Id);
-			var clientService = client.ClientServices.First(c => c.Service.Id == service.Id);
+			var clientService = client.ClientServices.FirstOrDefault(c => c.Service.Id == service.Id);
 			if (clientService == null) {
 				ErrorMessage("Услуга уже была деактивирована.");
+				return RedirectToAction("Service", "Personal");
+			}
+			if (clientService.Service as BlockAccountService != null &&
+			    SystemTime.Now() < clientService.BeginDate.Value.Date.AddDays(3)) {
+				var error = String.Format("Услуга может быть деактивирована не ранее {0}.",
+					clientService.BeginDate.Value.Date.AddDays(3).ToString("dd.MM.yyyy HH:mm"));
+				ErrorMessage(error);
 				return RedirectToAction("Service", "Personal");
 			}
 			SuccessMessage(clientService.DeActivateFor(CurrentClient, DbSession));
@@ -141,7 +148,12 @@ namespace Inforoom2.Controllers
 
 		private void ActivateService(ClientService clientService, Client client)
 		{
-			var msg = clientService.ActivateFor(client, DbSession);
+			string postMessage = "";
+			if (clientService.Service as BlockAccountService != null) {
+				postMessage = String.Format(" Может быть деактивирована не ранее {0}.",
+					clientService.BeginDate.Value.Date.AddDays(3).ToString("dd.MM.yyyy"));
+			}
+			var msg = clientService.ActivateFor(client, DbSession, postMessage);
 			if (clientService.IsActivated) {
 				SuccessMessage(msg);
 				if (client.IsNeedRecofiguration)

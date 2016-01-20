@@ -4,7 +4,7 @@
 @using Inforoom2.Helpers
 @using Inforoom2.Models
 @{
-	ViewBag.Title = "Обращения";
+	ViewBag.Title = "Обращения клиентов";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	InforoomModelFilter<Appeal> pager = ViewBag.Pager;
 	var appeals = pager.GetItems();
@@ -102,7 +102,7 @@
 			<th class="sorting" tabindex="0" aria-controls="table-2">
 				<a href="@pager.OrderBy(s => s.Client.Id)">ЛС</a>
 			</th> 
-			<th class="sorting" tabindex="0" aria-controls="table-2">Клиент</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2" style="min-width: 220px;">Клиент</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2">Текст обращения</th> 
 		</tr>
 		</thead>
@@ -124,7 +124,7 @@
 					}
 				</td>
 				<td>@(request.Client!=null?request.Client.GetName():"")</td>
-				<td>@request.Message</td>
+				<td>@Html.Raw(request.Message)</td>
 			</tr>
 		}
 		</tbody>

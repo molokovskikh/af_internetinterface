@@ -21,13 +21,14 @@ namespace Inforoom2.Components
 		}
 
 		// переопредиление получения критерия для фильтрации 
-		public new ICriteria GetCriteria(Expression<Func<TModel, bool>> expression = null)
+		public new ICriteria GetCriteria(Expression<Func<TModel, bool>> expression = null, List<Tuple<TModel, Expression<Func<TModel, bool>>>> expressionList = null)
 		{
-			var criteria = base.GetCriteria(expression);
+			var criteria = base.GetCriteria(expression, expressionList);
 			ProcessClientRegionFilter(criteria);
 			ProcessServiceMan(criteria);
 			return criteria;
 		}
+		 
 
 		/// <summary>
 		/// Фильтрация клиентов по регионам, с учетом их типа

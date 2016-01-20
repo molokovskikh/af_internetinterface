@@ -1498,13 +1498,19 @@
     <Content Include="assets\js\zurb-responsive-tables\stylesheets\typography.css" />
     <Content Include="assets\js\zurb-responsive-tables\stylesheets\ui.css" />
     <Content Include="Css\from_inforoom2.css" />
+    <Content Include="Css\PassAndShowCard.css" />
     <Content Include="Css\style.css" />
+    <Content Include="Images\image003.gif" />
+    <Content Include="Images\image004.gif" />
+    <Content Include="Images\image005.gif" />
+    <Content Include="Images\inforoomForCard.jpg" />
     <Content Include="Images\map.png" />
     <Content Include="Images\tick.png" />
     <Content Include="Scripts\ClientController.ClientRegistration.js" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\AddressController.CreateStreet.js" />
     <Content Include="Scripts\AddressController.CreateHouse.js" />
+    <Content Include="Scripts\InfoClientPage.js" />
     <Content Include="Scripts\ClientSearchPage.js" />
     <Content Include="Scripts\ConnectionTeamPrintTimeTable.js" />
     <Content Include="Scripts\ConnectionTeamController.ConnectionTable.js" />
@@ -1547,6 +1553,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ClientInfoViewHelper.cs" />
+    <Compile Include="ReportTemplates\FilterReportModels.cs" />
+    <Compile Include="ReportTemplates\LeaseReport.cs" />
+    <Compile Include="ReportTemplates\FilterReport.cs" />
+    <Compile Include="ReportTemplates\WriteOffsReport.cs" />
     <Compile Include="ReportTemplates\ClientReports.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1959,6 +1970,16 @@
     <Content Include="Views\Client\RegistrationLegal.cshtml" />
     <Content Include="Views\Client\Appeals.cshtml" />
     <Content Include="Views\Client\ListOnline.cshtml" />
+    <Content Include="Views\Client\LeasesLog.cshtml" />
+    <Content Include="Views\Client\ConnectionCard.cshtml" />
+    <Content Include="Views\Client\subviews\_Contacts.cshtml" />
+    <Content Include="Views\Client\subviews\_PassportData.cshtml" />
+    <Content Include="Views\Client\subviews\_PrivateInfo.cshtml" />
+    <Content Include="Views\Client\subviews\_Appeals.cshtml" />
+    <Content Include="Views\Client\subviews\_WriteOffs.cshtml" />
+    <Content Include="Views\Client\subviews\_Payments.cshtml" />
+    <Content Include="Views\Client\subviews\_Endpoint.cshtml" />
+    <Content Include="Views\Client\subviews\_UnresolvedCalls.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <None Include="Web.release.config">

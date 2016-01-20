@@ -39,7 +39,7 @@ namespace InforoomControlPanel.Controllers
 			// Чтобы не сохранялась и не выводилась на экран дата "01.01.0001"
 			if (privateMessage.EndDate == DateTime.MinValue)
 				privateMessage.EndDate = SystemTime.Today().AddDays(1);
-			var errors = ValidationRunner.ValidateDeep(privateMessage);
+			var errors = ValidationRunner.Validate(privateMessage);
 			if (errors.Length > 0) {
 				ViewBag.Client = privateMessage.Client;
 				ViewBag.PrivateMessage = privateMessage;

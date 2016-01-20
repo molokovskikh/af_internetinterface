@@ -1,0 +1,90 @@
+﻿@model Client
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	Client client = Model;
+	List<UnresolvedCall> unresolvedCalls = ViewBag.UnresolvedCalls;
+}
+<div class="panel panel-default blockJsLockControll">
+	<input id="subViewName" name="subViewName" type="hidden" value="_UnresolvedCalls">
+	@* Блок пустой *@
+	<div id="emptyBlock_unresolvedCalls" class="emptyBlock"></div>
+
+	@* Блок просмотра *@
+	<div id="defaultBlock_unresolvedCalls" class="defaultBlock hid">
+		<div class="panel-heading">
+			<h3 class="panel-title bold">
+				<a class="c-pointer" onclick="changeVisibility('emptyBlock_unresolvedCalls')">Неопознанные звонки</a>
+			</h3>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div @(unresolvedCalls.Count > 5?"class=col-lg-6":"")>
+					<table id="table-2" class="table hiddenOverflow table-bordered table-striped dataTable no-footer clientTable tableFullWidth" role="grid" aria-describedby="table-2_info">
+						<thead>
+						<tr role="row">
+							<th class="sorting" tabindex="0" aria-controls="table-2">
+								Номер телефона
+							</th>
+							<th class="sorting" tabindex="0" aria-controls="table-2">
+								Действие
+							</th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach (var item in unresolvedCalls.Take(5).ToList()) {
+							<tr>
+								<td>
+									<span>@item.Phone</span>
+								</td>
+								<td>
+									@using (@Html.BeginForm("BindPhone", "Client", null, FormMethod.Post)) {
+										@Html.HiddenFor(o => client.Id, new {@Name = "clientId"})
+										@Html.HiddenFor(o => item.Id, new {@Name = "phoneId"})
+										<button class="btn btn-white" type="submit" style="color: #E21A1A;">Привязать</button>
+									}
+								</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				</div>
+				@if (unresolvedCalls.Count > 5) {
+					<div class="col-lg-6">
+						<table id="table-2" class="table hiddenOverflow table-bordered table-striped dataTable no-footer clientTable tableFullWidth" role="grid" aria-describedby="table-2_info">
+							<thead>
+							<tr role="row">
+								<th class="sorting" tabindex="0" aria-controls="table-2">
+									Номер телефона
+								</th>
+								<th class="sorting" tabindex="0" aria-controls="table-2">
+									Действие
+								</th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach (var item in unresolvedCalls.OrderBy(s => s.Id).Take((unresolvedCalls.Count < 10 ? unresolvedCalls.Count - 5 : 5)).ToList().OrderByDescending(s => s.Id).ToList()) {
+								<tr>
+									<td>
+										<span>@item.Phone</span>
+									</td>
+									<td>
+										@using (@Html.BeginForm("BindPhone", "Client", null, FormMethod.Post)) {
+											@Html.HiddenFor(o => client.Id, new {@Name = "clientId"})
+											@Html.HiddenFor(o => item.Id, new {@Name = "phoneId"})
+											<input id="subViewName" name="subViewName" type="hidden" value="_Contacts">
+											<button class="btn btn-white" type="submit" style="color: #E21A1A;">Привязать</button>
+										}
+									</td>
+								</tr>
+							}
+							</tbody>
+						</table>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+
+</div>

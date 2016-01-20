@@ -109,7 +109,7 @@ namespace Inforoom2.Components
 		{
 			get
 			{
-				if (!_totalItems.HasValue) {
+				if (Criteria != null && (!_totalItems.HasValue)) {
 					var tempCriteria = (ICriteria) Criteria.Clone();
 					tempCriteria.SetFirstResult(0);
 					tempCriteria.SetMaxResults(1000000);
@@ -278,7 +278,8 @@ namespace Inforoom2.Components
 		/// </summary>
 		/// <param name="expression">Простое лямбда выражение (поле пренадлежит модели). Сложные лямбды со свойствами могут не прокатить.</param>
 		/// <returns>Критерий, который можно дополнить или, выполнив запрос, получить список запрашиваемых моделей.</returns>
-		public ICriteria GetCriteria(Expression<Func<TModel, bool>> expression = null)
+		public ICriteria GetCriteria(Expression<Func<TModel, bool>> expression = null,
+			List<Tuple<TModel, Expression<Func<TModel, bool>>>> expressionList = null)
 		{
 			//Второй раз создавать критерию нет необходимости
 			if (Criteria != null)
@@ -288,13 +289,18 @@ namespace Inforoom2.Components
 			Criteria = DbSession.CreateCriteria(typeof (TModel));
 			if (expression != null)
 				Criteria.Add(Restrictions.Where(expression));
-
+			if (expressionList != null) {
+				var conj = Restrictions.Disjunction();
+				foreach (var exp in expressionList) conj.Add(Restrictions.Where(exp.Item2));
+				Criteria.Add(conj);
+			}
 			AddFiltersToCriteria(Criteria);
 			AddOrderToCriteria(Criteria);
 			AddLimitToCriteria(Criteria);
 			ParamsProcessed = true;
 			return Criteria;
 		}
+
 
 		/// <summary>
 		/// Добавление ограничений на выборку. Чтобы отображать только N-noe количество записей
@@ -814,7 +820,6 @@ namespace Inforoom2.Components
 			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());
 
 			var models = criteria.List();
-
 			foreach (var obj in models) {
 				var value = propForValue != null ? propForValue.GetValue(obj, new object[] {}) : prop.GetValue(obj, new object[] {});
 				var text = propForText != null ? propForText.GetValue(obj) : value;
@@ -827,7 +832,10 @@ namespace Inforoom2.Components
 					values.Add(stringToAdd);
 				}
 			}
-			values = values.OrderBy(s => s).ToList();
+			values =
+				values.Where(s => s.IndexOf(">") != -1 && s.IndexOf("<") != -1)
+					.OrderBy(s => s.Substring(s.IndexOf(">"), s.Length - s.LastIndexOf("<")))
+					.ToList();
 			values.Insert(0, "<option value=''> </option>");
 			return values;
 		}
@@ -925,6 +933,7 @@ namespace Inforoom2.Components
 		{
 			var criteria = GetCriteria();
 			var list = criteria.List();
+			GetSql(criteria);
 			//из-за ограничений группировок и возможных join'ов мы получаем только идентификаторы моделей
 			//а потом отдельным запросом забираем модели. Вот так!
 			var realCriteria = DbSession.CreateCriteria(typeof (TModel));

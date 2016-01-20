@@ -84,6 +84,10 @@
 				{
 					<a class="btn btn-red" href="@Url.Action("CancelConnectionRequest", new { id = scheduleItem .Id})">Отменить</a>
 				}
+				@if (scheduleItem.RequestType == ServicemenScheduleItem.Type.ServiceRequest && scheduleItem.ServiceMan != null)
+				{
+					<a class="btn btn-red" href="@Url.Action("CancelServiceRequest", new { id = scheduleItem .Id})">Отменить</a>
+				}
 			</div>
 		}
 	</div>

@@ -26,7 +26,15 @@ namespace Inforoom2.Test.Functional.Personal
 
 			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Comment == clientMark);
 			client.Balance = -1;
-			client.Payments.Add(new Payment() { Client = client, Sum = 0, PaidOn = SystemTime.Now().AddDays(-2), RecievedOn = SystemTime.Now().AddDays(-1) });
+			var payment = new Payment()
+			{
+				Client = client,
+				Sum = 0,
+				PaidOn = SystemTime.Now().AddDays(-2),
+				RecievedOn = SystemTime.Now().AddDays(-1)
+			};
+            client.Payments.Add(payment);
+			DbSession.Save(payment);
 			Assert.IsNotNull(client, "Искомый клиент не найден");
 			Assert.AreEqual(StatusType.NoWorked, client.Status.Type, "Клиент не имеет статус 'Заблокирован'");
 			Assert.IsTrue(client.WorkingStartDate.HasValue, "У клиента не выставлена дата подключения");

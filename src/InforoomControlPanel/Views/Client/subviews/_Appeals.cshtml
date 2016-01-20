@@ -1,0 +1,142 @@
+﻿@model Client
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	Client client = Model;
+	int appealType = ViewBag.AppealType ?? 0;
+	List<Appeal> appeals = ViewBag.Appeals;
+}
+<div class="panel panel-default blockJsLockControll">
+	@using (@Html.BeginForm("InfoPhysical", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))
+	{
+		@Html.HiddenFor(o => client.Id)
+		<input id="subViewName" name="subViewName" type="hidden" value="_Appeals">
+		@* Блок пустой *@
+		<div id="emptyBlock_appeals" class="emptyBlock"></div>
+	}
+	@* Блок просмотра *@
+	<div id="defaultBlock_appeals" class="defaultBlock hid">
+		<div class="panel-heading">
+			<h3 class="panel-title bold">
+				<a class="c-pointer" onclick="changeVisibility('emptyBlock_appeals')">Обращения клиента</a>
+			</h3>
+		</div>
+		<div class="panel-body">
+			<a class="btn btn-@(appealType == (int) AppealType.All ? "gold" : "white")" href="@Url.Action("InfoPhysical", new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.All})">@(AppealType.All.GetDescription())</a>
+			<a class="btn btn-@(appealType == (int) AppealType.User ? "gold" : "white")" href="@Url.Action("InfoPhysical", new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.User})">@(AppealType.User.GetDescription())</a>
+			<a class="btn btn-@(appealType == (int) AppealType.Statistic ? "gold" : "white")" href="@Url.Action("InfoPhysical", new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.Statistic})">@(AppealType.Statistic.GetDescription())</a>
+			<a class="btn btn-@(appealType == (int) AppealType.System ? "gold" : "white")" href="@Url.Action("InfoPhysical", new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.System})">@(AppealType.System.GetDescription())</a>
+			<a class="btn btn-@(appealType == (int) AppealType.FeedBack ? "gold" : "white")" href="@Url.Action("InfoPhysical", new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.FeedBack})">@(AppealType.FeedBack.GetDescription())</a>
+		</div>
+		<div class="panel-body">
+			<textarea class="form-control" type="text" name="newUserAppeal" value="" rows="6" placeholder="Сообщение"></textarea>
+		</div>
+		<div class="panel-body" style="padding-top: 0px">
+			<button type="submit" class="btn btn-green" style="float: right;">Отправить</button>
+		</div>
+		@if (appeals.Count == 0)
+		{
+			<div class="panel-body" style="padding-top: 16px;border-top: 2px dashed #D6D6D6;">
+				<h2 style="text-align: center; margin-top: 0px;">
+					<span style="margin: auto; color: #A9A9A9;">нет</span>
+				</h2>
+			</div>
+		}
+		else
+		{
+			<div class="panel-body">
+				<table id="table-2" class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable border-right-white tableFullWidth" role="grid" aria-describedby="table-2_info">
+					<thead>
+						<tr role="row">
+							<th class="sorting" tabindex="0" aria-controls="table-2">
+								Текст обращения
+							</th>
+							<th class="sorting" tabindex="0" aria-controls="table-2">
+								Дата
+							</th>
+							<th class="sorting" tabindex="0" aria-controls="table-2">
+								Зарегистрировал
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var item in appeals)
+						{
+							<tr class="appeal @(item.Message.IndexOf("<p>Сервисная заявка №") != -1 ? "Service" : item.Message.IndexOf("Отключена услуга") != -1 || item.Message.IndexOf("Клиент был заблокирован") != -1 ? "Block" :item.AppealType.ToString())">
+								<td>
+									@if (item.inforoom2)
+									{
+										@Html.Raw(item.Message)
+									}
+									else
+									{
+										var splitedItem = item.Message.Split('#');
+										var redmineItem = new List<int>();
+										for (int i = 0; i < splitedItem.Length; i++)
+										{
+											int itemNum = 0;
+											if (splitedItem[i].IndexOf(" ") != -1)
+											{
+												splitedItem[i] = splitedItem[i].Substring(0, splitedItem[i].IndexOf(" "));
+											}
+											int.TryParse(splitedItem[i], out itemNum);
+											if (itemNum != 0)
+											{
+												redmineItem.Add(itemNum);
+											}
+										}
+										redmineItem = redmineItem.Distinct().ToList();
+										redmineItem.ForEach(s => { item.Message = item.Message.Replace("#" + s, "<a href='http://redmine.analit.net/issues/" + s + "'>#" + s + "</a>"); });
+										@Html.Raw(item.Message)
+									}
+
+								</td>
+								<td>
+									<span>@item.Date</span>
+								</td>
+								<td>
+									<span>@(item.Employee != null ? item.Employee.Name : item.AppealType == AppealType.User ? "Абонент" : "")</span>
+								</td>
+							</tr>
+				}
+					</tbody>
+				</table>
+				<table class="markerTable">
+					<tbody>
+						<tr>
+							<td>
+								<div class="legend-mark" style="background-color: #b0dca3;"></div>
+							</td>
+							<td>Сервисная заявка</td>
+							<td>
+								<div class="legend-mark" style="background-color: #F3E5C3;"></div>
+							</td>
+							<td>Пользовательское</td>
+							<td>
+								<div class="legend-mark" style="background-color: #D2D7EC;"></div>
+							</td>
+							<td>Системное</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="legend-mark" style="background-color: #BBF2F5;"></div>
+							</td>
+							<td>Статистические</td>
+							<td>
+								<div class="legend-mark" style="background-color: #FCD9D9;"></div>
+							</td>
+							<td>Внешнее</td>
+							<td>
+								<div class="legend-mark" style="background-color: #FFAEAE;"></div>
+							</td>
+							<td>Отключение</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		}
+	</div>
+</div>

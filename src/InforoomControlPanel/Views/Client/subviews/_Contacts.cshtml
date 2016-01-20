@@ -1,0 +1,145 @@
+﻿@model Client
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	Client client = Model;
+}
+<div class="panel panel-default blockJsLockControll">
+	@using (@Html.BeginForm("InfoPhysical", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
+		@Html.HiddenFor(o => client.Id)
+		<input id="subViewName" name="subViewName" type="hidden" value="_Contacts">
+		@* Блок пустой *@
+		<div id="emptyBlock_contacts" class="emptyBlock"></div>
+	}
+	@* Блок просмотра *@
+	<div id="defaultBlock_contacts" class="defaultBlock hid">
+		<div class="panel-heading">
+			<h3 class="panel-title bold"><a class="c-pointer" onclick="changeVisibility('emptyBlock_contacts')">Контакты</a></h3>
+		</div>
+		<div class="panel-body">
+			<table id="table-2" class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable border-right-white tableFullWidth" role="grid" aria-describedby="table-2_info">
+				<thead>
+				<tr role="row">
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						Контакт
+					</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						Тип
+					</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						Комментарий
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+				@foreach (var item in client.Contacts) {
+					<tr>
+						<td>
+							<span>@item.ContactPhoneSplitFormat</span></td>
+						<td>
+							<span>@item.Type.GetDescription()</span></td>
+						<td>
+							<span>@item.ContactName</span></td>
+					</tr>
+				}
+				</tbody>
+			</table>
+		</div>
+		<div class="panel-body" style="padding-top: 0px;">
+			<a class="btn btn-blue lockButton">Редактировать</a>
+		</div>
+	</div>
+	@* Блок редактирования *@
+	<div id="copyBlock_contacts" class="hid">
+		<tr>
+			<td>
+				<a class="btn btn-red" id="contactDel2" onclick="clientContactDelete(this)">X</a>
+			</td>
+			<td>
+				<input data-val="true" data-val-number="The field Id must be a number." data-val-required="Требуется поле Id." id="client_Contacts_2__Id" name="client.Contacts[0].Id" type="hidden" value="51685">
+				<input class="form-control" id="client_Contacts_2__ContactFormatString" name="client.Contacts[0].ContactFormatString" type="text" value="">
+				<div class="success">
+					<div class="icon"></div>
+				</div>
+			</td>
+			<td>
+				<select class="form-control" data-val="true" data-val-required="Требуется поле Type." id="client_Contacts_2__Type" name="client.Contacts[0].Type">
+					<option selected="selected" value="MobilePhone">Мобильный номер</option>
+					<option value="HousePhone">Домашний номер</option>
+					<option value="ConnectedPhone">Связанный номер</option>
+					<option value="Email">EMail</option>
+					<option value="FinancePhone">Финансовые вопросы</option>
+					<option value="HeadPhone">Главный телефон</option>
+					<option value="SmsSending">Телефон для смс рассылки</option>
+					<option value="TechPhone">техническая информация</option>
+					<option value="ActEmail">EMail для рассылки счетов/актов</option>
+				</select>
+				<div class="success">
+					<div class="icon"></div>
+				</div>
+			</td>
+			<td>
+				<input class="form-control" id="client_Contacts_2__ContactName" name="client.Contacts[0].ContactName" type="text" value="">
+				<div class="success">
+					<div class="icon"></div>
+				</div>
+			</td>
+		</tr>
+	</div>
+	<div id="editBlock_contacts" class="editBlock hid">
+		<div class="panel-heading">
+			<h3 class="panel-title bold"><a class="c-pointer" onclick="changeVisibility('emptyBlock_contacts')">Контакты (редактирование)</a></h3>
+		</div>
+		<div class="panel-body">
+			<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth" role="grid" aria-describedby="table-2_info">
+				<thead>
+				<tr role="row">
+					<th>
+
+					</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						Контакт
+					</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						Тип
+					</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						Комментарий
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+				@for (int i = 0; i < client.Contacts.Count; i++) {
+					<tr>
+						<td>
+							<a class="btn btn-red" id="contactDel@(i)" onclick="clientContactDelete(this)">X</a>
+						</td>
+						<td>
+							@Html.HiddenFor(o => client.Contacts[i].Id)
+							@Html.TextBoxFor(o => client.Contacts[i].ContactFormatString, new {@class = "form-control"})
+							@ViewBag.Validation.GetError(client.Contacts, "ContactFormatString")
+						</td>
+						<td>
+							@Html.DropDownEnumListFor(o => client.Contacts[i].Type, new {@class = "form-control"})
+							@ViewBag.Validation.GetError(client.Contacts, "Type")
+						</td>
+						<td>
+							@Html.TextBoxFor(o => client.Contacts[i].ContactName, new {@class = "form-control"})
+							@ViewBag.Validation.GetError(client.Contacts, "ContactName")
+						</td>
+					</tr>
+				}
+				</tbody>
+			</table>
+			@ViewBag.Validation.GetError(client, "Contacts")
+		</div>
+		<div class="panel-body" style="padding-top: 0px;">
+			<div class="col">
+				<button type="submit" class="btn btn-green">Сохранить</button>
+				<a class="btn btn-blue" onclick="clientContactCopy()">Добавить</a>
+				<a class="btn btn-red unlockButton">Отмена</a>
+			</div>
+		</div>
+	</div>
+</div>

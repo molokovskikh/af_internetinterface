@@ -8,7 +8,7 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Модель платежей
 	/// </summary>
-	[Class(0, Table = "Payments", NameType = typeof(Payment))]
+	[Class(0, Table = "Payments", NameType = typeof (Payment))]
 	public class Payment : BaseModel
 	{
 		[Property, Description("Дата получения платежа")]
@@ -23,6 +23,9 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "Client")]
 		public virtual Client Client { get; set; }
 
+		[ManyToOne(Column = "BankPayment")]
+		public virtual BankPayment BankPayment { get; set; }
+
 		[ManyToOne(Column = "Agent"), NotNull]
 		public virtual Employee Employee { get; set; }
 
@@ -34,5 +37,14 @@ namespace Inforoom2.Models
 
 		[Property, Description("Комментарий к платежу")]
 		public virtual string Comment { get; set; }
+
+		public virtual Appeal Cancel(string comment, Employee employee)
+		{
+			if (BillingAccount)
+				Client.WriteOff(Sum, Virtual.HasValue && Virtual.Value);
+
+			return new Appeal(String.Format("Удален платеж на сумму {0} \r\n Комментарий: {1}", Sum.ToString("0.00"), comment), Client,
+				AppealType.System) {Employee = employee};
+		}
 	}
 }

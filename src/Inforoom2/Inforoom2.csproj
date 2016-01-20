@@ -306,8 +306,11 @@
     <Compile Include="Helpers\AuthorizeUserAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Helpers\ConnectionHelper.cs" />
+    <Compile Include="Helpers\CryptoPass.cs" />
     <Compile Include="Helpers\DescriptionHelper.cs" />
     <Compile Include="Helpers\ConfigHelper.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\WarningHelper.cs" />
     <Compile Include="Helpers\Md5Helper.cs" />
     <Compile Include="Helpers\ModelCrudListener.cs" />
@@ -324,11 +327,17 @@
     <Compile Include="Intefaces\IModelWithPriority.cs" />
     <Compile Include="Intefaces\ILogAppeal.cs" />
     <Compile Include="Intefaces\IServicemenScheduleItem.cs" />
+    <Compile Include="Models\BankPayment.cs" />
+    <Compile Include="Models\Internetsessionslog.cs" />
+    <Compile Include="Models\IpPool.cs" />
+    <Compile Include="Models\IpPoolRegion.cs" />
     <Compile Include="Models\Recipient.cs" />
     <Compile Include="Models\ClientOrder.cs" />
     <Compile Include="Models\ServiceRequestComment.cs" />
     <Compile Include="Models\ServiceRequest.cs" />
     <Compile Include="Models\ServicemenScheduleItem.cs" />
+    <Compile Include="Models\UnresolvedCall.cs" />
+    <Compile Include="Models\Zone.cs" />
     <Compile Include="validators\ValidatorPhone.cs" />
     <Compile Include="Models\Log.cs" />
     <Compile Include="Models\AdditionalStatus.cs" />

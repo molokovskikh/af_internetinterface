@@ -92,8 +92,8 @@
 					<div class="form-group">
 						<label class="col-sm-4 control-label">Задача в Redmine для клиента:</label>
 						<div class="col-sm-4">
-							@Html.TextBoxFor(o => client.LegalRedmineTask, new {@class = "form-control"})
-							@ViewBag.Validation.GetError(client.LegalClient, "LegalRedmineTask")
+							@Html.TextBoxFor(o => client.RedmineTask, new {@class = "form-control"})
+							@ViewBag.Validation.GetError(client, "RedmineTask")
 						</div>
 					</div>
 
@@ -109,7 +109,5 @@
 	</div>
 
 </div>
-
-<div class="form-group">
-</div>
+ 
 <div style="clear: both;"></div>
