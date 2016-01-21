@@ -93,286 +93,388 @@
 		<span class="title">Главная</span>
 	</a>
 </li>
-<li>
-	<a href="@Url.Action("List", "Client")">
-		<i class="entypo-users"></i>
-		<span class="title">Клиенты</span>
-	</a>
-	<ul class="visible">
-		<li>
-			<a href="@Url.Action("List", "Client")">
-				<span class="title">Список клиентов</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("ListOnline", "Client")">
-				<span class="title">Онлайн</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("Appeals", "Client")">
-				<span class="title">Обращения</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("RegistrationPhysical", "Client")">
-				<span class="title">Зарегистрировать физ. лицо</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("RegistrationLegal", "Client")">
-				<span class="title">Зарегистрировать юр. лицо</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("Request", "Client")">
-				<span class="title">Создать заявку на подключение</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("RequestsList", "Client")">
-				<span class="title">Заявки на подключение</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("AgentList", "Client")">
-				<span class="title">Агенты</span>
-			</a>
-		</li>
-	</ul>
-</li>
-<li>
-	<a href="@Url.Action("Servicemen", "ConnectionTeam")">
-		<i class="entypo-attention"></i>
-		<span class="title">Сервисные бригады</span>
-	</a>
-	<ul class="visible">
-		<li>
-			<a href="@Url.Action("Servicemen", "ConnectionTeam")">
-				<span class="title">Сервисные инженеры</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("ServiceRequestList", "ServiceRequest")">
-				<span class="title">Сервисные заявки</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("ConnectionTable", "ConnectionTeam")">
-				<span class="title">График назначенных заявок</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("UnpluggedClientList", "ConnectionTeam")">
-				<span class="title">Подключения клиентов</span>
-			</a>
-		</li>
-	</ul>
-</li>
-<li>
-	<a href="@Url.Action("QuestionIndex", "Question")">
-		<i class="entypo-picture"></i>
-		<span class="title">Контент</span>
-	</a>
-	<ul class="visible">
-		<li>
-			<a href="@Url.Action("QuestionIndex", "Question")">
-				<span class="title">Вопросы и ответы</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("NewsIndex", "News")">
-				<span class="title">Новости</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("SlideIndex", "Slide")">
-				<span class="title">Слайды</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("BannerIndex", "Banner")">
-				<span class="title">Баннеры</span>
-			</a>
-		</li>
-	</ul>
-</li>
-<li>
-	<a href="@Url.Action("EmployeeList", "Admin")">
-		<i class="entypo-user"></i>
-		<span class="title">Сотрудники</span>
-	</a>
-	<ul class="visible">
-		<li>
-			<a href="@Url.Action("EmployeeList", "Admin")">
-				<span class="title">Сотрудники</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("RoleList", "Admin")">
-				<span class="title">Роли</span>
-			</a>
-		</li> <li>
-			<a href="@Url.Action("PermissionList", "Admin")">
-				<span class="title">Права</span>
-			</a>
-		</li>
-	</ul>
-</li>
-<li>
-	<a href="@Url.Action("TicketIndex", "Ticket")">
-		<i class="entypo-mail"></i>
-		<span class="title">Запросы пользователей</span>
-	</a>
-	<ul class="visible">
-		<li>
-			<a href="@Url.Action("TicketIndex", "Ticket")">
-				<span class="title">Запросы в техподдержку</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("CallMeBackTicketIndex", "Ticket")">
-				<span class="title">Заявки на обратный звонок</span>
-			</a>
-		</li>
-	</ul>
-</li>
-<li>
-	<a href="@Url.Action("PlanIndex", "Plans")">
-		<i class="entypo-mail"></i>
-		<span class="title">Тарифы</span>
-	</a>
-	<ul class="visible">
-		<li>
-			<a href="@Url.Action("PlanIndex", "Plans")">
-				<span class="title">Тарифы</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("HtmlPlanIndex", "Plans")">
-				<span class="title">Тарифы HTML</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("InternetPlanChangerIndex", "Plans")">
-				<span class="title">Смена по истечению срока</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("TvChannelList", "Plans")">
-				<span class="title">ТВ каналы</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("TvChannelGroupList", "Plans")">
-				<span class="title">Группы ТВ каналов</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("TvProtocolList", "Plans")">
-				<span class="title">Протоколы для ТВ</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("PackageSpeedList", "Plans")">
-				<span class="title">Скорость</span>
-			</a>
-		</li>
-	</ul>
-</li>
-<li>
-	<a href="@Url.Action("SwitchList", "Switch")">
-		<i class="entypo-mail"></i>
-		<span class="title">Коммутаторы</span>
-	</a>
-	<ul class="visible">
-		<li>
-			<a href="@Url.Action("SwitchList", "Switch")">
-				<span class="title">Коммутаторы</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("NetworkNodeList", "Switch")">
-				<span class="title">Узлы связи</span>
-			</a>
-		</li>
-	</ul>
-</li>
-<li>
-	<a href="@Url.Action("SwitchAddressList", "Address")">
-		<i class="entypo-mail"></i>
-		<span class="title">Адреса</span>
-	</a>
-	<ul class="visible">
-		<li>
-			<a href="@Url.Action("SwitchAddressList", "Address")">
-				<span class="title">Адреса коммутаторов</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("CityList", "Address")">
-				<span class="title">Города</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("RegionList", "Address")">
-				<span class="title">Регионы</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("StreetList", "Address")">
-				<span class="title">Улицы</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("HouseList", "Address")">
-				<span class="title">Дома</span>
-			</a>
-		</li>
-	</ul>
-</li>
-<li>
-	<a href="@Url.Action("ShowHardware", "HardwareTypes")">
-		<i class="entypo-mail"></i>
-		<span class="title">Оборудование</span>
-	</a>
-	<ul class="visible">
-		<li>
-			<a href="@Url.Action("ShowHardware", "HardwareTypes")">
-				<span class="title">Список оборудования</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("ClientList", "HardwareTypes")">
-				<span class="title">Список клиентов</span>
-			</a>
-		</li>
-	</ul>
-</li>
-<li>
-	<a href="@Url.Action("ShowHardware", "HardwareTypes")">
-		<i class="entypo-mail"></i>
-		<span class="title">Отчеты</span>
-	</a>
-	<ul class="visible">
-		<li>
-			<a href="@Url.Action("Client", "SpreadSheet")">
-				<span class="title">По клиентам</span>
-			</a>
-		</li>
-		<li>
-			<a href="@Url.Action("WriteOffs", "SpreadSheet")">
-				<span class="title">По списаниям</span>
-			</a>
-		</li>
-	</ul>
-</li>
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000000"))) {
+	<li>
+		<a>
+			<i class="entypo-users"></i>
+			<span class="title">Клиенты</span>
+		</a>
+		<ul class="visible">
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000001"))) {
+				<li>
+					<a href="@Url.Action("List", "Client")">
+						<span class="title">Список клиентов</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000002"))) {
+				<li>
+					<a href="@Url.Action("ListOnline", "Client")">
+						<span class="title">Онлайн</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000003") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000003"))) {
+				<li>
+					<a href="@Url.Action("Appeals", "Client")">
+						<span class="title">Обращения</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000004") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000004"))) {
+				<li>
+					<a href="@Url.Action("RegistrationPhysical", "Client")">
+						<span class="title">Зарегистрировать физ. лицо</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000005") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000005"))) {
+				<li>
+					<a href="@Url.Action("RegistrationLegal", "Client")">
+						<span class="title">Зарегистрировать юр. лицо</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000006") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000006"))) {
+				<li>
+					<a href="@Url.Action("Request", "Client")">
+						<span class="title">Создать заявку на подключение</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000007") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000007"))) {
+				<li>
+					<a href="@Url.Action("RequestsList", "Client")">
+						<span class="title">Заявки на подключение</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000008") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000008"))) {
+				<li>
+					<a href="@Url.Action("AgentList", "Client")">
+						<span class="title">Агенты</span>
+					</a>
+				</li>
+			}
+		</ul>
+	</li>
+}
+
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_001000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_001000"))) {
+	<li>
+		<a>
+			<i class="entypo-attention"></i>
+			<span class="title">Сервисные бригады</span>
+		</a>
+		<ul class="visible">
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_001001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_001001"))) {
+				<li>
+					<a href="@Url.Action("Servicemen", "ConnectionTeam")">
+						<span class="title">Сервисные инженеры</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_001002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_001002"))) {
+				<li>
+					<a href="@Url.Action("ServiceRequestList", "ServiceRequest")">
+						<span class="title">Сервисные заявки</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_001003") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_001003"))) {
+				<li>
+					<a href="@Url.Action("ConnectionTable", "ConnectionTeam")">
+						<span class="title">График назначенных заявок</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_001004") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_001004"))) {
+				<li>
+					<a href="@Url.Action("UnpluggedClientList", "ConnectionTeam")">
+						<span class="title">Подключения клиентов</span>
+					</a>
+				</li>
+			}
+		</ul>
+	</li>
+}
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_002000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_002000"))) {
+	<li>
+		<a>
+			<i class="entypo-picture"></i>
+			<span class="title">Контент</span>
+		</a>
+		<ul class="visible">
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_002001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_002001"))) {
+				<li>
+					<a href="@Url.Action("QuestionIndex", "Question")">
+						<span class="title">Вопросы и ответы</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_002002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_002002"))) {
+				<li>
+					<a href="@Url.Action("NewsIndex", "News")">
+						<span class="title">Новости</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_002003") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_002003"))) {
+				<li>
+					<a href="@Url.Action("SlideIndex", "Slide")">
+						<span class="title">Слайды</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_002004") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_002004"))) {
+				<li>
+					<a href="@Url.Action("BannerIndex", "Banner")">
+						<span class="title">Баннеры</span>
+					</a>
+				</li>
+			}
+		</ul>
+	</li>
+}
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_003000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_003000"))) {
+	<li>
+		<a>
+			<i class="entypo-user"></i>
+			<span class="title">Сотрудники</span>
+		</a>
+		<ul class="visible">
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_003001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_003001"))) {
+				<li>
+					<a href="@Url.Action("EmployeeList", "Admin")">
+						<span class="title">Сотрудники</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_003002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_003002"))) {
+				<li>
+					<a href="@Url.Action("RoleList", "Admin")">
+						<span class="title">Роли</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_003003") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_003003"))) {
+				<li>
+					<a href="@Url.Action("PermissionList", "Admin")">
+						<span class="title">Права</span>
+					</a>
+				</li>
+			}
+		</ul>
+	</li>
+}
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_004000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_004000"))) {
+	<li>
+		<a>
+			<i class="entypo-mail"></i>
+			<span class="title">Запросы пользователей</span>
+		</a>
+		<ul class="visible">
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_004001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_004001"))) {
+				<li>
+					<a href="@Url.Action("TicketIndex", "Ticket")">
+						<span class="title">Запросы в техподдержку</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_004002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_004002"))) {
+				<li>
+					<a href="@Url.Action("CallMeBackTicketIndex", "Ticket")">
+						<span class="title">Заявки на обратный звонок</span>
+					</a>
+				</li>
+			}
+		</ul>
+	</li>
+}
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005000"))) {
+	<li>
+		<a>
+			<i class="entypo-mail"></i>
+			<span class="title">Тарифы</span>
+		</a>
+		<ul class="visible">
+
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005001"))) {
+				<li>
+					<a href="@Url.Action("PlanIndex", "Plans")">
+						<span class="title">Тарифы</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005002"))) {
+				<li>
+					<a href="@Url.Action("HtmlPlanIndex", "Plans")">
+						<span class="title">Тарифы HTML</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005003") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005003"))) {
+				<li>
+					<a href="@Url.Action("InternetPlanChangerIndex", "Plans")">
+						<span class="title">Смена по истечению срока</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005004") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005004"))) {
+				<li>
+					<a href="@Url.Action("TvChannelList", "Plans")">
+						<span class="title">ТВ каналы</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005005") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005005"))) {
+				<li>
+					<a href="@Url.Action("TvChannelGroupList", "Plans")">
+						<span class="title">Группы ТВ каналов</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005006") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005006"))) {
+				<li>
+					<a href="@Url.Action("TvProtocolList", "Plans")">
+						<span class="title">Протоколы для ТВ</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005007") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005007"))) {
+				<li>
+					<a href="@Url.Action("PackageSpeedList", "Plans")">
+						<span class="title">Скорость</span>
+					</a>
+				</li>
+			}
+		</ul>
+	</li>
+}
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_006000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_006000"))) {
+	<li>
+		<a>
+			<i class="entypo-mail"></i>
+			<span class="title">Коммутаторы</span>
+		</a>
+		<ul class="visible">
+
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_006001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_006001"))) {
+				<li>
+					<a href="@Url.Action("SwitchList", "Switch")">
+						<span class="title">Коммутаторы</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_006002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_006002"))) {
+				<li>
+					<a href="@Url.Action("NetworkNodeList", "Switch")">
+						<span class="title">Узлы связи</span>
+					</a>
+				</li>
+			}
+		</ul>
+	</li>
+}
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_007000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_007000"))) {
+	<li>
+		<a>
+			<i class="entypo-mail"></i>
+			<span class="title">Адреса</span>
+		</a>
+		<ul class="visible">
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_007001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_007001"))) {
+				<li>
+					<a href="@Url.Action("SwitchAddressList", "Address")">
+						<span class="title">Адреса коммутаторов</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_007002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_007002"))) {
+				<li>
+					<a href="@Url.Action("CityList", "Address")">
+						<span class="title">Города</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_007003") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_007003"))) {
+				<li>
+					<a href="@Url.Action("RegionList", "Address")">
+						<span class="title">Регионы</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_007004") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_007004"))) {
+				<li>
+					<a href="@Url.Action("StreetList", "Address")">
+						<span class="title">Улицы</span>
+					</a>
+				</li>
+			}
+
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_007005") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_007005"))) {
+				<li>
+					<a href="@Url.Action("HouseList", "Address")">
+						<span class="title">Дома</span>
+					</a>
+				</li>
+			}
+		</ul>
+	</li>
+}
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_008000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_008000"))) {
+	<li>
+		<a>
+			<i class="entypo-mail"></i>
+			<span class="title">Оборудование</span>
+		</a>
+		<ul class="visible">
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_008001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_008001"))) {
+				<li>
+					<a href="@Url.Action("ShowHardware", "HardwareTypes")">
+						<span class="title">Список оборудования</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_008002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_008002"))) {
+				<li>
+					<a href="@Url.Action("ClientList", "HardwareTypes")">
+						<span class="title">Список клиентов</span>
+					</a>
+				</li>
+			}
+		</ul>
+	</li>
+}
+
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_009000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_009000"))) {
+	<li>
+		<a>
+			<i class="entypo-mail"></i>
+			<span class="title">Отчеты</span>
+		</a>
+		<ul class="visible">
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_009001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_009001"))) {
+				<li>
+					<a href="@Url.Action("Client", "SpreadSheet")">
+						<span class="title">По клиентам</span>
+					</a>
+				</li>
+			}
+
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_009002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_009002"))) {
+				<li>
+					<a href="@Url.Action("WriteOffs", "SpreadSheet")">
+						<span class="title">По списаниям</span>
+					</a>
+				</li>
+			}
+		</ul>
+	</li>
+}
 </ul>
-
 </div>
-
 </div>
-
 <div class="main-content">
 	<div class="row">
 		<!-- Profile Info and Notifications -->

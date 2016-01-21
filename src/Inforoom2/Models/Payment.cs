@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using Common.Tools;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
@@ -37,6 +38,11 @@ namespace Inforoom2.Models
 
 		[Property, Description("Комментарий к платежу")]
 		public virtual string Comment { get; set; }
+
+		public virtual string SumToLiteral()
+		{
+			return TextUtil.NumToPaymentString((double)Sum);
+		}
 
 		public virtual Appeal Cancel(string comment, Employee employee)
 		{

@@ -223,6 +223,7 @@ function cleanFilter(cleanIndex) {
 	$(cleanIndex).val("");
 	$(cleanIndex).change();
 }
+
 //замена знаков
 function replaceAll(str, find, replace) {
 	return str.replace(new RegExp(find, 'g'), replace);
@@ -300,21 +301,21 @@ $(function() {
 	addScrollBackToLinks();
 
 	/////Формирование адреса клиента
-	$(".addressFilterBlock input,.addressFilterBlock select").change(function () {
+	$(".addressFilterBlock input, .addressFilterBlock select").change(function() {
 		if ($(this).val() != "") {
 			$("#fullAdressSearch").val("");
 		}
 	});
-	$("#fullAdressSearch").change(function () {
+	$("#fullAdressSearch").change(function() {
 		if ($(this).val() != "") {
-			$(".addressFilterBlock input,.addressFilterBlock select").val("");
+			$(".addressFilterBlock input, .addressFilterBlock select").val("");
 		}
 	});
 	$("#StreetDropDown").html("");
 	$("#HouseDropDown").html("");
 
 	$('select[name="mfilter.filter.Equal.AppealType"] option[value="All"]').remove();
-	
+
 });
 
 //Добавление в куки сведений о необходимости открывать единственную запись в новой вкладке 
@@ -337,7 +338,7 @@ $(function() {
 //IP=>Число
 function dot2num(dot) {
 	var ipVal = "";
-	console.log(isNaN(dot) + " | " + dot); 
+	console.log(isNaN(dot) + " | " + dot);
 	try {
 		var d = dot.split('.');
 		ipVal = ((((((+d[0]) * 256) + (+d[1])) * 256) + (+d[2])) * 256) + (+d[3])
@@ -366,18 +367,16 @@ function num2dot(num) {
 }
 
 
-
 function GetSwitchesByZone(zoneDropdownName, switchesDropdownName) {
 	var zoneItem = $("[name='" + zoneDropdownName + "']");
 	var switchItem = $("[name='" + switchesDropdownName + "']");
 	if (zoneItem.length > 0 && switchItem.length > 0) {
-		zoneItem.change(function () {
-			switchItem.html("");
+		zoneItem.change(function() {
 			$.ajax({
 				url: cli.getParam("baseurl") + "Client/getSwitchesByZone?name=" + zoneItem.val(),
 				type: 'POST',
 				dataType: "json",
-				success: function (data) {
+				success: function(data) {
 					var htmlOptopns = "<option value=\"\"> </option>";
 					if (data != null) {
 						for (var i = 0; i < data.length; i++) {
@@ -385,30 +384,40 @@ function GetSwitchesByZone(zoneDropdownName, switchesDropdownName) {
 						}
 					}
 					switchItem.html(htmlOptopns);
+					if (switchItem.attr("pastValue") != null) {
+						switchItem.find("option[value='" + switchItem.attr("pastValue") + "']").attr("selected", "selected");
+						switchItem.removeAttr("pastValue");
+					}
 				},
-				error: function (data) {
+				error: function(data) {
 					switchItem.html("");
 				},
 				statusCode: {
-					404: function () {
+					404: function() {
 						switchItem.html("");
 					}
 				}
 			});
 		});
+		var currentValOption = switchItem.find("option[selected='selected']");
+		if (currentValOption.length > 0) {
+			var currentVal = currentValOption.val();
+			switchItem.attr("pastValue", currentVal);
+			zoneItem.change();
+		}
 	}
 }
 
 //Добавление в куки сведений о необходимости открывать единственную запись в новой вкладке 
 var ipRentSerchName = "input[name='mfilter.filter.Equal.Endpoints.First().LeaseList.First().Ip'],input[name='mfilter.filter.Equal.Endpoint.LeaseList.First().Ip']";
-$(function () {
+$(function() {
 	var ipEqualValue = $(ipRentSerchName).val();
 	if (ipEqualValue != "" && ipEqualValue != null) {
 		ipEqualValue = num2dot(ipEqualValue);
 		$("#ipEqualShown").val(ipEqualValue);
 	}
 	$("#ipEqualShown").change(function() {
-		var ipEqualText = $("#ipEqualShown").val(); 
+		var ipEqualText = $("#ipEqualShown").val();
 		if (ipEqualText != "" && ipEqualText != null && ipEqualText != undefined) {
 			ipEqualText = dot2num(ipEqualText);
 			if (ipEqualText == "") {

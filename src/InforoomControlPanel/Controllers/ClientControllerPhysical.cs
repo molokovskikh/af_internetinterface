@@ -1171,9 +1171,9 @@ namespace InforoomControlPanel.Controllers
 		{
 			var packageSpeedList = DbSession.Query<PackageSpeed>().ToList();
 			var pager = new InforoomModelFilter<Lease>(this);
-			var cr = pager.GetCriteria();
 			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
 				pager.SetOrderBy("Id", OrderingDirection.Desc);
+			var cr = pager.GetCriteria();
 			ViewBag.Pager = pager;
 			ViewBag.PackageSpeedList = packageSpeedList;
 			return View();
@@ -1213,7 +1213,8 @@ namespace InforoomControlPanel.Controllers
 			var client = DbSession.Query<Client>().FirstOrDefault(s => s.Id == Id);
 			var password = "";
 			var physicalClient = client.PhysicalClient;
-			if (physicalClient != null) {
+			if (physicalClient != null)
+			{
 				password = Inforoom2.Helpers.CryptoPass.GeneratePassword();
 				physicalClient.Password = Inforoom2.Helpers.CryptoPass.GetHashString(password);
 				DbSession.Save(physicalClient);
@@ -1221,6 +1222,13 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.Client = client;
 			ViewBag.NewPassword = password;
 
+			return View();
+		}
+		public ActionResult ContractOfAgency(int Id)
+		{
+			var payment = DbSession.Query<Payment>().FirstOrDefault(s => s.Id == Id);
+			ViewBag.Payment = payment;
+			ViewBag.Employee = GetCurrentEmployee();
 			return View();
 		}
 
@@ -1338,7 +1346,8 @@ namespace InforoomControlPanel.Controllers
 				SuccessMessage("Адрес изменен успешно");
 
 				//для тестов просто редирект - TODO: поправить, когда перенесется админка.
-				if (ConfigHelper.GetParam("PhysicalAddressEditingFlag") != null) {
+				if (ConfigHelper.GetParam("PhysicalAddressEditingFlag", true) != null &&
+				    ConfigHelper.GetParam("PhysicalAddressEditingFlag") == "true") {
 					return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
 				}
 
@@ -1835,5 +1844,7 @@ namespace InforoomControlPanel.Controllers
 
 			return Json(result, JsonRequestBehavior.AllowGet);
 		}
+
+		
 	}
 }

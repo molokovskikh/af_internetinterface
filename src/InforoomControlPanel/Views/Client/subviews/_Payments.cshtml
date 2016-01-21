@@ -70,7 +70,15 @@
 							}
 						</td>
 						<td>
-							<a>@item.Id</a>
+							@if (item.Virtual.HasValue && item.Virtual.Value)
+							{
+								<span>@item.Id</span>
+							}
+							else
+							{
+								<a target="_blank" href="@Url.Action("ContractOfAgency", new {item.Id})">@item.Id</a>
+							}
+							
 						</td>
 						<td>
 							@(item.Virtual.HasValue && item.Virtual.Value ? "Инфорум" : "") @(item.Employee != null && (!string.IsNullOrEmpty(item.Employee.Name))
@@ -211,7 +219,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-					<button type="submit" class="btn btn-success">Добавить</button>
+					<button type="submit" class="btn btn-success">Зачислить</button>
 				</div>
 			}
 		</div>

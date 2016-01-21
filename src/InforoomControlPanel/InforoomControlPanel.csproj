@@ -1497,8 +1497,12 @@
     <Content Include="assets\js\zurb-responsive-tables\stylesheets\reveal.css" />
     <Content Include="assets\js\zurb-responsive-tables\stylesheets\typography.css" />
     <Content Include="assets\js\zurb-responsive-tables\stylesheets\ui.css" />
+    <Content Include="Css\contract_of_agency_application.css" />
+    <Content Include="Css\contract_of_agency_base.css" />
+    <Content Include="Css\contract_of_agency_.css" />
     <Content Include="Css\from_inforoom2.css" />
     <Content Include="Css\PassAndShowCard.css" />
+    <Content Include="Css\contract_of_agency_style.css" />
     <Content Include="Css\style.css" />
     <Content Include="Images\image003.gif" />
     <Content Include="Images\image004.gif" />
@@ -1980,6 +1984,7 @@
     <Content Include="Views\Client\subviews\_Payments.cshtml" />
     <Content Include="Views\Client\subviews\_Endpoint.cshtml" />
     <Content Include="Views\Client\subviews\_UnresolvedCalls.cshtml" />
+    <Content Include="Views\Client\ContractOfAgency.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <None Include="Web.release.config">
