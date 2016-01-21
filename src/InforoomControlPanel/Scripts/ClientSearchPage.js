@@ -372,7 +372,6 @@ function GetSwitchesByZone(zoneDropdownName, switchesDropdownName) {
 	var switchItem = $("[name='" + switchesDropdownName + "']");
 	if (zoneItem.length > 0 && switchItem.length > 0) {
 		zoneItem.change(function() {
-			switchItem.html("");
 			$.ajax({
 				url: cli.getParam("baseurl") + "Client/getSwitchesByZone?name=" + zoneItem.val(),
 				type: 'POST',
@@ -400,14 +399,13 @@ function GetSwitchesByZone(zoneDropdownName, switchesDropdownName) {
 				}
 			});
 		});
+		var currentValOption = switchItem.find("option[selected='selected']");
+		if (currentValOption.length > 0) {
+			var currentVal = currentValOption.val();
+			switchItem.attr("pastValue", currentVal);
+			zoneItem.change();
+		}
 	}
-	var currentValOption = switchItem.find("option[selected='selected']");
-	if (currentValOption.length > 0) {
-		var currentVal = currentValOption.val();
-		switchItem.attr("pastValue", currentVal);
-		zoneItem.change();
-	}
-
 }
 
 //Добавление в куки сведений о необходимости открывать единственную запись в новой вкладке 
