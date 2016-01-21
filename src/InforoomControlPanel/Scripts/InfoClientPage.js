@@ -369,7 +369,8 @@ function updatePortsState(data) {
 				used = true;
 				for (var i = 0; i < data.length; i++) {
 					if ($(portTagItem).html().indexOf("<span>" + data[i].endpoint + "</span>") != -1) {
-						$(portTagItem).attr("href", cli.getParam("baseurl") + (data[i].type == 0 ? linkA.val() : linkB.val()) + "/" + data[i].client);
+						//Физ.лицо, Юр лицо
+						$(portTagItem).attr("href", (data[i].type == 0 ? linkA.val() : linkB.val()) + "/" + data[i].client);
 						$(portTagItem).addClass("client");
 						$(portTagItem).attr("title", "занятый порт");
 						used = false;

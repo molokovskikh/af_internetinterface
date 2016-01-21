@@ -142,6 +142,16 @@ namespace Inforoom2.Models
 		[OneToOne(PropertyRef = "PhysicalClient")]
 		public virtual Client Client { get; set; }
 
+		public virtual string SafeIdDocName
+		{
+			get
+			{
+				if (CertificateType == CertificateType.Passport)
+					return "Паспорт";
+				return CertificateName;
+			}
+		}
+
 		public virtual string FullName
 		{
 			get { return Surname + " " + Name + " " + Patronymic; }

@@ -17,11 +17,11 @@ namespace Inforoom2.Helpers
 		/// </summary>
 		/// <param name="name">Имя параметра</param>
 		/// <returns>Значение параметра</returns>
-		static public string GetParam(string name)
+		public static string GetParam(string name, bool isNullable = false)
 		{
 			var result = System.Web.Configuration.WebConfigurationManager.AppSettings[name];
 
-			if(result == null)
+			if (result == null && isNullable == false)
 				throw new Exception("Не удалось найти параметр {0} в текущем файле кофигурации");
 
 			return result;

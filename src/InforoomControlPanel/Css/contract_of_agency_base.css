@@ -1,0 +1,613 @@
+* {margin:0;padding:0}
+.clear { clear: both; height: 0; }
+.status.Dissolved { background-color: #F77B7B!important}
+
+td.online_client {
+	background-color: #B0DCA3;
+}
+
+.wat-cf:after {
+	 content: ".";
+	 display: block;
+	 height: 0;
+	 clear: both;
+	 visibility: hidden;
+}
+
+.wat-cf {display: inline-block;}
+
+/* Hides from IE-mac \*/
+* html .wat-cf {height: 1%;}
+.wat-cf {display: block;}
+/* End hide from IE-mac */
+
+h1 { margin: 15px 0; font-size: 22px; font-weight: normal;}
+h2 { font-size: 22px; margin: 15px 0; font-weight: normal;}
+h3 { font-size: 18px; margin: 10px 0; font-weight: normal;}
+h4 { font-size: 16px; margin: 10px 0; font-weight: normal;}
+hr {height: 1px; border: 0; }
+p { margin: 15px 0;}
+a img { border: none; }
+
+body {
+  font-size: 12px;
+  font-family: sans-serif;
+}
+
+#container {
+  min-width: 500px;
+}
+
+#header, #wrapper {
+  padding: 0 20px;
+}
+
+#header {
+  position: relative;
+  padding-top: 1px;
+}
+
+#header h1 {
+  margin: 0;
+  padding: 10px 0;
+  font-size: 26px;
+}
+
+#header h1 a:link, #header h1 a:active, #header h1 a:hover, #header h1 a:visited {
+  text-decoration: none;
+}
+
+#main {
+  width: 70%;
+  float: left;
+}
+
+.error {
+	color: red;
+}
+
+.sort
+{
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position:  left center;
+}
+
+.asc
+{
+	background-image: url(asc.gif);
+}
+
+.desc
+{
+	background-image: url(desc.gif);
+}
+
+.actions-bar {
+  padding: 10px 1px;
+}
+
+.actions-bar .actions {
+  float: left;
+}
+
+
+.actions-bar .pagination {
+  float: right;
+  padding: 1px 0;
+}
+
+
+#wrapper {
+  padding-top: 20px;
+}
+
+#main .block {
+  margin-bottom: 20px;
+  padding-top: 1px;
+}
+
+#main .block .content .inner {
+  padding: 0 15px 15px;
+}
+
+#main .main p.first {
+  margin-top: 0;
+}
+
+.block
+{
+	  margin-bottom: 20px;
+  padding-top: 1px;
+}
+
+#user-navigation {
+  position: absolute;
+  top: 0px;
+  right: 20px;
+}
+
+#main-navigation {
+  width: 100%;
+}
+
+#user-navigation ul, #main-navigation ul, .secondary-navigation ul, #sidebar ul.navigation {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+#user-navigation ul li, #main-navigation ul li, .secondary-navigation ul li {
+  float: left;
+}
+
+#main-navigation ul li {
+  margin-right: 5px;
+}
+
+#user-navigation ul li {
+  padding: 5px 10px;
+}
+
+#main-navigation ul li a:link, #main-navigation ul li a:visited, #main-navigation ul li a:hover, #main-navigation ul li a:active,
+.secondary-navigation ul li a:link, .secondary-navigation ul li a:visited, .secondary-navigation ul li a:hover, .secondary-navigation ul li a:active,
+#user-navigation ul li a:link, #user-navigation ul li a:visited, #user-navigation ul li a:hover, #user-navigation ul li a:active {
+  text-decoration: none;
+}
+
+#main-navigation ul li a {
+  font-size: 14px;
+  line-height: 14px;
+  display: block;
+  padding: 8px 15px;
+}
+
+.secondary-navigation {
+  font-size: 13px;
+  border-bottom-width: 10px;
+  border-bottom-style: solid;
+}
+
+.secondary-navigation ul li a {
+  display: block;
+  padding: 10px 15px;
+}
+
+#footer {
+  padding-bottom: 20px;
+}
+
+/* pagination */
+
+.pagination a, .pagination span, .pagination em {
+  padding: 2px 5px;
+  margin-right: 5px;
+  display: block;
+  float: left;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.pagination em {
+  font-weight: bold;
+}
+
+.pagination a {
+  text-decoration: none;
+}
+
+/* tables */
+#AdressTable td {
+  padding: 5px;
+}
+
+#AdressTable {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+
+.table
+{
+	border-spacing: 0;
+	border: 1px solid #ccc;
+	border-collapse: collapse;
+	width: 100%;
+	color: #5c5b5b;
+	margin-bottom: 5px;
+	font-size: 12px;
+}
+
+.centred
+{
+	margin-left: auto;
+	margin-right: auto;
+	width: 40%;
+}
+
+.non-greedy-table
+{
+	border-spacing: 0;
+	border: 1px solid #ccc;
+	border-collapse: collapse;
+	color: #5c5b5b;
+	margin-bottom: 5px;
+	font-size: 12px;
+}
+
+.table th, .non-greedy-table th
+{
+	font-weight: bold;
+	border: 1px solid #ccc;
+	background: #ededed;
+	background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#ebebeb));
+	background: -moz-linear-gradient(top, #ededed, #ebebeb);
+	text-align: center;
+}
+
+.table tr:first-child th:first-child, .non-greedy-table tr:first-child th:first-child
+{
+	-moz-border-radius-topleft: 3px;
+	-webkit-border-top-left-radius: 3px;
+	border-top-left-radius: 3px;
+}
+
+.table tr:first-child th:last-child, .non-greedy-table tr:first-child th:last-child
+{
+	-moz-border-radius-topright: 3px;
+	-webkit-border-top-right-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+.table th.first, .non-greedy-table th.first {
+  width: 30px;
+}
+
+.table th.last, .non-greedy-table th.last {
+  width: 200px;
+}
+
+.table .checkbox, .non-greedy-table .checkbox {
+  margin-left: 10px;
+}
+
+.table td, .non-greedy-table td {
+	padding: 3px;
+	border: 1px solid #e0e0e0;
+}
+
+.table a:link, .non-greedy-table a:link
+{
+	color: #474e99;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+.table a:active,
+.table a:hover,
+.non-greedy-table a:hover,
+.non-greedy-table a:hover
+{
+	color: #bd5a35;
+	text-decoration: underline;
+}
+
+.table td.last, .non-greedy-table td.last
+{
+	text-align: right;
+}
+
+#mapHead thead tr th {
+	background-color: #f1efef;
+}
+
+/* forms */
+
+input.checkbox {
+  margin: 0;
+  padding: 0;
+}
+
+.form .group {
+  margin-bottom: 15px;
+}
+
+.form div.left {
+  width: 20%;
+  float: left;
+}
+
+.form div.right {
+  width: 75%;
+  float: right;
+}
+
+.form .columns .column {
+  width: 48%;
+}
+
+.form .columns .left {
+  float: left;
+}
+
+.form .columns .right {
+  float: right;
+}
+
+.form label.label, .form input.text_field, .form textarea.text_area {
+  font-size: 1.2em;
+  padding: 1px 0;
+  margin: 0;
+}
+
+.form label.right {
+  text-align: right;
+}
+
+.form input.checkbox, .form input.radio {
+  margin-right: 5px;
+}
+
+.form label.checkbox, .form label.radio {
+  line-height: 1.5em;
+}
+
+.form label.label {
+  display: block;
+  padding-bottom: 2px;
+  font-weight: bold;
+}
+
+.form div.fieldWithErrors label.label {
+  display: inline;
+}
+
+.form .fieldWithErrors .error {
+  color: red;
+}
+
+.form input.text_field, .form textarea.text_area {
+  width: 100%;
+  border-width: 1px;
+  border-style: solid;
+}
+
+/* lists */
+
+ul.list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+ul.list li {
+  clear: left;
+  padding-bottom: 5px;
+}
+
+ul.list li .left {
+  float: left;
+}
+
+ul.list li .left .avatar {
+  width: 50px;
+  height: 50px;
+}
+
+ul.list li .item {
+  margin-left: 80px;
+}
+
+ul.list li .item .avatar {
+  float: left;
+  margin: 0 5px 5px 0;
+  width: 30px;
+  height: 30px;
+}
+
+/* box */
+
+#box {
+  width: 500px;
+  margin: 50px auto;
+}
+
+#box .block {
+  margin-bottom: 20px;
+}
+
+#box .block h2 {
+  padding: 10px 15px;
+  margin: 0;
+}
+
+#box .block .content {
+  padding: 10px 20px;
+}
+
+/*  Inspired by http://particletree.com/features/rediscovering-the-button-element */
+
+.text_button_padding{
+  color: #222222;
+  display: block;
+  float: left;
+  font-size: 1em;
+  line-height: 2em;
+  margin: 0 7px 0 0;
+  padding: 5px 0 6px 7px;
+  text-decoration: none;
+}
+.link_button{
+  cursor: pointer;
+}
+
+.deletePointControl
+{
+	cursor: pointer;
+}
+
+.selectorQuery
+{
+	color: red;
+}
+
+.hardWareInfoBlock
+{
+	margin-top: 10px;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.russianInfo table tbody th, #countersTable thead tr th {
+	width: 100px;
+	margin-bottom: 10px;
+}
+
+#portActiveBlock {
+	margin-top: -39px;
+}
+
+.backGroundBlock h3 {
+	text-align: center;
+	color: #666;
+}
+
+#interfaceCountersBlock {
+	margin-top: 10px;
+	text-align: left;
+	background-color: white;
+	border: 1px double #c1c3c4;
+	padding: 15px;
+}
+
+#interfaceCountersBlock p {
+	margin: 0px;
+}
+
+.hardWareInfoBlock th
+{
+	padding: 6px;
+}
+
+.switchInfoBlock
+{
+	border:1px double #c1c3c4;
+	width:600px;
+	padding: 15px;
+}
+
+.switchInfoClient
+{
+	margin-bottom:20px;
+	width:600px;
+}
+
+.backGroundBlock
+{
+	background-color:White;
+	padding-bottom: 30px;
+	padding-top:10px;
+	height:700px;
+	min-width:1300px;
+	margin-top: 40px;
+}
+
+.filterItem
+{
+	margin-top:10px;
+	float:none;
+}
+
+.inlineForm {
+	display: inline;
+}
+
+.fullWidth {
+	width: 100%;
+}
+
+ table.result_table {
+	background-color: white;
+	width: 50%;
+	margin: 0 auto;
+}
+
+ table.result_table tr td.first {
+	text-align: center;
+	font-size: 16px;
+}
+
+.table500 {
+	width: 500px;
+}
+
+.bookmarks .deleted {
+	background-color: #FCD0D0;
+}
+
+div.legend {
+	width:25px;
+	height:25px;
+	border: 1px double #AAA;
+	margin-top: 25px;
+	text-align: center;
+}
+
+.legendLabel {
+	padding-top: 25px;
+	padding-left: 5px;
+}
+
+.legendDiv {
+	margin:0 auto;
+	width:200px;
+}
+
+.CenterBlock {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.FilterTable {
+	width: 600px;
+	background-color: #e1e3e2;
+	padding: 5px;
+	border: 1px solid #AAA;
+}
+
+.FilterTable tr td {
+	font-weight: bold;
+	padding-top: 5px;
+}
+
+.FilterTable input[type=text], select {
+	width: 200px;
+}
+
+.house_selector_div
+{
+	width:600px;
+	height:100px;
+	text-align:left;
+	border: 1px solid #AAA;
+	padding: 10px;
+	margin: 10px auto 10px auto;
+}
+
+.action-bar
+{
+	margin-top:15px;
+}
+
+.centred1000px
+{
+	width:1000px;
+	min-height:250px;
+	height:auto;
+	margin: 10px auto 10px auto;
+}
+
+div.help
+{
+	font-size: smaller;
+}

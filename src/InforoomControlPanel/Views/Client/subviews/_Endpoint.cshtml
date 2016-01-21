@@ -69,7 +69,7 @@
 
 										if (currentEndpoint != null) {
 											<td>
-												<a class="port client" target="_blank" onclick="updatePort(this)" href="@(ConfigHelper.GetParam("adminPanelNew") + Url.Action("InfoPhysical", new {@Id = currentEndpoint.Client.Id}))">
+												<a class="port client" target="_blank" onclick="updatePort(this)" href="@(ConfigHelper.GetParam("adminPanelNew") + Url.Action(currentEndpoint.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = currentEndpoint.Client.Id}))">
 													<span>@currentPort</span>
 												</a>
 											</td>
@@ -289,7 +289,7 @@
 
 										if (currentEndpoint != null) {
 											<td>
-												<a class="port client" target="_blank" onclick="updatePort(this)" href="@(ConfigHelper.GetParam("adminPanelNew") + Url.Action("InfoPhysical", new {@Id = currentEndpoint.Client.Id}))">
+												<a class="port client" target="_blank" onclick="updatePort(this)" href="@(ConfigHelper.GetParam("adminPanelNew") + Url.Action(currentEndpoint.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = currentEndpoint.Client.Id}))">
 													<span>@currentPort</span>
 												</a>
 											</td>

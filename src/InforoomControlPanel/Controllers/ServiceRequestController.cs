@@ -221,6 +221,7 @@ namespace InforoomControlPanel.Controllers
 				}
 				// сохраняем изменения
 				DbSession.Save(serviceRequest);
+				SceHelper.UpdatePackageId(DbSession, serviceRequest.Client);
 				SuccessMessage("Сервисная заявка успешно обновлена.");
 
 				return RedirectToAction("ServiceRequestEdit", new {id = serviceRequest.Id});
