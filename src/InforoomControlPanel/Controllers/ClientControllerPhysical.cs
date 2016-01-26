@@ -103,7 +103,7 @@ namespace InforoomControlPanel.Controllers
 		/// <param name="clientStatus">статус клиента</param>
 		/// <returns></returns>
 		public ActionResult InfoPhysical(int id, object clientModelItem = null, string subViewName = "", int appealType = 0,
-			int writeOffState = 0, int clientStatus = 0)
+			int writeOffState = 0, int clientStatus = 0, string redmineTaskComment = "")
 		{
 			Client client;
 			//--------------------------------------------------------------------------------------| Обработка представлений (редактирование клиента)
@@ -119,6 +119,26 @@ namespace InforoomControlPanel.Controllers
 				}
 				// проводим валидацию модели клиента
 				var errors = ValidationRunner.ValidateDeep(clientModel);
+
+				if (!string.IsNullOrEmpty(redmineTaskComment)) {
+					if (!string.IsNullOrEmpty(clientModel.RedmineTask)) {
+						var newAppeal =
+							new Appeal(
+								redmineTaskComment +
+								String.Format(" <a target='_blank' href='http://redmine.analit.net/issues/{0}'>#{0}</a>",
+									clientModel.RedmineTask), clientModel,
+								AppealType.User)
+							{Employee = GetCurrentEmployee()};
+						DbSession.Save(newAppeal);
+					}
+					else {
+						errors.Add(new InvalidValue("Не указана задача в Redmine", typeof (Status), "redmineTaskComment", clientModel,
+							clientModel, new List<object>()));
+						ErrorMessage("Не указана задача в Redmine");
+						ViewBag.RedmineTaskComment = redmineTaskComment;
+					}
+				}
+
 				//если появились ошибки в любом из подпредставлений, кроме контактов, удаляем их
 				if (subViewName != "_Contacts") {
 					errors.RemoveErrors(new List<string>()
@@ -130,6 +150,7 @@ namespace InforoomControlPanel.Controllers
 				if (subViewName == "_PassportData") {
 					errors = ValidationRunner.Validate(clientModel.PhysicalClient);
 				}
+
 				//обновлдение статуса клиента, если он отличается от текущего
 				if (clientStatus != 0 && clientStatus != (int) clientModel.Status.Type && errors.Length == 0) {
 					var newStatus = DbSession.Query<Status>().FirstOrDefault(s => s.Id == clientStatus);
@@ -295,7 +316,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		[HttpPost]
 		public ActionResult InfoPhysical([EntityBinder] Client client, string subViewName, string newUserAppeal = "",
-			int writeOffState = 0, int clientStatus = 0)
+			int writeOffState = 0, int clientStatus = 0, string redmineTaskComment = "")
 		{
 			//создание нового оповещения
 			if (!string.IsNullOrEmpty(newUserAppeal)) {
@@ -304,7 +325,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			//обработка модели клиента, сохранение, передача необходимых данных на форму.
 			return InfoPhysical(client.Id, clientModelItem: client, subViewName: subViewName, writeOffState: writeOffState,
-				clientStatus: clientStatus);
+				clientStatus: clientStatus, redmineTaskComment: redmineTaskComment);
 		}
 
 		/// <summary>
@@ -1170,11 +1191,13 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult ListOnline(bool openInANewTab = true)
 		{
 			var packageSpeedList = DbSession.Query<PackageSpeed>().ToList();
+			var leaseWithoutEndPointList = DbSession.Query<Lease>().Where(s => s.Endpoint == null).ToList();
 			var pager = new InforoomModelFilter<Lease>(this);
 			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
 				pager.SetOrderBy("Id", OrderingDirection.Desc);
 			var cr = pager.GetCriteria();
 			ViewBag.Pager = pager;
+			ViewBag.LeaseWithoutEndPointList = leaseWithoutEndPointList;
 			ViewBag.PackageSpeedList = packageSpeedList;
 			return View();
 		}
@@ -1213,8 +1236,7 @@ namespace InforoomControlPanel.Controllers
 			var client = DbSession.Query<Client>().FirstOrDefault(s => s.Id == Id);
 			var password = "";
 			var physicalClient = client.PhysicalClient;
-			if (physicalClient != null)
-			{
+			if (physicalClient != null) {
 				password = Inforoom2.Helpers.CryptoPass.GeneratePassword();
 				physicalClient.Password = Inforoom2.Helpers.CryptoPass.GetHashString(password);
 				DbSession.Save(physicalClient);
@@ -1224,6 +1246,7 @@ namespace InforoomControlPanel.Controllers
 
 			return View();
 		}
+
 		public ActionResult ContractOfAgency(int Id)
 		{
 			var payment = DbSession.Query<Payment>().FirstOrDefault(s => s.Id == Id);
@@ -1560,6 +1583,7 @@ namespace InforoomControlPanel.Controllers
 				client.Appeals.Add(appeal);
 				client.Payments.Remove(payment);
 				DbSession.Save(client);
+				DbSession.Delete(payment);
 			}
 
 			if (paymentSum != -1) {
@@ -1680,8 +1704,16 @@ namespace InforoomControlPanel.Controllers
 			string subViewName = "")
 		{
 			string errorMessage = "";
+			if (connection.Switch == 0) {
+				ErrorMessage("Ошибка при обновлении подключения. Коммутатор не выбран!");
+				return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+			}
+			if (connection.Port == "0") {
+				ErrorMessage("Ошибка при обновлении подключения. Укажите порт!");
+				return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+			}
 			client.PhysicalClient.SaveSwitchForClient(DbSession, endpointId, connectSum, connection, staticAddress,
-				out errorMessage);
+				out errorMessage, GetCurrentEmployee());
 			if (!string.IsNullOrEmpty(errorMessage)) {
 				ErrorMessage(errorMessage);
 			}
@@ -1734,7 +1766,8 @@ namespace InforoomControlPanel.Controllers
 				var ports =
 					switchItem.Endpoints.Select(
 						s => new {@endpoint = s.Port, @client = s.Client.Id, @type = s.Client.PhysicalClient != null ? 0 : 1}).ToList();
-				return Json(ports, JsonRequestBehavior.AllowGet);
+				var data = new {Ports = ports, Comment = switchItem.Description};
+				return Json(data, JsonRequestBehavior.AllowGet);
 			}
 			return Json(null, JsonRequestBehavior.AllowGet);
 		}
@@ -1844,7 +1877,5 @@ namespace InforoomControlPanel.Controllers
 
 			return Json(result, JsonRequestBehavior.AllowGet);
 		}
-
-		
 	}
 }

@@ -10,6 +10,7 @@ using Inforoom2.Controllers;
 using Inforoom2.Helpers;
 using Inforoom2.Intefaces;
 using Inforoom2.Models;
+using InforoomControlPanel.Helpers;
 using NHibernate.Linq;
 using Remotion.Linq.Clauses;
 
@@ -107,23 +108,16 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult RenewActionPermissions()
 		{
-			var controllers = GetType().Assembly.GetTypes().Where(i => i.IsSubclassOf(typeof(ControlPanelController))).ToList();
-			foreach (var controller in controllers) {
-				var methods = controller.GetMethods();
-				var actions = methods.Where(i => i.ReturnType == typeof(ActionResult)).ToList();
-				foreach (var action in actions) {
-					var name = controller.Name + "_" + action.Name;
-					var right = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
-					if (right != null)
-						continue;
-					var newright = new Permission();
-					newright.Name = name;
-					var url = Url.Action(action.Name, controller.Name.Replace("Controller", ""));
-					newright.Description = "Доступ к странице <a href='" + url + "'>" + name + "</a>";
-					DbSession.Save(newright);
-				}
-			}
-			return RedirectToAction("PermissionList");
+			EmployeePermissionViewHelper.GeneratePermissions(DbSession,this);
+            return RedirectToAction("PermissionList");
+		}
+		/// <summary>
+		/// Права доступа
+		/// </summary>
+		public JsonResult RenewActionPermissionsJs()
+		{
+			EmployeePermissionViewHelper.GeneratePermissions(DbSession, this);
+			return null;
 		}
 
 		/// <summary>

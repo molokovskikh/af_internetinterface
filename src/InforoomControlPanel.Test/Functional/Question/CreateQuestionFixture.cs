@@ -13,7 +13,7 @@ namespace InforoomControlPanel.Test.Functional.Question
         public void SuccessfulCreateQuestion()
         {
             Open("Question/QuestionIndex");
-            browser.FindElementByCssSelector(".entypo-plus").Click();
+            browser.FindElementByCssSelector(".QuestionIndex .entypo-plus").Click();
             browser.FindElementByCssSelector("textarea[id=question_Text]").SendKeys("Как поменять тариф?");
             browser.FindElementByCssSelector("textarea[id=question_Answer]").SendKeys("Смотрите в настройке личного кабинета");
             browser.FindElementByCssSelector(".btn.btn-green").Click();
@@ -28,7 +28,7 @@ namespace InforoomControlPanel.Test.Functional.Question
         {
             Open("Question/QuestionIndex");
             var questionCount = DbSession.Query<Inforoom2.Models.Question>().Count();
-            browser.FindElementByCssSelector(".entypo-plus").Click();
+            browser.FindElementByCssSelector(".QuestionIndex .entypo-plus").Click();
             browser.FindElementByCssSelector(".btn.btn-green").Click();
             AssertText("Вопрос не может быть пустым");
             AssertText("Ответ не может быть пустым");

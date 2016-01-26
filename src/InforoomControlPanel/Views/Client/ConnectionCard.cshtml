@@ -51,7 +51,7 @@
 						@if(client.Contacts.FirstOrDefault(s => s.Type == ContactType.SmsSending) != null)
 						{
 						<p class="MsoNormal" style="margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal">
-							домашний телефон: <i style="mso-bidi-font-style: normal">
+							контактный телефон: <i style="mso-bidi-font-style: normal">
 								<u>
 									@(  client.Contacts.FirstOrDefault(s => s.Type == ContactType.SmsSending).ContactPhoneSplitFormat)
 								</u>

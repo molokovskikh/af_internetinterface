@@ -16,7 +16,7 @@ namespace InforoomControlPanel.Test.Functional.Banner
         {
             Open("Banner/BannerIndex");
             var bannerCount = DbSession.Query<Inforoom2.Models.Banner>().Count();
-            browser.FindElementByCssSelector(".entypo-plus").Click();
+            browser.FindElementByCssSelector(".BannerIndex .entypo-plus").Click();
             browser.FindElementByCssSelector("input[id=banner_Url]").SendKeys("Url-баннера");
             Css("#RegionDropDown").SelectByText("Белгород");
             browser.FindElementByCssSelector("input[id=isEnabled]").Click();

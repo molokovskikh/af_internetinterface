@@ -217,6 +217,16 @@ namespace Inforoom2.Models
 		[OneToMany(2, ClassType = typeof (ClientOrder))]
 		public virtual IList<ClientOrder> LegalClientOrders { get; set; }
 
+		public virtual string ClientId
+		{
+			get
+			{
+				var mask = "00000";
+				var idString = Id.ToString();
+				return mask.Length - idString.Length > 0 ? mask.Substring(idString.Length) + idString : idString;
+			}
+		}
+
 		public virtual bool HasRentalHardWare
 		{
 			get { return RentalHardwareList != null && RentalHardwareList.Count(s => s.IsActive) > 0; }
@@ -252,6 +262,11 @@ namespace Inforoom2.Models
 			return FindActiveService<T>() != null;
 		}
 
+
+		public virtual bool IsDisabledByBilling()
+		{
+			return Disabled && AutoUnblocked && Status.Type == StatusType.NoWorked;
+		}
 
 		/// <summary>
 		/// Метод для проверки, арендовано ли оборудование типа hwType у клиента
@@ -307,6 +322,7 @@ namespace Inforoom2.Models
 			return services.Sum(c => c.GetPrice());
 		}
 
+		///////////////////////////////////////////////////////////////////////////////////Это вроде бы для физика.=>
 		/// <summary>
 		/// Формирует итоговую цену Интернета за месяц по данному тарифному плану
 		/// </summary>
@@ -325,6 +341,14 @@ namespace Inforoom2.Models
 				return finalPrice;
 			return prePrice;
 		}
+
+		public virtual decimal ToPay(bool isBlocked = false)
+		{
+			var toPay = GetTariffPrice(isBlocked) - PhysicalClient.Balance;
+			return toPay <= 0m ? 0m : toPay < 10m ? 10m : toPay;
+		}
+
+		///////////////////////////////////////////////////////////////////////////////////Это вроде бы для физика.  <=
 
 		/// <summary>
 		/// Формирует итоговую цену для разблокировки клиента
@@ -465,6 +489,7 @@ namespace Inforoom2.Models
 			}
 			return null;
 		}
+
 
 		public virtual bool HasPassportData()
 		{
@@ -691,7 +716,7 @@ namespace Inforoom2.Models
 		/// <param name="NewStatus"></param>
 		/// <param name="employee"></param>
 		/// <returns></returns>
-		public virtual string TryToChangeStatus(ISession dbSession, Status NewStatus, Employee employee,  ref bool updateSce)
+		public virtual string TryToChangeStatus(ISession dbSession, Status NewStatus, Employee employee, ref bool updateSce)
 		{
 			string message = "";
 			var oldStatus = Status;

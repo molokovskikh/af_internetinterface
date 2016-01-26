@@ -16,7 +16,7 @@ namespace InforoomControlPanel.Test.Functional.Slide
         {
             Open("Slide/SlideIndex");
             var slideCount = DbSession.Query<Inforoom2.Models.Slide>().Count();
-            browser.FindElementByCssSelector(".entypo-plus").Click();
+            browser.FindElementByCssSelector(".SlideIndex .entypo-plus").Click();
             browser.FindElementByCssSelector("input[id=slide_Url]").SendKeys("Url-слайда");
             Css("#RegionDropDown").SelectByText("Белгород");
             browser.FindElementByCssSelector("input[id=isEnabled]").Click();

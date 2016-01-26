@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Inforoom2.Models;
 using NHibernate.Linq;
@@ -16,8 +17,11 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 
 			Open("Client/InfoPhysical?Id=" + client.Id);
 			Css("#PrivateMsgBtn").Click();
+			ClosePreviousTab();
+
 			AssertText(client.PhysicalClient.FullName);
-			Css("#privateMessage_Text").SendKeys("Тестовое сообщение");
+			WaitForCss("[name='privateMessage.Text']", 10);
+            Css("#privateMessage_Text").SendKeys("Тестовое сообщение");
 			Css("#privateMessage_EndDate").SendKeys(DateTime.Now.ToShortDateString());
 			// возникает ошибка бес "скликивания" по форме, 
 			// т.к. пенель календаря заслоняет следующее поле 

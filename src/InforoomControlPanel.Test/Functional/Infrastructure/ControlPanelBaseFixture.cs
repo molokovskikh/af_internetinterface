@@ -8,6 +8,8 @@ using Inforoom2.Test.Infrastructure;
 using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
+using InforoomControlPanel;
+using InternetInterface.Helpers;
 
 namespace InforoomControlPanel.Test.Functional.infrastructure
 {
@@ -21,10 +23,15 @@ namespace InforoomControlPanel.Test.Functional.infrastructure
 		{
 			var adminName = Environment.UserName;
 			var employee = DbSession.Query<Employee>().First(i => i.Login == adminName);
-			Employee = employee;
+			Employee = employee; 
 			DefaultEmployeePassword =  ConfigurationManager.AppSettings["DefaultEmployeePassword"];
 			LoginForAdmin();
-		}
+			Open("Admin/RenewActionPermissionsJs"); var permissions = DbSession.Query<Permission>().ToList();
+			foreach (var item in permissions) employee.Permissions.Add(item);
+			DbSession.Save(employee);
+			DbSession.Flush();
+			Open("Admin/Statistic");
+        }
 
 		[TearDown]
 		public void ControlPanelTearDown()

@@ -1,4 +1,5 @@
 ﻿@model Client
+@using Common.Tools
 @using Inforoom2.Components
 @using Inforoom2.Helpers
 @using Inforoom2.Models
@@ -10,6 +11,9 @@
 	List<Plan> planList = ViewBag.PlanList;
 	var internetService = client.ClientServices.FirstOrDefault(s => s.Service.Name == "Internet");
 	var isActivatedByUser = internetService != null ? internetService.ActivatedByUser : false;
+	string redmineTaskComment = ViewBag.RedmineTaskComment ?? "";
+	ClientEndpoint endpoint = client.Endpoints.FirstOrDefault();
+	var lease = endpoint != null ? endpoint.LeaseList.LastOrDefault() : null;
 }
 <div class="panel panel-default blockJsLockControll">
 @using (@Html.BeginForm("InfoPhysical", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
@@ -28,7 +32,7 @@
 	<div class="panel-body">
 		<table id="table-2" class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable border-right-white" role="grid" aria-describedby="table-2_info">
 			<tbody>
-			<tr>
+			<tr class="@(lease != null && lease.LeaseEnd > SystemTime.Now() ? "online" : "")">
 				<td>Номер лицевого счета</td>
 				<td>
 					<span>@client.Id</span>
@@ -42,7 +46,7 @@
 			</tr>
 			<tr>
 				<td>
-					<a class="c-pointer blue addressAjaxRunner" title="Изменение тарифа" data-toggle="modal" data-target="#ModelForAddress" onclick="StartAddressAjaxRunner(this)">Адрес подключения</a>
+					<a class="c-pointer blue addressAjaxRunner" title="Изменение адрес подключения" data-toggle="modal" data-target="#ModelForAddress" onclick="StartAddressAjaxRunner(this)">Адрес подключения</a>
 				</td>
 				<td style="width: 60%;">
 					<span>@client.PhysicalClient.Address.GetStringForPrint(city: false)</span>
@@ -86,7 +90,7 @@
 					<span>@client.PhysicalClient.VirtualBalance.ToString("0.00")</span>
 				</td>
 			</tr>
-			<tr>
+			<tr class="@(client.Status.Type == StatusType.NoWorked || client.Status.Type == StatusType.Dissolved ? "appeal Block" : "") @(client.Status.Type == StatusType.Dissolved ? "statusDissolved" : "")">
 				<td>Статус клиента</td>
 				<td>
 					<span>@client.Status.Name</span>
@@ -115,7 +119,6 @@
 					</td>
 				</tr>
 			}
-
 			@if (client.ClientRequest != null) {
 				<tr>
 					<td>Создан по заявке</td>
@@ -132,8 +135,16 @@
 					</td>
 				</tr>
 			}
+			@if (client.IsDisabledByBilling() || client.PhysicalClient.Balance < 0) {
+				<tr>
+					<td>Сумма для разблокировки</td>
+					<td>
+						<span>@client.ToPay(true).ToString("0.00") руб.</span>
+					</td>
+				</tr>
+			}
 			<tr>
-				<td>Количество бесплатных дней</td>
+				<td>Добровольная блокировка, доступно бесплатных дней</td>
 				<td>
 					<span>@client.FreeBlockDays</span>
 				</td>
@@ -156,7 +167,6 @@
 					</tr>
 				}
 			}
-
 			@if (client.StartNoBlock.HasValue) {
 				<tr>
 					<td>Дата начала программы скидок</td>
@@ -165,24 +175,22 @@
 					</td>
 				</tr>
 			}
-
-
 			<tr>
 				<td>Подключение</td>
 				<td>
 					@if (client.ConnectionRequest != null && client.ConnectionRequest.ServiceMan != null && client.ConnectionRequest.Status) {
-						<a class="c-pointer" href="@Url.Action("AttachRequest", "ConnectionTeam", new {@Id = client.Id, @type = ServicemenScheduleItem.Type.ClientConnectionRequest})">
+						<a target="_blank" class="c-pointer" href="@Url.Action("AttachRequest", "ConnectionTeam", new {@Id = client.Id, @type = ServicemenScheduleItem.Type.ClientConnectionRequest})">
 							<span>выполнил @client.ConnectionRequest.ServiceMan.Employee.Name - @(client.ConnectionRequest.EndTime.HasValue ? client.ConnectionRequest.EndTime.Value.ToString("dd.MM.yyyy HH:mm") : "")</span>
 						</a>
 					}
 					else {
 						if (client.ConnectionRequest != null && client.ConnectionRequest.ServiceMan != null && client.ConnectionRequest.Status == false) {
-							<a class="c-pointer" href="@Url.Action("AttachRequest", "ConnectionTeam", new {@Id = client.Id, @type = ServicemenScheduleItem.Type.ClientConnectionRequest})">
+							<a target="_blank" class="c-pointer" href="@Url.Action("AttachRequest", "ConnectionTeam", new {@Id = client.Id, @type = ServicemenScheduleItem.Type.ClientConnectionRequest})">
 								<span>выполняет @client.ConnectionRequest.ServiceMan.Employee.Name - @(client.ConnectionRequest.EndTime.HasValue ? client.ConnectionRequest.EndTime.Value.ToString("dd.MM.yyyy HH:mm") : "")</span>
 							</a>
 						}
 						else {
-							<a class="c-pointer" href="@Url.Action("AttachRequest", "ConnectionTeam", new {@Id = client.Id, @type = ServicemenScheduleItem.Type.ClientConnectionRequest})">не назначено</a>
+							<a target="_blank" class="c-pointer" href="@Url.Action("AttachRequest", "ConnectionTeam", new {@Id = client.Id, @type = ServicemenScheduleItem.Type.ClientConnectionRequest})">не назначено</a>
 						}
 					}
 				</td>
@@ -246,6 +254,14 @@
 				<td style="max-width: 60px;">Задача в Redmine для клиента</td>
 				<td>
 					@Html.TextBoxFor(o => client.RedmineTask, new {@class = "form-control"})
+					@ViewBag.Validation.GetError(client, "redmineTaskComment")
+				</td>
+				</td>
+			</tr>
+			<tr>
+				<td style="max-width: 60px;">Комментарий к задаче</td>
+				<td>
+					@Html.TextBoxFor(o => redmineTaskComment, new {@Name = "redmineTaskComment", @class = "form-control"})
 				</td>
 			</tr>
 			<tr>

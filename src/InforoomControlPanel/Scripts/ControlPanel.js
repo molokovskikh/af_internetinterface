@@ -173,7 +173,7 @@ function ControlPanel() {
 		} else {
 			msg = this.getCookie("ErrorMessage", true);
 			if (msg)
-				$('.server-message').prepend('<div class="col-md-12 alert alert-danger">' + msg + '</div>');
+				$('.server-message').prepend('<div class="col-md-12 alert alert-danger">' + msg + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
 		}
 	}
 

@@ -1,22 +1,27 @@
 ﻿@using Inforoom2.Helpers
 @using Inforoom2.Models
+@using Common.Tools
+@using Inforoom2.Models.Services
+@using InforoomControlPanel.Helpers
 @using NHibernate
 
 @{
 	Client client = ViewBag.Client;
 	bool rentIsActive = ViewBag.RentIsActive;
-	ViewBag.Title = "Информация по клиенту: " + client.PhysicalClient.FullName + " (" + client.Id + ") ";
+	ClientEndpoint endpoint = client.Endpoints.FirstOrDefault();
+	var lease = endpoint != null ? endpoint.LeaseList.LastOrDefault() : null;
+	ViewBag.Title = "Информация по клиенту"+ ( lease != null && lease.LeaseEnd > SystemTime.Now() ? " (он-лайн) ":"") +": " + client.PhysicalClient.FullName + " (" + client.ClientId + ") ";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	string action = ViewBag.ActionName;
 	string controller = ViewBag.ControllerName;
-	List<SwitchAddress> networkNodeList = ViewBag.networkNodeList;
-	Employee currentEmployeeForUserName = ViewBag.CurrentEmployee;
+	Employee currentEmployee = ViewBag.CurrentEmployee;
 	string currentSubViewName = ViewBag.CurrentSubViewName;
+
 }
 
 @section JavaScript{
 	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js")"></script>
-	<script type="text/javascript" src="@Url.Content("~/Scripts/InfoClientPage.js?v=2")"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/InfoClientPage.js?v=3")"></script>
 }
 <div class="panel panel-primary col-md-12">
 	@if (!string.IsNullOrEmpty(currentSubViewName)) {
@@ -24,36 +29,46 @@
 			@Html.Hidden("currentSubViewName", currentSubViewName)
 		</div>
 	}
+
+@if(currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010000.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_001000.ToString()))){
 	<ul class="list-group InfoPhysicalNaviPan">
 		<li class="list-group-item">
-			<a id="PrivateMsgBtn" class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("PrivateMessage", "ClientActions", new {id = client.Id})">
+			<a id="PrivateMsgBtn" class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="@Url.Action("PrivateMessage", "ClientActions", new {id = client.Id})">
 				<i class="entypo-plus-circled"></i>
 				Приватное сообщение
 			</a>
-			<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequestCreate", "ServiceRequest", new {@id = client.Id})">
+			<a class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="@Url.Action("ServiceRequestCreate", "ServiceRequest", new {@id = client.Id})">
 				<i class="entypo-doc-text"></i>
 				Сервисная заявка
 			</a>
-			<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("AttachRequest", "ConnectionTeam", new {@id = client.Id, @type = "ClientConnectionRequest"})">
+			<a class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="@Url.Action("AttachRequest", "ConnectionTeam", new {@id = client.Id, @type = "ClientConnectionRequest"})">
 				<i class="entypo-briefcase"></i>
-				Заявка на подключение
+				Назначить в график
 			</a>
-			<a class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="@ConfigHelper.GetParam("inforoom2Url")Account/AdminLogin?clientId=@(client.Id)&username=@(currentEmployeeForUserName.Login)">
+			<a class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="@ConfigHelper.GetParam("inforoom2Url")Account/AdminLogin?clientId=@(client.Id)&username=@(currentEmployee.Login)">
 				<i class="entypo-key"></i>
 				Войти в личный кабинет
 			</a>
 
 		</li>
 		<li class="list-group-item">
-			<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("LeasesLog", "Client", new {@id = client.Id})">
+			<a class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="@Url.Action("LeasesLog", "Client", new {@id = client.Id})">
 				<i class="entypo-chart-area"></i>
 				Статистика работы
 			</a>
-			<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ConnectionCard", "Client", new {@id = client.Id})">
+			<a class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="@Url.Action("ConnectionCard", "Client", new {@id = client.Id})">
 				<i class="entypo-chart-area"></i>
 				Наряд на подключение (обновление пароля)
 			</a>
-			<a class="btn @(rentIsActive ? "btn-red" : "btn-success") btn-sm btn-icon icon-left" href="@Url.Action("HardwareList", "HardwareRent", new {id = client.Id})">
+
+			@if (!string.IsNullOrEmpty(client.RedmineTask)) {
+				<a title="@client.RedmineTask" class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="http://redmine.analit.net/issues/@(client.RedmineTask)">
+					<i class="entypo-chart-area"></i>
+					Задача на Redmine
+				</a>
+			}
+			<a class="btn @(rentIsActive ? "btn-red" : "btn-success") btn-sm btn-icon icon-left" target="_blank" href="@Url.Action("HardwareList", "HardwareRent", new {id = client.Id})">
 				<i class="entypo-plus-circled"></i>
 				Аренда оборудования
 			</a>
@@ -63,75 +78,53 @@
 					<p style="background-color: pink; color: black">ПРИ РАСТОРЖЕНИИ ДОГОВОРА КЛИЕНТ ДОЛЖЕН ВЕРНУТЬ ОБОРУДОВАНИЕ</p>
 				</div>
 			}
-
 		</li>
 	</ul>
+}
 </div>
 <div class="panel panel-default" style="border-color: #ffffff;">
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-lg-6">
-				@Html.Partial("subviews/_PrivateInfo", client)
-				@Html.Partial("subviews/_PassportData", client)
-				@Html.Partial("subviews/_Endpoint", client)
-				@Html.Partial("subviews/_Payments", client)
-				@Html.Partial("subviews/_WriteOffs", client)
+@if(currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010001.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010001.ToString()))){
+	@Html.Partial("subviews/_PrivateInfo", client)
+}
+@if(currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010002.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010002.ToString())) ){
+	@Html.Partial("subviews/_PassportData", client)
+}
+@if(currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010003.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010003.ToString()))){
+	@Html.Partial("subviews/_Endpoint", client)
+}
+@if(currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010004.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010004.ToString()))){
+	@Html.Partial("subviews/_Payments", client)
+}
+@if(currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010005.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010005.ToString()))){
+	@Html.Partial("subviews/_WriteOffs", client)
+}
 			</div>
 			<div class="col-lg-6">
-				@Html.Partial("subviews/_Contacts", client)
-				@Html.Partial("subviews/_Appeals", client)
-				@Html.Partial("subviews/_UnresolvedCalls", client)
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010006.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010006.ToString()))){
+	@Html.Partial("subviews/_Contacts", client)
+}
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010007.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010007.ToString()))){
+	@Html.Partial("subviews/_Appeals", client)
+}
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010008.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010008.ToString()))){
+	@Html.Partial("subviews/_UnresolvedCalls", client)
+}
 			</div>
 		</div>
 	</div>
 </div>
-
-
-<div class="panel panel-primary col-md-12">
-
-
-	<div class="panel-body col-md-6">
-		@if (networkNodeList != null && networkNodeList.Count > 0) {
-			foreach (var node in networkNodeList) {
-				<div class="form-group">
-					<div class="col-sm-10">
-						<h5>
-							<strong>@node.NetworkNode.Name</strong>
-						</h5>
-						@foreach (var iswitch in node.NetworkNode.Switches) {
-							<h5>@iswitch.Name</h5>
-							<p>
-								<span>Свободные порты: </span>@(iswitch.PortCount - @iswitch.Endpoints.Count)
-							</p>
-							<p>
-								<span>Витые пары: </span>
-								@if (iswitch.NetworkNode.TwistedPairs.Count > 0) {
-									int countOfPairs = 0;
-									for (int i = 0; i < iswitch.NetworkNode.TwistedPairs.Count; i++) {
-										countOfPairs += iswitch.NetworkNode.TwistedPairs[i].PairCount;
-										if (i > 0) {
-											@Html.Raw(" + " + iswitch.NetworkNode.TwistedPairs[i].PairCount)
-										}
-										else {
-											@Html.Raw(iswitch.NetworkNode.TwistedPairs[i].PairCount)
-										}
-										if (i == iswitch.NetworkNode.TwistedPairs.Count - 1) {
-											@Html.Raw(" = " + countOfPairs)
-										}
-									}
-								}
-								else {
-									@Html.Raw(" нет ")
-								}
-							</p>
-						}
-					</div>
-				</div>
-			}
-		}
-	</div>
-
-</div>
+ 
 <div style="clear: both;"></div>
 
 @{

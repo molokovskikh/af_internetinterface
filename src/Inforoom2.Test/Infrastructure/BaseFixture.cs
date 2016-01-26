@@ -110,6 +110,14 @@ namespace Inforoom2.Test.Infrastructure
 			browser.Manage().Cookies.AddCookie(cookie);
 		}
 
+		public void ClosePreviousTab()
+		{
+			var tabs2 = browser.WindowHandles.ToList();
+			browser.SwitchTo().Window(tabs2[0]);
+			browser.Close();
+			browser.SwitchTo().Window(tabs2[1]);
+		}
+
 		/// <summary>
 		/// Получет куки по имени
 		/// </summary>

@@ -1,5 +1,6 @@
 ﻿@using System.Web.UI.WebControls
 @using Inforoom2.Models
+@using InforoomControlPanel.Helpers
 <!DOCTYPE html>
 @{
 	string username = "";
@@ -25,7 +26,7 @@
 	<link rel="stylesheet" href="~/assets/css/neon-theme.css?v=1">
 	<link rel="stylesheet" href="~/assets/css/neon-forms.css?v=2">
 	<link rel="stylesheet" href="~/assets/css/custom.css?v=4">
-	<link rel="stylesheet" href="~/Css/style.css?v=4"></link>
+	<link rel="stylesheet" href="~/Css/style.css?v=5"></link>
 
 	<script src="~/assets/js/jquery-1.11.0.min.js?v=1"></script>
 
@@ -93,63 +94,72 @@
 		<span class="title">Главная</span>
 	</a>
 </li>
-@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000000"))) {
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_000000.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000000.ToString()))) {
 	<li>
 		<a>
 			<i class="entypo-users"></i>
 			<span class="title">Клиенты</span>
 		</a>
 		<ul class="visible">
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000001"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_000001.ToString()) != null
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000001.ToString()))) {
 				<li>
 					<a href="@Url.Action("List", "Client")">
 						<span class="title">Список клиентов</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000002"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_000002.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000002.ToString()))) {
 				<li>
 					<a href="@Url.Action("ListOnline", "Client")">
 						<span class="title">Онлайн</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000003") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000003"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_000003.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000003.ToString()))) {
 				<li>
 					<a href="@Url.Action("Appeals", "Client")">
 						<span class="title">Обращения</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000004") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000004"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_000004.ToString()) != null
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000004.ToString()))) {
 				<li>
 					<a href="@Url.Action("RegistrationPhysical", "Client")">
 						<span class="title">Зарегистрировать физ. лицо</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000005") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000005"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_000005.ToString()) != null
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000005.ToString()))) {
 				<li>
 					<a href="@Url.Action("RegistrationLegal", "Client")">
 						<span class="title">Зарегистрировать юр. лицо</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000006") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000006"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_000006.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000006.ToString()))) {
 				<li>
 					<a href="@Url.Action("Request", "Client")">
 						<span class="title">Создать заявку на подключение</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000007") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000007"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_000007.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000007.ToString()))) {
 				<li>
 					<a href="@Url.Action("RequestsList", "Client")">
 						<span class="title">Заявки на подключение</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_000008") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_000008"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_000008.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000008.ToString()))) {
 				<li>
 					<a href="@Url.Action("AgentList", "Client")">
 						<span class="title">Агенты</span>
@@ -160,35 +170,40 @@
 	</li>
 }
 
-@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_001000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_001000"))) {
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_001000.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_001000.ToString()))) {
 	<li>
 		<a>
 			<i class="entypo-attention"></i>
 			<span class="title">Сервисные бригады</span>
 		</a>
 		<ul class="visible">
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_001001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_001001"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_001001.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_001001.ToString()))) {
 				<li>
 					<a href="@Url.Action("Servicemen", "ConnectionTeam")">
 						<span class="title">Сервисные инженеры</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_001002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_001002"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_001002.ToString()) != null
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_001002.ToString()))) {
 				<li>
 					<a href="@Url.Action("ServiceRequestList", "ServiceRequest")">
 						<span class="title">Сервисные заявки</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_001003") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_001003"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_001003.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_001003.ToString()))) {
 				<li>
 					<a href="@Url.Action("ConnectionTable", "ConnectionTeam")">
 						<span class="title">График назначенных заявок</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_001004") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_001004"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_001004.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_001004.ToString()))) {
 				<li>
 					<a href="@Url.Action("UnpluggedClientList", "ConnectionTeam")">
 						<span class="title">Подключения клиентов</span>
@@ -198,35 +213,40 @@
 		</ul>
 	</li>
 }
-@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_002000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_002000"))) {
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_002000.ToString()) != null
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_002000.ToString()))) {
 	<li>
 		<a>
 			<i class="entypo-picture"></i>
 			<span class="title">Контент</span>
 		</a>
 		<ul class="visible">
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_002001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_002001"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_002001.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_002001.ToString()))) {
 				<li>
 					<a href="@Url.Action("QuestionIndex", "Question")">
 						<span class="title">Вопросы и ответы</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_002002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_002002"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_002002.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_002002.ToString()))) {
 				<li>
 					<a href="@Url.Action("NewsIndex", "News")">
 						<span class="title">Новости</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_002003") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_002003"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_002003.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_002003.ToString()))) {
 				<li>
 					<a href="@Url.Action("SlideIndex", "Slide")">
 						<span class="title">Слайды</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_002004") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_002004"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_002004.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_002004.ToString()))) {
 				<li>
 					<a href="@Url.Action("BannerIndex", "Banner")">
 						<span class="title">Баннеры</span>
@@ -236,28 +256,32 @@
 		</ul>
 	</li>
 }
-@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_003000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_003000"))) {
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_003000.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_003000.ToString()))) {
 	<li>
 		<a>
 			<i class="entypo-user"></i>
 			<span class="title">Сотрудники</span>
 		</a>
 		<ul class="visible">
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_003001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_003001"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_003001.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_003001.ToString()))) {
 				<li>
 					<a href="@Url.Action("EmployeeList", "Admin")">
 						<span class="title">Сотрудники</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_003002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_003002"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_003002.ToString()) != null
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_003002.ToString()))) {
 				<li>
 					<a href="@Url.Action("RoleList", "Admin")">
 						<span class="title">Роли</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_003003") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_003003"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_003003.ToString()) != null
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_003003.ToString()))) {
 				<li>
 					<a href="@Url.Action("PermissionList", "Admin")">
 						<span class="title">Права</span>
@@ -267,21 +291,24 @@
 		</ul>
 	</li>
 }
-@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_004000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_004000"))) {
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_004000.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_004000.ToString()))) {
 	<li>
 		<a>
 			<i class="entypo-mail"></i>
 			<span class="title">Запросы пользователей</span>
 		</a>
 		<ul class="visible">
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_004001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_004001"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_004001.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_004001.ToString()))) {
 				<li>
 					<a href="@Url.Action("TicketIndex", "Ticket")">
 						<span class="title">Запросы в техподдержку</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_004002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_004002"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_004002.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_004002.ToString()))) {
 				<li>
 					<a href="@Url.Action("CallMeBackTicketIndex", "Ticket")">
 						<span class="title">Заявки на обратный звонок</span>
@@ -291,57 +318,65 @@
 		</ul>
 	</li>
 }
-@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005000"))) {
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_005000.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_005000.ToString()))) {
 	<li>
 		<a>
-			<i class="entypo-mail"></i>
+			<i class="entypo-plus"></i>
 			<span class="title">Тарифы</span>
 		</a>
 		<ul class="visible">
 
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005001"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_005001.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_005001.ToString()))) {
 				<li>
 					<a href="@Url.Action("PlanIndex", "Plans")">
 						<span class="title">Тарифы</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005002"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_005002.ToString()) != null
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_005002.ToString()))) {
 				<li>
 					<a href="@Url.Action("HtmlPlanIndex", "Plans")">
 						<span class="title">Тарифы HTML</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005003") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005003"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_005003.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_005003.ToString()))) {
 				<li>
 					<a href="@Url.Action("InternetPlanChangerIndex", "Plans")">
 						<span class="title">Смена по истечению срока</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005004") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005004"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_005004.ToString()) != null
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_005004.ToString()))) {
 				<li>
 					<a href="@Url.Action("TvChannelList", "Plans")">
 						<span class="title">ТВ каналы</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005005") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005005"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_005005.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_005005.ToString()))) {
 				<li>
 					<a href="@Url.Action("TvChannelGroupList", "Plans")">
 						<span class="title">Группы ТВ каналов</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005006") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005006"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_005006.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_005006.ToString()))) {
 				<li>
 					<a href="@Url.Action("TvProtocolList", "Plans")">
 						<span class="title">Протоколы для ТВ</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_005007") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_005007"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_005007.ToString()) != null
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_005007.ToString()))) {
 				<li>
 					<a href="@Url.Action("PackageSpeedList", "Plans")">
 						<span class="title">Скорость</span>
@@ -351,22 +386,25 @@
 		</ul>
 	</li>
 }
-@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_006000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_006000"))) {
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_006000.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_006000.ToString()))) {
 	<li>
 		<a>
-			<i class="entypo-mail"></i>
+			<i class="entypo-plus"></i>
 			<span class="title">Коммутаторы</span>
 		</a>
 		<ul class="visible">
 
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_006001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_006001"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_006001.ToString()) != null
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_006001.ToString()))) {
 				<li>
 					<a href="@Url.Action("SwitchList", "Switch")">
 						<span class="title">Коммутаторы</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_006002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_006002"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_006002.ToString()) != null
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_006002.ToString()))) {
 				<li>
 					<a href="@Url.Action("NetworkNodeList", "Switch")">
 						<span class="title">Узлы связи</span>
@@ -376,35 +414,40 @@
 		</ul>
 	</li>
 }
-@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_007000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_007000"))) {
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_007000.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_007000.ToString()))) {
 	<li>
 		<a>
-			<i class="entypo-mail"></i>
+			<i class="entypo-plus"></i>
 			<span class="title">Адреса</span>
 		</a>
 		<ul class="visible">
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_007001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_007001"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_007001.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_007001.ToString()))) {
 				<li>
 					<a href="@Url.Action("SwitchAddressList", "Address")">
 						<span class="title">Адреса коммутаторов</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_007002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_007002"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_007002.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_007002.ToString()))) {
 				<li>
 					<a href="@Url.Action("CityList", "Address")">
 						<span class="title">Города</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_007003") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_007003"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_007003.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_007003.ToString()))) {
 				<li>
 					<a href="@Url.Action("RegionList", "Address")">
 						<span class="title">Регионы</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_007004") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_007004"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_007004.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_007004.ToString()))) {
 				<li>
 					<a href="@Url.Action("StreetList", "Address")">
 						<span class="title">Улицы</span>
@@ -412,7 +455,8 @@
 				</li>
 			}
 
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_007005") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_007005"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_007005.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_007005.ToString()))) {
 				<li>
 					<a href="@Url.Action("HouseList", "Address")">
 						<span class="title">Дома</span>
@@ -422,21 +466,24 @@
 		</ul>
 	</li>
 }
-@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_008000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_008000"))) {
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_008000.ToString()) != null
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_008000.ToString()))) {
 	<li>
 		<a>
-			<i class="entypo-mail"></i>
+			<i class="entypo-plus"></i>
 			<span class="title">Оборудование</span>
 		</a>
 		<ul class="visible">
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_008001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_008001"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_008001.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_008001.ToString()))) {
 				<li>
 					<a href="@Url.Action("ShowHardware", "HardwareTypes")">
 						<span class="title">Список оборудования</span>
 					</a>
 				</li>
 			}
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_008002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_008002"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_008002.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_008002.ToString()))) {
 				<li>
 					<a href="@Url.Action("ClientList", "HardwareTypes")">
 						<span class="title">Список клиентов</span>
@@ -447,14 +494,16 @@
 	</li>
 }
 
-@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_009000") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_009000"))) {
+@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_009000.ToString()) != null 
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_009000.ToString()))) {
 	<li>
 		<a>
-			<i class="entypo-mail"></i>
+			<i class="entypo-plus"></i>
 			<span class="title">Отчеты</span>
 		</a>
 		<ul class="visible">
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_009001") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_009001"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_009001.ToString()) != null 
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_009001.ToString()))) {
 				<li>
 					<a href="@Url.Action("Client", "SpreadSheet")">
 						<span class="title">По клиентам</span>
@@ -462,7 +511,8 @@
 				</li>
 			}
 
-			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == "Link_009002") != null || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == "Link_009002"))) {
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_009002.ToString()) != null
+				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_009002.ToString()))) {
 				<li>
 					<a href="@Url.Action("WriteOffs", "SpreadSheet")">
 						<span class="title">По списаниям</span>

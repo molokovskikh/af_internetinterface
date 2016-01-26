@@ -12,6 +12,8 @@ namespace InforoomControlPanel.Test.Functional.Admin
 		[Test, Description("Изменение роли")]
 		public void EditRole()
 		{
+			Employee.Permissions.Clear();
+			DbSession.SaveOrUpdate(Employee);
 			Open("Admin/RoleList");
 			var role = DbSession.Query<Role>().First(p => p.Name == "Admin");
 			var targetRole = browser.FindElementByXPath("//td[contains(.,'" + role.Name + "')]");
@@ -20,7 +22,7 @@ namespace InforoomControlPanel.Test.Functional.Admin
 			button.Click();
 			//удаляем из выбранной роли право доступа к странице с адресами городов
 			var roleEdit = DbSession.Query<Permission>().First(p => p.Name == "AddressController_CityList");
-			var targetRoleEdit = browser.FindElementByXPath("//div[@class='col-sm-10'][contains(.,'" + roleEdit.Name + "')]");
+			var targetRoleEdit = browser.FindElementByXPath("//div[@class='col-sm-10 listItem gray'][contains(.,'" + roleEdit.Name + "')]");
 			var rowPlanPrice = targetRoleEdit.FindElement(By.XPath(".."));
 			var buttonPlanTransfers = rowPlanPrice.FindElement(By.CssSelector(".entypo-cancel-circled"));
 			buttonPlanTransfers.Click();
@@ -29,6 +31,7 @@ namespace InforoomControlPanel.Test.Functional.Admin
 			DbSession.Refresh(role);
 			var permossionRole = role.Permissions.ToList().FirstOrDefault(i => i.Name == "AddressController_CityList");
 			Assert.That(permossionRole, Is.Null, "Право у роли  должно удалиться и в базе данных");
+			DbSession.Flush();
 			ControlPanelTearDown();
 			LoginForAdmin();   
 			//заходим на страницу, которую удалили из прав доступа у роли

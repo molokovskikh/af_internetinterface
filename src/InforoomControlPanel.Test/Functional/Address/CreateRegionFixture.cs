@@ -14,7 +14,7 @@ namespace InforoomControlPanel.Test.Functional.Address
         public void CreateRegion()
         {
             Open("Address/RegionList");
-            browser.FindElementByCssSelector(".entypo-plus").Click();
+            browser.FindElementByCssSelector(".RegionList .entypo-plus").Click();
             browser.FindElementByCssSelector("input[id=Region_Name]").SendKeys("Ярославль");
             Css("#CityDropDown").SelectByText("Белгород");
             browser.FindElementByCssSelector("input[id=Region_OfficeAddress]").SendKeys("улица Трубецкого д12");
