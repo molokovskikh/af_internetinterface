@@ -1557,7 +1557,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\ClientInfoViewHelper.cs" />
+    <Compile Include="Helpers\EmployeePermissionViewHelper.cs" />
     <Compile Include="ReportTemplates\FilterReportModels.cs" />
     <Compile Include="ReportTemplates\LeaseReport.cs" />
     <Compile Include="ReportTemplates\FilterReport.cs" />

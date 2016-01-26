@@ -12,8 +12,11 @@ function ClientPage() {
 	//отобразить сообщение (ошибка)
 	this.ShowMessageError = function(message) {
 		$('.server-message').html("");
-		$('.server-message').prepend('<div class="col-md-12 alert alert-danger">' + message + '</div>');
-		scrollTo(".server-message", 100);
+		$('.server-message').prepend('<div class="col-md-12 alert alert-danger errorFixed">' + message + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+		//	scrollTo(".server-message", 100);
+		//$('.alert-danger.errorFixed').click(function() {
+		//	$(this).remove();
+		//});
 	}
 	/////////////////////////////////////////////////| Названия стилей-маркеров
 	//основной блок
@@ -363,14 +366,21 @@ function updatePortsState(data) {
 			var portTagItem = this;
 			$(portTagItem).removeAttr("href");
 			$(portTagItem).attr("title", "свободный порт");
-			if (data == null) {
+			var switchComment = $("#SwitchComment");
+			if (data == null || data.Comment == null) {
+				switchComment.html("");
+
+			} else {
+				switchComment.html(data.Comment);
+			}
+			if (data == null || data.Ports == null) {
 				$(portTagItem).addClass("free");
 			} else {
 				used = true;
-				for (var i = 0; i < data.length; i++) {
-					if ($(portTagItem).html().indexOf("<span>" + data[i].endpoint + "</span>") != -1) {
+				for (var i = 0; i < data.Ports.length; i++) {
+					if ($(portTagItem).html().indexOf("<span>" + data.Ports[i].endpoint + "</span>") != -1) {
 						//Физ.лицо, Юр лицо
-						$(portTagItem).attr("href", (data[i].type == 0 ? linkA.val() : linkB.val()) + "/" + data[i].client);
+						$(portTagItem).attr("href", (data.Ports[i].type == 0 ? linkA.val() : linkB.val()) + "/" + data.Ports[i].client);
 						$(portTagItem).addClass("client");
 						$(portTagItem).attr("title", "занятый порт");
 						used = false;

@@ -8,7 +8,14 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	IList<PackageSpeed> packageSpeedList = ViewBag.PackageSpeedList;
 	InforoomModelFilter<Lease> pager = ViewBag.Pager;
+	List<Lease> leaseWithoutEndPointList = ViewBag.LeaseWithoutEndPointList;
+	leaseWithoutEndPointList = leaseWithoutEndPointList.OrderBy(s => s.LeaseBegin).ToList();
 	var leases = pager.GetItems();
+	if (pager.Page == 1) {
+		leases = leases.Where(s => !leaseWithoutEndPointList.Any(d => d.Id == s.Id)).ToList();
+		leaseWithoutEndPointList.ForEach(s => { leases.Insert(0, s); });
+	}
+
 }
 @section JavaScript{
 	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=1")"></script>
@@ -116,14 +123,14 @@
 				<a href="@pager.OrderBy(s => s.Endpoint.PackageId)">PackageId</a>
 			</th>
 			<th class="sorting" tabindex="0" aria-controls="table-2">
-				 Скорость 
+				Скорость
 			</th>
 		</tr>
 		</thead>
 
 		<tbody>
 		@foreach (var lease in leases) {
-			<tr role="row" class="odd">
+			<tr role="row" class="odd@(lease.Endpoint != null?"":" no-end-point")">
 				<td>@(lease.Id)</td>
 				<td>@(lease.Endpoint != null ? lease.Endpoint.Ip != null ? lease.Endpoint.Ip.MapToIPv4().ToString() : "" : "")</td>
 				<td>@(lease.Ip)</td>

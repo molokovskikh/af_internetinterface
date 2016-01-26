@@ -3,6 +3,9 @@
 	.main-content .servicemen.panel, .PrintTimeTable{ display: block !important;}
 	.pageBreak {page-break-after: always;} 
 }
+ .alert-danger{position: fixed;top: 18px;min-width: 572px;width: 62%;z-index: 99999;border:9px solid #BD3737; font-size: 13px;}
+
+ .listItem.gray:hover{background: #E2E2E2 !important;}
  .error{color:red; font-weight:600 !important;}
  .servicemen table { table-layout:fixed; overflow:hidden;}
  .servicemen td { height: 40px;}
@@ -13,10 +16,11 @@
  body a{ color: #00A651;font-weight: bold; }
  .hiddenOverflow {display: block;overflow: hidden;}
  .border-right-white tr td:last-child{border-right-color: #fff;}
-
+ .emptyBlock .panel-heading .panel-title a{ border-left: 15px solid #367756;padding-left: 10px;}
+ .emptyBlock .online td{background: #BDE8BC !important; }
+ .appeal.Block.statusDissolved td{background: #FF5454 !important;}
  #switchPorts tbody.large{  border: 1px solid #808080;border-bottom: none;border-left: none;border-top: 4px solid #333;}
  #switchPorts tbody.large tr:nth-child(2n) {border-bottom: 4px solid #333;}
-
  #switchPorts tbody{  border: 1px solid #808080;border-bottom: none;border-left: none;}
  #switchPorts .port {display: block;width: 23px;height: 23px;text-align: center;background: #FFF9B3;cursor: pointer;border-bottom: 1px solid #808080;border-left: 1px solid #808080;}
  #switchPorts .port.free{background: #A8DAB3;}
@@ -25,6 +29,7 @@
  #switchPorts .port.client{background: #F7ADAD;}
  #switchPorts .port.client:hover{background: #FF7878;}
  #switchPorts .port span{ position: relative;top: 12%;font-size: 13px;color:#333;}
+ .table .no-end-point td{background: #E5FCFD !important;}
  .table .fixedIp{ display: inline-block;}
  .table .fixedIp.text{ width: 120px !important;}
  .table .fixedIp.value{ width: 80px !important; margin-left: 3px;}

@@ -384,13 +384,13 @@ namespace Inforoom2.Models
 		/// <param name="staticAddress">Статические адреса</param>
 		/// <param name="errorMessage">Выходая ошибка</param>
 		public virtual void SaveSwitchForClient(ISession dbSession, int endpointId, string connectSum,
-			ConnectionHelper connection, StaticIp[] staticAddress, out string errorMessage)
+			ConnectionHelper connection, StaticIp[] staticAddress, out string errorMessage, Employee employee)
 		{
 			var client = this.Client;
 			//получаем базовые значения
 			var settings = new SettingsHelper(dbSession);
 			staticAddress = staticAddress ?? new StaticIp[0];
-            var newFlag = false;
+			var newFlag = false;
 			var clientEntPoint = new ClientEndpoint();
 
 			//если нет эндпоинта в БД, это новое подключение
@@ -399,7 +399,8 @@ namespace Inforoom2.Models
 				clientEntPoint = endPoint;
 			else
 				newFlag = true;
-			
+
+
 			//сохраняем начальные значения точки подключения
 			var oldPort = clientEntPoint.Port;
 			var oldSwitch = clientEntPoint.Switch;
@@ -421,7 +422,6 @@ namespace Inforoom2.Models
 			if (string.IsNullOrEmpty(connection.staticIp) || nullFlag) {
 				if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
 				    (oldSwitch != null && connection.Switch == oldSwitch.Id && connection.Port == oldPort.ToString())) {
-
 					//обновляем PackageId у SCE клиента
 					SceHelper.UpdatePackageId(dbSession, client);
 
@@ -481,6 +481,12 @@ namespace Inforoom2.Models
 						if (client.RatedPeriodDate == null)
 							client.RatedPeriodDate = DateTime.Now;
 					}
+
+					dbSession.Save(
+						new Appeal(
+							String.Format(newFlag ? "Создана новая точка подключения. {0} #{1}" : "Обновлена точка подключения. {0} #{1}",
+								clientEntPoint.Switch.Name, clientEntPoint.Switch.Id), client, AppealType.System, employee));
+
 					dbSession.Save(client);
 
 					//обновляем статические адреса для клиентской точки подключения
@@ -495,10 +501,11 @@ namespace Inforoom2.Models
 								dbSession.Save(s);
 							}
 					}
-				//	_connectSum = 0m;
+					//	_connectSum = 0m;
 
 					//создаем платеж за подключение
 					if (!string.IsNullOrEmpty(connectSum) && _connectSum != -1) {
+						ConnectSum = _connectSum;
 						var payments = dbSession.Query<PaymentForConnect>().Where(p => p.EndPoint == clientEntPoint).ToList();
 						if (!payments.Any())
 							dbSession.Save(new PaymentForConnect(_connectSum, clientEntPoint));
@@ -507,11 +514,13 @@ namespace Inforoom2.Models
 							payment.Sum = _connectSum;
 							dbSession.Save(payment);
 						}
+						dbSession.Save(client);
 					}
 				}
 				else {
-					errorMessage = string.Empty;
-					errorMessage += "Ошибка ввода IP адреса. ";
+					if (staticAddress.Length > 0) {
+						errorMessage += (String.IsNullOrEmpty(errorMessage) ? "" : ". ") + "Ошибка ввода IP адреса. ";
+					}
 				}
 			}
 		}

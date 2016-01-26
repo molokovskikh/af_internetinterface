@@ -14,7 +14,7 @@ namespace InforoomControlPanel.Test.Functional.News
         public void SuccessfulCreateNewsBlock()
         {
             Open("News/NewsIndex");
-            browser.FindElementByCssSelector(".entypo-plus").Click();
+            browser.FindElementByCssSelector(".NewsIndex .entypo-plus").Click();
             browser.FindElementByCssSelector("input[class=NewsVersionCheckbox]").Click();
             browser.FindElementByCssSelector("input[id=newsBlock_Title]").SendKeys("Главная новость");
             browser.FindElementByCssSelector("textarea[id=newsBlock_Preview]").SendKeys("Новые события");
@@ -32,7 +32,7 @@ namespace InforoomControlPanel.Test.Functional.News
         {
             Open("News/NewsIndex");
             var newsBlockCount = DbSession.Query<NewsBlock>().Count();
-            browser.FindElementByCssSelector(".entypo-plus").Click();
+            browser.FindElementByCssSelector(".NewsIndex .entypo-plus").Click();
             browser.FindElementByCssSelector(".btn.btn-green").Click();
             AssertText("Заголовок не может быть пустым");
             AssertText("Короткое описание не может быть пустым");

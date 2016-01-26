@@ -42,7 +42,7 @@
 				</div>
 				<div class="form-group">
 					<div class="col-sm-8">
-						@Html.DropDownListExtendedFor(i => role.Permissions, permissions, i => i.Description, null, new { @class = "form-control" })
+						@Html.DropDownListExtendedFor(i => role.Permissions, permissions.OrderBy(s=>s.Description).ToList(), i => i.Description, null, new { @class = "form-control" })
 					</div>
 					<div class="col-sm-4">
 						<button class="btn btn-green" type="submit">Добавить</button>
@@ -54,18 +54,18 @@
 			<div class="form-group">
 				Права:
 			</div>
-			@foreach (var item in role.Permissions) {
-				<div class="form-group">
-					<div class="col-sm-10">
+			@foreach (var item in role.Permissions.OrderBy(s => s.Description).ToList()) {
+				<div class="form-group">@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+				{
+
+					<div class="col-sm-10 listItem gray">
+						@Html.HiddenFor(i => role.Id)
+						@Html.HiddenForModelList(role, i => role.Permissions, item.Id)
+						<button type="submit" class="btn-link entypo-cancel-circled" style="color: red"></button>
 						@Html.Raw(item.Description)
-					</div>
-					<div class="col-sm-2">
-							@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
-								@Html.HiddenFor(i=>role.Id)
-								@Html.HiddenForModelList(role, i=> role.Permissions,item.Id)
-								<button type="submit" class="btn-link entypo-cancel-circled" style="color: red"></button>
-							}
-					</div>
+					</div> 
+						
+					 	}
 				</div>
 			}
 		</div>

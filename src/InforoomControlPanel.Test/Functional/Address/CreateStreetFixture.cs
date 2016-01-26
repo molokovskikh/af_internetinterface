@@ -15,7 +15,7 @@ namespace InforoomControlPanel.Test.Functional.Address
         {
             Open("Address/StreetList");
             var streetCount = DbSession.Query<Street>().ToList().Count;
-            browser.FindElementByCssSelector(".entypo-plus").Click();
+            browser.FindElementByCssSelector(".StreetList .entypo-plus").Click();
             WaitForMap();
             Css("#RegionDropDown").SelectByText("Борисоглебск");
             var streetName = browser.FindElementByCssSelector("input[id=Street_Name]");
@@ -48,7 +48,7 @@ namespace InforoomControlPanel.Test.Functional.Address
         public void StreetNoConfirmedYandexAdd()
         {
             Open("Address/StreetList");
-            browser.FindElementByCssSelector(".entypo-plus").Click();
+            browser.FindElementByCssSelector(".StreetList .entypo-plus").Click();
             WaitForMap();
             Css("#RegionDropDown").SelectByText("Борисоглебск");
             var streetName = browser.FindElementByCssSelector("input[id=Street_Name]");

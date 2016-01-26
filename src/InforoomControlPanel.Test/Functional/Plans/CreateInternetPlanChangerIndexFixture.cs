@@ -13,7 +13,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 		public void successfulCreateInternetPlanChanger()
 		{
 			Open("Plans/InternetPlanChangerIndex");
-			browser.FindElementByCssSelector("i.entypo-plus").Click();
+			browser.FindElementByCssSelector(".InternetPlanChangerIndex i.entypo-plus").Click();
             Css(".targetPlan").SelectByText("50 на 50 (245 руб.)");
             Css(".cheapPlan").SelectByText("Старт (245 руб.)");
             Css(".fastPlan").SelectByText("Народный (300 руб.)");
@@ -30,7 +30,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
         {
             var planChangerCount = DbSession.Query<PlanChangerData>().Count();
             Open("Plans/InternetPlanChangerIndex");
-            browser.FindElementByCssSelector("i.entypo-plus").Click();
+            browser.FindElementByCssSelector(".InternetPlanChangerIndex i.entypo-plus").Click();
             browser.FindElementByCssSelector(".btn-green").Click();
             AssertText("выберите тариф");
             DbSession.Flush();

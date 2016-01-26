@@ -84,7 +84,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			//Дата начала расчетного периода
 			AssertText("Дата начала расчетного периода " + CurrentClient.RatedPeriodDate.Value.ToShortDateString());
 			//Количество бесплатных дней
-			AssertText("Количество бесплатных дней " + CurrentClient.FreeBlockDays.ToString());
+			AssertText("Добровольная блокировка, доступно бесплатных дней " + CurrentClient.FreeBlockDays.ToString());
 			//Подключение
 			AssertText("Подключение " + "не назначено");
 			//Проверен
@@ -97,56 +97,64 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 		/// <param name="status"></param>
 		private void CheckStatusChangeEffect(StatusType status)
 		{
+			var internetService = CurrentClient.ClientServices.FirstOrDefault(s => (s.Service as Internet)!=null);
 			//Статус - Заблокирован
 			if (status == StatusType.Worked) {
 				//запускаем биллинг
+				CurrentClient.PaidDay = false;
+				DbSession.Save(CurrentClient);
 				RunBillingProcessPayments();
 				RunBillingProcessWriteoffs();
 				//Обновляем модель клиента
 				DbSession.Refresh(CurrentClient);
 				DbSession.Refresh(CurrentClient.PhysicalClient);
+				DbSession.Refresh(internetService);
 				//Проверяем изменения
 				Assert.That(CurrentClient.Status.Type, Is.EqualTo(StatusType.Worked), "Статус не совпадает.");
 				Assert.That(CurrentClient.Disabled, Is.EqualTo(false), "Состояние не совпадает.");
 				Assert.That(CurrentClient.AutoUnblocked, Is.EqualTo(true), "Состояние не совпадает.");
 				Assert.That(CurrentClient.DebtDays, Is.EqualTo(0), "Долговые дни не совпадают.");
 				Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false), "Отображение варнинга не совпадает.");
-				Assert.That(CurrentClient.ClientServices.FirstOrDefault(s => (s.Service as Internet) != null && s.IsActivated),
-					Is.Not.Null, "Сервис 'Интернет' не совпадает.");
+				Assert.That(internetService.IsActivated, Is.EqualTo(true), "Сервис 'Интернет' не совпадает.");
 			}
-			//Статус - Подключен
+			//Статус - Отключен
 			if (status == StatusType.NoWorked) {
 				//запускаем биллинг
+				CurrentClient.PaidDay = false;
+				DbSession.Save(CurrentClient);
 				RunBillingProcessPayments();
 				RunBillingProcessWriteoffs();
+				DbSession.Flush();
 				//Обновляем модель клиента
 				DbSession.Refresh(CurrentClient);
 				DbSession.Refresh(CurrentClient.PhysicalClient);
+				DbSession.Refresh(internetService);
 				//Проверяем изменения
 				Assert.That(CurrentClient.Status.Type, Is.EqualTo(StatusType.NoWorked), "Статус не совпадает.");
 				Assert.That(CurrentClient.Disabled, Is.EqualTo(true), "Состояние не совпадает.");
 				Assert.That(CurrentClient.AutoUnblocked, Is.EqualTo(false), "Состояние не совпадает.");
 				Assert.That(CurrentClient.Discount, Is.EqualTo(0), "Скидка не совпадает.");
 				Assert.That(CurrentClient.StartNoBlock, Is.Null, "Отмена блокировки не совпадает.");
-				Assert.That(CurrentClient.ClientServices.FirstOrDefault(s => (s.Service as Internet) != null && !s.IsActivated),
-					Is.Not.Null, "Сервис 'Интернет' не совпадает.");
+				Assert.That(internetService.IsActivated, Is.EqualTo(false), "Сервис 'Интернет' не совпадает.");
 				Assert.That(CurrentClient.Endpoints.Count, Is.GreaterThan(0), "Отмена блокировки не совпадает.");
 			}
 			//Статус - Расторгнут
 			if (status == StatusType.Dissolved) {
 				//запускаем биллинг
+				CurrentClient.PaidDay = false;
+				DbSession.Save(CurrentClient);
 				RunBillingProcessPayments();
 				RunBillingProcessWriteoffs();
 				//Обновляем модель клиента
 				DbSession.Refresh(CurrentClient);
 				DbSession.Refresh(CurrentClient.PhysicalClient);
+				DbSession.Refresh(internetService);
 				//Проверяем изменения
 				Assert.That(CurrentClient.Status.Type, Is.EqualTo(StatusType.Dissolved), "Статус не совпадает.");
 				Assert.That(CurrentClient.Disabled, Is.EqualTo(true), "Состояние не совпадает.");
 				Assert.That(CurrentClient.AutoUnblocked, Is.EqualTo(false), "Состояние не совпадает.");
 				Assert.That(CurrentClient.Discount, Is.EqualTo(0), "Скидка не совпадает.");
-				Assert.That(CurrentClient.ClientServices.FirstOrDefault(s => (s.Service as Internet) != null && !s.IsActivated),
-					Is.Not.Null, "Сервис 'Интернет' не совпадает.");
+				Assert.That(internetService.IsActivated, Is.EqualTo(false), "Сервис 'Интернет' не совпадает.");
 				Assert.That(CurrentClient.Endpoints.Count, Is.EqualTo(0), "Отмена блокировки не совпадает.");
 			}
 		}

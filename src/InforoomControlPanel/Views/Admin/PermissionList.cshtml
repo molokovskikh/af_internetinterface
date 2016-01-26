@@ -1,4 +1,4 @@
-﻿@using Inforoom2.Components 
+﻿@using Inforoom2.Components
 @using Inforoom2.Models
 @model dynamic
 
@@ -8,30 +8,30 @@
 	IList<Permission> permissions = ViewBag.Permissions;
 }
 <div class="form-group">
-<a class="btn btn-success btn-sm btn-icon icon-left" href = '@Url.Action("RenewActionPermissions", "Admin")'>
-	<i class="entypo-plus"></i>
-	Обновить автоматические права
-</a>
-	</div>
+	<a class="btn btn-success btn-sm btn-icon icon-left" href='@Url.Action("RenewActionPermissions", "Admin")'>
+		<i class="entypo-plus"></i>
+		Обновить автоматические права
+	</a>
+</div>
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
 	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 		<thead>
-			<tr role="row">
-				<th class="sorting" tabindex="0" aria-controls="table-2">Номер</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2">Название</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2">Описание</th>
-			</tr>
+		<tr role="row">
+			<th class="sorting" tabindex="0" aria-controls="table-2">Номер</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Название</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Описание</th>
+		</tr>
 		</thead>
 
 		<tbody>
-			@foreach (var item in permissions)
-			{
-				<tr role="row" class="odd">
-					<td>@item.Id</td>
-					<td>@item.Name</td>
-					<td>@Html.Raw(item.Description)</td>
-				</tr>
-			}
+		@foreach (var item in permissions.OrderBy(s=>s.Description).ToList()) {
+			<tr role="row" class="odd">
+
+				<td>@item.Id</td>
+				<td>@item.Name</td>
+				<td>@Html.Raw(item.Description)</td>
+			</tr>
+		}
 		</tbody>
 	</table>
 

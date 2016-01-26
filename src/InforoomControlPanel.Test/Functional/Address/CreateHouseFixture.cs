@@ -15,7 +15,7 @@ namespace InforoomControlPanel.Test.Functional.Address
         {
             Open("Address/HouseList");
             var houseCount = DbSession.Query<House>().ToList().Count;
-            browser.FindElementByCssSelector(".entypo-plus").Click();
+            browser.FindElementByCssSelector(".HouseList .entypo-plus").Click();
             Css("#StreetDropDown").SelectByText("улица третьяковская");
             Css("#RegionDropDown").SelectByText("Борисоглебск");
             WaitForMap();
@@ -46,7 +46,7 @@ namespace InforoomControlPanel.Test.Functional.Address
         public void HouseNoConfirmedYandexAdd()
         {
             Open("Address/HouseList");
-            browser.FindElementByCssSelector(".entypo-plus").Click();
+            browser.FindElementByCssSelector(".HouseList .entypo-plus").Click();
             WaitForMap();
             Css("#StreetDropDown").SelectByText("улица третьяковская");
             var houseNumber = browser.FindElementByCssSelector("input[id=House_Number]");

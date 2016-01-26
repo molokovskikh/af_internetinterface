@@ -14,7 +14,7 @@ namespace InforoomControlPanel.Test.Functional.Address
         public void CreateCity()
         {
             Open("Address/CityList");
-            browser.FindElementByCssSelector(".entypo-plus").Click();
+            browser.FindElementByCssSelector(".CityList .entypo-plus").Click();
             var cityName = browser.FindElementByCssSelector("input[class=form-control]");
             cityName.SendKeys("Москва");
             browser.FindElementByCssSelector(".btn.btn-green").Click();

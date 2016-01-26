@@ -190,7 +190,7 @@ namespace Inforoom2.Test
 		{
 
 			var wait = new WebDriverWait(browser, seconds.Second());
-			wait.Until(d => ((RemoteWebDriver) d).FindElementByCssSelector(css).Displayed);
+			wait.Until(d => ((RemoteWebDriver)d).FindElementsByCssSelector(css).Count > 0 && ((RemoteWebDriver) d).FindElementByCssSelector(css).Displayed);
 		}
 
 		protected void WaitAnimation(string css)

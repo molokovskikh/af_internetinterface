@@ -15,7 +15,7 @@ namespace InforoomControlPanel.Test.Functional.Address
         {
             Open("Address/SwitchAddressList");
             var addressCount = DbSession.Query<SwitchAddress>().ToList().Count;
-            browser.FindElementByCssSelector(".entypo-plus").Click();
+            browser.FindElementByCssSelector(".SwitchAddressList .entypo-plus").Click();
             Css("#RegionDropDown").SelectByText("Борисоглебск");
             Css("#StreetDropDown").SelectByText("улица третьяковская");
             Css("#HouseDropDown").SelectByText("6Б");

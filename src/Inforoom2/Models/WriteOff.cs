@@ -44,7 +44,7 @@ namespace Inforoom2.Models
 			}
 			else
 				Client.LegalClient.Balance += WriteOffSum;
-			return new Appeal(String.Format("Удалено списание на сумму {0}. Причина: ", WriteOffSum.ToString("0.00"), reason), Client, AppealType.System) {Employee = employee};
+			return new Appeal(String.Format("Удалено списание на сумму {0}. Причина: {1}", WriteOffSum.ToString("0.00"), reason), Client, AppealType.System) {Employee = employee};
 		}
 	}
 }

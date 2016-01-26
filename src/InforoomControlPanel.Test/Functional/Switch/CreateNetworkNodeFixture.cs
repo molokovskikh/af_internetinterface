@@ -16,7 +16,7 @@ namespace InforoomControlPanel.Test.Functional.Switch
 		public void CreateNetworkNodeFixture()
 		{
 			Open("Switch/NetworkNodeList");
-			var button = browser.FindElement(By.CssSelector("i.entypo-plus"));
+			var button = browser.FindElement(By.CssSelector(".NetworkNodeList i.entypo-plus"));
 			button.Click();
 			browser.FindElementByCssSelector("input[id=NetworkNode_Name]").SendKeys("Узел связи для тестирования");
 			browser.FindElementByCssSelector("input[id=NetworkNode_Virtual]").Click();

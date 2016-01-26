@@ -8,12 +8,14 @@
 	Client client = Model;
 	List<Switch> switchList = ViewBag.SwitchList;
 	ClientEndpoint endpoint = client.Endpoints.FirstOrDefault();
-	var lease = endpoint != null ? endpoint.LeaseList.LastOrDefault() : null;
+	var leases = endpoint != null ? endpoint.LeaseList : new List<Lease>();
 	IList<PackageSpeed> packageSpeedList = ViewBag.PackageSpeedList;
 	IList<IpPoolRegion> ipPoolRegionList = ViewBag.IpPoolRegionList;
 	StaticIp[] staticAddress = ViewBag.StaticAddressArray ?? new StaticIp[0];
 	Inforoom2.Helpers.ConnectionHelper connection = ViewBag.Connection ?? new Inforoom2.Helpers.ConnectionHelper();
+	List<SwitchAddress> networkNodeList = ViewBag.networkNodeList;
 	var newEndpoint = endpoint == null;
+
 }
 <div class="panel panel-default blockJsLockControll">
 
@@ -42,14 +44,12 @@
 					<td>IP-пул</td>
 					<td>
 						@Html.DropDownListExtendedFor(o => endpoint.Pool, ipPoolRegionList, obj => obj.Description, f => new {@value = f.IpPool.Id}, new {@Name = "connection.Pool", @class = "form-control"}, endpoint != null && endpoint.Pool != null ? endpoint.Pool.Id : 0, true)
-						@ViewBag.Validation.GetError(endpoint, "Pool")
 					</td>
 				</tr>
 				<tr>
 					<td>Коммутатор</td>
 					<td>
 						@Html.DropDownListExtendedFor(o => endpoint.Switch, switchList, obj => obj.Name + " (портов: " + obj.PortCount + ")", f => new {@maxPorts = f.PortCount}, new {@Name = "connection.Switch", @class = "form-control"}, endpoint != null && endpoint.Switch != null ? endpoint.Switch.Id : 0, true)
-						@ViewBag.Validation.GetError(client.PhysicalClient, "PassportNumber")
 					</td>
 				</tr>
 				<tr>
@@ -69,7 +69,7 @@
 
 										if (currentEndpoint != null) {
 											<td>
-												<a class="port client" target="_blank" onclick="updatePort(this)" href="@(ConfigHelper.GetParam("adminPanelNew") + Url.Action(currentEndpoint.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = currentEndpoint.Client.Id}))">
+												<a class="port client" target="_blank" onclick="updatePort(this)" href="@(Url.Action(currentEndpoint.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = currentEndpoint.Client.Id}))">
 													<span>@currentPort</span>
 												</a>
 											</td>
@@ -87,6 +87,7 @@
 							}
 							</tbody>
 						</table>
+						<div id="SwitchComment" style="margin: 9px 0px 2px 10px;color: #1D91D8;font-weight: bold;"></div>
 					</td>
 				</tr>
 				<tr>
@@ -95,8 +96,7 @@
 						<div class="col-sm-4 date-picker-box" style="padding-left: 0px;">
 							@Html.Hidden("endpointId", endpoint != null ? endpoint.Port : 0, new {@Name = "connection.Port", @id = "endpoint_PortVal"})
 							@Html.TextBoxFor(o => endpoint.Port, new {@Name = "", @class = "form-control", @type = "number", @min = "0", @max = (columns*itemsInRow).ToString(), @disabled = "disabled"})
-							@ViewBag.Validation.GetError(client.PhysicalClient, "PassportDate")
-						</div>
+							</div>
 					</td>
 				</tr>
 				<tr>
@@ -149,7 +149,7 @@
 				<tr>
 					<td>Арендованный IP</td>
 					<td>
-						<span @(lease != null && lease.LeaseEnd < SystemTime.Now() ? "style=color:#E60000;font-weight:bold;" : "")>@(lease != null ? lease.Ip.MapToIPv4().ToString() : "")</span>
+						@Html.Raw(string.Join(", ", leases.Select(lease => "<span " + (lease != null && lease.LeaseEnd < SystemTime.Now() ? "style=color:#E60000;font-weight:bold;" : "") + ">" + lease.Ip.ToString() + "</span>").ToList()))
 					</td>
 				</tr>
 				<tr>
@@ -163,7 +163,7 @@
 						<a target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld") + "Switches/MakeSwitch?Switch=" + endpoint.Switch.Id)"> Коммутатор</a>
 					</td>
 					<td>
-						<a href="@(ConfigHelper.GetParam("adminPanelOld") + "Hardware/PortInfo?endPoint=" + endpoint.Id)">@(endpoint.Switch.Name + " (" + endpoint.Switch.Ip.ToString() + ")")</a>
+						<a target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld") + "Hardware/PortInfo?endPoint=" + endpoint.Id)">@(endpoint.Switch.Name + " (" + endpoint.Switch.Ip.ToString() + ")")</a>
 					</td>
 				</tr>
 				<tr>
@@ -184,6 +184,16 @@
 						<span>@(endpoint.Monitoring ? "да" : "нет")</span>
 					</td>
 				</tr>
+					@if (endpoint.Client.PhysicalClient != null)
+					{
+						<tr>
+							<td>Сумма за подключение</td>
+							<td>
+								<span>@endpoint.Client.PhysicalClient.ConnectSum.ToString("0.00") руб.</span>
+							</td>
+						</tr>
+					}
+				
 				@if (endpoint.StaticIpList.Count > 0) {
 					<tr>
 						<td>Статические адреса</td>
@@ -212,6 +222,51 @@
 									</tbody>
 								</table>
 							</div>
+						</td>
+					</tr>
+				}
+				@if (endpoint.Client.PhysicalClient != null) {
+					<tr>
+						<td></td>
+						<td>
+							@if (networkNodeList != null && networkNodeList.Count > 0) {
+								foreach (var node in networkNodeList) {
+									<div class="form-group">
+										<div class="col-sm-10">
+											<h5>
+												<strong>@node.NetworkNode.Name</strong>
+											</h5>
+											@foreach (var iswitch in node.NetworkNode.Switches) {
+												<h5>@iswitch.Name</h5>
+												<p>
+													<span>Свободные порты: </span>@(iswitch.PortCount - @iswitch.Endpoints.Count)
+												</p>
+												<p>
+													<span>Витые пары: </span>
+													@if (iswitch.NetworkNode.TwistedPairs.Count > 0) {
+														int countOfPairs = 0;
+														for (int i = 0; i < iswitch.NetworkNode.TwistedPairs.Count; i++) {
+															countOfPairs += iswitch.NetworkNode.TwistedPairs[i].PairCount;
+															if (i > 0) {
+																@Html.Raw(" + " + iswitch.NetworkNode.TwistedPairs[i].PairCount)
+															}
+															else {
+																@Html.Raw(iswitch.NetworkNode.TwistedPairs[i].PairCount)
+															}
+															if (i == iswitch.NetworkNode.TwistedPairs.Count - 1) {
+																@Html.Raw(" = " + countOfPairs)
+															}
+														}
+													}
+													else {
+														@Html.Raw(" нет ")
+													}
+												</p>
+											}
+										</div>
+									</div>
+								}
+							}
 						</td>
 					</tr>
 				}
@@ -255,21 +310,19 @@
 				<tr>
 					<td>Арендованный IP</td>
 					<td>
-						<span @(lease != null && lease.LeaseEnd < SystemTime.Now() ? "style=color:#E60000;font-weight:bold;" : "")>@(lease != null ? lease.Ip.MapToIPv4().ToString() : "")</span>
+						@Html.Raw( string.Join(", ",leases.Select(lease=> "<span "+ (lease != null && lease.LeaseEnd < SystemTime.Now() ? "style=color:#E60000;font-weight:bold;" : "") + ">"+ lease.Ip.ToString()+ "</span>").ToList()))					 
 					</td>
 				</tr>
 				<tr>
 					<td>IP-пул</td>
 					<td>
 						@Html.DropDownListExtendedFor(o => endpoint.Pool, ipPoolRegionList, obj => obj.Description, f => new {@value = f.IpPool.Id}, new {@Name = "connection.Pool", @class = "form-control"}, endpoint != null && endpoint.Pool != null ? endpoint.Pool.Id : 0, true)
-						@ViewBag.Validation.GetError(endpoint, "Pool")
 					</td>
 				</tr>
 				<tr>
 					<td>Коммутатор</td>
 					<td>
 						@Html.DropDownListExtendedFor(o => endpoint.Switch, switchList, obj => obj.Name + " (портов: " + obj.PortCount + ")", f => new {@maxPorts = f.PortCount}, new {@Name = "connection.Switch", @class = "form-control"}, endpoint != null && endpoint.Switch != null ? endpoint.Switch.Id : 0, true)
-						@ViewBag.Validation.GetError(endpoint, "endpoint")
 					</td>
 				</tr>
 				<tr>
@@ -306,6 +359,7 @@
 							}
 							</tbody>
 						</table>
+						<div id="SwitchComment" style="margin: 9px 0px 2px 10px;color: #1D91D8;font-weight: bold;">@(endpoint.Switch != null ? endpoint.Switch.Description : "")</div>
 					</td>
 				</tr>
 				<tr>
