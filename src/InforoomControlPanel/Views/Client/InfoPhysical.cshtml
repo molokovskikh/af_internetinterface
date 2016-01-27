@@ -31,7 +31,7 @@
 	}
 
 @if(currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010000.ToString()) != null 
-	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_001000.ToString()))){
+	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010000.ToString()))){
 	<ul class="list-group InfoPhysicalNaviPan">
 		<li class="list-group-item">
 			<a id="PrivateMsgBtn" class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="@Url.Action("PrivateMessage", "ClientActions", new {id = client.Id})">
