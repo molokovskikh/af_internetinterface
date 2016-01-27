@@ -374,6 +374,14 @@ namespace Inforoom2.Models
 			}
 		}
 
+		public virtual void UpdatePackageId(ClientEndpoint clientEndpoint)
+		{
+			if (Plan != null && Client.Internet.ActivatedByUser)
+				clientEndpoint.PackageId = Plan.PackageSpeed.PackageId;
+			else
+				clientEndpoint.PackageId = null;
+		}
+
 		/// <summary>
 		/// Добавление точки подключения клиенту
 		/// </summary>
@@ -422,9 +430,6 @@ namespace Inforoom2.Models
 			if (string.IsNullOrEmpty(connection.staticIp) || nullFlag) {
 				if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
 				    (oldSwitch != null && connection.Switch == oldSwitch.Id && connection.Port == oldPort.ToString())) {
-					//обновляем PackageId у SCE клиента
-					SceHelper.UpdatePackageId(dbSession, client);
-
 					//обновляем/задаем поля точки подключения
 					if (clientEntPoint.Ip == null && !string.IsNullOrEmpty(connection.staticIp)) {
 						dbSession.Save(new UserWriteOff(client, 200,
@@ -487,6 +492,7 @@ namespace Inforoom2.Models
 							String.Format(newFlag ? "Создана новая точка подключения. {0} #{1}" : "Обновлена точка подключения. {0} #{1}",
 								clientEntPoint.Switch.Name, clientEntPoint.Switch.Id), client, AppealType.System, employee));
 
+					client.PhysicalClient.UpdatePackageId(clientEntPoint);
 					dbSession.Save(client);
 
 					//обновляем статические адреса для клиентской точки подключения
@@ -516,6 +522,8 @@ namespace Inforoom2.Models
 						}
 						dbSession.Save(client);
 					}
+					//обновляем PackageId у SCE клиента
+					SceHelper.UpdatePackageId(dbSession, client);
 				}
 				else {
 					if (staticAddress.Length > 0) {
