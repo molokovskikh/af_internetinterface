@@ -272,6 +272,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\ExceptionTopHandler.cs" />
     <Compile Include="Components\HtmlSniffer.cs" />
     <Compile Include="Components\Cryptographer.cs" />
     <Compile Include="Components\EmailSender.cs" />

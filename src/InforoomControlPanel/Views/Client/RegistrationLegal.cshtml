@@ -33,15 +33,15 @@
 					<div class="form-group">
 						<label class="col-sm-4 control-label">Юридический адрес:</label>
 						<div class="col-sm-4">
-							@Html.TextBoxFor(o => client.LegalClient.LegalAdress, new {@class = "form-control"})
-							@ViewBag.Validation.GetError(client.LegalClient, "LegalAdress")
+							@Html.TextBoxFor(o => client.LegalClient.LegalAddress, new {@class = "form-control"})
+							@ViewBag.Validation.GetError(client.LegalClient, "LegalAddress")
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-4 control-label">Фактический адрес:</label>
 						<div class="col-sm-4">
-							@Html.TextBoxFor(o => client.LegalClient.ActualAdress, new {@class = "form-control"})
-							@ViewBag.Validation.GetError(client.LegalClient, "ActualAdress")
+							@Html.TextBoxFor(o => client.LegalClient.ActualAddress, new {@class = "form-control"})
+							@ViewBag.Validation.GetError(client.LegalClient, "ActualAddress")
 						</div>
 					</div>
 					<div class="form-group">

@@ -1,0 +1,104 @@
+﻿@using System.Activities.Expressions
+@using System.Activities.Statements
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	ViewBag.Title = "Архив заказов";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	InforoomModelFilter<ClientOrder> pager = ViewBag.Pager as InforoomModelFilter<ClientOrder>;
+	IList<ClientOrder> clientOrder = ViewBag.ClientOrder as IList<ClientOrder>;
+
+
+}
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=1")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/InfoClientPage.js?v=1")"></script>
+}
+<div id="table-2_wrapper" class="clientMainTable dataTables_wrapper form-inline">
+	<div class="totalCountOfItems">
+		Всего заказов: <strong>@pager.TotalItems</strong>
+	</div>
+	<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+		<div class="panel-body">
+			<div class="row">
+				@{ Html.RenderPartial("Pagination"); }
+			</div>
+		</div>
+	</div>
+	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer archiveClientOrder" role="grid" aria-describedby="table-2_info">
+		<thead>
+			<tr role="row">
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+					<span class="black">Номер</span>
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+					<span class="black">Дата начала</span>
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+					<span class="black">Дата окончания</span>
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+
+					<p style="text-align:center;margin: 1px;">Подключенные услуги</p>
+					<table class="table table-bordered table-striped datatable dataTable no-footer">
+						<thead>
+							<tr>
+								<th>
+								<span class="black">Описание</span>	
+								</th>
+								<th style="width:100px;">
+									<span class="black">Стоимость</span>
+								</th>
+								<th style="width:100px;">
+									<span class="black">Периодичная</span>
+								</th>
+							</tr>
+						</thead>
+					</table>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in clientOrder)
+			{
+				<tr class="serv">
+					<td>@item.Number</td>
+					<td>@(item.BeginDate.HasValue && item.BeginDate.Value != DateTime.MinValue ? item.BeginDate.Value.ToShortDateString() : "")</td>
+					<td>@(item.EndDate.HasValue && item.EndDate.Value!=DateTime.MinValue ? item.EndDate.Value.ToShortDateString() : "")</td>
+					<td>
+						<table class="table table-bordered table-striped datatable dataTable no-footer">
+							<tbody>
+								@foreach (var service in item.OrderServices)
+								{
+									<tr>
+										<td>@(service.Description)</td>
+										<td style="width: 100px;">@(service.Cost.ToString("0.00")) руб.</td>
+										<td style="width: 100px;">@(service.IsPeriodic ? "да" : "нет")</td>
+									</tr>
+
+								}
+								@if (item.EndPoint != null){
+								<tr>
+									<td>
+										<span class="gray bold c-pointer entypo-right-open-mini" phantomFor=".phantomBlock@(item.Id)">подключение</span>
+										<div class="phantomBlock@(item.Id)">
+											@Html.Partial("subviews/_EndpointLegal", item)
+										</div>
+									</td>
+									<td></td>
+									<td></td>
+								</tr>
+								}
+</tbody>
+						</table>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<div class="row">
+		@{ Html.RenderPartial("Pagination"); }
+	</div>
+</div>
+@Html.Partial("subviews/modelview/_LegalEndpointDelete")

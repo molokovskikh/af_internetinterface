@@ -62,7 +62,9 @@ namespace Inforoom2.Test.Infrastructure.Helpers
 
 			[Description("клиент с домом, регион которого отличается от региона улицы")] clientWithDifferentRegionHouse,
 
-			[Description("клиент с тарифным планом, который закреплен за регионом")] clientWithRegionalPlan 
+			[Description("клиент с тарифным планом, который закреплен за регионом")] clientWithRegionalPlan,
+
+			[Description("клиент - юр. лицо")]legalClient
 		}
 
 		public int Index

@@ -2,6 +2,7 @@
 using System.Linq;
 using Castle.ActiveRecord;
 using Common.Tools;
+using InternetInterface.Helpers;
 using InternetInterface.Services;
 using MonoRail.Debugger.Toolbar;
 using NHibernate;
@@ -37,7 +38,8 @@ namespace InternetInterface.Models.Services
 						    && (clientService.Client.PhysicalClient.LastTimePlanChanged.AddDays(changer.Timeout) < SystemTime.Now())) {
 							if (!clientService.Client.ShowBalanceWarningPage) {
 								clientService.Client.ShowBalanceWarningPage = true;
-								clientService.Client.CreareAppeal("Клиент был заблокирован в связи с прекращением действия тарифа '"
+								SceHelper.UpdatePackageId(session, clientService.Client);
+                                clientService.Client.CreareAppeal("Клиент был заблокирован в связи с прекращением действия тарифа '"
 								                                  + clientService.Client.PhysicalClient.Tariff.Name + "'.", AppealType.Statistic);
 							}
 						}

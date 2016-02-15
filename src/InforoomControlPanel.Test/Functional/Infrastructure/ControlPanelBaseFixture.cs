@@ -23,20 +23,21 @@ namespace InforoomControlPanel.Test.Functional.infrastructure
 		{
 			var adminName = Environment.UserName;
 			var employee = DbSession.Query<Employee>().First(i => i.Login == adminName);
-			Employee = employee; 
-			DefaultEmployeePassword =  ConfigurationManager.AppSettings["DefaultEmployeePassword"];
-			LoginForAdmin();
-			Open("Admin/RenewActionPermissionsJs"); var permissions = DbSession.Query<Permission>().ToList();
+			Employee = employee;
+			//Добавление прав
+			Call(BuildTestUrl("AdminOpen/RenewActionPermissionsJs")); var permissions = DbSession.Query<Permission>().ToList();
 			foreach (var item in permissions) employee.Permissions.Add(item);
 			DbSession.Save(employee);
-			DbSession.Flush();
-			Open("Admin/Statistic");
-        }
+			DbSession.Flush(); 
+			//Авторизация
+			DefaultEmployeePassword =  ConfigurationManager.AppSettings["DefaultEmployeePassword"];
+			LoginForAdmin();
+		}
 
 		[TearDown]
 		public void ControlPanelTearDown()
 		{
-			Css(".entypo-logout.right").Click();
+			Css("#logoutLink").Click();
 		}
 		public void LoginForAdmin()
 		{

@@ -86,6 +86,17 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Close();
 		}
 
+		public static void Call(string url)
+		{
+			if (!string.IsNullOrEmpty(url))
+			{
+				var wc = new WebClient();
+				wc.DownloadString(new Uri(url));
+				System.Threading.Thread.Sleep(1000);
+				wc.Dispose();
+			}
+
+		}
 		protected bool IsTextExists(string text)
 		{
 			var body = browser.FindElementByCssSelector("body").Text;
@@ -562,6 +573,13 @@ namespace Inforoom2.Test.Infrastructure
 				{
 					Balance = 1000,
 					Region = DbSession.Query<Region>().First(),
+					Name = "Первый юрик на деревне",
+					ShortName = "Первый юрик",
+					ActualAddress = "ПерваяНаправо, 1",
+					LegalAddress = "ПерваяНалево, 4",
+					MailingAddress = "ПерваяПрямо, 2",
+					ContactPerson = "Семён",
+					Inn = "1234567890"
 				},
 				Status = Status.Get(StatusType.Worked, DbSession),
 				SendSmsNotification = false,
@@ -570,6 +588,7 @@ namespace Inforoom2.Test.Infrastructure
 				FreeBlockDays = 28,
 				WorkingStartDate = DateTime.Now.AddMonths(-3),
 				Lunched = true,
+				Comment = ClientCreateHelper.ClientMark.legalClient.GetDescription(),
 				WhoRegistered = DbSession.Query<Employee>().FirstOrDefault(e => e.Login == Environment.UserName)
 			};
 			// TODO:UnusedClientAddresses
@@ -587,7 +606,7 @@ namespace Inforoom2.Test.Infrastructure
 			switchAddress.Entrance = 1;
 			switchAddress.Street = DbSession.Query<Street>().First();
 			DbSession.Save(switchAddress);
-			
+
 			//CreateSwitch adding based on client address
 			var switchItem = CreateSwitch(legalClient);
 			var networkNode = new NetworkNode();
@@ -598,16 +617,16 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Save(networkNode);
 			//CreateSwitch adding based on client address
 			var ipPool = DbSession.Query<IpPool>().FirstOrDefault();
-			if (ipPool==null) {
+			if (ipPool == null) {
 				ipPool = new IpPool()
 				{
 					Begin = 1541080064,
 					End = 1541080319,
 					LeaseTime = 3600,
 					IsGray = false
-				}; 
-                DbSession.Save(ipPool);
-			} 
+				};
+				DbSession.Save(ipPool);
+			}
 
 			//ClientEndpoint adding based on client address
 			var endpoint = new ClientEndpoint
@@ -899,7 +918,7 @@ namespace Inforoom2.Test.Infrastructure
 			var parts = DefaultIpString.Split('.');
 			parts[2] = (EndpointIpCounter++).ToString();
 			IPAddress addr = IPAddress.Parse(string.Join(".", parts));
-			
+
 			var zone = DbSession.Query<Zone>().FirstOrDefault(s => s.Region.Id == client.GetRegion().Id);
 			if (zone == null) {
 				zone = new Zone();
@@ -914,7 +933,7 @@ namespace Inforoom2.Test.Infrastructure
 			newSwitch.Mac = "EC-FE-C5-36-1A-27";
 			newSwitch.Ip = addr;
 			newSwitch.PortCount = 13;
-            DbSession.Save(newSwitch);
+			DbSession.Save(newSwitch);
 
 			zone.Switches.Add(newSwitch);
 			DbSession.Save(zone);
@@ -947,8 +966,7 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Save(networkNode);
 
 			var ipPool = DbSession.Query<IpPool>().FirstOrDefault();
-			if (ipPool == null)
-			{
+			if (ipPool == null) {
 				ipPool = new IpPool()
 				{
 					Begin = 1541080064,

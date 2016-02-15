@@ -12,13 +12,13 @@ namespace Inforoom2.Helpers
 		public int? Pool { get; set; }
 		public int Switch { get; set; }
 		public int Brigad { get; set; }
-		public string staticIp { get; set; }
+		public string StaticIp { get; set; }
 		public bool Monitoring { get; set; }
 		public int PackageId { get; set; }
 
 		public IpPool GetPool(ISession dbSession)
 		{
-			return dbSession.Query<IpPool>().FirstOrDefault(s => s.Id == Pool);
+			return Pool.HasValue ? dbSession.Query<IpPool>().FirstOrDefault(s => s.Id == Pool.Value) : null;
 		}
 
 		public PackageSpeed GetPackageSpeed(ISession dbSession)

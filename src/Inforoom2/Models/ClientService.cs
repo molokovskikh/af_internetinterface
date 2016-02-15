@@ -19,6 +19,9 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "service", NotNull = true)]
 		public virtual Service Service { get; set; }
 
+		[ManyToOne(Column = "Activator")]
+		public virtual Employee Employee { get; set; }
+
 		[Property(Column = "BeginWorkDate")]
 		public virtual DateTime? BeginDate { get; set; }
 
@@ -55,7 +58,7 @@ namespace Inforoom2.Models
 				Service.Activate(this, session);
 				IsActivated = true; // IsActivated внутри Service.Activate() почему-то не срабатывает
 				currentClient.ClientServices.Add(this); // Важно добавлять услугу после активации, чтобы она не влияла на списания
-				currentClient.IsNeedRecofiguration = Service.GetType() == typeof (DeferredPayment);
+				currentClient.IsNeedRecofiguration = Service.GetType() == typeof (DeferredPayment) || Service.GetType() == typeof(WorkLawyer);
 
 				message = string.Format("Услуга \"{0}\" активирована на период с {1} по {2}. "+ postMessage,
 					Service.Name,
@@ -74,8 +77,7 @@ namespace Inforoom2.Models
 		public virtual string DeActivateFor(Client currentClient, ISession session, string postMessage = "")
 		{
 			Service.Deactivate(this, session);
-			currentClient.IsNeedRecofiguration = Service.GetType() == typeof (BlockAccountService);
-
+			currentClient.IsNeedRecofiguration = Service.GetType() == typeof (BlockAccountService) || Service.GetType() == typeof(WorkLawyer);
 			return string.Format("Услуга \"{0}\" деактивирована", Service.Name) + postMessage;
 		}
 
@@ -113,14 +115,16 @@ namespace Inforoom2.Models
 			return false;
 		}
 
-		public virtual void TryDeactivate(ISession dbSession)
+		public virtual bool TryDeactivate(ISession dbSession)
 		{
 			if (Service.CanDeactivate(this)) {
 				DeleteFromClient();
 				//перед деактивацией, услугу нужно удалить из
 				//списка услуг клиента тк она может влиять на цену
 				Service.Deactivate(this, dbSession);
+				return true;
 			}
+			return false;
 		}
 
 		public virtual void Deactivate(ISession dbSession)

@@ -24,4 +24,12 @@ namespace Inforoom2.Helpers
 			return timeStr;
 		}
 	}
+
+	public static class StringStaticHelper
+	{
+		public static string CutAfter(this string self, int charsNumber, string postChars = "...")
+		{
+			return !string.IsNullOrEmpty(self) && self.Length > charsNumber ? self.Substring(0, charsNumber) + postChars : self;
+		}
+	}
 }

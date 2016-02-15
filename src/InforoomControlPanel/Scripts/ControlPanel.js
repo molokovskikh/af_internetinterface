@@ -331,6 +331,106 @@ function scrollTo(element, speed) {
 	}, speed);
 }
 
+function scrollToPoint(point, speed) {
+	speed = speed != null ? speed : 300;
+	$('html, body').animate({
+		scrollTop: point
+	}, speed);
+}
+
+var maxObj_;
+var $scrollingDiv;
+
+function scrollElOnScroll(objToScroll) {
+	$scrollingDiv = $(objToScroll);
+	var objForException = $(".none");
+	$(window).scroll(function() {
+		$scrollingDiv
+			.animate({
+				"marginTop": $(window).scrollTop() + "px"
+			}, 50);
+	});
+}
+
+function scrollPan_add(text_bool) {
+	var sc = $("#scroll_top");
+	maxObj_ = $(".breadcrumb");
+	if (maxObj_.length == 0 || $(maxObj_).offset() == null) {
+		return;
+	}
+	if (sc.length == 0 && $(document).height() > $(window).height()) {
+		$("body").append("<div id='scroll_top' class='top' current_y='0'><a class='scroll_block'><span class='scroll_img' >" +
+			"</span>" + ((text_bool == true) ? "<span class='scroll_text' >наверх</span>" : "") + "</a></div>");
+
+		$("#scroll_top").css("margin-top", "0 px");
+		$("#scroll_top").css("margin-left", $(".sidebar-menu").width() + "px");
+
+		if (text_bool == false) {
+			$("#scroll_top").css("min-width", "50px");
+			$("#scroll_top").css("width", "50px");
+			$(".scroll_block").css("width", "50px");
+		}
+
+		$("#scroll_top").click(function() {
+			if ($("#scroll_top").attr("current_y") == 0 && $(window).scrollTop() == 0) {
+				var point = 0;
+				if ($("footer.main").length > 0) {
+					point = $("footer.main").offset().top;
+				}
+				if ($(".main-menu").length > 0 && point < $(".main-menu").height()) {
+					point = $(".main-menu").height();
+				}
+				scrollToPoint(point);
+			}
+			if (($("#scroll_top").attr("current_y") > 0 && $("#scroll_top").hasClass("top")) || $("#scroll_top").hasClass("top") == false) {
+				if ($("#scroll_top").hasClass("top")) {
+					var point_y = $("#scroll_top").attr("current_y");
+					scrollToPoint(point_y);
+					$("#scroll_top").attr("current_y", "0");
+					$("#scroll_top").removeClass("top");
+					if (text_bool == true) {
+						$(".scroll_text").html("наверх");
+					}
+				} else {
+					var point_y = $("#scroll_top").attr("current_y");
+					scrollToPoint(point_y);
+					$("#scroll_top").addClass("moves");
+					$("#scroll_top").attr("current_y", $(window).scrollTop());
+					$("#scroll_top").addClass("top");
+					if (text_bool == true) {
+						$(".scroll_text").html("вниз");
+					}
+				}
+
+			}
+		});
+
+		$(window).scroll(function(d) {
+			if ($(maxObj_).offset().top < $(window).scrollTop()) {
+				$("#scroll_top").removeClass("top");
+				if (text_bool == true) {
+					$(".scroll_text").html("наверх");
+				}
+				if ($("#scroll_top").hasClass("moves") == false) {
+					$("#scroll_top").attr("current_y", "0");
+				}
+			} else {
+
+				$("#scroll_top").removeClass("moves");
+				$("#scroll_top").addClass("top");
+				if (text_bool == true) {
+					$(".scroll_text").html("вниз");
+				}
+			}
+		});
+
+		scrollElOnScroll($("#scroll_top"));
+	} else {
+		setTimeout(scrollPan_add(false), 2000);
+	}
+
+}
+
 $(function() {
 
 	var cookieValue = $.cookie("ShowLargeMenu");
@@ -344,5 +444,6 @@ $(function() {
 		else
 			$.cookie("ShowLargeMenu", "true", { expires: 365, path: "/" });
 	});
+	setTimeout(scrollPan_add(false), 2000);
 
 });

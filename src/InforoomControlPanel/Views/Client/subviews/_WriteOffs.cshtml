@@ -8,9 +8,17 @@
 	int writeOffState = ViewBag.WriteOffState;
 	List<object> writeoffsAndUserWriteOff = ViewBag.WriteoffsAndUserWriteOff;
 	var totalWriteOffSum = writeoffsAndUserWriteOff.Count > 0 ? writeoffsAndUserWriteOff.Sum(s => (s as WriteOff != null ? ((WriteOff) s).WriteOffSum : ((UserWriteOff) s).Sum)) : 0m;
+
+	string formClientType = "";
+	if (client.PhysicalClient != null) {
+		formClientType = "InfoPhysical";
+	}
+	else {
+		formClientType = "InfoLegal";
+	}
 }
 <div class="panel panel-default blockJsLockControll">
-	@using (@Html.BeginForm("InfoPhysical", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
+	@using (@Html.BeginForm(formClientType, "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
 		@Html.HiddenFor(o => client.Id)
 		<input id="subViewName" name="subViewName" type="hidden" value="_WriteOffs">
 		@* Блок пустой *@
@@ -31,8 +39,8 @@
 		</div>
 		<div class="panel-body">
 			<span>Группировка:</span>
-			<a class="btn btn-@(writeOffState == 0 ? "gold" : "white")" href="@Url.Action("InfoPhysical", new {@id = client.Id, @writeOffState = 0})">Месяц</a>
-			<a class="btn btn-@(writeOffState == 1 ? "gold" : "white")" href="@Url.Action("InfoPhysical", new {@id = client.Id, @writeOffState = 1})">Год</a>
+			<a class="btn btn-@(writeOffState == 0 ? "gold" : "white")" href="@Url.Action(formClientType, new {@id = client.Id, @writeOffState = 0})">Месяц</a>
+			<a class="btn btn-@(writeOffState == 1 ? "gold" : "white")" href="@Url.Action(formClientType, new {@id = client.Id, @writeOffState = 1})">Год</a>
 		</div>
 		<div class="panel-body">
 			<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable border-right-white writeOffTable" role="grid" aria-describedby="table-2_info">
@@ -118,7 +126,7 @@
 								<td>@wOff.Comment</td>
 								<td>
 									@if (wOff.IsProcessedByBilling) {
-										<a class="c-pointer" title="удаление списания" data-toggle="modal" data-target="#ModelForWriteOffs" onclick="writeoffDelete('@wOff.Id',1)">удалить</a>
+										<a class="c-pointer" title="удаление списания" data-toggle="modal" data-target="#ModelForWriteOffs" onclick="writeoffDelete('@wOff.Id', 1)">удалить</a>
 									}
 									else {
 										<span title="Списание ожидает обработки">удалить</span>
@@ -137,7 +145,7 @@
 								<td>@(wOff.Sale.HasValue ? wOff.Sale.Value.ToString("0") + " %" : "" )</td>
 								<td>@wOff.Comment</td>
 								<td>
-									<a class="c-pointer" title="удаление списания" data-toggle="modal" data-target="#ModelForWriteOffs" onclick="writeoffDelete('@wOff.Id',0)">удалить</a>
+									<a class="c-pointer" title="удаление списания" data-toggle="modal" data-target="#ModelForWriteOffs" onclick="writeoffDelete('@wOff.Id', 0)">удалить</a>
 								</td>
 							</tr>
 						}
@@ -145,82 +153,11 @@
 						writeoffsAndUserWriteOff.RemoveAt(0);
 					}
 				}
-
-
 				</tbody>
 			</table>
 		</div>
 	</div>
 </div>
-<!-- Modal For WriteOffs Cancel-->
-<div class="modal fade" id="ModelForWriteOffs" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			@using (@Html.BeginForm("DeleteWriteOff", "Client", null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
-			{
-				@Html.HiddenFor(o => client.Id)
-				<input id="subViewName" name="subViewName" type="hidden" value="_WriteOffs">
-				<input id="writeoffToDelete" type="hidden" name="writeOffId" value="">
-				<input id="writeoffType" type="hidden" name="user" value="">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">Удаление списания</h4>
-				</div>
-				<div class="modal-body">
-					<p><span id="writeOffDeleteMessage"></span></p>
-					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
-						<tbody>
-							<tr>
-								<td style="max-width: 60px;">Причина</td>
-								<td>
-									<input class="form-control" name="comment" type="text" value="">
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-					<button type="submit" class="btn btn-red">Удалить</button>
-				</div>
-			}
-		</div>
-	</div>
-</div>
-<!-- Modal For WriteOffs Add-->
-<div class="modal fade" id="ModelForWriteOffsAdd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			@using (@Html.BeginForm("AddWriteOff", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
-				@Html.HiddenFor(o => client.Id)
-				<input id="subViewName" name="subViewName" type="hidden" value="_WriteOffs">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">Добавление списания</h4>
-				</div>
-				<div class="modal-body">
-					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
-						<tbody>
-						<tr>
-							<td>Сумма</td>
-							<td>
-								<input class="form-control" name="sum" min="0" type="number" value="" step="any">
-							</td>
-						</tr>
-						<tr>
-							<td style="max-width: 60px;">Комментарий</td>
-							<td>
-								<input class="form-control" name="comment" type="text" value="">
-							</td>
-						</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-					<button type="submit" class="btn btn-success">Списать</button>
-				</div>
-			}
-		</div>
-	</div>
-</div>
+
+@Html.Partial("subviews/modelview/_WriteOffCancel", client)
+@Html.Partial("subviews/modelview/_WriteOffCreate", client)

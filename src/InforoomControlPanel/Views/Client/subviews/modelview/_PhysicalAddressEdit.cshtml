@@ -1,0 +1,57 @@
+﻿
+@model Inforoom2.Models.Client
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	Client client = Model;
+	List<Region> regionList = ViewBag.RegionList;
+}
+<!-- Modal For Address -->
+<div class="modal fade" id="ModelForAddress" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			@using (@Html.BeginForm("ChangeAddress", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))
+			{
+				@Html.HiddenFor(o => client.Id)
+				<input id="subViewName" name="subViewName" type="hidden" value="_PrivatePhysicalInfo">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Изменение адреса</h4>
+				</div>
+				<div class="modal-body">
+					<div class="panel-body addressFilterBlock">
+						<div class="panel-body" style="padding: 0px;">
+							<div class="row">
+								<div>
+									<span class="addressDetails top-bottom">Регион</span>
+									@Html.DropDownListExtendedFor(i => client.GetRegion(), regionList, obj => obj.Name, null,
+										new { @class = "form-control", @Id = "RegionDropDown", @Name = "RegionDropDown_name" }, client.GetRegion() != null ? client.GetRegion().Id : 0, true)
+									<span class="addressDetails top-bottom">Улица</span> <select id="StreetDropDown" class="form-control form-control addressSearch" value="@client.Address.House.Street.Id"></select>
+									<span class="addressDetails top-bottom">Дом</span> <select id="HouseDropDown" class="form-control form-control addressSearch" name="houseId" value="@client.Address.House.Id"></select>
+								</div>
+								<div>
+									<span class="addressDetails top-bottom">Квартира</span>
+									@Html.TextBoxFor(o => client.PhysicalClient.Address.Apartment, new { @class = "form-control", @Name = "apartment" })
+									@ViewBag.Validation.GetError(client.PhysicalClient.Address, "Apartment")
+									<span class="addressDetails top-bottom">Подъезд</span>
+									@Html.TextBoxFor(o => client.PhysicalClient.Address.Entrance, new { @class = "form-control", @Name = "entrance" })
+									@ViewBag.Validation.GetError(client.PhysicalClient.Address, "Entrance")
+									<span class="addressDetails top-bottom">Этаж</span>
+									@Html.TextBoxFor(o => client.PhysicalClient.Address.Floor, new { @class = "form-control", @Name = "floor", @Type = "number", @Min = "0" })
+									@ViewBag.Validation.GetError(client.PhysicalClient.Address, "Floor")
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="StopAddressAjaxRunner(this)">Закрыть</button>
+					<button type="submit" class="btn btn-success">Сохранить</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>

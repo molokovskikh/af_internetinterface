@@ -47,8 +47,9 @@
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Дата выдачи:</label>
-				<div class = "col-sm-4">
-					@Html.ValidationEditor(validationRunner, clientRentalHardware, "GiveDate", new { @value = date }, HtmlTag.date, HtmlType.none)
+				<div class="col-sm-4">
+					@Html.TextBoxFor(o => clientRentalHardware.GiveDate, clientRentalHardware.GiveDate.GetValueOrDefault().ToString("dd.MM.yyyy"), new { @data_format = "dd.mm.yyyy", @class = "form-control", @data_provide = "datepicker-inline" })
+				 	@ViewBag.Validation.GetError(clientRentalHardware, "GiveDate")
 				</div>
 			</div>
 			<div class="form-group">

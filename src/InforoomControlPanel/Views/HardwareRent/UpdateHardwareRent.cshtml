@@ -61,7 +61,8 @@
 				<label class="col-sm-2 control-label">Дата выдачи:</label>
 				<div class="col-sm-4">
 					@if (clientRentalHardware.IsActive) {
-						@Html.ValidationEditor(validationRunner, clientRentalHardware, "GiveDate", new { @value = date }, HtmlTag.date, HtmlType.none)
+						@Html.TextBoxFor(o => clientRentalHardware.GiveDate, clientRentalHardware.GiveDate.GetValueOrDefault().ToString("dd.MM.yyyy"), new {@data_format = "dd.mm.yyyy", @class = "form-control", @data_provide = "datepicker-inline"})
+						@ViewBag.Validation.GetError(clientRentalHardware, "GiveDate")
 					}
 					else {
 						@(clientRentalHardware.GiveDate.HasValue ? clientRentalHardware.GiveDate.Value.ToString("dd.MM.yyyy") : "")

@@ -321,6 +321,7 @@ namespace InforoomControlPanel.Controllers
 			//создание нового оповещения
 			if (!string.IsNullOrEmpty(newUserAppeal)) {
 				var newAppeal = new Appeal(newUserAppeal, client, AppealType.User) {Employee = GetCurrentEmployee()};
+				newAppeal.ReplaceSharpWithRedmine();
 				DbSession.Save(newAppeal);
 			}
 			//обработка модели клиента, сохранение, передача необходимых данных на форму.
@@ -1303,7 +1304,8 @@ namespace InforoomControlPanel.Controllers
 			else {
 				ErrorMessage("Не удалось привязать выбранный номер к данному клиенту");
 			}
-			return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+				new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 		/// <summary>
@@ -1383,7 +1385,7 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage("Адрес не был изменен: не был указан дом");
 			}
 
-			return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 		[HttpPost]
@@ -1467,7 +1469,7 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage("Платеж не был добавлен: данные введены неверно");
 			}
 
-			return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 		[HttpPost]
@@ -1478,15 +1480,15 @@ namespace InforoomControlPanel.Controllers
 
 			if (clientReceiver == null && string.IsNullOrEmpty(comment)) {
 				ErrorMessage("Платеж не был переведен: указанный лицевой счет не существует, причина перевода не указана");
-				return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
 			}
 			if (clientReceiver == null) {
 				ErrorMessage("Платеж не был переведен: указанный лицевой счет не существует");
-				return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
 			}
 			if (string.IsNullOrEmpty(comment)) {
 				ErrorMessage("Платеж не был переведен: не указана причина перевода");
-				return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
 			}
 
 			decimal paymentSum = -1;
@@ -1494,7 +1496,7 @@ namespace InforoomControlPanel.Controllers
 				var payment = client.Payments.FirstOrDefault(s => s.Id == paymentId);
 				if (!payment.BillingAccount) {
 					ErrorMessage($"Платеж {paymentId} не был переведен: платеж ожидает обработки");
-					return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+					return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
 				}
 				paymentSum = payment.Sum;
 				var appeal = payment.Cancel(comment, GetCurrentEmployee());
@@ -1509,13 +1511,13 @@ namespace InforoomControlPanel.Controllers
 					"Платеж №{4} клиента №<a href='{5}'>{1}</a> на сумму {0} руб.  был перемещен клиенту №<a href='{6}'>{2}</a>.<br/>Комментарий: {3} ";
 				var msgTextA = String.Format(msgTextFormat + "<br/>Баланс: {7}. ", payment.Sum.ToString("0.00"),
 					client.Id, clientReceiver.Id, comment, payment.Id,
-					ConfigHelper.GetParam("adminPanelNew") + Url.Action("InfoPhysical", new {@Id = client.Id}),
-					ConfigHelper.GetParam("adminPanelNew") + Url.Action("InfoPhysical", new {@Id = clientReceiver.Id}),
+					ConfigHelper.GetParam("adminPanelNew") + Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id}),
+					ConfigHelper.GetParam("adminPanelNew") + Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = clientReceiver.Id}),
 					client.Balance.ToString("0.00"));
 				var msgTextB = String.Format(msgTextFormat, payment.Sum.ToString("0.00"), client.Id, clientReceiver.Id, comment,
 					payment.Id,
-					ConfigHelper.GetParam("adminPanelNew") + Url.Action("InfoPhysical", new {@Id = client.Id}),
-					ConfigHelper.GetParam("adminPanelNew") + Url.Action("InfoPhysical", new {@Id = clientReceiver.Id}));
+					ConfigHelper.GetParam("adminPanelNew") + Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id}),
+					ConfigHelper.GetParam("adminPanelNew") + Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = clientReceiver.Id}));
 				var clientAppeal = new Appeal(msgTextA, client, AppealType.System)
 				{
 					Employee = GetCurrentEmployee(),
@@ -1560,7 +1562,7 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage("Платеж не был переведен: платежа с данным номером в базе нет");
 			}
 
-			return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 		[HttpPost]
@@ -1569,14 +1571,14 @@ namespace InforoomControlPanel.Controllers
 		{
 			if (string.IsNullOrEmpty(comment)) {
 				ErrorMessage($"Платеж {paymentId} не был отменен: не указана причина отмены");
-				return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
 			}
 			decimal paymentSum = -1;
 			if (paymentId != 0) {
 				var payment = client.Payments.FirstOrDefault(s => s.Id == paymentId);
 				if (!payment.BillingAccount) {
 					ErrorMessage($"Платеж {paymentId} не был отменен: платеж ожидает обработки");
-					return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+					return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
 				}
 				paymentSum = payment.Sum;
 				var appeal = payment.Cancel(comment, GetCurrentEmployee());
@@ -1610,7 +1612,7 @@ namespace InforoomControlPanel.Controllers
 			else {
 				ErrorMessage($"Платеж {paymentId} не был удален: платежа по данному номеру не существует");
 			}
-			return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 		[HttpPost]
@@ -1638,7 +1640,7 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage("Списание не было добавлено: данные введены неверно");
 			}
 
-			return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient!=null? "InfoPhysical":"InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 		[HttpPost]
@@ -1695,7 +1697,7 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage($"Списание {writeOffId} не было удалено: списания по данному номеру не существует");
 			}
 
-			return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 		[HttpPost]
@@ -1703,6 +1705,8 @@ namespace InforoomControlPanel.Controllers
 			Inforoom2.Helpers.ConnectionHelper connection, StaticIp[] staticAddress, string connectSum = "",
 			string subViewName = "")
 		{
+			if (staticAddress != null)
+				foreach (var item in staticAddress) item.Mask = item.Mask.HasValue && item.Mask.Value == 0 ? 32 : item.Mask;
 			string errorMessage = "";
 			if (connection.Switch == 0) {
 				ErrorMessage("Ошибка при обновлении подключения. Коммутатор не выбран!");
@@ -1732,7 +1736,7 @@ namespace InforoomControlPanel.Controllers
 				if (!client.RemoveEndpoint(endPoint, DbSession))
 					ErrorMessage("Последняя точка подключения не может быть удалена!");
 			}
-			return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 
@@ -1804,78 +1808,6 @@ namespace InforoomControlPanel.Controllers
 		{
 			var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Endpoint.Id == id);
 			return Json(lease != null && lease.Ip != null ? lease.Ip.ToString() : "", JsonRequestBehavior.AllowGet);
-		}
-
-		/// <summary>
-		/// Асинхронная функция (JSON).
-		/// Определяет не упал ли коммутатор, к которому подключен клиент.
-		/// </summary>
-		/// <param name="id">Идентификатор точки подключения клиента</param>
-		/// <returns></returns>
-		[HttpPost]
-		public JsonResult PingEndpoint(int id)
-		{
-			string result = "";
-			try {
-				var endpoint = DbSession.Query<ClientEndpoint>().First(i => i.Id == id);
-				var ip = endpoint.Switch.Ip;
-				Ping pingSender = new Ping();
-				PingOptions options = new PingOptions();
-				// Use the default Ttl value which is 128,
-				// but change the fragmentation behavior.
-				options.DontFragment = true;
-
-				// Create a buffer of 32 bytes of data to be transmitted.
-				string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-				byte[] buffer = Encoding.ASCII.GetBytes(data);
-				int timeout = 120;
-
-				// отправлять 4 пакета
-				var replyArray = new PingReply[4];
-				for (int i = 0; i < replyArray.Length; i++) replyArray[i] = pingSender.Send(ip, timeout, buffer, options);
-
-				//Отобразить пользователю:
-				//-Минимальное время,
-				Int64 minRoundtripTime = 0;
-				//-Максимальное время,
-				Int64 maxRoundtripTime = 0;
-				//-Количество пакетов, которое вернулось.
-				Int64 returnedPackagesNumber = 0;
-				// проверка вернувшихся пакетов
-				for (int i = 0; i < replyArray.Length; i++) {
-					if (i == 0) {
-						minRoundtripTime = replyArray[i].RoundtripTime;
-						maxRoundtripTime = replyArray[i].RoundtripTime;
-					}
-					minRoundtripTime = minRoundtripTime > replyArray[i].RoundtripTime && replyArray[i].Status == IPStatus.Success
-						? replyArray[i].RoundtripTime
-						: minRoundtripTime;
-					maxRoundtripTime = maxRoundtripTime < replyArray[i].RoundtripTime && replyArray[i].RoundtripTime != 0 &&
-					                   replyArray[i].Status == IPStatus.Success
-						? replyArray[i].RoundtripTime
-						: maxRoundtripTime;
-					returnedPackagesNumber += replyArray[i].Status == IPStatus.Success ? 1 : 0;
-				}
-				//если вернулся хотя бы один пакет
-				if (returnedPackagesNumber > 0) {
-					result =
-						string.Format(
-							"<b style='color:{0}'>Статус: Онлайн,<br/> Пришло пакетов: {1},<br/> Скорость ответа минимальная: {2} мс.<br/> Скорость ответамаксимальная: {3} мс.</b>",
-							returnedPackagesNumber > 1 ? "green" : "red",
-							returnedPackagesNumber + " / " + replyArray.Length,
-							minRoundtripTime,
-							maxRoundtripTime);
-					// если ни один пакет не вернулся
-				}
-				else {
-					result = string.Format("<b style='color:red'>Коммутатор ничего не ответил</b>");
-				}
-			}
-			catch (Exception) {
-				result = string.Format("<b style='color:red'>Коммутатор ничего не ответил</b>");
-			}
-
-			return Json(result, JsonRequestBehavior.AllowGet);
 		}
 	}
 }

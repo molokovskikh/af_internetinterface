@@ -110,6 +110,12 @@ namespace Inforoom2.Models.Services
 			assignedService.IsActivated = false;
 		}
 
+		public override bool CanDeactivate(ClientService assignedService)
+		{
+			return assignedService.Client.PhysicalClient.Balance < 0
+				|| (assignedService.EndDate != null && SystemTime.Now().Date >= assignedService.EndDate.Value);
+		}
+
 		public override bool IsActivableFor(Client client)
 		{
 			return client != null

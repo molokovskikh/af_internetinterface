@@ -1,0 +1,43 @@
+﻿@model Inforoom2.Models.Client
+
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using Inforoom2.Models.Services
+@{
+	Layout = "";
+	Client client = Model;
+}
+<!-- Modal For Order Add-->
+<div class="modal fade" id="ModelForUpdateConnectionAddress" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			@using (@Html.BeginForm("UpdateConnectionAddress", "Client", null, FormMethod.Post, new {@class = "form-horizontal form-groups-bordered"})) {
+				@Html.Hidden("clientId", client.Id)
+				<input name="orderId" type="hidden" value="">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Редактирование адреса подключения</h4>
+				</div>
+				<div class="modal-body">
+					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
+						<tbody>
+						<tr>
+							<td>Адрес подключения</td>
+							<td>
+								<input name="newAddress" class="form-control" value="">
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+					<button type="submit" class="btn btn-success">Сохранить</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>

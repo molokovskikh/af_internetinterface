@@ -142,7 +142,7 @@ namespace Inforoom2.Models
 		[ManyToOne(Cascade = "save-update"), Description("Статус")]
 		public virtual Status Status { get; set; }
 
-		[ManyToOne(Column = "PhysicalClient", Cascade = "save-update")]
+		[ManyToOne(Column = "PhysicalClient", Cascade = "save-update"), Description("Физ. лицо")]
 		public virtual PhysicalClient PhysicalClient { get; set; }
 
 		[OneToOne(PropertyRef = "Client")]
@@ -151,7 +151,7 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "LawyerPerson", Cascade = "save-update"), Description("Юр. лицо")]
 		public virtual LegalClient LegalClient { get; set; }
 
-		[Property(Column = "RedmineTask")]
+		[Property(Column = "RedmineTask"), Description("Задача в Redmine")  ]
 		public virtual string RedmineTask { get; set; }
 
 		[ManyToOne(Column = "Recipient", Cascade = "save-update")]
@@ -214,7 +214,7 @@ namespace Inforoom2.Models
 		//TODO: перенесено из старой админки (нужен рефакторинг)
 		[Bag(0, Table = "Orders", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "ClientId")]
-		[OneToMany(2, ClassType = typeof (ClientOrder))]
+		[OneToMany(2, ClassType = typeof (ClientOrder)), Description("Заказы")]
 		public virtual IList<ClientOrder> LegalClientOrders { get; set; }
 
 		public virtual string ClientId
@@ -237,10 +237,9 @@ namespace Inforoom2.Models
 			return WorkingStartDate != null;
 		}
 
-		public virtual bool IsPhysicalClient
-		{
-			get { return PhysicalClient == null; }
-		}
+		public virtual bool IsPhysicalClient => PhysicalClient != null;
+
+		public virtual bool IsLegalClient => LegalClient != null;
 
 		public virtual ClientService Internet
 		{
@@ -266,6 +265,27 @@ namespace Inforoom2.Models
 		public virtual bool IsDisabledByBilling()
 		{
 			return Disabled && AutoUnblocked && Status.Type == StatusType.NoWorked;
+		}
+
+		/// <summary>
+		/// ///							
+		/// синхронизирует состояние услуг и состояние точки подключения. Вызывается иногда из Background.
+		/// ///
+		/// </summary>
+		public virtual void SyncServices(ISession session, SettingsHelper settings)
+		{
+			var service = settings.Services.OfType<FixedIp>().FirstOrDefault();
+			if (service == null)
+				return;
+
+			foreach (var endpoint in Endpoints) {
+				if (endpoint.Ip != null) {
+					TryActivate(session, service, endpoint);
+				}
+				else {
+					TryDeactivate(session, service, endpoint);
+				}
+			}
 		}
 
 		/// <summary>
@@ -601,7 +621,8 @@ namespace Inforoom2.Models
 			return new List<string>()
 			{
 				"LegalClient",
-				"Status"
+				"Status",
+				"RedmineTask"
 				// В старую админку приходит оповещение с формы (после переноса страницы клиента, можно будет раскомментить)
 				//"SendSmsNotification"
 			};
@@ -672,7 +693,7 @@ namespace Inforoom2.Models
 			return ClientServices.Any(c => NHibernateUtil.GetClass(c.Service) == typeof (T));
 		}
 
-		public virtual bool TryActivate(ISession dbSession, Service service, ClientEndpoint endpoint = null)
+		public virtual bool TryActivate(ISession dbSession, Service service, ClientEndpoint endpoint = null, Employee employee = null)
 		{
 			if (ClientServices.Any(s => s.Client.Endpoints.Contains(endpoint) && s.Service == service))
 				return false;
@@ -680,7 +701,8 @@ namespace Inforoom2.Models
 			{
 				Client = this,
 				Service = service,
-				Endpoint = endpoint
+				Endpoint = endpoint,
+				Employee = employee
 			};
 			ClientServices.Add(clientService);
 			return clientService.TryActivate(dbSession);
@@ -749,13 +771,12 @@ namespace Inforoom2.Models
 				}
 				if (NewStatus.Type != StatusType.Dissolved) {
 					AutoUnblocked = true;
-					if (Disabled) Appeals.Add(new Appeal("Клиент был заблокирован оператором", this, AppealType.Statistic, employee));
+					if (Disabled) Appeals.Add(new Appeal("Клиент был разблокирован оператором", this, AppealType.Statistic, employee));
 					if (ShowBalanceWarningPage)
 						Appeals.Add(new Appeal("Оператором отключена страница Warning", this, AppealType.Statistic, employee));
 					Disabled = false;
 					ShowBalanceWarningPage = false;
 				}
-
 				if (NewStatus.Type == StatusType.Dissolved) {
 					if (HaveService<BlockAccountService>()) {
 						var thisService = ClientServices

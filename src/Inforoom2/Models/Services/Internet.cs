@@ -17,5 +17,14 @@ namespace Inforoom2.Models.Services
 				return 0;
 			return assignedService.Client.GetTariffPrice();
 		}
+
+		public override bool CanDeactivate(ClientService assignedService)
+		{
+			return assignedService.IsActivated &&
+				   (!assignedService.ActivatedByUser
+					|| assignedService.Client.Disabled
+					//Статус "Заблокирован - Восстановление работы" является причиной отключения интернета, при его наличии услугу нужно деактивировать
+					|| assignedService.Client.Status.Type == StatusType.BlockedForRepair);
+		}
 	}
 }

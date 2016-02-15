@@ -33,6 +33,12 @@ namespace Inforoom2.Models
 			set { Speed = value*1000000; }
 		}
 
+		[ValidatorNotNull]
+		public virtual string SpeedInMgBitFormated
+		{
+			get { return Speed.HasValue ? (Convert.ToDecimal(Speed.Value)/1000000).ToString("0.000") : "0"; }
+		}
+
 		[Property]
 		public virtual bool IsPhysic { get; set; }
 
@@ -93,6 +99,7 @@ namespace Inforoom2.Models
 			var currentSpeed = dbSession.Query<PackageSpeed>().FirstOrDefault(s => s.PackageId == packageId);
 			return currentSpeed == null ? 0f : currentSpeed.GetSpeed();
 		}
+
 		public static float GetSpeedForPackageId(IList<PackageSpeed> list, int packageId)
 		{
 			var currentSpeed = list.FirstOrDefault(s => s.PackageId == packageId);

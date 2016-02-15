@@ -1,9 +1,54 @@
-﻿using NHibernate.Mapping.Attributes;
+﻿using System;
+using System.Text;
+using Common.Tools;
+using NHibernate;
+using NHibernate.Mapping.Attributes;
 
 namespace Inforoom2.Models.Services
 {
-	[Subclass(0, ExtendsType = typeof(Service), DiscriminatorValue = "WorkLawyer")]
+	[Subclass(0, ExtendsType = typeof (Service), DiscriminatorValue = "WorkLawyer")]
 	public class WorkLawyer : Service
 	{
+		public override bool CanActivate(ClientService assignedService)
+		{
+			return assignedService.Client.LegalClient != null && assignedService.Client.LegalClient.Plan != null;
+		}
+
+		public override bool CanDeactivate(ClientService assignedService)
+		{
+			return assignedService.Client.LegalClient != null;
+		}
+		
+		public override void Deactivate(ClientService assignedService, ISession session)
+		{
+			var client = assignedService.Client;
+			var warning = client.LegalClient.NeedShowWarning();
+			client.ShowBalanceWarningPage = warning;
+			client.Disabled = warning;
+			client.IsNeedRecofiguration = true;
+			assignedService.IsActivated = false;
+		}
+
+		public override void Activate(ClientService assignedService, ISession session)
+		{
+			if ((!assignedService.IsActivated && CanActivate(assignedService))) {
+				var client = assignedService.Client;
+				client.ShowBalanceWarningPage = false;
+				client.Disabled = false;
+				assignedService.IsActivated = true;
+				client.IsNeedRecofiguration = true;
+				assignedService.EndDate = assignedService.EndDate.Value.Date;
+			}
+		}
+
+		// WriteOff - не перенесена из InternetInterface, используется в биллинге
+		//public override void WriteOff(ClientService assignedService)
+		//{
+		//	if ((assignedService.EndDate == null) ||
+		//	    (assignedService.EndDate != null && (SystemTime.Now().Date >= assignedService.EndDate.Value.Date))) {
+		//		ForceDeactivate(assignedService);
+		//		assignedService.Client.ClientServices.Remove(assignedService);
+		//	}
+		//}
 	}
 }

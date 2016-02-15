@@ -31,7 +31,7 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult Statistic()
 		{
-			return View("Statistic");
+            return View("Statistic");
 		}
 
 		/// <summary>
@@ -110,14 +110,6 @@ namespace InforoomControlPanel.Controllers
 		{
 			EmployeePermissionViewHelper.GeneratePermissions(DbSession,this);
             return RedirectToAction("PermissionList");
-		}
-		/// <summary>
-		/// Права доступа
-		/// </summary>
-		public JsonResult RenewActionPermissionsJs()
-		{
-			EmployeePermissionViewHelper.GeneratePermissions(DbSession, this);
-			return null;
 		}
 
 		/// <summary>

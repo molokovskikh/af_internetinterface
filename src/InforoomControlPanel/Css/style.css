@@ -2,9 +2,13 @@
 	.main-content > *, .doNotPrint > *, .doNotPrint{ display: none !important;}
 	.main-content .servicemen.panel, .PrintTimeTable{ display: block !important;}
 	.pageBreak {page-break-after: always;} 
-}
+} 
+ .ListOrderArchive .phantomBlock{ max-width: 800px;}
+ .no-margin{ margin: 0px !important;}
  .alert-danger{position: fixed;top: 18px;min-width: 572px;width: 62%;z-index: 99999;border:9px solid #BD3737; font-size: 13px;}
-
+ span.red.bold{padding-left: 2px; font-weight: bold; color: #C70E0E;}
+ .gray.bold{padding-left: 2px; font-weight: bold; color: #888888;}
+.black{color: #333!important;}
  .listItem.gray:hover{background: #E2E2E2 !important;}
  .error{color:red; font-weight:600 !important;}
  .servicemen table { table-layout:fixed; overflow:hidden;}
@@ -14,17 +18,34 @@
  .hid{ display: none;}
  body { color: #424242; }
  body a{ color: #00A651;font-weight: bold; }
+ .max-width200{    max-width: 400px;}
  .hiddenOverflow {display: block;overflow: hidden;}
+ .emptyBlock .orderListBorder .order h5:first-of-type{    margin-bottom: 13px;}
  .border-right-white tr td:last-child{border-right-color: #fff;}
- .emptyBlock .panel-heading .panel-title a{ border-left: 15px solid #367756;padding-left: 10px;}
+ .emptyBlock .orderListBorder .order h5 strong.right{display: inline-block;position: absolute;text-align: right;right: 0px;margin-right: 24px;}
+ .emptyBlock .orderListBorder .order h5 strong.right a{margin-right: 9px; font-weight: 300; border-bottom: 1px dashed #C1C1C1;}
+ .emptyBlock .orderListBorder .order h5 strong.right a:hover{ border-bottom:none;}
+ .emptyBlock .orderListBorder .orderTitle{ color: #0D52AB!important; cursor:pointer;}
+ .emptyBlock .orderListBorder .line-through{    border-bottom: 2px solid #EAD5BF;width: 100%;display: block;margin: auto;margin-bottom: 21px;}
+ .emptyBlock .orderListBorder .orderColumn h5 strong{ color: #636363;}
+ .emptyBlock .orderListBorder .orderColumn h5 strong.margin-left{margin-left: 13px !important}
+ .emptyBlock .orderListBorder .orderColumn h5 strong.margin-left{margin-left: 13px !important}
+ .emptyBlock .orderListBorder span.red.bold{width: 40px;display: inline-block;}
+ .emptyBlock .orderListBorder span.gray.left{ color: #8E8E8E;}
+ .emptyBlock .orderListBorder .width-120{width: 120px !important}
+ .emptyBlock .orderListBorder .width-240{width: 240px !important}
+ .emptyBlock .orderListBorder .orderColumn{ border-color: #fff!important;}
+ .emptyBlock .orderListBorder .orderColumn:first-of-type { border-top: 2px solid #8C9BA5!important;}
+ .emptyBlock .orderListBorder .orderColumn{ border-bottom: 2px solid #677BB1!important;}
+ .emptyBlock .panel-heading .panel-title.bold{    padding-left: 10px;}
  .emptyBlock .online td{background: #BDE8BC !important; }
  .appeal.Block.statusDissolved td{background: #FF5454 !important;}
  #switchPorts tbody.large{  border: 1px solid #808080;border-bottom: none;border-left: none;border-top: 4px solid #333;}
  #switchPorts tbody.large tr:nth-child(2n) {border-bottom: 4px solid #333;}
  #switchPorts tbody{  border: 1px solid #808080;border-bottom: none;border-left: none;}
- #switchPorts .port {display: block;width: 23px;height: 23px;text-align: center;background: #FFF9B3;cursor: pointer;border-bottom: 1px solid #808080;border-left: 1px solid #808080;}
+ #switchPorts .port {display: block;width: 24px;height: 24px;text-align: center;background: #FFF9B3;cursor: pointer;border-bottom: 1px solid #808080;border-left: 1px solid #808080;}
  #switchPorts .port.free{background: #A8DAB3;}
- #switchPorts .port.free:hover{background: #86D497;}
+ #switchPorts .port.free:hover{background: #65C77A;}
  #switchPorts .port.free:hover span{ color: #000;}
  #switchPorts .port.client{background: #F7ADAD;}
  #switchPorts .port.client:hover{background: #FF7878;}
@@ -33,15 +54,21 @@
  .table .fixedIp{ display: inline-block;}
  .table .fixedIp.text{ width: 120px !important;}
  .table .fixedIp.value{ width: 80px !important; margin-left: 3px;}
- 
- table .staticIpElement a.delete span:first-child{color: #005CB5;font-size: 16px;}
- table .staticIpElement a.delete span:last-child{color: #006BCA;top: -2px;position: relative;margin-left: 2px;cursor: pointer; border-bottom: 1px dashed #00549E;}
- table .staticIpElement a.delete:hover span:last-child { border-bottom: none;}
+ .archiveClientOrder tr.serv{border-top: 2px solid #969696  !important;}
+ .archiveClientOrder tr.serv:first-of-type{border-top: 2px solid #CCCCCC !important;} 
+ .archiveClientOrder tr.serv:last-of-type{border-bottom: 2px solid #969696  !important;} 
+ table .staticIpElement a.delete span:first-child,.serviceRemove span:first-child{color: #005CB5;font-size: 16px;}
+ table .staticIpElement a.delete span:last-child,.serviceRemove span:last-child{color: #006BCA;top: -2px;position: relative;margin-left: 2px;cursor: pointer; border-bottom: 1px dashed #00549E;}
+ table .staticIpElement a.delete:hover span:last-child,.serviceRemove:hover span:last-child { border-bottom: none;}
 
- a.addStaticIpElement span:first-child{color: #940000;font-size: 16px;}
- a.addStaticIpElement span:last-child{color: #E40000;top: -2px;position: relative;margin-left: 2px;cursor: pointer; border-bottom: 1px dashed #DA0000;}
- a.addStaticIpElement:hover span:last-child { border-bottom: none;}
-
+ a.addStaticIpElement span:first-child,.addNewElement span:first-child{color: #940000;font-size: 16px;}
+ a.addStaticIpElement span:last-child,.addNewElement span:last-child{color: #E40000;top: -2px;position: relative;margin-left: 2px;cursor: pointer; border-bottom: 1px dashed #DA0000;}
+ a.addStaticIpElement:hover span:last-child,.addNewElement:hover span:last-child { border-bottom: none;}
+ .OrderServicePanel{background: #EFEFEF;padding-bottom: 1px;border-bottom: 10px solid #E6E6E6;}
+ .addOrderServiceElement{margin-bottom: 6px;display: block;width: 138px;background: #FFFFFF;padding-left: 5px;padding-right: 10px;border: 1px solid #E0E0E0;text-align: center;cursor: pointer;}
+ .addServiceTable{margin-bottom: 8px;}
+ .centeredCheckBox{text-align: center; width: 253px;}
+ #ModelForOrderClose .modal-body,#ModelForOrderEdit .modal-body{padding-bottom: 10px;}
  #clientReciverMessage{padding-top: 8px;margin-bottom: 0px;color: #1C9407;}
  #ClientEditorForm .addressDetails.top-bottom{padding-top: 6px;padding-bottom: 5px;display: block;}
  #ModelForWriteOffsAdd table,  #ModelForPaymentsAdd table{margin-bottom: 0px;}
@@ -50,6 +77,8 @@
  .InfoPhysicalNaviPan a.btn{ font-size: 12px;}
 .blockJsLockControll a.blue{ color: #0072BC;}
 .blockJsLockControll a.blue:hover{ color: #626A6F;}
+.blockJsLockControll a.red{ color: #D20000;}
+.blockJsLockControll a.red:hover{ color: #C30000;}
  table .payment .buttons {padding: 0px;}
  table .payment .buttons a{display: block;padding: 3px 5px 3px 5px;cursor: pointer;    text-align: right; }
  table .payment .buttons a span{border-bottom: 1px dashed #B3B3B3;}
@@ -61,6 +90,44 @@
  table .payment a{color: #333;cursor: pointer;}
  table .payment a:hover{color: #000;}
  
+ 
+.scroll_img {
+	display: inline-block;
+    height: 14px;
+    width: 18px;
+    background: url('/Images/toplink.png') center 3px no-repeat;
+    cursor: pointer;
+}
+#scroll_top.top .scroll_img {
+  background: url('/Images/toplink.png') center -7px no-repeat;
+}
+#scroll_top {
+  height: 20px;
+  width: 50pxpx;
+  min-width: 50px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  text-align: center;
+  cursor: pointer;
+    border: 1px solid #D0D0D0;
+    border-left: 1px solid #E9E9E9;
+    border-top: 1px solid #E6E6E6;
+	z-index: 99999;
+  background: #FFFFFF;
+}
+.scroll_block {
+	z-index: 99999;
+  display: block;
+  height: 20px;
+  width: 50px;
+  position: relative;
+  font-size: 16px;
+  font-weight: bold;
+  margin: auto;
+  cursor: pointer;
+}
+
  .appeal.Block td{background: #FFAEAE !important;}
  .appeal.User td{background: #FDEFDB !important;}
  .appeal.Statistic td{background: #DEF4F5 !important;}

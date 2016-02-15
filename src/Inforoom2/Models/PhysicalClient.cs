@@ -353,26 +353,6 @@ namespace Inforoom2.Models
 			return ((StatusType) Client.Status.Id);
 		}
 
-		/// <summary>
-		/// ///							
-		/// синхронизирует состояние услуг и состояние точки подключения. Вызывается иногда из Background.
-		/// ///
-		/// </summary>
-		public virtual void SyncServices(ISession session, SettingsHelper settings)
-		{
-			var service = settings.Services.OfType<FixedIp>().FirstOrDefault();
-			if (service == null)
-				return;
-
-			foreach (var endpoint in Client.Endpoints) {
-				if (endpoint.Ip != null) {
-					Client.TryActivate(session, service, endpoint);
-				}
-				else {
-					Client.TryDeactivate(session, service, endpoint);
-				}
-			}
-		}
 
 		public virtual void UpdatePackageId(ClientEndpoint clientEndpoint)
 		{
@@ -414,7 +394,7 @@ namespace Inforoom2.Models
 			var oldSwitch = clientEntPoint.Switch;
 
 			var nullFlag = false;
-			if (!string.IsNullOrEmpty(connection.staticIp)) {
+			if (!string.IsNullOrEmpty(connection.StaticIp)) {
 				clientEntPoint.Ip = null;
 				nullFlag = true;
 			}
@@ -427,13 +407,13 @@ namespace Inforoom2.Models
 			if (!validateSum)
 				errorMessage = "Введена невалидная сумма. ";
 
-			if (string.IsNullOrEmpty(connection.staticIp) || nullFlag) {
+			if (string.IsNullOrEmpty(connection.StaticIp) || nullFlag) {
 				if (validateSum && string.IsNullOrEmpty(errorMessage) || validateSum &&
 				    (oldSwitch != null && connection.Switch == oldSwitch.Id && connection.Port == oldPort.ToString())) {
 					//обновляем/задаем поля точки подключения
-					if (clientEntPoint.Ip == null && !string.IsNullOrEmpty(connection.staticIp)) {
+					if (clientEntPoint.Ip == null && !string.IsNullOrEmpty(connection.StaticIp)) {
 						dbSession.Save(new UserWriteOff(client, 200,
-							string.Format("Плата за фиксированный Ip адрес ({0})", connection.staticIp)));
+							string.Format("Плата за фиксированный Ip адрес ({0})", connection.StaticIp)));
 					}
 					clientEntPoint.Client = client;
 					clientEntPoint.Port = connection.GetPortNumber().Value;
@@ -443,7 +423,7 @@ namespace Inforoom2.Models
 
 					//сохраняем значение фиксированного Ip для точки подкючения
 					IPAddress address;
-					if (connection.staticIp != null && IPAddress.TryParse(connection.staticIp, out address))
+					if (connection.StaticIp != null && IPAddress.TryParse(connection.StaticIp, out address))
 						clientEntPoint.Ip = address;
 					else
 						clientEntPoint.Ip = null;
@@ -454,21 +434,7 @@ namespace Inforoom2.Models
 						if (client.Status.Additional.Count > 0 && client.Status.Additional.Any(s => s.ShortName == "Refused")) {
 							client.Status.Additional.Clear();
 						}
-					}
-
-					//назначение обслуживания отдельно вроде бы как - нужно уточнить
-					//if (newFlag || clientEntPoint.WhoConnected == null)
-					//{
-					//	if (client.IsPhysical() && client.ConnectGraph != null)
-					//	{
-					//		clientEntPoint.WhoConnected = client.ConnectGraph.Brigad;
-					//	}
-					//	else
-					//	{
-					//		var brigad = DbSession.Get<Brigad>(BrigadForConnect);
-					//		clientEntPoint.WhoConnected = brigad;
-					//	}
-					//}
+					} 
 
 					//обновляем значение даты подключения клиента
 					client.ConnectedDate = DateTime.Now;
@@ -476,7 +442,7 @@ namespace Inforoom2.Models
 						client.Status = dbSession.Load<Status>((int) StatusType.BlockedAndConnected);
 
 					//синхронизируем сервисы клиента на основе settings(ов)
-					SyncServices(dbSession, settings);
+					client.SyncServices(dbSession, settings);
 
 					//Если клиент не включался и ему сразу был дан статический IP
 					//То данные, которые проставляются DHCP сервисом, необходимо проставлять вручную, если их нет
@@ -536,7 +502,7 @@ namespace Inforoom2.Models
 		public virtual void AddEndpoint(ISession dbSession, ClientEndpoint endpoint, SettingsHelper settings)
 		{
 			Client.Endpoints.Add(endpoint);
-			SyncServices(dbSession, settings);
+			Client.SyncServices(dbSession, settings);
 		}
 	}
 
