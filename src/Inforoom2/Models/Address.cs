@@ -15,7 +15,7 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Модель адреса
 	/// </summary>
-	[Class(0, Table = "address", NameType = typeof(Address)), Description("Адрес")]
+	[Class(0, Table = "address", NameType = typeof (Address)), Description("Адрес")]
 	public class Address : BaseModel, ILogAppeal
 	{
 		[ManyToOne(Column = "house", Cascade = "save-update"), ValidatorNotEmpty, Description("Дом")]
@@ -50,7 +50,7 @@ namespace Inforoom2.Models
 		}
 
 		public virtual string AddressAsString { get; set; }
-
+		
 		public virtual Client GetAppealClient(ISession session)
 		{
 			return session.Query<Client>().FirstOrDefault(s => s.PhysicalClient.Address == this);
@@ -58,7 +58,8 @@ namespace Inforoom2.Models
 
 		public virtual List<string> GetAppealFields()
 		{
-			return new List<string>() {
+			return new List<string>()
+			{
 				"House",
 				"Entrance",
 				"Apartment",
@@ -74,7 +75,7 @@ namespace Inforoom2.Models
 			if (property == "House") {
 				// получаем псевдоним из описания
 				property = this.House.GetDescription();
-				var oldHouse = oldPropertyValue == null ? null : ((House)oldPropertyValue);
+				var oldHouse = oldPropertyValue == null ? null : ((House) oldPropertyValue);
 				var currentHouse = this.House;
 				if (oldHouse == null) {
 					message += property + " было: " + "значение отсуствует <br/> ";
@@ -109,12 +110,14 @@ namespace Inforoom2.Models
 		/// <param name="floor">Этаж</param>
 		/// <param name="apartment">Квартира</param>
 		/// <returns>Форматированный адрес</returns>
-		public virtual string GetStringForPrint(bool city = true, bool street = true, bool house = true, bool entrance = true, bool floor = true, bool apartment = true)
+		public virtual string GetStringForPrint(bool city = true, bool street = true, bool house = true, bool entrance = true,
+			bool floor = true, bool apartment = true)
 		{
 			var cityReg = (House.Region == null ? House.Street.Region.City.Name : House.Region.City.Name);
 
 			return GetAddressString(street ? House.Street.Name : "", house ? House.Number : "",
-				city ? cityReg : "", apartment ? Apartment ?? "" : "", entrance ? Entrance ?? "" : "", floor ? Floor == 0 ? "" : Floor.ToString() : "");
+				city ? cityReg : "", apartment ? Apartment ?? "" : "", entrance ? Entrance ?? "" : "",
+				floor ? Floor == 0 ? "" : Floor.ToString() : "");
 		}
 
 		/// <summary>
@@ -128,7 +131,8 @@ namespace Inforoom2.Models
 		/// <param name="floor">Этаж</param>
 		/// <param name="mask">форматирующая маска</param>
 		/// <returns></returns>
-		protected static string GetAddressString(string street, string house, string city = "", string apartment = "", string entrance = "", string floor = "", string mask = "")
+		protected static string GetAddressString(string street, string house, string city = "", string apartment = "",
+			string entrance = "", string floor = "", string mask = "")
 		{
 			string address;
 			if (mask != String.Empty) {
@@ -144,7 +148,7 @@ namespace Inforoom2.Models
 				address = address[0] == ',' ? address.Substring(1) : address;
 				address = address.Replace(",,", ",");
 			}
-			return address.Replace("  "," ");
+			return address.Replace("  ", " ");
 		}
 
 		/// <summary>
@@ -154,12 +158,13 @@ namespace Inforoom2.Models
 		/// <returns>Форматированное название улицы</returns>
 		protected static string GetPrintStreet(string street)
 		{
-			var shortCut = new Dictionary<string, string>() {
-				{ "улица", "ул." },
-				{ "проезд", "пр-д." },
-				{ "проспект", "просп." },
-				{ "переулок", "пер." },
-				{ "бульвар", "бул." }
+			var shortCut = new Dictionary<string, string>()
+			{
+				{"улица", "ул."},
+				{"проезд", "пр-д."},
+				{"проспект", "просп."},
+				{"переулок", "пер."},
+				{"бульвар", "бул."}
 			};
 			street = street.Trim();
 			bool withoutCut = true;
@@ -181,7 +186,8 @@ namespace Inforoom2.Models
 					var newStreet = "";
 					for (int j = 0; j < streetSubStings.Length; j++) {
 						if (!shortCut.Any(s => s.Key == streetSubStings[j].ToLower() || s.Value == streetSubStings[j].ToLower())) {
-							newStreet += newStreet.Length == 0 ? streetSubStings[j][0].ToString().ToUpper() + streetSubStings[j].Substring(1)
+							newStreet += newStreet.Length == 0
+								? streetSubStings[j][0].ToString().ToUpper() + streetSubStings[j].Substring(1)
 								: " " + streetSubStings[j][0].ToString().ToUpper() + streetSubStings[j].Substring(1);
 						}
 						else {

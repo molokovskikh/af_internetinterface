@@ -1,0 +1,280 @@
+﻿@model Inforoom2.Models.Client
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	Client client = Model;
+	List<Region> regionList = ViewBag.RegionList;
+	List<Switch> switchList = ViewBag.SwitchList;
+	ClientEndpoint endpoint = ViewBag.EditingEndpoint ?? new ClientEndpoint();
+	ClientOrder order = ViewBag.EditingClientOrder ?? new ClientOrder();
+	IList<PackageSpeed> packageSpeedList = ViewBag.PackageSpeedList;
+	packageSpeedList = packageSpeedList.Where(s=>s.Confirmed).OrderBy(s => s.Speed).ToList();
+    IList<IpPoolRegion> ipPoolRegionList = ViewBag.IpPoolRegionList;
+}
+<!-- Modal For Order Edit-->
+<div class="modal fade" id="ModelForOrderEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+@using (@Html.BeginForm("EditClientOrder", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
+	@Html.HiddenFor(o => client.Id)
+	@Html.HiddenFor(o => endpoint.Id)
+	<input name="order.Id" type="hidden" value="">
+	<input id="subViewName" name="subViewName" type="hidden" value="_legalOrders">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h4 class="modal-title"><strong></strong></h4>
+	</div>
+	<div class="modal-body">
+	<h5>
+		<strong class="orderTitle">Информация о заказе<span class="red bold" id="OrderNumber"></span></strong>
+	</h5>
+	<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth">
+		<tbody>
+		<tr>
+			<td>Номер</td>
+			<td>
+				@Html.TextBoxFor(o => order.Number, new {@class = "form-control", @name = "order.Number", @min = "0", @type = "number"})
+			</td>
+		</tr>
+		<tr>
+			<td>Дата начала</td>
+			<td>
+				@Html.TextBoxFor(o => order.BeginDate, order.BeginDate.GetValueOrDefault().ToString("dd.MM.yyyy"), new { @name = "order.BeginDate", id = "OrderBeginDate", @data_format = "dd.mm.yyyy", @class = "form-control", @data_provide = "datepicker-inline"})
+			</td>
+		</tr>
+		<tr>
+			<td>Дата окончания</td>
+			<td>
+				@Html.TextBoxFor(o => order.EndDate, order.EndDate.GetValueOrDefault().ToString("dd.MM.yyyy"), new { @name = "order.EndDate", id = "OrderEndDate", @data_format = "dd.mm.yyyy", @class = "form-control", @data_provide = "datepicker-inline"})
+			</td>
+		</tr>
+		</tbody>
+	</table>
+	<h5>
+		<strong id="OrderServicesNumber">Подключенные услуги </strong>
+	</h5>
+	<div class="addServiceBlock hid">
+		<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth addServiceTable">
+			<thead>
+			<tr role="row">
+				<th>Описание</th>
+				<th>Стоимость (руб.)</th>
+				<th style="width: 105px;">Периодичность</th>
+				<th>Действие</th>
+			</tr>
+			</thead>
+			<tbody id="OrderServicesList">
+			<tr class="hid">
+				<td class="serviceDescription">
+					<input  type="hidden" class="form-control" id="servId" disabled="disabled" name="order.OrderServices[].Id" value="">
+					<input class="form-control" id="servDesc" type="text" disabled="disabled" name="order.OrderServices[].Description" value="">
+				</td>
+				<td class="serviceCost">
+					<input class="form-control" name="order.OrderServices[].Cost" disabled="disabled" min="0" type="number" value="" step="any">
+				</td>
+				<td class="serviceIsPeriodic centeredCheckBox">
+					<input class="c-pointer" data-val="true" data-val-required="Требуется поле Boolean." name="order.OrderServices[].IsPeriodic" type="checkbox" value="true">
+					<input name="order.OrderServices[].IsPeriodic" type="hidden" value="false">
+				</td>
+				<td class="serviceRemove">
+					<a onclick="removeOrderService(this);" class="delete">
+						<span>-</span><span>Удалить</span>
+					</a>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="OrderServicePanel">
+		<a onclick="addOrderService(this,true);" class="addNewElement addOrderServiceElement">
+			<span>+</span><span>Добавить</span>
+		</a>
+	</div>
+	<h5>
+		<strong class="">Точка подключения</strong>
+	</h5>
+	<div class="clientEndpointPanel">
+		<table class="table table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth" role="grid">
+			<tbody>
+			<tr>
+				<td>
+					<label for="UseNewEndpoint" class="c-pointer">Не использовать точку подключения</label>
+				</td>
+				<td class="centeredCheckBox">
+					<input class="c-pointer" data-val-required="Требуется поле Boolean." id="UseNewEndpoint" name="noEndpoint" type="checkbox" value="true" onchange="CheckForEndpointUsing()">
+					<input name="noEndpoint" type="hidden" value="false">
+				</td>
+			</tr>
+			<tr class="oldClientEndpointPanel">
+				<td>Использовать существующее подключение</td>
+				<td>
+					<select id="ClientEndpointDropDown" name="order.EndPoint.Id" class="form-control" onchange="CheckForNewEndpointUsing(this)"></select> 
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="newClientEndpointPanel">
+		<table class="table table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth" role="grid">
+			<tbody>
+			<tr>
+				<td>Статус коммутатора</td>
+				<td style="width: 60%;">
+					<span class="switchstatus">нет ответа</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Фиксированный IP</td>
+				<td>
+						<input data-val="true" data-val-number="The field Id must be a number." data-val-required="Требуется поле Id." id="fixedIp" name="connection.StaticIp" type="hidden" value="">
+						<span class="fixedIp"></span>
+						<a class="createFixedIp c-pointer" onclick="createFixedIp(0)">назначить</a>
+						<a class="removeFixedIp c-pointer hid" onclick="removeFixedIp();">удалить</a>
+				</td>
+			</tr>
+			<tr>
+				<td>Арендованный IP</td>
+				<td>
+					<div id="rentIpList"></div> 
+				</td>
+			</tr>
+			<tr>
+				<td>IP-пул</td>
+				<td>
+					@Html.DropDownListExtendedFor(o => endpoint.Pool, ipPoolRegionList, obj => obj.Description, f => new {@value = f.IpPool.Id}, new {@Name = "connection.Pool", @class = "form-control"}, endpoint != null && endpoint.Pool != null ? endpoint.Pool.Id : 0, true)
+				</td>
+			</tr>
+				<tr>
+					<td>Адрес</td>
+					<td>
+						@Html.TextBoxFor(o => order.ConnectionAddress, new { @class = "form-control", @name = "connection.Address" })
+					</td>
+				</tr>
+			<tr>
+				<td>Коммутатор</td>
+				<td>
+					@Html.DropDownListExtendedFor(o => endpoint.Switch, switchList, obj => obj.Name + " (портов: " + obj.PortCount + ")", f => new {@maxPorts = f.PortCount}, new {@Name = "connection.Switch", @class = "form-control"}, endpoint != null && endpoint.Switch != null ? endpoint.Switch.Id : 0, true)
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<table id="switchPorts" role="grid">
+						<tbody>
+						@{
+							int columns = 24;
+							var pcount = endpoint != null && endpoint.Switch != null ? endpoint.Switch.PortCount : 1;
+							int itemsInRow = pcount < 24 ? 1 : ((pcount/columns) + ((pcount > columns) && ((pcount%columns) > 0) ? 1 : 0));
+							int currentPort = 1;
+						}
+						@for (int j = 0; j < itemsInRow; j++) {
+							<tr>
+								@for (int i = 0; i < columns; i++) {
+									<td>
+										<a class="port" onclick="updatePort(this)">
+											<span>@currentPort</span>
+										</a>
+									</td>
+									currentPort++;
+								}
+							</tr>
+						}
+						</tbody>
+					</table>
+					<div id="SwitchComment" style="margin: 9px 0px 2px 10px; color: #1D91D8; font-weight: bold;">@(endpoint.Switch != null ? endpoint.Switch.Description : "")</div>
+				</td>
+			</tr>
+			<tr>
+				<td>Порт</td>
+				<td>
+					<div class="col-sm-4 date-picker-box" style="padding-left: 0px;">
+						@Html.Hidden("endpointId", endpoint != null ? endpoint.Port : 0, new {@Name = "connection.Port", @id = "endpoint_PortVal"})
+						@Html.TextBoxFor(o => endpoint.Port, new {@Name = "connection_Port", @class = "form-control", @type = "number", @min = "0", @max = (columns*itemsInRow).ToString(), @disabled = "disabled"})
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label class="c-pointer" for="endpointToBeChecked">Мониторинг</label>
+				</td>
+				<td>
+					@Html.CheckBoxFor(o => endpoint.Monitoring, new {@Name = "connection.Monitoring", @class = "c-pointer", id = "endpointToBeChecked"})
+				</td>
+			</tr>
+			<tr>
+				<td>Скорость</td>
+				<td>
+					@Html.DropDownListExtendedFor(o => endpoint.PackageId, packageSpeedList, obj => obj.SpeedInMgBitFormated + " мб/с (pid: " + obj.PackageId + ") " + obj.Description, v => new { @value = v.PackageId }, new { @Name = "connection.PackageId", @class = "form-control" }, true)
+				</td>
+			</tr>
+			<tr>
+				<td>Статические адреса</td>
+				<td>
+					<div class="ipStaticList">
+						<table class="table table-bordered table-striped datatable no-footer tableFullWidth" role="grid" id="ipStaticTable" style="margin-bottom: 8px;">
+							<thead>
+							<tr role="row">
+								<th tabindex="0" aria-controls="table-2">IP адрес / маска</th>
+								<th tabindex="0" aria-controls="table-2">Маска</th>
+								<th tabindex="0" aria-controls="table-2">Действие</th>
+							</tr>
+							</thead>
+							<tbody id="staticIpList">
+							<tr class="staticIpRaw hid">
+								<td>
+									<div>
+										<input name="fixedIp_text" class="fixedIp id" type="hidden" value="0">
+										<input name="fixedIp_text" class="form-control fixedIp text" type="text" placeholder="0.0.0.0" disabled="disabled" required="required" minlength="7" data-minlength="7">
+										<input name="fixedIp_value" class="form-control fixedIp value" data-val="true" data-val-number="The field Mask must be a number." min="0" max="30" type="number" value="0" disabled="disabled">
+									</div>
+								</td>
+								<td>
+									<span class="subnet"></span>
+								</td>
+								<td>
+									<a onclick="deleteStaticIp(this);" class="delete">
+										<span>-</span><span>Удалить</span>
+									</a>
+								</td>
+							</tr> 
+							@for (int i = 0; i < endpoint.StaticIpList.Count; i++) {
+								<tr class="staticIpElement">
+									<td>
+										<div> 
+											@Html.TextBoxFor(o => endpoint.StaticIpList[i].Ip, new {@Name = "staticAddress[" + i + "].Ip", @class = "form-control fixedIp text", @type = "text", data_minlength = "7", maxlength = "15", required = "required"})
+											@Html.TextBoxFor(o => endpoint.StaticIpList[i].Mask != 0 ? endpoint.StaticIpList[i].Mask : 32, new { @Name = "staticAddress[" + i + "].Mask", @class = "form-control fixedIp value", @type = "number", @max = "30" })
+	</div>
+									</td>
+									<td>
+										<span class="subnet">@endpoint.StaticIpList[i].GetSubnet()</span>
+									</td>
+									<td>
+										<a onclick="deleteStaticIp(this);" class="delete">
+											<span>-</span><span>Удалить</span>
+										</a>
+									</td>
+								</tr>
+							}
+							</tbody>
+						</table>
+						<a onclick="addStaticIp(this);" class="addNewElement addStaticIpElement">
+							<span>+</span><span>Добавить</span>
+						</a>
+					</div>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+	</div>
+	<div class="modal-footer no-margin">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+		<button type="submit" class="btn btn-success">Сохранить</button>
+	</div>
+}
+</div>
+</div>
+</div>

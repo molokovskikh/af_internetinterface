@@ -1,0 +1,208 @@
+﻿@model Client
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	Client client = Model;
+	List<Status> statusList = ViewBag.StatusList;
+	List<Region> regionList = ViewBag.RegionList;
+	string redmineTaskComment = ViewBag.RedmineTaskComment ?? "";
+	//var internetService = client.ClientServices.FirstOrDefault(s => s.Service.Name == "Internet");
+	//var isActivatedByUser = internetService != null ? internetService.ActivatedByUser : false;
+}
+<div class="panel panel-default blockJsLockControll">
+@using (@Html.BeginForm("InfoLegal", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
+	@Html.HiddenFor(o => client.Id)
+	<input id="subViewName" name="subViewName" type="hidden" value="_PrivateLegalInfo">
+		@* Блок пустой *@
+	<div id="emptyBlock_PrivateLegalInfo" class="emptyBlock"></div>
+}
+@* Блок просмотра *@
+<div id="defaultBlock_PrivateLegalInfo" class="defaultBlock hid">
+	<div class="panel-heading">
+		<h3 class="panel-title bold">
+			<a class="c-pointer" onclick="changeVisibility('emptyBlock_PrivateLegalInfo')">Личная информация</a>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<table id="table-2" class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable border-right-white tableFullWidth" role="grid" aria-describedby="table-2_info">
+			<tbody>
+				<tr>
+					<td>Номер лицевого счета</td>
+					<td>
+						<span>@client.Id</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Юридический адрес</td>
+					<td>
+						<span>@client.LegalClient.LegalAddress</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Фактический адрес</td>
+					<td>
+						<span>@client.LegalClient.ActualAddress</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Почтовый адрес</td>
+					<td>
+						<span>@client.LegalClient.MailingAddress</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Регион</td>
+					<td>
+						<span>@client.LegalClient.Region.Name</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Контактное лицо</td>
+					<td>
+						<span>@client.LegalClient.ContactPerson</span>
+					</td>
+				</tr>
+				<tr>
+					<td>ИНН</td>
+					<td>
+						<span>@client.LegalClient.Inn</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Дата регистрации</td>
+					<td>
+						<span>@client.CreationDate</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Зарегистрировал</td>
+					<td>
+						<span>@client.WhoRegistered.Name</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Абонентская плата</td>
+					<td>
+						<span>@(client.LegalClient.Plan.HasValue? client.LegalClient.Plan.Value.ToString("0.00"):"") ₽</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Баланс</td>
+					<td>
+						<span>@client.LegalClient.Balance.ToString("0.00") ₽</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Статус клиента</td>
+					<td>
+						<span>@client.Status.Type.GetDescription()</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="panel-body" style="padding-top: 0px;">
+		<a class="btn btn-blue lockButton">Редактировать</a>
+	</div>
+</div>
+@* Блок редактирования *@
+<div id="editBlock_PrivateLegalInfo" class="editBlock hid">
+	<div class="panel-heading">
+		<h3 class="panel-title bold">
+			<a class="c-pointer" onclick="changeVisibility('emptyBlock_PrivateLegalInfo')">Личная информация (редактирование)</a>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<table id="table-2" class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable border-right-white tableFullWidth" role="grid" aria-describedby="table-2_info">
+			<tbody> 
+				<tr>
+					<td>Полное наименование</td>
+					<td>
+						@Html.TextBoxFor(o => client.LegalClient.Name, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(client.LegalClient, "Name")
+					</td>
+				</tr>
+				<tr>
+					<td>Краткое наименование</td>
+					<td>
+						@Html.TextBoxFor(o => client.LegalClient.ShortName, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(client.LegalClient, "ShortName")
+					</td>
+				</tr>
+				<tr>
+					<td>Юридический адрес</td>
+					<td>
+						@Html.TextBoxFor(o => client.LegalClient.LegalAddress, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(client.LegalClient, "LegalAddress") 
+					</td>
+				</tr>
+				<tr>
+					<td>Фактический адрес</td>
+					<td>
+						@Html.TextBoxFor(o => client.LegalClient.ActualAddress, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(client.LegalClient, "ActualAddress")
+					</td>
+				</tr>
+				<tr>
+					<td>Почтовый адрес</td>
+					<td>
+						@Html.TextBoxFor(o => client.LegalClient.MailingAddress, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(client.LegalClient, "MailingAddress")
+					</td>
+				</tr>
+				<tr>
+					<td>Регион</td>
+					<td>
+						@Html.DropDownListExtendedFor(o => client.LegalClient.Region, regionList, obj => obj.Name, null, new {@class = "form-control" }, client.LegalClient.Region.Id)
+						@ViewBag.Validation.GetError(client.LegalClient, "Region")
+					</td>
+				</tr> 
+				<tr>
+					<td>Контактное лицо</td>
+					<td>
+						@Html.TextBoxFor(o => client.LegalClient.ContactPerson, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(client.LegalClient, "ContactPerson")
+					</td>
+				</tr>
+				<tr>
+					<td>ИНН</td>
+					<td>
+						@Html.TextBoxFor(o => client.LegalClient.Inn, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(client.LegalClient, "Inn")
+					</td>
+				</tr> 
+				<tr>
+					<td>Статус</td>
+					<td>
+						@Html.DropDownListExtendedFor(o => client.Status, statusList, obj => obj.Name, null, new { @Name = "clientStatus", @class = "form-control" }, client.Status.Id)
+						@ViewBag.Validation.GetError(client, "Status")
+					</td>
+				</tr>
+				<tr>
+					<td>Задача в Redmine для клиента</td>
+					<td>
+						@Html.TextBoxFor(o => client.RedmineTask, new { @class = "form-control" })
+						@ViewBag.Validation.GetError(client, "redmineTaskComment")
+					</td>
+					</td>
+				</tr>
+				<tr>
+					<td>Комментарий к задаче</td>
+					<td>
+						@Html.TextAreaFor(o => redmineTaskComment, new { @Name = "redmineTaskComment", @class = "form-control max-width200" })
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="panel-body" style="padding-top: 0px;">
+		<div class="col">
+			<button type="submit" class="btn btn-green">Сохранить</button>
+			<a class="btn btn-red unlockButton">Отмена</a>
+		</div>
+	</div>
+</div>
+</div>
+ 

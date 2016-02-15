@@ -1050,7 +1050,6 @@ namespace InternetInterface.Controllers
 		{
 			if (Partner.IsDiller())
 				virtualPayment = false;
-
 			Payment payment = null;
 			var client = DbSession.Load<Client>(clientId);
 			decimal tryBalance;

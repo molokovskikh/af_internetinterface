@@ -155,7 +155,7 @@
 				<tr>
 					<td>IP-пул</td>
 					<td>
-						<span>@(endpoint.Pool != null ? endpoint.Pool.GetBeginIp() : "")</span>	<span>@(endpoint.Pool != null ? " - " + endpoint.Pool.GetEndIp() : "")</span>
+						<span>@(endpoint.Pool != null ? endpoint.Pool.Id + ( ipPoolRegionList.Count>0? " (" + ipPoolRegionList.FirstOrDefault(s => s.IpPool.Id == endpoint.Pool.Id).Description + ")" : "") : "")</span>
 					</td>
 				</tr>
 				<tr>
@@ -300,7 +300,7 @@
 					<td>Фиксированный IP</td>
 					<td>
 						@if (endpoint.Id != 0) {
-							@Html.Hidden("connection.staticIp", endpoint.Ip, new {@Id = "fixedIp"})
+							@Html.Hidden("connection.StaticIp", endpoint.Ip, new {@Id = "fixedIp"})
 							<span class="fixedIp">@(endpoint != null && endpoint.Ip != null ? endpoint.Ip.ToString() : "")</span>
 							<a class="createFixedIp c-pointer @(endpoint.Ip == null ? "" : "hid")" onclick="createFixedIp('@endpoint.Id')">назначить</a>
 							<a class="removeFixedIp c-pointer @(endpoint.Ip != null ? "" : "hid")" onclick="removeFixedIp();">удалить</a>
@@ -332,7 +332,8 @@
 							<tbody>
 							@{
 								int columns = 24;
-								int itemsInRow = 2; //(endpoint.Switch.PortCount/columns) + ((endpoint.Switch.PortCount%columns > 0) ? 1 : 0);
+								var pcount = endpoint != null && endpoint.Switch != null ? endpoint.Switch.PortCount : 1;
+								int itemsInRow = pcount < 24 ? 1: ((pcount / columns) + ((pcount > columns) && ((pcount % columns) > 0) ? 1 : 0));
 								int currentPort = 1;
 							}
 							@for (int j = 0; j < itemsInRow; j++) {
@@ -342,7 +343,7 @@
 
 										if (currentEndpoint != null) {
 											<td>
-												<a class="port client" target="_blank" onclick="updatePort(this)" href="@(ConfigHelper.GetParam("adminPanelNew") + Url.Action(currentEndpoint.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = currentEndpoint.Client.Id}))">
+												<a class="port client" target="_blank" onclick="updatePort(this)" href="@(Url.Action(currentEndpoint.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = currentEndpoint.Client.Id}))">
 													<span>@currentPort</span>
 												</a>
 											</td>
@@ -409,7 +410,7 @@
 									<td>
 										<div>
 											<input name="fixedIp_text" class="form-control fixedIp text" type="text" placeholder="0.0.0.0" disabled="disabled" required="required" minlength="7" data-minlength="7">
-											<input name="fixedIp_value" class="form-control fixedIp value" data-val="true" data-val-number="The field Mask must be a number." min="8" max="30" type="number" value="0" disabled="disabled">
+											<input name="fixedIp_value" class="form-control fixedIp value" data-val="true" data-val-number="The field Mask must be a number." min="0" max="30" type="number" value="0" disabled="disabled">
 										</div>
 									</td>
 									<td>
@@ -424,8 +425,9 @@
 									<tr class="staticIpElement">
 										<td>
 											<div>
+												@{ var mask = endpoint.StaticIpList[i].Mask != 0 ? endpoint.StaticIpList[i].Mask : 32;}
 												@Html.TextBoxFor(o => endpoint.StaticIpList[i].Ip, new {@Name = "staticAddress[" + i + "].Ip", @class = "form-control fixedIp text", @type = "text", data_minlength = "7", maxlength = "15", required = "required"})
-												@Html.TextBoxFor(o => endpoint.StaticIpList[i].Mask, new {@Name = "staticAddress[" + i + "].Mask", @class = "form-control fixedIp value", @type = "number", @max = "30"})
+												@Html.TextBoxFor(o => mask, new {@Name = "staticAddress[" + i + "].Mask", @class = "form-control fixedIp value", @type = "number", @max = "30"})
 											</div>
 											@ViewBag.Validation.GetError(staticAddress, "Ip")
 											@ViewBag.Validation.GetError(staticAddress, "Mask")

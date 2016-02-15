@@ -27,7 +27,7 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "BankPayment")]
 		public virtual BankPayment BankPayment { get; set; }
 
-		[ManyToOne(Column = "Agent"), NotNull]
+		[ManyToOne(Column = "Agent")]
 		public virtual Employee Employee { get; set; }
 
 		[Property, Description("Отметка о том,что обработано биллингом ")]

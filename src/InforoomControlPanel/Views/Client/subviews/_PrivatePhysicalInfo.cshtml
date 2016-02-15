@@ -7,10 +7,6 @@
 	Layout = "";
 	Client client = Model;
 	List<Status> statusList = ViewBag.StatusList;
-	List<Region> regionList = ViewBag.RegionList;
-	List<Plan> planList = ViewBag.PlanList;
-	var internetService = client.ClientServices.FirstOrDefault(s => s.Service.Name == "Internet");
-	var isActivatedByUser = internetService != null ? internetService.ActivatedByUser : false;
 	string redmineTaskComment = ViewBag.RedmineTaskComment ?? "";
 	ClientEndpoint endpoint = client.Endpoints.FirstOrDefault();
 	var lease = endpoint != null ? endpoint.LeaseList.LastOrDefault() : null;
@@ -18,15 +14,15 @@
 <div class="panel panel-default blockJsLockControll">
 @using (@Html.BeginForm("InfoPhysical", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
 	@Html.HiddenFor(o => client.Id)
-	<input id="subViewName" name="subViewName" type="hidden" value="_PrivateInfo">
+	<input id="subViewName" name="subViewName" type="hidden" value="_PrivatePhysicalInfo">
 		@* Блок пустой *@
-	<div id="emptyBlock_privateInfo" class="emptyBlock"></div>
+	<div id="emptyBlock_PrivatePhysicalInfo" class="emptyBlock"></div>
 }
 @* Блок просмотра *@
-<div id="defaultBlock_privateInfo" class="defaultBlock hid">
+<div id="defaultBlock_PrivatePhysicalInfo" class="defaultBlock hid">
 	<div class="panel-heading">
 		<h3 class="panel-title bold">
-			<a class="c-pointer" onclick="changeVisibility('emptyBlock_privateInfo')">Личная информация</a>
+			<a class="c-pointer" onclick="changeVisibility('emptyBlock_PrivatePhysicalInfo')">Личная информация</a>
 		</h3>
 	</div>
 	<div class="panel-body">
@@ -35,7 +31,7 @@
 			<tr class="@(lease != null && lease.LeaseEnd > SystemTime.Now() ? "online" : "")">
 				<td>Номер лицевого счета</td>
 				<td>
-					<span>@client.Id</span>
+					<span>@client.ClientId</span>
 				</td>
 			</tr>
 			<tr>
@@ -46,7 +42,7 @@
 			</tr>
 			<tr>
 				<td>
-					<a class="c-pointer blue addressAjaxRunner" title="Изменение адрес подключения" data-toggle="modal" data-target="#ModelForAddress" onclick="StartAddressAjaxRunner(this)">Адрес подключения</a>
+					<a class="c-pointer blue addressAjaxRunner" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForAddress" onclick="StartAddressAjaxRunner(this)">Адрес подключения</a>
 				</td>
 				<td style="width: 60%;">
 					<span>@client.PhysicalClient.Address.GetStringForPrint(city: false)</span>
@@ -69,7 +65,7 @@
 					<a class="c-pointer blue" title="Изменение тарифа" data-toggle="modal" data-target="#ModelForPlan">Тариф</a>
 				</td>
 				<td>
-					<span>@(client.PhysicalClient.Plan != null ? client.PhysicalClient.Plan.Name + " (" + client.PhysicalClient.Plan.Price.ToString("0.00") + " р.)" : "нет")</span>
+					<span>@(client.PhysicalClient.Plan != null ? client.PhysicalClient.Plan.Name + " (" + client.PhysicalClient.Plan.Price.ToString("0.00") + " р."+ (client.GetTariffPrice() != 0 ? " / " + client.GetTariffPrice().ToString("0.00") + " р.)" : ")") : "нет")</span>
 				</td>
 			</tr>
 			<tr>
@@ -208,10 +204,10 @@
 	</div>
 </div>
 @* Блок редактирования *@
-<div id="editBlock_privateInfo" class="editBlock hid">
+<div id="editBlock_PrivatePhysicalInfo" class="editBlock hid">
 	<div class="panel-heading">
 		<h3 class="panel-title bold">
-			<a class="c-pointer" onclick="changeVisibility('emptyBlock_privateInfo')">Личная информация (редактирование)</a>
+			<a class="c-pointer" onclick="changeVisibility('emptyBlock_PrivatePhysicalInfo')">Личная информация (редактирование)</a>
 		</h3>
 	</div>
 	<div class="panel-body">
@@ -238,7 +234,7 @@
 			<tr>
 				<td style="max-width: 60px;">Статус</td>
 				<td>
-					@Html.DropDownListExtendedFor(o => client.Status, statusList, obj => obj.Name, null, new {@Name = "clientStatus", @class = "form-control"}, client.Status.Id)
+					@Html.DropDownListExtendedFor(o => client.Status, statusList, obj => obj.Name, null, new {@Name = "clientStatus", @class = "form-control"}, client.Status.Id, true)
 					@ViewBag.Validation.GetError(client, "Status")
 				</td>
 			</tr>
@@ -261,7 +257,7 @@
 			<tr>
 				<td style="max-width: 60px;">Комментарий к задаче</td>
 				<td>
-					@Html.TextBoxFor(o => redmineTaskComment, new {@Name = "redmineTaskComment", @class = "form-control"})
+					@Html.TextAreaFor(o => redmineTaskComment, new {@Name = "redmineTaskComment", @class = "form-control max-width200"})
 				</td>
 			</tr>
 			<tr>
@@ -284,113 +280,6 @@
 </div>
 </div>
 
-<!-- Modal For Plan-->
-<div class="modal fade" id="ModelForPlan" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			@using (@Html.BeginForm("ChangePlan", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
-				@Html.HiddenFor(o => client.Id)
-				<input id="subViewName" name="subViewName" type="hidden" value="_PrivateInfo">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">Изменение тарифа</h4>
-				</div>
-				<div class="modal-body">
-					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
-						<tbody>
-						<tr>
-							<td style="max-width: 60px;">Тариф</td>
-							<td>
-								@Html.DropDownListExtendedFor(i => client.Plan, planList, obj => obj.Name + " (" + obj.Price.ToString("0.00") + " р.)", null,
-									new {@class = "form-control", @Name = "plan"}, client.Plan != null ? client.Plan.Id : 0, false)
-							</td>
-						</tr>
-						<tr>
-							<td style="max-width: 80px;">
-								<label class="c-pointer" for="IsActivatedByUser">Подключить</label>
-							</td>
-							<td>
-								@Html.CheckBoxFor(o => isActivatedByUser, new {@Name = "isActivatedByUser", @class = "c-pointer", id = "IsActivatedByUser"})
-							</td>
-						</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-					<button type="submit" class="btn btn-success">Сохранить</button>
-				</div>
-			}
-		</div>
-	</div>
-</div>
-<!-- Modal For Sale -->
-<div class="modal fade" id="ModelForSale" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			@using (@Html.BeginForm("GetLastSale", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
-				@Html.Hidden("clientId", client.Id)
-				<input id="subViewName" name="subViewName" type="hidden" value="_PrivateInfo">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">Возврат скидки</h4>
-				</div>
-				<div class="modal-body">
-					<p>Для восстановление скидки укажите причину.</p>
-					<p>
-						<input class="form-control" name="comment" type="text" value="" placeholder="Причина восстановления скидки">
-					</p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-					<button type="submit" class="btn btn-success">Применить</button>
-				</div>
-			}
-		</div>
-	</div>
-</div>
-<!-- Modal For Address -->
-<div class="modal fade" id="ModelForAddress" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-sm">
-		<div class="modal-content">
-			@using (@Html.BeginForm("ChangeAddress", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
-				@Html.HiddenFor(o => client.Id)
-				<input id="subViewName" name="subViewName" type="hidden" value="_PrivateInfo">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">Изменение адреса</h4>
-				</div>
-				<div class="modal-body">
-					<div class="panel-body addressFilterBlock">
-						<div class="panel-body" style="padding: 0px;">
-							<div class="row">
-								<div>
-									<span class="addressDetails top-bottom">Регион</span>
-									@Html.DropDownListExtendedFor(i => client.GetRegion(), regionList, obj => obj.Name, null,
-										new {@class = "form-control", @Id = "RegionDropDown", @Name = "RegionDropDown_name"}, client.GetRegion() != null ? client.GetRegion().Id : 0, true)
-									<span class="addressDetails top-bottom">Улица</span> <select id="StreetDropDown" class="form-control form-control addressSearch" value="@client.Address.House.Street.Id"></select>
-									<span class="addressDetails top-bottom">Дом</span> <select id="HouseDropDown" class="form-control form-control addressSearch" name="houseId" value="@client.Address.House.Id"></select>
-								</div>
-								<div>
-									<span class="addressDetails top-bottom">Квартира</span> 
-									@Html.TextBoxFor(o => client.PhysicalClient.Address.Apartment, new {@class = "form-control", @Name = "apartment"})
-									@ViewBag.Validation.GetError(client.PhysicalClient.Address, "Apartment")
-									<span class="addressDetails top-bottom">Подъезд</span>
-									@Html.TextBoxFor(o => client.PhysicalClient.Address.Entrance, new {@class = "form-control", @Name = "entrance"})
-									@ViewBag.Validation.GetError(client.PhysicalClient.Address, "Entrance")
-									<span class="addressDetails top-bottom">Этаж</span>
-									@Html.TextBoxFor(o => client.PhysicalClient.Address.Floor, new {@class = "form-control", @Name = "floor", @Type = "number", @Min = "0"})
-									@ViewBag.Validation.GetError(client.PhysicalClient.Address, "Floor")
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="StopAddressAjaxRunner(this)">Закрыть</button>
-					<button type="submit" class="btn btn-success">Сохранить</button>
-				</div>
-			}
-		</div>
-	</div>
-</div>
+@Html.Partial("subviews/modelview/_PhysicalPlanEdit", client)
+@Html.Partial("subviews/modelview/_PhysicalSaleUpdate", client)
+@Html.Partial("subviews/modelview/_PhysicalAddressEdit", client)

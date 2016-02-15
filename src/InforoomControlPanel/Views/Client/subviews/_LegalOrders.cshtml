@@ -1,0 +1,122 @@
+﻿@model Client
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	Client client = Model;
+	List<Region> regionList = ViewBag.RegionList;
+	List<Switch> switchList = ViewBag.SwitchList;
+	IList<PackageSpeed> packageSpeedList = ViewBag.PackageSpeedList;
+	IList<IpPoolRegion> ipPoolRegionList = ViewBag.IpPoolRegionList;
+	var orderList = client.LegalClientOrders.Where(s=>!s.IsDeactivated).ToList();
+}
+<div class="panel panel-default blockJsLockControll">
+@Html.HiddenFor(o => client.Id)
+<input id="subViewName" name="subViewName" type="hidden" value="_LegalOrders">
+	@Html.Hidden("clientUrlExampleA", Url.Action("InfoPhysical", new { @Id = "" }))
+	@Html.Hidden("clientUrlExampleB", Url.Action("InfoLegal", new { @Id = "" }))
+@* Блок пустой *@
+<div id="emptyBlock_legalOrders" class="emptyBlock"></div>
+@* Блок просмотра *@
+<div id="defaultBlock_legalOrders" class="defaultBlock hid">
+	<div class="panel-heading">
+		<h3 class="panel-title bold">
+			<a class="c-pointer" onclick="changeVisibility('emptyBlock_legalOrders')">Заказы</a>
+		</h3>
+		<p class="navbar-text navbar-right" style="margin: 0px; margin-top: 4px; margin-right: 5px;">
+			<a class="btn btn-white  btn-sm btn-icon icon-right" style="font-size: 12px;" data-toggle="modal" data-target="#ModelForOrderEdit" onclick="onModalOrderEditOpen(0)">
+				<i class="entypo-box" style="background: #DC7777;"></i>
+				Регистрация заказа
+			</a>
+		</p>
+	</div>
+	<div class="panel-body" @(orderList.Count != 0? "style=padding-top:2px;" : "")>
+		@if (orderList.Count == 0) {
+			<h3 style="margin: 0px; text-align: center; color: #6D6D6D; background: #E8E8E8; border: 1px dashed #B1B1B1; padding-bottom: 1px;">Нет</h3>
+		}
+		else {
+			<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth" role="grid">
+				<tbody>
+				@for (int i = 0; i < orderList.Count; i++) {
+					<tr class="orderListBorder">
+						<td class="orderColumn">
+							<div id="@(orderList[i].Id)" class="order">
+								<h5>
+									<strong class="orderTitle entypo-right-open-mini">
+										Информация о заказе №<span class="red bold">@(orderList[i].Number)</span>
+										@{
+											var comment = orderList[i].EndPoint == null && orderList[i].OrderServices.Count > 0 ? orderList[i].OrderServices.FirstOrDefault().Description : "";
+											comment = orderList[i].EndPoint != null && !string.IsNullOrEmpty(orderList[i].ConnectionAddress)
+												? orderList[i].ConnectionAddress : (orderList[i].EndPoint != null ? orderList[i].EndPoint.Switch.Name + " (порт " + orderList[i].EndPoint.Port + ")" : comment);
+											}
+										<span class="gray left" title="@comment">
+												@comment.CutAfter(40)
+										</span>
+									</strong>
+									<strong class="right">
+										@if (!orderList[i].IsActivated)
+										{
+											<a class="c-pointer blue addressAjaxRunner" title="Редактировать заказ" data-toggle="modal" data-target="#ModelForOrderEdit" onclick="onModalOrderEditOpen(@orderList[i].Id)">редактировать</a>
+										}
+										<a class="c-pointer red addressAjaxRunner" title="Удалить заказ" data-toggle="modal" data-target="#ModelForOrderRemove" onclick="updateModelForOrderClose(@orderList[i].Id, '@(
+												orderList[i].EndDate.HasValue? orderList[i].EndDate.Value.ToString("dd.MM.yyyy"):"")')" >@Html.Raw(orderList[i].EndDate.HasValue?"<b>закрыть<b>": "закрыть")</a>
+									</strong>
+								</h5>
+								<div class="orderBody hid">
+									<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth">
+										<tbody>
+											<tr>
+												<td>Дата начала</td>
+												<td class="width-240">@(orderList[i].BeginDate.HasValue ? orderList[i].BeginDate.Value.ToShortDateString() : "не указана")</td>
+											</tr>
+											<tr>
+												<td>Дата окончания</td>
+												<td class="width-240">@(orderList[i].EndDate.HasValue ? orderList[i].EndDate.Value.ToShortDateString() : "не указана")</td>
+											</tr>
+										</tbody>
+									</table>
+									@if (orderList[i].OrderServices.Count > 0)
+									{
+										<h5>
+											<strong class="margin-left">Подключенные услуги (@(orderList[i].OrderServices.Count))</strong>
+										</h5>
+										<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth">
+											<thead>
+												<tr role="row">
+													<th>Описание</th>
+													<th class="width-120">Стоимость</th>
+													<th class="width-120">Периодичность</th>
+												</tr>
+											</thead>
+											<tbody>
+												@foreach (var item in orderList[i].OrderServices)
+												{
+													<tr>
+														<td>@(item.Description)</td>
+														<td>@(item.Cost.ToString("0.00")) руб.</td>
+														<td>@(item.IsPeriodic ? "есть" : "нет")</td>
+													</tr>
+												}
+											</tbody>
+										</table>
+									}
+
+									@if (orderList[i].EndPoint != null)
+									{
+										@Html.Partial("subviews/_EndpointLegal", orderList[i])
+									}
+								</div>
+							</div>
+						</td>
+					</tr>
+				}
+				</tbody>
+			</table>
+		}
+	</div>
+</div>
+</div> 
+@Html.Partial("subviews/modelview/_LegalOrderEdit", client)
+@Html.Partial("subviews/modelview/_LegalOrderDelete", client)

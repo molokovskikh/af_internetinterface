@@ -42,8 +42,8 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 
 			var client_LegalClient_Name = browser.FindElementByCssSelector("input[id=client_LegalClient_Name]");
 			var client_LegalClient_ShortName = browser.FindElementByCssSelector("input[id=client_LegalClient_ShortName]");
-			var client_LegalClient_LegalAddress = browser.FindElementByCssSelector("input[id=client_LegalClient_LegalAdress]");
-			var client_LegalClient_ActualAddress = browser.FindElementByCssSelector("input[id=client_LegalClient_ActualAdress]");
+			var client_LegalClient_LegalAddress = browser.FindElementByCssSelector("input[id=client_LegalClient_LegalAddress]");
+			var client_LegalClient_ActualAddress = browser.FindElementByCssSelector("input[id=client_LegalClient_ActualAddress]");
 			var client_LegalClient_MailingAddress =
 				browser.FindElementByCssSelector("input[id=client_LegalClient_MailingAddress]");
 			var ContactString_1 = browser.FindElementByCssSelector("input[id=ContactString_1]");
@@ -91,8 +91,8 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			var client = DbSession.Query<Client>().FirstOrDefault(s => s.LegalClient != null && s.LegalClient.Inn == Inn);
 			Assert.That(client.LegalClient.Name, Is.EqualTo(client_Name), "В базе данных не верное значение Полного наименования");
 			Assert.That(client.LegalClient.ShortName, Is.EqualTo(client_ShortName), "В базе данных не верное значение Краткого наименования");
-			Assert.That(client.LegalClient.LegalAdress, Is.EqualTo(client_LegalAddress), "В базе данных не верное значение Юридического адреса");
-			Assert.That(client.LegalClient.ActualAdress, Is.EqualTo(client_ActualAddress), "В базе данных не верное значение Фактического адреса");
+			Assert.That(client.LegalClient.LegalAddress, Is.EqualTo(client_LegalAddress), "В базе данных не верное значение Юридического адреса");
+			Assert.That(client.LegalClient.ActualAddress, Is.EqualTo(client_ActualAddress), "В базе данных не верное значение Фактического адреса");
 			Assert.That(client.LegalClient.MailingAddress, Is.EqualTo(client_MailingAddress), "В базе данных не верное значение Почтового адреса");
 			Assert.That(client.LegalClient.Inn, Is.EqualTo(Inn), "В базе данных не верное значение ИНН");
 			Assert.That(client.LegalClient.ContactPerson, Is.EqualTo(client_ContactPerson), "В базе данных не верное значение Контактного лица");

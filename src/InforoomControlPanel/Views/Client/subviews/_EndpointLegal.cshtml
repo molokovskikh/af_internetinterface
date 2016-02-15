@@ -1,0 +1,118 @@
+﻿@model ClientOrder
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	ClientOrder order = Model;
+	var endpoint = Model.EndPoint;
+	IList<PackageSpeed> packageSpeedList = ViewBag.PackageSpeedList;
+	IList<IpPoolRegion> ipPoolRegionList = ViewBag.IpPoolRegionList;
+} 
+	<div class="line-through"></div>
+	<h5>
+		<strong class="black margin-left">Точка подключения № <span class="red bold">@order.EndPoint.Id</span></strong>
+		@if (order.IsActivated && order.IsDeactivated && order.EndPoint != null) {
+			<a data-toggle="modal" data-target="#ModelForEndpointProofDelete" onclick="deleteEndpointProof(@order.EndPoint.Id)">
+				<span class="red bold">удалить</span>
+			</a>
+		} 
+	</h5>
+	<table id="table-2" class="table hiddenOverflow table-bordered table-striped datatable no-footer clientTable border-right-white tableFullWidth" role="grid" aria-describedby="table-2_info">
+		<tbody>
+			<tr>
+				<td>Статус коммутатора</td>
+				<td style="width: 60%;">
+					@Html.Hidden("endpointId", order.EndPoint.Id)
+					<span class="switchstatus">нет ответа</span>
+				</td>
+			</tr>
+			@if (endpoint.Ip != null)
+			{
+				<tr>
+					<td>Фиксированный IP</td>
+					<td>
+						<span>@endpoint.Ip.MapToIPv4().ToString()</span>
+					</td>
+				</tr>
+			}
+			<tr>
+				<td>Арендованный IP</td>
+				<td>
+					@Html.Raw(string.Join(", ", endpoint.LeaseList.Select(lease => "<br/><span " + (lease != null && lease.LeaseEnd < SystemTime.Now() ? "style=color:#E60000;font-weight:bold;" : "") + ">" + lease.Ip.ToString() + "</span>").ToList()))
+				</td>
+			</tr>
+			<tr>
+				<td>IP-пул</td>
+				<td>
+					<span>@(endpoint.Pool != null && ipPoolRegionList.FirstOrDefault(s => s.IpPool.Id == endpoint.Pool.Id) != null ? endpoint.Pool.Id + " (" + ipPoolRegionList.FirstOrDefault(s => s.IpPool.Id == endpoint.Pool.Id).Description + ")" : "")</span>
+				</td>
+			</tr>
+			<tr>
+				<td><a class="c-pointer blue addressAjaxRunner" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForUpdateConnectionAddress" onclick="GetOrderConnectionAddress('@order.Id')">Адрес подключения</a></td>
+				<td>
+					@order.ConnectionAddress
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<a target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld") + "Switches/MakeSwitch?Switch=" + endpoint.Switch.Id)"> Коммутатор</a>
+				</td>
+				<td>
+					<a target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld") + "Hardware/PortInfo?endPoint=" + endpoint.Id)">@(endpoint.Switch.Name + " (" + endpoint.Switch.Ip.ToString() + ")")</a>
+				</td>
+			</tr>
+			<tr>
+				<td>Порт</td>
+				<td>
+					<span>@endpoint.Port</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Скорость</td>
+				<td>
+					<span>@(endpoint.PackageId.HasValue ? PackageSpeed.GetSpeedForPackageId(packageSpeedList, endpoint.PackageId.Value).ToString() : "0 ") мбит/с</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Мониторинг</td>
+				<td>
+					<span>@(endpoint.Monitoring ? "да" : "нет")</span>
+				</td>
+			</tr>
+			@if (endpoint.StaticIpList.Count > 0)
+			{
+				<tr>
+					<td>Статические адреса</td>
+					<td>
+						<div class="ipStaticList">
+							<table class="table table-bordered table-striped datatable no-footer tableFullWidth" role="grid">
+								<thead>
+									<tr role="row">
+										<th tabindex="0" aria-controls="table-2">IP адрес / маска</th>
+										<th tabindex="0" aria-controls="table-2">Маска</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var item in endpoint.StaticIpList)
+									{
+										<tr>
+											<td>
+												<span>@item.Ip</span>
+												<span> / </span>
+												<span>@item.Mask</span>
+											</td>
+											<td>
+												<span>@item.GetSubnet()</span>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table> 

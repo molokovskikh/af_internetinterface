@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using Common.Tools;
-using Common.Tools.Calendar;
 using Common.Web.Ui.NHibernateExtentions;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using Inforoom2.Test.Infrastructure.Helpers;
 using InforoomControlPanel.Test.Functional.infrastructure;
 using NHibernate.Linq;
-using NPOI.HSSF.Record;
 using NUnit.Framework;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
 
-namespace InforoomControlPanel.Test.Functional.ClientPhysical
+namespace InforoomControlPanel.Test.Functional.ClientInfo
 {
 	internal class ClientPhysicalFixture : ControlPanelBaseFixture
 	{
@@ -46,10 +40,10 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			WaitForText("Номер лицевого счета");
 		}
 
-		[Test, Description("Страница клиента. Вывод личной информации")]
+		[Test, Description("Страница клиента. Физ. лицо. Вывод личной информации")]
 		public void PrivateInfo()
 		{
-			string blockName = "#emptyBlock_privateInfo ";
+			string blockName = "#emptyBlock_PrivatePhysicalInfo ";
 
 			//Номер лицевого счета
 			AssertText("Номер лицевого счета " + CurrentClient.Id.ToString());
@@ -66,8 +60,8 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 				: "нет"));
 			//тариф
 			AssertText("Тариф " + (CurrentClient.PhysicalClient.Plan != null
-				? (CurrentClient.PhysicalClient.Plan.Name + " (" + CurrentClient.PhysicalClient.Plan.Price.ToString("0.00") + " р.)")
-					.Trim()
+				? CurrentClient.PhysicalClient.Plan.Name + " (" + CurrentClient.PhysicalClient.Plan.Price.ToString("0.00") + " р." +
+				  (CurrentClient.GetTariffPrice() != 0 ? " / " + CurrentClient.GetTariffPrice().ToString("0.00") + " р.)" : ")")
 				: "нет"));
 			//Баланс
 			AssertText("Баланс " + CurrentClient.PhysicalClient.Balance.ToString("0.00"));
@@ -97,7 +91,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 		/// <param name="status"></param>
 		private void CheckStatusChangeEffect(StatusType status)
 		{
-			var internetService = CurrentClient.ClientServices.FirstOrDefault(s => (s.Service as Internet)!=null);
+			var internetService = CurrentClient.ClientServices.FirstOrDefault(s => (s.Service as Internet) != null);
 			//Статус - Заблокирован
 			if (status == StatusType.Worked) {
 				//запускаем биллинг
@@ -159,10 +153,10 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			}
 		}
 
-		[Test, Description("Страница клиента. Вывод личной информации")]
+		[Test, Description("Страница клиента. Физ. лицо. Вывод личной информации")]
 		public void PrivateInfoStatusChange()
 		{
-			string blockName = "#emptyBlock_privateInfo ";
+			string blockName = "#emptyBlock_PrivatePhysicalInfo ";
 			//редактируем блок
 			browser.FindElementByCssSelector(blockName + ".btn.btn-blue.lockButton").Click();
 			//Статус - Заблокирован
@@ -177,7 +171,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			var inputObjList =
 				browser.FindElementsByCssSelector(blockName + "[name='clientStatus'] option[selected='selected']");
 			if (inputObjList.Count > 0) {
-				Assert.That(inputObjList[0].Text, Is.EqualTo((StatusType.NoWorked).GetDescription()),
+				Assert.That(inputObjList.FirstOrDefault(s => s.Text != "").Text, Is.EqualTo((StatusType.NoWorked).GetDescription()),
 					"Статус не совпадает.");
 			}
 			else {
@@ -199,7 +193,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			inputObjList =
 				browser.FindElementsByCssSelector(blockName + "[name='clientStatus'] option[selected='selected']");
 			if (inputObjList.Count > 0) {
-				Assert.That(inputObjList[0].Text, Is.EqualTo((StatusType.Worked).GetDescription()),
+				Assert.That(inputObjList.FirstOrDefault(s => s.Text != "").Text, Is.EqualTo((StatusType.Worked).GetDescription()),
 					"Статус не совпадает.");
 			}
 			else {
@@ -220,7 +214,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			inputObjList =
 				browser.FindElementsByCssSelector(blockName + "[name='clientStatus'] option[selected='selected']");
 			if (inputObjList.Count > 0) {
-				Assert.That(inputObjList[0].Text, Is.EqualTo((StatusType.Dissolved).GetDescription()),
+				Assert.That(inputObjList.FirstOrDefault(s => s.Text != "").Text, Is.EqualTo((StatusType.Dissolved).GetDescription()),
 					"Статус не совпадает.");
 			}
 			else {
@@ -240,7 +234,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			inputObjList =
 				browser.FindElementsByCssSelector(blockName + "[name='clientStatus'] option[selected='selected']");
 			if (inputObjList.Count > 0) {
-				Assert.That(inputObjList[0].Text, Is.EqualTo((StatusType.Worked).GetDescription()),
+				Assert.That(inputObjList.FirstOrDefault(s => s.Text != "").Text, Is.EqualTo((StatusType.Worked).GetDescription()),
 					"Статус не совпадает.");
 			}
 			else {
@@ -250,10 +244,10 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			CheckStatusChangeEffect(StatusType.Worked);
 		}
 
-		[Test, Description("Страница клиента. Редактирование личной информации")]
+		[Test, Description("Страница клиента. Физ. лицо. Редактирование личной информации")]
 		public void PrivateInfoEditing()
 		{
-			string blockName = "#emptyBlock_privateInfo ";
+			string blockName = "#emptyBlock_PrivatePhysicalInfo ";
 			var surname = CurrentClient.PhysicalClient.Surname;
 			var name = CurrentClient.PhysicalClient.Name;
 			var patronymic = CurrentClient.PhysicalClient.Patronymic;
@@ -282,7 +276,8 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			var inputObjList =
 				browser.FindElementsByCssSelector(blockName + "[name='clientStatus'] option[selected='selected']");
 			if (inputObjList.Count > 0) {
-				Assert.That(inputObjList[0].Text, Is.EqualTo((status.Type).GetDescription()), "Статус не совпадает.");
+				Assert.That(inputObjList.FirstOrDefault(s => s.Text != "").Text, Is.EqualTo((status.Type).GetDescription()),
+					"Статус не совпадает.");
 			}
 			else {
 				Assert.That(inputObjList.Count, Is.Not.EqualTo(0), "Статус не совпадает.");
@@ -317,7 +312,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			//Статус
 			inputObjList = browser.FindElementsByCssSelector(blockName + "[name='clientStatus'] option[selected='selected']");
 			if (inputObjList.Count > 0) {
-				Assert.That(inputObjList[0].Text, Is.EqualTo((status.Type + marker).GetDescription()), "Статус не совпадает.");
+				Assert.That(inputObjList.FirstOrDefault(s => s.Text != "").Text, Is.EqualTo((status.Type + marker).GetDescription()), "Статус не совпадает.");
 			}
 			else {
 				Assert.That(inputObjList.Count, Is.Not.EqualTo(0), "Статус не совпадает.");
@@ -335,10 +330,10 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 		}
 
 
-		[Test, Description("Страница клиента. Редактирование адреса")]
+		[Test, Description("Страница клиента. Физ. лицо. Редактирование адреса")]
 		public void AddressEditing()
 		{
-			string blockName = "#emptyBlock_privateInfo ";
+			string blockName = "#emptyBlock_PrivatePhysicalInfo ";
 			string blockNameNew = "#ModelForAddress ";
 
 			var region = CurrentClient.PhysicalClient.Address.Region;
@@ -392,15 +387,19 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			AssertText(CurrentClient.PhysicalClient.Address.GetStringForPrint(city: false), blockName);
 		}
 
-		[Test, Description("Страница клиента. Редактирование тарифа")]
+		[Test, Description("Страница клиента. Физ. лицо. Редактирование тарифа")]
 		public void PlanEditing()
 		{
-			string blockName = "#emptyBlock_privateInfo ";
+			string blockName = "#emptyBlock_PrivatePhysicalInfo ";
 			string blockNameNew = "#ModelForPlan ";
 			var currentPlan = CurrentClient.PhysicalClient.Plan;
 			var anotherPlan = DbSession.Query<Plan>().FirstOrDefault(s => s != currentPlan); // зависит от региона <=========
 
-			AssertText("Тариф " + currentPlan.Name + " (" + currentPlan.Price.ToString("0.00") + " р.)", blockName);
+			AssertText("Тариф " + (currentPlan != null
+				? currentPlan.Name + " (" + currentPlan.Price.ToString("0.00") + " р." +
+				  (CurrentClient.GetTariffPrice() != 0 ? " / " + CurrentClient.GetTariffPrice().ToString("0.00") + " р.)" : ")")
+				: "нет"), blockName);
+
 			browser.FindElementByCssSelector(blockName + "[data-target='#ModelForPlan']").Click();
 
 			var planInHistory =
@@ -418,7 +417,10 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			browser.FindElementByCssSelector(blockNameNew + ".btn.btn-success").Click();
 
 			AssertText("Тариф клиента успешно изменен");
-			AssertText("Тариф " + anotherPlan.Name + " (" + anotherPlan.Price.ToString("0.00") + " р.)", blockName);
+			AssertText("Тариф " + (anotherPlan != null
+				? anotherPlan.Name + " (" + currentPlan.Price.ToString("0.00") + " р." +
+				  (CurrentClient.GetTariffPrice() != 0 ? " / " + CurrentClient.GetTariffPrice().ToString("0.00") + " р.)" : ")")
+				: "нет"), blockName);
 
 			planInHistory =
 				DbSession.Query<PlanHistoryEntry>().FirstOrDefault(s => s.PlanBefore == currentPlan && s.PlanAfter == anotherPlan);
@@ -426,10 +428,10 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			Assert.That(planInHistory, Is.Not.Null, "Запись в истории отсутствует.");
 		}
 
-		[Test, Description("Страница клиента. Возврат скидки")]
+		[Test, Description("Страница клиента. Физ. лицо. Возврат скидки")]
 		public void SaleEditing()
 		{
-			string blockName = "#emptyBlock_privateInfo ";
+			string blockName = "#emptyBlock_PrivatePhysicalInfo ";
 			string blockNameNew = "#ModelForSale ";
 			var comment = "Надо!";
 			CurrentClient.Discount = 5;
@@ -458,7 +460,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			Assert.That(CurrentClient.Discount, Is.EqualTo(8), "Скидка отсутствует.");
 		}
 
-		[Test, Description("Страница клиента. Редактирование контактов")]
+		[Test, Description("Страница клиента. Физ. лицо. Редактирование контактов")]
 		public void ContactsEditing()
 		{
 			string blockName = "#emptyBlock_contacts ";
@@ -483,7 +485,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			var inputObjList =
 				browser.FindElementsByCssSelector(blockName + "[name='client.Contacts[0].Type'] option[selected='selected']");
 			if (inputObjList.Count > 0) {
-				Assert.That(inputObjList[0].Text, Is.EqualTo((type).GetDescription()), "Тип не совпадает.");
+				Assert.That(inputObjList.FirstOrDefault(s => s.Text != "").Text, Is.EqualTo((type).GetDescription()), "Тип не совпадает.");
 			}
 			else {
 				Assert.That(inputObjList.Count, Is.Not.EqualTo(0), "Статус не совпадает.");
@@ -512,7 +514,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			AssertNoText(phoneNumber);
 		}
 
-		[Test, Description("Страница клиента. Добавление обращения клиента")]
+		[Test, Description("Страница клиента. Физ. лицо. Добавление обращения клиента")]
 		public void AppealAdding()
 		{
 			string blockName = "#emptyBlock_appeals ";
@@ -527,7 +529,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			AssertText(appealMessage, blockName);
 		}
 
-		[Test, Description("Страница клиента. Изменение Паспортных данных клиента")]
+		[Test, Description("Страница клиента. Физ. лицо. Изменение Паспортных данных клиента")]
 		public void PassportDataEditing()
 		{
 			string blockName = "#emptyBlock_documents ";
@@ -613,7 +615,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			AssertText(@"Адрес регистрации " + registrationAddress, blockName);
 		}
 
-		[Test, Description("Страница клиента. Добавление неопознанного звонка")]
+		[Test, Description("Страница клиента. Физ. лицо. Добавление неопознанного звонка")]
 		public void UnresolvedCallEditing()
 		{
 			string blockName = "#emptyBlock_unresolvedCalls ";
@@ -635,7 +637,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			AssertText(unresolvedPhoneNew.Phone.Insert(3, "-"), blockNameContacts);
 		}
 
-		[Test, Description("Страница клиента. Добавление платежа")]
+		[Test, Description("Страница клиента. Физ. лицо. Добавление платежа")]
 		public void PaymentEditingAdd()
 		{
 			string blockName = "#emptyBlock_payments ";
@@ -692,7 +694,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			AssertText("Платеж успешно добавлен и ожидает обработки");
 		}
 
-		[Test, Description("Страница клиента. Отмена платежа")]
+		[Test, Description("Страница клиента. Физ. лицо. Отмена платежа")]
 		public void PaymentEditingRemove()
 		{
 			string blockName = "#emptyBlock_payments ";
@@ -750,7 +752,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			AssertText("успешно отменен!");
 		}
 
-		[Test, Description("Страница клиента. Перевод платежа")]
+		[Test, Description("Страница клиента. Физ. лицо. Перевод платежа")]
 		public void PaymentEditingMove()
 		{
 			string blockName = "#emptyBlock_payments ";
@@ -824,7 +826,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			Assert.That(anotherClient.Balance, Is.EqualTo(clientBalance + sum), "Баланс клиента не совпадает с должным.");
 		}
 
-		[Test, Description("Страница клиента. Добавление абонентской платы")]
+		[Test, Description("Страница клиента. Физ. лицо. Добавление абонентской платы")]
 		public void WriteOffEditingAddAndRemove()
 		{
 			CurrentClient.PaidDay = false;
@@ -900,7 +902,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			Assert.That(CurrentClient.Balance, Is.GreaterThan(clientBalance - sum), "Баланс клиента не совпадает с должным.");
 		}
 
-		[Test, Description("Страница клиента. Добавление информации по подключению")]
+		[Test, Description("Страница клиента. Физ. лицо. Добавление информации по подключению")]
 		public void ConnectionAdding()
 		{
 			var connectSum = 41;
@@ -966,7 +968,7 @@ namespace InforoomControlPanel.Test.Functional.ClientPhysical
 			Assert.That(CurrentClient.Balance, Is.EqualTo(currentBalance - connectSum), "Баланс клиента не совпадает с должным.");
 		}
 
-		[Test, Description("Страница клиента. Редактирование информации по подключению")]
+		[Test, Description("Страница клиента. Физ. лицо. Редактирование информации по подключению")]
 		public void ConnectionEditing()
 		{
 			string blockName = "#emptyBlock_endpoint ";

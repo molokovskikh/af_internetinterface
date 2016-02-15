@@ -6,10 +6,16 @@
 	Layout = "";
 	Client client = Model;
 	var paymentsSum = client.Payments.Sum(s => s.Sum);
-	var isBonus = false;
+	string formClientType = "";
+	if (client.PhysicalClient != null) {
+		formClientType = "InfoPhysical";
+	}
+	else {
+		formClientType = "InfoLegal";
+	}
 }
 <div class="panel panel-default blockJsLockControll">
-	@using (@Html.BeginForm("InfoPhysical", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
+	@using (@Html.BeginForm(formClientType, "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
 		@Html.HiddenFor(o => client.Id)
 		<input id="subViewName" name="subViewName" type="hidden" value="_Payments">
 		@* Блок пустой *@
@@ -21,12 +27,14 @@
 			<h3 class="panel-title bold">
 				<a class="c-pointer" onclick="changeVisibility('emptyBlock_payments')">Платежи</a><span style="padding-left: 10px; font-weight: bold; color: #C70E0E;">всего: @paymentsSum.ToString("0.00") руб.</span>
 			</h3>
+			@if (client.LegalClient==null) {
 			<p class="navbar-text navbar-right" style="margin: 0px; margin-top: 4px; margin-right: 5px;">
 				<a class="btn btn-white  btn-sm btn-icon icon-right" style="font-size: 12px;" data-toggle="modal" data-target="#ModelForPaymentsAdd">
 					<i class="entypo-box" style="background: #0072BC;"></i>
 					Пополнение баланса
 				</a>
 			</p>
+			}
 		</div>
 		<div class="panel-body">
 			<table id="table-2" class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable border-right-white writeOffTable" role="grid" aria-describedby="table-2_info">
@@ -70,15 +78,13 @@
 							}
 						</td>
 						<td>
-							@if (item.Virtual.HasValue && item.Virtual.Value)
-							{
+							@if (item.Virtual.HasValue && item.Virtual.Value) {
 								<span>@item.Id</span>
 							}
-							else
-							{
+							else {
 								<a target="_blank" href="@Url.Action("ContractOfAgency", new {item.Id})">@item.Id</a>
 							}
-							
+
 						</td>
 						<td>
 							@(item.Virtual.HasValue && item.Virtual.Value ? "Инфорум" : "") @(item.Employee != null && (!string.IsNullOrEmpty(item.Employee.Name))
@@ -107,121 +113,7 @@
 		</div>
 	</div>
 </div>
-<!-- Modal For Payments Cancel-->
-<div class="modal fade" id="ModelForPaymentsCancel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			@using (@Html.BeginForm("RemovePayment", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))
-			{
-				@Html.HiddenFor(o => client.Id)
-				<input id="subViewName" name="subViewName" type="hidden" value="_Payments">
-				<input id="paymentsCancelId" name="paymentId" type="hidden" value="">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">Отмена платежа</h4>
-				</div>
-				<div class="modal-body">
-					<p><span id="paymentDeleteMessage"></span></p>
-					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
-						<tbody>
-						<tr>
-							<td style="max-width: 60px;">Причина</td>
-							<td>
-								<input class="form-control" name="comment" type="text" value="">
-							</td>
-						</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-					<button type="submit" class="btn btn-red">Отменить платеж</button>
-				</div>
-			}
-		</div>
-	</div>
-</div>
-<!-- Modal For Payments Move-->
-<div class="modal fade" id="ModelForPaymentsMove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			@using (@Html.BeginForm("MovePayment", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
-				@Html.HiddenFor(o => client.Id)
-				<input id="subViewName" name="subViewName" type="hidden" value="_Payments">
-				<input id="paymentMoveId" name="paymentId" type="hidden" value="">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">Перевод платежа</h4>
-				</div>
-				<div class="modal-body">
-					<p><span id="paymentMoveMessage"></span></p>
-					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
-						<tbody>
-						<tr>
-							<td style="max-width: 60px;">ЛС-клиента</td>
-							<td>
-								<input class="form-control" id="clientReciverId" name="clientReceiverId" min="0" type="number" value="">
-								<p id="clientReciverMessage"></p>
-							</td>
-						</tr>
-						<tr>
-							<td style="max-width: 60px;">Причина</td>
-							<td>
-								<input class="form-control" name="comment" type="text" value="">
-							</td>
-						</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-					<button type="submit" class="btn btn-success">Перевести</button>
-				</div>
-			}
-		</div>
-	</div>
-</div>
-<!-- Modal For Payments Add-->
-<div class="modal fade" id="ModelForPaymentsAdd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			@using (@Html.BeginForm("AddPayment", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))
-			{
-				@Html.HiddenFor(o => client.Id)
-				<input id="subViewName" name="subViewName" type="hidden" value="_Payments">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">Добавление платежа</h4>
-				</div>
-				<div class="modal-body">
-					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
-						<tbody>
-							<tr>
-								<td style="max-width: 60px;">Сумма</td>
-								<td>
-									<input class="form-control" name="sum"  min="0" type="number" value="" step="any">
-								</td>
-							</tr>
-							<tr>
-								<td style="max-width: 60px;">Комментарий</td>
-								<td>
-									<input class="form-control" name="comment" type="text" value="">
-								</td>
-							</tr>
-							<tr>
-								<td style="max-width: 80px;"><label class="c-pointer" for="isBonus">Зачислить как бонус</label></td>
-								<td>
-									@Html.CheckBoxFor(o => isBonus, new { @Name = "isBonus", @class = "c-pointer", id = "isBonus" })
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-					<button type="submit" class="btn btn-success">Зачислить</button>
-				</div>
-			}
-		</div>
-	</div>
-</div>
+
+@Html.Partial("subviews/modelview/_PaymentAdd", client)
+@Html.Partial("subviews/modelview/_PaymentCancel", client)
+@Html.Partial("subviews/modelview/_PaymentMove", client)

@@ -13,5 +13,5 @@ namespace Inforoom2.Intefaces
 		Client GetAppealClient(ISession session);
 		List<string> GetAppealFields();
 		string GetAdditionalAppealInfo(string property, object oldPropertyValue,  ISession session);
-	} 
+	}
 }

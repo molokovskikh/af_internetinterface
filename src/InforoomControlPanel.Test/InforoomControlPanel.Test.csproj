@@ -222,7 +222,8 @@
     <Compile Include="Functional\ClientActions\ServiceRequestFixture.cs" />
     <Compile Include="Functional\ClientActions\PrivateMessageFixture.cs" />
     <Compile Include="Functional\ClientActions\LogAppealFixture.cs" />
-    <Compile Include="Functional\ClientPhysical\ClientPhysicalFixture.cs" />
+    <Compile Include="Functional\ClientInfo\ClientLegalFixture.cs" />
+    <Compile Include="Functional\ClientInfo\ClientPhysicalFixture.cs" />
     <Compile Include="Functional\Infrastructure\ControlPanelBaseFixture.cs" />
     <Compile Include="Functional\News\CreateNewsBlockFixture.cs" />
     <Compile Include="Functional\News\DeleteNewsBlockFixture.cs" />

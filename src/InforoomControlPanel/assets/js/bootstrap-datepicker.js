@@ -1390,7 +1390,7 @@
 	);
 	$(function () {
 	 	$('[data-provide="datepicker-inline"]').datepicker({
-			startView: 2,
+			startView: 0,
 			clearBtn: true,
 			language: "ru",
 			todayHighlight: true

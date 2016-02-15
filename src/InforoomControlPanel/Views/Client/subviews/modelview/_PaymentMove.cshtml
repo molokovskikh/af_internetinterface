@@ -1,0 +1,51 @@
+﻿
+@model Inforoom2.Models.Client
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	Client client = Model;
+}
+<!-- Modal For Payments Move-->
+<div class="modal fade" id="ModelForPaymentsMove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			@using (@Html.BeginForm("MovePayment", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))
+			{
+				@Html.HiddenFor(o => client.Id)
+				<input id="subViewName" name="subViewName" type="hidden" value="_Payments">
+				<input id="paymentMoveId" name="paymentId" type="hidden" value="">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Перевод платежа</h4>
+				</div>
+				<div class="modal-body">
+					<p><span id="paymentMoveMessage"></span></p>
+					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
+						<tbody>
+							<tr>
+								<td style="max-width: 60px;">ЛС-клиента</td>
+								<td>
+									<input class="form-control" id="clientReciverId" name="clientReceiverId" min="0" type="number" value="">
+									<p id="clientReciverMessage"></p>
+								</td>
+							</tr>
+							<tr>
+								<td style="max-width: 60px;">Причина</td>
+								<td>
+									<input class="form-control" name="comment" type="text" value="">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+					<button type="submit" class="btn btn-success">Перевести</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>

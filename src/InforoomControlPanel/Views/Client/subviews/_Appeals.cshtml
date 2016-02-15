@@ -8,9 +8,16 @@
 	Client client = Model;
 	int appealType = ViewBag.AppealType ?? 0;
 	List<Appeal> appeals = ViewBag.Appeals;
+	string formClientType = "";
+	if (client.PhysicalClient != null) {
+		formClientType = "InfoPhysical";
+	}
+	else {
+		formClientType = "InfoLegal";
+	}
 }
 <div class="panel panel-default blockJsLockControll">
-	@using (@Html.BeginForm("InfoPhysical", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))
+	@using (@Html.BeginForm(formClientType, "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))
 	{
 		@Html.HiddenFor(o => client.Id)
 		<input id="subViewName" name="subViewName" type="hidden" value="_Appeals">
@@ -25,11 +32,11 @@
 			</h3>
 		</div>
 		<div class="panel-body">
-			<a class="btn btn-@(appealType == (int) AppealType.All ? "gold" : "white")" href="@Url.Action("InfoPhysical", new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.All})">@(AppealType.All.GetDescription())</a>
-			<a class="btn btn-@(appealType == (int) AppealType.User ? "gold" : "white")" href="@Url.Action("InfoPhysical", new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.User})">@(AppealType.User.GetDescription())</a>
-			<a class="btn btn-@(appealType == (int) AppealType.Statistic ? "gold" : "white")" href="@Url.Action("InfoPhysical", new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.Statistic})">@(AppealType.Statistic.GetDescription())</a>
-			<a class="btn btn-@(appealType == (int) AppealType.System ? "gold" : "white")" href="@Url.Action("InfoPhysical", new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.System})">@(AppealType.System.GetDescription())</a>
-			<a class="btn btn-@(appealType == (int) AppealType.FeedBack ? "gold" : "white")" href="@Url.Action("InfoPhysical", new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.FeedBack})">@(AppealType.FeedBack.GetDescription())</a>
+			<a class="btn btn-@(appealType == (int) AppealType.All ? "gold" : "white")" href="@Url.Action(formClientType, new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.All})">@(AppealType.All.GetDescription())</a>
+			<a class="btn btn-@(appealType == (int) AppealType.User ? "gold" : "white")" href="@Url.Action(formClientType, new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.User})">@(AppealType.User.GetDescription())</a>
+			<a class="btn btn-@(appealType == (int) AppealType.Statistic ? "gold" : "white")" href="@Url.Action(formClientType, new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.Statistic})">@(AppealType.Statistic.GetDescription())</a>
+			<a class="btn btn-@(appealType == (int) AppealType.System ? "gold" : "white")" href="@Url.Action(formClientType, new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.System})">@(AppealType.System.GetDescription())</a>
+			<a class="btn btn-@(appealType == (int) AppealType.FeedBack ? "gold" : "white")" href="@Url.Action(formClientType, new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.FeedBack})">@(AppealType.FeedBack.GetDescription())</a>
 		</div>
 		<div class="panel-body">
 			<textarea class="form-control" type="text" name="newUserAppeal" value="" rows="6" placeholder="Сообщение"></textarea>

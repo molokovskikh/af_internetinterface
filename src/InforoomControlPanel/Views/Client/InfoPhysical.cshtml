@@ -88,7 +88,7 @@
 			<div class="col-lg-6">
 @if(currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010001.ToString()) != null 
 	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010001.ToString()))){
-	@Html.Partial("subviews/_PrivateInfo", client)
+	@Html.Partial("subviews/_PrivatePhysicalInfo", client)
 }
 @if(currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010002.ToString()) != null 
 	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010002.ToString())) ){
@@ -96,7 +96,7 @@
 }
 @if(currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010003.ToString()) != null 
 	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010003.ToString()))){
-	@Html.Partial("subviews/_Endpoint", client)
+	@Html.Partial("subviews/_EndpointPhysical", client)
 }
 @if(currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010004.ToString()) != null 
 	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010004.ToString()))){

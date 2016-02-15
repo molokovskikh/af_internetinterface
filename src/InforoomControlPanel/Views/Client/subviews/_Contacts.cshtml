@@ -4,9 +4,16 @@
 @{
 	Layout = "";
 	Client client = Model;
+	string formClientType = "";
+	if (client.PhysicalClient != null) {
+		formClientType = "InfoPhysical";
+	}
+	else {
+		formClientType = "InfoLegal";
+	}
 }
 <div class="panel panel-default blockJsLockControll">
-	@using (@Html.BeginForm("InfoPhysical", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
+	@using (@Html.BeginForm(formClientType, "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
 		@Html.HiddenFor(o => client.Id)
 		<input id="subViewName" name="subViewName" type="hidden" value="_Contacts">
 		@* Блок пустой *@
@@ -15,7 +22,9 @@
 	@* Блок просмотра *@
 	<div id="defaultBlock_contacts" class="defaultBlock hid">
 		<div class="panel-heading">
-			<h3 class="panel-title bold"><a class="c-pointer" onclick="changeVisibility('emptyBlock_contacts')">Контакты</a></h3>
+			<h3 class="panel-title bold">
+				<a class="c-pointer" onclick="changeVisibility('emptyBlock_contacts')">Контакты</a>
+			</h3>
 		</div>
 		<div class="panel-body">
 			<table id="table-2" class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable border-right-white tableFullWidth" role="grid" aria-describedby="table-2_info">
@@ -89,7 +98,9 @@
 	</div>
 	<div id="editBlock_contacts" class="editBlock hid">
 		<div class="panel-heading">
-			<h3 class="panel-title bold"><a class="c-pointer" onclick="changeVisibility('emptyBlock_contacts')">Контакты (редактирование)</a></h3>
+			<h3 class="panel-title bold">
+				<a class="c-pointer" onclick="changeVisibility('emptyBlock_contacts')">Контакты (редактирование)</a>
+			</h3>
 		</div>
 		<div class="panel-body">
 			<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth" role="grid" aria-describedby="table-2_info">

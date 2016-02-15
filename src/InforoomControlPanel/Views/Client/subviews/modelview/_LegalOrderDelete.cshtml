@@ -1,0 +1,43 @@
+﻿@model Inforoom2.Models.Client
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	Client client = Model;
+	var DateTimeNow = SystemTime.Now();
+}
+<!-- Modal For Order Add-->
+<div class="modal fade" id="ModelForOrderRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			@using (@Html.BeginForm("CloseClientOrder", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))
+			{
+				@Html.HiddenFor(o => client.Id)
+				<input id="subViewName" name="subViewName" type="hidden" value="_legalOrders">
+				<input id="subViewName" name="orderId" type="hidden" value="0">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Закрытие заказа</h4>
+				</div>
+				<div class="modal-body">
+					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
+						<tbody>
+							<tr>
+								<td>Дата закрытия</td>
+								<td>
+									@Html.TextBoxFor(o => DateTimeNow, DateTimeNow.ToString("dd.MM.yyyy"), new {@Name= "orderCloseDate", @data_format = "dd.mm.yyyy", @class = "form-control", @data_provide = "datepicker-inline"})
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+					<button type="submit" class="btn btn-success">Закрыть заказ</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>

@@ -1,0 +1,54 @@
+﻿@model Inforoom2.Models.Client
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	Client client = Model;
+	List<Plan> planList = ViewBag.PlanList;
+	var internetService = client.ClientServices.FirstOrDefault(s => s.Service.Name == "Internet");
+	var isActivatedByUser = internetService != null ? internetService.ActivatedByUser : false;
+}
+
+<!-- Modal For Plan-->
+<div class="modal fade" id="ModelForPlan" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			@using (@Html.BeginForm("ChangePlan", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))
+			{
+				@Html.HiddenFor(o => client.Id)
+				<input id="subViewName" name="subViewName" type="hidden" value="_PrivatePhysicalInfo">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Изменение тарифа</h4>
+				</div>
+				<div class="modal-body">
+					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
+						<tbody>
+							<tr>
+								<td style="max-width: 60px;">Тариф</td>
+								<td>
+									@Html.DropDownListExtendedFor(i => client.Plan, planList, obj => obj.Name + " (" + obj.Price.ToString("0.00") + " р.)", null,
+									new { @class = "form-control", @Name = "plan" }, client.Plan != null ? client.Plan.Id : 0, false)
+								</td>
+							</tr>
+							<tr>
+								<td style="max-width: 80px;">
+									<label class="c-pointer" for="IsActivatedByUser">Подключить</label>
+								</td>
+								<td>
+									@Html.CheckBoxFor(o => isActivatedByUser, new { @Name = "isActivatedByUser", @class = "c-pointer", id = "IsActivatedByUser" })
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+					<button type="submit" class="btn btn-success">Сохранить</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>

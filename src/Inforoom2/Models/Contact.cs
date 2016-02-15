@@ -16,7 +16,7 @@ namespace Inforoom2.Models
 		[ManyToOne]
 		public virtual Client Client { get; set; }
 
-		[Property]
+		[Property, Description("Тип контакта")]
 		public virtual ContactType Type { get; set; }
 
 		//[Property(Column = "Contact"), NotNullNotEmpty(Message = "Введите номер телефона"), Pattern(@"^\d{10}$", RegexOptions.Compiled, Message = "Номер телефона введен неправильно")]
@@ -45,7 +45,8 @@ namespace Inforoom2.Models
 				"ContactString",
 				"Comment",
 				"ContactName",
-				"Date"
+				"Date",
+				"Type"
 			};
 		}
 

@@ -15,7 +15,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			var client = DbSession.Query<Client>().FirstOrDefault();
 			Assert.IsNotNull(client, "\nНи один клиент не найден!");
 
-			Open("Client/InfoPhysical?Id=" + client.Id);
+			Open("Client/InfoPhysical/" + client.Id);
 			Css("#PrivateMsgBtn").Click();
 			ClosePreviousTab();
 

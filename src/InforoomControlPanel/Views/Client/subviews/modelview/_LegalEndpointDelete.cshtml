@@ -1,0 +1,33 @@
+﻿
+@{
+	Layout = "";
+}
+<!-- Modal For Order Add-->
+<div class="modal fade" id="ModelForEndpointProofDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			@using (@Html.BeginForm("DeleteClientEndpoint", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))
+			{
+				<input id="subViewName" name="subViewName" type="hidden" value="_legalOrders">
+				<input name="endpointId" type="hidden" value="0">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Удаление точки подключения</h4>
+				</div>
+				<div class="modal-body">
+					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
+						<tbody>
+							<tr>
+								<td>Вы действительно хотите удалить точку подключения <span id="endpointId" class="red bold"></span> безвозвратно?</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+					<button type="submit" class="btn btn-red">Удаление</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>

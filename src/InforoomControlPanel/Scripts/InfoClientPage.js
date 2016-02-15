@@ -49,7 +49,6 @@ function ClientPage() {
 		$(thisMain).find("#SwitchDropDown").unbind("change").change(function() {
 			GetBusyPorts();
 		});
-
 	}
 
 
@@ -132,45 +131,51 @@ function ClientPage() {
 
 
 function changeVisibilityFromCookies(blockName) {
-	try {
-		var panelBodyToHide = $("#" + blockName).find(".panel-body");
-		if (panelBodyToHide.length > 0) {
-			if ($(panelBodyToHide).find(".error").length > 0) {
-				$(panelBodyToHide).removeClass("hid");
-			} else {
-				var cookieValue = $.cookie(blockName);
-				if (cookieValue != null && cookieValue == "true") {
-					if (!$(panelBodyToHide).hasClass("hid")) {
-						$(panelBodyToHide).addClass("hid");
-					}
-				} else {
-					if ($(panelBodyToHide).hasClass("hid")) {
-						$(panelBodyToHide).removeClass("hid");
-					}
-				}
-			}
-		}
-	} catch (e) {
-
-	}
+	changeVisibility(blockName, true);
 }
 
-function changeVisibility(blockName) {
+function changeVisibility(blockName, fromCookies) {
 	try {
+		var buttonIconStyleA = "entypo-right-open";
+		var buttonIconStyleB = "entypo-down-open";
+		var abutton = $("#" + blockName).find(".panel-title.bold a.c-pointer");
+		abutton.removeClass(buttonIconStyleA).removeClass(buttonIconStyleB);
+
 		var panelBodyToHide = $("#" + blockName).find(".panel-body");
 		if (panelBodyToHide.length > 0) {
 			if ($(panelBodyToHide).find(".error").length > 0) {
+				abutton.addClass(buttonIconStyleB);
+				abutton.addClass("sdsd1");
 				$(panelBodyToHide).removeClass("hid");
 			} else {
-				if ($(panelBodyToHide).hasClass("hid")) {
-					$(panelBodyToHide).removeClass("hid");
-					$.cookie(blockName, "false", { expires: 365, path: "/" });
+				abutton.addClass("sdsd2");
+				if (fromCookies == undefined) {
+					//записываем кукисы
+					if ($(panelBodyToHide).hasClass("hid")) {
+						abutton.addClass(buttonIconStyleB);
+						$(panelBodyToHide).removeClass("hid");
+						$.cookie(blockName, "false", { expires: 365, path: "/" });
+					} else {
+						abutton.addClass(buttonIconStyleA);
+						$(panelBodyToHide).addClass("hid");
+						$.cookie(blockName, "true", { expires: 365, path: "/" });
+					}
 				} else {
-					$(panelBodyToHide).addClass("hid");
-					$.cookie(blockName, "true", { expires: 365, path: "/" });
+					//заполняем из кукисов
+					var cookieValue = $.cookie(blockName);
+					if (cookieValue != null && cookieValue == "true") {
+						abutton.addClass(buttonIconStyleA);
+						if (!$(panelBodyToHide).hasClass("hid")) {
+							$(panelBodyToHide).addClass("hid");
+						}
+					} else {
+						abutton.addClass(buttonIconStyleB);
+						if ($(panelBodyToHide).hasClass("hid")) {
+							$(panelBodyToHide).removeClass("hid");
+						}
+					}
 				}
 			}
-
 		}
 	} catch (e) {
 
@@ -302,7 +307,6 @@ function getPaymentReciver() {
 					}
 				}
 			});
-
 		} else {
 			$("#clientReciverMessage").html("");
 		}
@@ -317,8 +321,25 @@ function updatePort(_this) {
 	}
 }
 
+function updatePortGrid(portCount) {
+	var columns = 24;
+	var itemsInRow = portCount == undefined || portCount == null || portCount < 24 ? 1 : (Math.round(portCount / columns) + ((portCount > columns) && ((portCount % columns) > 0) ? 1 : 0));
+	var currentPort = 1;
+	var html = "";
+	for (j = 0; j < itemsInRow; j++) {
+		html += "<tr>";
+		for (i = 0; i < columns; i++) {
+			html += '<td><a class="port free" target="_blank" onclick="updatePort(this)"><span>' + currentPort + '</span></a></td>';
+			currentPort++;
+		}
+		html += "</tr>";
+	}
+	$("#switchPorts tbody").html(html);
+}
+
 function createFixedIp(endpointId) {
 	var errorText = "Ошибка при присвоении фиксированного IP !";
+	$(".fixedIp").html("");
 	$.ajax({
 		url: cli.getParam("baseurl") + "Client/GetStaticIp?id=" + endpointId,
 		type: 'POST',
@@ -361,6 +382,8 @@ function updatePortsState(data) {
 	var linkA = $("[name='clientUrlExampleA']");
 	var linkB = $("[name='clientUrlExampleB']");
 	if (linkA.length > 0 && linkB.length > 0) {
+		var portCount = $("#SwitchDropDown [value='" + $("#SwitchDropDown").val() + "']").attr("maxports");
+		updatePortGrid(portCount);
 		var portTags = $("#switchPorts .port");
 		portTags.each(function() {
 			var portTagItem = this;
@@ -425,6 +448,10 @@ var timeoutIteration = 0;
 
 //Функция, которая пингует эндпоинт и отображает ответ
 function updateEndpointStatus(id, htmlElement, timeout) {
+	if (id == undefined || id == null) {
+		setTimeout(updateEndpointStatus.bind(this, id, htmlElement, timeout), timeout);
+		return;
+	}
 	if ($(htmlElement).hasClass("ajaxRun") == false) {
 		$(htmlElement).addClass("ajaxRun");
 
@@ -432,7 +459,7 @@ function updateEndpointStatus(id, htmlElement, timeout) {
 			timeout = 5000;
 		try {
 			$.ajax({
-				url: cli.getParam("baseurl") + "Client/PingEndpoint?Id=" + id,
+				url: cli.getParam("baseurl") + "AdminOpen/PingEndpoint?Id=" + id,
 				type: 'POST',
 				dataType: "json",
 				success: function(data) {
@@ -447,7 +474,6 @@ function updateEndpointStatus(id, htmlElement, timeout) {
 				}
 			});
 		} catch (e) {
-			console.log(e);
 			setTimeout(updateEndpointStatus.bind(this, id, htmlElement, timeout), timeout);
 		}
 	} else {
@@ -456,14 +482,14 @@ function updateEndpointStatus(id, htmlElement, timeout) {
 }
 
 
-//добавление статического Ip
+//удаление статического Ip
 function deleteStaticIp(element) {
 	$(element).parents(".staticIpElement").remove();
 	$(".staticAddressError").remove();
 	UpdateStaticIp();
 }
 
-//удаление статического Ip
+//добавление статического Ip
 function addStaticIp(element) {
 	var cleanSubnet = $(element).parents(".ipStaticList").find(".staticIpElement");
 	var pattern = new RegExp("^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$");
@@ -485,6 +511,7 @@ function addStaticIp(element) {
 
 //обновление имен статических Ip
 function UpdateStaticIp() {
+
 	$(".ipStaticList").each(
 		function() {
 			var staticIpList = $(this).find(".staticIpElement");
@@ -509,6 +536,11 @@ function setValid(elem) {
 		$(elem).parent().find(".error").remove();
 		if (!pattern.test($(this).val())) {
 			$(this).parent().append('<div class="error">IP адрес указан в неверном формате<div class="msg"></div><div class="icon"></div></div>');
+		} else {
+			var valOfMsk = $(this).parents(".staticIpElement").find(".value").val();
+			if (valOfMsk == 0) {
+				updateSubnateVal($(this).parents(".staticIpElement").find(".subnet"), valOfMsk);
+			}
 		}
 	});
 }
@@ -516,13 +548,21 @@ function setValid(elem) {
 function setValidMask(elem) {
 	$(elem).unbind("change");
 	$(elem).change(function() {
+		var minValue = 8;
+
+		if ($(this).val() == '0') {
+			$(this).attr("min", "0");
+		} else {
+			$(this).attr("min", minValue);
+		}
+
 		$(this).parent().find(".error").remove();
 		if ($(this).val() > 30) {
 			$(this).parent().append('<div class="error">Маска не может быть больше 30<div class="msg"></div><div class="icon"></div></div>');
 			return;
 		}
-		if ($(this).val() < 8) {
-			$(this).parent().append('<div class="error">Маска не может быть меньше 8<div class="msg"></div><div class="icon"></div></div>');
+		if ($(this).val() < minValue && $(this).val() != '0') {
+			$(this).parent().append('<div class="error">Маска не может быть меньше ' + minValue + '<div class="msg"></div><div class="icon"></div></div>');
 			return;
 		}
 		updateSubnateVal($(this).parents(".staticIpElement").find(".subnet"), $(this).val());
@@ -534,7 +574,7 @@ function updateSubnateVal(htmlElement, mask) {
 	if ($(htmlElement).hasClass("ajaxRun") == false) {
 		$(htmlElement).addClass("ajaxRun");
 		$.ajax({
-			url: cli.getParam("baseurl") + "Client/GetSubnet?mask=" + mask,
+			url: cli.getParam("baseurl") + "Client/GetSubnet?mask=" + (mask == "0" ? "32" : mask),
 			type: 'POST',
 			dataType: "json",
 			success: function(data) {
@@ -554,12 +594,45 @@ function endpointDelete(id) {
 	$("#endpointDeleteMessage").html("Вы действительно хотите удалить соединение <strong>№" + id + "</strong> ?");
 }
 
+function phantomFor() {
+	var phantoms = $("[phantomFor]");
+	if (phantoms.length > 0) {
+		phantoms.each(function () {
+			var phantomAimStart = $($(this).attr("phantomFor"));
+			phantomAimStart.addClass("hid");
+			$(this).unbind("click").click(function() {
+				var phantomAim = $($(this).attr("phantomFor"));
+				if (phantomAim.hasClass("hid")) {
+					phantomAim.removeClass("hid");
+					if ($(this).hasClass("entypo-down-open-mini")) $(this).removeClass("entypo-down-open-mini").addClass("entypo-right-open-mini");
+					if ($(this).hasClass("entypo-down-open")) $(this).removeClass("entypo-down-open").addClass("entypo-right-open");
+					 
+				} else {
+					if (!phantomAim.hasClass("hid")) {
+						phantomAim.addClass("hid");
+						if ($(this).hasClass("")) {
+							if ($(this).hasClass("entypo-right-open-mini")) $(this).removeClass("entypo-right-open-mini").addClass("entypo-down-open-mini");
+							if ($(this).hasClass("entypo-right-open")) $(this).removeClass("entypo-right-open").addClass("entypo-down-open");
+						}
+					}
+				}
+			});
+		});
+	}
+}
+
+//удаление точки подключения
+function deleteEndpointProof(id) {
+	$("#ModelForEndpointProofDelete [name='endpointId']").val(id);
+	$("#ModelForEndpointProofDelete #endpointId").html(id);
+}
 var clientPage = new ClientPage();
 //вызов функций при загрузке, дополнительные действия
 $(function() {
 	clientPage.ShowBlocks();
 	changeVisibilityUpdateEach();
 	$("div.Client.InfoPhysical").removeClass("hid");
+	$("div.Client.InfoLegal").removeClass("hid");
 
 	$("#clientReciverId").change(function() {
 		getPaymentReciver();
@@ -580,8 +653,14 @@ $(function() {
 			scrollTo(valNameScroll, 1);
 	}
 	$(".switchstatus").each(function() {
-		var id = $("[name='endpointId']").val();
+		var id = 0;
+		if ($("[name='endpointId']").length > 0) {
+			id = $(this).parent().find("[name='endpointId']").val();
+		} else {
+			id = $("[name='endpointId']").val();
+		}
 		//	$(this).insertAfter("<div class='switchStatusUpdater'></div>");
-		updateEndpointStatus(id, ".switchstatus");
+		updateEndpointStatus(id, this);
 	});
+	phantomFor();
 });
