@@ -93,7 +93,7 @@
 						<td>@item.PaidOn</td>
 						<td>@item.RecievedOn</td>
 						<td>@item.Sum.ToString("0.00")</td>
-						<td>@item.Comment</td>
+						<td>@Html.Raw(item.IsDuplicate? "<strong>( дубликат )</strong>" : "") @item.Comment</td>
 					</tr>
 				}
 				</tbody>

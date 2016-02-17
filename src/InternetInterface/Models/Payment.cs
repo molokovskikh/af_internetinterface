@@ -58,11 +58,17 @@ namespace InternetInterface.Models
 		[Property, Style]
 		public virtual bool Virtual { get; set; }
 
+		[Property]
+		public virtual bool IsDuplicate { get; set; }
+		
 		[BelongsTo]
 		public virtual BankPayment BankPayment { get; set; }
 
 		[Property]
 		public virtual string Comment { get; set; }
+
+		[Property]
+		public virtual string TransactionId { get; set; }
 
 		[Style]
 		public virtual bool NotProcessed

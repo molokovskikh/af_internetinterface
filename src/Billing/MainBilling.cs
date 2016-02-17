@@ -96,8 +96,22 @@ namespace Billing
 			});
 
 			WithTransaction(session => {
-				var payments = session.Query<Payment>().Where(p => !p.BillingAccount);
+				//Выборка всех необработанных платежей, не отмеченых, как дублируемые
+				var payments = session.Query<Payment>().Where(p => !p.BillingAccount && !p.IsDuplicate);
+				////Поиск дублируемых платежей
 				foreach (var payment in payments) {
+                    if (session.Query<Payment>().Any(p => p.IsDuplicate == false
+																	&& p.TransactionId != null
+																	&& p.Agent != null
+																	&& p.Id != payment.Id
+																	&& p.TransactionId == payment.TransactionId
+																	&& p.Agent == payment.Agent)) {
+						//Если платеж дублирован, маркеруем, пропускаем платеж
+						payment.IsDuplicate = true;
+						session.Save(payment);
+	                    session.Flush();
+                        continue;
+					}
 					var updateClient = payment.Client;
 					if (updateClient.PhysicalClient != null) {
 						updateClient.PhysicalClient.AccountPayment(payment);
@@ -508,7 +522,7 @@ namespace Billing
 				c.BeginWork != null)
 				.ToList();
 			foreach (var client in bonusesClients) {
-				if (client.Payments.Sum(p => p.Sum) >= needToAgentSum * agentSettings) {
+				if (client.Payments.Where(s=>!s.IsDuplicate).Sum(p => p.Sum) >= needToAgentSum * agentSettings) {
 					var request = client.Request;
 					request.PaidBonus = true;
 					session.Save(request);

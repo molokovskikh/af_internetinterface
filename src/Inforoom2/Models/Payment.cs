@@ -39,6 +39,9 @@ namespace Inforoom2.Models
 		[Property, Description("Комментарий к платежу")]
 		public virtual string Comment { get; set; }
 
+		[Property, Description("Платеж является дубликатом")]
+		public virtual bool IsDuplicate { get; set; }
+
 		public virtual string SumToLiteral()
 		{
 			return TextUtil.NumToPaymentString((double)Sum);
