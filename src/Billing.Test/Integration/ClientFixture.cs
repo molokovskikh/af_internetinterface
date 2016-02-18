@@ -479,5 +479,92 @@ namespace Billing.Test.Integration
 
 			ConfigurationManager.AppSettings["ProcessFirstPaymentBonus"] = null;
 		}
+
+		[Test(Description = "Проверка обработки дублированных платежей")]
+		public void TestForClonePaymentIgnorance()
+		{
+			//создаем 2 агентов
+			var agent1 = new Partner() {Name = "SB"};
+			var agent2 = new Partner() { Name = "SV" };
+			session.Save(agent1);
+			session.Save(agent2);
+			//Создание 6 платежей (3 валидные и 3 нет)
+			//Родительский платеж
+			var payment = new Payment
+			{
+				RecievedOn = SystemTime.Now(),
+				TransactionId = "777",
+				Client = client,
+				Agent = agent1,
+				Comment = "Test2",
+				Sum = 999
+			};
+			//Нужны 2 дубликата
+			session.Save(payment);
+			payment = new Payment
+			{
+				RecievedOn = SystemTime.Now(),
+				TransactionId = "777",
+				Client = client,
+				Agent = agent1,
+				Comment = "Test2",
+				Sum = 999
+			};
+			session.Save(payment);
+			payment = new Payment
+			{
+				RecievedOn = SystemTime.Now(),
+				TransactionId = "777",
+				Client = client,
+				Agent = agent1,
+				Comment = "Test2",
+				Sum = 999
+			};
+			//Дубль с другим агентом
+			session.Save(payment);
+			payment = new Payment
+			{
+				RecievedOn = SystemTime.Now(),
+				TransactionId = "777",
+				Client = client,
+				Agent = agent2,
+				Comment = "Test2",
+				Sum = 999
+			};
+			session.Save(payment);
+			//Дубль с другой транзакцией
+			payment = new Payment
+			{
+				RecievedOn = SystemTime.Now(),
+				TransactionId = "776",
+				Client = client,
+				Agent = agent1,
+				Comment = "Test2",
+				Sum = 999
+			};
+			session.Save(payment);
+			//Дубль, отмеченный, как дубль
+			payment = new Payment
+			{
+				RecievedOn = SystemTime.Now(),
+				TransactionId = "776",
+				Client = client,
+				Agent = agent1,
+				Comment = "Test2",
+				Sum = 999,
+				IsDuplicate = true
+			};
+			session.Save(payment);
+			session.Flush();
+			//Обработка платежей
+            billing.ProcessPayments(); 
+			//Проверка отработки биллинга
+			var payments = session.Query<Payment>().Where(s => !s.BillingAccount && s.IsDuplicate).ToList();
+			//Один дубль уже был, должны были быть отмечены еще 2
+			Assert.That(payments.Count, Is.EqualTo(3));
+			payments = session.Query<Payment>().Where(s => s.BillingAccount && !s.IsDuplicate).ToList();
+			//Три платежа должны были пройти
+			Assert.That(payments.Count, Is.EqualTo(3));  
+		}
 	}
 }

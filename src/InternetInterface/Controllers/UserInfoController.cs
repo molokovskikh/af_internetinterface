@@ -905,7 +905,7 @@ namespace InternetInterface.Controllers
 		{
 			var payments =
 				DbSession.Query<Payment>()
-					.Where(p => p.Client.Id == client.Id)
+					.Where(p => !p.IsDuplicate && p.Client.Id == client.Id)
 					.Where(p => p.Sum > 0)
 					.OrderByDescending(t => t.PaidOn)
 					.ToList();
@@ -913,7 +913,7 @@ namespace InternetInterface.Controllers
 			var userWriteoffSum = DbSession.Query<UserWriteOff>().Where(w => w.Client.Id == client.Id).ToList().Sum(w => w.Sum);
 			if (InitializeContent.Partner.IsDiller())
 				payments =
-					payments.Where(p => p.Agent != null && p.Agent == InitializeContent.Partner)
+					payments.Where(p => !p.IsDuplicate && p.Agent != null && p.Agent == InitializeContent.Partner)
 						.OrderByDescending(t => t.PaidOn)
 						.Take(5)
 						.OrderBy(t => t.PaidOn)

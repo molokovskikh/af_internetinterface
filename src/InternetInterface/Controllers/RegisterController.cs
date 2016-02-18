@@ -83,7 +83,7 @@ namespace InternetInterface.Controllers
 			PropertyBag["internet"] = internet;
 			if (IsValid(physicalClient) && IsValid(client)) {
 				client.AfterRegistration(Partner);
-				foreach (var payment in client.Payments)
+				foreach (var payment in client.Payments.Where(s => !s.IsDuplicate))
 					DbSession.Save(payment);
 
 				foreach (var contact in client.Contacts)

@@ -328,7 +328,7 @@ namespace InternetInterface.Models
 			if (forbiddenByService)
 				return false;
 			var tariffSum = GetPriceIgnoreDisabled();
-			return Payments.Sum(s => s.Sum) >= tariffSum * PercentBalance;
+			return Payments.Where(s => !s.IsDuplicate).Sum(s => s.Sum) >= tariffSum * PercentBalance;
 		}
 
 		public virtual bool IsPhysical()
@@ -456,7 +456,7 @@ namespace InternetInterface.Models
 
 		public virtual bool PaymentForTariff()
 		{
-			return Payments.Sum(p => p.Sum) >= GetPriceIgnoreDisabled();
+			return Payments.Where(s => !s.IsDuplicate).Sum(p => p.Sum) >= GetPriceIgnoreDisabled();
 		}
 
 		public virtual bool CanUseDebtWork()
