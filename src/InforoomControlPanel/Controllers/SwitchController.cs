@@ -6,6 +6,8 @@ using System.Web.Routing;
 using Inforoom2.Components;
 using Inforoom2.Models;
 using NHibernate.Linq;
+using System.Net;
+using Remotion.Linq.Clauses;
 
 namespace InforoomControlPanel.Controllers
 {
@@ -26,16 +28,21 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult SwitchList()
 		{
-			ViewBag.Switches = DbSession.Query<Switch>().ToList();
+			// формирование фильтра
+			var pager = new InforoomModelFilter<Switch>(this);
+			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
+				pager.SetOrderBy("Id", OrderingDirection.Desc);
+			//получение критерия для Hibernate запроса из класса ModelFilter
+			var criteria = pager.GetCriteria();
+            ViewBag.pager = pager; 
 			return View("SwitchList");
 		}
-
 		/// <summary>
 		/// Изменение коммутаторов
 		/// </summary>
-		public ActionResult EditSwitch(int id)
+		public ActionResult SwitchCreate()
 		{
-			ViewBag.Switch = DbSession.Get<Switch>(id);
+			ViewBag.Zones = DbSession.Query<Zone>().OrderBy(i => i.Name).ToList();
 			ViewBag.NetworkNodes = DbSession.Query<NetworkNode>().OrderBy(i => i.Name).ToList();
 			return View();
 		}
@@ -44,8 +51,44 @@ namespace InforoomControlPanel.Controllers
 		/// Изменение коммутатора
 		/// </summary>
 		[HttpPost]
-		public ActionResult EditSwitch([EntityBinder] Switch Switch)
+		public ActionResult SwitchCreate([EntityBinder] Switch Switch, string switchIp)
+		{ 
+			IPAddress address = null;
+			IPAddress.TryParse(switchIp, out address);
+			Switch.Ip = address;
+                var errors = ValidationRunner.Validate(Switch);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(Switch);
+				SuccessMessage("Коммутатор успешно добавлен");
+				return RedirectToAction("SwitchList");
+			} 
+			ViewBag.Zones = DbSession.Query<Zone>().OrderBy(i => i.Name).ToList();
+			ViewBag.NetworkNodes = DbSession.Query<NetworkNode>().OrderBy(i => i.Name).ToList();
+			ViewBag.Switch = Switch;
+			return View();
+		}
+		
+		/// <summary>
+		/// Изменение коммутаторов
+		/// </summary>
+		public ActionResult EditSwitch(int id)
 		{
+			ViewBag.Switch = DbSession.Get<Switch>(id);
+			ViewBag.Zones = DbSession.Query<Zone>().OrderBy(i => i.Name).ToList();
+			ViewBag.NetworkNodes = DbSession.Query<NetworkNode>().OrderBy(i => i.Name).ToList();
+			return View();
+		}
+
+		/// <summary>
+		/// Изменение коммутатора
+		/// </summary>
+		[HttpPost]
+		public ActionResult EditSwitch([EntityBinder] Switch Switch, string switchIp)
+		{
+			IPAddress address = null;
+			IPAddress.TryParse(switchIp, out address);
+			Switch.Ip = address;
 			var errors = ValidationRunner.Validate(Switch);
 			if (errors.Length == 0) {
 				DbSession.Save(Switch);
@@ -66,6 +109,43 @@ namespace InforoomControlPanel.Controllers
 			DbSession.Delete(address);
 			SuccessMessage("Адрес успешно удален");
 			return RedirectToAction("EditNetworkNode", new { id = address.NetworkNode.Id });
+		}
+		/// <summary>
+		/// Страница списка коммутаторов
+		/// </summary>
+		public ActionResult RegionIpPools()
+		{
+			ViewBag.IpPools = DbSession.Query<IpPool>().OrderBy(i => i.Begin).ToList();
+			ViewBag.Regions = DbSession.Query<Region>().OrderBy(i => i.Name).ToList();
+			ViewBag.IpPoolRegions = DbSession.Query<IpPoolRegion>().OrderBy(i => i.Region.Name).ToList();
+			return View();
+		}
+		/// <summary>
+		/// Изменение коммутатора
+		/// </summary>
+		[HttpPost]
+		public ActionResult RegionIpPoolAdd([EntityBinder] IpPoolRegion newIpPoolRegion)
+		{
+			var errors = ValidationRunner.Validate(newIpPoolRegion);
+			if (errors.Length == 0)
+			{
+				DbSession.Save(newIpPoolRegion);
+				SuccessMessage($"IP-пул {newIpPoolRegion.IpPool.GetBeginIp() + " - " + newIpPoolRegion.IpPool.GetEndIp()} для региона {newIpPoolRegion.Region.Name} успешно удален");
+			}
+			else {
+				ErrorMessage("IP-пул не был добавлен");
+			}
+			return RedirectToAction("RegionIpPools");
+		}
+		/// <summary>
+		/// Удаление у узла связи обслуживающего адреса
+		/// </summary>
+		public ActionResult RegionIpPoolDelete(int id)
+		{
+			var ipPoolRegion = DbSession.Get<IpPoolRegion>(id);
+			DbSession.Delete(ipPoolRegion);
+			SuccessMessage($"IP-пул {ipPoolRegion.IpPool.GetBeginIp() +" - "+ ipPoolRegion.IpPool.GetEndIp()} для региона {ipPoolRegion.Region.Name} успешно удален");
+			return RedirectToAction("RegionIpPools");
 		}
 
 		/// <summary>

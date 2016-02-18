@@ -1,0 +1,90 @@
+﻿@using System.Activities.Expressions
+@using System.Activities.Statements
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	ViewBag.Title = "Работа сотрудников";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	InforoomModelFilter<PaymentsForEmployee> pager = ViewBag.Pager;
+	List<Tuple<Employee, List<PaymentsForEmployee>>> itemList = ViewBag.ItemList;
+}
+<div class="form-group">
+	<a class="btn btn-blue" href="@Url.Action("EmployeeList")">Назад</a>
+</div>
+<div id="table-2_wrapper" class="clientMainTable dataTables_wrapper form-inline">
+	<form>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Дата c</div>
+				<div class="col-sm-3 fix400">
+					@pager.FormFilter(i => i.RegistrationDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new {@class = "form-control", @style = "width:101px;"})
+					<span style="display: inline-block; width: 22px; margin-left: 50px;">по</span>
+					@pager.FormFilter(i => i.RegistrationDate, HtmlType.Date, ComparsionType.LowerOrEqual, new {@class = "form-control", @style = "width:101px;"})
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Сотрудник</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Employee.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			</div>
+		</div>
+	</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">
+					@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+				</div>
+				<div class="col-sm-1">
+					@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+				</div> 
+			</div>
+		</div>
+	</form>
+	<div class="totalCountOfItems">
+		Всего: <strong>@pager.TotalItems</strong> строк
+	</div>
+	<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+		<div class="panel-body">
+			<div class="row">
+				@{ Html.RenderPartial("Pagination"); }
+			</div>
+		</div>
+	</div>
+	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+
+		<tbody>
+	@foreach (var item in itemList)
+			{
+		<tr class="serv">
+			<td class="title-gray"><div>@item.Item1.Name (итого: @(item.Item2.Sum(s=>s.Sum)) руб.)</div></td>
+		</tr>
+		<tr class="serv">
+			<td>
+				<div>Начисления за текущий период</div>
+				<table class="table table-bordered table-striped datatable dataTable no-footer">
+					<tbody>
+					<tr>
+						<td style="width: 100px;">Дата действия</td>
+						<td style="width: 100px;">Сумма</td>
+						<td>Действие</td>
+					</tr>
+					@foreach (var payment in item.Item2) { 
+						<tr>
+							<td>@payment.RegistrationDate.ToShortDateString()</td>
+							<td>@payment.Sum</td>
+							<td>@payment.Comment</td>
+						</tr>
+					}
+					</tbody>
+				</table>
+			</td>
+		</tr>
+			}
+</tbody>
+	</table>
+	<div class="row">
+		@{ Html.RenderPartial("Pagination"); }
+	</div>
+</div>

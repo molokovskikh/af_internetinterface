@@ -7,6 +7,7 @@ using System.Web.WebPages;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
+using Inforoom2.Models.Services;
 using NHibernate.Linq;
 using NHibernate.Util;
 
@@ -70,8 +71,38 @@ namespace InforoomControlPanel.Controllers
 				.GroupBy(s => s.Speed).Select(grp => grp.First()).ToList();
 
 			return View("CreatePlan");
+		}  
+
+		public ActionResult FixedIpPrice()
+		{
+			var priceItem = DbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof(FixedIp)));
+			ViewBag.FixedIp = priceItem;
+			return View();
 		}
 
+		[HttpPost]
+		public ActionResult FixedIpPrice(string price)
+		{
+			decimal priceForIp = -1;
+			if (!string.IsNullOrEmpty(price)) {
+				decimal.TryParse(price, out priceForIp);
+				if (priceForIp != -1) {
+					var priceItem = DbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof (FixedIp)));
+					if (priceItem != null) {
+						priceItem.Price = priceForIp;
+						var errors = ValidationRunner.Validate(priceItem);
+						if (errors.Length == 0) {
+							DbSession.Save(priceItem);
+							SuccessMessage("Стоимость подключения фиксированного Ip успешно изменена!");
+							return RedirectToAction("FixedIpPrice");
+						}
+					}
+				}
+			}
+			ErrorMessage("Стоимость подключения фиксированного Ip задана некорректно!");
+			return RedirectToAction("FixedIpPrice");
+		}
+		
 		/// <summary>
 		/// Просмотр тарифа
 		/// </summary>

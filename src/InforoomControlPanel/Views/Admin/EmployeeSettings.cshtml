@@ -1,0 +1,46 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using NHibernate.Util
+@model dynamic
+
+@{
+	ViewBag.Title = "";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	List<EmployeeTariff> settings = ViewBag.EmployeeTariff ?? new List<EmployeeTariff>();
+}
+
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/Employee.js")"></script>
+}
+<div class="panel panel-default">
+	<div class="panel-body">
+		@using (Html.BeginForm("EmployeeSettings", "Admin", FormMethod.Post, new {@class = "form-horizontal form-groups-bordered"})) {
+			<div class="col-sm-6"> 
+				<div class="form-group">
+					<label class="col-sm-6 control-label">@settings[0].Description</label>
+					<div class="col-sm-4">
+						@Html.TextBox("settingsA", settings[0].Sum.ToString().Replace(",","."), new { @class = "form-control", @min = "0", @type = "number", @step = "any" })
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-6 control-label">@settings[1].Description</label>
+					<div class="col-sm-4">
+						@Html.TextBox("settingsB", settings[1].Sum.ToString().Replace(",", "."), new { @class = "form-control", @min = "0", @type = "number", @step = "any" })
+					</div>
+				</div>
+				<div class="form-group"></div>
+					<div class="form-group">
+						<div class="col-sm-2">
+							<button class="btn btn-green" type="submit">Обновить</button>
+						</div>
+					</div>
+				</div>
+		}
+	</div>
+</div>
+<div class="form-group">
+	<a class="btn btn-blue" href="@Url.Action("EmployeeList")">Назад</a>
+</div>
+

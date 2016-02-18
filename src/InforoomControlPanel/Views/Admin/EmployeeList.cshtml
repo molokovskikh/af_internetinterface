@@ -6,32 +6,76 @@
 	ViewBag.Title = "Сотрудники";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	var employees = ViewBag.employees as List<Employee>;
-	
 }
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/Employee.js")"></script>
+}
+<div class="form-group">
+	<a class="btn btn-success btn-sm btn-icon icon-left" href='@Url.Action("EmployeeAdd", "Admin")'>
+		<i class="entypo-plus"></i>
+		Добавить сотрудника
+	</a>
+</div>
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
 	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 		<thead>
-			<tr role="row">
-				<th class="sorting" tabindex="0" aria-controls="table-2">Номер</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2">Название</th>
-				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
-			</tr>
+		<tr role="row">
+			<th class="sorting" tabindex="0" aria-controls="table-2">Номер</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Логин</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Название</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">E-mail</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Номер телефона</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Адрес</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Дата регистрации</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Показывать ДП</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Заблокирован</th>
+		</tr>
 		</thead>
 
 		<tbody>
-			@foreach (var item in employees)
-			{
+		@{
+			var disabledFirst = false;
+		}
+		@foreach (var item in employees) {
+			if (!disabledFirst && item.IsDisabled) {
+				disabledFirst = true;
 				<tr role="row" class="odd">
-					<td>@item.Id</td>
-					<td>@item.Name</td>
+					<td></td>
+					<td></td>
 					<td>
-							<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditEmployee", ViewBag.ControllerName, new { id = item.Id })"> 
-							<i class="entypo-plus-circled"></i>
-							Изменить
-						</a>
-					</td>
+						<span class="col-sm-4 control-label gray bold c-pointer entypo-right-open-mini disabledEmployeeButton" phantomFor=".disabledEmployee">Заблокированные</span></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
 				</tr>
 			}
+			<tr role="row" class="odd @(item.IsDisabled ? "disabledEmployee" : "")">
+
+				<td>@item.Id</td>
+				<td>
+					@if (item.EmployeePayments.Count > 0) {
+						<a target="_blank" class="blue" href="@Url.Action("PaymentsForEmployee", ViewBag.ControllerName, new {id = item.Id})">
+							<i class="entypo-vcard blue"></i> @item.Login</a>
+					}
+					else {
+						@item.Login
+					}
+				</td>
+				<td>
+					<a target="_blank" href="@Url.Action("EditEmployee", ViewBag.ControllerName, new {id = item.Id})">
+						<i class="entypo-pencil"></i> @Html.Raw(item.Name.CutForBrowser(5))</a>
+				</td>
+				<td>@item.Email</td>
+				<td>@item.PhoneNumber</td>
+				<td>@item.Address</td>
+				<td>@item.RegistrationDate</td>
+				<td>@(item.ShowContractOfAgency ? "да" : "нет")</td>
+				<td>@(item.IsDisabled ? "да" : "нет")</td>
+			</tr>
+		}
 		</tbody>
 	</table>
 

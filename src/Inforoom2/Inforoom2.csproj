@@ -328,7 +328,9 @@
     <Compile Include="Intefaces\IModelWithPriority.cs" />
     <Compile Include="Intefaces\ILogAppeal.cs" />
     <Compile Include="Intefaces\IServicemenScheduleItem.cs" />
+    <Compile Include="Models\EmployeeTariffs.cs" />
     <Compile Include="Models\BankPayment.cs" />
+    <Compile Include="Models\PaymentsForEmployee.cs" />
     <Compile Include="Models\Internetsessionslog.cs" />
     <Compile Include="Models\IpPool.cs" />
     <Compile Include="Models\IpPoolRegion.cs" />

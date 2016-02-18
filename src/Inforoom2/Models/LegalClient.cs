@@ -14,6 +14,7 @@ using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 using NHibernate.Linq;
 using System.Globalization;
+using Inforoom2.Models.Services;
 
 namespace Inforoom2.Models
 {
@@ -310,16 +311,22 @@ namespace Inforoom2.Models
 
 			appealInsert = appealInsert + appealUpdate + appealRemove;
 			if (appealInsert != string.Empty) {
-				order.Client.Appeals.Add(new Appeal($"По зказу №{order.Number} " + appealInsert, order.Client, AppealType.System,
+				order.Client.Appeals.Add(new Appeal($"По заказу №{order.Number} " + appealInsert, order.Client, AppealType.System,
 					employee));
 			}
 		}
 
 		private void SetStaticIpAsOrderService(ISession dbSession, ClientOrder order, string staticIp)
 		{
+			decimal priceForIp = 0;
+			var priceItem = dbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof(FixedIp)));
+			if (priceItem != null)
+			{
+				priceForIp = priceItem.Price;
+			}
 			var staticIpService = new OrderService
 			{
-				Cost = 200,
+				Cost = priceForIp,
 				Order = order,
 				Description = string.Format("Плата за фиксированный Ip адрес ({0})", staticIp)
 			};

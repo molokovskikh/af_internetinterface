@@ -520,6 +520,17 @@ namespace Billing.Test.Integration
 				Comment = "Test2",
 				Sum = 999
 			};
+			//Дубль, просроченный (больше 48)
+			payment = new Payment
+			{
+				RecievedOn = SystemTime.Now().AddDays(-49),
+				TransactionId = "777",
+				Client = client,
+				Agent = agent1,
+				Comment = "Test2",
+				Sum = 999
+			};
+			session.Save(payment);
 			//Дубль с другим агентом
 			session.Save(payment);
 			payment = new Payment

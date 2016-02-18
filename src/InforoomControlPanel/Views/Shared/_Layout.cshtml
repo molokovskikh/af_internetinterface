@@ -1,6 +1,7 @@
 ﻿@using System.Web.UI.WebControls
 @using Inforoom2.Models
 @using InforoomControlPanel.Helpers
+@using NHibernate
 <!DOCTYPE html>
 @{
 	string username = "";
@@ -11,6 +12,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="shortcut icon" href="~/favicon.ico">
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<meta name="description" content="Neon Admin Panel"/>
@@ -272,6 +274,15 @@
 					</a>
 				</li>
 			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_003004.ToString()) != null
+					|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_003004.ToString())))
+			{
+				<li>
+					<a href="@Url.Action("PaymentsForEmployee", "Admin")">
+						<span class="title">Работа сотрудников</span>
+					</a>
+				</li>
+			}
 			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_003002.ToString()) != null
 				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_003002.ToString()))) {
 				<li>
@@ -288,6 +299,16 @@
 					</a>
 				</li>
 			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_003005.ToString()) != null
+					|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_003005.ToString())))
+			{
+				<li>
+					<a href="@Url.Action("EmployeeSettings", "Admin")">
+						<span class="title">Настройки</span>
+					</a>
+				</li>
+			}
+
 		</ul>
 	</li>
 }
@@ -383,6 +404,24 @@
 					</a>
 				</li>
 			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_005009.ToString()) != null
+						|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_005009.ToString())))
+			{
+				<li>
+					<a href="@Url.Action("FixedIpPrice", "Plans")">
+						<span class="title">Стоимость фиксированного Ip</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_005008.ToString()) != null
+					|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_005008.ToString())))
+			{
+				<li>
+					<a href="@Url.Action("SaleSettings", "Admin")">
+						<span class="title">Настройки скидок</span>
+					</a>
+				</li>
+			}
 		</ul>
 	</li>
 }
@@ -408,6 +447,15 @@
 				<li>
 					<a href="@Url.Action("NetworkNodeList", "Switch")">
 						<span class="title">Узлы связи</span>
+					</a>
+				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_006003.ToString()) != null
+					|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_006003.ToString())))
+			{
+				<li>
+					<a href="@Url.Action("RegionIpPools", "Switch")">
+						<span class="title">IP-пулы регионов</span>
 					</a>
 				</li>
 			}
@@ -599,7 +647,6 @@
 
 <!-- Demo Settings -->
 <script src="~/assets/js/neon-demo.js"></script>
-
 <script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
 <script type="text/javascript" src="~/Scripts/jquery-ui-1.11.1.js"></script>
 <script type="text/javascript" src="~/assets/js/jquery.cookie.js"></script>
@@ -620,5 +667,13 @@
 	#endif
 }
 
+
+	@{
+		if (ViewBag.SessionToRefresh != null)
+		{
+			var sessionToRefresh = (ISession)ViewBag.SessionToRefresh;
+			sessionToRefresh.Transaction.Rollback();
+		}
+	}
 </body>
 </html>

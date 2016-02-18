@@ -1,0 +1,66 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "Настройки скидок";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	SaleSettings settings = ViewBag.SaleSettings ?? new SaleSettings();
+}
+
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/Employee.js")"></script>
+}
+<div class="panel panel-default">
+	<div class="panel-body">
+		@using (Html.BeginForm("SaleSettings", "Admin", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+		{
+			@Html.HiddenFor(I => settings.Id)
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Необходимо работать беспрерывно для получения скидки (месяцев)</label>
+					<div class="col-sm-6">
+						@Html.TextBoxFor(I => settings.PeriodCount, new { @class = "form-control", @min = "0", @type = "number", })
+						@ViewBag.Validation.GetError(settings, "PeriodCount")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Минимальный процент</label>
+					<div class="col-sm-6">
+						@Html.TextBoxFor(I => settings.MinSale, new { @class = "form-control", @min = "0", @type = "number" })
+						@ViewBag.Validation.GetError(settings, "MinSale")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Максимальный процент</label>
+					<div class="col-sm-6">
+						@Html.TextBoxFor(I => settings.MaxSale, new { @class = "form-control", @min = "0", @type = "number" })
+						@ViewBag.Validation.GetError(settings, "MaxSale")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Шаг прироста скидки за каждый последующий месяц (в %)</label>
+					<div class="col-sm-6">
+						@Html.TextBox("settings.SaleStep", settings.SaleStep.ToString().Substring(0, settings.SaleStep.ToString().IndexOf(",")), new { @class = "form-control", @min = "0", @type = "number" })
+						@ViewBag.Validation.GetError(settings, "SaleStep")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Количество дней через которое сбрасывается статус "Заблокирован - Восстановление работы"</label>
+					<div class="col-sm-6">
+						@Html.TextBoxFor(I => settings.DaysForRepair, new { @class = "form-control", @min = "0", @type = "number" })
+						@ViewBag.Validation.GetError(settings, "DaysForRepair")
+					</div>
+				</div>
+				<div class="form-group"></div>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<button class="btn btn-green" type="submit">Обновить</button>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>

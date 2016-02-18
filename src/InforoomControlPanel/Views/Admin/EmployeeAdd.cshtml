@@ -1,0 +1,107 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+
+@{
+	ViewBag.Title = "Добавление нового сотрудника";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	Employee employee = ViewBag.Employee ?? new Employee();
+}
+
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/Employee.js")"></script>
+}
+<div class="panel panel-default">
+	<div class="panel-body">
+		@using (Html.BeginForm("EmployeeAdd", "Admin", FormMethod.Post, new {@class = "form-horizontal form-groups-bordered"})) {
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">ФИО</label>
+					<div class="col-sm-6">
+						@Html.TextBoxFor(I => employee.Name, new {@class = "form-control"})
+						@ViewBag.Validation.GetError(employee, "Name")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Логин</label>
+					<div class="col-sm-6">
+						@Html.TextBoxFor(I => employee.Login, new {@class = "form-control"})
+						@ViewBag.Validation.GetError(employee, "Login")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Адрес</label>
+					<div class="col-sm-6">
+						@Html.TextBoxFor(I => employee.Address, new {@class = "form-control"})
+						@ViewBag.Validation.GetError(employee, "Address")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">EMail</label>
+					<div class="col-sm-6">
+						@Html.TextBoxFor(I => employee.Email, new {@class = "form-control"})
+						@ViewBag.Validation.GetError(employee, "Email")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Номер телефона</label>
+					<div class="col-sm-6">
+						@Html.TextBoxFor(I => employee.PhoneNumber, new {@class = "form-control"})
+						@ViewBag.Validation.GetError(employee, "PhoneNumber")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label c-pointer" for="IsDisabledCheck">Заблокирован</label>
+					<div class="col-sm-6">
+						@Html.CheckBoxFor(I => employee.IsDisabled, new {@Id = "IsDisabledCheck"})
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label c-pointer" for="ShowContractOfAgencyCheck">Показывать договор поручения</label>
+					<div class="col-sm-6">
+						@Html.CheckBoxFor(I => employee.ShowContractOfAgency, new { @Id = "ShowContractOfAgencyCheck" })
+					</div>
+				</div>
+				<div class="form-group"> 
+					<span class="col-sm-4 control-label gray bold c-pointer entypo-right-open-mini" phantomFor=".ServiceBlock" phantomOnClick="CheckEmployeeWithServiceRequest">Прием сервисных заявок</span>
+					<div class="col-sm-6"></div>
+					</div>
+				<div class="ServiceBlock hid">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Время начала приема</label>
+						<div class="col-sm-6">
+							@Html.TextBoxFor(I => employee.WorkBegin, new { @Name = "workBegin", @class = "form-control timepicker" })
+							@ViewBag.Validation.GetError(employee, "WorkBegin")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Время конца приема</label>
+						<div class="col-sm-6">
+							@Html.TextBoxFor(I => employee.WorkEnd, new { @Name = "workEnd", @class = "form-control timepicker" })
+							@ViewBag.Validation.GetError(employee, "WorkEnd")
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 control-label">Интервал приема</label>
+						<div class="col-sm-6">
+							@Html.TextBoxFor(I => employee.WorkStep, new { @Name = "workStep", @class = "form-control timepicker"})
+							@ViewBag.Validation.GetError(employee, "WorkStep")
+						</div>
+					</div>
+					</div>
+				<div class="form-group"></div>
+					<div class="form-group">
+						<div class="col-sm-2">
+							<button class="btn btn-green" type="submit">Сохранить</button>
+						</div>
+					</div>
+				</div>
+		}
+	</div>
+</div>
+<div class="form-group">
+	<a class="btn btn-blue" href="@Url.Action("EmployeeList")">Назад</a>
+</div>
+

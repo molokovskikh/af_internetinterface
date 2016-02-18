@@ -364,13 +364,11 @@ function scrollPan_add(text_bool) {
 
 		$("#scroll_top").css("margin-top", "0 px");
 		$("#scroll_top").css("margin-left", $(".sidebar-menu").width() + "px");
-
 		if (text_bool == false) {
 			$("#scroll_top").css("min-width", "50px");
 			$("#scroll_top").css("width", "50px");
 			$(".scroll_block").css("width", "50px");
 		}
-
 		$("#scroll_top").click(function() {
 			if ($("#scroll_top").attr("current_y") == 0 && $(window).scrollTop() == 0) {
 				var point = 0;
@@ -401,7 +399,6 @@ function scrollPan_add(text_bool) {
 						$(".scroll_text").html("вниз");
 					}
 				}
-
 			}
 		});
 
@@ -431,8 +428,61 @@ function scrollPan_add(text_bool) {
 
 }
 
+//Формирование закрывающейся панели для селектора отмеченного в свойстве
+function phantomFor() {
+	var phantoms = $("[phantomFor]");
+	if (phantoms.length > 0) {
+		phantoms.each(function () {
+			var phantomAimStart = $($(this).attr("phantomFor"));
+
+			var phantomAim = $($(this).attr("phantomFor"));
+			var phantomIsShown = $(this).attr("phantomisshown");
+			if (phantomIsShown == "true") {
+				phantomAim.removeClass("hid");
+				if ($(this).hasClass("entypo-right-open-mini")) $(this).removeClass("entypo-right-open-mini").addClass("entypo-down-open-mini");
+				if ($(this).hasClass("entypo-right-open")) $(this).removeClass("entypo-right-open").addClass("entypo-down-open");
+			} else {
+				phantomAimStart.addClass("hid");
+				if ($(this).hasClass("entypo-down-open-mini")) $(this).removeClass("entypo-down-open-mini").addClass("entypo-right-open-mini");
+				if ($(this).hasClass("entypo-down-open")) $(this).removeClass("entypo-down-open").addClass("entypo-right-open");
+			}
+
+			$(this).unbind("click").click(function () {
+
+				var phantomOnClick = $(this).attr("phantomOnClick");
+				if (phantomOnClick != undefined && phantomOnClick != "") {
+					window[phantomOnClick](this);
+				}
+				if (phantomAim.hasClass("hid")) {
+					phantomAim.removeClass("hid");
+					$(this).attr("phantomChecked", "true");
+							if ($(this).hasClass("entypo-right-open-mini")) $(this).removeClass("entypo-right-open-mini").addClass("entypo-down-open-mini");
+							if ($(this).hasClass("entypo-right-open")) $(this).removeClass("entypo-right-open").addClass("entypo-down-open");
+
+				} else {
+					if (!phantomAim.hasClass("hid")) {
+						phantomAim.addClass("hid");
+						$(this).attr("phantomChecked","false");
+						if ($(this).hasClass("entypo-down-open-mini")) $(this).removeClass("entypo-down-open-mini").addClass("entypo-right-open-mini");
+						if ($(this).hasClass("entypo-down-open")) $(this).removeClass("entypo-down-open").addClass("entypo-right-open");
+					}
+				}
+			});
+		});
+	}
+}
+
 $(function() {
 
+	$(".timepicker").timepicker({
+		minuteStep: 1,
+		template: 'modal',
+		appendWidgetTo: 'body',
+		showSeconds: false,
+		showMeridian: false,
+		defaultTime: false
+	});
+	phantomFor();
 	var cookieValue = $.cookie("ShowLargeMenu");
 	if (cookieValue != null && cookieValue == "true") {
 		$(".sidebar-menu-inner .sidebar-collapse-icon .entypo-menu").click();

@@ -409,7 +409,7 @@ function GetSwitchesByZone(zoneDropdownName, switchesDropdownName) {
 }
 
 //Добавление в куки сведений о необходимости открывать единственную запись в новой вкладке 
-var ipRentSerchName = "input[name='mfilter.filter.Equal.Endpoints.First().LeaseList.First().Ip'],input[name='mfilter.filter.Equal.Endpoint.LeaseList.First().Ip']";
+var ipRentSerchName = "input[name='mfilter.filter.Equal.Endpoints.First().LeaseList.First().Ip'],input[name='mfilter.filter.Equal.Endpoint.LeaseList.First().Ip'],input[name='mfilter.filter.Equal.Ip']";
 $(function() {
 	var ipEqualValue = $(ipRentSerchName).val();
 	if (ipEqualValue != "" && ipEqualValue != null) {
@@ -433,5 +433,7 @@ $(function() {
 			$(ipRentSerchName).val("");
 		}
 	});
-	GetSwitchesByZone("mfilter.filter.Equal.Endpoint.Switch.Zone.Name", "mfilter.filter.Equal.Endpoint.Switch.Name");
+	if ($("[name='" + "mfilter.filter.Equal.Endpoint.Switch.Zone.Name" + "']").length > 0 && $("[name='" + "mfilter.filter.Equal.Endpoint.Switch.Name" + "']").length > 0) {
+		GetSwitchesByZone("mfilter.filter.Equal.Endpoint.Switch.Zone.Name", "mfilter.filter.Equal.Endpoint.Switch.Name");
+	}
 });

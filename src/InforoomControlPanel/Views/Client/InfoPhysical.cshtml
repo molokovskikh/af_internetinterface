@@ -126,11 +126,3 @@
 </div>
  
 <div style="clear: both;"></div>
-
-@{
-	if (ViewBag.SessionToRefresh != null) {
-		var sessionToRefresh = (ISession) ViewBag.SessionToRefresh;
-		sessionToRefresh.Refresh(client);
-		sessionToRefresh.Refresh(client.PhysicalClient);
-	}
-}

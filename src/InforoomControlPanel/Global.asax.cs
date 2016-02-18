@@ -49,6 +49,10 @@ namespace InforoomControlPanel
 		{
 			try {
 				Exception exception = Server.GetLastError();
+
+#if DEBUG
+				throw exception;
+#endif
 				var currentUrl = HttpContext.Current.Request.Url.ToString();
 				var exText = string.Format("<a href='{0}'>{0}</a>", currentUrl.CutAfter(100)); 
 

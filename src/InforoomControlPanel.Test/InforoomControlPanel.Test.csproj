@@ -209,6 +209,8 @@
     <Compile Include="Functional\AdminAccount\LoginFixture.cs" />
     <Compile Include="Functional\Admin\EditRoleFixture.cs" />
     <Compile Include="Functional\Admin\AdminFixture.cs" />
+    <Compile Include="Functional\Admin\SaleSettingsFixture.cs" />
+    <Compile Include="Functional\Admin\EmployeeSettingsFixture.cs" />
     <Compile Include="Functional\Banner\BannerFixture.cs" />
     <Compile Include="Functional\Banner\DeleteBannerFixture.cs" />
     <Compile Include="Functional\Banner\CreateBannerFixture.cs" />
@@ -229,6 +231,7 @@
     <Compile Include="Functional\News\DeleteNewsBlockFixture.cs" />
     <Compile Include="Functional\News\EditNewsBlockFixture.cs" />
     <Compile Include="Functional\News\NewsFixture.cs" />
+    <Compile Include="Functional\Plans\FixedIpPriceChangeFixture.cs" />
     <Compile Include="Functional\Plans\CreatePlanFixture.cs" />
     <Compile Include="Functional\Plans\CreateInternetPlanChangerIndexFixture.cs" />
     <Compile Include="Functional\Plans\CreateTVProtocolFixture.cs" />
@@ -256,7 +259,8 @@
     <Compile Include="Functional\Switch\DeleteNetworkNodeFixture.cs" />
     <Compile Include="Functional\Switch\EditNetworkNodeFixture.cs" />
     <Compile Include="Functional\Switch\CreateNetworkNodeFixture.cs" />
-    <Compile Include="Functional\Switch\EditSwitchFixture.cs" />
+    <Compile Include="Functional\Switch\RegionIpPoolsFixture.cs" />
+    <Compile Include="Functional\Switch\SwitchSettingsFixture.cs" />
     <Compile Include="Functional\Switch\SwitchFixture.cs" />
     <Compile Include="Functional\Ticket\EditCallMeBackTicketFixture.cs" />
     <Compile Include="Functional\Ticket\EditTicketFixture.cs" />
