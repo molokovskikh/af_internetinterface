@@ -100,7 +100,8 @@ namespace Billing
 				var payments = session.Query<Payment>().Where(p => !p.BillingAccount && !p.IsDuplicate);
 				////Поиск дублируемых платежей
 				foreach (var payment in payments) {
-                    if (session.Query<Payment>().Any(p => p.IsDuplicate == false
+                    if (session.Query<Payment>().Any(p => p.RecievedOn >= SystemTime.Now().Date.AddDays(-48)
+																	&& p.IsDuplicate == false
 																	&& p.TransactionId != null
 																	&& p.Agent != null
 																	&& p.Id != payment.Id

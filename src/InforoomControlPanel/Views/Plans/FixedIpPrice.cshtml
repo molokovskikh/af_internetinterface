@@ -1,0 +1,36 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using NHibernate.Util
+@model dynamic
+
+@{
+	ViewBag.Title = "Стоимость подключения фиксированного Ip";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	FixedIp settings = ViewBag.FixedIp;
+}
+
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/Employee.js")"></script>
+}
+<div class="panel panel-default">
+	<div class="panel-body">
+		@using (Html.BeginForm("FixedIpPrice", "Plans", FormMethod.Post, new {@class = "form-horizontal form-groups-bordered"})) {
+			<div class="col-sm-6"> 
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Стоимость подключения фиксированного Ip</label>
+					<div class="col-sm-6">
+						@Html.TextBox("price", settings.Price, new { @class = "form-control", @min = "0", @type = "number" })
+					</div>
+				</div>
+				<div class="form-group"></div>
+					<div class="form-group">
+						<div class="col-sm-2">
+							<button class="btn btn-green" type="submit">Обновить</button>
+						</div>
+					</div>
+				</div>
+		}
+	</div>
+</div>
+

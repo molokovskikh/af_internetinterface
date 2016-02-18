@@ -33,11 +33,11 @@
      || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_020000.ToString()))) {
 	<ul class="list-group InfoPhysicalNaviPan">
 		<li class="list-group-item">
-			<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("ServiceRequestCreate", "ServiceRequest", new {@id = client.Id})">
+			<a class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="@Url.Action("ServiceRequestCreate", "ServiceRequest", new {@id = client.Id})">
 				<i class="entypo-doc-text"></i>
 				Сервисная заявка
 			</a>
-			<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("LeasesLog", "Client", new {@id = client.Id})">
+			<a class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="@Url.Action("LeasesLog", "Client", new {@id = client.Id})">
 				<i class="entypo-chart-area"></i>
 				Статистика работы
 			</a>
@@ -49,7 +49,13 @@
 				<i class="entypo-chart-area"></i>
 				Архив заказов
 			</a>
-			<a class="btn @(rentIsActive ? "btn-red" : "btn-success") btn-sm btn-icon icon-left" href="@Url.Action("HardwareList", "HardwareRent", new {id = client.Id})">
+			@if (!string.IsNullOrEmpty(client.RedmineTask)) {
+				<a title="@client.RedmineTask" class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="http://redmine.analit.net/issues/@(client.RedmineTask)">
+					<i class="entypo-chart-area"></i>
+					Задача на Redmine
+				</a>
+			}
+			<a class="btn @(rentIsActive ? "btn-red" : "btn-success") btn-sm btn-icon icon-left" target="_blank" href="@Url.Action("HardwareList", "HardwareRent", new {id = client.Id})">
 				<i class="entypo-plus-circled"></i>
 				Аренда оборудования
 			</a>
@@ -68,40 +74,40 @@
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-lg-6">
-				@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010001.ToString()) != null
-|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010001.ToString())))
+				@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_020001.ToString()) != null
+|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_020001.ToString())))
 				{
 					@Html.Partial("subviews/_PrivateLegalInfo", client)
 				}
-				@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010003.ToString()) != null
-|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010003.ToString())))
+				@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_020003.ToString()) != null
+|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_020003.ToString())))
 				{
 					@Html.Partial("subviews/_LegalOrders", client)
 				}
-				@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010004.ToString()) != null
-|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010004.ToString())))
+				@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_020004.ToString()) != null
+|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_020004.ToString())))
 				{
 					@Html.Partial("subviews/_Payments", client)
 				}
-				@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010005.ToString()) != null
-|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010005.ToString())))
+				@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_020005.ToString()) != null
+|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_020005.ToString())))
 				{
 					@Html.Partial("subviews/_WriteOffs", client)
 				}
 			</div>
 			<div class="col-lg-6">
-				@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010006.ToString()) != null
-|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010006.ToString())))
+				@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_020006.ToString()) != null
+|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_020006.ToString())))
 				{
 					@Html.Partial("subviews/_Contacts", client)
 				}
-				@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010007.ToString()) != null
-|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010007.ToString())))
+				@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_020007.ToString()) != null
+|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_020007.ToString())))
 				{
 					@Html.Partial("subviews/_Appeals", client)
 				}
-				@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_010008.ToString()) != null
-|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_010008.ToString())))
+				@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_020008.ToString()) != null
+|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_020008.ToString())))
 				{
 					@Html.Partial("subviews/_UnresolvedCalls", client)
 				}
@@ -116,11 +122,3 @@
 <div class="form-group">
 </div>
 <div style="clear: both;"></div>
-
-@{
-	if (ViewBag.SessionToRefresh != null) {
-		var sessionToRefresh = (ISession) ViewBag.SessionToRefresh;
-		sessionToRefresh.Refresh(client);
-		sessionToRefresh.Refresh(client.LegalClient);
-	}
-}

@@ -75,6 +75,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NHibernate.Validator.1.3.2.4000\lib\Net35\NHibernate.Validator.Specific.dll</HintPath>
     </Reference>
+    <Reference Include="NPOI, Version=2.0.6.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
@@ -1516,6 +1517,7 @@
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\AddressController.CreateStreet.js" />
     <Content Include="Scripts\AddressController.CreateHouse.js" />
+    <Content Include="Scripts\Employee.js" />
     <Content Include="Scripts\LegalOrderPage.js" />
     <Content Include="Scripts\InfoClientPage.js" />
     <Content Include="Scripts\ClientSearchPage.js" />
@@ -2007,8 +2009,15 @@
     <Content Include="Views\Client\subviews\modelview\_LegalEndpointAddress.cshtml" />
     <Content Include="Views\Client\subviews\_EndpointLegal.cshtml" />
     <Content Include="Views\Client\subviews\modelview\_LegalEndpointDelete.cshtml" />
+    <Content Include="Views\Admin\EmployeeAdd.cshtml" />
+    <Content Include="Views\Admin\PaymentsForEmployee.cshtml" />
+    <Content Include="Views\Admin\EmployeeSettings.cshtml" />
+    <Content Include="Views\Admin\SaleSettings.cshtml" />
+    <Content Include="Views\Plans\FixedIpPrice.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
+    <Content Include="Views\Switch\SwitchCreate.cshtml" />
+    <Content Include="Views\Switch\RegionIpPools.cshtml" />
     <None Include="Web.release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -9,6 +9,7 @@
  span.red.bold{padding-left: 2px; font-weight: bold; color: #C70E0E;}
  .gray.bold{padding-left: 2px; font-weight: bold; color: #888888;}
 .black{color: #333!important;}
+.blue{color:#0D90D4!important;}
  .listItem.gray:hover{background: #E2E2E2 !important;}
  .error{color:red; font-weight:600 !important;}
  .servicemen table { table-layout:fixed; overflow:hidden;}
@@ -17,7 +18,7 @@
  .table thead a.checked.asc {color: #ff0000;}
  .hid{ display: none;}
  body { color: #424242; }
- body a{ color: #00A651;font-weight: bold; }
+ body a{ color: #10A257;font-weight: bold; }
  .max-width200{    max-width: 400px;}
  .hiddenOverflow {display: block;overflow: hidden;}
  .emptyBlock .orderListBorder .order h5:first-of-type{    margin-bottom: 13px;}
@@ -60,7 +61,8 @@
  table .staticIpElement a.delete span:first-child,.serviceRemove span:first-child{color: #005CB5;font-size: 16px;}
  table .staticIpElement a.delete span:last-child,.serviceRemove span:last-child{color: #006BCA;top: -2px;position: relative;margin-left: 2px;cursor: pointer; border-bottom: 1px dashed #00549E;}
  table .staticIpElement a.delete:hover span:last-child,.serviceRemove:hover span:last-child { border-bottom: none;}
-
+ .disabledEmployeeButton{width: 200px !important; color: #bd3737!important;}
+ .disabledEmployee a{color: #D80000!important;}
  a.addStaticIpElement span:first-child,.addNewElement span:first-child{color: #940000;font-size: 16px;}
  a.addStaticIpElement span:last-child,.addNewElement span:last-child{color: #E40000;top: -2px;position: relative;margin-left: 2px;cursor: pointer; border-bottom: 1px dashed #DA0000;}
  a.addStaticIpElement:hover span:last-child,.addNewElement:hover span:last-child { border-bottom: none;}
@@ -89,45 +91,12 @@
  table .payment.red td{background: #FFCFCF !important;}
  table .payment a{color: #333;cursor: pointer;}
  table .payment a:hover{color: #000;}
- 
- 
-.scroll_img {
-	display: inline-block;
-    height: 14px;
-    width: 18px;
-    background: url('/Images/toplink.png') center 3px no-repeat;
-    cursor: pointer;
-}
-#scroll_top.top .scroll_img {
-  background: url('/Images/toplink.png') center -7px no-repeat;
-}
-#scroll_top {
-  height: 20px;
-  width: 50pxpx;
-  min-width: 50px;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  text-align: center;
-  cursor: pointer;
-    border: 1px solid #D0D0D0;
-    border-left: 1px solid #E9E9E9;
-    border-top: 1px solid #E6E6E6;
-	z-index: 99999;
-  background: #FFFFFF;
-}
-.scroll_block {
-	z-index: 99999;
-  display: block;
-  height: 20px;
-  width: 50px;
-  position: relative;
-  font-size: 16px;
-  font-weight: bold;
-  margin: auto;
-  cursor: pointer;
-}
-
+.title-gray, .table-striped > tbody > tr:nth-child(odd) > td.title-gray{ background-color: #4D5461 !important;color: #fff;font-size: 14px;}
+.scroll_img {display: inline-block;height: 14px;width: 18px;background: url('../Images/toplink.png') center 3px no-repeat;cursor: pointer;}
+#scroll_top.top .scroll_img {background: url('../Images/toplink.png') center -7px no-repeat;}
+#scroll_top {height: 20px;width: 50pxpx;min-width: 50px;position: absolute;top: 0px;left: 0px;text-align: center;cursor: pointer;border: 1px solid #D0D0D0;border-left: 1px solid #E9E9E9;
+    border-top: 1px solid #E6E6E6;z-index: 99999;background: #FFFFFF;}
+.scroll_block {z-index: 99999;display: block;height: 20px;width: 50px;position: relative;font-size: 16px;font-weight: bold;margin: auto;cursor: pointer;}
  .appeal.Block td{background: #FFAEAE !important;}
  .appeal.User td{background: #FDEFDB !important;}
  .appeal.Statistic td{background: #DEF4F5 !important;}

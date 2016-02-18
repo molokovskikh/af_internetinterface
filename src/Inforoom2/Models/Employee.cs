@@ -1,28 +1,52 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Inforoom2.validators;
 using NHibernate.Mapping.Attributes;
+using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
 	/// <summary>
 	/// Модель сотрудника (администратора)
 	/// </summary>
-	[Class(0, Table = "Partners", NameType = typeof(Employee))]
+	[Class(0, Table = "Partners", NameType = typeof (Employee))]
 	public class Employee : BaseModel
 	{
 		public Employee()
 		{
 			Roles = new List<Role>();
 			Permissions = new List<Permission>();
-			PaymentEmployee = new List<PaymentSystem>();
+			EmployeePayments = new List<PaymentsForEmployee>();
+			RegistrationDate = DateTime.Now;
+			 
 		}
 
-		[Property, Description("Имя сотрудника")]
+		public static TimeSpan DefaultWorkBegin => new TimeSpan(9, 0, 0);
+
+		public static TimeSpan DefaultWorkEnd => new TimeSpan(19, 0, 0);
+
+		public static TimeSpan DefaultWorkStep => new TimeSpan(0, 30, 0);
+
+		[Property, Description("Имя сотрудника"), NotNullNotEmpty(Message = "Необходимо ввести имя сотрудника")]
 		public virtual string Name { get; set; }
 
-		[Property, Description("Логин сотрудника")]
+		[Property, Description("Имя сотрудника")]
+		public virtual string Email { get; set; }
+
+		[Property(Column = "TelNum")]
+		public virtual string PhoneNumber { get; set; }
+
+		[Property, Description("Логин сотрудника"), NotNullNotEmpty(Message = "Необходимо ввести логин сотрудника")]
 		public virtual string Login { get; set; }
+
+		[Property(Column = "Adress"), Description("Адрес")]
+		public virtual string Address { get; set; }
+
+		[Property(Column = "RegDate")]
+		public virtual DateTime RegistrationDate { get; set; }
 
 		[Property]
 		public virtual int? Categorie { get; set; }
@@ -30,24 +54,36 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual bool IsDisabled { get; set; }
 
+		[Property]
+		public virtual TimeSpan? WorkBegin { get; set; }
+
+		[Property]
+		public virtual TimeSpan? WorkEnd { get; set; }
+
+		[Property]
+		public virtual TimeSpan? WorkStep { get; set; }
+
+		[Property]
+		public virtual bool ShowContractOfAgency { get; set; }
+
 		[Bag(0, Table = "roletouser", Lazy = CollectionLazy.False)]
-		[Key(1, Column = "user", NotNull = false)]
-		[ManyToMany(2, Column = "role", ClassType = typeof(Role))]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "user", NotNull = false)]
+		[ManyToMany(2, Column = "role", ClassType = typeof (Role))]
 		public virtual IList<Role> Roles { get; set; }
 
 		[Bag(0, Table = "permissiontouser", Lazy = CollectionLazy.False)]
-		[Key(1, Column = "user", NotNull = false)]
-		[ManyToMany(2, Column = "permission", ClassType = typeof(Permission))]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "user", NotNull = false)]
+		[ManyToMany(2, Column = "permission", ClassType = typeof (Permission))]
 		public virtual IList<Permission> Permissions { get; set; }
 
-		[Bag(0, Table = "paymentsystems", Lazy = CollectionLazy.False)]
-		[Key(1, Column = "Employee", NotNull = false)]
-		[ManyToMany(2, Column = "Id", ClassType = typeof(PaymentSystem))]
-		public virtual IList<PaymentSystem> PaymentEmployee { get; set; }
+		[Bag(0, Table = "PaymentsForAgent", Cascade = "all-delete-orphan")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "Agent")]
+		[OneToMany(2, ClassType = typeof (PaymentsForEmployee))]
+		public virtual IList<PaymentsForEmployee> EmployeePayments { get; set; }
 
 		public virtual bool IsPaymentSystem()
 		{
-			var ret = PaymentEmployee.Count > 0;
+			var ret = EmployeePayments.Count > 0;
 			return ret;
 		}
 

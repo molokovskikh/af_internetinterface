@@ -338,6 +338,10 @@ function updatePortGrid(portCount) {
 }
 
 function createFixedIp(endpointId) {
+	if (endpointId == 0 ) {
+			var orderItem = $("[name='order.EndPoint.Id']");
+			endpointId = orderItem.length>0?orderItem.val():0;
+	}
 	var errorText = "Ошибка при присвоении фиксированного IP !";
 	$(".fixedIp").html("");
 	$.ajax({
@@ -594,32 +598,6 @@ function endpointDelete(id) {
 	$("#endpointDeleteMessage").html("Вы действительно хотите удалить соединение <strong>№" + id + "</strong> ?");
 }
 
-function phantomFor() {
-	var phantoms = $("[phantomFor]");
-	if (phantoms.length > 0) {
-		phantoms.each(function () {
-			var phantomAimStart = $($(this).attr("phantomFor"));
-			phantomAimStart.addClass("hid");
-			$(this).unbind("click").click(function() {
-				var phantomAim = $($(this).attr("phantomFor"));
-				if (phantomAim.hasClass("hid")) {
-					phantomAim.removeClass("hid");
-					if ($(this).hasClass("entypo-down-open-mini")) $(this).removeClass("entypo-down-open-mini").addClass("entypo-right-open-mini");
-					if ($(this).hasClass("entypo-down-open")) $(this).removeClass("entypo-down-open").addClass("entypo-right-open");
-					 
-				} else {
-					if (!phantomAim.hasClass("hid")) {
-						phantomAim.addClass("hid");
-						if ($(this).hasClass("")) {
-							if ($(this).hasClass("entypo-right-open-mini")) $(this).removeClass("entypo-right-open-mini").addClass("entypo-down-open-mini");
-							if ($(this).hasClass("entypo-right-open")) $(this).removeClass("entypo-right-open").addClass("entypo-down-open");
-						}
-					}
-				}
-			});
-		});
-	}
-}
 
 //удаление точки подключения
 function deleteEndpointProof(id) {

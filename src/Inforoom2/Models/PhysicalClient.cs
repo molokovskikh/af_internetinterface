@@ -15,6 +15,7 @@ using NHibernate.Mapping.Attributes;
 using NHibernate.Util;
 using NHibernate.Validator.Constraints;
 using System.Net;
+using Inforoom2.Models.Services;
 
 namespace Inforoom2.Models
 {
@@ -412,7 +413,12 @@ namespace Inforoom2.Models
 				    (oldSwitch != null && connection.Switch == oldSwitch.Id && connection.Port == oldPort.ToString())) {
 					//обновляем/задаем поля точки подключения
 					if (clientEntPoint.Ip == null && !string.IsNullOrEmpty(connection.StaticIp)) {
-						dbSession.Save(new UserWriteOff(client, 200,
+						decimal priceForIp = 0;
+						var priceItem =  dbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof (FixedIp)));
+						if (priceItem != null) {
+							priceForIp = priceItem.Price;
+						}
+                        dbSession.Save(new UserWriteOff(client, priceForIp,
 							string.Format("Плата за фиксированный Ip адрес ({0})", connection.StaticIp)));
 					}
 					clientEntPoint.Client = client;

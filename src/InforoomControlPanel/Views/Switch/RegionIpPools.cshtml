@@ -1,0 +1,71 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	ViewBag.Title = "Назначение IP-пулов для регионов";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	List<IpPoolRegion> ipPoolRegions = ViewBag.IpPoolRegions;
+	var newIpPoolRegion = new IpPoolRegion();
+    List<IpPool> ipPools = ViewBag.IpPools;
+	List<Region> regions = ViewBag.Regions;
+}
+<div class="panel panel-primary col-md-12">
+	<div class="panel-body">
+		@using (@Html.BeginForm("RegionIpPoolAdd", "Switch", null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+		{
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Соотрудник</label>
+				<div class="col-sm-4">
+					@Html.DropDownListExtendedFor(i => newIpPoolRegion.IpPool, ipPools, obj => obj.GetBeginIp() + " - "+ obj.GetEndIp(), null, new { @class = "form-control" })
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Регион</label>
+				<div class="col-sm-4">
+					@Html.DropDownListExtendedFor(i => newIpPoolRegion.Region, regions, obj => obj.Name, null, new { @class = "form-control" })
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Описание</label>
+				<div class="col-sm-4">
+					@Html.TextBoxFor(model => newIpPoolRegion.Description, new { @class = "form-control" })
+				</div>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-green" type="submit">Добавить</button>
+			</div>
+		}
+	</div>
+</div>
+<div class="panel panel-primary col-md-12">
+	<div class="panel-body">
+		<div class="form-group">
+			@{
+				var lastRegionId = 0;
+			}
+			<table id="table-2" class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable border-right-white writeOffTable" role="grid" aria-describedby="table-2_info">
+				<tbody>
+
+				@foreach (var item in ipPoolRegions) {
+					if (lastRegionId != item.Region.Id) {
+						lastRegionId = item.Region.Id;
+						<tr>
+							<td>
+								<h3>@item.Region.Name </h3>
+							</td>
+							<td></td>
+						</tr>
+					}
+						<tr>
+						<td><span style="display: inline-block; min-width: 260px;">@( item.IpPool.GetBeginIp() + " - " + item.IpPool.GetEndIp())</span></td>
+							<td>
+								<a class="entypo-cancel-circled" title="удалить" style="color: red" href="@Url.Action("RegionIpPoolDelete", new {@id = item.Id})">
+									<span style="display: inline-block; min-width: 260px;">@(item.Description)</span>
+								</a>
+							</td>
+						</tr>
+			}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

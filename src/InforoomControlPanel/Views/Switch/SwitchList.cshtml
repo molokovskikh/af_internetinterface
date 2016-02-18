@@ -1,42 +1,127 @@
 ﻿@using System.Activities.Expressions
+@using Inforoom2.Components
 @using Inforoom2.Models
 
 @{
-	ViewBag.Title = "Коммутаторы";
-	Layout = "~/Views/Shared/_Layout.cshtml";
-	IList<Switch> switches = ViewBag.Switches;
+	ViewBag.Title = "Список коммутаторов";
+	Layout = "~/Views/Shared/_Layout.cshtml"; 
+	InforoomModelFilter<Switch> modelFilter = ViewBag.pager;
+	IList<Switch> switches = modelFilter.GetItems();
 }
-<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
-<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
-	<thead>
-		<tr role="row">
-			<th class="sorting" tabindex="0" aria-controls="table-2" >#</th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" >Название</th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" >Ip</th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" >Mac</th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" >Количество портов</th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" >Узел связи</th>
-			<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
-		</tr>
-	</thead>
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=1")"></script>
+}
+<div class="form-group">
+	<a class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href='@Url.Action("SwitchCreate", "Switch")'>
+		<i class="entypo-plus"></i>
+		Добавить коммутатор
+	</a>
+</div>
+
+<form>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-sm-1">
+				<label class="c-pointer" style="margin-bottom: 12px;" for="filterFree">Id</label>
+			</div>
+			<div class="col-sm-2">@modelFilter.FormFilter(i => i.Id, HtmlType.text, ComparsionType.Equal)</div>
+		</div>
+	</div> 
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-sm-1">
+				<label class="c-pointer" style="margin-bottom: 12px;" for="filterFree">Ip</label>
+			</div>
+			<div class="col-sm-2">
+				@modelFilter.FormFilter(i => i.Ip, HtmlType.text, ComparsionType.Equal, new { Id = "ipEqualHidden", @class = "form-control hidden hid", @style = "min-width:280px; max-width:280px;" })
+
+				<input type="text" name="" value="" id="ipEqualShown" class="form-control">
+			</div>
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-sm-1">
+				<label class="c-pointer" style="margin-bottom: 12px;" for="filterFree">Mac</label>
+			</div>
+			<div class="col-sm-2">@modelFilter.FormFilter(i => i.Mac, HtmlType.text, ComparsionType.Like)</div>
+		</div>
+	</div> 
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-sm-1">
+				<label class="c-pointer" style="margin-bottom: 12px;" for="filterFree">Зона</label>
+			</div>
+			<div class="col-sm-2">@modelFilter.FormFilter(i => i.Zone.Name, HtmlType.Dropdown, ComparsionType.Equal)</div>
+		</div>
+	</div> 
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-sm-1">
+				<label class="c-pointer" style="margin-bottom: 12px;" for="filterFree">Узел связи</label>
+			</div>
+			<div class="col-sm-2">@modelFilter.FormFilter(i => i.NetworkNode.Name, HtmlType.Dropdown, ComparsionType.Equal)</div>
+		</div>
+	</div> 
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-sm-2">
+				<label class="c-pointer" style="margin-bottom: 12px;" for="filterFree">Тип</label>
+			</div>
+			<div class="col-sm-2">@modelFilter.FormFilter(i => i.Type, HtmlType.Dropdown, ComparsionType.Equal)</div>
+		</div>
+	</div> 
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-sm-1">
+				<label class="c-pointer" style="margin-bottom: 12px;" for="filterFree">Название</label>
+			</div>
+			<div class="col-sm-2">@modelFilter.FormFilter(i => i.Name, HtmlType.text, ComparsionType.Like)</div>
+			
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-1">
+			@modelFilter.SubmitButton(new { @class = "btn btn-success btn-sm" })
+		</div>
+		<div class="col-sm-1">
+			@modelFilter.CleanButton(new { @class = "btn btn-success btn-sm" })
+		</div> 
+	</div>
+</form>
+<div class="panel-body"></div>
+	<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+		<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+			<thead>
+				<tr role="row">
+					<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@modelFilter.OrderBy(s => s.Id)">#</a></th>
+					<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@modelFilter.OrderBy(s => s.Name)">Название</a></th>
+					<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@modelFilter.OrderBy(s => s.Ip)">Ip</a></th>
+					<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@modelFilter.OrderBy(s => s.Mac)">Mac</a></th>
+					<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@modelFilter.OrderBy(s => s.PortCount)">Количество портов</a></th>
+					<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@modelFilter.OrderBy(s => s.Type)">Тип</a></th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">Узел связи</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
+				</tr>
+			</thead>
 			@foreach (var item in switches)
 			{
-			<tr>
-				<td>@Html.DisplayFor(modelItem => item.Id)</td>
-				<td>@Html.DisplayFor(modelItem => item.Name)</td>
-				<td>@(item.Ip != null ? item.Ip.ToString() : "Нет")</td>
-				<td>@Html.DisplayFor(modelItem => item.Mac)</td>
-				<td>@item.Endpoints.Count / @item.PortCount</td>
-				<td>@(item.NetworkNode != null ? item.NetworkNode.Name : "Не прикреплен")</td>
-				<td>
-					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditSwitch","Switch",new {id = item.Id})">
-						<i class="entypo-vcard"></i>
-						Изменить
-					</a>
-				</td>
-			</tr>
+				<tr>
+					<td>@Html.DisplayFor(modelItem => item.Id)</td>
+					<td>@Html.DisplayFor(modelItem => item.Name)</td>
+					<td>@(item.Ip != null ? item.Ip.ToString() : "Нет")</td>
+					<td>@Html.DisplayFor(modelItem => item.Mac)</td>
+					<td>@item.Endpoints.Count / @item.PortCount</td>
+					<td>@item.Type.GetDescription()</td>
+					<td>@(item.NetworkNode != null ? item.NetworkNode.Name : "Не прикреплен")</td>
+					<td>
+						<a class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="@Url.Action("EditSwitch","Switch",new {id = item.Id})">
+							<i class="entypo-vcard"></i>
+							Изменить
+						</a>
+					</td>
+				</tr>
 			}
-	<tbody>
-	</tbody>
-</table>
-</div>
+			<tbody></tbody>
+		</table>
+	</div>

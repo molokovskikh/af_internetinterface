@@ -57,9 +57,12 @@ namespace Inforoom2.Helpers
 				|| tableName == "UnresolvedPhone".ToLower()
 				|| tableName == "bankpayments".ToLower()
 				|| tableName == "NetworkZones".ToLower()
-				|| tableName == "Recipients".ToLower())
+				|| tableName == "Recipients".ToLower()
+				|| tableName == "PaymentsForAgent".ToLower()
+				|| tableName == "AgentTariffs".ToLower())
 			{
-				return tableName;
+				
+                return tableName;
 			}
 			return "inforoom2_" + tableName;
 		}

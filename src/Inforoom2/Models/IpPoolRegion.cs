@@ -22,10 +22,10 @@ namespace Inforoom2.Models
 			Region = region;
 		}
 
-		[ManyToOne(Column = "IpPool"), NotNullNotEmpty]
+		[ManyToOne(Column = "IpPool"), NotNull]
 		public virtual IpPool IpPool { get; set; }
 
-		[ManyToOne(Column = "Region", Cascade = "save-update")]
+		[ManyToOne(Column = "Region", Cascade = "save-update"), NotNull]
 		public virtual Region Region { get; set; }
 
 		[Property]

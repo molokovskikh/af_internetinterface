@@ -25,7 +25,8 @@ namespace InforoomControlPanel.Test.Functional.infrastructure
 			var employee = DbSession.Query<Employee>().First(i => i.Login == adminName);
 			Employee = employee;
 			//Добавление прав
-			Call(BuildTestUrl("AdminOpen/RenewActionPermissionsJs")); var permissions = DbSession.Query<Permission>().ToList();
+			Call(BuildTestUrl("AdminOpen/RenewActionPermissionsJs"));
+			var permissions = DbSession.Query<Permission>().ToList();
 			foreach (var item in permissions) employee.Permissions.Add(item);
 			DbSession.Save(employee);
 			DbSession.Flush(); 

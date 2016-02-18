@@ -223,7 +223,8 @@ namespace Inforoom2.Test.Infrastructure
 			GenerateContent();
 			GeneratePaymentsAndWriteoffs();
 			GenerateAgent();
-			DbSession.Flush();
+			GenerateEmployeeSettings();
+            DbSession.Flush();
 		}
 
 		//private void GenerateServices()
@@ -395,6 +396,19 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Save(agent);
 		}
 
+		private void GenerateEmployeeSettings()
+		{
+			var  settings = new EmployeeTariff();
+			settings.ActionName = "WorkedClient";
+			settings.Sum = 101;
+			settings.Description = "";
+			DbSession.Save(settings);
+			settings = new EmployeeTariff();
+			settings.ActionName = "AgentPayIndex";
+			settings.Sum = 102;
+			settings.Description = "";
+			DbSession.Save(settings);
+		}
 
 		private void GenerateAddresses()
 		{

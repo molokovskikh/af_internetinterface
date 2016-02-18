@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using NHibernate.Transform;
 
 namespace Inforoom2.Helpers
 {
@@ -30,6 +33,26 @@ namespace Inforoom2.Helpers
 		public static string CutAfter(this string self, int charsNumber, string postChars = "...")
 		{
 			return !string.IsNullOrEmpty(self) && self.Length > charsNumber ? self.Substring(0, charsNumber) + postChars : self;
+		}
+
+		public static string CutForBrowser(this string self, int charsNumber)
+		{
+			var stArray = self.Split(' ');
+			var stResult = "";
+			for (int i = 0; i < stArray.Length; i++)
+			{
+				var chArray = new List<char>();
+                for (int j = 0; j< stArray[i].Length; j++) {
+	                if (j>= charsNumber && j % charsNumber == 0)
+					{
+						chArray.AddRange("<wbr>".ToCharArray()); 
+					}
+		                  chArray.Add(stArray[i][j]);
+                }
+				stArray[i] = string.Join("", chArray);
+			}
+			self = string.Join(" ", stArray);
+            return self;
 		}
 	}
 }

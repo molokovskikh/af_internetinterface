@@ -1116,7 +1116,7 @@ namespace InforoomControlPanel.Controllers
 
 			return View();
 		}
-
+		///| -----------------------------------------------|Агенты (не ясно нужны или нет)|------------------------------------------------->>
 		public ActionResult AgentList()
 		{
 			var Agent = DbSession.QueryOver<Agent>().List();
@@ -1165,6 +1165,8 @@ namespace InforoomControlPanel.Controllers
 			}
 			return RedirectToAction("AgentList");
 		}
+		//<-----------------------------------------------------------------------------------------------------------------------------------||
+
 
 		/// <summary>
 		/// Страница списка клиентов

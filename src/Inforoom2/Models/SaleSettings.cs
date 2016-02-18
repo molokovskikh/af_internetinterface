@@ -1,27 +1,28 @@
 ﻿using Common.Tools;
 using NHibernate.Mapping.Attributes;
+using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
 	[Class(0, Table = "SaleSettings", NameType = typeof(SaleSettings))]
 	public class SaleSettings : BaseModel
 	{
-		[Property]
+		[Property, NotNull(Message = "Поле обязательно для заполнения")]
 		public virtual int PeriodCount { get; set; }
 
-		[Property]
+		[Property, NotNull(Message = "Поле обязательно для заполнения")]
 		public virtual int MinSale { get; set; }
 
-		[Property]
+		[Property, NotNull(Message = "Поле обязательно для заполнения")]
 		public virtual int MaxSale { get; set; }
 
-		[Property]
+		[Property, NotNull(Message = "Поле обязательно для заполнения")]
 		public virtual decimal SaleStep { get; set; }
 
-		[Property]
+		[Property, NotNull(Message = "Поле обязательно для заполнения")]
 		public virtual int DaysForRepair { get; set; }
 
-		[Property]
+		[Property, NotNull(Message = "Поле обязательно для заполнения")]
 		public virtual int FreeDaysVoluntaryBlocking { get; set; }
 
 		public static SaleSettings Defaults()
