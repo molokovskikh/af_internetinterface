@@ -268,7 +268,7 @@ namespace Billing.Test.Integration
 
 			session.Clear();
 			lPerson = session.Get<LawyerPerson>(lPerson.Id);
-			Assert.That(lPerson.Balance, Is.EqualTo(-25000m), lPerson.Id.ToString());
+			Assert.That(lPerson.Balance, Is.EqualTo(-15000m), lPerson.Id.ToString());
 			billing.ProcessPayments();
 			lPerson.Balance += 15000;
 			session.Update(lPerson);
