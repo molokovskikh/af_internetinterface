@@ -187,18 +187,33 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		[HttpPost]
 		public ActionResult EditEmployee([EntityBinder] Employee employee, string workBegin, string workEnd, string workStep,
-			bool isDisabled)
+			bool? isDisabled)
 		{
 			if (!string.IsNullOrEmpty(workBegin)) {
 				employee.WorkBegin = TimeSpan.Parse(workBegin, new DateTimeFormatInfo());
 			}
+			else {
+				if (workBegin == string.Empty) {
+					employee.WorkBegin = null;
+				}
+			}
 			if (!string.IsNullOrEmpty(workEnd)) {
 				employee.WorkEnd = TimeSpan.Parse(workEnd, new DateTimeFormatInfo());
+			}
+			else {
+				if (workEnd == string.Empty) {
+					employee.WorkEnd = null;
+				}
 			}
 			if (!string.IsNullOrEmpty(workStep)) {
 				employee.WorkStep = TimeSpan.Parse(workStep, new DateTimeFormatInfo());
 			}
-			employee.IsDisabled = GetCurrentEmployee() == employee ? false : isDisabled;
+			else {
+				if (workStep == string.Empty) {
+					employee.WorkStep = null;
+				}
+			}
+			employee.IsDisabled = GetCurrentEmployee() != employee && (isDisabled ?? false);
 			var errors = ValidationRunner.ValidateDeep(employee);
 			if (errors.Length == 0) {
 				DbSession.Save(employee);
