@@ -102,6 +102,7 @@
 	<div class="panel-body">
 		@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
 			@Html.HiddenFor(i => employee.Id)
+			@Html.Hidden("isDisabled", employee.IsDisabled.ToString())
 			<div class="col-sm-6">
 				<div class="form-group">
 					Добавить роль:
@@ -128,6 +129,7 @@
 					<div class="col-sm-2">
 						@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
 							@Html.HiddenFor(i => employee.Id)
+							@Html.Hidden("isDisabled", employee.IsDisabled.ToString())
 							@Html.HiddenForModelList(employee, i => employee.Roles, item.Id)
 							<button type="submit" class="btn-link entypo-cancel-circled" style="color: red"></button>
 						}
@@ -140,6 +142,7 @@
 	<div class="panel-body">
 		@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
 			@Html.HiddenFor(i => employee.Id)
+			@Html.Hidden("isDisabled", employee.IsDisabled.ToString())
 			<div class="col-sm-6">
 				<div class="form-group">
 					Добавить права:
@@ -165,8 +168,9 @@
 						@Html.Raw(item.Description)
 					</div>
 					<div class="col-sm-2">
-						@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
-							@Html.HiddenFor(i => employee.Id)
+						@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })){
+							@Html.Hidden("isDisabled", employee.IsDisabled.ToString())
+							@Html.HiddenFor(i => employee.IsDisabled)
 							@Html.HiddenForModelList(employee, i => employee.Permissions, item.Id)
 							<button type="submit" class="btn-link entypo-cancel-circled" style="color: red"></button>
 						}
