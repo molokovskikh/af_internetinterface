@@ -109,6 +109,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="assets\css\bootstrap-colorpicker.min.css" />
     <Content Include="assets\css\bootstrap.css" />
     <Content Include="assets\css\css\neon-theme.css" />
     <Content Include="assets\css\custom.css" />
@@ -146,6 +147,9 @@
     <Content Include="assets\css\skins\white.min.css" />
     <Content Include="assets\css\skins\yellow.css" />
     <Content Include="assets\css\skins\yellow.min.css" />
+    <Content Include="assets\css\ui-semantic\dropdown.min.css" />
+    <Content Include="assets\css\ui-semantic\transition.min.css" />
+    <Content Include="assets\js\ui-semantic\transition.min.js" />
     <Content Include="assets\css\wysihtml5-color.css" />
     <Content Include="assets\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="assets\fonts\index.html" />
@@ -1407,6 +1411,7 @@
     <Content Include="assets\js\tocify\jquery.tocify.css" />
     <Content Include="assets\js\tocify\jquery.tocify.min.js" />
     <Content Include="assets\js\typeahead.min.js" />
+    <Content Include="assets\js\ui-semantic\dropdown.min.js" />
     <Content Include="assets\js\uikit\addons\css\datepicker.almost-flat.css" />
     <Content Include="assets\js\uikit\addons\css\datepicker.almost-flat.min.css" />
     <Content Include="assets\js\uikit\addons\css\datepicker.css" />
@@ -1513,6 +1518,7 @@
     <Content Include="Images\map.png" />
     <Content Include="Images\tick.png" />
     <Content Include="Images\toplink.png" />
+    <Content Include="Scripts\ConnectionRequestMarker.js" />
     <Content Include="Scripts\ClientController.ClientRegistration.js" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\AddressController.CreateStreet.js" />
@@ -1532,6 +1538,7 @@
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-ui-1.11.1.js" />
     <Content Include="assets\js\jquery.cookie.js" />
+    <Content Include="Scripts\PaymentsCalendarFilter.js" />
     <Content Include="Scripts\Window.js" />
     <Content Include="Scripts\YandexMapHelper.js" />
     <Content Include="favicon.ico" />
@@ -1546,7 +1553,9 @@
     <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ClientControllerPhysical.cs" />
+    <Compile Include="Controllers\ClientControllerPhysicalRequest.cs" />
     <Compile Include="Controllers\ServiceRequestController.cs" />
+    <Compile Include="Controllers\ConnectionRequestController.cs" />
     <Compile Include="Controllers\SpreadSheetController.cs" />
     <Compile Include="Controllers\ClientActionsController.cs" />
     <Compile Include="Controllers\ConnectionTeamController.cs" />
@@ -1569,6 +1578,7 @@
     <Compile Include="ReportTemplates\FilterReportModels.cs" />
     <Compile Include="ReportTemplates\LeaseReport.cs" />
     <Compile Include="ReportTemplates\FilterReport.cs" />
+    <Compile Include="ReportTemplates\PaymentsReport.cs" />
     <Compile Include="ReportTemplates\WriteOffsReport.cs" />
     <Compile Include="ReportTemplates\ClientReports.cs" />
   </ItemGroup>
@@ -2014,10 +2024,14 @@
     <Content Include="Views\Admin\EmployeeSettings.cshtml" />
     <Content Include="Views\Admin\SaleSettings.cshtml" />
     <Content Include="Views\Plans\FixedIpPrice.cshtml" />
+    <Content Include="Views\Client\subviews\modelview\_RequestMarkerColorChange.cshtml" />
+    <Content Include="Views\ConnectionRequest\ConnectionRequestEdit.cshtml" />
+    <Content Include="Views\SpreadSheet\Payments.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <Content Include="Views\Switch\SwitchCreate.cshtml" />
     <Content Include="Views\Switch\RegionIpPools.cshtml" />
+    <Content Include="Views\Switch\modelview\_SwitchRemove.cshtml" />
     <None Include="Web.release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

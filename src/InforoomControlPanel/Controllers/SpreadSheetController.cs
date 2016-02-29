@@ -59,6 +59,35 @@ namespace InforoomControlPanel.Controllers
 			}
 			return View();
 		}
-		 
+
+		/// <summary>
+		/// Отчет по выручке
+		/// </summary>
+		public ActionResult Payments()
+		{
+			var pager = new InforoomModelFilter<Payment>(this);
+			pager = PaymentsReport.GetGeneralReport(this, pager);
+			if (pager == null) {
+				return null;
+			}
+			var dateA = DateTime.Parse(pager.GetParam("filter.GreaterOrEqueal.PaidOn"));
+			var dateB = DateTime.Parse(pager.GetParam("filter.LowerOrEqual.PaidOn")).AddDays(1).AddSeconds(-1);
+			var clientId = DateTime.Parse(pager.GetParam("filter.GreaterOrEqueal.PaidOn"));
+			var clientName = DateTime.Parse(pager.GetParam("filter.LowerOrEqual.PaidOn")).AddDays(1).AddSeconds(-1);
+
+			ViewBag.TotalSum = pager.TotalSumByFieldName("Sum");
+
+			var firstYear = DbSession.Query<Payment>().OrderBy(s => s.Id).FirstOrDefault();
+			var lastYear = DbSession.Query<Payment>().OrderByDescending(s => s.Id).FirstOrDefault();
+
+			ViewBag.FirstYear = firstYear?.PaidOn.Year ?? 0;
+			ViewBag.FirstMonth = firstYear?.PaidOn.Month ?? 0;
+			ViewBag.LastYear = lastYear?.PaidOn.Year ?? 0;
+			ViewBag.LastMonth = lastYear?.PaidOn.Month ?? 0;
+			ViewBag.CurrentYear = dateB.Year;
+			ViewBag.CurrentMonth = dateB.Month;
+
+			return View();
+		}
 	}
 }

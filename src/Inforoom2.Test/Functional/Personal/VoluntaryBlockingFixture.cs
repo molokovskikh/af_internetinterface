@@ -172,9 +172,9 @@ namespace Inforoom2.Test.Functional.Personal
 			thisElement.Click();
 			thisElement = browser.FindElementByLinkText("Подключить");
 			thisElement.Click();
-			thisElement = browser.FindElementById("blockingEndDate");
+			thisElement = browser.FindElementById("weeksCount");
 			thisElement.Clear();
-			thisElement.SendKeys(DateTime.Now.AddDays(client.FreeBlockDays + 1).ToShortDateString());
+			thisElement.SendKeys((client.FreeBlockDays + 1).ToString());
 			thisElement = browser.FindElementById("ConnectBtn");
 			thisElement.Click();
 			thisElement = browser.FindElementByCssSelector(".window .click.ok");

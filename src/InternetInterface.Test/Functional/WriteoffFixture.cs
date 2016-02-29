@@ -9,7 +9,7 @@ using Test.Support.Selenium;
 
 namespace InternetInterface.Test.Functional
 {
-	[TestFixture]
+	[TestFixture(Ignore = true, IgnoreReason = "Функционал перенесен в новую админку.")]
 	public class WriteoffFixture : SeleniumFixture
 	{
 		[Test]

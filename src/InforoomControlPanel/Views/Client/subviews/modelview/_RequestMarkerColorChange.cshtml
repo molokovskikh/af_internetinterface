@@ -1,0 +1,57 @@
+﻿@{
+	Layout = "";
+}
+<!-- Modal For RequestMarkerColor Change -->
+<div class="modal fade" id="RequestMarkerColorChange" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" >
+				<input id="subViewName" name="subViewName" type="hidden" value="_WriteOffs">
+				<input id="writeoffToDelete" type="hidden" name="writeOffId" value="">
+				<input id="writeoffType" type="hidden" name="user" value="">
+				<div class="modal-header" module="requestMarkerColorChange">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Редактирование маркеров</h4>
+				</div>
+			<div class="modal-body">
+				<div class="panel-body">
+					<div class="row">
+						<select class=" form-control form-control" style="width: 100%;" name="markerList"></select>
+					</div>
+				</div>
+
+				<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
+					<tbody>
+						<tr>
+							<td style="max-width: 60px;">Наименование</td>
+							<td>
+								<input style="width: 100%;" class="form-control" name="name" type="text" value="">
+							</td>
+						</tr>
+						<tr>
+							<td style="max-width: 60px;"><span name="colorExample">Цвет</span></td>
+							<td>
+								<input style="width: 100%;" class="form-control" name="color" type="text" value="">
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="panel-body">
+					<div class="row">
+						<span id="clientReciverMessage" class="red bold"></span>
+					</div>
+				</div> 
+				<div class="panel-body">
+					<div class="row">
+						<a class="btn btn-success" onclick="updateMarker(this)" data-loading-text="Обновление...">Обновить</a>
+						<a class="btn btn-success" onclick="addMarker(this)" data-loading-text="Добавление...">Добавить</a>
+						<a class="btn btn-red" onclick="removeMarkerAjax(this)" data-loading-text="Удаление...">Удалить</a>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<input type="hidden" id="exitButtonRef" value ="@Url.Action("RequestsList")">
+				<a id="exitButton" class="btn btn-default" data-dismiss="modal">Закрыть</a>
+			</div>
+				</div>
+			</div>
+</div>

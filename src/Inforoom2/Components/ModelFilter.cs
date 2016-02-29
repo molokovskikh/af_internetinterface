@@ -112,7 +112,7 @@ namespace Inforoom2.Components
 				if (Criteria != null && (!_totalItems.HasValue)) {
 					var tempCriteria = (ICriteria) Criteria.Clone();
 					tempCriteria.SetFirstResult(0);
-					tempCriteria.SetMaxResults(1000000);
+					tempCriteria.SetMaxResults(10000000);
 					var res = tempCriteria.SetProjection(Projections.CountDistinct("Id")).UniqueResult();
 					_totalItems = int.Parse(res.ToString());
 				}
@@ -150,6 +150,23 @@ namespace Inforoom2.Components
 		/// Счетчик для имен псевдонимов. Необходим для создания уникальности имен.
 		/// </summary>
 		protected int AliasCounter = 0;
+
+		/// <summary>
+		/// Возвращает Url для страницы под определенным номером
+		/// </summary>
+		/// <param name="number">Номер страницы</param>
+		/// <returns></returns>
+		public decimal TotalSumByFieldName(string name)
+		{
+			if (Criteria != null && (!_totalItems.HasValue)) {
+				var tempCriteria = (ICriteria) Criteria.Clone();
+				tempCriteria.SetFirstResult(0);
+				tempCriteria.SetMaxResults(10000000);
+				var res = tempCriteria.SetProjection(Projections.Sum(name)).UniqueResult();
+				return res != null ? decimal.Parse(res.ToString()) : 0;
+			}
+			return 0;
+		}
 
 		/// <summary>
 		/// Возвращает Url для страницы под определенным номером
@@ -279,7 +296,8 @@ namespace Inforoom2.Components
 		/// <param name="expression">Простое лямбда выражение (поле пренадлежит модели). Сложные лямбды со свойствами могут не прокатить.</param>
 		/// <returns>Критерий, который можно дополнить или, выполнив запрос, получить список запрашиваемых моделей.</returns>
 		public ICriteria GetCriteria(Expression<Func<TModel, bool>> expression = null,
-			List<Tuple<TModel, Expression<Func<TModel, bool>>>> expressionList = null)
+			List<Tuple<TModel, Expression<Func<TModel, bool>>>> expressionList = null,
+			ICriterion criterion = null)
 		{
 			//Второй раз создавать критерию нет необходимости
 			if (Criteria != null)
@@ -287,6 +305,8 @@ namespace Inforoom2.Components
 
 			// создаем конструктор запросов Nhibernate и добавляем в него простую лямбду, если она имеется
 			Criteria = DbSession.CreateCriteria(typeof (TModel));
+			if (criterion != null)
+				Criteria.Add(criterion);
 			if (expression != null)
 				Criteria.Add(Restrictions.Where(expression));
 			if (expressionList != null) {
@@ -471,7 +491,7 @@ namespace Inforoom2.Components
 				return value;
 
 			if (propertyType.FullName.Contains(typeof (bool).Name)) {
-				if (value.Contains("true"))
+				if (value.ToLower().Contains("true"))
 					return true;
 				return false;
 			}
@@ -809,7 +829,9 @@ namespace Inforoom2.Components
 			PropertyInfo propForText = null, PropertyInfo propForValue = null)
 		{
 			//Для булевых типов проще сразу вернуть результат без запросов к БД
-			if (prop.PropertyType == typeof (bool))
+			if (prop.PropertyType == typeof (bool) ||
+			    (prop.PropertyType.GenericTypeArguments != null &&
+			     prop.PropertyType.GenericTypeArguments.Any(s => s == typeof (bool))))
 				return GetBooleanDropDownValues(selectedValue);
 
 			var values = new List<string>();
@@ -847,8 +869,8 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		protected List<string> GetBooleanDropDownValues(string selectedValue = null)
 		{
-			var selectedTrue = "true" == selectedValue ? "selected='selected'" : "";
-			var selectedFalse = "false" == selectedValue ? "selected='selected'" : "";
+			var selectedTrue = "true" == selectedValue?.ToLower() ? "selected='selected'" : "";
+			var selectedFalse = "false" == selectedValue?.ToLower() ? "selected='selected'" : "";
 			var values = new List<string>();
 			values.Add("<option value=''> </option>");
 			values.Add(String.Format("<option {0} value='true'>Да</option>", selectedTrue));

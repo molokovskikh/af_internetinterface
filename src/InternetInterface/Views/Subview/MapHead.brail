@@ -12,7 +12,7 @@
 					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/RegistrationLegal">Регистрация ЮрЛица</a></th>
 				<% end %>
 				<th>
-					${app.LinkTo("Заявки", @ConnectionRequest, @Index)}
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/RequestsList">Заявки</a>
 				</th>
 				<% if MapPartner.AccesPartner("GCI"): %>
 				<th>
@@ -20,13 +20,17 @@
 				</th>
 				<% end %>
 				<% if MapPartner.AccesPartner("DHCP"): %>
-				<th>${App.LinkTo("OnLine клиенты", @Switches, @OnLineClient, {"filter.Zone" : "4"})}</th>
+				<th>
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/ListOnline">OnLine клиенты</a>
+				</th>
 				<% end %>
 				<% if MapPartner.AccesPartner("SSI"): %>
 				<th>${App.LinkTo("Платежи по регистраторам", @Payers, @Filter)}</th>
 				<% end %>
 				<% if (MapPartner.AccesPartner("SSI") or MapPartner.AccesPartner("PFA")): %>
-				<th>${App.LinkTo("Платежи", @Payers, @AgentFilter)}</th>
+				<th>
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}SpreadSheet/Payments">Платежи</a>
+				</th>
 				<% end %>
 				<% if MapPartner.AccesPartner("SSI"): %>
 				<th>
@@ -68,9 +72,9 @@
 				</th>
 				<% if MapPartner.AccesPartner("SSI"): %>
 				<th>
-					${App.LinkTo("Обращения", @UserInfo, @ShowAppeals)} <br/>
-					${App.LinkTo("Подключения", @Brigads, @ReportOnWork)} <br/>
-					${App.LinkTo("Списания", @Payments, @ShowWriteOffs)}
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Client/Appeals">Обращения</a><br/>
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}ConnectionTeam/UnpluggedClientList">Подключения</a><br/>
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}SpreadSheet/WriteOffs">Списания</a>
 				</th>
 				<% end %>
 				<% if MapPartner.AccesPartner("DHCP"): %>

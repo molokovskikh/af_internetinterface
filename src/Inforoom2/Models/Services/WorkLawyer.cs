@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using Common.Tools;
+using Inforoom2.Helpers;
 using NHibernate;
 using NHibernate.Mapping.Attributes;
 
@@ -25,6 +26,9 @@ namespace Inforoom2.Models.Services
 			var warning = client.LegalClient.NeedShowWarning();
 			client.ShowBalanceWarningPage = warning;
 			client.Disabled = warning;
+			if (warning) {
+				client.Appeals.Add(new Appeal(string.Format("В результате деактивации услуги {0} клиент был заблокирован.", assignedService.Service.Name),client,AppealType.System));
+            }
 			client.IsNeedRecofiguration = true;
 			assignedService.IsActivated = false;
 		}

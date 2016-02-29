@@ -58,9 +58,8 @@
 						<tr>
 						<td><span style="display: inline-block; min-width: 260px;">@( item.IpPool.GetBeginIp() + " - " + item.IpPool.GetEndIp())</span></td>
 							<td>
-								<a class="entypo-cancel-circled" title="удалить" style="color: red" href="@Url.Action("RegionIpPoolDelete", new {@id = item.Id})">
-									<span style="display: inline-block; min-width: 260px;">@(item.Description)</span>
-								</a>
+								<a class="entypo-cancel-circled" title="удалить" style="color: red" href="@Url.Action("RegionIpPoolDelete", new {@id = item.Id})"></a>
+								<span style="display: inline-block; min-width: 260px;">@(item.Description)</span>
 							</td>
 						</tr>
 			}

@@ -36,6 +36,11 @@ namespace InternetInterface.Services
 			client.ShowBalanceWarningPage = warning;
 			client.Disabled = warning;
 			client.Update();
+			if (warning) {
+				client.CreareAppeal(string.Format("В результате деактивации услуги {0} клиент был заблокирован.",
+					assignedService.Service.Name));
+			}
+			client.IsNeedRecofiguration = true;
 			assignedService.IsActivated = false;
 			ActiveRecordMediator.Save(assignedService);
 		}
@@ -56,7 +61,7 @@ namespace InternetInterface.Services
 		public override void WriteOff(ClientService assignedService)
 		{
 			if ((assignedService.EndWorkDate == null) ||
-				(assignedService.EndWorkDate != null && (SystemTime.Now().Date >= assignedService.EndWorkDate.Value.Date))) {
+			    (assignedService.EndWorkDate != null && (SystemTime.Now().Date >= assignedService.EndWorkDate.Value.Date))) {
 				ForceDeactivate(assignedService);
 				assignedService.Client.ClientServices.Remove(assignedService);
 				ActiveRecordMediator.Save(assignedService.Client);

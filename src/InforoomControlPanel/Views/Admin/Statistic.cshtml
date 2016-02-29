@@ -1,4 +1,39 @@
-﻿@{
+﻿@using Inforoom2.Components
+@using Inforoom2.Models
+@{
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	ViewBag.Title = "Главная";
-} 
+	ViewBag.Title = "Панель администрирования";
+	InforoomModelFilter<SiteVersionChange> pager = ViewBag.Pager;
+	IList<SiteVersionChange> changes = pager.GetItems();
+	 
+	var currentVersion = changes.FirstOrDefault() ?? new SiteVersionChange() {Version = "0.01", Changes = "Незначительные обновления"};
+}
+<h3 style="color: #8E8E8E;">
+	Текущая версия программы <span style="color: #B10000;">@currentVersion.Version</span>
+</h3>
+
+
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+	<div class="row">
+		@{ Html.RenderPartial("Pagination"); }
+	</div>
+	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+		<thead>
+		<tr role="row">
+			<th class="sorting" tabindex="0" aria-controls="table-2" style="width: 150px;">Версия</th>
+			<th class="sorting" tabindex="0" aria-controls="table-2">Изменения</th>
+		</tr>
+		</thead>
+		<tbody>
+		@for (int i = 0; i < changes.Count; i++) {
+			<tr role="row" class="markedItem">
+				<td>@Html.Raw(changes[i].Version)</td>
+				<td>@Html.Raw(changes[i].Changes)</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+	<div class="row">
+		@{ Html.RenderPartial("Pagination"); }
+	</div>
+</div>

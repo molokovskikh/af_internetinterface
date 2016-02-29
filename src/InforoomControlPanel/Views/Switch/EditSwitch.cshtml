@@ -4,7 +4,7 @@
 @model dynamic
 
 @{
-	ViewBag.Title = "Редактировать коммутатор";
+	ViewBag.Title = "Изменить коммутатор";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	Switch Switch = ViewBag.Switch;
 	List<Zone> zones = ViewBag.Zones;
@@ -12,72 +12,107 @@
 }
 <div class="panel panel-primary">
 	<div class="panel-body">
-	<div class="col-md-6">
-		@using (@Html.BeginForm("EditSwitch", "Switch", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
-		{
-			<div class="form-group">
-				@Html.HiddenFor(model => Switch.Id)
-				<label class="col-sm-3 control-label" for="field-ta">Название</label>
-				<div class="col-sm-6">
-					@Html.TextBoxFor(model => Switch.Name, new { @class = "form-control" })
-					@ViewBag.Validation.GetError(Switch, "Name")
+		<div class="col-md-6">
+			@using (@Html.BeginForm("EditSwitch", "Switch", FormMethod.Post, new {@class = "form-horizontal form-groups-bordered"})) {
+				<div class="form-group">
+					@Html.HiddenFor(model => Switch.Id)
+					<label class="col-sm-3 control-label" for="field-ta">Название</label>
+					<div class="col-sm-6">
+						@Html.TextBoxFor(model => Switch.Name, new {@class = "form-control"})
+						@ViewBag.Validation.GetError(Switch, "Name")
+					</div>
 				</div>
-			</div>
 				<div class="form-group">
 					<label class="col-sm-3 control-label" for="field-ta">IP адрес</label>
 					<div class="col-sm-6">
-						@Html.TextBoxFor(model => Switch.Ip, new { @Name = "switchIp", @class = "form-control" })
+						@Html.TextBoxFor(model => Switch.Ip, new {@Name = "switchIp", @class = "form-control"})
 						@ViewBag.Validation.GetError(Switch, "Ip")
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-3 control-label" for="field-ta">MAC адрес</label>
 					<div class="col-sm-6">
-						@Html.TextBoxFor(model => Switch.Mac, new { @class = "form-control" })
+						@Html.TextBoxFor(model => Switch.Mac, new {@class = "form-control"})
 						@ViewBag.Validation.GetError(Switch, "Mac")
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-3 control-label" for="field-ta">Кол-во портов</label>
 					<div class="col-sm-6">
-						@Html.TextBoxFor(model => Switch.PortCount, new { @class = "form-control" })
+						@Html.TextBoxFor(model => Switch.PortCount, new {@class = "form-control"})
 						@ViewBag.Validation.GetError(Switch, "PortCount")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						<span class="bold c-pointer" phantomFor=".phantomBlock">Кол-во занятых портов</span></label>
+					<div class="col-sm-6">
+						<label class="col-sm-3 control-label">
+							<span>@Switch.Endpoints.Count</span></label>
+						<div class="form-group phantomBlock">
+							<div class="panel-body">
+							</div>
+							<table class="table table-bordered table-striped datatable dataTable no-footer">
+								<thead>
+								<tr>
+									<td>Номер т. подключения</td>
+									<td>Текущий Ip</td>
+									<td>Порт т. подключения</td>
+									<td>ЛС клиента т. подключения</td>
+								</tr>
+								</thead>
+								<tbody>
+								@foreach (var item in Switch.Endpoints.OrderBy(s => s.Port).ToList()) {
+									<tr>
+										<td>@(@item.Id)</td>
+										<td>@(string.Join(",<br/>", @item.LeaseList.Select(s => s.Ip)))</td>
+										<td>@(@item.Port)</td>
+										<td>
+											<a target="_blank" href="@Url.Action(item.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {item.Client.Id})" class="@(item.Client.PhysicalClient != null ? "linkPhysical" : "linkLegal")"> @item.Client.ClientId</a>
+										</td>
+									</tr>
+								}
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-3 control-label" for="field-ta">Узел связи</label>
 					<div class="col-sm-6">
-						@Html.DropDownListExtendedFor(model => Switch.NetworkNode, NetworkNodes, i => i.Name, null, new { @class = "form-control" }, Switch != null && Switch.NetworkNode != null ? Switch.NetworkNode.Id : 0)
+						@Html.DropDownListExtendedFor(model => Switch.NetworkNode, NetworkNodes, i => i.Name, null, new {@class = "form-control"}, Switch != null && Switch.NetworkNode != null ? Switch.NetworkNode.Id : 0)
 						@ViewBag.Validation.GetError(Switch, "PortCount")
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-3 control-label" for="field-ta">Зона</label>
 					<div class="col-sm-6">
-						@Html.DropDownListExtendedFor(model => Switch.Zone, zones, i => i.Name, null, new { @class = "form-control" }, Switch != null && Switch.Zone != null ? Switch.Zone.Id : 0)
+						@Html.DropDownListExtendedFor(model => Switch.Zone, zones, i => i.Name, null, new {@class = "form-control"}, Switch != null && Switch.Zone != null ? Switch.Zone.Id : 0)
 						@ViewBag.Validation.GetError(Switch, "PortCount")
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-3 control-label" for="field-ta">Тип</label>
 					<div class="col-sm-6">
-						@Html.DropDownEnumListFor(model => Switch.Type, new { @class = "form-control" })
+						@Html.DropDownEnumListFor(model => Switch.Type, new {@class = "form-control"})
 						@ViewBag.Validation.GetError(Switch, "Type")
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-3 control-label" for="field-ta">Комментарий</label>
 					<div class="col-sm-6">
-						@Html.TextAreaFor(model => Switch.Description, new { @class = "form-control", @Rows = "5" })
+						@Html.TextAreaFor(model => Switch.Description, new {@class = "form-control", @Rows = "5"})
 						@ViewBag.Validation.GetError(Switch, "Description", "Имя не может быть пустым")
 					</div>
 				</div>
 				<div class="form-group">
 					<button class="btn btn-green" type="submit">Принять изменения</button>
+					<a class="btn btn-red" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForSwitchRemove">Удалить коммутатор</a>
 				</div>
 			}
+		</div>
 	</div>
-	</div>
+	@Html.Partial("modelview/_SwitchRemove", Switch)
 </div>
 
 <div class="form-group">

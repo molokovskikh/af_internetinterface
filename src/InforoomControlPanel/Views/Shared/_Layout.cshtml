@@ -28,7 +28,7 @@
 	<link rel="stylesheet" href="~/assets/css/neon-theme.css?v=1">
 	<link rel="stylesheet" href="~/assets/css/neon-forms.css?v=2">
 	<link rel="stylesheet" href="~/assets/css/custom.css?v=4">
-	<link rel="stylesheet" href="~/Css/style.css?v=5"></link>
+	<link rel="stylesheet" href="~/Css/style.css?v=6"></link>
 
 	<script src="~/assets/js/jquery-1.11.0.min.js?v=1"></script>
 
@@ -148,7 +148,7 @@
 				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000006.ToString()))) {
 				<li>
 					<a href="@Url.Action("Request", "Client")">
-						<span class="title">Создать заявку на подключение</span>
+						<span class="title">Создать заявку на регистрацию</span>
 					</a>
 				</li>
 			}
@@ -156,7 +156,7 @@
 				|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000007.ToString()))) {
 				<li>
 					<a href="@Url.Action("RequestsList", "Client")">
-						<span class="title">Заявки на подключение</span>
+						<span class="title">Заявки на регистрацию</span>
 					</a>
 				</li>
 			}
@@ -567,6 +567,14 @@
 					</a>
 				</li>
 			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_009003.ToString()) != null
+					|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_009003.ToString()))) {
+				<li>
+					<a href="@Url.Action("Payments", "SpreadSheet")">
+						<span class="title">По платежам</span>
+					</a>
+				</li>
+			}
 		</ul>
 	</li>
 }
@@ -643,8 +651,7 @@
 
 <!-- JavaScripts initializations and stuff -->
 <script src="~/assets/js/neon-custom.js"></script>
-
-
+	
 <!-- Demo Settings -->
 <script src="~/assets/js/neon-demo.js"></script>
 <script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
@@ -656,7 +663,7 @@
 <script src="~/assets/js/bootstrap-datepicker.js"></script>
 <script src="~/assets/js/bootstrap-timepicker.min.js"></script>
 <script src="~/assets/js/bootstrap-datepicker.ru.min.js"></script>
-<script type="text/javascript" src="~/Scripts/ControlPanel.js?v=1"></script>
+<script type="text/javascript" src="~/Scripts/ControlPanel.js?v=2"></script>
 
 @RenderSection("JavaScript", required: false)
 @{

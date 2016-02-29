@@ -151,6 +151,9 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "LawyerPerson", Cascade = "save-update"), Description("Юр. лицо")]
 		public virtual LegalClient LegalClient { get; set; }
 
+		[OneToOne(PropertyRef = "Client")]
+		public virtual PrivateMessage Message { get; set; }
+
 		[Property(Column = "RedmineTask"), Description("Задача в Redmine")  ]
 		public virtual string RedmineTask { get; set; }
 

@@ -10,7 +10,7 @@
 		<% if MapPartner.AccesPartner("RP"): %>
 		<tr>
 			<td>
-				<a href="${siteroot}/Partners/Index?roleId=1"><span class="MA"><div class="menudiv">Дилеры</div></span></a>
+				<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Admin/EmployeeList">Дилеры</a>
 				<span class="comment_text">Просмотр и регистрация дилеров (Дилер - сотрудник сторонней, партнерской организации, осуществляющий работу с клиентами)</span>
 			</td>
 		</tr>
@@ -18,7 +18,7 @@
 		<% if MapPartner.AccesPartner("RP"): %>
 		<tr>
 			<td>
-				<a href="${siteroot}/Partners/Index?roleId=3"><span class="MA"><div class="menudiv">Сотрудники </div></span></a>
+				<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Admin/EmployeeList">Сотрудники</a>
 				<span class="comment_text">Просмотр и регистрация сотрудников АК "Инфорум"</span>
 			</td>
 		</tr>
@@ -33,14 +33,14 @@
 		</tr>
 		<tr>
 			<td>
-				${app.LinkTo("Коммутаторы", @Switches, @ShowSwitches)}
+				<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Switch/SwitchList">Коммутаторы</a>
 				<br><span class="comment_text">Просмотр и редактирование коммутаторов</span>
 			</td>
 		</tr>
 		<% if MapPartner.AccesPartner("SSI"): %>
 		<tr>
 			<td>
-				<a href="${siteroot}/Partners/Index?roleId=5"><span class="MA"><div class="menudiv">Агенты</div></span></a>
+				<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Admin/EmployeeList">Агенты</a>
 				<span class="comment_text">Просмотр и редактирование списка агентов, осуществляющих обход домов</span>
 			</td>
 		</tr>
@@ -48,7 +48,7 @@
 		<% if MapPartner.AccesPartner("SSI"): %>
 		<tr>
 			<td>
-				<a href="${Siteroot}/AgentInfo/GroupInfo"><span class="MA"><div class="menudiv">Работа агентов</div></span></a>
+				<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Admin/PaymentsForEmployee">Работа агентов</a>
 				<span class="comment_text">Просмотр выплат по агентам, осуществляющим работу с населением</span>
 			</td>
 		</tr>
@@ -56,7 +56,7 @@
 		<% if MapPartner.AccesPartner("SR"): %>
 		<tr>
 			<td>
-				<a href="${siteroot}/Partners/Index?roleId=7"><span class="MA"><div class="menudiv">Сервисные инженеры</div></span></a>
+				<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Admin/EmployeeList">Сервисные инженеры</a>
 				<span class="comment_text">Просмотр и редактирование списка сервисных инженеров, устраняющих поломки клиента</span>
 			</td>
 		</tr>
@@ -64,7 +64,7 @@
 		<% if MapPartner.AccesPartner("SSI"): %>
 		<tr>
 			<td>
-				<a href="${Siteroot}/Payments/СhangeSaleSettings"><span class="MA"><div class="menudiv">Редактировать настройки скидок</div></span></a>
+				<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Admin/SaleSettings">Редактировать настройки скидок</a>
 				<span class="comment_text">Здесь можно выставить настройки системы скидок</span>
 			</td>
 		</tr>
@@ -72,7 +72,7 @@
 		<% if MapPartner.AccesPartner("SSI"): %>
 		<tr>
 			<td>
-				<a href="${Siteroot}/AgentInfo/EditAgentSettings"><span class="MA"><div class="menudiv">Редактировать настройки агентов</div></span></a>
+				<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Admin/EmployeeSettings">Редактировать настройки агентов</a>
 				<span class="comment_text">Здесь можно выставить настройки компенсации агентов и др.</span>
 			</td>
 		</tr>
@@ -84,7 +84,7 @@
 		</tr>
 		<tr>
 			<td>
-				${app.LinkTo("Услуги", @Services, @Edit)}
+				<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Plans/FixedIpPrice">Услуги</a>
 			</td>
 		</tr>
 		<tr>
@@ -99,7 +99,7 @@
 		</tr>
 		<tr>
 			<td>
-				${app.LinkTo("IP-пулы по регионам", @IpPools, @ShowRegionsList)}
+				<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Switch/RegionIpPools">IP-пулы по регионам</a>
 				<br/><span class="comment_text">Просмотр регионов и выбор для них IP-пулов</span>
 			</td>
 		</tr>

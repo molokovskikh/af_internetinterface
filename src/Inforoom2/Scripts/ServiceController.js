@@ -59,8 +59,8 @@ $(document).ready(function () {
 
 $("#ConnectBtn").on("click", function () {
 	var currentDate = cli.getCurrentDate();
-	var blockDate = $('.datePicker').datepicker("getDate");
-	var blockDays = Math.ceil((blockDate - currentDate) / (24 * 60 * 60 * 1000));
+	var blockweeks = $('#weeksCount').val();
+	var blockDays = blockweeks*7;
 	var freeDays = parseInt(cli.getParam("FreeBlockDays"));
 	if (blockDays > freeDays) {
 		var daysLeft = currentDate.getDaysInMonth() - currentDate.getDate();
@@ -89,3 +89,26 @@ $("#ConnectBtn").on("click", function () {
 	}
 	return true;
 });
+
+function getMonth(_this) {
+	var weeks = $(_this).val();
+	$.ajax({
+		url: cli.getParam("baseurl") + "Service/BlockAccountWeek?weeks=" + weeks,
+		type: 'POST',
+		dataType: "json",
+		success: function (data) {
+			$("#dateInWeeks").html(data);
+			$("#blockingEndDate").val(data);
+		},
+		error: function (data) {
+			$("#dateInWeeks").html("кол-во указано неверно");
+			$("#blockingEndDate").val("");
+		},
+		statusCode: {
+			404: function () {
+				$("#dateInWeeks").html("кол-во указано неверно");
+				$("#blockingEndDate").val("");
+			}
+		}
+	});
+}

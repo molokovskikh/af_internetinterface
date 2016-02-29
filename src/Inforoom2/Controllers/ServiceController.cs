@@ -40,6 +40,16 @@ namespace Inforoom2.Controllers
 			ViewBag.DeferredPayment = deferredPayment;
 		}
 
+		/// <summary>
+		/// получение кол-ва недель блокировки
+		/// </summary>
+		[HttpPost]
+		public JsonResult BlockAccountWeek(int weeks)
+		{
+			var date =  SystemTime.Now().Date.AddDays(weeks*7).Date.AddMinutes(-1).ToString("dd.MM.yyyy HH:mm");
+            return Json(date.ToString(), JsonRequestBehavior.AllowGet);
+		}
+
 		public ActionResult BlockAccount()
 		{
 			if (CurrentClient == null) return RedirectToAction("Login", "Account");
@@ -60,6 +70,7 @@ namespace Inforoom2.Controllers
 		{
 			var client = CurrentClient;
 			if (client.CanUseService(service) && blockingEndDate != null) {
+				blockingEndDate = blockingEndDate.Value.Date.AddDays(1);
 				var clientService = new ClientService
 				{
 					BeginDate = SystemTime.Now(),

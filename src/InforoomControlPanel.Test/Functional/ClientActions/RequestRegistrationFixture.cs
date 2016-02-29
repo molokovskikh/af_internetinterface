@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Common.Tools;
 using Common.Tools.Calendar;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -36,7 +37,8 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			request.Plan = plan;
 			request.YandexStreet = "улица гагарина";
 			request.YandexHouse = "1А";
-			DbSession.Save(request);
+			request.RegDate = SystemTime.Now();
+            DbSession.Save(request);
 		}
 
 		/// <summary>
@@ -186,5 +188,59 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			var clientHouse = house.Last().Text;
 			Assert.That(clientHouse, Is.StringContaining(request.HouseNumber + request.Housing), "Поле Дом в форме регетсрации  должно быть заполнено улицей вводимой клиентом");
 		}
+
+		[Test, Description("Добавление маркера")]
+		public void ClientConnectionRequestMarker()
+		{
+			Open("Client/RequestsList");
+			var panelCss = "#RequestMarkerColorChange ";
+			var markerName = "Черный маркер";
+			var markerColor = "#111111";
+			var markerColorDifference = "#222222";
+
+
+			var hasMarker = DbSession.Query<ConnectionRequestMarker>().FirstOrDefault(s => s.Name == markerName);
+            Assert.That(hasMarker, Is.Null, "Маркера не должно быть в базе.");
+
+			browser.FindElementByCssSelector("[data-target='#RequestMarkerColorChange']").Click();
+			WaitForVisibleCss(panelCss + "input[name='name']", 20);
+
+			var inputObj2 = browser.FindElementByCssSelector(panelCss + "input[name='color']");
+			inputObj2.Clear();
+			inputObj2.SendKeys(markerColor);
+			browser.FindElementByCssSelector("#myModalLabel").Click();
+
+			var inputObj = browser.FindElementByCssSelector(panelCss + ".modal-body input[name='name']");
+			inputObj.Clear();
+			inputObj.SendKeys(markerName);
+			browser.FindElementByCssSelector("#myModalLabel").Click();
+			 
+			browser.FindElementByCssSelector("[onclick='addMarker(this)']").Click();
+			WaitForVisibleCss("[name='markerList'] option", 20);
+			DbSession.Flush();
+
+			hasMarker = DbSession.Query<ConnectionRequestMarker>().FirstOrDefault(s => s.Name == markerName);
+			Assert.That(hasMarker, Is.Not.Null, "Маркер должен быть в базе.");
+			WaitForVisibleCss("[name='markerList'] option[value='" + hasMarker.Id + "']", 20);
+			WaitForVisibleCss("[name='markerList'] option[color='" + hasMarker.Color + "']", 20);
+			//WaitAjax(20);
+			//AssertText("Список обновлен");
+
+			inputObj = browser.FindElementByCssSelector(panelCss + "input[name='color']");
+			Assert.That(inputObj.GetAttribute("value").IndexOf(markerColorDifference) == -1, Is.True, "Цвет не совпадает.");
+			inputObj.Clear();
+			inputObj.SendKeys(markerColorDifference);
+
+			browser.FindElementByCssSelector("#myModalLabel").Click();
+			browser.FindElementByCssSelector("[onclick='updateMarker(this)']").Click();
+			WaitForVisibleCss("[name='markerList'] option[color='" + markerColorDifference + "']", 20);
+			DbSession.Flush();
+			DbSession.Refresh(hasMarker);
+            Assert.That(hasMarker, Is.Not.Null, "Маркер должен быть в базе.");
+			WaitForVisibleCss("[name='markerList'] option[value='" + hasMarker.Id + "']", 20);
+			browser.FindElementByCssSelector("#exitButton").Click();
+
+		}
+
 	}
 }

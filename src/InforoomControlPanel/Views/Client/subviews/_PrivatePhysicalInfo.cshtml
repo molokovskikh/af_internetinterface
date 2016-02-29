@@ -119,7 +119,7 @@
 				<tr>
 					<td>Создан по заявке</td>
 					<td>
-						<a target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld") + "ConnectionRequest/RequestOne?id=" + client.ClientRequest.Id)"> №@client.ClientRequest.Id</a>
+						<a target="_blank" href="@Url.Action("ConnectionRequestEdit","ConnectionRequest", new {client.ClientRequest.Id} )"> №@client.ClientRequest.Id</a>
 					</td>
 				</tr>
 			}

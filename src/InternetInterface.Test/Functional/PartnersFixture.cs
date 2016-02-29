@@ -11,7 +11,7 @@ namespace InternetInterface.Test.Functional
 	[TestFixture]
 	public class PartnersFixture : SeleniumFixture
 	{
-		[Test]
+		[Test, Ignore("Функционал перенесен в новую админку.")]
 		public void Create_service_engineer()
 		{
 			Open("Map/SiteMap");

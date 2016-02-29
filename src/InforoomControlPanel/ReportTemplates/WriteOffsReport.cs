@@ -38,7 +38,12 @@ namespace InforoomControlPanel.ReportTemplates
 				//Тип 
 				if (pager.GetParam("filter.IsNotNull.Client.PhysicalClient") != null)
 					header.Add(string.Format("Тип клиента: {0}",
-						pager.GetParam("filter.IsNotNull.Client.PhysicalClient") == "1" ? "Физ.лицо" : "Юр.лицо"));
+						pager.GetParam("filter.IsNotNull.Client.PhysicalClient") == "1"
+							? "Физ.лицо"
+							: pager.GetParam("filter.IsNotNull.Client.PhysicalClient") != ""
+								? "Юр.лицо"
+								: "Все"))
+						;
 				//Регион
 				if (pager.GetParam("clientregionfilter.Client") != null)
 					header.Add(string.Format("Регион: {0}", pager.GetParam("clientregionfilter.Client")));

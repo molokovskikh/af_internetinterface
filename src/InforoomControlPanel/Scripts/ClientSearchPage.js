@@ -437,3 +437,4 @@ $(function() {
 		GetSwitchesByZone("mfilter.filter.Equal.Endpoint.Switch.Zone.Name", "mfilter.filter.Equal.Endpoint.Switch.Name");
 	}
 });
+ 

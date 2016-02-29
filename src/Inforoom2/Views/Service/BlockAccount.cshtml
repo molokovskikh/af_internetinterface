@@ -3,14 +3,17 @@
 @using Inforoom2.Models.Services
 
 @model dynamic
-@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/ServiceController.js")"></script>}
+@section JavaScript{<script type="text/javascript"src="@Url.Content("~/Scripts/ServiceController.js?v=1")"></script>}
 @{
 	ViewBag.Title = "Личный кабинет: Добровольная блокировка";
 	Client client = ViewBag.Client;
 	BlockAccountService service = ViewBag.BlockAccountService;
 	var nowDate = SystemTime.Now();
-	var blockingEndDate = nowDate.AddDays(client.FreeBlockDays > 0 ? client.FreeBlockDays : 1).ToShortDateString();
+	var blockingEndDate = nowDate.Date.AddDays(7).Date.AddMinutes(-1).ToString("dd.MM.yyyy HH:mm");
+	///	var blockingEndDate = nowDate.AddDays(client.FreeBlockDays > 0 ? client.FreeBlockDays : 1).ToShortDateString();
 	var blockService = client.ClientServices.FirstOrDefault(c => c.Service.GetType() == typeof (BlockAccountService)) ?? new ClientService();
+	var weeksCount = ViewBag.WeeksCount??1;
+
 }
 
 <h2 class="heading"> @ViewBag.Title </h2>
@@ -20,14 +23,16 @@
 	@if (client.CanUseService(service)) {
 		<p class="font">
 			В течении года Вам предоставляется 28 дней бесплатного использования данной услуги.<br/>
-			По истечении этого времени абонентская плата составляет 3 руб/день, а стоимость активации равна 50 руб.
+			По истечении этого времени абонентская плата составляет 3 руб/день, а стоимость активации равна 50 руб.<br/>
+			Блокировка выставляется в неделях.
 		</p>
 		<p> Количество бесплатных дней: @client.FreeBlockDays </p>
 
 		using (@Html.BeginForm("ActivateAccountBlocking", "Service", FormMethod.Post)) {
 			@Html.HiddenFor(modelItem => service.Id)
 			<p>
-				Заблокировать до: @Html.TextBoxFor(modelItem => blockingEndDate, null, new {@class = "datePicker personal"})
+				<input type="hidden" id ="blockingEndDate" name="blockingEndDate" value="@(blockingEndDate):00"/>
+				Заблокировать на @Html.TextBoxFor(modelItem => weeksCount, null, new {@id= "weeksCount", @type = "number", @class = "personal", @Style = "width: 100px;", @Name = "", min= "1", @onchange = "getMonth(this)" }) нед., до <span id="dateInWeeks" class="red-font">@blockingEndDate</span>
 				<input id="ConnectBtn" class="button" type="submit" value="Подключить"/>
 			</p>
 		}

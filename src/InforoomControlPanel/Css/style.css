@@ -3,12 +3,16 @@
 	.main-content .servicemen.panel, .PrintTimeTable{ display: block !important;}
 	.pageBreak {page-break-after: always;} 
 } 
+ div a.linkLegal{color:#0D90D4;}
+ div a.linkPhysical{color:#10A257;}
+ .font-12{font-size: 12px;display: block;text-align: right;}
  .ListOrderArchive .phantomBlock{ max-width: 800px;}
  .no-margin{ margin: 0px !important;}
  .alert-danger{position: fixed;top: 18px;min-width: 572px;width: 62%;z-index: 99999;border:9px solid #BD3737; font-size: 13px;}
  span.red.bold{padding-left: 2px; font-weight: bold; color: #C70E0E;}
  .gray.bold{padding-left: 2px; font-weight: bold; color: #888888;}
 .black{color: #333!important;}
+.red{color:#E60000!important;}
 .blue{color:#0D90D4!important;}
  .listItem.gray:hover{background: #E2E2E2 !important;}
  .error{color:red; font-weight:600 !important;}
@@ -45,6 +49,7 @@
  #switchPorts tbody.large tr:nth-child(2n) {border-bottom: 4px solid #333;}
  #switchPorts tbody{  border: 1px solid #808080;border-bottom: none;border-left: none;}
  #switchPorts .port {display: block;width: 24px;height: 24px;text-align: center;background: #FFF9B3;cursor: pointer;border-bottom: 1px solid #808080;border-left: 1px solid #808080;}
+ #switchPorts td:last-child {border-right: 1px solid #808080;}
  #switchPorts .port.free{background: #A8DAB3;}
  #switchPorts .port.free:hover{background: #65C77A;}
  #switchPorts .port.free:hover span{ color: #000;}
@@ -110,6 +115,20 @@
  .clientTable a.clientName{ color: #000000;font-weight: 300;}
  .clientTable a.clientName:hover{ border-bottom: 1px dashed #949494;}
  .tableFullWidth{display: table !important;}
+ /* Маркеры заявок на подлючение */
+ .markerListPanel a{ color: #5D5D5D !important;}
+ .markerListPanel .marker{ display: inline-block;width: 11px;height: 11px;margin-right: 5px;border: 1px solid #C7C7C7;}
+/* Календарь, выбор месяца*/
+#monthSelector {width: 482px !important;}
+#monthSelector .mnt{    border: 1px solid #BDBDBD;    text-align: center;cursor: pointer;    width: 80px;
+    display: inline-block;}
+#monthSelector .mnt:hover{background: #DFF5B2  !important;}
+#monthSelector .mnt.checked{ font-weight: bold; color: #286702;border: 1px solid #7B7B7B;}
+#monthSelector .mnt.disabled {background: #D8D8D8 !important;cursor:not-allowed !important;}
+#monthSelector .mnt.a{ background: #E4ECDC;}
+#monthSelector .mnt.b{ background: #DFEAC7;}
+#monthSelector .mnt.c{ background: #D2E6AA;}
+#monthSelector .mnt.d{ background: #D7E2C0;}
  .FilterSubPanel.PhysicalClient, .FilterSubPanel.LegalClient {
 	border: 1px solid #D2D2D2;
     padding: 12px;

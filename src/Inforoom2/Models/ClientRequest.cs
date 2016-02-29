@@ -11,9 +11,9 @@ namespace Inforoom2.Models
 {
 	public enum RequestType
 	{
-		[Display(Name = "от клиента")] FromClient = 1,
-		[Display(Name = "от оператора")] FromOperator = 2,
-		[Display(Name = "автоматическая")] Automatic = 3
+		[Display(Name = "от клиента"),Description("от клиента")] FromClient = 1,
+		[Display(Name = "от оператора"), Description("от оператора")] FromOperator = 2,
+		[Display(Name = "автоматическая"), Description("автоматическая")] Automatic = 3
 	}
 
 	/// <summary>
@@ -22,6 +22,11 @@ namespace Inforoom2.Models
 	[Class(0, Table = "Requests", NameType = typeof(ClientRequest))]
 	public class ClientRequest : BaseModel
 	{
+		public ClientRequest()
+		{
+			ConnectionRequestComments = new List<ConnectionRequestComment>();
+        }
+
 		[Property(Column = "_Comment"), Description("Комментарий к заявке")]
 		public virtual string Comment { get; set; }
 
@@ -43,9 +48,8 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual bool SelfConnect { get; set; }
 
-		// TODO: сделать специальный тип моделей, содержащий метод
-		[Property]
-		public virtual int? Label { get; set; }
+		[ManyToOne(Column = "Label", Cascade = "save-update"), Description("Маркер")]
+		public virtual ConnectionRequestMarker Marker { get; set; } 
 
 		[ManyToOne(Column = "_ServiceMan")]
 		public virtual ServiceMan ServiceMan { get; set; }
@@ -110,6 +114,12 @@ namespace Inforoom2.Models
 		public virtual string YandexHouse { get; set; }
 
 		public virtual string AddressAsString { get; set; }
+
+
+		[Bag(0, Table = "RequestMessages", Cascade = "all-delete-orphan")]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "Request")]
+		[OneToMany(2, ClassType = typeof(ConnectionRequestComment))]
+		public virtual IList<ConnectionRequestComment> ConnectionRequestComments { get; set; }
 
 		[Property(Column = "Archive")]
 		public virtual bool Archived { get; set; }

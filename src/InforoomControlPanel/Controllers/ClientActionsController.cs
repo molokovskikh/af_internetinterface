@@ -17,7 +17,7 @@ namespace InforoomControlPanel.Controllers
 		{
 			var client = DbSession.Get<Client>(id);
 			ViewBag.Client = client;
-			var message = DbSession.Query<PrivateMessage>().FirstOrDefault(pm => pm.Client.Id == id);
+			var message = client.Message;
 			ViewBag.PrivateMessage = message ?? new PrivateMessage {
 				Client = client,
 				EndDate = SystemTime.Today().AddDays(1)
@@ -45,10 +45,24 @@ namespace InforoomControlPanel.Controllers
 				ViewBag.PrivateMessage = privateMessage;
 				return View();
 			}
-
-			privateMessage.RegDate = SystemTime.Now();
+			var client = privateMessage.Client;
+            privateMessage.RegDate = SystemTime.Now();
 			privateMessage.Registrator = GetCurrentEmployee();
-			DbSession.SaveOrUpdate(privateMessage);
+			if (client.Message == null || privateMessage.Client.Message.Id == 0 || client.Message.Id == privateMessage.Id)
+			{
+				client.Message = privateMessage;
+				DbSession.SaveOrUpdate(privateMessage);
+			}
+			else {
+				if (client.Message.Id != privateMessage.Id) {
+					client.Message.Enabled = privateMessage.Enabled;
+					client.Message.EndDate = privateMessage.EndDate;
+					client.Message.RegDate = privateMessage.RegDate;
+					client.Message.Registrator = privateMessage.Registrator;
+					client.Message.Text = privateMessage.Text;
+					DbSession.SaveOrUpdate(client.Message);
+				}
+            }
 			SuccessMessage("Приватное сообщение успешно сохранено!");
 			return RedirectToAction("InfoPhysical", "Client", new {id = privateMessage.Client.Id});
 		}
