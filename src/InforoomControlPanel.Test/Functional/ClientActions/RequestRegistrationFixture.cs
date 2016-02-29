@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Common.Tools;
 using Common.Tools.Calendar;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
@@ -36,7 +37,8 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			request.Plan = plan;
 			request.YandexStreet = "улица гагарина";
 			request.YandexHouse = "1А";
-			DbSession.Save(request);
+			request.RegDate = SystemTime.Now();
+            DbSession.Save(request);
 		}
 
 		/// <summary>

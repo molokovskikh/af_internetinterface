@@ -11,6 +11,7 @@ body { background: #9EA5AD!important;}
 a.corpred, .corpred { color: #a61c21 !important;}
 textarea { resize: none;}
 ul { padding: 0px;}
+
 .blockBefore{width: 100px;}
 .dateToBlockBefore{width: 100px;}
 .menu ul { width: 100%!important;}
@@ -20,6 +21,7 @@ ul { padding: 0px;}
 .wrapper .heading {z-index: 2;font-family: PDFDinTextPro; font-size: 27px; display: inline-block; font-weight: normal;width: 100%;left: 0;margin: 5px 0px; color: #2e2d2d;}
 .wrapper { height: auto!important;}
 .features { position: relative!important;top: auto!important;}
+.red-font {color: #C30000}
 a {color: #474747}
 .top .city { overflow: visible;z-index: 1; }
 	.top .cities {background-color: white;border: 1px solid #e7e7e7;border-radius: 5px;display: none;left: 0;position: absolute;text-align: center;top: 32px;width: 155px;}
