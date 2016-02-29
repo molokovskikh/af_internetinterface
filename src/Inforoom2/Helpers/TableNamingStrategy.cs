@@ -59,6 +59,8 @@ namespace Inforoom2.Helpers
 				|| tableName == "NetworkZones".ToLower()
 				|| tableName == "Recipients".ToLower()
 				|| tableName == "PaymentsForAgent".ToLower()
+				|| tableName == "RequestMessages".ToLower()
+				|| tableName == "Labels".ToLower()
 				|| tableName == "AgentTariffs".ToLower())
 			{
 				

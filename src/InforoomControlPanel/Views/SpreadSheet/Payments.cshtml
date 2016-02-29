@@ -1,0 +1,185 @@
+﻿@using System.Globalization
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Models
+@using NPOI.SS.Formula.Functions
+@model dynamic
+@{
+	ViewBag.Title = "Отчет по списаниям";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	InforoomModelFilter<Payment> pager = ViewBag.Pager;
+	IList<Payment> writeOffs = pager.GetItems();
+	decimal totalSum = ViewBag.TotalSum;
+
+	int firstYear = ViewBag.FirstYear??0;
+	int firstMonth = ViewBag.FirstMonth??0;
+	int lastYear = ViewBag.LastYear??0;
+	int lastMonth = ViewBag.LastMonth??0;
+	int currentYear = ViewBag.CurrentYear??0;
+	int currentMonth = ViewBag.CurrentMonth??0;
+}
+
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=1")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/PaymentsCalendarFilter.js?v=1")"></script>
+}
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+	<form id="PaymentForm">
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Дата списания с </div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.PaidOn, HtmlType.Date, ComparsionType.GreaterOrEqueal, new {@class = "form-control",@Id="dateA"})</div>
+				<div class="col-sm-1">по</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.PaidOn, HtmlType.Date, ComparsionType.LowerOrEqual, new {@class = "form-control", @Id = "dateB"})</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<input type="hidden" id="firstYear" value="@firstYear" />
+			<input type="hidden" id="lastYear" value="@lastYear" />
+			<input type="hidden" id="firstMonth" value="@firstMonth"/>
+			<input type="hidden" id="lastMonth" value="@lastMonth" />
+			<input type="hidden" id="currentMonth" value="@currentMonth"/>
+
+
+			<input type="hidden" id="selectedMonth" name="mfilter.selectedMonth" value="" /> 
+			<div class="row">
+				<div class="col-sm-2">
+					<select class=" form-control form-control" style="min-width: 100px; max-width: 280px;" id="currentYear" name="mfilter.selectedYear">
+						@for (int i = firstYear; i <= lastYear; i++) {
+							<option value="@i" @(currentYear == i ? "selected=selected" : "")>@i</option>
+						}
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<table id="monthSelector" class="table table-bordered table-striped datatable dataTable no-footer">
+						<tr>
+							<td class="mnt a" month="01"><span>Январь</span></td>
+							<td class="mnt a" month="02"><span>Февраль</span></td>
+							<td class="mnt b" month="03"><span>Март</span></td>
+							<td class="mnt b" month="04"><span>Апрель</span></td>
+							<td class="mnt b" month="05"><span>Май</span></td>
+							<td class="mnt c" month="06"><span>Июнь</span></td>
+						</tr>
+						<tr>
+							<td class="mnt c" month="07"><span>Июль</span></td>
+							<td class="mnt c" month="08"><span>Август</span></td>
+							<td class="mnt d" month="09"><span>Сентябрь</span></td>
+							<td class="mnt d" month="10"><span>Октябрь</span></td>
+							<td class="mnt d" month="11"><span>Ноябрь</span></td>
+							<td class="mnt a" month="12"><span>Декабрь</span></td>
+						</tr>
+					</table>
+				</div>
+
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Оператор</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Employee.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">ЛС клиента</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Client.Id, HtmlType.text, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Имя клиента</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Client._Name, HtmlType.text, ComparsionType.Like, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Регион</div>
+				<div class="col-sm-2">@pager.ClientRegionFilter(i => i.Client, new {@class = "form-control", @style = "min-width:280px;"})</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Тип клиента</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Client.PhysicalClient, HtmlType.Dropdown, ComparsionType.IsNotNull, new {@Id = "FilterCondition_ClientType", @class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Бонусные</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Virtual, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">
+					@pager.SubmitButton(new {@class = "btn btn-success btn-sm"})
+				</div>
+				<div class="col-sm-1">
+					@pager.CleanButton(new {@class = "btn btn-success btn-sm"})
+				</div>
+				<div class="col-sm-1">
+					@pager.ExportButton(new {@class = "btn btn-sm btn-blue margin"})
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<h3 class="totalCountOfItems"> 
+		Всего: <strong>@pager.TotalItems</strong> платежей на сумму <strong>@totalSum.ToString("C2",CultureInfo.CreateSpecificCulture("ru-RU"))</strong>
+	</h3>
+
+	<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+		<div class="row">
+			@{ Html.RenderPartial("Pagination"); }
+		</div>
+		<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+			<thead>
+			<tr role="row">
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+					<a href="@pager.OrderBy(s => s.Client.Id)">Код клиента</a>
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Клиент</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Регион</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+					<a href="@pager.OrderBy(s => s.Sum)">Сумма (руб)</a>
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+					<a href="@pager.OrderBy(s => s.PaidOn)">Дата списания</a>
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+					<a href="@pager.OrderBy(s => s.Virtual)">Бонусный</a>
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Комментарий</th>
+			</tr>
+			</thead>
+
+			<tbody>
+			@foreach (var writeOff in writeOffs) {
+				<tr role="row" class="odd">
+					<td>
+						<a target="_blank" href="@Url.Action(writeOff.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new { writeOff.Client.Id})" class="idColumn @(writeOff.Client.PhysicalClient != null ? "linkPhysical" : "linkLegal")"> @writeOff.Client.ClientId</a>
+					</td>
+					<td>
+						<span>@(writeOff.Client != null ? writeOff.Client.Fullname : "")</span></td>
+					<td>
+						<span>@(writeOff.Client.GetRegion() != null ? writeOff.Client.GetRegion().Name : "") </span></td>
+					<td>
+						<span>@writeOff.Sum</span></td>
+					<td>
+						<span>@writeOff.PaidOn</span></td>
+					<td>
+						<span>@(writeOff.Virtual == true ? "да" : "нет")</span></td>
+					<td>
+						<span>@writeOff.Comment</span></td>
+				</tr>
+			}
+			</tbody>
+		</table>
+		<div class="row">
+			@{ Html.RenderPartial("Pagination"); }
+		</div>
+	</div>
+	<div class="totalCountOfItems">
+		Всего: <strong>@pager.TotalItems</strong> строк
+	</div>
+</div>

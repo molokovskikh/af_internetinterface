@@ -160,7 +160,7 @@
 				</tr>
 				<tr>
 					<td>
-						<a target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld") + "Switches/MakeSwitch?Switch=" + endpoint.Switch.Id)"> Коммутатор</a>
+						<a target="_blank" href="@Url.Action("EditSwitch","Switch",new { endpoint.Switch.Id})"> Коммутатор</a>
 					</td>
 					<td>
 						<a target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld") + "Hardware/PortInfo?endPoint=" + endpoint.Id)">@(endpoint.Switch.Name + " (" + endpoint.Switch.Ip.ToString() + ")")</a>
@@ -467,7 +467,7 @@
 		<div class="modal-content">
 			@using (@Html.BeginForm("RemoveEndpoint", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))
 			{
-				@Html.HiddenFor(o => client.Id)
+				@Html.HiddenFor(o=> client.Id)
 				<input id="subViewName" name="subViewName" type="hidden" value="_Endpoint">
 				<input id="endpointToRemoveId" name="endpointId" type="hidden" value="">
 				<div class="modal-header">

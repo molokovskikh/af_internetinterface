@@ -14,8 +14,8 @@
 	var emptyAddressString = "";
 }
 @section JavaScript{
-	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=2")"></script>
-	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js?v=2")"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=3")"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js?v=3")"></script>
 }
 
 <div id="table-2_wrapper" class="clientMainTable dataTables_wrapper form-inline no-footer  clientTableFilter">
@@ -289,13 +289,10 @@
 
 			<tr role="row" class="odd@(clientItem.GetStatus() == StatusType.Dissolved ? " grayBack" : client.Balance < 0 ? " redBack" : client.PhysicalClient == null ? " leg" : " phys")">
 				<td>
-					<a @(client.PhysicalClient == null ? "style=color:#0D90D4;" : "") class="idColumn" target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld")
-					                                                                                                           + (String.Format("UserInfo/{0}?filter.ClientCode=", client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-					                                                                                                           + client.Id)">
-						@client.Id</a>
+					<a target="_blank" href="@Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {client.Id})" class="idColumn @(client.PhysicalClient != null ? "linkPhysical" : "linkLegal")"> @client.ClientId</a>
 				</td>
 				<td @(client.IsOnlineCheck() ? " class=online " : "")>
-					<a class="clientName" target="_blank" href="@(client.PhysicalClient == null ? Url.Action("InfoLegal", new {id = client.Id}) : Url.Action("InfoPhysical", new {id = client.Id}))">
+					<a class="clientName" target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld") + (String.Format("UserInfo/{0}?filter.ClientCode=", client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson")) + client.Id)">
 						<span>@(clientItem.GetName())</span>
 					</a>
 				</td>

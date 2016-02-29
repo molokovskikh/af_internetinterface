@@ -35,6 +35,10 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult Statistic()
 		{
+			var pager = new InforoomModelFilter<SiteVersionChange>(this);
+			pager.SetOrderBy("Id", OrderingDirection.Desc);
+			pager.GetCriteria();
+			ViewBag.Pager = pager; 
 			return View("Statistic");
 		}
 

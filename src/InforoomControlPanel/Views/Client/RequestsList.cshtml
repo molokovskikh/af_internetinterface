@@ -1,40 +1,183 @@
 ﻿@using System.Activities.Expressions
 @using System.Activities.Statements
 @using Inforoom2.Components
+@using Inforoom2.Helpers
 @using Inforoom2.Models
-@{ 
+@{
 	ViewBag.Title = "Заявки клиентов на регистрацию";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	InforoomModelFilter<ClientRequest> pager = ViewBag.Pager;
 	var clientRequests = pager.GetItems();
+	List<ConnectionRequestMarker> markers = ViewBag.Markers;
+	string currentMarkers = ViewBag.CurrentMarkers??"";
 }
 
+@section JavaScript{
+	@*Компонент Semantic-UI DropeDown-multiselect для выбора списка цветов фильтрации*@
+	<link rel="stylesheet" href="@Url.Content("~/assets/css/bootstrap-colorpicker.min.css")" />
+	<script type="text/javascript" src="@Url.Content("~/assets/js/bootstrap-colorpicker.min.js")"></script>
+	<link rel="stylesheet" href="@Url.Content("~/assets/css/ui-semantic/dropdown.min.css")" />
+	<script type="text/javascript" src="@Url.Content("~/assets/js/ui-semantic/dropdown.min.js")"></script>
+	<link rel="stylesheet" href="@Url.Content("~/assets/css/ui-semantic/transition.min.css")" />
+	<script type="text/javascript" src="@Url.Content("~/assets/js/ui-semantic/transition.min.js")"></script>
+
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ConnectionRequestMarker.js")"></script>
+}
+<div id="table-2_wrapper" class="clientMainTable dataTables_wrapper form-inline no-footer  clientTableFilter">
+	<form>
+		<div class="panel-body">
+			<div class="row">
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Дата подачи</div>
+				<div class="col-sm-3 fix400">
+					@pager.FormFilter(i => i.RegDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control", @style = "width:101px;" })
+					<span style="display: inline-block; width: 22px; margin-left: 50px;">по</span>
+					@pager.FormFilter(i => i.RegDate, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control", @style = "width:101px;" })
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Номер</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Id, HtmlType.text, ComparsionType.Equal, new { @class = "form-control", @style = "width: 100%;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Текст</div>
+				<div class="col-sm-3"><input type="text" class=" form-control form-control" style="width: 100%;" name="requestText"></div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">В архиве</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Archived, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "width: 100%;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">
+					<a class="c-pointer blue" title="Редактирование маркеров" data-toggle="modal" onclick="GetMarkerListAjax()" data-target="#RequestMarkerColorChange">Маркеры</a>
+				</div>
+				<div class="col-sm-3">
+					<input name="requestMarkers" type="hidden" value="@currentMarkers">
+					<div class="uis fluid multiple search selection dropdown markerListPanel hid">
+						<input type="hidden" name="markers">
+						<i class="dropdown icon"></i>
+						<div class="default text">Выберите маркеры</div>
+						<div class="menu">
+							@foreach (var item in markers) {
+								<div class="item" data-value="@item.Id">
+									<span class="marker" style="background: @item.Color;"></span>@item.Name</div>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">
+					@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+				</div>
+				<div class="col-sm-1">
+					@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+			</div>
+		</div>
+	</form>
+</div>
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
-	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
-		<thead>
+	<form action="@Url.Action("RequestMarkerColorChange")" class="form-horizontal form-groups-bordered" method="post">
+
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">
+						<button class="btn btn-green" type="submit" name="changeRequestMarker">Убрать метки</button>
+					</div>
+				<div class="col-sm-4">
+					@Html.DropDownListExtendedFor(i => i, markers, i => i.Name, s => new { @color = s.Color }, new { @Name = "markerId", @class = "form-control" }, firstEmptyElementAdd: true)
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			@{ Html.RenderPartial("Pagination"); }
+		</div>
+		<div class="totalCountOfItems">
+			Всего: <strong>@pager.TotalItems</strong> строк
+		</div>
+		<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+			<thead>
 			<tr role="row">
-				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.OrderBy(s => s.Id)">#</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.OrderBy(s => s.ApplicantName)">Имя</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.OrderBy(s => s.Address)">Адрес</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" ><a href="@pager.OrderBy(s => s.RegDate)">Дата</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2" >Действия</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2" style="width: 120px; text-align: right;"><a href="@pager.OrderBy(s => s.Marker.Name)">Маркер</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Id)">Номер</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.ApplicantName)">Имя</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.ApplicantPhoneNumber)">Телефон</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Email)">Email</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a>Адрес</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Plan)">Тариф</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.RegDate)">Дата регистрации</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
 			</tr>
-		</thead>
-			
-		<tbody>
-			@foreach (var request in clientRequests) {
-				<tr role="row" class="odd">
-					<td>@request.Id</td>
-					<td>@request.ApplicantName</td>
+			</thead>
+
+			<tbody>
+			@for (int i = 0; i < clientRequests.Count; i++) {
+				var request = clientRequests[i];
+				<tr role="row" class="markedItem">
+					<td>
+						@if (request.Marker != null) {
+							<span class="label label-default font-12" style='background: @request.Marker.Color'>@request.Marker.Name</span>
+						}
+						else {
+							<span class="label label-default font-12"><strong>Нет</strong></span>
+						}
+					</td>
+					<td>
+						<strong class="itemId c-pointer">@request.Id</strong>
+						<input type="hidden" dataTitle="itemId" name="markedItems[@i]">
+					</td>
+					<td><a href="@Url.Action("ConnectionRequestEdit","ConnectionRequest", new {@id = request.Id})" >@request.ApplicantName</a></td>
+					<td>@request.ApplicantPhoneNumber</td>
+					<td>@request.Email</td>
 					<td>@request.GetAddress()</td>
+					<td>@request.Plan.NameWithPrice</td>
 					<td>@request.RegDate</td>
 					<td>
-						<a href="@Url.Action("RequestRegistration", new { @id = request.Id })" class="btn btn-green">зарегистрировать</a></td>
+						@if (request.Client == null) {
+							<a href="@Url.Action("RequestRegistration", new {@id = request.Id})" class="btn btn-green">зарегистрировать</a>
+						}
+						else {
+							<a href="@Url.Action(request.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@id = request.Client.Id})" class="btn btn-green">лс @request.Client.ClientId</a>
+						}
+						
+						<a onclick="@(request.Archived ? "archeveOut(" + request.Id + ")" : "archeveIn(" + request.Id + ")");" class="btn btn-default">@(request.Archived ? "из ахрива" : "в ахрив")</a>
+					</td>
 				</tr>
 			}
-		</tbody>
-	</table>
-	<div class="row">
-		@{ Html.RenderPartial("Pagination"); }
-	</div>
+			</tbody>
+		</table>
+
+		<div class="totalCountOfItems">
+			Всего: <strong>@pager.TotalItems</strong> строк
+		</div>
+		<div class="row">
+			@{ Html.RenderPartial("Pagination"); }
+		</div>
+
+	</form>
+		<div class="row">
+			@Html.Partial("subviews/modelview/_RequestMarkerColorChange")
+		</div>
 </div>

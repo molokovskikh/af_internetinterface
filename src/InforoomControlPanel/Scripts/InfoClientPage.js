@@ -323,24 +323,30 @@ function updatePort(_this) {
 
 function updatePortGrid(portCount) {
 	var columns = 24;
+	portCount = parseInt(portCount);
 	var itemsInRow = portCount == undefined || portCount == null || portCount < 24 ? 1 : (Math.round(portCount / columns) + ((portCount > columns) && ((portCount % columns) > 0) ? 1 : 0));
 	var currentPort = 1;
 	var html = "";
 	for (j = 0; j < itemsInRow; j++) {
 		html += "<tr>";
 		for (i = 0; i < columns; i++) {
-			html += '<td><a class="port free" target="_blank" onclick="updatePort(this)"><span>' + currentPort + '</span></a></td>';
-			currentPort++;
+			if ((1 + portCount) > currentPort) {
+				html += '<td><a class="port free" target="_blank" onclick="updatePort(this)"><span>' + currentPort + '</span></a></td>';
+				currentPort++;
+			}
 		}
 		html += "</tr>";
+		if ((portCount + 1) <= currentPort) {
+			break;
+		}
 	}
 	$("#switchPorts tbody").html(html);
 }
 
 function createFixedIp(endpointId) {
-	if (endpointId == 0 ) {
-			var orderItem = $("[name='order.EndPoint.Id']");
-			endpointId = orderItem.length>0?orderItem.val():0;
+	if (endpointId == 0) {
+		var orderItem = $("[name='order.EndPoint.Id']");
+		endpointId = orderItem.length > 0 ? orderItem.val() : 0;
 	}
 	var errorText = "Ошибка при присвоении фиксированного IP !";
 	$(".fixedIp").html("");
@@ -604,6 +610,7 @@ function deleteEndpointProof(id) {
 	$("#ModelForEndpointProofDelete [name='endpointId']").val(id);
 	$("#ModelForEndpointProofDelete #endpointId").html(id);
 }
+
 var clientPage = new ClientPage();
 //вызов функций при загрузке, дополнительные действия
 $(function() {

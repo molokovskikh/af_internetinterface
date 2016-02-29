@@ -39,20 +39,19 @@ namespace Inforoom2.Helpers
 		{
 			var stArray = self.Split(' ');
 			var stResult = "";
-			for (int i = 0; i < stArray.Length; i++)
-			{
+			for (int i = 0; i < stArray.Length; i++) {
 				var chArray = new List<char>();
-                for (int j = 0; j< stArray[i].Length; j++) {
-	                if (j>= charsNumber && j % charsNumber == 0)
-					{
-						chArray.AddRange("<wbr>".ToCharArray()); 
+				for (int j = 0; j < stArray[i].Length; j++) {
+					if (j >= charsNumber && j%charsNumber == 0) {
+						chArray.AddRange("<wbr>".ToCharArray());
 					}
-		                  chArray.Add(stArray[i][j]);
-                }
+					chArray.Add(stArray[i][j]);
+				}
 				stArray[i] = string.Join("", chArray);
 			}
 			self = string.Join(" ", stArray);
-            return self;
+			return self;
 		}
+		 
 	}
 }

@@ -81,6 +81,7 @@ namespace InforoomControlPanel.Helpers
 			[Description("Ссылка - Отчеты")] Block_009000,
 			[Description("Ссылка - Отчеты - По клиентам")] Block_009001,
 			[Description("Ссылка - Отчеты - По списаниям")] Block_009002,
+			[Description("Ссылка - Отчеты - По платежам")] Block_009003,
 			[Description("Блок - Клиент - Физ.лицо - Меню")] Block_010000,
 			[Description("Блок - Клиент - Физ.лицо - Личная информация")] Block_010001,
 			[Description("Блок - Клиент - Физ.лицо - Паспортные данные")] Block_010002,

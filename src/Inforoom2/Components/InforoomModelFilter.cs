@@ -8,6 +8,7 @@ using System.Web;
 using Inforoom2.Controllers;
 using Inforoom2.Models;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Linq;
 using Expression = NHibernate.Criterion.Expression;
 
@@ -21,9 +22,9 @@ namespace Inforoom2.Components
 		}
 
 		// переопредиление получения критерия для фильтрации 
-		public new ICriteria GetCriteria(Expression<Func<TModel, bool>> expression = null, List<Tuple<TModel, Expression<Func<TModel, bool>>>> expressionList = null)
+		public new ICriteria GetCriteria(Expression<Func<TModel, bool>> expression = null, List<Tuple<TModel, Expression<Func<TModel, bool>>>> expressionList = null, ICriterion criterion = null)
 		{
-			var criteria = base.GetCriteria(expression, expressionList);
+			var criteria = base.GetCriteria(expression, expressionList, criterion);
 			ProcessClientRegionFilter(criteria);
 			ProcessServiceMan(criteria);
 			return criteria;

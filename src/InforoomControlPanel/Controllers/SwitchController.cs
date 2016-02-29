@@ -99,7 +99,20 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.Switch = Switch;
 			return View();
 		}
-
+		/// <summary>
+		/// Удаление коммутатора
+		/// </summary>
+		[HttpPost]
+		public ActionResult SwitchRemove(int id)
+		{
+			var switchToRemove = DbSession.Get<Switch>(id);
+			if (switchToRemove!=null && switchToRemove.Endpoints.Count == 0) {
+				DbSession.Delete(switchToRemove);
+			}
+			SuccessMessage("Коммутатор успешно удален");
+			return RedirectToAction("SwitchList");
+		}
+		
 		/// <summary>
 		/// Удаление у узла связи обслуживающего адреса
 		/// </summary>

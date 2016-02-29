@@ -82,12 +82,15 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage("Ошибка ввода: неподдерживаемый формат введенных данных.");
 			}
 			if (!openInANewTab && pager.TotalItems == 1) {
-				//TODO: выпелить после полного перехода на новую админку
-				var OldRedirect = ConfigHelper.GetParam("adminPanelOld");
 				var clientList = pager.GetItems();
-				var urlToRedirect = OldRedirect + String.Format("UserInfo/{0}?filter.ClientCode={1}",
-					(clientList.First().PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"), clientList.First().Id);
-				return Redirect(urlToRedirect);
+				//TODO: выпилить после полного перехода на новую админку
+				//var OldRedirect = ConfigHelper.GetParam("adminPanelOld");
+				//
+				//var urlToRedirect = OldRedirect + String.Format("UserInfo/{0}?filter.ClientCode={1}",
+				//	(clientList.First().PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"), clientList.First().Id);
+				//return Redirect(urlToRedirect);
+
+				return RedirectToAction((clientList.First().PhysicalClient != null ? "InfoPhysical" : "InfoLegal"), "Client", new {clientList.First().Id});
 			}
 			return View("List");
 		}
@@ -329,462 +332,6 @@ namespace InforoomControlPanel.Controllers
 				clientStatus: clientStatus, redmineTaskComment: redmineTaskComment);
 		}
 
-		/// <summary>
-		/// Отображает форму новой заявки
-		/// </summary>
-		public ActionResult Request()
-		{
-			InitClientRequest();
-			return View();
-		}
-
-		[HttpPost]
-		public ActionResult Request([EntityBinder] ClientRequest clientRequest)
-		{
-			clientRequest.ActionDate = clientRequest.RegDate = DateTime.Now;
-			// Заявка от оператора по умочанию  
-			clientRequest.RequestSource = RequestType.FromOperator;
-			clientRequest.RequestAuthor = GetCurrentEmployee();
-			// Сохранение адреса  
-			if (clientRequest.Housing != null && clientRequest.Housing != "") {
-				string houseNumber = "";
-				string justStr = clientRequest.Housing;
-				foreach (char t in justStr) {
-					try {
-						houseNumber += Convert.ToInt32(t.ToString()).ToString();
-					}
-					catch (Exception) {
-						break;
-					}
-				}
-				houseNumber = houseNumber == string.Empty ? "0" : houseNumber;
-				clientRequest.HouseNumber = Convert.ToInt32(houseNumber);
-				// отделение буквенной части от "Номера дома"
-				var housingPostfix = clientRequest.Housing.IndexOf(houseNumber);
-				housingPostfix = housingPostfix == -1 ? 0 : housingPostfix + houseNumber.Length;
-				clientRequest.Housing = clientRequest.Housing.Substring(housingPostfix,
-					clientRequest.Housing.Length - housingPostfix);
-			}
-			// валидация и сохранение
-			var errors = ValidationRunner.ValidateDeep(clientRequest);
-			if (errors.Length == 0 && clientRequest.IsContractAccepted) {
-				// чистим адрес - его сохранять не нужно					  TODO: не помогает !!!
-				clientRequest.Address = null;
-				// сохранение
-				DbSession.Save(clientRequest);
-				SuccessMessage(string.Format("Спасибо, Ваша заявка создана. Номер заявки {0}", clientRequest.Id));
-				return RedirectToAction("Request");
-			}
-			// Пока используется IsContractAccepted=true, закомментированные строки кода не нужны
-			//if (!clientRequest.IsContractAccepted) {
-			//	ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
-			//}
-			Street currentStreet = null;
-			House currentHouse = null;
-			Region currentRegion = null;
-			// получаем списки регионов 
-			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
-			if (clientRequest.Address != null && clientRequest.Address.House != null) {
-				currentHouse = clientRequest.Address.House;
-				currentStreet = clientRequest.Address.House.Street;
-				currentRegion = clientRequest.Address.House.Region;
-			}
-			// получаем списки тарифов по выбранному выбранному региону
-			var planList = new List<Plan>();
-			if (currentRegion != null) {
-				planList = DbSession.Query<Plan>().Where(s => s.Disabled == false && s.AvailableForNewClients
-				                                              && s.RegionPlans.Any(d => d.Region == (currentRegion)))
-					.OrderBy(s => s.Name)
-					.ToList();
-			}
-			// списки улиц и домов
-			var currentStreetList = currentStreet == null || currentRegion == null
-				? new List<Street>()
-				: DbSession.Query<Street>()
-					.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id))
-					.OrderBy(s => s.Name)
-					.ToList();
-			var currentHouseList = currentStreet == null || currentRegion == null
-				? new List<House>()
-				: DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
-				                                      ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) ||
-				                                       (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
-				                                      (s.Street.Region.Id == currentRegion.Id && s.Region == null ||
-				                                       (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)))
-					.OrderBy(s => s.Number)
-					.ToList();
-			ViewBag.CurrentRegion = currentRegion;
-			ViewBag.CurrentStreet = currentStreet;
-			ViewBag.CurrentHouse = currentHouse;
-			ViewBag.RegionList = regionList;
-			ViewBag.CurrentStreetList = currentStreetList;
-			ViewBag.CurrentHouseList = currentHouseList;
-			ViewBag.PlanList = planList;
-			ViewBag.IsRedirected = false;
-			ViewBag.IsCityValidated = false;
-			ViewBag.IsStreetValidated = false;
-			ViewBag.IsHouseValidated = false;
-			ViewBag.ClientRequest = clientRequest;
-
-			return View();
-		}
-
-		private void InitClientRequest()
-		{
-			var clientRequest = new ClientRequest
-			{
-				IsContractAccepted = true
-			};
-			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
-			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
-			// списки улиц и домов 
-			ViewBag.RegionList = regionList;
-			ViewBag.CurrentStreetList = new List<Street>();
-			ViewBag.CurrentHouseList = new List<House>();
-			ViewBag.PlanList = new List<Plan>();
-			ViewBag.CurrentRegion = null;
-			ViewBag.CurrentStreet = null;
-			ViewBag.CurrentHouse = null;
-			ViewBag.IsRedirected = false;
-			ViewBag.IsCityValidated = false;
-			ViewBag.IsStreetValidated = false;
-			ViewBag.IsHouseValidated = false;
-			ViewBag.ClientRequest = clientRequest;
-		}
-
-		// TODO: поправить процедуру!
-		protected Address GetAddressByYandexData(ClientRequest clientRequest)
-		{
-			var region = DbSession.Query<Region>().FirstOrDefault(r => r.Name == clientRequest.City);
-
-			var street = DbSession.Query<Street>()
-				.FirstOrDefault(s => s.Name == clientRequest.YandexStreet && s.Region == region);
-			if (street == null) {
-				street = new Street(clientRequest.YandexStreet);
-			}
-			var house = DbSession.Query<House>().FirstOrDefault(h => h.Number == clientRequest.YandexHouse
-			                                                         && h.Street.Name == clientRequest.YandexStreet
-			                                                         && (h.Street.Region == region
-			                                                             || h.Region == region));
-			if (house == null) {
-				house = new House(clientRequest.YandexHouse);
-			}
-			var address = GetList<Address>().FirstOrDefault(a => a.IsCorrectAddress
-			                                                     && a.House == house
-			                                                     && a.House.Street == street
-			                                                     && a.House.Street.Region == region);
-			return address;
-		}
-
-		/// <summary>
-		/// Список заявок на подключение
-		/// </summary>
-		/// <param name="ClientRequest"></param>
-		/// <returns></returns>
-		public ActionResult RequestsList()
-		{
-			var pager = new InforoomModelFilter<ClientRequest>(this);
-			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
-				pager.SetOrderBy("RegDate", OrderingDirection.Desc);
-			var criteria = pager.GetCriteria();
-			ViewBag.Pager = pager;
-			return View();
-		}
-
-
-		/// <summary>
-		///  Форма регистрации клиента по заявке
-		/// </summary>
-		/// <param name="id">Id заявки</param>
-		/// <returns></returns>
-		public ActionResult RequestRegistration(int id)
-		{
-			// Создаем клиента
-			var client = new Client();
-			// запрос клиента
-			ClientRequest clientRequest = DbSession.Query<ClientRequest>().First(s => s.Id == id);
-			// Создаем физ.клиента
-			client.PhysicalClient = new PhysicalClient();
-			// ФИО по запросу
-			string[] fio = clientRequest.ApplicantName.Trim().Split(' ');
-			client.PhysicalClient.Surname = fio.Length > 0 ? fio[0] : "";
-			client.PhysicalClient.Name = fio.Length > 1 ? fio[1] : "";
-			client.PhysicalClient.Patronymic = fio.Length > 2 ? fio[2] : "";
-			// контакты по запросу
-			// Контакты находятся в отдельной таблице
-			client.Contacts = new List<Contact>();
-			if (clientRequest.ApplicantPhoneNumber != null) {
-				client.Contacts.Add(new Contact()
-				{
-					Client = client,
-					ContactString =
-						clientRequest.ApplicantPhoneNumber.IndexOf('-') != -1
-							? clientRequest.ApplicantPhoneNumber
-							: clientRequest.ApplicantPhoneNumber.Insert(3, "-"),
-					Type = ContactType.MobilePhone,
-					Date = DateTime.Now
-				});
-			}
-			if (clientRequest.ApplicantPhoneNumber != null) {
-				client.Contacts.Add(new Contact()
-				{
-					Client = client,
-					ContactString = clientRequest.Email,
-					Type = ContactType.Email,
-					Date = DateTime.Now
-				});
-			}
-			// дата изменений
-			client.StatusChangedOn = DateTime.Now;
-			// список типов документа
-			var certificateTypeDic = new Dictionary<int, CertificateType>();
-			certificateTypeDic.Add(0, CertificateType.Passport);
-			certificateTypeDic.Add(1, CertificateType.Other);
-			client.PhysicalClient.CertificateType = CertificateType.Passport;
-
-			// Проверка адреса из заявки клиента по введенным им значениям 
-			var currentRegion = DbSession.Query<Region>().FirstOrDefault(s => s.Name.ToLower() == clientRequest.City.ToLower());
-			var currentStreet =
-				DbSession.Query<Street>().FirstOrDefault(s => s.Name.ToLower().Trim() == clientRequest.Street.ToLower().Trim());
-			var tempHouseNumber = (clientRequest.HouseNumber != null ? clientRequest.HouseNumber + clientRequest.Housing : "");
-			var houseToFind = DbSession.Query<House>().FirstOrDefault(s => s.Number == tempHouseNumber
-			                                                               &&
-			                                                               (s.Region == currentRegion ||
-			                                                                s.Street == currentStreet && s.Region == null));
-
-			if (houseToFind == null) {
-				houseToFind = new House();
-				// Проверка адреса из заявки клиента по яндексу 
-				var tempYandexAddress = GetAddressByYandexData(clientRequest);
-				if (tempYandexAddress != null && tempYandexAddress.House != null) {
-					clientRequest.Address = tempYandexAddress;
-					clientRequest.Address.IsCorrectAddress = true;
-					clientRequest.Address.Floor = clientRequest.Floor;
-					clientRequest.Address.Entrance = clientRequest.Entrance.ToString();
-					clientRequest.Address.Apartment = clientRequest.Apartment.ToString();
-				}
-			}
-			else {
-				// формирование адреса
-				client.PhysicalClient.Address = new Address()
-				{
-					House = houseToFind,
-					Floor = clientRequest.Floor,
-					Entrance = clientRequest.Entrance.ToString(),
-					Apartment = clientRequest.Apartment.ToString()
-				};
-			}
-			// TODO: учесть принадлежность домов к региону
-			// списки улиц и домов
-			var currentStreetList = currentStreet == null || currentRegion == null
-				? new List<Street>()
-				: DbSession.Query<Street>()
-					.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id))
-					.OrderBy(s => s.Name)
-					.ToList();
-			var currentHouseList = currentStreet == null || currentRegion == null
-				? new List<House>()
-				: DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
-				                                      ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) ||
-				                                       (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
-				                                      (s.Street.Region.Id == currentRegion.Id && s.Region == null ||
-				                                       (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)))
-					.OrderBy(s => s.Number)
-					.ToList();
-			// тариф по запросу
-			client.PhysicalClient.Plan = clientRequest.Plan;
-			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
-			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
-			var planList = DbSession.Query<Plan>().OrderBy(s => s.Name).ToList();
-			if (regionList.Count > 0) {
-				planList = planList.Where(s => s.Disabled == false && s.AvailableForNewClients
-				                               && s.RegionPlans.Any(d => d.Region == currentRegion)).OrderBy(s => s.Name).ToList();
-			}
-			//
-			ViewBag.CurrentRegion = currentRegion;
-			ViewBag.CurrentStreet = currentStreet;
-			ViewBag.CurrentHouse = houseToFind;
-			ViewBag.UserRequestStreet = clientRequest.Street;
-			ViewBag.UserRequestHouse = clientRequest.HouseNumber;
-			ViewBag.UserRequestHousing = clientRequest.Housing;
-			ViewBag.CurrentStreetList = currentStreetList;
-			ViewBag.CurrentHouseList = currentHouseList;
-			ViewBag.RegionList = regionList;
-			ViewBag.PlanList = planList;
-			ViewBag.RedirectToCard = true;
-			ViewBag.CertificateTypeDic = certificateTypeDic;
-			ViewBag.ScapeUserNameDoubling = true;
-			ViewBag.requestId = id;
-			ViewBag.Client = client;
-
-			return View();
-		}
-
-		/// <summary>
-		///  Форма регистрации клиента по заявке POST
-		/// </summary> 
-		[HttpPost]
-		public ActionResult RequestRegistration([EntityBinder] Client client, int requestId, bool redirectToCard,
-			bool scapeUserNameDoubling = false)
-		{
-			// удаление неиспользованного контакта *иначе в БД лишняя запись
-			client.Contacts = client.Contacts.Where(s => s.ContactString != string.Empty).ToList();
-			// указываем статус
-			client.Status = Inforoom2.Models.Status.Get(StatusType.BlockedAndNoConnected, DbSession);
-			client.WhoRegistered = GetCurrentEmployee();
-			// добавление клиента
-			var errors = ValidationRunner.ValidateDeep(client);
-			if (!scapeUserNameDoubling) {
-				// Принудительная валидация, проверка дублирования ФИО
-				var scapeNameDoubling = new Inforoom2.validators.ValidatorPhysicalClient();
-				ViewBag.ValidatorFullNameOriginal = scapeNameDoubling;
-				errors = ValidationRunner.ForcedValidationByAttribute(
-					client, client.GetType().GetProperty("PhysicalClient"), scapeNameDoubling, false, errors);
-			}
-			// убираем из списка ошибок те, которые допустимы в данном случае
-			errors.RemoveErrors(new List<string>()
-			{
-				"Inforoom2.Models.PhysicalClient.PassportDate",
-				"Inforoom2.Models.PhysicalClient.CertificateName"
-			});
-			// получаем заявку
-			ClientRequest clientRequest = DbSession.Query<ClientRequest>().First(s => s.Id == requestId);
-			// список типов документа
-			var certificateTypeDic = new Dictionary<int, CertificateType>();
-			certificateTypeDic.Add(0, CertificateType.Passport);
-			certificateTypeDic.Add(1, CertificateType.Other);
-
-			// если ошибок нет
-			if (errors.Length == 0) {
-				// указываем имя лица, которое проводит регистрирацию
-				client.WhoRegisteredName = client.WhoRegistered.Name;
-				// генерируем пароль и его хыш сохраняем в модель физ.клиента
-				PhysicalClient.GeneratePassword(client.PhysicalClient);
-				// указываем полное имя клиента
-				client._Name = client.PhysicalClient.FullName;
-				// добавляем клиенту стандартные сервисы 
-				var services =
-					DbSession.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet" || s.Name == "PlanChanger").ToList();
-				IList<ClientService> csList = services.Select(service => new ClientService
-				{
-					Service = service,
-					Client = client,
-					BeginDate = DateTime.Now,
-					IsActivated = (service.Name == "PlanChanger"),
-					ActivatedByUser = (service.Name == "Internet")
-				}).ToList();
-				client.ClientServices = csList;
-				// дублируем моб.номер клиента в смс рассылку
-				var mobilePhone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
-				if (mobilePhone != null) {
-					mobilePhone.Type = ContactType.SmsSending;
-					client.Contacts.Add(mobilePhone);
-				}
-				// сохраняем модель
-				DbSession.Save(client);
-				// Обновление заявки
-				if (clientRequest != null) {
-					// привязка текущего клиента к поданой им заявке
-					// отправление запроса на регистрацию в архив
-					clientRequest.Client = client;
-					clientRequest.Archived = true;
-					clientRequest.Label = 23;
-					DbSession.Save(clientRequest);
-				}
-				// предварительно вызывая процедуру (старой админки) которая делает необходимые поправки в записях клиента и физ.клиента
-				// переходим к карте клиента *в старой админке, если выбран пункт "Показывать наряд на подключение"
-				if (redirectToCard) {
-					return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-					                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-					                "UserInfo/PassAndShowCard?ClientID=" + client.Id);
-				}
-				// переходим к информации о клиенте *в старой админке
-				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-				                "UserInfo/ShowPhysicalClient?filter.ClientCode=" + client.Id);
-			}
-			// адресные данные по запросу 
-			Street currentStreet = null;
-			House currentHouse = null;
-			Region currentRegion = null;
-
-			var currentStreetList = new List<Street>();
-			var currentHouseList = new List<House>();
-
-			// пустой список тарифов
-			var planList = new List<Plan>();
-			// если дом существует, на его основе создать адрес
-			if (client.Address.House != null) {
-				currentRegion = client.Address.House.Region;
-				currentStreet = client.Address.House.Street;
-				currentHouse = client.Address.House;
-				if (currentRegion == null) {
-					currentRegion = client.Address.House.Street.Region;
-				}
-				client.PhysicalClient.Address = new Address()
-				{
-					House = currentHouse,
-					Floor = client.Address.Floor,
-					Entrance = client.Address.Entrance,
-					Apartment = client.Address.Apartment
-				};
-				// списки улиц и домов
-				currentStreetList = currentStreet == null || currentRegion == null
-					? new List<Street>()
-					: DbSession.Query<Street>()
-						.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id))
-						.OrderBy(s => s.Name)
-						.ToList();
-				currentHouseList = DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
-				                                                       ((s.Street.Region.Id == currentRegion.Id &&
-				                                                         s.Street.Id == currentStreet.Id) ||
-				                                                        (s.Street.Id == currentStreet.Id &&
-				                                                         s.Region.Id == currentRegion.Id)) &&
-				                                                       (s.Street.Region.Id == currentRegion.Id && s.Region == null ||
-				                                                        (s.Street.Id == currentStreet.Id &&
-				                                                         s.Region.Id == currentRegion.Id)))
-					.OrderBy(s => s.Number)
-					.ToList();
-			}
-			else {
-				//если адрес пустой создаем новый дом ( not null )
-				client.PhysicalClient.Address = new Address()
-				{
-					House = new House(),
-					Floor = 0,
-					Entrance = "",
-					Apartment = ""
-				};
-			}
-			// получаем списки регионов и тарифов по выбранному выбранному региону (городу) 
-			var regionList = DbSession.Query<Region>().ToList();
-			if (currentRegion != null) {
-				planList = DbSession.Query<Plan>().Where(s => s.Disabled == false && s.AvailableForNewClients
-				                                              && s.RegionPlans.Any(d => d.Region == (currentRegion)))
-					.OrderBy(s => s.Name)
-					.ToList();
-			}
-			//
-			ViewBag.CurrentRegion = currentRegion;
-			ViewBag.CurrentStreet = currentStreet;
-			ViewBag.CurrentHouse = currentHouse;
-			ViewBag.UserRequestStreet = clientRequest.Street;
-			ViewBag.UserRequestHouse = clientRequest.HouseNumber;
-			ViewBag.UserRequestHousing = clientRequest.Housing;
-			ViewBag.RegionList = regionList;
-			ViewBag.CurrentStreetList = currentStreetList;
-			ViewBag.CurrentHouseList = currentHouseList;
-			ViewBag.PlanList = planList;
-			ViewBag.CertificateTypeDic = certificateTypeDic;
-			ViewBag.RedirectToCard = redirectToCard;
-			ViewBag.ScapeUserNameDoubling = scapeUserNameDoubling;
-			ViewBag.requestId = requestId;
-			ViewBag.Client = client;
-
-			return View();
-		}
 
 		/// <summary>
 		/// Форма регистрации клиента 
@@ -899,14 +446,15 @@ namespace InforoomControlPanel.Controllers
 				if (redirectToCard) {
 					return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 					                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-					                "UserInfo/PassAndShowCard?ClientID=" + client.Id);
+					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"] +
+					                Url.Action("ConnectionCard", "Client", new {@id = client.Id}));
 				}
 				// иначе переходим к информации о клиенте *в старой админке
+
 				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-				                "UserInfo/ShowPhysicalClient?filter.ClientCode=" + client.Id);
+				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"] +
+				                Url.Action("InfoPhysical", "Client", new {@id = client.Id}));
 			}
 			// заполняем список типов документа
 			var CertificateTypeDic = new Dictionary<int, CertificateType>();
@@ -1048,8 +596,8 @@ namespace InforoomControlPanel.Controllers
 
 				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-				                "UserInfo/ShowPhysicalClient?filter.ClientCode=" + client.Id);
+				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"] +
+				                Url.Action("InfoPhysical", "Client", new {@id = client.Id}));
 			}
 			else {
 				DbSession.Clear();
@@ -1116,6 +664,7 @@ namespace InforoomControlPanel.Controllers
 
 			return View();
 		}
+
 		///| -----------------------------------------------|Агенты (не ясно нужны или нет)|------------------------------------------------->>
 		public ActionResult AgentList()
 		{
@@ -1165,6 +714,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			return RedirectToAction("AgentList");
 		}
+
 		//<-----------------------------------------------------------------------------------------------------------------------------------||
 
 
@@ -1387,7 +937,8 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage("Адрес не был изменен: не был указан дом");
 			}
 
-			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+				new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 		[HttpPost]
@@ -1471,7 +1022,8 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage("Платеж не был добавлен: данные введены неверно");
 			}
 
-			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+				new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 		[HttpPost]
@@ -1482,15 +1034,18 @@ namespace InforoomControlPanel.Controllers
 
 			if (clientReceiver == null && string.IsNullOrEmpty(comment)) {
 				ErrorMessage("Платеж не был переведен: указанный лицевой счет не существует, причина перевода не указана");
-				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
+				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+					new {@Id = client.Id, @subViewName = subViewName});
 			}
 			if (clientReceiver == null) {
 				ErrorMessage("Платеж не был переведен: указанный лицевой счет не существует");
-				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
+				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+					new {@Id = client.Id, @subViewName = subViewName});
 			}
 			if (string.IsNullOrEmpty(comment)) {
 				ErrorMessage("Платеж не был переведен: не указана причина перевода");
-				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
+				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+					new {@Id = client.Id, @subViewName = subViewName});
 			}
 
 			decimal paymentSum = -1;
@@ -1498,7 +1053,8 @@ namespace InforoomControlPanel.Controllers
 				var payment = client.Payments.FirstOrDefault(s => s.Id == paymentId);
 				if (!payment.BillingAccount) {
 					ErrorMessage($"Платеж {paymentId} не был переведен: платеж ожидает обработки");
-					return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
+					return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+						new {@Id = client.Id, @subViewName = subViewName});
 				}
 				paymentSum = payment.Sum;
 				var appeal = payment.Cancel(comment, GetCurrentEmployee());
@@ -1513,13 +1069,17 @@ namespace InforoomControlPanel.Controllers
 					"Платеж №{4} клиента №<a href='{5}'>{1}</a> на сумму {0} руб.  был перемещен клиенту №<a href='{6}'>{2}</a>.<br/>Комментарий: {3} ";
 				var msgTextA = String.Format(msgTextFormat + "<br/>Баланс: {7}. ", payment.Sum.ToString("0.00"),
 					client.Id, clientReceiver.Id, comment, payment.Id,
-					ConfigHelper.GetParam("adminPanelNew") + Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id}),
-					ConfigHelper.GetParam("adminPanelNew") + Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = clientReceiver.Id}),
+					ConfigHelper.GetParam("adminPanelNew") +
+					Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id}),
+					ConfigHelper.GetParam("adminPanelNew") +
+					Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = clientReceiver.Id}),
 					client.Balance.ToString("0.00"));
 				var msgTextB = String.Format(msgTextFormat, payment.Sum.ToString("0.00"), client.Id, clientReceiver.Id, comment,
 					payment.Id,
-					ConfigHelper.GetParam("adminPanelNew") + Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id}),
-					ConfigHelper.GetParam("adminPanelNew") + Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = clientReceiver.Id}));
+					ConfigHelper.GetParam("adminPanelNew") +
+					Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id}),
+					ConfigHelper.GetParam("adminPanelNew") +
+					Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = clientReceiver.Id}));
 				var clientAppeal = new Appeal(msgTextA, client, AppealType.System)
 				{
 					Employee = GetCurrentEmployee(),
@@ -1564,7 +1124,8 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage("Платеж не был переведен: платежа с данным номером в базе нет");
 			}
 
-			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+				new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 		[HttpPost]
@@ -1573,14 +1134,16 @@ namespace InforoomControlPanel.Controllers
 		{
 			if (string.IsNullOrEmpty(comment)) {
 				ErrorMessage($"Платеж {paymentId} не был отменен: не указана причина отмены");
-				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
+				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+					new {@Id = client.Id, @subViewName = subViewName});
 			}
 			decimal paymentSum = -1;
 			if (paymentId != 0) {
 				var payment = client.Payments.FirstOrDefault(s => s.Id == paymentId);
 				if (!payment.BillingAccount) {
 					ErrorMessage($"Платеж {paymentId} не был отменен: платеж ожидает обработки");
-					return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
+					return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+						new {@Id = client.Id, @subViewName = subViewName});
 				}
 				paymentSum = payment.Sum;
 				var appeal = payment.Cancel(comment, GetCurrentEmployee());
@@ -1614,7 +1177,8 @@ namespace InforoomControlPanel.Controllers
 			else {
 				ErrorMessage($"Платеж {paymentId} не был удален: платежа по данному номеру не существует");
 			}
-			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+				new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 		[HttpPost]
@@ -1642,7 +1206,8 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage("Списание не было добавлено: данные введены неверно");
 			}
 
-			return RedirectToAction(client.PhysicalClient!=null? "InfoPhysical":"InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+				new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 		[HttpPost]
@@ -1699,7 +1264,8 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage($"Списание {writeOffId} не было удалено: списания по данному номеру не существует");
 			}
 
-			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+				new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 		[HttpPost]
@@ -1738,7 +1304,8 @@ namespace InforoomControlPanel.Controllers
 				if (!client.RemoveEndpoint(endPoint, DbSession))
 					ErrorMessage("Последняя точка подключения не может быть удалена!");
 			}
-			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+				new {@Id = client.Id, @subViewName = subViewName});
 		}
 
 

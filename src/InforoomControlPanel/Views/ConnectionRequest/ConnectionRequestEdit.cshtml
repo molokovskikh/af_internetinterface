@@ -1,0 +1,147 @@
+﻿@model ClientRequest
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "Изменение заявки на регистрацию";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ClientRequest connectionRequest = Model;
+	List<ServiceRequestComment> serviceRequestCommentList = ViewBag.ServiceRequestCommentList;
+	ServicemenScheduleItem servicemenScheduleItem = ViewBag.ServicemenScheduleItem;
+	ServiceRequestComment commentToAdd = ViewBag.ServiceRequestComment ?? new ServiceRequestComment();
+	ServiceRequestComment reasonForFree = ViewBag.ReasonForFree ?? new ServiceRequestComment();
+}
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ConnectionRequestMarker.js")"></script>
+}
+<div class="panel panel-primary">
+	<div class="panel-body">
+		<table id="table-2" class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
+			<tbody>
+			<tr>
+				<td>ФИО</td>
+				<td>
+					<span>@(connectionRequest.ApplicantName)</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Телефон</td>
+				<td>
+					<span>@(connectionRequest.ApplicantPhoneNumber)</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Email</td>
+				<td>
+					<span>@(connectionRequest.Email)</span>
+				</td>
+			</tr>
+				<tr>
+					<td>Адрес</td>
+					<td>
+						<span>@(connectionRequest.GetAddress())</span>
+					</td>
+				</tr>
+			<tr>
+				<td>Тариф</td>
+				<td>
+					<span>@(connectionRequest.Plan != null ? connectionRequest.Plan.Name : "нет")</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Метка назначена</td>
+				<td>
+					<span>@(connectionRequest.Marker != null ? connectionRequest.Marker.Name : "нет")</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Дата последнего действия</td>
+				<td>
+					<span>@(connectionRequest.ActionDate)</span>
+				</td>
+			</tr>
+			@if (connectionRequest.RequestAuthor != null) {
+				<tr>
+					<td>Создана оператором</td>
+					<td>
+						<span>@(connectionRequest.RequestAuthor.Name )</span>
+					</td>
+				</tr>
+			}
+			<tr>
+				<td>Дата регистрации заявки</td>
+				<td>
+					<span>@(connectionRequest.RegDate)</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Заявка</td>
+				<td>
+					<span>@(connectionRequest.RequestSource != 0 ? connectionRequest.RequestSource.GetDescription() : "")</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Заявка в архиве</td>
+				<td>
+					<span>@(connectionRequest.Archived ? "да" : "нет")</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Клиент зарегистрирован по заявке:</td>
+				<td>
+					@if (connectionRequest.Client != null)
+					{
+						<a target="_blank" href="@Url.Action(connectionRequest.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {connectionRequest.Client.Id})" class="@(connectionRequest.Client.PhysicalClient != null ? "linkPhysical" : "linkLegal")"> @connectionRequest.Client.GetName()</a>
+					}
+					else {
+						<span>нет</span>
+					}
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@if (connectionRequest.Client == null) {
+						<a href="@Url.Action("RequestRegistration", "Client", new {@id = connectionRequest.Id})" class="btn btn-green">зарегистрировать</a>
+					}
+				</td>
+				<td>
+					<a onclick="@(connectionRequest.Archived ? "archeveOut(" + connectionRequest.Id + ")" : "archeveIn(" + connectionRequest.Id + ")");" class="btn btn-default">@(connectionRequest.Archived ? "из ахрива" : "в ахрив")</a>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="form-group">
+		<strong class="col-sm-3 control-label">
+			Комментарии:
+		</strong>
+	</div>
+	<div class="panel-body">
+		<div class="panel-body">
+			@foreach (var comment in connectionRequest.ConnectionRequestComments) {
+				<p class="form-group">
+					<span>Автор: <strong>@(comment.Registrator != null ? comment.Registrator.Name : "Неизвестный")</strong></span><br>
+					<span>Дата создания: <strong>@comment.Date</strong></span> <br>
+					<span><i><strong>Сообщение: </strong></i><br /> @Html.Raw(comment.Comment)</span>
+				</p>
+			}
+		</div>
+		<div class="panel-body">
+			@using (@Html.BeginForm("AddConnectionRequestComment", "ConnectionRequest", FormMethod.Post)) {
+				@Html.HiddenFor(model => connectionRequest.Id, new {@Name = "id"})
+				<strong>Сообщение</strong>
+				<div class="form-group">
+					@Html.TextAreaFor(model => commentToAdd.Comment, new {@class = "form-control", @Name = "comment", rows = "6", @style = "max-width:400px;"})
+				</div>
+
+				<div class="form-group">
+					<button class="btn btn-green" type="submit">Отправить</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="form-group">
+	<button class="btn btn-blue" onclick=" location.href = '@Url.Action("RequestsList", "Client")' ">Назад</button>
+</div>

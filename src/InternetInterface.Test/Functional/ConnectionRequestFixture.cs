@@ -31,7 +31,7 @@ namespace InternetInterface.Test.Functional
 			AssertText("от оператора");
 		}
 
-		[Test]
+		[Test, Ignore("Функционал перенесен в новую админку.")]
 		public void Filter_request_city()
 		{
 			//Подготовка данных
