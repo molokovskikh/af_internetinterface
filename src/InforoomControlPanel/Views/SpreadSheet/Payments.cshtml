@@ -2,12 +2,14 @@
 @using Common.Tools
 @using Inforoom2.Components
 @using Inforoom2.Models
+@using InforoomControlPanel.Helpers
 @using NPOI.SS.Formula.Functions
 @model dynamic
 @{
-	ViewBag.Title = "Отчет по списаниям";
+	ViewBag.Title = "Отчет по платежам";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	InforoomModelFilter<Payment> pager = ViewBag.Pager;
+	Employee currentEmployee = ViewBag.CurrentEmployee;
 	IList<Payment> writeOffs = pager.GetItems();
 	decimal totalSum = ViewBag.TotalSum;
 
@@ -34,14 +36,14 @@
 			</div>
 		</div>
 		<div class="panel-body">
-			<input type="hidden" id="firstYear" value="@firstYear" />
-			<input type="hidden" id="lastYear" value="@lastYear" />
+			<input type="hidden" id="firstYear" value="@firstYear"/>
+			<input type="hidden" id="lastYear" value="@lastYear"/>
 			<input type="hidden" id="firstMonth" value="@firstMonth"/>
-			<input type="hidden" id="lastMonth" value="@lastMonth" />
+			<input type="hidden" id="lastMonth" value="@lastMonth"/>
 			<input type="hidden" id="currentMonth" value="@currentMonth"/>
 
 
-			<input type="hidden" id="selectedMonth" name="mfilter.selectedMonth" value="" /> 
+			<input type="hidden" id="selectedMonth" name="mfilter.selectedMonth" value=""/>
 			<div class="row">
 				<div class="col-sm-2">
 					<select class=" form-control form-control" style="min-width: 100px; max-width: 280px;" id="currentYear" name="mfilter.selectedYear">
@@ -73,6 +75,9 @@
 
 			</div>
 		</div>
+		@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_900001.ToString()) != null
+					|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_900001.ToString()))){ 
+			
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-sm-2">Оператор</div>
@@ -109,19 +114,33 @@
 				<div class="col-sm-3">@pager.FormFilter(i => i.Virtual, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
 			</div>
 		</div>
-		<div class="panel-body">
-			<div class="row">
-				<div class="col-sm-1">
-					@pager.SubmitButton(new {@class = "btn btn-success btn-sm"})
-				</div>
-				<div class="col-sm-1">
-					@pager.CleanButton(new {@class = "btn btn-success btn-sm"})
-				</div>
-				<div class="col-sm-1">
-					@pager.ExportButton(new {@class = "btn btn-sm btn-blue margin"})
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-1">
+						@pager.SubmitButton(new {@class = "btn btn-success btn-sm"})
+					</div>
+					<div class="col-sm-1">
+						@pager.CleanButton(new {@class = "btn btn-success btn-sm"})
+					</div>
+					<div class="col-sm-1">
+						@pager.ExportButton(new {@class = "btn btn-sm btn-blue margin"})
+					</div>
 				</div>
 			</div>
-		</div>
+		}
+		else
+		{
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-1">
+						@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+					</div>
+					<div class="col-sm-1">
+						@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+					</div>
+				</div>
+			</div>
+		}
 	</form>
 
 	<h3 class="totalCountOfItems"> 

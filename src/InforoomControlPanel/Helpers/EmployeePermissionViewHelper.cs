@@ -99,7 +99,8 @@ namespace InforoomControlPanel.Helpers
 			[Description("Блок - Клиент - Юр.лицо - Абонентская плата")] Block_020005,
 			[Description("Блок - Клиент - Юр.лицо - Контакты")] Block_020006,
 			[Description("Блок - Клиент - Юр.лицо - Обращения клиента")] Block_020007,
-			[Description("Блок - Клиент - Юр.лицо - Неопознанные звонки")] Block_020008
+			[Description("Блок - Клиент - Юр.лицо - Неопознанные звонки")] Block_020008,
+			[Description("Настройки - Платежи - Полный интерфейс")] Block_900001
 		}
 
 		public static void GeneratePermissions(ISession dbSession,object currentController)

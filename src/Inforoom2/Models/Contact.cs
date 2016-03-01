@@ -78,7 +78,15 @@ namespace Inforoom2.Models
 					ContactString = value;
 				}
 			}
-			get { return ContactString != null ? ContactString.Replace("-", "") : ContactString; }
+			get
+			{
+				return (Type == ContactType.ConnectedPhone || Type == ContactType.HeadPhone || Type == ContactType.HousePhone ||
+				        Type == ContactType.FinancePhone
+				        || Type == ContactType.MobilePhone || Type == ContactType.SmsSending || Type == ContactType.TechPhone) &&
+				       ContactString != null
+					? ContactString.Replace("-", "")
+					: ContactString;
+			}
 		}
 
 		public virtual string GetAdditionalAppealInfo(string property, object oldPropertyValue, ISession session)

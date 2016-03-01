@@ -11,6 +11,7 @@ using Common.Tools.Calendar;
 using Inforoom2.Components;
 using Inforoom2.Controllers;
 using Inforoom2.Models;
+using InforoomControlPanel.Helpers;
 using InforoomControlPanel.ReportTemplates;
 using NHibernate.Linq;
 using NHibernate.Mapping;
@@ -66,10 +67,23 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult Payments()
 		{
 			var pager = new InforoomModelFilter<Payment>(this);
+			var currentEmployee = GetCurrentEmployee();
+			if (
+				(currentEmployee.Permissions.FirstOrDefault(
+					s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_900001.ToString()) != null
+				 ||
+				 currentEmployee.Roles.Any(
+					 s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_900001.ToString()))) ==
+				false) {
+				pager.ParamDelete("filter.Equal.Employee.Name");
+				pager.ParamSet("filter.Equal.Employee.Name", currentEmployee.Name);
+			}
+
 			pager = PaymentsReport.GetGeneralReport(this, pager);
 			if (pager == null) {
 				return null;
 			}
+
 			var dateA = DateTime.Parse(pager.GetParam("filter.GreaterOrEqueal.PaidOn"));
 			var dateB = DateTime.Parse(pager.GetParam("filter.LowerOrEqual.PaidOn")).AddDays(1).AddSeconds(-1);
 			var clientId = DateTime.Parse(pager.GetParam("filter.GreaterOrEqueal.PaidOn"));
