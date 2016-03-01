@@ -162,7 +162,7 @@
 							<a href="@Url.Action(request.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@id = request.Client.Id})" class="btn btn-green">лс @request.Client.ClientId</a>
 						}
 						
-						<a onclick="@(request.Archived ? "archeveOut(" + request.Id + ")" : "archeveIn(" + request.Id + ")");" class="btn btn-default">@(request.Archived ? "из ахрива" : "в ахрив")</a>
+						<a onclick="@(request.Archived ? "archeveOut(" + request.Id + ")" : "archeveIn(" + request.Id + ")");" class="btn btn-default">@(request.Archived ? "из архива" : "в архив")</a>
 					</td>
 				</tr>
 			}

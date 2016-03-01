@@ -350,7 +350,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult CloseClientOrder(int orderId, DateTime? orderCloseDate)
 		{
 			var order = DbSession.Load<ClientOrder>(orderId);
-            if (orderCloseDate != null)
+			if (orderCloseDate != null)
 				order.EndDate = orderCloseDate;
 			else {
 				order.IsDeactivated = true;
@@ -358,17 +358,17 @@ namespace InforoomControlPanel.Controllers
 			}
 			order.SendMailAboutClose(DbSession, GetCurrentEmployee());
 
-			var message = order.IsDeactivated? $"Заказ №{order.Number} успешно закрыт и перенесен в архив" : $"Заказ №{order.Number} будет закрыт и перенесен в архив {order.EndDate.GetValueOrDefault().ToShortDateString()}";
+			var message = order.IsDeactivated
+				? $"Заказ №{order.Number} успешно закрыт и перенесен в архив"
+				: $"Заказ №{order.Number} будет закрыт и перенесен в архив {order.EndDate.GetValueOrDefault().ToShortDateString()}";
 			order.Client.Appeals.Add(new Appeal(message, order.Client, AppealType.System, GetCurrentEmployee()));
 			SuccessMessage(message);
 			DbSession.Save(order);
 
-			return RedirectToAction("InfoLegal", new { order.Client.Id });
-			
+			return RedirectToAction("InfoLegal", new {order.Client.Id});
 		}
 
 
-		[HttpPost]
 		public ActionResult ActivateService(int clientId, int serviceId, DateTime? startDate, DateTime? endDate)
 		{
 			var servise = DbSession.Load<Service>(serviceId);
@@ -380,18 +380,14 @@ namespace InforoomControlPanel.Controllers
 				var lessThanCurrent = DateTime.Compare(endDate.Value.Date, startDate.Value.Date);
 				if (lessThanPast != 1 || lessThanCurrent != 1) {
 					ErrorMessage("Дата окончания может быть выставлена только для будущего периода");
-					return client.IsPhysicalClient
-						? InfoPhysical(client.Id)
-						: InfoLegal(client.Id);
+					return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new {client.Id});
 				}
 			}
 			if (endDate.HasValue) {
 				var lessThanPast = DateTime.Compare(endDate.Value.Date, SystemTime.Now().Date);
 				if (lessThanPast != 1) {
 					ErrorMessage("Дата окончания может быть выставлена только для будущего периода");
-					return client.IsPhysicalClient
-						? InfoPhysical(client.Id)
-						: InfoLegal(client.Id);
+					return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new {client.Id});
 				}
 			}
 			if (servise.InterfaceControl) {
@@ -441,11 +437,13 @@ namespace InforoomControlPanel.Controllers
 				catch (Exception e) {
 					ErrorMessage(e.Message);
 				}
+				DbSession.Update(client);
 			}
-			//обработка модели клиента, сохранение, передача необходимых данных на форму.
+
 			return client.IsPhysicalClient
 				? InfoPhysical(client.Id, clientModelItem: client)
 				: InfoLegal(client.Id, clientModelItem: client);
+			return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new {client.Id});
 		}
 
 		[HttpPost]
@@ -465,11 +463,10 @@ namespace InforoomControlPanel.Controllers
 				}
 				if (client.IsNeedRecofiguration)
 					SceHelper.UpdatePackageId(DbSession, client);
+				DbSession.Update(client);
 			}
-			//обработка модели клиента, сохранение, передача необходимых данных на форму.
-			return client.IsPhysicalClient
-				? InfoPhysical(client.Id, clientModelItem: client)
-				: InfoLegal(client.Id, clientModelItem: client);
+
+			return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new {client.Id});
 		}
 
 		/// <summary>

@@ -8,7 +8,7 @@
 	bool rentIsActive = ViewBag.RentIsActive;
 	ClientEndpoint endpoint = client.Endpoints.FirstOrDefault();
 	var lease = endpoint != null ? endpoint.LeaseList.LastOrDefault() : null;
-	ViewBag.Title = "Информация по клиенту" + (lease != null && lease.LeaseEnd > SystemTime.Now() ? " (он-лайн) " : "") + ": " + client.LegalClient.Name + " (" + client.ClientId + ") ";
+	ViewBag.Title = "Информация по клиенту" + (lease != null && lease.LeaseEnd > SystemTime.Now() ? " (он-лайн) " : "") + ": " + client.LegalClient.ShortName + " (" + client.ClientId + ") ";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	string action = ViewBag.ActionName;
 	string controller = ViewBag.ControllerName;
