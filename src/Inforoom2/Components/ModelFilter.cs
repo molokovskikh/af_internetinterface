@@ -755,6 +755,9 @@ namespace Inforoom2.Components
 			if (type == HtmlType.text) {
 				return string.Format("<input type='text' {0} />", GetPropsValues(o));
 			}
+			if (type == HtmlType.number) {
+				return string.Format("<input type='number' {0} />", GetPropsValues(o));
+			}
 
 			if (type == HtmlType.checkbox) {
 				o["class"] = "c-pointer " + o["class"];

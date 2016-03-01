@@ -324,7 +324,7 @@ namespace InforoomControlPanel.Controllers
 			//создание нового оповещения
 			if (!string.IsNullOrEmpty(newUserAppeal)) {
 				var newAppeal = new Appeal(newUserAppeal, client, AppealType.User) {Employee = GetCurrentEmployee()};
-				newAppeal.ReplaceSharpWithRedmine();
+				newAppeal.Message = newAppeal.Message.ReplaceSharpWithRedmine();
 				DbSession.Save(newAppeal);
 			}
 			//обработка модели клиента, сохранение, передача необходимых данных на форму.

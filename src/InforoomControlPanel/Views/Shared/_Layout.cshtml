@@ -575,6 +575,15 @@
 					</a>
 				</li>
 			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_009004.ToString()) != null
+						|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_009004.ToString())))
+			{
+				<li>
+					<a href="@Url.Action("PaymentList", "Payments")">
+						<span class="title">По банковским выпискам</span>
+					</a>
+				</li>
+			}
 		</ul>
 	</li>
 }

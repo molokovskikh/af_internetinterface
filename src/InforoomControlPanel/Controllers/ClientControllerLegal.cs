@@ -303,8 +303,10 @@ namespace InforoomControlPanel.Controllers
 			int writeOffState = 0, int clientStatus = 0, string redmineTaskComment = "")
 		{
 			//создание нового оповещения
-			if (!string.IsNullOrEmpty(newUserAppeal)) {
-				var newAppeal = new Appeal(newUserAppeal, client, AppealType.User) {Employee = GetCurrentEmployee()};
+			if (!string.IsNullOrEmpty(newUserAppeal))
+			{
+				var newAppeal = new Appeal(newUserAppeal, client, AppealType.User) { Employee = GetCurrentEmployee() };
+				newAppeal.Message = newAppeal.Message.ReplaceSharpWithRedmine();
 				DbSession.Save(newAppeal);
 			}
 

@@ -10,6 +10,7 @@ using Common.Tools;
 using Common.Tools.Calendar;
 using Inforoom2.Components;
 using Inforoom2.Controllers;
+using Inforoom2.Helpers;
 using Inforoom2.Models;
 using InforoomControlPanel.ReportTemplates;
 using NHibernate.Linq;
@@ -53,8 +54,8 @@ namespace InforoomControlPanel.Controllers
 					Date = SystemTime.Now(),
 					Registrator = GetCurrentEmployee(),
 					Request = connectionRequest,
-					Comment = comment
-				};
+					Comment = comment.ReplaceSharpWithRedmine()
+			};
 				DbSession.Save(newComment);
                 connectionRequest.ConnectionRequestComments.Add(newComment);
 				DbSession.Save(connectionRequest);
