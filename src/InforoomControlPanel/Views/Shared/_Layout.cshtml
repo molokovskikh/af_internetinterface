@@ -28,7 +28,7 @@
 	<link rel="stylesheet" href="~/assets/css/neon-theme.css?v=1">
 	<link rel="stylesheet" href="~/assets/css/neon-forms.css?v=2">
 	<link rel="stylesheet" href="~/assets/css/custom.css?v=4">
-	<link rel="stylesheet" href="~/Css/style.css?v=6"></link>
+	<link rel="stylesheet" href="~/Css/style.css?v=7"></link>
 
 	<script src="~/assets/js/jquery-1.11.0.min.js?v=1"></script>
 
@@ -575,6 +575,15 @@
 					</a>
 				</li>
 			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_009004.ToString()) != null
+						|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_009004.ToString())))
+			{
+				<li>
+					<a href="@Url.Action("PaymentList", "Payments")">
+						<span class="title">По банковским выпискам</span>
+					</a>
+				</li>
+			}
 		</ul>
 	</li>
 }
@@ -663,7 +672,7 @@
 <script src="~/assets/js/bootstrap-datepicker.js"></script>
 <script src="~/assets/js/bootstrap-timepicker.min.js"></script>
 <script src="~/assets/js/bootstrap-datepicker.ru.min.js"></script>
-<script type="text/javascript" src="~/Scripts/ControlPanel.js?v=2"></script>
+<script type="text/javascript" src="~/Scripts/ControlPanel.js?v=3"></script>
 
 @RenderSection("JavaScript", required: false)
 @{
@@ -679,8 +688,8 @@
 		if (ViewBag.SessionToRefresh != null)
 		{
 			var sessionToRefresh = (ISession)ViewBag.SessionToRefresh;
-			sessionToRefresh.Transaction.Rollback();
-		}
+			sessionToRefresh.Transaction.Rollback(); 
+        }
 	}
 </body>
 </html>

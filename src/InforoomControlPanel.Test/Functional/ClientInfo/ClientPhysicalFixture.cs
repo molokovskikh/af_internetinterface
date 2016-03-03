@@ -205,8 +205,21 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			//Статус - Расторгнут
 			Css(blockName + "[name='clientStatus']")
 				.SelectByText((StatusType.Dissolved).GetDescription());
+			//Сохранение изменений
+			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
+			//Проверка на ошибку
+			AssertText("Не указана причина изменения статуса", blockName);
+			//Повтор
+			//Статус - Расторгнут
+			Css(blockName + "[name='clientStatus']")
+				.SelectByText((StatusType.Dissolved).GetDescription());
+			//Указываем причину изменения статуса
+			var inputObj = browser.FindElementByCssSelector(blockName + "textarea[name='clientStatusChangeComment']");
+			inputObj.Clear();
+			inputObj.SendKeys("причина изменения статуса");
 			//сохранение изменений
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
+
 			//редактируем блок
 			browser.FindElementByCssSelector(blockName + ".btn.btn-blue.lockButton").Click();
 			//ожидание
@@ -292,10 +305,6 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Assert.That(inputObj.GetAttribute("value"), Is.EqualTo(""), "'Задача в Redmine для клиента' не совпадает.");
 			inputObj.Clear();
 			inputObj.SendKeys(redmineTask + marker);
-			//Проверен
-			inputObj = browser.FindElementByCssSelector(blockName + "input[name='client.PhysicalClient.Checked']");
-			Assert.That(inputObj.GetAttribute("checked"), Is.Null, "СМС рассылка не совпадает.");
-			inputObj.Click();
 			//сохранение изменений
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
 			//редактируем блок
@@ -324,9 +333,6 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			inputObj = browser.FindElementByCssSelector(blockName + "input[name='client.RedmineTask']");
 			Assert.That(inputObj.GetAttribute("value"), Is.EqualTo(redmineTask + marker),
 				"'Задача в Redmine для клиента' не совпадает.");
-			//Проверен
-			inputObj = browser.FindElementByCssSelector(blockName + "input[name='client.PhysicalClient.Checked']");
-			Assert.That(inputObj.GetAttribute("checked"), Is.Not.Null, "СМС рассылка не совпадает.");
 		}
 
 
@@ -383,6 +389,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			//сохраняем изменения
 			browser.FindElementByCssSelector(blockNameNew + ".btn.btn-success").Click();
 
+			WaitForText("Номер лицевого счета", 10);
 			DbSession.Refresh(CurrentClient.PhysicalClient.Address);
 			AssertText(CurrentClient.PhysicalClient.Address.GetStringForPrint(city: false), blockName);
 		}
@@ -470,8 +477,10 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			var marker = 2;
 			var markerClone = 3;
 			//новый телефон
-			string phoneNumber = firstContact.ContactPhoneSplitFormat.Substring(1);
+			string phoneNumber = firstContact.ContactFormatString.Substring(1);
 			phoneNumber = marker + phoneNumber;
+			string phoneNumberToCheck = firstContact.ContactPhoneSplitFormat.Substring(1);
+			phoneNumberToCheck = marker + phoneNumberToCheck;
 
 			//Проверяем наличия текущего контакта пользователя на форме
 			AssertText(firstContact.ContactPhoneSplitFormat + " " + firstContact.Type.GetDescription(), blockName);
@@ -491,9 +500,11 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Assert.That(inputObjList.Count, Is.Not.EqualTo(0), "Статус не совпадает.");
 			}
 			//создаем новый номер и проверяем его отсутствие на форме
-			phoneNumber = firstContact.ContactPhoneSplitFormat.Substring(1);
+			phoneNumber = firstContact.ContactFormatString.Substring(1);
+			phoneNumberToCheck = firstContact.ContactPhoneSplitFormat.Substring(1);
 			phoneNumber = markerClone + phoneNumber;
-			AssertNoText(phoneNumber, blockName);
+			phoneNumberToCheck = markerClone + phoneNumberToCheck;
+			AssertNoText(phoneNumberToCheck, blockName);
 			//добавляем новый номер
 			browser.FindElementByCssSelector(blockName + ".btn.btn-blue").Click();
 			//Контакт
@@ -503,15 +514,16 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Css(blockName + "[name='client.Contacts[1].Type']").SelectByText((typeClone).GetDescription());
 			//сохраняем изменения
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
+			WaitAjax(10);
 			//проверяем наличие добавленного номера
-			AssertText(phoneNumber, blockName);
+			AssertText(phoneNumberToCheck, blockName);
 			//Удаляем контакт
 			browser.FindElementByCssSelector(blockName + ".btn.btn-blue.lockButton").Click();
 			browser.FindElementByCssSelector(blockName + "#contactDel1").Click();
 			//сохраняем изменения
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
 			//проверяем отсутствие удаленного номера
-			AssertNoText(phoneNumber);
+			AssertNoText(phoneNumberToCheck);
 		}
 
 		[Test, Description("Страница клиента. Физ. лицо. Добавление обращения клиента")]
@@ -597,6 +609,10 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			inputObj = browser.FindElementByCssSelector(blockName + "input[name='client.PhysicalClient.RegistrationAddress']");
 			inputObj.Clear();
 			inputObj.SendKeys(registrationAddress);
+			//Проверен
+			inputObj = browser.FindElementByCssSelector(blockName + "input[name='client.PhysicalClient.Checked']");
+			Assert.That(inputObj.GetAttribute("checked"), Is.Null, "Поле проверен не совпадает.");
+			inputObj.Click();
 
 			//сохраняем изменения
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
@@ -613,6 +629,8 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			AssertText(@"Кем выдан " + passportResidention, blockName);
 			//Адрес регистрации
 			AssertText(@"Адрес регистрации " + registrationAddress, blockName);
+			//Проверен
+			AssertText(@"Проверен да");
 		}
 
 		[Test, Description("Страница клиента. Физ. лицо. Добавление неопознанного звонка")]

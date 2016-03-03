@@ -84,10 +84,8 @@ namespace InforoomControlPanel.Controllers
 				return null;
 			}
 
-			var dateA = DateTime.Parse(pager.GetParam("filter.GreaterOrEqueal.PaidOn"));
+			//var dateA = DateTime.Parse(pager.GetParam("filter.GreaterOrEqueal.PaidOn"));
 			var dateB = DateTime.Parse(pager.GetParam("filter.LowerOrEqual.PaidOn")).AddDays(1).AddSeconds(-1);
-			var clientId = DateTime.Parse(pager.GetParam("filter.GreaterOrEqueal.PaidOn"));
-			var clientName = DateTime.Parse(pager.GetParam("filter.LowerOrEqual.PaidOn")).AddDays(1).AddSeconds(-1);
 
 			ViewBag.TotalSum = pager.TotalSumByFieldName("Sum");
 

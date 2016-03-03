@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Web;
+using Common.Tools;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 
@@ -74,6 +75,26 @@ namespace Inforoom2.Models
 
 		[OneToOne(PropertyRef = "BankPayment")]
 		public virtual Payment Payment { get; set; }
-		 
+
+		public virtual bool UpdatePayerInn { get; set; }
+
+		public virtual void RegisterPayment()
+		{
+			RegistredOn = SystemTime.Now();
+		}
+
+		public virtual void UpdateInn()
+		{
+			if (!UpdatePayerInn)
+				return;
+
+			if (Payer != null
+				&& Payer.LegalClient != null
+				&& Payer != null
+				&& !String.IsNullOrEmpty(RecipientInn))
+			{
+				Payer.LegalClient.Inn = PayerInn;
+			}
+		}
 	}
 }

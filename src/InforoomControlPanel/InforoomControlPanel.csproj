@@ -1554,6 +1554,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ClientControllerPhysical.cs" />
     <Compile Include="Controllers\ClientControllerPhysicalRequest.cs" />
+    <Compile Include="Controllers\PaymentsController.cs" />
     <Compile Include="Controllers\ServiceRequestController.cs" />
     <Compile Include="Controllers\ConnectionRequestController.cs" />
     <Compile Include="Controllers\SpreadSheetController.cs" />
@@ -2027,6 +2028,12 @@
     <Content Include="Views\Client\subviews\modelview\_RequestMarkerColorChange.cshtml" />
     <Content Include="Views\ConnectionRequest\ConnectionRequestEdit.cshtml" />
     <Content Include="Views\SpreadSheet\Payments.cshtml" />
+    <Content Include="Views\Payments\PaymentList.cshtml" />
+    <Content Include="Views\Payments\PaymentCreate.cshtml" />
+    <Content Include="Views\Payments\PaymentProcess.cshtml" />
+    <Content Include="Views\Payments\PaymentEdit.cshtml" />
+    <Content Include="Views\Payments\_PaymentCancel.cshtml" />
+    <Content Include="Views\Payments\_PaymentCreate.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <Content Include="Views\Switch\SwitchCreate.cshtml" />

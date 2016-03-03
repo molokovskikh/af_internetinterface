@@ -26,7 +26,7 @@ namespace InforoomControlPanel.Controllers
 		/// <param name="archived"></param>
 		/// <param name="requestText"></param>
 		/// <returns></returns>
-		public ActionResult RequestsList(string requestMarkers = null, string requestText = "")
+		public ActionResult RequestsList(string requestMarkers = null, string requestText = "", bool justNull = true)
 		{
 			var pager = new InforoomModelFilter<ClientRequest>(this);
 			var markers = !string.IsNullOrEmpty(requestMarkers)
@@ -37,7 +37,6 @@ namespace InforoomControlPanel.Controllers
 					requestMarkers = pager.GetParam("requestMarkers");
 					markers = requestMarkers.Split(',').Select(s => int.Parse(s)).ToArray();
 				}
-			
 			}
 			if (markers != null && markers.Length > 0) {
 				ViewBag.CurrentMarkers = requestMarkers;
@@ -94,11 +93,17 @@ namespace InforoomControlPanel.Controllers
 									Restrictions.Or(Restrictions.Eq("Id", isId), Restrictions.Like("ApplicantName", "%" + requestText + "%"))));
 				}
 				else {
-					var criteria = pager.GetCriteria(s => s.Marker == null);
+					if (justNull) {
+						var criteria = pager.GetCriteria(s => s.Marker == null);
+					}
+					else {
+						var criteria = pager.GetCriteria();
+					}
 				}
 			}
 			ViewBag.Markers = DbSession.Query<ConnectionRequestMarker>().OrderBy(s => s.Deleted).ThenBy(s => s.Name).ToList();
 			ViewBag.Pager = pager;
+			ViewBag.JustNull = justNull;
 			return View();
 		}
 
@@ -112,8 +117,8 @@ namespace InforoomControlPanel.Controllers
 			var marker = DbSession.Query<ConnectionRequestMarker>().FirstOrDefault(s => s.Id == markerId);
 			if (markerList.Count > 0) {
 				foreach (var item in markerList) {
-					if (marker.ShortComment == "Refused" || marker.ShortComment == "Deleted" || marker.ShortComment == "Registered")
-					{
+					if (marker != null &&
+					    (marker.ShortComment == "Refused" || marker.ShortComment == "Deleted" || marker.ShortComment == "Registered")) {
 						item.Archived = true;
 					}
 					item.Marker = marker;
@@ -147,7 +152,7 @@ namespace InforoomControlPanel.Controllers
 			if (marker != null) {
 				marker.Archived = false;
 				DbSession.Save(marker);
-                return Json(true, JsonRequestBehavior.AllowGet);
+				return Json(true, JsonRequestBehavior.AllowGet);
 			}
 			else {
 				return Json(false, JsonRequestBehavior.AllowGet);
@@ -234,7 +239,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			return MarkerList();
 		}
-		
+
 		/// <summary>
 		/// Отображает форму новой заявки
 		/// </summary>
@@ -591,7 +596,8 @@ namespace InforoomControlPanel.Controllers
 				if (redirectToCard) {
 					return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 					                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"] + Url.Action("ConnectionCard", "Client", new { @id = client.Id }));
+					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"] +
+					                Url.Action("ConnectionCard", "Client", new {@id = client.Id}));
 				}
 				// переходим к информации о клиенте *в старой админке
 				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +

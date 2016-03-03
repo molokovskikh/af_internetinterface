@@ -21,10 +21,12 @@
 		<div class="column">Тариф:</div>
 		<div class="shelf">@Html.DisplayFor(c => client.Plan.Name)</div>
 	</div>
-	<div class="line">
-		<div class="column">Скидка:</div>
-		<div class="shelf">@Html.DisplayFor(c => client.Client.Discount)%</div>
-	</div>
+	@if (!client.Plan.IgnoreDiscount) {
+		<div class="line">
+			<div class="column">Скидка:</div>
+			<div class="shelf">@Html.DisplayFor(c => client.Client.Discount)%</div>
+		</div>
+	}
 	@if (client.PhoneNumber != string.Empty) {
 		<div class="line">
 			<div class="column">Номер телефона:</div>

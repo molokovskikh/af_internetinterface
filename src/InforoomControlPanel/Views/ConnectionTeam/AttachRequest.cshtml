@@ -40,9 +40,7 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label">От</label>
 				<div class="col-sm-7">
-					<a @(scheduleItem.GetClient().PhysicalClient == null ? "style=color:#0D90D4;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
-						   + (String.Format("UserInfo/{0}?filter.ClientCode=", scheduleItem.GetClient().PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-					  + scheduleItem.GetClient().Id)">@scheduleItem.GetClient().Fullname</a>
+					<a target="_blank" href="@Url.Action(scheduleItem.GetClient().PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {scheduleItem.GetClient().Id})" class="idColumn @(scheduleItem.GetClient().PhysicalClient != null ? "linkPhysical" : "linkLegal")">@scheduleItem.GetClient().Fullname</a>
 				</div>
 			</div>
 			<div class="form-group">

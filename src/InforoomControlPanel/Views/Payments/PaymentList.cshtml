@@ -1,0 +1,219 @@
+﻿@using System.Globalization
+@using System.Web.Mvc.Html
+@using Inforoom2.Components
+@using Inforoom2.Models
+@model dynamic
+@{
+	ViewBag.Title = "История платежей";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	InforoomModelFilter<BankPayment> pager = ViewBag.pager;
+	var bankPaymentsList = pager.GetItems();
+
+	decimal totalSum = ViewBag.TotalSum;
+
+	int firstYear = ViewBag.FirstYear ?? 0;
+	int firstMonth = ViewBag.FirstMonth ?? 0;
+	int lastYear = ViewBag.LastYear ?? 0;
+	int lastMonth = ViewBag.LastMonth ?? 0;
+	int currentYear = ViewBag.CurrentYear ?? 0;
+	int currentMonth = ViewBag.CurrentMonth ?? 0;
+}
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=1")"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/PaymentsCalendarFilter.js?v=1")"></script>
+}
+<div id="table-2_wrapper" class="clientMainTable dataTables_wrapper form-inline no-footer  clientTableFilter">
+	<form id="PaymentForm">
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Дата списания с </div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.PayedOn, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control", @Id = "dateA" })</div>
+				<div class="col-sm-1">по</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.PayedOn, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control", @Id = "dateB" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<input type="hidden" id="firstYear" value="@firstYear" />
+			<input type="hidden" id="lastYear" value="@lastYear" />
+			<input type="hidden" id="firstMonth" value="@firstMonth" />
+			<input type="hidden" id="lastMonth" value="@lastMonth" />
+			<input type="hidden" id="currentMonth" value="@currentMonth" />
+
+
+			<input type="hidden" id="selectedMonth" name="mfilter.selectedMonth" value="" />
+			<div class="row">
+				<div class="col-sm-2">
+					<select class=" form-control form-control" style="min-width: 100px; max-width: 280px;" id="currentYear" name="mfilter.selectedYear">
+						@for (int i = firstYear; i <= lastYear; i++)
+						{
+							<option value="@i" @(currentYear == i ? "selected=selected" : "")>@i</option>
+						}
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<table id="monthSelector" class="table table-bordered table-striped datatable dataTable no-footer">
+						<tr>
+							<td class="mnt a" month="01">
+								<span>Январь</span>
+							</td>
+							<td class="mnt a" month="02">
+								<span>Февраль</span>
+							</td>
+							<td class="mnt b" month="03">
+								<span>Март</span>
+							</td>
+							<td class="mnt b" month="04">
+								<span>Апрель</span>
+							</td>
+							<td class="mnt b" month="05">
+								<span>Май</span>
+							</td>
+							<td class="mnt c" month="06">
+								<span>Июнь</span>
+							</td>
+						</tr>
+						<tr>
+							<td class="mnt c" month="07">
+								<span>Июль</span>
+							</td>
+							<td class="mnt c" month="08">
+								<span>Август</span>
+							</td>
+							<td class="mnt d" month="09">
+								<span>Сентябрь</span>
+							</td>
+							<td class="mnt d" month="10">
+								<span>Октябрь</span>
+							</td>
+							<td class="mnt d" month="11">
+								<span>Ноябрь</span>
+							</td>
+							<td class="mnt a" month="12">
+								<span>Декабрь</span>
+							</td>
+						</tr>
+					</table>
+				</div>
+
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Получатель</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Recipient.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">ЛС</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Payer.Id, HtmlType.number, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Плательщик</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.PayerName, HtmlType.text, ComparsionType.Like, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Только неопознанные</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Payer, HtmlType.Dropdown, ComparsionType.IsNull, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			</div>
+		</div>
+
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">
+					@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+				</div>
+				<div class="col-sm-1">
+					@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+				</div>
+			</div>
+		</div>
+
+	</form>
+	<h3 class="totalCountOfItems">
+		Всего <strong>@pager.TotalItems</strong> платежей на сумму <strong>@totalSum.ToString("C2", CultureInfo.CreateSpecificCulture("ru-RU"))</strong>
+	</h3>
+
+	<div id="table-2_wrapper">
+		<div class="totalCountOfItems">
+			Всего заказов: <strong>@pager.TotalItems</strong>
+		</div>
+		<div class="form-inline no-footer">
+			<div class="panel-body">
+				<div class="row">
+					@{ Html.RenderPartial("Pagination"); }
+				</div>
+			</div>
+		</div>
+		<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+			<thead>
+				<tr role="row">
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						<a href="@pager.OrderBy(s => s.Recipient.Name)">
+							<span>Получатель</span>
+						</a>
+
+					</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						<a href="@pager.OrderBy(s => s.PayedOn)">
+							<span>Дата платежа</span>
+						</a>
+					</th>
+					<th class="sorting" tabindex="0" aria-controls="table-2">
+						<a href="@pager.OrderBy(s => s.PayerName)">
+							<span>Плательщик</span>
+						</a>
+					</th>
+					<th class="sorting">
+						<a href="@pager.OrderBy(s => s.Sum)">
+							<span>Сумма</span>
+						</a>
+					</th>
+					<th class="sorting">
+						<a href="@pager.OrderBy(s => s.RegistredOn)">
+							<span>Дата внесения платежа</span>
+						</a>
+					</th>
+					<th>
+						<span class="black">Действия</span>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in bankPaymentsList)
+				{
+					<tr>
+						<td>@item.Recipient.Name</td>
+						<td>@item.PayedOn.ToShortDateString()</td>
+						<td>
+							@if (item.Payer != null) {
+								<a target="_blank" href="@Url.Action(item.Payer.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {item.Payer.Id})" class="idColumn @(item.Payer.PhysicalClient != null ? "linkPhysical" : "linkLegal")">
+									@item.Payer.Name
+								</a>
+							}
+							else {
+								<strong>не опознан</strong>
+							}
+							
+						</td>
+						<td>@item.Sum</td>
+						<td>@(item.RegistredOn )</td>
+						<td>
+							
+							<a href="@Url.Action("PaymentEdit", new {@id = item.Id})" class="btn btn-green">редактировать</a>
+
+							<a href="@Url.Action("PaymentRemove", new {@id = item.Id})" class="btn btn-red">удалить</a>
+						</td>
+					</tr>
+			}
+			</tbody>
+		</table>
+		<div class="row">
+			@{ Html.RenderPartial("Pagination"); }
+		</div>
+	</div>
+</div>

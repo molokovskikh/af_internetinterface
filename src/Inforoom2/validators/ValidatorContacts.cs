@@ -7,7 +7,7 @@ using Contact = Inforoom2.Models.Contact;
 namespace Inforoom2.validators
 {
 	//Валидация контактов
-	internal class ValidatorContacts : CustomValidator
+	public class ValidatorContacts : CustomValidator
 	{
 		// перечень проверок
 		private static readonly Regex CheckMailFormat = new Regex(@"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#" +
@@ -70,8 +70,8 @@ namespace Inforoom2.validators
 					}
 					return;
 				}
-				if (!CheckPhoneFormat1.Match(currentContact.ContactString).Success &&
-				    !CheckPhoneFormat2.Match(currentContact.ContactString).Success) {
+				if (!CheckPhoneFormat1.Match(currentContact.ContactPhoneSplitFormat).Success &&
+				    !CheckPhoneFormat2.Match(currentContact.ContactPhoneSplitFormat).Success) {
 					if (htmlError) {
 						AddError("<strong class='msg'>Мобильный телефон указан неверно.</strong> <p> Возможные форматы:<p>" +
 						         "<strong><i>xxx-xxxxxxx</i></strong></p><p><strong><i>xxxx-xxxxxx</strong></i></p></p>");
@@ -93,8 +93,8 @@ namespace Inforoom2.validators
 					}
 					return;
 				}
-				if (!CheckPhoneFormat1.Match(currentContact.ContactString).Success &&
-				    !CheckPhoneFormat2.Match(currentContact.ContactString).Success) {
+				if (!CheckPhoneFormat1.Match(currentContact.ContactPhoneSplitFormat).Success &&
+				    !CheckPhoneFormat2.Match(currentContact.ContactPhoneSplitFormat).Success) {
 					if (htmlError) {
 						AddError("<strong class='msg'>Домашний телефон указан неверно.</strong> <p> Возможные форматы:<p><strong>" +
 						         "<i>xxx-xxxxxxx</i></strong></p><p><strong><i>xxxx-xxxxxx</strong></i></p></p>");
@@ -116,8 +116,8 @@ namespace Inforoom2.validators
 					}
 					return;
 				}
-				if (!CheckPhoneFormat1.Match(currentContact.ContactString).Success &&
-				    !CheckPhoneFormat2.Match(currentContact.ContactString).Success) {
+				if (!CheckPhoneFormat1.Match(currentContact.ContactPhoneSplitFormat).Success &&
+				    !CheckPhoneFormat2.Match(currentContact.ContactPhoneSplitFormat).Success) {
 					AddError("Номер телефона введен неправильно");
 				}
 			}

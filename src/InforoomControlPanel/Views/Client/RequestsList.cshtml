@@ -10,6 +10,7 @@
 	var clientRequests = pager.GetItems();
 	List<ConnectionRequestMarker> markers = ViewBag.Markers;
 	string currentMarkers = ViewBag.CurrentMarkers??"";
+	bool justNull = ViewBag.JustNull ?? true;
 }
 
 @section JavaScript{
@@ -78,6 +79,13 @@
 				</div>
 			</div>
 		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2"><label for="justNullMarker" class = "c-pointer">Поиск по немаркированным</label></div>
+				<div class="col-sm-3">@Html.CheckBoxFor(model => justNull, new { @id = "justNullMarker", @class = "c-pointer" })</div>
+			</div>
+		</div>
+		
 		<div class="panel-body">
 			<div class="row">
 			</div>

@@ -137,6 +137,12 @@ namespace InforoomControlPanel.Controllers
 			if (client != null) {
 				//получение телефона-'по умолчанию'
 				var phone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.SmsSending);
+				if (phone == null) {
+					phone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
+				}
+				if (phone == null) {
+					phone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone);
+				}
 				//создание заявки и передача ее на форму
 				var serviceRequest = new ServiceRequest() {Client = client, Phone = phone != null ? phone.ContactString : ""};
 				ViewBag.ServiceRequest = serviceRequest;
@@ -266,23 +272,42 @@ namespace InforoomControlPanel.Controllers
 		/// <param name="updateRequest">Если комментарий подразумевает обновление СЗ</param>
 		/// <returns></returns>
 		[HttpPost]
-		public ActionResult AddComment([EntityBinder] ServiceRequest serviceRequest, ServiceRequestComment comment)
+		public ActionResult AddComment([EntityBinder] ServiceRequest serviceRequest, ServiceRequestComment comment,
+			bool updateRequest = true)
 		{
 			if (serviceRequest == null) {
 				return RedirectToAction("ServiceRequestList");
 			}
 			ViewBag.ServiceRequestComment = comment;
 			ViewBag.ReasonForFreeShown = false;
+			ViewBag.UpdateRequest = updateRequest;
 			ViewBag.СurrentStatus = serviceRequest.Status;
 			//валидация комментария
 			var errors = ValidationRunner.ValidateDeep(comment);
-			if (errors.Length == 0 && serviceRequest.Id != 0 && !string.IsNullOrEmpty(comment.Comment)) {
-				//добавление комментария
-				serviceRequest.AddComment(DbSession, comment.Comment, GetCurrentEmployee());
+			if (errors.Length == 0 && serviceRequest.Id != 0
+			    && (updateRequest && !string.IsNullOrEmpty(comment.Comment) || updateRequest == false)) {
+				//обновление даты модификации
+				if (updateRequest) {
+					serviceRequest.ModificationDate = SystemTime.Now();
+					DbSession.Save(serviceRequest);
+					//Отправляем аппил о редактировании
+					string appealMessage =
+						string.Format(
+							"'Дата модификации' заявки изменена на {0}. <br/><strong>Причина:</strong> {1}", serviceRequest.ModificationDate,
+							comment.Comment);
+					serviceRequest.AddComment(DbSession, appealMessage, GetCurrentEmployee());
+				}
+				else {
+					//добавление комментария
+					serviceRequest.AddComment(DbSession, comment.Comment, GetCurrentEmployee());
+				}
 				//вывод сообщения
 				SuccessMessage("Комментарий был добавлен успешно.");
 				//переход к редактированию сервисной заяки
 				return RedirectToAction("ServiceRequestEdit", new {id = serviceRequest.Id});
+			}
+			if (updateRequest && string.IsNullOrEmpty(comment.Comment)) {
+				ErrorMessage("Не указана причина изменения даты обновления.");
 			}
 			//переход к редактированию сервисной заяки
 			ViewBag.ServiceRequest = serviceRequest;

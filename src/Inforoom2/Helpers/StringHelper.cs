@@ -52,6 +52,31 @@ namespace Inforoom2.Helpers
 			self = string.Join(" ", stArray);
 			return self;
 		}
-		 
+
+		public static string ReplaceSharpWithRedmine(this string self)
+		{
+			var splited = self.Split(separator: "#".ToCharArray(), options: StringSplitOptions.RemoveEmptyEntries);
+			var itemsToReplace = new List<string>();
+			foreach (var item in splited) {
+				string numberText = "";
+				int number = 0;
+				for (int i = 0; i < item.Length; i++) {
+					if (int.TryParse(item[i].ToString(), out number)) {
+						numberText += item[i];
+					}
+					else {
+						break;
+					}
+				}
+				if (!string.IsNullOrEmpty(numberText) && !itemsToReplace.Any(s => s == numberText)) {
+					itemsToReplace.Add(numberText);
+				}
+			}
+			foreach (var item in itemsToReplace) {
+				self = self.Replace("#" + item,
+					String.Format(" <a target='_blank' href='http://redmine.analit.net/issues/{0}'>#{0}</a>", item));
+			}
+			return self;
+		}
 	}
 }

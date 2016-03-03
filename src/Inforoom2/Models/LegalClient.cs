@@ -123,7 +123,7 @@ namespace Inforoom2.Models
 		{
 			var param = ConfigHelper.GetParam("LawyerPersonBalanceWarningRate");
 			var rate = (decimal) float.Parse(param, CultureInfo.InvariantCulture);
-			var cond = Balance <= -((Plan ?? 0)*rate) && Balance < 0;
+			var cond = Balance < -((Plan ?? 0)*rate) && Balance < 0;
 			return cond;
 		}
 

@@ -87,7 +87,7 @@ namespace InternetInterface.Models
 		{
 			var param = ConfigurationManager.AppSettings["LawyerPersonBalanceWarningRate"];
 			var rate = (decimal)float.Parse(param, CultureInfo.InvariantCulture);
-			var cond = Balance <= -(Tariff * rate) && Balance < 0;
+			var cond = Balance < -(Tariff * rate) && Balance < 0;
 			return cond;
 		}
 

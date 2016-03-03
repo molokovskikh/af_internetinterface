@@ -97,7 +97,7 @@ namespace InforoomControlPanel.Controllers
 		/// <param name="clientStatus">статус клиента</param>
 		/// <returns></returns>
 		public ActionResult InfoLegal(int id, object clientModelItem = null, string subViewName = "", int appealType = 0,
-			int writeOffState = 0, int clientStatus = 0, string redmineTaskComment = "")
+			int writeOffState = 0, int clientStatus = 0, string clientStatusChangeComment = "")
 		{
 			Client client;
 			//--------------------------------------------------------------------------------------| Обработка представлений (редактирование клиента)
@@ -107,31 +107,34 @@ namespace InforoomControlPanel.Controllers
 				var clientModel = (Client) clientModelItem;
 				//подпредставление "контакты"
 				if (subViewName == "_Contacts") {
-					// удаление неиспользованного контакта *иначе в БД лишняя запись  
-					clientModel.Contacts.RemoveEach(s => s.ContactString == string.Empty);
-					clientModel.Contacts.Each(s => s.ContactString = s.ContactPhoneSplitFormat);
+					var listForAppeal = new List<string>();
+					//такая структора из-за работы байндера (не менять, а если менять, то колностью работу со списком контактов)
+					//удаление контактов
+					var contactsToRemove = clientModel.Contacts.Where(s => s.ContactString == string.Empty).ToList();
+					foreach (var item in contactsToRemove) {
+						clientModel.Contacts.Remove(item);
+						DbSession.Delete(item);
+					}
+					//обновление контактов, задание нужных полей при добавлении
+					clientModel.Contacts.Each(s =>
+					{
+						s.Client = clientModel;
+						s.ContactString = s.ContactFormatString;
+						if (s.Date == DateTime.MinValue) {
+							s.Date = SystemTime.Now();
+						}
+						if (s.WhoRegistered == null) {
+							s.WhoRegistered = GetCurrentEmployee();
+							listForAppeal.Add(s.ContactFormatString);
+						}
+					});
+					if (listForAppeal.Count != 0) {
+						clientModel.Appeals.Add(new Appeal($"Обновлены контактные данные. Добавлены: {string.Join(",", listForAppeal)}",
+							clientModel, AppealType.System, GetCurrentEmployee()));
+					}
 				}
 				// проводим валидацию модели клиента
 				var errors = ValidationRunner.ValidateDeep(clientModel);
-
-				if (!string.IsNullOrEmpty(redmineTaskComment)) {
-					if (!string.IsNullOrEmpty(clientModel.RedmineTask)) {
-						var newAppeal =
-							new Appeal(
-								redmineTaskComment +
-								String.Format(" <a target='_blank' href='http://redmine.analit.net/issues/{0}'>#{0}</a>",
-									clientModel.RedmineTask), clientModel,
-								AppealType.User)
-							{Employee = GetCurrentEmployee()};
-						DbSession.Save(newAppeal);
-					}
-					else {
-						errors.Add(new InvalidValue("Не указана задача в Redmine", typeof (Status), "redmineTaskComment", clientModel,
-							clientModel, new List<object>()));
-						ErrorMessage("Не указана задача в Redmine");
-						ViewBag.RedmineTaskComment = redmineTaskComment;
-					}
-				}
 
 				//если появились ошибки в любом из подпредставлений, кроме контактов, удаляем их
 				if (subViewName != "_Contacts") {
@@ -140,6 +143,16 @@ namespace InforoomControlPanel.Controllers
 						"Inforoom2.Models.Client.Contacts"
 					});
 				}
+
+				if (string.IsNullOrEmpty(clientStatusChangeComment) && clientStatus != 0 && clientStatus != (int) clientModel.Status.Type
+				    && clientStatus == (int) StatusType.Dissolved) {
+					errors.Add(new InvalidValue("Не указана причина изменения статуса", typeof (Status), "clientStatusChangeComment",
+						clientModel,
+						clientModel, new List<object>()));
+					ErrorMessage("Не указана причина изменения статуса");
+					ViewBag.clientStatusChangeComment = clientStatusChangeComment;
+				}
+
 				//обновление статуса клиента, если он отличается от текущего
 				if (clientStatus != 0 && clientStatus != (int) clientModel.Status.Type && errors.Length == 0) {
 					var newStatus = DbSession.Query<Status>().FirstOrDefault(s => s.Id == clientStatus);
@@ -147,6 +160,10 @@ namespace InforoomControlPanel.Controllers
 					if (!string.IsNullOrEmpty(messageAlert)) {
 						ErrorMessage(messageAlert);
 						errors.Add(new InvalidValue("", typeof (Status), "Name", newStatus, newStatus, new List<object>()));
+					}
+					else {
+						clientModel.Appeals.Add(new Appeal($"Комментарий к изменению статуса: {clientStatusChangeComment}",
+							clientModel, AppealType.System, GetCurrentEmployee()));
 					}
 				}
 				//если нет ошибок
@@ -300,17 +317,18 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		[HttpPost]
 		public ActionResult InfoLegal([EntityBinder] Client client, string subViewName, string newUserAppeal = "",
-			int writeOffState = 0, int clientStatus = 0, string redmineTaskComment = "")
+			int writeOffState = 0, int clientStatus = 0, string clientStatusChangeComment = "")
 		{
 			//создание нового оповещения
 			if (!string.IsNullOrEmpty(newUserAppeal)) {
 				var newAppeal = new Appeal(newUserAppeal, client, AppealType.User) {Employee = GetCurrentEmployee()};
+				newAppeal.Message = newAppeal.Message.ReplaceSharpWithRedmine();
 				DbSession.Save(newAppeal);
 			}
 
 			//обработка модели клиента, сохранение, передача необходимых данных на форму.
 			return InfoLegal(client.Id, clientModelItem: client, subViewName: subViewName, writeOffState: writeOffState,
-				clientStatus: clientStatus, redmineTaskComment: redmineTaskComment);
+				clientStatus: clientStatus, clientStatusChangeComment: clientStatusChangeComment);
 		}
 
 		[HttpPost]
@@ -439,10 +457,6 @@ namespace InforoomControlPanel.Controllers
 				}
 				DbSession.Update(client);
 			}
-
-			return client.IsPhysicalClient
-				? InfoPhysical(client.Id, clientModelItem: client)
-				: InfoLegal(client.Id, clientModelItem: client);
 			return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new {client.Id});
 		}
 
@@ -465,7 +479,6 @@ namespace InforoomControlPanel.Controllers
 					SceHelper.UpdatePackageId(DbSession, client);
 				DbSession.Update(client);
 			}
-
 			return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new {client.Id});
 		}
 
@@ -490,6 +503,7 @@ namespace InforoomControlPanel.Controllers
 			var order = DbSession.Get<ClientOrder>(id);
 			return Json(order.ConnectionAddress ?? "", JsonRequestBehavior.AllowGet);
 		}
+
 
 		/// <summary>
 		/// получение клиентского эндпоинта

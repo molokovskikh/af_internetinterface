@@ -59,6 +59,11 @@
 					<td>
 						<span>@client.PhysicalClient.RegistrationAddress</span></td>
 				</tr>
+				<tr>
+					<td>Проверен</td>
+					<td>
+						<span>@(client.PhysicalClient.Checked ? "да" : "нет")</span></td>
+				</tr>
 				</tbody>
 			</table>
 		</div>
@@ -135,6 +140,14 @@
 					<td>
 						@Html.TextBoxFor(o => client.PhysicalClient.RegistrationAddress, new {@class = "form-control"})
 						@ViewBag.Validation.GetError(client.PhysicalClient, "RegistrationAddress")</td>
+				</tr>
+				<tr>
+					<td style="max-width: 60px;">
+						<label class="c-pointer" for="clientToBeChecked">Проверен</label>
+					</td>
+					<td>
+						@Html.CheckBoxFor(o => client.PhysicalClient.Checked, new {@class = "c-pointer", id = "clientToBeChecked"})
+					</td>
 				</tr>
 				</tbody>
 			</table>

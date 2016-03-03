@@ -7,7 +7,7 @@
 	Client client = Model;
 	List<Status> statusList = ViewBag.StatusList;
 	List<Region> regionList = ViewBag.RegionList;
-	string redmineTaskComment = ViewBag.RedmineTaskComment ?? "";
+	string clientStatusChangeComment = ViewBag.clientStatusChangeComment ?? "";
 	//var internetService = client.ClientServices.FirstOrDefault(s => s.Service.Name == "Internet");
 	//var isActivatedByUser = internetService != null ? internetService.ActivatedByUser : false;
 }
@@ -94,7 +94,7 @@
 						<span>@client.LegalClient.Balance.ToString("0.00") ₽</span>
 					</td>
 				</tr>
-				<tr>
+				<tr class="@(client.Status.Type == StatusType.NoWorked || client.Status.Type == StatusType.Dissolved ? "appeal Block" : "") @(client.Status.Type == StatusType.Dissolved ? "statusDissolved" : "")">
 					<td>Статус клиента</td>
 					<td>
 						<span>@client.Status.Type.GetDescription()</span>
@@ -176,22 +176,22 @@
 				<tr>
 					<td>Статус</td>
 					<td>
-						@Html.DropDownListExtendedFor(o => client.Status, statusList, obj => obj.Name, null, new { @Name = "clientStatus", @class = "form-control" }, client.Status.Id)
+						@Html.DropDownListExtendedFor(o => client.Status, statusList, obj => obj.Name, null, new { @Name = "clientStatus", @class = "form-control" }, client.Status.Id, true)
 						@ViewBag.Validation.GetError(client, "Status")
+					</td>
+				</tr>
+				<tr>
+					<td>Комментарий к изменению статуса</td>
+					<td>
+						@Html.TextAreaFor(o => clientStatusChangeComment, new { @Name = "clientStatusChangeComment", @class = "form-control max-width200" })
+						@ViewBag.Validation.GetError(client, "clientStatusChangeComment")
 					</td>
 				</tr>
 				<tr>
 					<td>Задача в Redmine для клиента</td>
 					<td>
 						@Html.TextBoxFor(o => client.RedmineTask, new { @class = "form-control" })
-						@ViewBag.Validation.GetError(client, "redmineTaskComment")
 					</td>
-					</td>
-				</tr>
-				<tr>
-					<td>Комментарий к задаче</td>
-					<td>
-						@Html.TextAreaFor(o => redmineTaskComment, new { @Name = "redmineTaskComment", @class = "form-control max-width200" })
 					</td>
 				</tr>
 			</tbody>

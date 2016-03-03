@@ -35,22 +35,24 @@ namespace Inforoom2.Helpers
 		/// <param name="expression">Экспрессия, возвращающая список в модели: i => tvChannelGroup.TvChannels</param>
 		/// <param name="skipId">Идентификатор модели, которую необходимо удалить.</param>
 		/// <returns>Верстка для полей</returns>
-		public static HtmlString HiddenForModelList<TModel, TProperty>(this HtmlHelper helper, TModel model, Expression<Func<TModel, TProperty>> expression, int skipId = 0)
+		public static HtmlString HiddenForModelList<TModel, TProperty>(this HtmlHelper helper, TModel model,
+			Expression<Func<TModel, TProperty>> expression, int skipId = 0)
 			where TProperty : IEnumerable
 		{
 			string expr = expression.ToString();
 			var func = expression.Compile();
 			var list = func(model) as IList;
-			if(list == null)
+			if (list == null)
 				throw new Exception("При создании скрытогой верстки для списка моделей, был передан вовсе не список");
 			var builder = new StringBuilder();
 
-				var field = expr.After(").");
-				if(string.IsNullOrEmpty(field))
-					throw new Exception("При создании скрытогой верстки для списка моделей не удается разыменовать имя поля-списка. Наиболее вероятная ошибка - указание 'i => i.{поле списка}' вместо 'i => {Переменная модели}.{поле списка}'. Сравни свой код с тем, откуда ты копировал.");
-				var name = field + "[-1].Id";
-				
-				builder.Append(string.Format("<input type='hidden' name='{0}' value='{1}' />", name, skipId));
+			var field = expr.After(").");
+			if (string.IsNullOrEmpty(field))
+				throw new Exception(
+					"При создании скрытогой верстки для списка моделей не удается разыменовать имя поля-списка. Наиболее вероятная ошибка - указание 'i => i.{поле списка}' вместо 'i => {Переменная модели}.{поле списка}'. Сравни свой код с тем, откуда ты копировал.");
+			var name = field + "[-1].Id";
+
+			builder.Append(string.Format("<input type='hidden' name='{0}' value='{1}' />", name, skipId));
 
 			return new HtmlString(builder.ToString());
 		}
@@ -71,18 +73,20 @@ namespace Inforoom2.Helpers
 		/// <returns>HTML выподающий список</returns>
 		public static HtmlString DropDownListExtendedFor<TModel, TProperty>(this HtmlHelper helper,
 			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
-			Func<TModel, object> htmlAttributes, object selectTagAttributes, string selectedValueId, bool firstEmptyElementAdd = false)
+			Func<TModel, object> htmlAttributes, object selectTagAttributes, string selectedValueId,
+			bool firstEmptyElementAdd = false)
 			where TModel : BaseModel
 		{
 			// свойства тэга Select
-			var defaultSelectAttributes = new Dictionary<string, string>() {
-				{ "id", "" },
-				{ "name", "" }
+			var defaultSelectAttributes = new Dictionary<string, string>()
+			{
+				{"id", ""},
+				{"name", ""}
 			};
 			// default <select> attributes
 			string expr = expression.ToString();
 			defaultSelectAttributes["name"] = "name=\"" + expr.After(").") + ".Id\"";
-			if (typeof(TProperty).GetInterfaces().Contains(typeof(IEnumerable)))
+			if (typeof (TProperty).GetInterfaces().Contains(typeof (IEnumerable)))
 				defaultSelectAttributes["name"] = "name=\"" + expr.After(").") + "[].Id\"";
 
 			if (modelCollection.Count > 0) {
@@ -98,9 +102,10 @@ namespace Inforoom2.Helpers
 			}
 			foreach (var model in modelCollection) {
 				// свойства тэга Option
-				var defaultOptionAttributes = new Dictionary<string, string>() {
-					{ "value", "value=\"" + model.Id + "\"" },
-					{ "selected", "selected = selected" }
+				var defaultOptionAttributes = new Dictionary<string, string>()
+				{
+					{"value", "value=\"" + model.Id + "\""},
+					{"selected", "selected = selected"}
 				};
 				// default <option> attributes
 				if (optionValue != null) {
@@ -113,22 +118,30 @@ namespace Inforoom2.Helpers
 
 				if (defaultOptionAttributes["value"] == "value=\"" + selectedValueId + "\"") {
 					options.AppendFormat("<option {0} {1} >{2}</option>", defaultOptionAttributes["value"],
-						string.Join(" ", defaultOptionAttributes.Where(s => s.Key != "value" && s.Key != "text").Select(s => s.Value).ToArray()), defaultOptionAttributes["text"]);
+						string.Join(" ",
+							defaultOptionAttributes.Where(s => s.Key != "value" && s.Key != "text").Select(s => s.Value).ToArray()),
+						defaultOptionAttributes["text"]);
 				}
 				else {
 					options.AppendFormat("<option {0} {1} >{2}</option>", defaultOptionAttributes["value"],
-						string.Join(" ", defaultOptionAttributes.Where(s => s.Key != "value" && s.Key != "text" && s.Key != "selected").Select(s => s.Value).ToArray()), defaultOptionAttributes["text"]);
+						string.Join(" ",
+							defaultOptionAttributes.Where(s => s.Key != "value" && s.Key != "text" && s.Key != "selected")
+								.Select(s => s.Value)
+								.ToArray()), defaultOptionAttributes["text"]);
 				}
 			}
-			var selectString = string.Format("<select {0} {1} {2}>{3}</select>", defaultSelectAttributes["id"], defaultSelectAttributes["name"],
-				string.Join(" ", defaultSelectAttributes.Where(s => s.Key != "id" && s.Key != "name").Select(s => s.Value).ToArray()), options);
+			var selectString = string.Format("<select {0} {1} {2}>{3}</select>", defaultSelectAttributes["id"],
+				defaultSelectAttributes["name"],
+				string.Join(" ", defaultSelectAttributes.Where(s => s.Key != "id" && s.Key != "name").Select(s => s.Value).ToArray()),
+				options);
 
 			return new HtmlString(selectString);
 		}
 
 		public static HtmlString DropDownListExtendedFor<TModel, TProperty>(this HtmlHelper helper,
 			Expression<Func<TModel, TProperty>> expression, IList<TModel> modelCollection, Func<TModel, string> optionValue,
-			Func<TModel, object> htmlAttributes, object selectTagAttributes, int selectedValueId, bool firstEmptyElementAdd = false)
+			Func<TModel, object> htmlAttributes, object selectTagAttributes, int selectedValueId,
+			bool firstEmptyElementAdd = false)
 			where TModel : BaseModel
 		{
 			return DropDownListExtendedFor(helper, expression, modelCollection, optionValue, htmlAttributes, selectTagAttributes,
@@ -175,16 +188,19 @@ namespace Inforoom2.Helpers
 			int selectedValueId, bool firstEmptyElementAdd = false)
 			where TModel : BaseModel
 		{
-			return DropDownListExtendedFor(helper, expression, modelCollection, optionValue, null, null, selectedValueId, firstEmptyElementAdd);
+			return DropDownListExtendedFor(helper, expression, modelCollection, optionValue, null, null, selectedValueId,
+				firstEmptyElementAdd);
 		}
 
 
-		public static HtmlString ValidationEditor(this HtmlHelper helper, ValidationRunner validation, object obj, string propertyName, object htmlAttributes, HtmlTag htmlTag, HtmlType htmlType, bool isValidated, object forcedValidationAttribute = null)
+		public static HtmlString ValidationEditor(this HtmlHelper helper, ValidationRunner validation, object obj,
+			string propertyName, object htmlAttributes, HtmlTag htmlTag, HtmlType htmlType, bool isValidated,
+			object forcedValidationAttribute = null)
 		{
-			var tag = Enum.GetName(typeof(HtmlTag), htmlTag);
+			var tag = Enum.GetName(typeof (HtmlTag), htmlTag);
 			string type = string.Empty;
 			if (htmlType != HtmlType.none) {
-				type = Enum.GetName(typeof(HtmlType), htmlType);
+				type = Enum.GetName(typeof (HtmlType), htmlType);
 			}
 
 
@@ -205,30 +221,39 @@ namespace Inforoom2.Helpers
 				case HtmlTag.input:
 					//Форматируем дату
 					if (value is DateTime)
-						value = (DateTime)value == DateTime.MinValue ? "" : ((DateTime)value).ToString("dd.MM.yy");
+						value = (DateTime) value == DateTime.MinValue ? "" : ((DateTime) value).ToString("dd.MM.yy");
 
-					html = string.Format("<{0} id=\"{1}\" {2} type=\"{3}\" name =\"{4}\" value=\"{5}\">", tag, id, attributes, type, name, value);
+					html = string.Format("<{0} id=\"{1}\" {2} type=\"{3}\" name =\"{4}\" value=\"{5}\">", tag, id, attributes, type,
+						name, value);
 					break;
 				case HtmlTag.textarea:
-					html = string.Format("<{0} id=\"{1}\" name =\"{3}\" {2} rows = \"6\" cols = \"75\">{4}</{5}>", tag, id, attributes, name, value, tag);
+					html = string.Format("<{0} id=\"{1}\" name =\"{3}\" {2} rows = \"6\" cols = \"75\">{4}</{5}>", tag, id, attributes,
+						name, value, tag);
 					break;
 				case HtmlTag.checkbox:
-					var val = (bool)value ? "checked" : "";
-					html = string.Format("<input type=\"checkbox\" id=\"{0}\" name =\"{2}\" {1} value=\"{3}\"/>", id, attributes, name, val);
+					var val = (bool) value ? "checked" : "";
+					html = string.Format("<input type=\"checkbox\" id=\"{0}\" name =\"{2}\" {1} value=\"{3}\"/>", id, attributes, name,
+						val);
 					break;
 				case HtmlTag.date:
 					//todo Использовать HTMLGenerator
-					html = string.Format("<div class=\"input-group\"><input id=\"{0}\" name =\"{2}\" {1} value=\"{3}\" class=\"form-control datepicker\" data-format=\"dd.mm.yyyy\" type=\"text\" /><div class=\"input-group-addon\"><a href=\"#\"><i class=\"entypo-calendar\"></i></a></div></div>", id, attributes, name, value);
+					html =
+						string.Format(
+							"<div class=\"input-group\"><input id=\"{0}\" name =\"{2}\" {1} value=\"{3}\" class=\"form-control datepicker\" data-format=\"dd.mm.yyyy\" type=\"text\" /><div class=\"input-group-addon\"><a href=\"#\"><i class=\"entypo-calendar\"></i></a></div></div>",
+							id, attributes, name, value);
 					break;
 				case HtmlTag.datetime:
-					var dobj = value != null ? (DateTime)value : SystemTime.Now();
+					var dobj = value != null ? (DateTime) value : SystemTime.Now();
 					if (dobj == DateTime.MinValue) {
 						dobj = SystemTime.Now();
 					}
 					var date = dobj.Date.ToString().Split(' ')[0];
 					var time = dobj.TimeOfDay;
 					var datetime = dobj;
-					html = string.Format("<div {1} id=\"{0}\"  class=\"date-and-time\"><input  name =\"{2}\" type=\"hidden\" value=\"{5}\" /><input {1} type=\"text\" data-format=\"dd.mm.yyyy\" value=\"{3}\" class=\"form-control datepicker\"><input {1} value=\"{4}\" type=\"text\" data-second-step=\"5\" data-minute-step=\"10\" data-show-meridian=\"false\" data-default-time=\"current\" data-template=\"dropdown\" class=\"form-control timepicker\"></div>", id, attributes, name, date, time, datetime);
+					html =
+						string.Format(
+							"<div {1} id=\"{0}\"  class=\"date-and-time\"><input  name =\"{2}\" type=\"hidden\" value=\"{5}\" /><input {1} type=\"text\" data-format=\"dd.mm.yyyy\" value=\"{3}\" class=\"form-control datepicker\"><input {1} value=\"{4}\" type=\"text\" data-second-step=\"5\" data-minute-step=\"10\" data-show-meridian=\"false\" data-default-time=\"current\" data-template=\"dropdown\" class=\"form-control timepicker\"></div>",
+							id, attributes, name, date, time, datetime);
 					break;
 				default:
 					throw new NotImplementedException("Html for tag is not implemented");
@@ -243,9 +268,12 @@ namespace Inforoom2.Helpers
 			return error;
 		}
 
-		public static HtmlString ValidationEditor(this HtmlHelper helper, ValidationRunner validation, object obj, string propertyName, object htmlAttributes, HtmlTag htmlTag, HtmlType htmlType, object forcedValidationAttribute = null)
+		public static HtmlString ValidationEditor(this HtmlHelper helper, ValidationRunner validation, object obj,
+			string propertyName, object htmlAttributes, HtmlTag htmlTag, HtmlType htmlType,
+			object forcedValidationAttribute = null)
 		{
-			return ValidationEditor(helper, validation, obj, propertyName, htmlAttributes, htmlTag, htmlType, false, forcedValidationAttribute);
+			return ValidationEditor(helper, validation, obj, propertyName, htmlAttributes, htmlTag, htmlType, false,
+				forcedValidationAttribute);
 		}
 
 		private static StringBuilder GetPropsValues(object obj)
@@ -291,27 +319,30 @@ namespace Inforoom2.Helpers
 
 		// Хелпер для Enum
 		public static MvcHtmlString DropDownEnumListFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper,
-			Expression<Func<TModel, TProperty>> expression, object htmlAttributes)
+			Expression<Func<TModel, TProperty>> expression, object htmlAttributes, bool valueAsInt = false)
 			where TModel : class
 		{
 			TProperty value = htmlHelper.ViewData.Model == null
 				? default(TProperty)
 				: expression.Compile()(htmlHelper.ViewData.Model);
-			string selected = value == null ? String.Empty : value.ToString();
-			return htmlHelper.DropDownListFor(expression, CreateSelectListForEnum(expression.ReturnType, selected),
+			string selected = value == null
+				? String.Empty
+				: (valueAsInt ? (Convert.ToInt32(value)).ToString() : value.ToString());
+			return htmlHelper.DropDownListFor(expression, CreateSelectListForEnum(expression.ReturnType, selected, valueAsInt),
 				htmlAttributes);
 		}
 
-		private static IEnumerable<SelectListItem> CreateSelectListForEnum(Type enumType, string selectedItem)
+		private static IEnumerable<SelectListItem> CreateSelectListForEnum(Type enumType, string selectedItem, bool valueAsInt = false)
 		{
 			return (from object item in Enum.GetValues(enumType)
 				let fi = enumType.GetField(item.ToString())
-				let attribute = fi.GetCustomAttributes(typeof(DisplayAttribute), true).FirstOrDefault()
-				let title = attribute == null ? item.GetDescription() : ((DisplayAttribute)attribute).Name
-				select new SelectListItem {
-					Value = item.ToString(),
+				let attribute = fi.GetCustomAttributes(typeof (DisplayAttribute), true).FirstOrDefault()
+				let title = attribute == null ? item.GetDescription() : ((DisplayAttribute) attribute).Name
+				select new SelectListItem
+				{
+					Value = valueAsInt ? (Convert.ToInt32(item)).ToString() : item.ToString(),
 					Text = title,
-					Selected = selectedItem == item.ToString()
+					Selected = selectedItem == (valueAsInt ? (Convert.ToInt32(item)).ToString() : item.ToString())
 				}).ToList();
 		}
 

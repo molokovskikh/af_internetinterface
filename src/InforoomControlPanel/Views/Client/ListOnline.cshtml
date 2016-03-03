@@ -15,7 +15,7 @@
 		leases = leases.Where(s => !leaseWithoutEndPointList.Any(d => d.Id == s.Id)).ToList();
 		leaseWithoutEndPointList.ForEach(s => { leases.Insert(0, s); });
 	}
-
+	string leaseListByIp = ViewBag.LeaseListByIp??"";
 }
 @section JavaScript{
 	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=1")"></script>
@@ -55,10 +55,8 @@
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-sm-2">Арендованный IP</div>
-				<div class="col-sm-3">
-					@pager.FormFilter(i => i.Endpoint.LeaseList.First().Ip, HtmlType.text, ComparsionType.Equal, new {Id = "ipEqualHidden", @class = "form-control hidden hid", @style = "min-width:280px; max-width:280px;"})
-
-					<input type="text" name="" value="" id="ipEqualShown" class="form-control" style="min-width: 280px; max-width: 280px;">
+				<div class="col-sm-3"> 
+					<input type="text" name="mfilter.filter.LeaseListByIp" value="@leaseListByIp" class="form-control" style="min-width: 280px; max-width: 280px;">
 				</div>
 			</div>
 		</div>
@@ -154,7 +152,7 @@
 						</a>
 					}
 				</td>
-				<td>@(lease.Switch != null ? lease.Switch.Ip.ToString() : "")</td>
+				<td>@(lease.Switch != null ? (lease.Switch.Ip != null ? lease.Switch.Ip.ToString() : "") : "")</td>
 				<td>@(lease.Port)</td>
 				<td>@(lease.Endpoint != null ? lease.Endpoint.PackageId != null ? lease.Endpoint.PackageId.ToString() : "" : "")</td>
 				<td>

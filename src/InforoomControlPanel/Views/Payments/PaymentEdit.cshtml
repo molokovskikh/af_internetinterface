@@ -1,0 +1,134 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+@{
+	ViewBag.Title = "Список документов";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	BankPayment bankPayment = ViewBag.BankPayment;
+	List<Recipient> recipientList = ViewBag.RecipientList;
+}
+<div class="panel panel-primary">
+	<div class="panel-body">
+		<div class="col-md-6">
+			<h3>Отправитель</h3>
+			<table class="table table-bordered table-striped datatable dataTable no-footer">
+				<tr>
+					<td>
+						<label class="control-label">Наименование</label>
+					</td>
+					<td>
+						<span>@bankPayment.PayerName</span></td>
+				</tr>
+				<tr>
+					<td>
+						<label class="control-label">ИНН</label>
+					</td>
+					<td>
+						<span>@bankPayment.PayerInn</span></td>
+				</tr>
+				<tr>
+					<td>
+						<label class="control-label">Номер счета</label>
+					</td>
+					<td>
+						<span>@bankPayment.PayerAccountCode</span></td>
+				</tr>
+			</table>
+			<h3>Банк отправителя</h3>
+			<table class="table table-bordered table-striped datatable dataTable no-footer">
+				<tr>
+					<td>
+						<label class="control-label">Наименование</label>
+					</td>
+					<td>
+						<span>@bankPayment.PayerBankDescription</span></td>
+				</tr>
+				<tr>
+					<td>
+						<label class="control-label">БИК</label>
+					</td>
+					<td>
+						<span>@bankPayment.PayerBankBic</span></td>
+				</tr>
+				<tr>
+					<td>
+						<label class="control-label">Номер счета</label>
+					</td>
+					<td>
+						<span>@bankPayment.PayerBankAccountCode</span> </td>
+				</tr>
+			</table> 
+			<table class="table table-bordered table-striped datatable dataTable no-footer">
+				<tr>
+					<td>
+						<strong class="control-label">Примечание</strong>
+					</td>
+					<td>
+						<span>@bankPayment.Comment</span></td>
+				</tr>
+			</table>
+			@*@using (@Html.BeginForm("PaymentEdit", "Payments", FormMethod.Post, new {@class = "form-horizontal form-groups-bordered"})) {*@
+				@Html.HiddenFor(model => bankPayment.Id)
+				<table class="table table-bordered table-striped datatable dataTable no-footer">
+					<tr>
+						<td>
+							<label class="control-label">Дата</label>
+						</td>
+						<td>
+							@Html.TextBoxFor(o => bankPayment.Payment.PaidOn, bankPayment.Payment.PaidOn.ToString("dd.MM.yyyy"),
+								new
+								{
+									@data_format = "dd.mm.yyyy",
+									@class = "form-control",
+									@data_provide = "datepicker-inline"
+								})
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">Сумма</label>
+						</td>
+						<td>@Html.TextBoxFor(model => bankPayment.Payment.Sum, new {@class = "form-control", Type = "numeric"})</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">№ документа</label>
+						</td>
+						<td>@Html.TextBoxFor(model => bankPayment.DocumentNumber, new {@class = "form-control", Type = "numeric"})</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">Получатель</label>
+						</td>
+						<td>@Html.DropDownListExtendedFor(i => bankPayment.Recipient, recipientList, obj => obj.Name, null, new {@class = "form-control"}, bankPayment.Recipient != null ? bankPayment.Recipient.Id.ToString() : "0")</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">Плательщик</label>
+						</td>
+						<td>@Html.TextBoxFor(model => bankPayment.Payer.Name, new {@class = "form-control", Type = "numeric"})</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">Примечание</label>
+						</td>
+						<td>@Html.TextBoxFor(model => bankPayment.OperatorComment, new {@class = "form-control", Type = "numeric"})</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label c-pointer" for="isToBeUpdated"><strong>Обновить ИНН плательщика</strong></label>
+						</td>
+						<td>@Html.CheckBoxFor(model => bankPayment.UpdatePayerInn, new {@id = "isToBeUpdated", @class = "c-pointer"})</td>
+					</tr>
+				</table>
+				@*<div class="form-group">
+					<button class="btn btn-green" type="submit">Сохранить</button>
+				</div>*@
+			@*}*@
+		</div>
+	</div>
+</div>
+
+<div class="form-group">
+	<button class="btn btn-blue" onclick=" location.href = '@Url.Action("PaymentList", "Payments")' ">Назад</button>
+</div>

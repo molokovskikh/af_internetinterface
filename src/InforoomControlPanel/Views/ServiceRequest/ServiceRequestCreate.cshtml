@@ -19,7 +19,6 @@
 						                                                                                         + (String.Format("UserInfo/{0}?filter.ClientCode=", serviceRequest.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
 						                                                                                         + serviceRequest.Client.Id)">
 							@serviceRequest.Client.Fullname</a>
-
 					</div>
 				</div>
 				<div class="form-group">
@@ -31,8 +30,17 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Телефон для связи</label>
 					<div class="col-sm-5">
-						@Html.TextBoxFor(model => serviceRequest.Phone, new {@class = "form-control"})
+						@Html.TextBoxFor(model => serviceRequest.Phone, new {@id="phoneNumberContact",@class = "form-control"})
 						@ViewBag.Validation.GetError(serviceRequest, "Phone")
+						<br/>
+						<strong class="c-pointer entypo-right-open-mini" phantomFor=".phantomBlock">все контакты</strong>
+						<div class="phantomBlock hid">
+							<ul class="contactList">
+								@foreach (var item in serviceRequest.Client.Contacts) {
+									<li><span class="contact c-pointer" onclick="changeValueFromHtml('#phoneNumberContact',this)">@item.ContactString</span></li>
+								}
+							</ul>
+						</div>
 					</div>
 				</div>
 				<div class="form-group">
