@@ -38,6 +38,9 @@ namespace Inforoom2.Models
 			return this.Client;
 		}
 
+		[ManyToOne(Column = "Registrator", Cascade = "save-update")]
+		public virtual Employee WhoRegistered { get; set; }
+
 		public virtual List<string> GetAppealFields()
 		{
 			return new List<string>()
@@ -45,7 +48,6 @@ namespace Inforoom2.Models
 				"ContactString",
 				"Comment",
 				"ContactName",
-				"Date",
 				"Type"
 			};
 		}

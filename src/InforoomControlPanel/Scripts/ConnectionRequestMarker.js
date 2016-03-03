@@ -43,8 +43,23 @@ $(function() {
 		}
 	});
 
-
+	checkJustNullMarker();
 });
+
+function checkJustNullMarker() {
+	var cookieValue = $.cookie("justNullMarker");
+	if (cookieValue != null && cookieValue == "true") {
+		if ($("#justNullMarker").is(":checked") == false) {
+			$("#justNullMarker").attr("checked", "checked");
+		}
+	} else {
+		$("#justNullMarker").removeAttr("checked");
+	}
+	$("#justNullMarker").click(function() {
+		var valueOfCookie = $("#justNullMarker").is(":checked") + "";
+		$.cookie("justNullMarker", valueOfCookie, { expires: 365, path: "/" });
+	});
+}
 
 function onMarkerListChange(_this) {
 	var marker = $(modelWindow + "[name='markerList'] option[value='" + $(_this).val() + "']");

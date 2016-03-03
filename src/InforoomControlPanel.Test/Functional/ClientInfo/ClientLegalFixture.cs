@@ -194,9 +194,22 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			//Проверки последствий смены:
 			CheckStatusChangeEffect(StatusType.Worked);
 
+
 			//Статус - Расторгнут
 			Css(blockName + "[name='clientStatus']")
 				.SelectByText((StatusType.Dissolved).GetDescription());
+			//Сохранение изменений
+			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
+			//Проверка на ошибку
+			AssertText("Не указана причина изменения статуса", blockName);
+			//Повтор
+			//Статус - Расторгнут
+			Css(blockName + "[name='clientStatus']")
+				.SelectByText((StatusType.Dissolved).GetDescription());
+			//Указываем причину изменения статуса
+			var inputObj = browser.FindElementByCssSelector(blockName + "textarea[name='clientStatusChangeComment']");
+			inputObj.Clear();
+			inputObj.SendKeys("причина изменения статуса");
 			//сохранение изменений
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
 			//редактируем блок
@@ -353,8 +366,10 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			var marker = 2;
 			var markerClone = 3;
 			//новый телефон
-			string phoneNumber = firstContact.ContactPhoneSplitFormat.Substring(1);
+			string phoneNumber = firstContact.ContactFormatString.Substring(1);
 			phoneNumber = marker + phoneNumber;
+			string phoneNumberToCheck = firstContact.ContactPhoneSplitFormat.Substring(1);
+			phoneNumberToCheck = marker + phoneNumberToCheck;
 
 			//Проверяем наличия текущего контакта пользователя на форме
 			AssertText(firstContact.ContactPhoneSplitFormat + " " + firstContact.Type.GetDescription(), blockName);
@@ -375,9 +390,11 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Assert.That(inputObjList.Count, Is.Not.EqualTo(0), "Статус не совпадает.");
 			}
 			//создаем новый номер и проверяем его отсутствие на форме
-			phoneNumber = firstContact.ContactPhoneSplitFormat.Substring(1);
+			phoneNumber = firstContact.ContactFormatString.Substring(1);
 			phoneNumber = markerClone + phoneNumber;
-			AssertNoText(phoneNumber, blockName);
+			phoneNumberToCheck = firstContact.ContactPhoneSplitFormat.Substring(1);
+			phoneNumberToCheck = markerClone + phoneNumberToCheck;
+			AssertNoText(phoneNumberToCheck, blockName);
 			//добавляем новый номер
 			browser.FindElementByCssSelector(blockName + ".btn.btn-blue").Click();
 			//Контакт
@@ -387,15 +404,16 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Css(blockName + "[name='client.Contacts[1].Type']").SelectByText((typeClone).GetDescription());
 			//сохраняем изменения
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
+			WaitAjax(10);
 			//проверяем наличие добавленного номера
-			AssertText(phoneNumber, blockName);
+			AssertText(phoneNumberToCheck, blockName);
 			//Удаляем контакт
 			browser.FindElementByCssSelector(blockName + ".btn.btn-blue.lockButton").Click();
 			browser.FindElementByCssSelector(blockName + "#contactDel1").Click();
 			//сохраняем изменения
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
 			//проверяем отсутствие удаленного номера
-			AssertNoText(phoneNumber);
+			AssertNoText(phoneNumberToCheck);
 		}
 
 		[Test, Description("Страница клиента. Юр. лицо. Добавление обращения клиента")]
@@ -869,7 +887,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			inputObj.SendKeys(newAddress); 
 			//сохраняем изменения
 			browser.FindElementByCssSelector(blockModelName + ".btn.btn-success").Click();
-
+			WaitForText("Номер лицевого счета", 10);
 			DbSession.Refresh(CurrentClient);
 			Assert.That(CurrentClient.LegalClientOrders.Where(s => s.ConnectionAddress == newAddress).ToList().Count, Is.EqualTo(1));
 		}

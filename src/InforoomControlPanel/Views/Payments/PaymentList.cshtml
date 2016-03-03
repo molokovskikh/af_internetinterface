@@ -112,7 +112,7 @@
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-sm-2">Плательщик</div>
-				<div class="col-sm-3">@pager.FormFilter(i => i.Payer._Name, HtmlType.text, ComparsionType.Like, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.PayerName, HtmlType.text, ComparsionType.Like, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
 			</div>
 		</div>
 		<div class="panel-body">
@@ -164,7 +164,7 @@
 						</a>
 					</th>
 					<th class="sorting" tabindex="0" aria-controls="table-2">
-						<a href="@pager.OrderBy(s => s.Payer.Name)">
+						<a href="@pager.OrderBy(s => s.PayerName)">
 							<span>Плательщик</span>
 						</a>
 					</th>
@@ -202,7 +202,12 @@
 						</td>
 						<td>@item.Sum</td>
 						<td>@(item.RegistredOn )</td>
-						<td></td>
+						<td>
+							
+							<a href="@Url.Action("PaymentEdit", new {@id = item.Id})" class="btn btn-green">редактировать</a>
+
+							<a href="@Url.Action("PaymentRemove", new {@id = item.Id})" class="btn btn-red">удалить</a>
+						</td>
 					</tr>
 			}
 			</tbody>

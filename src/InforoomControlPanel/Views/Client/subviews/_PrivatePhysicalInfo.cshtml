@@ -7,7 +7,7 @@
 	Layout = "";
 	Client client = Model;
 	List<Status> statusList = ViewBag.StatusList;
-	string redmineTaskComment = ViewBag.RedmineTaskComment ?? "";
+	string clientStatusChangeComment = ViewBag.clientStatusChangeComment ?? "";
 	ClientEndpoint endpoint = client.Endpoints.FirstOrDefault();
 	var lease = endpoint != null ? endpoint.LeaseList.LastOrDefault() : null;
 }
@@ -191,11 +191,6 @@
 					}
 				</td>
 			</tr>
-			<tr>
-				<td>Проверен</td>
-				<td>
-					<span>@(client.PhysicalClient.Checked ? "да" : "нет")</span></td>
-			</tr>
 			</tbody>
 		</table>
 	</div>
@@ -239,6 +234,13 @@
 				</td>
 			</tr>
 			<tr>
+					<td style="max-width: 60px;">Комментарий к изменению статуса</td>
+					<td>
+						@Html.TextAreaFor(o => clientStatusChangeComment, new { @Name = "clientStatusChangeComment", @class = "form-control max-width200" })
+						@ViewBag.Validation.GetError(client, "clientStatusChangeComment")
+					</td>
+			</tr>
+			<tr>
 				<td style="max-width: 60px;">
 					<label class="c-pointer" for="sendSmsNotification">СМС рассылка</label>
 				</td>
@@ -250,22 +252,6 @@
 				<td style="max-width: 60px;">Задача в Redmine для клиента</td>
 				<td>
 					@Html.TextBoxFor(o => client.RedmineTask, new {@class = "form-control"})
-					@ViewBag.Validation.GetError(client, "redmineTaskComment")
-				</td>
-				</td>
-			</tr>
-			<tr>
-				<td style="max-width: 60px;">Комментарий к задаче</td>
-				<td>
-					@Html.TextAreaFor(o => redmineTaskComment, new {@Name = "redmineTaskComment", @class = "form-control max-width200"})
-				</td>
-			</tr>
-			<tr>
-				<td style="max-width: 60px;">
-					<label class="c-pointer" for="clientToBeChecked">Проверен</label>
-				</td>
-				<td>
-					@Html.CheckBoxFor(o => client.PhysicalClient.Checked, new {@class = "c-pointer", id = "clientToBeChecked"})
 				</td>
 			</tr>
 			</tbody>

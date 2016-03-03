@@ -8,7 +8,8 @@ namespace Inforoom2.validators
 {
 	public class ValidatorPhone : CustomValidator
 	{
-		private static readonly Regex CheckPhoneFormat = new Regex(@"^(\d{3})-(\d{7})(\*\d{3})?$");
+		private static readonly Regex CheckPhoneFormat1 = new Regex(@"^(\d{3})-(\d{7})(\*\d{3})?$");
+		private static readonly Regex CheckPhoneFormat2 = new Regex(@"^(\d{3})(\d{7})(\*\d{3})?$");
 
 		protected override void Run(object value)
 		{
@@ -18,7 +19,7 @@ namespace Inforoom2.validators
 				if (string.IsNullOrEmpty(telephone)) {
 					AddError("Введите номер телефона");
 				}
-				if (!CheckPhoneFormat.Match(telephone).Success) {
+				if (!CheckPhoneFormat1.Match(telephone).Success && !CheckPhoneFormat2.Match(telephone).Success) {
 					AddError("Мобильный телефон указан неверно (необходим формат xxx-xxxxxxx)");
 				}
 			}

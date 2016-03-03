@@ -189,13 +189,59 @@ function changeVisibilityUpdateEach() {
 }
 
 
+function clientContactValidation() {
+	var contactsList = $("#emptyBlock_contacts").find('[name*=".ContactFormatString"].enabled');
+	var contactsListType = $("#emptyBlock_contacts").find('[name*=".Type"].enabled');
+	var contactsListAjax = new Array();
+	var contactsListTypeAjax = new Array();
+	if (contactsListType.length !== contactsList.length) {
+		console.log("Ошибка в формировании списка контактов для валидирования.");
+		return;
+	}
+	for (var i = 0; i < contactsList.length; i++) {
+		contactsListAjax.push(String($(contactsList[i]).val()));
+		contactsListTypeAjax.push(parseInt($(contactsListType[i]).val()));
+	}
+	$("#ContactValidationMessage").html("");
+	$("#ContactValidationMessage").removeClass("error");
+	if (contactsListAjax.length > 0) {
+		$.ajax({
+			url: cli.getParam("baseurl") + "Client/GetContactValidation",
+			type: 'POST',
+			dataType: "json",
+			data: JSON.stringify({ "contacts": contactsListAjax, "types": contactsListTypeAjax }),
+			contentType: 'application/json; charset=utf-8',
+			success: function(data) {
+				if (data != "") {
+					$("#ContactValidationMessage").addClass("error");
+					$("#ContactValidationMessage").html(data);
+				} else {
+					$("#ClientContactsEditorForm").submit();
+				}
+			},
+			error: function(data) {
+				$("#clientReciverMessage").html("Ответ не был получен. Контакты не проверены.");
+			},
+			statusCode: {
+				404: function() {
+					$("#clientReciverMessage").html("Ответ не был получен. Контакты не проверены.");
+				}
+			}
+		});
+	} else {
+		$("#clientReciverMessage").html("");
+	}
+}
+
 function clientContactDelete(button) {
 	var trList = $("#emptyBlock_contacts table tr");
 	for (var i = 0; i < trList.length; i++) {
 		var delItem = $(trList[i]).find("#" + $(button).attr("id"));
 		if (delItem.length > 0) {
-			$(trList[i]).find('[name*="ContactFormatString"]').val("");
-			$(trList[i]).addClass("hid");
+			$(trList[i]).addClass("hid"); 
+			$(trList[i]).find('[name*=".ContactFormatString"]').val("");
+			$(trList[i]).find('[name*=".ContactFormatString"]').removeClass("enabled");
+			$(trList[i]).find('[name*=".Type"]').removeClass("enabled");
 			break;
 		}
 	}
@@ -222,6 +268,8 @@ function clientContactCopy() {
 		$(lastRow).find('.btn.btn-red').attr("id", "contactDel" + indexNum);
 		$(lastRow).find('[name*="ContactFormatString"]').attr("name", "client.Contacts[" + indexNum + "].ContactFormatString").removeAttr("id");
 		$(lastRow).find('[name*="Type"]').attr("name", "client.Contacts[" + indexNum + "].Type").removeAttr("id");
+		$(lastRow).find('[name*="Client"]').attr("name", "client.Contacts[" + indexNum + "].Client.Id").removeAttr("id");
+		$(lastRow).find('[name*=".Date"]').attr("name", "client.Contacts[" + indexNum + "].Date").removeAttr("id");
 		$(lastRow).find('[name*="ContactName"]').attr("name", "client.Contacts[" + indexNum + "].ContactName").removeAttr("id");
 
 		$(lastRow).removeClass("hid");

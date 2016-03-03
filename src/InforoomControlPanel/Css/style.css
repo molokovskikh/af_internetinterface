@@ -24,6 +24,9 @@
  body { color: #424242; }
  body a{ color: #10A257;font-weight: bold; }
  .max-width200{    max-width: 400px;}
+ .contactList { padding-left: 20px;margin-top: 4px;} 
+ .contactList .contact { margin-top: 3px;display: block;}
+ .contactList .contact:hover { font-weight: bold;}
  .hiddenOverflow {display: block;overflow: hidden;}
  .emptyBlock .orderListBorder .order h5:first-of-type{    margin-bottom: 13px;}
  .border-right-white tr td:last-child{border-right-color: #fff;}

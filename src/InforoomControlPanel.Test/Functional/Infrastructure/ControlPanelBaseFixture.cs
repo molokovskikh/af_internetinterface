@@ -38,6 +38,7 @@ namespace InforoomControlPanel.Test.Functional.infrastructure
 		[TearDown]
 		public void ControlPanelTearDown()
 		{
+			WaitForVisibleCss("#logoutLink");
 			Css("#logoutLink").Click();
 		}
 		public void LoginForAdmin()

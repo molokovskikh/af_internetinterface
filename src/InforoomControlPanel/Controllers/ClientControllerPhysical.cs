@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -90,7 +91,8 @@ namespace InforoomControlPanel.Controllers
 				//	(clientList.First().PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"), clientList.First().Id);
 				//return Redirect(urlToRedirect);
 
-				return RedirectToAction((clientList.First().PhysicalClient != null ? "InfoPhysical" : "InfoLegal"), "Client", new {clientList.First().Id});
+				return RedirectToAction((clientList.First().PhysicalClient != null ? "InfoPhysical" : "InfoLegal"), "Client",
+					new {clientList.First().Id});
 			}
 			return View("List");
 		}
@@ -106,7 +108,7 @@ namespace InforoomControlPanel.Controllers
 		/// <param name="clientStatus">статус клиента</param>
 		/// <returns></returns>
 		public ActionResult InfoPhysical(int id, object clientModelItem = null, string subViewName = "", int appealType = 0,
-			int writeOffState = 0, int clientStatus = 0, string redmineTaskComment = "")
+			int writeOffState = 0, int clientStatus = 0, string clientStatusChangeComment = "")
 		{
 			Client client;
 			//--------------------------------------------------------------------------------------| Обработка представлений (редактирование клиента)
@@ -116,31 +118,34 @@ namespace InforoomControlPanel.Controllers
 				var clientModel = (Client) clientModelItem;
 				//подпредставление "контакты"
 				if (subViewName == "_Contacts") {
-					// удаление неиспользованного контакта *иначе в БД лишняя запись  
-					clientModel.Contacts.RemoveEach(s => s.ContactString == string.Empty);
-					clientModel.Contacts.Each(s => s.ContactString = s.ContactPhoneSplitFormat);
+					var listForAppeal = new List<string>();
+					//такая структора из-за работы байндера (не менять, а если менять, то колностью работу со списком контактов)
+					//удаление контактов
+					var contactsToRemove = clientModel.Contacts.Where(s => s.ContactString == string.Empty).ToList();
+					foreach (var item in contactsToRemove) {
+						clientModel.Contacts.Remove(item);
+						DbSession.Delete(item);
+					}
+					//обновление контактов, задание нужных полей при добавлении
+					clientModel.Contacts.Each(s =>
+					{
+						s.Client = clientModel;
+						s.ContactString = s.ContactFormatString;
+						if (s.Date == DateTime.MinValue) {
+							s.Date = SystemTime.Now();
+						}
+						if (s.WhoRegistered == null) {
+							s.WhoRegistered = GetCurrentEmployee();
+							listForAppeal.Add(s.ContactFormatString);
+						}
+					});
+					if (listForAppeal.Count != 0) {
+						clientModel.Appeals.Add(new Appeal($"Обновлены контактные данные. Добавлены: {string.Join(",", listForAppeal)}",
+							clientModel, AppealType.System, GetCurrentEmployee()));
+					}
 				}
 				// проводим валидацию модели клиента
 				var errors = ValidationRunner.ValidateDeep(clientModel);
-
-				if (!string.IsNullOrEmpty(redmineTaskComment)) {
-					if (!string.IsNullOrEmpty(clientModel.RedmineTask)) {
-						var newAppeal =
-							new Appeal(
-								redmineTaskComment +
-								String.Format(" <a target='_blank' href='http://redmine.analit.net/issues/{0}'>#{0}</a>",
-									clientModel.RedmineTask), clientModel,
-								AppealType.User)
-							{Employee = GetCurrentEmployee()};
-						DbSession.Save(newAppeal);
-					}
-					else {
-						errors.Add(new InvalidValue("Не указана задача в Redmine", typeof (Status), "redmineTaskComment", clientModel,
-							clientModel, new List<object>()));
-						ErrorMessage("Не указана задача в Redmine");
-						ViewBag.RedmineTaskComment = redmineTaskComment;
-					}
-				}
 
 				//если появились ошибки в любом из подпредставлений, кроме контактов, удаляем их
 				if (subViewName != "_Contacts") {
@@ -154,6 +159,15 @@ namespace InforoomControlPanel.Controllers
 					errors = ValidationRunner.Validate(clientModel.PhysicalClient);
 				}
 
+				if (string.IsNullOrEmpty(clientStatusChangeComment) && clientStatus != 0 &&
+				    clientStatus != (int) clientModel.Status.Type
+				    && clientStatus == (int) StatusType.Dissolved) {
+					errors.Add(new InvalidValue("Не указана причина изменения статуса", typeof (Status), "clientStatusChangeComment",
+						clientModel,
+						clientModel, new List<object>()));
+					ErrorMessage("Не указана причина изменения статуса");
+					ViewBag.clientStatusChangeComment = clientStatusChangeComment;
+				}
 				//обновлдение статуса клиента, если он отличается от текущего
 				if (clientStatus != 0 && clientStatus != (int) clientModel.Status.Type && errors.Length == 0) {
 					var newStatus = DbSession.Query<Status>().FirstOrDefault(s => s.Id == clientStatus);
@@ -161,6 +175,10 @@ namespace InforoomControlPanel.Controllers
 					if (!string.IsNullOrEmpty(messageAlert)) {
 						ErrorMessage(messageAlert);
 						errors.Add(new InvalidValue("", typeof (Status), "Name", newStatus, newStatus, new List<object>()));
+					}
+					else {
+						clientModel.Appeals.Add(new Appeal($"Комментарий к изменению статуса: {clientStatusChangeComment}",
+							clientModel, AppealType.System, GetCurrentEmployee()));
 					}
 				}
 				//если нет ошибок
@@ -319,7 +337,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		[HttpPost]
 		public ActionResult InfoPhysical([EntityBinder] Client client, string subViewName, string newUserAppeal = "",
-			int writeOffState = 0, int clientStatus = 0, string redmineTaskComment = "")
+			int writeOffState = 0, int clientStatus = 0, string clientStatusChangeComment = "")
 		{
 			//создание нового оповещения
 			if (!string.IsNullOrEmpty(newUserAppeal)) {
@@ -329,7 +347,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			//обработка модели клиента, сохранение, передача необходимых данных на форму.
 			return InfoPhysical(client.Id, clientModelItem: client, subViewName: subViewName, writeOffState: writeOffState,
-				clientStatus: clientStatus, redmineTaskComment: redmineTaskComment);
+				clientStatus: clientStatus, clientStatusChangeComment: clientStatusChangeComment);
 		}
 
 
@@ -744,8 +762,39 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult ListOnline(bool openInANewTab = true)
 		{
 			var packageSpeedList = DbSession.Query<PackageSpeed>().ToList();
+
+
 			var leaseWithoutEndPointList = DbSession.Query<Lease>().Where(s => s.Endpoint == null).ToList();
 			var pager = new InforoomModelFilter<Lease>(this);
+
+			var ipLease = pager.GetParam("filter.LeaseListByIp");
+			pager.ParamDelete("filter.LeaseListByIp");
+			if (!string.IsNullOrEmpty(ipLease)) {
+				IPAddress ipaddressModel = null;
+				if (ipLease.Count(s => s == '.') < 3 || ipLease.Last() == '.') {
+					if (ipLease.Last() == '.') {
+						ipLease += "0";
+					}
+					while (ipLease.Count(s => s == '.') < 3) {
+						ipLease += ".0";
+					}
+					IPAddress.TryParse(ipLease, out ipaddressModel);
+					if (ipaddressModel != null) {
+						pager.ParamDelete("filter.Equal.Endpoint.LeaseList.First().Ip");
+						pager.ParamDelete("filter.GreaterOrEqueal.Endpoint.LeaseList.First().Ip");
+						pager.ParamSet("filter.GreaterOrEqueal.Endpoint.LeaseList.First().Ip", ipaddressModel.ToString());
+						ViewBag.LeaseListByIp = ipLease ?? "";
+					}
+				}
+				else {
+					IPAddress.TryParse(ipLease, out ipaddressModel);
+					if (ipaddressModel != null) {
+						pager.ParamSet("filter.Equal.Endpoint.LeaseList.First().Ip", ipaddressModel.ToString());
+						ViewBag.LeaseListByIp = ipLease ?? "";
+					}
+				}
+			}
+
 			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
 				pager.SetOrderBy("Id", OrderingDirection.Desc);
 			var cr = pager.GetCriteria();
@@ -1158,7 +1207,7 @@ namespace InforoomControlPanel.Controllers
 
 				var str = ConfigHelper.GetParam("PaymentNotificationMail");
 				if (str == null)
-					throw new Exception("Параметр приложения SaleUpdateMail должен быть задан в config");
+					throw new Exception("Параметр приложения PaymentNotificationMail должен быть задан в config");
 				var appealText = string.Format(@"
 Отменен платеж №{0}
 Клиент: №{1} - {2}
@@ -1377,6 +1426,26 @@ namespace InforoomControlPanel.Controllers
 		{
 			var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Endpoint.Id == id);
 			return Json(lease != null && lease.Ip != null ? lease.Ip.ToString() : "", JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// валидация контактов клиента
+		/// </summary>
+		[HttpPost]
+		public JsonResult GetContactValidation(string[] contacts, int[] types)
+		{
+			if (contacts == null || types == null || contacts.Length != types.Length) {
+				return Json("Ошибка в отправке данных", JsonRequestBehavior.AllowGet);
+			}
+			for (int i = 0; i < contacts.Length; i++) {
+				var contactForValidation = new Contact() {ContactString = contacts[i], Type = (ContactType) types[i]};
+				var errors = ValidationRunner.ForcedValidationByAttribute<Contact>(contactForValidation, s => s.ContactString,
+					new Inforoom2.validators.ValidatorContacts());
+				if (errors.Length != 0) {
+					return Json($"{errors[0].Message} '{errors[0].Value}' ", JsonRequestBehavior.AllowGet);
+				}
+			}
+			return Json("", JsonRequestBehavior.AllowGet);
 		}
 	}
 }

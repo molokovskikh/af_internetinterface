@@ -10,7 +10,7 @@
 	ServiceRequestComment commentToAdd = ViewBag.ServiceRequestComment ?? new ServiceRequestComment();
 	ServiceRequestComment reasonForFree = ViewBag.ReasonForFree ?? new ServiceRequestComment();
 	bool reasonForFreeShown = ViewBag.ReasonForFreeShown;
-	bool updateRequest = ViewBag.UpdateRequest ?? false;
+	bool updateRequest = ViewBag.UpdateRequest ?? true;
 	ServiceRequestStatus currentStatus = ViewBag.СurrentStatus;
 }
 <div class="panel panel-primary">
@@ -23,10 +23,7 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Клиент</label>
 					<div class="col-sm-5">
-						<a @(serviceRequest.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
-						                                                                                         + (String.Format("UserInfo/{0}?filter.ClientCode=", serviceRequest.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-						                                                                                         + serviceRequest.Client.Id)">
-							@serviceRequest.Client.Fullname</a>
+						<a target="_blank" href="@Url.Action(serviceRequest.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {serviceRequest.Client.Id})" class="idColumn @(serviceRequest.Client.PhysicalClient != null ? "linkPhysical" : "linkLegal")"> @serviceRequest.Client.Fullname</a>				 
 
 					</div>
 				</div>
@@ -47,6 +44,16 @@
 					<div class="col-sm-5">
 						@Html.TextBoxFor(model => serviceRequest.Phone, new {@class = "form-control"})
 						@ViewBag.Validation.GetError(serviceRequest, "Phone")
+						<br/>
+						<strong class="c-pointer entypo-right-open-mini" phantomFor=".phantomBlock">все контакты</strong>
+						<div class="phantomBlock hid">
+							<ul class="contactList">
+								@foreach (var item in serviceRequest.Client.Contacts) {
+									<li>
+										<span class="contact c-pointer" onclick="changeValueFromHtml('#serviceRequest_Phone', this)">@item.ContactString</span></li>
+								}
+							</ul>
+						</div>
 					</div>
 				</div>
 				if (serviceRequest.BlockClientAndWriteOffs) {
@@ -136,10 +143,20 @@
 			<div style="border-bottom: 2px dashed #D0D0D0; padding-top: 18px; margin-bottom: 36px;"></div>
 			@using (@Html.BeginForm("AddComment", "ServiceRequest", FormMethod.Post)) {
 				@Html.HiddenFor(model => serviceRequest.Id)
-				<div class="form-group">
-					<label class="col-sm-3 control-label bold">Сообщение</label>
+				<div class="form-group" style="min-width:560px">
 					<div class="col-sm-5">
-						@Html.TextAreaFor(model => commentToAdd.Comment, new {@class = "form-control", @Name = "comment.Comment", rows = "6"})
+						<ul style="list-style: none;">
+							<li>
+								<label class="control-label bold">Сообщение</label>
+							</li>
+							<li>
+								<label class="control-label bold c-pointer" style="float: left;width: 172px;" for="updateDate">Изменить дату обновления сервисной заявки</label>
+								@Html.CheckBoxFor(model => updateRequest, new {@id = "updateDate", @class = "c-pointer", @style = "float: left;" })
+							</li>
+						</ul>
+					</div>
+					<div class="col-sm-5">
+						@Html.TextAreaFor(model => commentToAdd.Comment, new {@class = "form-control", @Name = "comment.Comment", rows = "6", style = "min-width:150px;"})
 						@ViewBag.Validation.GetError(commentToAdd, "Comment")
 					</div>
 

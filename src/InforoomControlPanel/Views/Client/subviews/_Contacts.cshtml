@@ -13,7 +13,7 @@
 	}
 }
 <div class="panel panel-default blockJsLockControll">
-	@using (@Html.BeginForm(formClientType, "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
+	@using (@Html.BeginForm(formClientType, "Client", null, FormMethod.Post, new {@id = "ClientContactsEditorForm", @class = "form-horizontal form-groups-bordered"})) {
 		@Html.HiddenFor(o => client.Id)
 		<input id="subViewName" name="subViewName" type="hidden" value="_Contacts">
 		@* Блок пустой *@
@@ -66,23 +66,23 @@
 				<a class="btn btn-red" id="contactDel2" onclick="clientContactDelete(this)">X</a>
 			</td>
 			<td>
-				<input data-val="true" data-val-number="The field Id must be a number." data-val-required="Требуется поле Id." id="client_Contacts_2__Id" name="client.Contacts[0].Id" type="hidden" value="51685">
-				<input class="form-control" id="client_Contacts_2__ContactFormatString" name="client.Contacts[0].ContactFormatString" type="text" value="">
+				<input data-val="true" data-val-number="The field Id must be a number." data-val-required="Требуется поле Id." id="client_Contacts_2__Id" name="client.Contacts[0].Id" type="hidden" value="">
+				<input class="form-control enabled" id="client_Contacts_2__ContactFormatString" name="client.Contacts[0].ContactFormatString" type="text" value="">
 				<div class="success">
 					<div class="icon"></div>
 				</div>
 			</td>
 			<td>
-				<select class="form-control" data-val="true" data-val-required="Требуется поле Type." id="client_Contacts_2__Type" name="client.Contacts[0].Type">
-					<option selected="selected" value="MobilePhone">Мобильный номер</option>
-					<option value="HousePhone">Домашний номер</option>
-					<option value="ConnectedPhone">Связанный номер</option>
-					<option value="Email">EMail</option>
-					<option value="FinancePhone">Финансовые вопросы</option>
-					<option value="HeadPhone">Главный телефон</option>
-					<option value="SmsSending">Телефон для смс рассылки</option>
-					<option value="TechPhone">техническая информация</option>
-					<option value="ActEmail">EMail для рассылки счетов/актов</option>
+				<select class="form-control enabled" data-val="true" data-val-required="Требуется поле Type." id="client_Contacts_2__Type" name="client.Contacts[0].Type">
+					<option selected="selected" value="@((int)ContactType.MobilePhone)">Мобильный номер</option>
+					<option value="@((int)ContactType.HousePhone)">Домашний номер</option>
+					<option value="@((int)ContactType.ConnectedPhone)">Связанный номер</option>
+					<option value="@((int)ContactType.Email)">EMail</option>
+					<option value="@((int)ContactType.FinancePhone)">Финансовые вопросы</option>
+					<option value="@((int)ContactType.HeadPhone)">Главный телефон</option>
+					<option value="@((int)ContactType.SmsSending)">Телефон для смс рассылки</option>
+					<option value="@((int)ContactType.TechPhone)">техническая информация</option>
+					<option value="@((int)ContactType.ActEmail)">EMail для рассылки счетов/актов</option>
 				</select>
 				<div class="success">
 					<div class="icon"></div>
@@ -128,11 +128,13 @@
 						</td>
 						<td>
 							@Html.HiddenFor(o => client.Contacts[i].Id)
-							@Html.TextBoxFor(o => client.Contacts[i].ContactFormatString, new {@class = "form-control"})
+							@Html.HiddenFor(o => client.Contacts[i].Date)
+							@Html.HiddenFor(o => client.Contacts[i].Client.Id)
+							@Html.TextBoxFor(o => client.Contacts[i].ContactFormatString, new {@class = "form-control enabled", @required = "required"})
 							@ViewBag.Validation.GetError(client.Contacts, "ContactFormatString")
 						</td>
 						<td>
-							@Html.DropDownEnumListFor(o => client.Contacts[i].Type, new {@class = "form-control"})
+							@Html.DropDownEnumListFor(o => client.Contacts[i].Type, new {@class = "form-control enabled" },true)
 							@ViewBag.Validation.GetError(client.Contacts, "Type")
 						</td>
 						<td>
@@ -143,11 +145,14 @@
 				}
 				</tbody>
 			</table>
-			@ViewBag.Validation.GetError(client, "Contacts")
+			<div id="ContactValidationMessage">
+				@ViewBag.Validation.GetError(client, "Contacts")
+			</div>
+			
 		</div>
 		<div class="panel-body" style="padding-top: 0px;">
 			<div class="col">
-				<button type="submit" class="btn btn-green">Сохранить</button>
+				<button type="button" onclick="clientContactValidation()" class="btn btn-green">Сохранить</button>
 				<a class="btn btn-blue" onclick="clientContactCopy()">Добавить</a>
 				<a class="btn btn-red unlockButton">Отмена</a>
 			</div>

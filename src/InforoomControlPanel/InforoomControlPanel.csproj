@@ -2031,6 +2031,9 @@
     <Content Include="Views\Payments\PaymentList.cshtml" />
     <Content Include="Views\Payments\PaymentCreate.cshtml" />
     <Content Include="Views\Payments\PaymentProcess.cshtml" />
+    <Content Include="Views\Payments\PaymentEdit.cshtml" />
+    <Content Include="Views\Payments\_PaymentCancel.cshtml" />
+    <Content Include="Views\Payments\_PaymentCreate.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <Content Include="Views\Switch\SwitchCreate.cshtml" />

@@ -10,6 +10,7 @@ using Common.Tools;
 using Common.Tools.Calendar;
 using Inforoom2.Components;
 using Inforoom2.Controllers;
+using Inforoom2.Helpers;
 using Inforoom2.Models;
 using InforoomControlPanel.ReportTemplates;
 using NHibernate.Linq;
@@ -37,17 +38,15 @@ namespace InforoomControlPanel.Controllers
 
 			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
 				pager.SetOrderBy("PayedOn", OrderingDirection.Desc);
-			
+
 			var selectedMonth = pager.GetParam("selectedMonth");
 			var selectedYear = pager.GetParam("selectedYear");
 			pager.ParamDelete("selectedYear");
 			pager.ParamDelete("selectedMonth");
 			DateTime selectedDate = DateTime.MinValue;
-			if (!string.IsNullOrEmpty(selectedMonth) && !string.IsNullOrEmpty(selectedYear))
-			{
+			if (!string.IsNullOrEmpty(selectedMonth) && !string.IsNullOrEmpty(selectedYear)) {
 				DateTime.TryParse($"01.{selectedMonth}.{selectedYear}", out selectedDate);
-				if (selectedDate != DateTime.MinValue)
-				{
+				if (selectedDate != DateTime.MinValue) {
 					pager.ParamDelete("filter.GreaterOrEqueal.PayedOn");
 					pager.ParamDelete("filter.LowerOrEqual.PayedOn");
 					pager.ParamSet("filter.GreaterOrEqueal.PayedOn", selectedDate.Date.FirstDayOfMonth().ToString("dd.MM.yyyy"));
@@ -56,8 +55,7 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			if (string.IsNullOrEmpty(pager.GetParam("filter.GreaterOrEqueal.PayedOn")) &&
-				string.IsNullOrEmpty(pager.GetParam("filter.LowerOrEqual.PayedOn")))
-			{
+			    string.IsNullOrEmpty(pager.GetParam("filter.LowerOrEqual.PayedOn"))) {
 				pager.ParamDelete("filter.GreaterOrEqueal.PayedOn");
 				pager.ParamDelete("filter.LowerOrEqual.PayedOn");
 				pager.ParamSet("filter.GreaterOrEqueal.PayedOn", SystemTime.Now().Date.FirstDayOfMonth().ToString("dd.MM.yyyy"));
@@ -79,7 +77,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.CurrentYear = dateB.Year;
 			ViewBag.CurrentMonth = dateB.Month;
 			ViewBag.pager = pager;
-            return View();
+			return View();
 		}
 
 		/// <summary>
@@ -91,66 +89,120 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		/// <summary>
+		/// Создание счета
+		/// </summary>
+		[HttpPost]
+		public ActionResult PaymentCreate([EntityBinder] BankPayment payment)
+		{
+			var errors = ValidationRunner.Validate(payment);
+			if (errors.Length > 0) {
+				return View();
+			}
+			var newPayment = new Payment()
+			{
+				Client = payment.Payer,
+				Sum = payment.Sum,
+				RecievedOn = payment.RegistredOn,
+				PaidOn = payment.PayedOn,
+				Employee = GetCurrentEmployee(),
+				BankPayment = payment
+			};
+			errors = ValidationRunner.Validate(newPayment);
+			if (errors.Length > 0) {
+				return View();
+			}
+			payment.RegisterPayment();
+			DbSession.Save(payment);
+			DbSession.Save(newPayment);
+			SuccessMessage($"Платеж от '{payment.Id}' успешно добавлен!");
+			return RedirectToAction("PaymentList"); 
+		}
+
+		/// <summary>
+		/// Создание счета
+		/// </summary>
+		public ActionResult PaymentEdit(int id)
+		{
+			ViewBag.BankPayment = DbSession.Query<BankPayment>().FirstOrDefault(s => s.Id == id);
+			ViewBag.RecipientList = DbSession.Query<Recipient>().OrderBy(s => s.Name).ToList();
+
+			return View();
+		}
+
+		private void Cancel(Payment payment, string comment, Employee employee)
+		{
+			if (!string.IsNullOrEmpty(comment)) {
+				var message = payment.Cancel(comment, employee);
+				DbSession.Delete(payment);
+				DbSession.Save(message);
+				SuccessMessage($"Платеж {payment.Id} успешно отменен!");
+				var str = ConfigHelper.GetParam("PaymentNotificationMail");
+				if (str == null)
+					throw new Exception("Параметр приложения PaymentNotificationMail должен быть задан в config");
+				var appealText = string.Format(@"
+Отменен платеж №{0}
+Клиент: №{1} - {2}
+Сумма: {3:C}
+Оператор: {4}
+Комментарий: {5}
+", payment.Id, payment.Client.Id, payment.Client.Name, payment.Sum, GetCurrentEmployee().Name, comment);
+				var emails = str.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+#if DEBUG
+#else
+						EmailSender.SendEmail(emails, "Уведомление об отмене платежа", appealText);
+#endif
+			}
+		}
+
+		/// <summary>
+		/// Создание счета
+		/// </summary>
+		public ActionResult PaymentRemove(int id)
+		{
+			var paymentToDelete = DbSession.Query<BankPayment>().FirstOrDefault(s => s.Id == id);
+			if (paymentToDelete == null) {
+				SuccessMessage($"Платежа с идентификатором '{id}' не существует.");
+			}
+			if (paymentToDelete.Payment != null) {
+				Cancel(paymentToDelete.Payment,
+					string.Format("Был удален банковский платеж от {0} на сумму {1}. Комментарий: {2}",
+						paymentToDelete.PayedOn.ToShortDateString(), paymentToDelete.Sum, paymentToDelete.Comment), GetCurrentEmployee());
+			}
+			DbSession.Delete(paymentToDelete);
+			SuccessMessage($"Платеж от '{paymentToDelete.PayerName}' успешно удален");
+			return RedirectToAction("PaymentList");
+		}
+
+		/// <summary>
+		/// Создание счета
+		/// </summary>
+		[HttpPost]
+		public ActionResult PaymentEdit([EntityBinder] BankPayment bankPayment, bool paymentUpdatePayerInn)
+		{
+			ViewBag.BankPayment = bankPayment;
+			ViewBag.RecipientList = DbSession.Query<Recipient>().OrderBy(s => s.Name).ToList();
+
+			var error = ValidationRunner.Validate(bankPayment);
+			if (error.Count != 0) {
+				ViewBag.SessionToRefresh = DbSession;
+				return View();
+			}
+			error = ValidationRunner.Validate(bankPayment.Payment);
+			if (error.Count != 0) {
+				ViewBag.SessionToRefresh = DbSession;
+				return View();
+			}
+			bankPayment.UpdateInn();
+			DbSession.Save(bankPayment);
+			SuccessMessage($"Платеж от '{bankPayment.PayerName}' успешно обновлен");
+			return RedirectToAction("PaymentList");
+		}
+
+		/// <summary>
 		/// Формирование документов
 		/// </summary>
 		public ActionResult PaymentProcess()
 		{
-			return View();
-		}
-
-		/// <summary>
-		/// Отчет по клиентам
-		/// </summary>
-		public ActionResult Client()
-		{
-			var pager = new InforoomModelFilter<Client>(this);
-			pager = ClientReports.GetGeneralReport(this, pager);
-			if (pager == null) {
-				return null;
-			}
-			return View();
-		}
-
-		/// <summary>
-		/// Отчет по выручке
-		/// </summary>
-		public ActionResult WriteOffs()
-		{
-			var pager = new InforoomModelFilter<WriteOff>(this);
-			pager = WriteOffsReport.GetGeneralReport(this, pager);
-			if (pager == null) {
-				return null;
-			}
-			return View();
-		}
-
-		/// <summary>
-		/// Отчет по выручке
-		/// </summary>
-		public ActionResult Payments()
-		{
-			var pager = new InforoomModelFilter<Payment>(this);
-			pager = PaymentsReport.GetGeneralReport(this, pager);
-			if (pager == null) {
-				return null;
-			}
-			var dateA = DateTime.Parse(pager.GetParam("filter.GreaterOrEqueal.PaidOn"));
-			var dateB = DateTime.Parse(pager.GetParam("filter.LowerOrEqual.PaidOn")).AddDays(1).AddSeconds(-1);
-			var clientId = DateTime.Parse(pager.GetParam("filter.GreaterOrEqueal.PaidOn"));
-			var clientName = DateTime.Parse(pager.GetParam("filter.LowerOrEqual.PaidOn")).AddDays(1).AddSeconds(-1);
-
-			ViewBag.TotalSum = pager.TotalSumByFieldName("Sum");
-
-			var firstYear = DbSession.Query<Payment>().OrderBy(s => s.Id).FirstOrDefault();
-			var lastYear = DbSession.Query<Payment>().OrderByDescending(s => s.Id).FirstOrDefault();
-
-			ViewBag.FirstYear = firstYear?.PaidOn.Year ?? 0;
-			ViewBag.FirstMonth = firstYear?.PaidOn.Month ?? 0;
-			ViewBag.LastYear = lastYear?.PaidOn.Year ?? 0;
-			ViewBag.LastMonth = lastYear?.PaidOn.Month ?? 0;
-			ViewBag.CurrentYear = dateB.Year;
-			ViewBag.CurrentMonth = dateB.Month;
-
 			return View();
 		}
 	}

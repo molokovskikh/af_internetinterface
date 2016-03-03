@@ -794,7 +794,7 @@ namespace Inforoom2.Models
 					//Endpoints удалять не нужно TODO: после перехода на новую админку поправить!
 					var endpointLog =
 						Endpoints.Where(e => e.Switch != null)
-							.Implode(e => String.Format("Коммутатор {0} порт {1}", e.Switch.Name, e.Port), Environment.NewLine);
+							.Implode(e => String.Format("Удалено подключение: коммутатор {0} порт {1}", e.Switch.Name, e.Port), Environment.NewLine);
 					Appeals.Add(new Appeal(endpointLog, this, AppealType.System, employee));
 					Endpoints.Clear();
 					Discount = 0;

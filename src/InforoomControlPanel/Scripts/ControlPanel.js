@@ -472,6 +472,11 @@ function phantomFor() {
 	}
 }
 
+function changeValueFromHtml(objDonor, objRecipient) {
+	console.log($(objDonor).val());
+	$(objDonor).val($(objRecipient).html());
+}
+
 $(function() {
 
 	$(".timepicker").timepicker({
