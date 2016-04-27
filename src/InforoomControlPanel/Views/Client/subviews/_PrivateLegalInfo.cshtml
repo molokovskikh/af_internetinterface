@@ -100,6 +100,20 @@
 						<span>@client.Status.Type.GetDescription()</span>
 					</td>
 				</tr>
+				<tr>
+					<td>
+						<span title="Доступ в глобальную сеть.">Глобальная сеть</span>
+					</td>
+					<td>
+						<span>@(client.Disabled?"Нет": "Есть")</span>
+					</td>
+				</tr>
+				<tr>
+					<td><span title="Warning">Блокирующие сообщения</span></td>
+					<td>
+						<span>@(client.ShowBalanceWarningPage ? "Вкл." : "Выкл.")</span>
+					</td>
+				</tr>
 			</tbody>
 		</table>
 	</div>

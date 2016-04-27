@@ -1,4 +1,6 @@
 ﻿@using System.Web.UI.WebControls
+@using Common.Tools
+@using Inforoom2.Helpers
 @using Inforoom2.Models
 @using InforoomControlPanel.Helpers
 @using NHibernate
@@ -44,7 +46,7 @@
 
 
 </head>
-<body class="page-body" data-url="http://neon.dev">
+<body class="page-body">
 <div class="page-container">
 <!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
 
@@ -55,9 +57,10 @@
 <header class="logo-env">
 
 	<!-- logo -->
-	<div class="logo">
+	<div class="logo hlink">
 		<a href="@Url.Action("Index", "AdminAccount")">
-			<img src="~/assets/images/logo@2x.png" width="120" alt=""/>
+			<i class="entypo-home"></i>
+			<span class="title">Главная</span>
 		</a>
 	</div>
 
@@ -85,17 +88,11 @@
 <!-- add class "multiple-expanded" to allow multiple submenus to open -->
 <!-- class "auto-inherit-active-class" will automatically add "active" class for parent elements who are marked already with class "active" -->
 <li>
-	<a href="http://stat.ivrn.net/ii/">
-		<i class="entypo-home"></i>
+	<a href="@ConfigHelper.GetParam("adminPanelOld")">
+		<i class="entypo-link"></i>
 		<span class="title">Перейти в InternetInterface</span>
 	</a>
-</li>
-<li>
-	<a href="@Url.Action("Index", "AdminAccount")">
-		<i class="entypo-home"></i>
-		<span class="title">Главная</span>
-	</a>
-</li>
+</li> 
 @if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_000000.ToString()) != null 
 	|| currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000000.ToString()))) {
 	<li>
@@ -631,7 +628,7 @@
 	<!-- Footer -->
 	<footer class="main">
 
-		&copy; 2014 <strong>Neon</strong> Admin Theme by <a href="http://laborator.co" target="_blank">Laborator</a>
+		Панель администрирования - @SystemTime.Now().Year 
 
 	</footer>
 </div>

@@ -11,8 +11,7 @@
 	Banner banner = ViewBag.Banner;
 	var urlPath = (string)ViewBag.pathFromConfigURL;
 }
-
-
+@if (slideList!=null && slideList.Count>0) {
 <div class="offers">
 	<div class="slider">
 		<div class="content">
@@ -40,8 +39,8 @@
 			<img src="@urlPath@banner.ImagePath" />
 		</a>
 	</div>
-
 </div>
+} 
 <div class="find">
 	<a href="/TestSpeed">
 		<div class="speed">

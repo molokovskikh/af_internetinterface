@@ -87,5 +87,15 @@ namespace InforoomControlPanel.Controllers
 			}
 			return RedirectToAction(actionName, controllerName);
 		}
+
+		/// <summary>
+		/// Если произошли нежелательные изменения, сохранившиеся байндером ошибки,
+		/// нужно отменить транзакциою, чтоб они не попали в БД, при этом нужно отобразить валидацию,
+		/// ято не возможно, если делать это в Action методе => чистим транзакцию на форме, передавая ей сессию
+		/// </summary>
+		public void PreventSessionUpdate()
+		{
+			ViewBag.SessionToRefresh = DbSession;
+		}
 	}
 }

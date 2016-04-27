@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using Common.Tools;
 using Common.Web.Ui.NHibernateExtentions;
@@ -438,14 +439,15 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 		[Test, Description("Страница клиента. Физ. лицо. Возврат скидки")]
 		public void SaleEditing()
 		{
+			Assert.That(CurrentClient.StartNoBlock, Is.Null);
 			string blockName = "#emptyBlock_PrivatePhysicalInfo ";
 			string blockNameNew = "#ModelForSale ";
 			var comment = "Надо!";
 			CurrentClient.Discount = 5;
 			CurrentClient.WriteOffs.RemoveEach(CurrentClient.WriteOffs);
 			CurrentClient.WriteOffs.Add(new WriteOff() {Sale = 8, Client = CurrentClient, MoneySum = 0});
-
-			DbSession.Save(CurrentClient);
+			
+      DbSession.Save(CurrentClient);
 			DbSession.Flush();
 
 			Open("Client/InfoPhysical/" + CurrentClient.Id);
@@ -464,7 +466,24 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 
 			DbSession.Refresh(CurrentClient);
 
+			//проверка скидки и периода отсчета после отработки "восстановления скидки"
+			var saleSettings = DbSession.Query<SaleSettings>().FirstOrDefault();
+			var monthOnStart = Convert.ToInt32((CurrentClient.Discount - saleSettings.MinSale) 
+				/ saleSettings.SaleStep + saleSettings.PeriodCount); //расчет периода отсчета 
+			Assert.That(CurrentClient.StartNoBlock.Value, Is.EqualTo(SystemTime.Now().AddMonths(-monthOnStart).Date));
 			Assert.That(CurrentClient.Discount, Is.EqualTo(8), "Скидка отсутствует.");
+			//проверка скидки и периода отсчета после отработки "назначения скидки" (по дате отсчета)
+			CurrentClient.Discount = 0; //сброс скидки
+			CurrentClient.PaidDay = false;
+			DbSession.Save(CurrentClient);
+			DbSession.Flush();
+			RunBillingProcessPayments(CurrentClient);
+			RunBillingProcessWriteoffs(CurrentClient, false);
+			DbSession.Refresh(CurrentClient);
+			Assert.That(CurrentClient.StartNoBlock.Value, Is.EqualTo(SystemTime.Now().AddMonths(-monthOnStart).Date));
+			Assert.That(CurrentClient.Discount, Is.EqualTo(8), "Скидка отсутствует.");
+
+
 		}
 
 		[Test, Description("Страница клиента. Физ. лицо. Редактирование контактов")]
@@ -514,7 +533,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Css(blockName + "[name='client.Contacts[1].Type']").SelectByText((typeClone).GetDescription());
 			//сохраняем изменения
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
-			WaitAjax(10);
+			WaitAjax(20);
 			//проверяем наличие добавленного номера
 			AssertText(phoneNumberToCheck, blockName);
 			//Удаляем контакт
@@ -823,13 +842,15 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			WaitForVisibleCss(blockNamePaymentsMove + "input[name='clientReceiverId']");
 			inputObj.Clear();
 			inputObj.SendKeys(anotherClient.Id.ToString());
+			WaitAjax(10);
+			browser.FindElementByCssSelector(blockNamePaymentsMove + "#myModalLabel").Click();
+			WaitAjax(10);
 			//Причина
 			inputObj = browser.FindElementByCssSelector(blockNamePaymentsMove + "input[name='comment']");
 			WaitForVisibleCss(blockNamePaymentsMove + "input[name='comment']");
 			inputObj.Clear();
 			inputObj.SendKeys(commentCancel);
-
-			WaitForText(anotherClient.GetName(), 10);
+			WaitForText(anotherClient.Id.ToString(), 10);
 
 			AssertText("платеж №" + CurrentClient.Payments.OrderByDescending(s => s.PaidOn).FirstOrDefault().Id,
 				blockNamePaymentsMove);

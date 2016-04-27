@@ -61,6 +61,7 @@ namespace Inforoom2.Helpers
 				|| tableName == "PaymentsForAgent".ToLower()
 				|| tableName == "RequestMessages".ToLower()
 				|| tableName == "Labels".ToLower()
+				|| tableName == "ignoredinns".ToLower()
 				|| tableName == "AgentTariffs".ToLower())
 			{
 				

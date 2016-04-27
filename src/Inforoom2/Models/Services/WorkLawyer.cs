@@ -23,7 +23,7 @@ namespace Inforoom2.Models.Services
 		public override void Deactivate(ClientService assignedService, ISession session)
 		{
 			var client = assignedService.Client;
-			var warning = client.LegalClient.NeedShowWarning();
+			var warning = client.LegalClient.NeedShowWarning() || client.Balance < 0;
 			client.ShowBalanceWarningPage = warning;
 			client.Disabled = warning;
 			if (warning) {

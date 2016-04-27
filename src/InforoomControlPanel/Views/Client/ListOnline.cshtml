@@ -56,7 +56,7 @@
 			<div class="row">
 				<div class="col-sm-2">Арендованный IP</div>
 				<div class="col-sm-3"> 
-					<input type="text" name="mfilter.filter.LeaseListByIp" value="@leaseListByIp" class="form-control" style="min-width: 280px; max-width: 280px;">
+					<input type="text" name="mfilter.LeaseListByIp" value="@leaseListByIp" class="form-control" style="min-width: 280px; max-width: 280px;">
 				</div>
 			</div>
 		</div>
@@ -135,11 +135,7 @@
 				<td>@(lease.LeaseBegin)</td>
 				<td>
 					@if (lease.Endpoint != null) {
-						<a @(lease.Endpoint.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") class="idColumn" target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld")
-						                                                                                                                          + (String.Format("UserInfo/{0}?filter.ClientCode=", lease.Endpoint.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-						                                                                                                                          + lease.Endpoint.Client.Id)">
-							@lease.Endpoint.Client.Id
-						</a>
+						<a target="_blank" href="@Url.Action(lease.Endpoint.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new { lease.Endpoint.Client.Id })" class="idColumn @(lease.Endpoint.Client.PhysicalClient != null ? "linkPhysical" : "linkLegal")"> @lease.Endpoint.Client.ClientId</a>
 					}
 				</td>
 				<td>@(lease.Endpoint != null ? lease.Endpoint.Id.ToString() : "")</td>

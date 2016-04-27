@@ -78,7 +78,7 @@
 							}
 						</td>
 						<td>
-							@if (item.Virtual.HasValue && item.Virtual.Value) {
+							@if (item.Virtual.HasValue && item.Virtual.Value && item.Client.IsPhysicalClient) {
 								<span>@item.Id</span>
 							}
 							else {

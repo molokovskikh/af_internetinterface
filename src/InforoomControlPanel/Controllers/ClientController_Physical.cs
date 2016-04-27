@@ -99,6 +99,9 @@ namespace InforoomControlPanel.Controllers
 
 		/// <summary>
 		/// Страница редактирования клиента - физ. лица (учавствует и в пост-запросе)
+		/// TODO: этот божественный метод нужно распилить. Лучше не использовать Глубокую валидацию,
+		/// TODO: (в идеале байндить объекты обычным байндером)
+		/// TODO: ну или хотя бы выделить сложным ветвлениям по методу
 		/// </summary>
 		/// <param name="id">идентификатор</param>
 		/// <param name="clientModelItem">модель клиента</param>
@@ -131,6 +134,7 @@ namespace InforoomControlPanel.Controllers
 					{
 						s.Client = clientModel;
 						s.ContactString = s.ContactFormatString;
+						s.ContactName = s.ContactName == string.Empty? null : s.ContactName; // в БД по умолчанию Null а не пустое значение  
 						if (s.Date == DateTime.MinValue) {
 							s.Date = SystemTime.Now();
 						}
@@ -327,7 +331,7 @@ namespace InforoomControlPanel.Controllers
 		/// <summary>
 		/// Страница редактирования клиента - физ. лица  (непосредствено редактирования). // структура такая из-за того, что в проекте используется [EntityBinder] и все под него заточено. 
 		/// 1) EntityBinder - есть во всем проекте (делать иначе вкаком-то конкретном случае - плохо, а менять весь проект долго) и поэтому не Angular (или др.).
-		/// 2) Почему не Ajax - он использован там, где не нужно выводить пользователю валидировать по полям
+		/// 2) Почему не Ajax - он используется там, где не нужно выводить пользователю валидацию по полям
 		/// </summary>
 		/// <param name="client">модель клиента с формы</param>
 		/// <param name="subViewName">подпредставление</param>
@@ -464,15 +468,15 @@ namespace InforoomControlPanel.Controllers
 				if (redirectToCard) {
 					return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 					                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"] +
-					                Url.Action("ConnectionCard", "Client", new {@id = client.Id}));
+					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]
+					                + $"Client/ConnectionCard/{client.Id}");
 				}
 				// иначе переходим к информации о клиенте *в старой админке
 
 				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"] +
-				                Url.Action("InfoPhysical", "Client", new {@id = client.Id}));
+				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]
+				                + $"Client/InfoPhysical/{client.Id}");
 			}
 			// заполняем список типов документа
 			var CertificateTypeDic = new Dictionary<int, CertificateType>();
@@ -535,6 +539,7 @@ namespace InforoomControlPanel.Controllers
 
 		/// <summary>
 		/// Форма редактирования клиента 
+		/// TODO: убедиться, что форма не нужна - удалить мусор.
 		/// </summary> 
 		/// <param name="id"></param>
 		/// <returns></returns>
@@ -593,6 +598,7 @@ namespace InforoomControlPanel.Controllers
 
 		/// <summary>
 		///  Форма редактирования клиента POST
+		/// TODO: убедиться, что форма не нужна - удалить мусор.
 		/// </summary>
 		/// <param name="ClientRegistration"></param>
 		/// <returns></returns>
@@ -614,8 +620,8 @@ namespace InforoomControlPanel.Controllers
 
 				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"] +
-				                Url.Action("InfoPhysical", "Client", new {@id = client.Id}));
+				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]
+				                + $"Client/InfoPhysical/{client.Id}");
 			}
 			else {
 				DbSession.Clear();
@@ -682,157 +688,7 @@ namespace InforoomControlPanel.Controllers
 
 			return View();
 		}
-
-		///| -----------------------------------------------|Агенты (не ясно нужны или нет)|------------------------------------------------->>
-		public ActionResult AgentList()
-		{
-			var Agent = DbSession.QueryOver<Agent>().List();
-			Agent = Agent.OrderByDescending(s => s.Active).ThenBy(s => s.Name).ToList();
-			var employee = DbSession.QueryOver<Employee>().List();
-			ViewBag.AgentList = Agent;
-			ViewBag.AgentMan = new Agent();
-			return View("AgentList");
-		}
-
-		public ActionResult AgentAdd([EntityBinder] Agent agent)
-		{
-			var existedAgent = DbSession.Query<Agent>()
-				.FirstOrDefault(s => s.Name.ToLower().Replace(" ", "") == agent.Name.ToLower().Replace(" ", ""));
-			if (existedAgent == null) {
-				var errors = ValidationRunner.ValidateDeep(agent);
-				if (errors.Length == 0) {
-					DbSession.Save(agent);
-					SuccessMessage("Агент успешно добавлен");
-				}
-				else {
-					ErrorMessage(errors[0].Message);
-				}
-			}
-			else {
-				ErrorMessage("Агент с подобным ФИО уже существует!");
-			}
-			return RedirectToAction("AgentList");
-		}
-
-		public ActionResult AgentStatusChange(int id)
-		{
-			var Agent = DbSession.Query<Agent>().FirstOrDefault(s => s.Id == id);
-			if (Agent != null) {
-				Agent.Active = !Agent.Active;
-				DbSession.Update(Agent);
-			}
-			return RedirectToAction("AgentList");
-		}
-
-		public ActionResult AgentDelete(int id)
-		{
-			var Agent = DbSession.Query<Agent>().FirstOrDefault(s => s.Id == id);
-			if (Agent != null) {
-				DbSession.Delete(Agent);
-			}
-			return RedirectToAction("AgentList");
-		}
-
-		//<-----------------------------------------------------------------------------------------------------------------------------------||
-
-
-		/// <summary>
-		/// Страница списка клиентов
-		/// </summary>
-		public ActionResult Appeals(bool openInANewTab = true)
-		{
-			var pager = new InforoomModelFilter<Appeal>(this);
-			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
-				pager.SetOrderBy("Id", OrderingDirection.Desc);
-			if (string.IsNullOrEmpty(pager.GetParam("filter.GreaterOrEqueal.Date")) &&
-			    string.IsNullOrEmpty(pager.GetParam("filter.LowerOrEqual.Date"))) {
-				pager.ParamDelete("filter.GreaterOrEqueal.Date");
-				pager.ParamDelete("filter.LowerOrEqual.Date");
-				pager.ParamSet("filter.GreaterOrEqueal.Date", SystemTime.Now().Date.FirstDayOfMonth().ToString("dd.MM.yyyy"));
-				pager.ParamSet("filter.LowerOrEqual.Date", SystemTime.Now().Date.ToString("dd.MM.yyyy"));
-			}
-			var criteria = pager.GetCriteria();
-			ViewBag.Pager = pager;
-			return View();
-		}
-
-		/// <summary>
-		/// Страница списка клиентов
-		/// </summary>
-		public ActionResult ListOnline(bool openInANewTab = true)
-		{
-			var packageSpeedList = DbSession.Query<PackageSpeed>().ToList();
-
-
-			var leaseWithoutEndPointList = DbSession.Query<Lease>().Where(s => s.Endpoint == null).ToList();
-			var pager = new InforoomModelFilter<Lease>(this);
-
-			var ipLease = pager.GetParam("filter.LeaseListByIp");
-			pager.ParamDelete("filter.LeaseListByIp");
-			if (!string.IsNullOrEmpty(ipLease)) {
-				IPAddress ipaddressModel = null;
-				if (ipLease.Count(s => s == '.') < 3 || ipLease.Last() == '.') {
-					if (ipLease.Last() == '.') {
-						ipLease += "0";
-					}
-					while (ipLease.Count(s => s == '.') < 3) {
-						ipLease += ".0";
-					}
-					IPAddress.TryParse(ipLease, out ipaddressModel);
-					if (ipaddressModel != null) {
-						pager.ParamDelete("filter.Equal.Endpoint.LeaseList.First().Ip");
-						pager.ParamDelete("filter.GreaterOrEqueal.Endpoint.LeaseList.First().Ip");
-						pager.ParamSet("filter.GreaterOrEqueal.Endpoint.LeaseList.First().Ip", ipaddressModel.ToString());
-						ViewBag.LeaseListByIp = ipLease ?? "";
-					}
-				}
-				else {
-					IPAddress.TryParse(ipLease, out ipaddressModel);
-					if (ipaddressModel != null) {
-						pager.ParamSet("filter.Equal.Endpoint.LeaseList.First().Ip", ipaddressModel.ToString());
-						ViewBag.LeaseListByIp = ipLease ?? "";
-					}
-				}
-			}
-
-			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
-				pager.SetOrderBy("Id", OrderingDirection.Desc);
-			var cr = pager.GetCriteria();
-			ViewBag.Pager = pager;
-			ViewBag.LeaseWithoutEndPointList = leaseWithoutEndPointList;
-			ViewBag.PackageSpeedList = packageSpeedList;
-			return View();
-		}
-
-		/// <summary>
-		/// Страница списка клиентов
-		/// </summary>
-		public ActionResult LeasesLog(int Id = 0)
-		{
-			var pager = new FilterReport<Internetsessionslog>(this);
-			if (Id == 0 && string.IsNullOrEmpty(pager.GetParam("Id")) == false) {
-				int.TryParse(pager.GetParam("Id"), out Id);
-			}
-			if (Id == 0) {
-				return RedirectToAction("List");
-			}
-			var client = DbSession.Query<Client>().FirstOrDefault(s => s.Id == Id);
-			if (client == null) {
-				return RedirectToAction("List");
-			}
-
-			var result = LeaseReport.GetGeneralReport(this, pager, DbSession, client);
-			if (result == null) {
-				return RedirectToAction("List");
-			}
-
-			ViewBag.Result = result;
-			ViewBag.Pager = pager;
-			ViewBag.Client = client;
-
-			return View();
-		}
-
+		
 		public ActionResult ConnectionCard(int Id, string updateKeySt = "")
 		{
 			var client = DbSession.Query<Client>().FirstOrDefault(s => s.Id == Id);
@@ -862,12 +718,7 @@ namespace InforoomControlPanel.Controllers
 		{
 			return RedirectToAction("ConnectionCard", new {Id, updateKeySt = updatePasswordKey});
 		}
-
-		public ActionResult _Contacts(int Id, string updatePasswordKey)
-		{
-			return View("_Contacts");
-		}
-
+		 
 		/// <summary>
 		/// Закрепление неизвестного номера за клиентом
 		/// </summary>
@@ -928,10 +779,13 @@ namespace InforoomControlPanel.Controllers
 				if (writeOff.Sale <= client.Discount) {
 					ErrorMessage("Клиент не нуждается в восстановлении скидки!");
 				}
-				else {
-					if (string.IsNullOrEmpty(comment) == false) {
-						client.Discount = (int) writeOff.Sale.Value;
-						client.StartNoBlock = SystemTime.Now();
+				else
+				{
+					var saleSettings = DbSession.Query<SaleSettings>().FirstOrDefault();
+					if (string.IsNullOrEmpty(comment) == false && saleSettings!= null) {
+						client.Discount = (int)writeOff.Sale.Value;
+						var monthOnStart = Convert.ToInt32((client.Discount - saleSettings.MinSale) / saleSettings.SaleStep + saleSettings.PeriodCount);
+						client.StartNoBlock = SystemTime.Now().AddMonths(-monthOnStart).Date;
 						var partner = GetCurrentEmployee();
 						var appealText = string.Format("Скидка {0}% возвращена клиенту {1}. Вернул {2}. Причина: {3}",
 							client.Discount.ToString("0.00"), client.Id, partner.Name, comment);
@@ -1038,284 +892,6 @@ namespace InforoomControlPanel.Controllers
 			return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
 		}
 
-		[HttpPost]
-		public ActionResult AddPayment([EntityBinder] Client client, string sum = "", string comment = "",
-			bool isBonus = false, string subViewName = "")
-		{
-			decimal realSum = 0m;
-			Decimal.TryParse(sum.ToString().Replace(".", ","), out realSum);
-			if (realSum > 0) {
-				if (client.LegalClient == null) {
-					realSum = Decimal.Round(realSum, 2);
-					var payment = new Payment()
-					{
-						Client = client,
-						Comment = comment,
-						Employee = GetCurrentEmployee(),
-						PaidOn = SystemTime.Now(),
-						RecievedOn = SystemTime.Now(),
-						Virtual = isBonus,
-						Sum = realSum,
-						BillingAccount = false
-					};
-					client.Payments.Add(payment);
-					DbSession.Save(payment);
-					DbSession.Save(client);
-					SuccessMessage("Платеж успешно добавлен и ожидает обработки");
-				}
-				else {
-					ErrorMessage("Юридические лица не могут оплачивать наличностью");
-				}
-			}
-			else {
-				ErrorMessage("Платеж не был добавлен: данные введены неверно");
-			}
-
-			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-				new {@Id = client.Id, @subViewName = subViewName});
-		}
-
-		[HttpPost]
-		public ActionResult MovePayment([EntityBinder] Client client, int clientReceiverId = 0, int paymentId = 0,
-			string comment = "", string subViewName = "")
-		{
-			var clientReceiver = DbSession.Query<Client>().FirstOrDefault(s => s.Id == clientReceiverId);
-
-			if (clientReceiver == null && string.IsNullOrEmpty(comment)) {
-				ErrorMessage("Платеж не был переведен: указанный лицевой счет не существует, причина перевода не указана");
-				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-					new {@Id = client.Id, @subViewName = subViewName});
-			}
-			if (clientReceiver == null) {
-				ErrorMessage("Платеж не был переведен: указанный лицевой счет не существует");
-				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-					new {@Id = client.Id, @subViewName = subViewName});
-			}
-			if (string.IsNullOrEmpty(comment)) {
-				ErrorMessage("Платеж не был переведен: не указана причина перевода");
-				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-					new {@Id = client.Id, @subViewName = subViewName});
-			}
-
-			decimal paymentSum = -1;
-			if (paymentId != 0) {
-				var payment = client.Payments.FirstOrDefault(s => s.Id == paymentId);
-				if (!payment.BillingAccount) {
-					ErrorMessage($"Платеж {paymentId} не был переведен: платеж ожидает обработки");
-					return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-						new {@Id = client.Id, @subViewName = subViewName});
-				}
-				paymentSum = payment.Sum;
-				var appeal = payment.Cancel(comment, GetCurrentEmployee());
-				client.Appeals.Add(appeal);
-
-				payment.Client.Payments.Remove(payment);
-				payment.Client = clientReceiver;
-				payment.BillingAccount = false;
-				clientReceiver.Payments.Add(payment);
-
-				var msgTextFormat =
-					"Платеж №{4} клиента №<a href='{5}'>{1}</a> на сумму {0} руб.  был перемещен клиенту №<a href='{6}'>{2}</a>.<br/>Комментарий: {3} ";
-				var msgTextA = String.Format(msgTextFormat + "<br/>Баланс: {7}. ", payment.Sum.ToString("0.00"),
-					client.Id, clientReceiver.Id, comment, payment.Id,
-					ConfigHelper.GetParam("adminPanelNew") +
-					Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id}),
-					ConfigHelper.GetParam("adminPanelNew") +
-					Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = clientReceiver.Id}),
-					client.Balance.ToString("0.00"));
-				var msgTextB = String.Format(msgTextFormat, payment.Sum.ToString("0.00"), client.Id, clientReceiver.Id, comment,
-					payment.Id,
-					ConfigHelper.GetParam("adminPanelNew") +
-					Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = client.Id}),
-					ConfigHelper.GetParam("adminPanelNew") +
-					Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", new {@Id = clientReceiver.Id}));
-				var clientAppeal = new Appeal(msgTextA, client, AppealType.System)
-				{
-					Employee = GetCurrentEmployee(),
-					inforoom2 = true
-				};
-				var clientReceiverAppeal = new Appeal(msgTextB, clientReceiver, AppealType.System)
-				{
-					Employee = GetCurrentEmployee(),
-					inforoom2 = true
-				};
-
-				DbSession.Save(payment);
-				client.Appeals.Add(clientAppeal);
-				clientReceiver.Appeals.Add(clientReceiverAppeal);
-
-
-				DbSession.Save(client);
-				DbSession.Save(clientReceiver);
-
-
-				var appealText = string.Format(@"
-Переведен платеж №{0}
-От клиента: №{1}
-Клиенту: №{2}
-Сумма: {3}
-Оператор: {4}
-Комментарий: {5}
-", paymentId, client.Name + " (" + client.Id + ") ", clientReceiver.Name + " (" + clientReceiver.Id + ") ",
-					paymentSum.ToString("0.00"), GetCurrentEmployee().Name, comment);
-
-
-				string emails = "InternetBilling@analit.net";
-#if DEBUG
-#else
-						EmailSender.SendEmail(emails, "Переведен платеж", appealText);
-#endif
-
-
-				SuccessMessage("Платеж успешно переведен и ожидает обработки");
-			}
-			else {
-				ErrorMessage("Платеж не был переведен: платежа с данным номером в базе нет");
-			}
-
-			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-				new {@Id = client.Id, @subViewName = subViewName});
-		}
-
-		[HttpPost]
-		public ActionResult RemovePayment([EntityBinder] Client client, int paymentId = 0, string comment = "",
-			string subViewName = "")
-		{
-			if (string.IsNullOrEmpty(comment)) {
-				ErrorMessage($"Платеж {paymentId} не был отменен: не указана причина отмены");
-				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-					new {@Id = client.Id, @subViewName = subViewName});
-			}
-			decimal paymentSum = -1;
-			if (paymentId != 0) {
-				var payment = client.Payments.FirstOrDefault(s => s.Id == paymentId);
-				if (!payment.BillingAccount) {
-					ErrorMessage($"Платеж {paymentId} не был отменен: платеж ожидает обработки");
-					return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-						new {@Id = client.Id, @subViewName = subViewName});
-				}
-				paymentSum = payment.Sum;
-				var appeal = payment.Cancel(comment, GetCurrentEmployee());
-				client.Appeals.Add(appeal);
-				client.Payments.Remove(payment);
-				DbSession.Save(client);
-				DbSession.Delete(payment);
-			}
-
-			if (paymentSum != -1) {
-				SuccessMessage($"Платеж {paymentId} успешно отменен!");
-
-				var str = ConfigHelper.GetParam("PaymentNotificationMail");
-				if (str == null)
-					throw new Exception("Параметр приложения PaymentNotificationMail должен быть задан в config");
-				var appealText = string.Format(@"
-Отменен платеж №{0}
-Клиент: №{1} - {2}
-Сумма: {3:C}
-Оператор: {4}
-Комментарий: {5}
-", paymentId, client.Id, client.Name, paymentSum, GetCurrentEmployee().Name, comment);
-
-
-				var emails = str.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
-#if DEBUG
-#else
-						EmailSender.SendEmail(emails, "Уведомление об отмене платежа", appealText);
-#endif
-			}
-			else {
-				ErrorMessage($"Платеж {paymentId} не был удален: платежа по данному номеру не существует");
-			}
-			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-				new {@Id = client.Id, @subViewName = subViewName});
-		}
-
-		[HttpPost]
-		public ActionResult AddWriteOff([EntityBinder] Client client, string sum = "", string comment = "",
-			string subViewName = "")
-		{
-			decimal realSum = 0m;
-			Decimal.TryParse(sum.ToString().Replace(".", ","), out realSum);
-			if (realSum > 0 && comment != "") {
-				realSum = Decimal.Round(realSum, 2);
-				var writeOff = new UserWriteOff()
-				{
-					Comment = comment,
-					Sum = realSum,
-					Date = SystemTime.Now(),
-					Client = client,
-					Employee = GetCurrentEmployee(),
-					IsProcessedByBilling = false
-				};
-				client.UserWriteOffs.Add(writeOff);
-				DbSession.Save(client);
-				SuccessMessage("Списание успешно добавлено и ожидает обработки");
-			}
-			else {
-				ErrorMessage("Списание не было добавлено: данные введены неверно");
-			}
-
-			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-				new {@Id = client.Id, @subViewName = subViewName});
-		}
-
-		[HttpPost]
-		public ActionResult DeleteWriteOff([EntityBinder] Client client, int writeOffId = 0, int user = 0, string comment = "",
-			string subViewName = "")
-		{
-			decimal writeOffSum = -1;
-			if (string.IsNullOrEmpty(comment)) {
-				ErrorMessage($"Списание {writeOffId} не было удалено: не указана причина отмены");
-				return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
-			}
-			if (user == 1) {
-				var writeOff = client.UserWriteOffs.FirstOrDefault(s => s.Id == writeOffId);
-				if (!writeOff.IsProcessedByBilling) {
-					ErrorMessage($"Списание {writeOffId} не было удалено: списание ожидает обработки");
-					return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
-				}
-				writeOffSum = writeOff.Sum;
-				var appeal = writeOff.Cancel(GetCurrentEmployee(), comment);
-				client.Appeals.Add(appeal);
-				client.UserWriteOffs.Remove(writeOff);
-				DbSession.Save(client);
-			}
-			else {
-				var writeOff = client.WriteOffs.FirstOrDefault(s => s.Id == writeOffId);
-				writeOffSum = writeOff.WriteOffSum;
-				var appeal = writeOff.Cancel(GetCurrentEmployee(), comment);
-				client.Appeals.Add(appeal);
-				client.WriteOffs.Remove(writeOff);
-				DbSession.Save(client);
-			}
-
-			if (writeOffSum != -1) {
-				SuccessMessage($"Списание {writeOffId} успешно удалено!");
-
-				var str = ConfigHelper.GetParam("WriteOffNotificationMail");
-				if (str == null)
-					throw new Exception("Параметр приложения WriteOffNotificationMail должен быть задан в config");
-				var appealText = string.Format(@"
-Отменено списание №{0}
-Клиент: №{1} - {2}
-Сумма: {3}
-Оператор: {4}
-Комментарий: {5}
-", writeOffId, client.Id, client.Name, writeOffSum, GetCurrentEmployee().Name, comment);
-
-				var emails = str.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
-#if DEBUG
-#else
-						EmailSender.SendEmail(emails, "Уведомление об удалении списания", appealText);
-#endif
-			}
-			else {
-				ErrorMessage($"Списание {writeOffId} не было удалено: списания по данному номеру не существует");
-			}
-
-			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-				new {@Id = client.Id, @subViewName = subViewName});
-		}
 
 		[HttpPost]
 		public ActionResult UpdateConnection([EntityBinder] Client client, int endpointId,
@@ -1340,112 +916,6 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
-		}
-
-
-		[HttpPost]
-		public ActionResult RemoveEndpoint([EntityBinder] Client client, int endpointId,
-			string subViewName = "")
-		{
-			var endPoint = client.Endpoints.FirstOrDefault(s => s.Id == endpointId);
-			if (endPoint != null) {
-				//TODO: важно! SQL запрос необходим для удаления элемента (прежний вариант с отчисткой списка удалял клиентов у endpoint(ов))
-				if (!client.RemoveEndpoint(endPoint, DbSession))
-					ErrorMessage("Последняя точка подключения не может быть удалена!");
-			}
-			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-				new {@Id = client.Id, @subViewName = subViewName});
-		}
-
-
-		[HttpPost]
-		public JsonResult GetSubnet(int mask)
-		{
-			return Json(SubnetMask.CreateByNetBitLength(mask).ToString(), JsonRequestBehavior.AllowGet);
-		}
-
-		/// <summary>
-		/// получение ФИО по ЛС
-		/// </summary>
-		[HttpPost]
-		public JsonResult getClientName(int id)
-		{
-			var client = DbSession.Get<Client>(id);
-			if (client != null) {
-				return Json(client.GetName(), JsonRequestBehavior.AllowGet);
-			}
-			return Json("Данного ЛС в базе нет", JsonRequestBehavior.AllowGet);
-		}
-
-		/// <summary>
-		/// получение ФИО по ЛС
-		/// </summary>
-		[HttpPost]
-		public JsonResult getBusyPorts(int id)
-		{
-			var switchItem = DbSession.Get<Switch>(id);
-			if (switchItem != null) {
-				var ports =
-					switchItem.Endpoints.Select(
-						s => new {@endpoint = s.Port, @client = s.Client.Id, @type = s.Client.PhysicalClient != null ? 0 : 1}).ToList();
-				var data = new {Ports = ports, Comment = switchItem.Description};
-				return Json(data, JsonRequestBehavior.AllowGet);
-			}
-			return Json(null, JsonRequestBehavior.AllowGet);
-		}
-
-		/// <summary>
-		/// получение Коммутаторов по зоне
-		/// </summary>
-		[HttpPost]
-		public JsonResult getSwitchesByZone(string name)
-		{
-			var switchList = name == String.Empty
-				? DbSession.Query<Switch>()
-					.Where(s => s.Name != null)
-					.Select(s => s.Name)
-					.OrderBy(s => s)
-					.ToList()
-					.Distinct()
-					.ToList()
-				: DbSession.Query<Switch>()
-					.Where(s => s.Zone.Name == name && s.Name != null)
-					.Select(s => s.Name)
-					.OrderBy(s => s)
-					.ToList()
-					.Distinct()
-					.ToList();
-			return Json(switchList, JsonRequestBehavior.AllowGet);
-		}
-
-		/// <summary>
-		/// получение Ip для фиксирования
-		/// </summary>
-		[HttpPost]
-		public JsonResult GetStaticIp(int id)
-		{
-			var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Endpoint.Id == id);
-			return Json(lease != null && lease.Ip != null ? lease.Ip.ToString() : "", JsonRequestBehavior.AllowGet);
-		}
-
-		/// <summary>
-		/// валидация контактов клиента
-		/// </summary>
-		[HttpPost]
-		public JsonResult GetContactValidation(string[] contacts, int[] types)
-		{
-			if (contacts == null || types == null || contacts.Length != types.Length) {
-				return Json("Ошибка в отправке данных", JsonRequestBehavior.AllowGet);
-			}
-			for (int i = 0; i < contacts.Length; i++) {
-				var contactForValidation = new Contact() {ContactString = contacts[i], Type = (ContactType) types[i]};
-				var errors = ValidationRunner.ForcedValidationByAttribute<Contact>(contactForValidation, s => s.ContactString,
-					new Inforoom2.validators.ValidatorContacts());
-				if (errors.Length != 0) {
-					return Json($"{errors[0].Message} '{errors[0].Value}' ", JsonRequestBehavior.AllowGet);
-				}
-			}
-			return Json("", JsonRequestBehavior.AllowGet);
 		}
 	}
 }

@@ -65,7 +65,7 @@
 					<a class="c-pointer blue" title="Изменение тарифа" data-toggle="modal" data-target="#ModelForPlan">Тариф</a>
 				</td>
 				<td>
-					<span>@(client.PhysicalClient.Plan != null ? client.PhysicalClient.Plan.Name + " (" + client.PhysicalClient.Plan.Price.ToString("0.00") + " р."+ (client.GetTariffPrice() != 0 ? " / " + client.GetTariffPrice().ToString("0.00") + " р.)" : ")") : "нет")</span>
+					<span>@(client.PhysicalClient.Plan != null ? client.PhysicalClient.Plan.Name + " (" + client.PhysicalClient.Plan.Price.ToString("0.00") + " р."+ (client.GetTariffPrice(true) != 0 ? " / " + client.GetTariffPrice(true).ToString("0.00") + " р.)" : ")") : "нет")</span>
 				</td>
 			</tr>
 			<tr>
@@ -90,6 +90,20 @@
 				<td>Статус клиента</td>
 				<td>
 					<span>@client.Status.Name</span>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<span title="Доступ в глобальную сеть.">Глобальная сеть</span></td>
+				<td>
+					<span>@(client.Disabled ? "Нет" : "Есть")</span>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<span title="Warning">Блокирующие сообщения</span></td>
+				<td>
+					<span>@(client.ShowBalanceWarningPage ? "Вкл." : "Выкл.")</span>
 				</td>
 			</tr>
 			<tr>

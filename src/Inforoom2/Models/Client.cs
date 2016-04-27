@@ -363,7 +363,7 @@ namespace Inforoom2.Models
 			    WorkingStartDate.Value.AddMonths(PhysicalClient.Plan.FinalPriceInterval) <= SystemTime.Now())
 				return finalPrice;
 			return prePrice;
-		}
+		} 
 
 		public virtual decimal ToPay(bool isBlocked = false)
 		{
@@ -391,7 +391,7 @@ namespace Inforoom2.Models
 		protected virtual decimal AccountDiscounts(decimal price)
 		{
 			if (Discount > 0)
-				price *= 1 - Discount/100;
+				price *= 1 - ((decimal)Discount)/100;
 			return price;
 		}
 

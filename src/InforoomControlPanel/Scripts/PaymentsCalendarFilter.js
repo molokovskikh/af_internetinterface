@@ -15,7 +15,7 @@ var markerDateB = "#dateB";
 var markerDates = "#dateA,#dateB";
 
 function Clean() {
-	if (!$(markerYear).hasClass("input_disabled")) { 
+	if (!$(markerYear).hasClass("input_disabled")) {
 		$(markerMonth).removeClass("checked");
 		$(markerYear).val(lastYear);
 		$(markerYear).change();
@@ -30,7 +30,7 @@ function DateSet(_this) {
 }
 
 function ListUpdate() {
-	var currentSelectedYear = $(markerYear).val(); 
+	var currentSelectedYear = $(markerYear).val();
 	currentSelectedYear = parseInt(currentSelectedYear);
 
 	$(markerYear).removeClass("input_disabled");
@@ -67,11 +67,68 @@ function OnLoad() {
 		ListUpdate();
 	});
 
-	$(markerDates).unbind("change").change(function () { 
+	$(markerDates).unbind("change").change(function() {
 		Clean();
 	});
 }
 
+function onPaymentCreateForm() {
+	var noMistakes = true;
+	var html = "<ul>";
+	var valSum = parseInt($("#BankPaymentSum").val());
+
+	if (String(valSum) === "NaN" || typeof valSum != "number") {
+		html = "<li>Укажите сумму</li>";
+		noMistakes = false;
+	}
+	if (valSum < 1) {
+		html = "<li>Сумма должна быть больше 0</li>";
+		noMistakes = false;
+	}
+	if (valSum > 100000) {
+		html = "<li>Сумма должна быть больше 100 000</li>";
+		noMistakes = false;
+	}
+	html += "<ul>";
+	$("#paymentMoveMessage").html(html);
+	return noMistakes;
+}
+
+function getPaymentReciverUpdateList() {
+	var currentVal = $("#clientReciverId").val();
+	if (currentVal != undefined && currentVal !== "") {
+		var objWithRecipient = $("#clientReciverMessage [onclick*='getPaymentClientIdUpdate']");
+		objWithRecipient.each(function() {
+			if (currentVal === $(this).html()) {
+				var recipient = $(this).attr('recipient');
+				if (recipient != undefined && recipient !== "") {
+					$("#RecipientDropDown option").removeClass("hid");
+					$("#RecipientDropDown option").addClass("hid");
+					var shownObj = $("#RecipientDropDown option[value='" + recipient + "']");
+					if (shownObj.length > 0) {
+						$(shownObj).removeClass("hid");
+					}  
+					if ($("#RecipientDropDown option:selected").val() !== String(recipient)) {
+						$("#RecipientDropDown").val("");
+					}
+
+				}
+			}
+		});
+	}
+}
+
 $(function() {
 	OnLoad();
+
+	$("#clientReciverId").change(
+		function() {
+			getPaymentReciver('#clientReciverId', '#clientReciverMessage', false, 2, function() {
+				getPaymentReciverUpdateList();
+				$($("#clientReciverMessage [onclick*='getPaymentClientIdUpdate']")).click(function() {
+					getPaymentReciverUpdateList();
+				});
+			})
+		}
+	);
 });

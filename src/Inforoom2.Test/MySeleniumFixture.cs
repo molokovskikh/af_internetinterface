@@ -186,7 +186,7 @@ namespace Inforoom2.Test
 			wait.Until(d => ((RemoteWebDriver) d).FindElementsByCssSelector(css).Count > 0);
 		}
 
-		protected void WaitForVisibleCss(string css, int seconds = 5)
+		protected void WaitForVisibleCss(string css, int seconds = 10)
 		{
 
 			var wait = new WebDriverWait(browser, seconds.Second());
@@ -220,14 +220,14 @@ namespace Inforoom2.Test
 			});
 		}
 
-		protected void WaitForText(string text, int seconds = 5)
+		protected void WaitForText(string text, int seconds = 7)
 		{
 			var wait = new WebDriverWait(browser, seconds.Second());
 			wait.Until(d => ((RemoteWebDriver) d).FindElementByCssSelector("body").Text.Contains(text));
 		}
 
 		//иногда WaitForText приводит к ошибкам stale reference exception
-		public void SafeWaitText(string text, int seconds = 5)
+		public void SafeWaitText(string text, int seconds = 7)
 		{
 			var begin = DateTime.Now;
 			var timeout = seconds.Second();

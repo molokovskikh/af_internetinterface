@@ -947,6 +947,13 @@ namespace Inforoom2.Components
 		{
 			if (Models == null)
 				Execute();
+
+			if (Models != null && Models.Count == 0 && TotalItems > 0) {
+				Params["page"] = "1";
+				Criteria = null;
+				Execute();
+			}
+
 			return Models;
 		}
 

@@ -88,6 +88,9 @@ namespace InforoomControlPanel.Controllers
 
 		/// <summary>
 		/// Страница редактирования клиента - физ. лица (учавствует и в пост-запросе)
+		/// TODO: этот божественный метод нужно распилить. Лучше не использовать Глубокую валидацию,
+		/// TODO: (в идеале байндить объекты обычным байндером)
+		/// TODO: ну или хотя бы выделить сложным ветвлениям по методу
 		/// </summary>
 		/// <param name="id">идентификатор</param>
 		/// <param name="clientModelItem">модель клиента</param>
@@ -120,6 +123,7 @@ namespace InforoomControlPanel.Controllers
 					{
 						s.Client = clientModel;
 						s.ContactString = s.ContactFormatString;
+						s.ContactName = s.ContactName == string.Empty ? null : s.ContactName; // в БД по умолчанию Null а не пустое значение  
 						if (s.Date == DateTime.MinValue) {
 							s.Date = SystemTime.Now();
 						}
@@ -144,7 +148,8 @@ namespace InforoomControlPanel.Controllers
 					});
 				}
 
-				if (string.IsNullOrEmpty(clientStatusChangeComment) && clientStatus != 0 && clientStatus != (int) clientModel.Status.Type
+				if (string.IsNullOrEmpty(clientStatusChangeComment) && clientStatus != 0 &&
+				    clientStatus != (int) clientModel.Status.Type
 				    && clientStatus == (int) StatusType.Dissolved) {
 					errors.Add(new InvalidValue("Не указана причина изменения статуса", typeof (Status), "clientStatusChangeComment",
 						clientModel,
@@ -306,8 +311,8 @@ namespace InforoomControlPanel.Controllers
 
 		/// <summary>
 		/// Страница редактирования клиента - физ. лица  (непосредствено редактирования). // структура такая из-за того, что в проекте используется [EntityBinder] и все под него заточено. 
-		/// 1) EntityBinder - есть во всем проекте (делать иначе вкаком-то конкретном случае - плохо, а менять весь проект долго) и поэтому не Angular (или др.).
-		/// 2) Почему не Ajax - он использован там, где не нужно выводить пользователю валидировать по полям
+		/// 1) EntityBinder - есть во всем проекте (делать иначе в каком-то конкретном случае - плохо, а менять весь проект долго) и поэтому не Angular (или др.).
+		/// 2) Почему не Ajax - он используется там, где не нужно выводить пользователю валидацию по полям
 		/// </summary>
 		/// <param name="client">модель клиента с формы</param>
 		/// <param name="subViewName">подпредставление</param>
@@ -386,101 +391,6 @@ namespace InforoomControlPanel.Controllers
 			return RedirectToAction("InfoLegal", new {order.Client.Id});
 		}
 
-
-		public ActionResult ActivateService(int clientId, int serviceId, DateTime? startDate, DateTime? endDate)
-		{
-			var servise = DbSession.Load<Service>(serviceId);
-			var client = DbSession.Load<Client>(clientId);
-			var dtn = DateTime.Now;
-			//Валидации даты
-			if (startDate.HasValue && endDate.HasValue) {
-				var lessThanPast = DateTime.Compare(endDate.Value.Date, SystemTime.Now().Date);
-				var lessThanCurrent = DateTime.Compare(endDate.Value.Date, startDate.Value.Date);
-				if (lessThanPast != 1 || lessThanCurrent != 1) {
-					ErrorMessage("Дата окончания может быть выставлена только для будущего периода");
-					return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new {client.Id});
-				}
-			}
-			if (endDate.HasValue) {
-				var lessThanPast = DateTime.Compare(endDate.Value.Date, SystemTime.Now().Date);
-				if (lessThanPast != 1) {
-					ErrorMessage("Дата окончания может быть выставлена только для будущего периода");
-					return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new {client.Id});
-				}
-			}
-			if (servise.InterfaceControl) {
-				var clientService = new ClientService
-				{
-					Client = client,
-					Service = servise,
-					BeginDate =
-						startDate == null
-							? dtn
-							: new DateTime(startDate.Value.Year,
-								startDate.Value.Month,
-								startDate.Value.Day, dtn.Hour,
-								dtn.Minute,
-								dtn.Second),
-					EndDate = endDate == null
-						? endDate
-						: new DateTime(endDate.Value.Year,
-							endDate.Value.Month,
-							endDate.Value.Day,
-							dtn.Hour,
-							dtn.Minute,
-							dtn.Second),
-					Employee = GetCurrentEmployee()
-				};
-				client.ClientServices.Add(clientService);
-				try {
-					bool activationResult = clientService.TryActivate(DbSession);
-					if (activationResult) {
-						var message = string.Format("Услуга \"{0}\" активирована на период с {1} по {2}", clientService.Service.Name,
-							clientService.BeginDate != null
-								? clientService.BeginDate.Value.ToShortDateString()
-								: DateTime.Now.ToShortDateString(),
-							clientService.EndDate != null
-								? clientService.EndDate.Value.ToShortDateString()
-								: string.Empty);
-						client.Appeals.Add(new Appeal(message, client, AppealType.System, GetCurrentEmployee()));
-						SuccessMessage(message);
-					}
-					else {
-						ErrorMessage(String.Format("Невозможно активировать услугу \"{0}\"", clientService.Service.Name));
-					}
-
-					if (client.IsNeedRecofiguration)
-						SceHelper.UpdatePackageId(DbSession, client);
-				}
-				catch (Exception e) {
-					ErrorMessage(e.Message);
-				}
-				DbSession.Update(client);
-			}
-			return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new {client.Id});
-		}
-
-		[HttpPost]
-		public ActionResult DiactivateService(int clientId, int serviceId)
-		{
-			var client = DbSession.Load<Client>(clientId);
-			var clientService = client.ClientServices.FirstOrDefault(c => c.Service.Id == serviceId && c.IsActivated);
-			if (clientService != null) {
-				bool activationResult = clientService.TryDeactivate(DbSession);
-				if (activationResult) {
-					var message = string.Format("Услуга \"{0}\" успешно деактивирована.", clientService.Service.Name);
-					client.Appeals.Add(new Appeal(message, client, AppealType.System, GetCurrentEmployee()));
-					SuccessMessage(message);
-				}
-				else {
-					ErrorMessage(String.Format("Невозможно деактивировать услугу \"{0}\"", clientService.Service.Name));
-				}
-				if (client.IsNeedRecofiguration)
-					SceHelper.UpdatePackageId(DbSession, client);
-				DbSession.Update(client);
-			}
-			return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new {client.Id});
-		}
 
 		/// <summary>
 		/// получение клиентского эндпоинта

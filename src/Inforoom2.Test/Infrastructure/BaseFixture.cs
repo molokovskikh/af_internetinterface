@@ -184,7 +184,7 @@ namespace Inforoom2.Test.Infrastructure
 			var exceptions =
 				"unresolvedphone,clientendpointinternetlogs,internetsessionslogs,partners,services,status,packagespeed,networkzones,accesscategories" +
 				"categoriesaccessset,connectbrigads,statuscorrelation,usercategories,additionalstatus," +
-				"salesettings,internetsettings,issues,recipients";
+				"salesettings,internetsettings,issues,recipients,ignoredinns";
 			parts = exceptions.Split(',');
 			foreach (var part in parts)
 				tables.RemoveAll(i => i == strategy.TableName(part));

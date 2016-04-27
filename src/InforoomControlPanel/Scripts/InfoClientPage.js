@@ -335,32 +335,6 @@ function paymentMove(id) {
 	$("#paymentMoveMessage").html("Укажите кому и зачем Вам необходимо перевести платеж <strong>№" + id + "</strong> ?");
 }
 
-function getPaymentReciver() {
-	if ($("#clientReciverId").length > 0) {
-		if ($("#clientReciverId").val() != null && $("#clientReciverId").val() != "") {
-
-			$.ajax({
-				url: cli.getParam("baseurl") + "Client/getClientName?id=" + $("#clientReciverId").val(),
-				type: 'POST',
-				dataType: "json",
-				success: function(data) {
-					$("#clientReciverMessage").html(data);
-				},
-				error: function(data) {
-					$("#clientReciverMessage").html("Ответ не был получен");
-				},
-				statusCode: {
-					404: function() {
-						$("#clientReciverMessage").html("Ответ не был получен");
-					}
-				}
-			});
-		} else {
-			$("#clientReciverMessage").html("");
-		}
-	}
-}
-
 function updatePort(_this) {
 	if ($(_this).attr("href") == "" || $(_this).attr("href") == null) {
 		var portVal = $(_this).find("span").html();
@@ -666,11 +640,7 @@ $(function() {
 	changeVisibilityUpdateEach();
 	$("div.Client.InfoPhysical").removeClass("hid");
 	$("div.Client.InfoLegal").removeClass("hid");
-
-	$("#clientReciverId").change(function() {
-		getPaymentReciver();
-	});
-
+	 
 	updateStaticIpEvents();
 
 	$("#switchPorts .port.free").attr("title", "свободный порт");

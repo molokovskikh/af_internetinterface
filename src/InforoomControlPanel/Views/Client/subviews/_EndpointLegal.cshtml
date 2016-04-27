@@ -24,7 +24,9 @@
 			<tr>
 				<td>Статус коммутатора</td>
 				<td style="width: 60%;">
-					@Html.Hidden("endpointId", order.EndPoint.Id)
+					@if (endpoint != null) {
+					 @Html.Hidden("endpointId", endpoint.Id)
+					}
 					<span class="switchstatus">нет ответа</span>
 				</td>
 			</tr>

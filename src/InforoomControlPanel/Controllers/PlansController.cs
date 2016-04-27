@@ -75,7 +75,7 @@ namespace InforoomControlPanel.Controllers
 
 		public ActionResult FixedIpPrice()
 		{
-			var priceItem = DbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof(FixedIp)));
+			var priceItem = DbSession.Query<Inforoom2.Models.Services.Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof(FixedIp)));
 			ViewBag.FixedIp = priceItem;
 			return View();
 		}

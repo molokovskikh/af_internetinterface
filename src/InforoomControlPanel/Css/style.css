@@ -3,14 +3,18 @@
 	.main-content .servicemen.panel, .PrintTimeTable{ display: block !important;}
 	.pageBreak {page-break-after: always;} 
 } 
+ .logo.hlink a{ font-size: 20px;font-weight: normal !important;}
  div a.linkLegal{color:#0D90D4;}
+  div a.linkLegal:hover {color:#0477B7} 
  div a.linkPhysical{color:#10A257;}
+  div a.linkPhysical:hover{color:#018A44;}
  .font-12{font-size: 12px;display: block;text-align: right;}
  .ListOrderArchive .phantomBlock{ max-width: 800px;}
  .no-margin{ margin: 0px !important;}
  .alert-danger{position: fixed;top: 18px;min-width: 572px;width: 62%;z-index: 99999;border:9px solid #BD3737; font-size: 13px;}
  span.red.bold{padding-left: 2px; font-weight: bold; color: #C70E0E;}
  .gray.bold{padding-left: 2px; font-weight: bold; color: #888888;}
+ .gray{color: #888888 !important;}
 .black{color: #333!important;}
 .red{color:#E60000!important;}
 .blue{color:#0D90D4!important;}
