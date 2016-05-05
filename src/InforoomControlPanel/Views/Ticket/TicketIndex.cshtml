@@ -28,9 +28,10 @@
 				<tr role="row" class="odd">
 					<td>@Html.DisplayFor(modelItem => item.Id)</td>
 					<td>
-						@if (item.Client != null)
-						{
-							<a href="@ConfigHelper.GetParam("adminPanelOld")UserInfo/ShowPhysicalClient?filter.ClientCode=@item.Client.Id">@item.Client.Id</a>
+						@if (item.Client != null) {
+							<a target="_blank" href="@Url.Action(item.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {item.Client.Id})" class="idColumn @(item.Client.PhysicalClient != null ? "linkPhysical" : "linkLegal")">
+								<span>@item.Client.Id - @(item.Client.GetName())</span>
+							</a>
 						}
 					</td>
 					<td class="maxWidth_150"><div class="maxWidth_1wordWrap">@Html.DisplayFor(modelItem => item.Email)</div></td>

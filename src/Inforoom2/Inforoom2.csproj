@@ -311,6 +311,7 @@
     <Compile Include="Helpers\CryptoPass.cs" />
     <Compile Include="Helpers\DescriptionHelper.cs" />
     <Compile Include="Helpers\ConfigHelper.cs" />
+    <Compile Include="Helpers\SecurityContext.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\WarningHelper.cs" />
     <Compile Include="Helpers\Md5Helper.cs" />

@@ -10,56 +10,64 @@
 }
 <div class="panel panel-primary col-md-12">
 	<div class="panel-body">
-		@using (Html.BeginForm("UpdateHardwareRent", "HardwareRent", new { @id = client.Id }, FormMethod.Post, new { @id = "HardwareListForm" })) {
-			<table id="HardwareTable" class="table table-bordered table-striped datatable dataTable no-footer" aria-describedby="HardwareTable_info" role="grid">
-				<thead>
-					<tr>
-						<th>Тип</th>
-						@if (clientHasHardware) {
-							<th>Модель, серийный номер</th>
-							<th>Дата выдачи</th>
-							<th>Данные о состоянии</th>
-							<th>Комментарий</th>
-						}
-						<th>Действие</th>
-					</tr>
-				</thead>
-				<tbody>
-					@for (var i = 0; i < rentalHardwareList.Count; i++) {
-						var rentalHardware = rentalHardwareList[i];
-						var trClass = i % 2 == 1 ? "odd" : "even";
-						var thisHw = client.GetActiveRentalHardware(rentalHardware);
+		@using (Html.BeginForm("UpdateHardwareRent", "HardwareRent", new { @id = client.Id }, FormMethod.Post, new { @id = "HardwareListForm" }))
+		{
+		<table id="HardwareTable" class="table table-bordered table-striped datatable dataTable no-footer" aria-describedby="HardwareTable_info" role="grid">
+			<thead>
+				<tr>
+					<th>Тип</th>
+					<th>Оборудование</th>
+					<th>Действие</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for (var i = 0; i < rentalHardwareList.Count; i++)
+				{
+					var rentalHardware = rentalHardwareList[i];
+					var trClass = i % 2 == 1 ? "odd" : "even";
+					var thisHwList = client.RentalHardwareList.Where(s => s.Hardware == rentalHardware && s.IsActive).ToList();
 
-						<tr class="@trClass" role="row">
-							<td><b>@rentalHardware.Name</b></td>
-							@if (clientHasHardware) {
-								if (thisHw != null) {
-									<td>@thisHw.Name, @thisHw.SerialNumber</td>
+				<tr class="@trClass" role="row">
+					<td><b>@rentalHardware.Name</b></td>
+					<td>
+						@if (clientHasHardware)
+						{
+						<table class="table table-bordered table-striped datatable dataTable no-footer tableInside" role="grid">
+							<thead>
+								<tr>
+									<th class="a">Модель, серийный номер</th>
+									<th class="b">Дата выдачи</th>
+									<th class="c">Данные о состоянии</th>
+									<th>Комментарий</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var thisHw in thisHwList)
+								{
+								<tr role="row">
+									<td><a href="@Url.Action("UpdateHardwareRent", new { id = thisHw.Id })">@thisHw.Name, @thisHw.SerialNumber</a></td>
 									<td>@(thisHw.GiveDate.HasValue ? thisHw.GiveDate.Value.ToShortDateString() : "")</td>
-									<td>@(thisHw.WasUsed ? "б/у" : "новый"),
-										Выдан @Html.Raw(thisHw.GetAbsentPartsOfRentedHardware(true))</td>
+									<td>
+										@(thisHw.WasUsed ? "б/у" : "новый"),
+										Выдан @Html.Raw(thisHw.GetAbsentPartsOfRentedHardware(true))
+									</td>
 									<td>@thisHw.Comment</td>
+								</tr>
 								}
-								else {
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-								}
+							</tbody>
+							</table>
+						}
+					</td>
+						<td>
+							@if (client.IsLegalClient || (!client.IsLegalClient && !client.HardwareIsRented(rentalHardware))) {
+								<a class="btn btn-green" href="@Url.Action("CreateHardwareRent", new { id = client.Id, Hardware = rentalHardware.Id })">Добавить</a>
 							}
-							<td>
-								@if (client.HardwareIsRented(rentalHardware)) {
-									<a class="btn btn-green" href="@Url.Action("UpdateHardwareRent", new { id = thisHw.Id })">Редактировать</a>
-								}
-								else {
-									<a class="btn btn-green" href="@Url.Action("CreateHardwareRent", new { id = client.Id, Hardware = rentalHardware.Id })">Редактировать</a>
-								}
-							</td>
+						</td>
 						</tr>
-					}
+				}
 				</tbody>
-			</table>
-		}
+				</table>
+			}
 	</div>
 </div>
 <div class="form-group">

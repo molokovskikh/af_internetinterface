@@ -158,7 +158,8 @@ function additionalBlockVisibility() {
 	//проверяем, есть ли заполненные поля в блоке
 	var anyInputHasValue;
 	$(".additionalFilterBlock input, .additionalFilterBlock select").each(function() {
-		if ($(this).val() != null && $(this).val() != "" && $(this).attr("id") != "OpenInANewTab" && $(this).attr("name") != "openInANewTab") {
+		if ($(this).val() != null && $(this).val() != "" && $(this).attr("id") != "OpenInANewTab" && $(this).attr("name") != "openInANewTab"
+			&& $(this).attr("id") != "WithArchiveRents" && $(this).attr("name") != "mfilter.withArchiveRents") {
 			anyInputHasValue = true;
 		}
 	});

@@ -60,42 +60,6 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "Клиенты";
 		}
 
-		/// <summary>
-		/// Страница списка клиентов
-		/// </summary>
-		public ActionResult List(bool openInANewTab = true, bool error = false)
-		{
-			InforoomModelFilter<Client> pager = null;
-			try {
-				pager = new InforoomModelFilter<Client>(this);
-				pager = ClientReports.GetGeneralReport(this, pager, false);
-			}
-			catch (Exception ex) {
-				if (!(ex is FormatException)) {
-					throw ex;
-				}
-				pager = null;
-			}
-			if (pager == null) {
-				return RedirectToAction("List", new {@error = true});
-			}
-			if (error) {
-				ErrorMessage("Ошибка ввода: неподдерживаемый формат введенных данных.");
-			}
-			if (!openInANewTab && pager.TotalItems == 1) {
-				var clientList = pager.GetItems();
-				//TODO: выпилить после полного перехода на новую админку
-				//var OldRedirect = ConfigHelper.GetParam("adminPanelOld");
-				//
-				//var urlToRedirect = OldRedirect + String.Format("UserInfo/{0}?filter.ClientCode={1}",
-				//	(clientList.First().PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"), clientList.First().Id);
-				//return Redirect(urlToRedirect);
-
-				return RedirectToAction((clientList.First().PhysicalClient != null ? "InfoPhysical" : "InfoLegal"), "Client",
-					new {clientList.First().Id});
-			}
-			return View("List");
-		}
 
 		/// <summary>
 		/// Страница редактирования клиента - физ. лица (учавствует и в пост-запросе)

@@ -11,6 +11,7 @@ using Inforoom2.Models;
 using NHibernate;
 using NHibernate.Engine;
 using NHibernate.Event;
+using NHibernate.Linq;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Persister.Entity;
 
@@ -19,16 +20,8 @@ namespace Inforoom2.Helpers
 	public class ModelCrudListener : IPreUpdateEventListener, IPostInsertEventListener, IPreDeleteEventListener
 	{
 		[Description("Текущий пользователь")]
-		public static Employee CurrentEmployee { get; private set; }
-
-		/// <summary>
-		/// Указание текущего пользователя, для отражения его действий в логах
-		/// </summary>
-		public static void SetEmployee(Employee currentUser)
-		{
-			CurrentEmployee = currentUser;
-		}
-
+		private Employee CurrentEmployee { get; set; }
+ 
 		/// <summary>
 		/// Формирование дополнительного сообщения об ошибке (подсказки)
 		/// </summary>
@@ -141,16 +134,17 @@ namespace Inforoom2.Helpers
 			if ((postInsert.Entity as Log != null) || (postInsert.Entity as Appeal != null)) {
 				return;
 			}
-			if (postInsert.Entity.GetType().GetInterfaces().Any(s => s == typeof (ILogAppeal))) {
+			if (postInsert.Entity.GetType().GetInterfaces().Any(s => s == typeof(ILogAppeal))) {
 				// сообщение
 				var messageBuilder = new StringBuilder();
 				// оформление логируемого поля модели
 				const string pattern = "{0} было: {1} <br/>{0} стало: {2} <br/>";
 				//получаем необходимые данные о событии
-				var currentObj = ((ILogAppeal) postInsert.Entity);
+				var currentObj = ((ILogAppeal)postInsert.Entity);
 				var session = postInsert.Session;
 				// запрещаем Flush модели на время обработки
 				(postInsert.Session as ISession).FlushMode = FlushMode.Never;
+				CurrentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName);
 				try {
 					var currentState = postInsert.State;
 					// объявляем нужные переменные
@@ -183,8 +177,7 @@ namespace Inforoom2.Helpers
 						// если существует логируемая разница между старой и новой моделями, сохраняем ее в лог 
 						if (messageBuilder.Length > 0) {
 							// формируем лог
-							appeal = new Appeal()
-							{
+							appeal = new Appeal() {
 								Message = messageBuilder.ToString(),
 								Client = appealBase,
 								AppealType = AppealType.System,
@@ -215,16 +208,17 @@ namespace Inforoom2.Helpers
 			if ((postUpdate.Entity as Log != null) || (postUpdate.Entity as Appeal != null)) {
 				return;
 			}
-			if (postUpdate.Entity.GetType().GetInterfaces().Any(s => s == typeof (ILogAppeal))) {
+			if (postUpdate.Entity.GetType().GetInterfaces().Any(s => s == typeof(ILogAppeal))) {
 				// сообщение
 				var messageBuilder = new StringBuilder();
 				// оформление логируемого поля модели
 				const string pattern = "{0} было: {1} <br/>{0} стало: {2} <br/>";
 				//получаем необходимые данные о событии
-				var currentObj = ((ILogAppeal) postUpdate.Entity);
+				var currentObj = ((ILogAppeal)postUpdate.Entity);
 				var session = postUpdate.Session;
 				// запрещаем Flush модели на время обработки
 				(postUpdate.Session as ISession).FlushMode = FlushMode.Never;
+				CurrentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName);
 				try {
 					var oldState = postUpdate.OldState;
 					var currentState = postUpdate.State;
@@ -284,12 +278,12 @@ namespace Inforoom2.Helpers
 											messageBuilder.AppendFormat(pattern, postUpdate.Entity.GetDescription(propNames[i]),
 												oldState.GetValue(i) == null
 													? "значение отсуствует"
-													: oldState[i].GetType().BaseType == typeof (Enum)
+													: oldState[i].GetType().BaseType == typeof(Enum)
 														? oldState[i].GetDescription()
-														: (oldState[i] is bool ? ((bool) oldState.GetValue(i) ? "да" : "нет") : oldState[i]),
+														: (oldState[i] is bool ? ((bool)oldState.GetValue(i) ? "да" : "нет") : oldState[i]),
 												currentState.GetValue(i) == null
 													? "значение отсуствует"
-													: currentState[i].GetType().BaseType == typeof (Enum)
+													: currentState[i].GetType().BaseType == typeof(Enum)
 														? currentState[i].GetDescription()
 														: (currentState[i] is bool ? ((bool)currentState.GetValue(i) ? "да" : "нет") : currentState[i]));
 										}
@@ -307,10 +301,9 @@ namespace Inforoom2.Helpers
 							// добавляя в начало информацию о модели
 							messageBuilder.Insert(0, string.Format("{0} , Id : {1} <br/>",
 								postUpdate.Entity.GetDescription(),
-								((postUpdate.Entity as BaseModel) != null ? "" + ((BaseModel) postUpdate.Entity).Id : "")));
+								((postUpdate.Entity as BaseModel) != null ? "" + ((BaseModel)postUpdate.Entity).Id : "")));
 							// формируем лог
-							appeal = new Appeal()
-							{
+							appeal = new Appeal() {
 								Message = messageBuilder.ToString(),
 								Client = appealBase,
 								AppealType = AppealType.System,
@@ -341,6 +334,9 @@ namespace Inforoom2.Helpers
 			}
 			//получаем необходимые данные о событии  
 			var session = postUpdate.Session;
+			// запрещаем Flush модели на время обработки
+			(postUpdate.Session as ISession).FlushMode = FlushMode.Never;
+			CurrentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName);
 			var oldState = postUpdate.OldState;
 			var currentState = postUpdate.State;
 			// сообщение
@@ -389,7 +385,7 @@ namespace Inforoom2.Helpers
 									(oldState[i] is Enum
 										? oldState[i].GetDescription() // если старое значение яв. перечислением, получаем его описание
 										: (oldState[i] is bool
-											? ((bool) oldState[i]) ? "Да" : "Нет" // если бинарное старое значение - выводим да/нет
+											? ((bool)oldState[i]) ? "Да" : "Нет" // если бинарное старое значение - выводим да/нет
 											: oldState[i])) // а вообще, старое значение обычное
 									: (oldState.GetValue(i) as BaseModel).Id)), // значение старое - модель, выводим Id модели
 							(currentState.GetValue(i) == null
@@ -399,7 +395,7 @@ namespace Inforoom2.Helpers
 									(currentState[i] is Enum
 										? currentState[i].GetDescription() // если новое значение яв. перечислением, получаем его описание
 										: (currentState[i] is bool
-											? ((bool) currentState[i]) ? "Да" : "Нет" // если бинарное новое значение - выводим да/нет
+											? ((bool)currentState[i]) ? "Да" : "Нет" // если бинарное новое значение - выводим да/нет
 											: currentState[i])) // а вообще, новое значение обычное 
 									: (currentState.GetValue(i) as BaseModel).Id)),
 							propNames[i]); // значение новое - модель, выводим Id модели
@@ -409,13 +405,12 @@ namespace Inforoom2.Helpers
 			// если существует логируемая разница между старой и новой моделями, сохраняем ее в лог 
 			if (messageBuilder.Length > 0) {
 				// добавляя в начало информацию о модели
-				int modelId = ((postUpdate.Entity as BaseModel) != null ? ((BaseModel) postUpdate.Entity).Id : 0);
+				int modelId = ((postUpdate.Entity as BaseModel) != null ? ((BaseModel)postUpdate.Entity).Id : 0);
 				messageBuilder.Insert(0, string.Format("Модель <strong> {0} </strong>, Id : <strong>{1}</strong> изменена :<br/>",
 					"<span class='c-pointer' title='" + postUpdate.Entity.GetType().Name + "'>" + postUpdate.Entity.GetDescription() +
 					"</span>", modelId));
 				// формируем лог 
-				log = new Log()
-				{
+				log = new Log() {
 					Message = messageBuilder.ToString(),
 					Type = LogEventType.Update,
 					Employee = CurrentEmployee,
@@ -427,6 +422,8 @@ namespace Inforoom2.Helpers
 			if (log != null) {
 				session.Save(log);
 			}
+			// возвращаем значение Flush поумолчанию
+			(postUpdate.Session as ISession).FlushMode = FlushMode.Auto;
 		}
 
 		/// <summary>
@@ -441,6 +438,9 @@ namespace Inforoom2.Helpers
 			//получаем необходимые данные о событии 
 			var currentObj = postInsert.State;
 			var session = postInsert.Session;
+			// запрещаем Flush модели на время обработки
+			(postInsert.Session as ISession).FlushMode = FlushMode.Never;
+			CurrentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName); 
 			// объявляем нужные переменные
 			Log log = null;
 			// сообщение
@@ -472,12 +472,11 @@ namespace Inforoom2.Helpers
 			// сохраняем сообщение в лог 
 			if (messageBuilder.Length > 0) {
 				// добавляя в начало информацию о модели
-				int modelId = ((postInsert.Entity as BaseModel) != null ? ((BaseModel) postInsert.Entity).Id : 0);
+				int modelId = ((postInsert.Entity as BaseModel) != null ? ((BaseModel)postInsert.Entity).Id : 0);
 				messageBuilder.Insert(0, string.Format("Модель <strong> {0} </strong>, Id : <strong>{1}</strong> добавлена :<br/>",
 					postInsert.Entity.GetDescription(), modelId));
 				// формируем лог 
-				log = new Log()
-				{
+				log = new Log() {
 					Message = messageBuilder.ToString(),
 					Type = LogEventType.Insert,
 					Employee = CurrentEmployee,
@@ -489,6 +488,8 @@ namespace Inforoom2.Helpers
 			if (log != null) {
 				session.Save(log);
 			}
+			// возвращаем значение Flush поумолчанию
+			(postInsert.Session as ISession).FlushMode = FlushMode.Auto;
 		}
 
 		/// <summary>
@@ -503,6 +504,9 @@ namespace Inforoom2.Helpers
 			//получаем необходимые данные о событии 
 			var currentObj = preDelete.DeletedState;
 			var session = preDelete.Session;
+			// запрещаем Flush модели на время обработки
+			(preDelete.Session as ISession).FlushMode = FlushMode.Never;
+			CurrentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName);
 			// сообщение
 			var messageBuilder = new StringBuilder();
 			// оформление логируемого поля модели
@@ -534,12 +538,11 @@ namespace Inforoom2.Helpers
 			// сохраняем сообщение в лог 
 			if (messageBuilder.Length > 0) {
 				// добавляя в начало информацию о модели
-				int modelId = ((preDelete.Entity as BaseModel) != null ? ((BaseModel) preDelete.Entity).Id : 0);
+				int modelId = ((preDelete.Entity as BaseModel) != null ? ((BaseModel)preDelete.Entity).Id : 0);
 				messageBuilder.Insert(0, string.Format("Модель <strong> {0} </strong>, Id : <strong>{1}</strong> удалена :<br/>",
 					preDelete.Entity.GetDescription(), modelId));
 				// формируем лог 
-				log = new Log()
-				{
+				log = new Log() {
 					Message = messageBuilder.ToString(),
 					Type = LogEventType.Delete,
 					Employee = CurrentEmployee,
@@ -551,6 +554,8 @@ namespace Inforoom2.Helpers
 			if (log != null) {
 				session.Save(log);
 			}
+			// возвращаем значение Flush поумолчанию
+			(preDelete.Session as ISession).FlushMode = FlushMode.Auto;
 		}
 	}
 }

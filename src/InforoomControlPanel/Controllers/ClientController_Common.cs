@@ -41,6 +41,45 @@ namespace InforoomControlPanel.Controllers
 {
 	public partial class ClientController : ControlPanelController
 	{
+
+
+		/// <summary>
+		/// Страница списка клиентов
+		/// </summary>
+		public ActionResult List(bool openInANewTab = true, bool error = false)
+		{
+			InforoomModelFilter<Client> pager = null;
+			try
+			{
+				pager = new InforoomModelFilter<Client>(this);
+				pager = ClientReports.GetGeneralReport(this, pager, false);
+			}
+			catch (Exception ex)
+			{
+				if (!(ex is FormatException))
+				{
+					throw ex;
+				}
+				pager = null;
+			}
+			if (pager == null)
+			{
+				return RedirectToAction("List", new { @error = true });
+			}
+			if (error)
+			{
+				ErrorMessage("Ошибка ввода: неподдерживаемый формат введенных данных.");
+			}
+			if (!openInANewTab && pager.TotalItems == 1)
+			{
+				var clientList = pager.GetItems(); 
+
+				return RedirectToAction((clientList.First().PhysicalClient != null ? "InfoPhysical" : "InfoLegal"), "Client",
+					new { clientList.First().Id });
+			}
+			return View("List");
+		}
+
 		public ActionResult ActivateService(int clientId, int serviceId, DateTime? startDate, DateTime? endDate)
 		{
 			var servise = DbSession.Load<Inforoom2.Models.Services.Service>(serviceId);

@@ -16,6 +16,19 @@ namespace InforoomControlPanel.ReportTemplates
 		public static InforoomModelFilter<Client> GetGeneralReport(Controller controller, InforoomModelFilter<Client> pager,
 			bool dateNecessary = true)
 		{
+			if (!string.IsNullOrEmpty(pager.GetParam("filter.Equal.RentalHardwareList.First().Hardware.Name")) &&
+			    !string.IsNullOrEmpty(pager.GetParam("withArchiveRents"))) {
+				var stWithArchiveRents = pager.GetParam("withArchiveRents").Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+				var withArchiveRents = false;
+				if (stWithArchiveRents != null && bool.TryParse(stWithArchiveRents, out withArchiveRents) && withArchiveRents) {
+					pager.ParamDelete("filter.Equal.RentalHardwareList.First().IsActive");
+					pager.ParamSet("filter.Equal.RentalHardwareList.First().IsActive", "true");
+					controller.ViewBag.WithArchiveRents = true;
+				}
+				else {
+					pager.ParamDelete("filter.Equal.RentalHardwareList.First().IsActive");
+				}
+			}
 			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
 				pager.SetOrderBy("Id", OrderingDirection.Desc);
 			if (dateNecessary && string.IsNullOrEmpty(pager.GetParam("filter.GreaterOrEqueal.CreationDate")) &&

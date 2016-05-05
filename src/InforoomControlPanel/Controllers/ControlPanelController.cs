@@ -29,7 +29,7 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			var employee = GetCurrentEmployee();
-			ModelCrudListener.SetEmployee(employee);
+		//	ModelCrudListener.SetEmployee(employee);
 			string name = ViewBag.ControllerName + "Controller_" + ViewBag.ActionName;
 			var permission = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
 			//@todo убрать проверку, на accessDenined, а вместо этого просто не генерировать его. В целом подумать
@@ -41,8 +41,8 @@ namespace InforoomControlPanel.Controllers
 		{
 			if (User == null || DbSession == null || !DbSession.IsConnected) {
 				return null;
-			}
-			return DbSession.Query<Employee>().FirstOrDefault(e => e.Login == User.Identity.Name);
+			}  
+      return DbSession.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName);
 		}
 
 		protected override void OnResultExecuting(ResultExecutingContext filterContext)

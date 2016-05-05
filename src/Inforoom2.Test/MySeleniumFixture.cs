@@ -51,7 +51,11 @@ namespace Inforoom2.Test
 		public static void GlobalTearDown()
 		{
 			if (GlobalDriver != null) {
-				GlobalDriver.Close();
+				var allTabsToClose = GlobalDriver.WindowHandles.ToList();
+				foreach (var tab in allTabsToClose) {
+					GlobalDriver.SwitchTo().Window(tab);
+					GlobalDriver.Close();
+				}
 				GlobalDriver.Quit();
 				GlobalDriver.Dispose();
 				GlobalDriver = null;
@@ -179,6 +183,7 @@ namespace Inforoom2.Test
 				Thread.Sleep(10);
 			}
 		}
+		 
 
 		protected void WaitForCss(string css, int seconds = 5)
 		{
@@ -191,6 +196,13 @@ namespace Inforoom2.Test
 
 			var wait = new WebDriverWait(browser, seconds.Second());
 			wait.Until(d => ((RemoteWebDriver)d).FindElementsByCssSelector(css).Count > 0 && ((RemoteWebDriver) d).FindElementByCssSelector(css).Displayed);
+		}
+
+		protected void WaitForHiddenCss(string css, int seconds = 10)
+		{
+
+			var wait = new WebDriverWait(browser, seconds.Second());
+			wait.Until(d => ((RemoteWebDriver)d).FindElementsByCssSelector(css).Count == 0 || !((RemoteWebDriver)d).FindElementByCssSelector(css).Displayed);
 		}
 
 		protected void WaitAnimation(string css)
@@ -206,9 +218,9 @@ namespace Inforoom2.Test
 			});
 		}
 
-		protected void WaitClickable(string css)
+		protected void WaitClickable(string css, int seconds = 5)
 		{
-			var wait = new WebDriverWait(browser, waitTime.Second());
+			var wait = new WebDriverWait(browser, seconds.Second());
 			wait.Until(d =>
 			{
 				var el = ((RemoteWebDriver) d).FindElementByCssSelector(css);

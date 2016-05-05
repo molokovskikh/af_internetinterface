@@ -298,17 +298,7 @@ namespace Inforoom2.Models
 		{
 			return RentalHardwareList.ToList().Exists(rh => rh.Hardware == hw && rh.IsActive);
 		}
-
-		/// <summary>
-		/// Метод получения у клиента текущей услуги "Аренда оборудования" 
-		/// </summary>
-		public virtual ClientRentalHardware GetActiveRentalHardware(RentalHardware hw)
-		{
-			var thisHardware = RentalHardwareList.Where(rh => rh.Hardware == hw && rh.IsActive).ToList();
-			return thisHardware.OrderBy(h => h.BeginDate).LastOrDefault();
-		}
-
-		public virtual bool CanUseService(Service service)
+		 public virtual bool CanUseService(Service service)
 		{
 			return service.IsActivableFor(this);
 		}

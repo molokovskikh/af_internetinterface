@@ -355,6 +355,15 @@ namespace InforoomControlPanel.Controllers
 					clientRequest.Address.Floor = clientRequest.Floor;
 					clientRequest.Address.Entrance = clientRequest.Entrance.ToString();
 					clientRequest.Address.Apartment = clientRequest.Apartment.ToString();
+					client.PhysicalClient.Address = clientRequest.Address;
+				}
+				else {
+					client.PhysicalClient.Address = new Address() {
+						House = null,
+						Floor = clientRequest.Floor,
+						Entrance = clientRequest.Entrance.ToString(),
+						Apartment = clientRequest.Apartment.ToString()
+					};
 				}
 			}
 			else {

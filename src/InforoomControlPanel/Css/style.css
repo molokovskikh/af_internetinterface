@@ -63,6 +63,10 @@
  #switchPorts .port.client{background: #F7ADAD;}
  #switchPorts .port.client:hover{background: #FF7878;}
  #switchPorts .port span{ position: relative;top: 12%;font-size: 13px;color:#333;}
+ #HardwareListForm .tableInside th.a{width: 350px!important;}
+ #HardwareListForm .tableInside th.b{width: 90px!important;}
+ #HardwareListForm .tableInside th.c{width: 226px!important;}
+ .portInfoData{background: #EAEAEA;padding: 4px;color: #E80000;font-weight: bold;}  
  .table .no-end-point td{background: #E5FCFD !important;}
  .table .fixedIp{ display: inline-block;}
  .table .fixedIp.text{ width: 120px !important;}

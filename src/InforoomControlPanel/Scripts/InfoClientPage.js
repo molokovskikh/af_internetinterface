@@ -216,6 +216,18 @@ function clientContactValidation() {
 					$("#ContactValidationMessage").addClass("error");
 					$("#ContactValidationMessage").html(data);
 				} else {
+					$("#ClientContactsEditorForm [name *= '.ContactName']").each(function() {
+						if ($(this).val() === "" && $("#editBlock_contacts [name = '" + $(this).attr("name") + "']").val() === "") {
+							$(this).attr("noName", $(this).attr("name"));
+							$(this).removeAttr("name");
+						}
+					});
+					$("#ClientContactsEditorForm [noName *= '.ContactName']").each(function () {
+						if ($(this).val() !== "") {
+							$(this).attr("name", $(this).attr("noName"));
+							$(this).removeAttr("noName");
+						}
+					});
 					$("#ClientContactsEditorForm").submit();
 				}
 			},
@@ -235,6 +247,7 @@ function clientContactValidation() {
 
 function clientContactDelete(button) {
 	var trList = $("#emptyBlock_contacts table tr");
+	if ($("#editBlock_contacts #contactsTable .contactItem").length == 1) return;
 	for (var i = 0; i < trList.length; i++) {
 		var delItem = $(trList[i]).find("#" + $(button).attr("id"));
 		if (delItem.length > 0) {
@@ -340,6 +353,7 @@ function updatePort(_this) {
 		var portVal = $(_this).find("span").html();
 		$("#endpoint_Port").val(portVal);
 		$("#endpoint_PortVal").val(portVal);
+		$(".portInfoData").html(portVal);
 	}
 }
 

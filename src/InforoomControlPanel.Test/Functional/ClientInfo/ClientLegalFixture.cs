@@ -10,6 +10,7 @@ using Inforoom2.Test.Infrastructure.Helpers;
 using InforoomControlPanel.Test.Functional.infrastructure;
 using NHibernate.Linq;
 using NUnit.Framework;
+using OpenQA.Selenium.Support.UI;
 
 namespace InforoomControlPanel.Test.Functional.ClientInfo
 {
@@ -405,7 +406,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Css(blockName + "[name='client.Contacts[1].Type']").SelectByText((typeClone).GetDescription());
 			//сохраняем изменения
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
-			WaitAjax(10);
+			WaitForVisibleCss(blockName + ".btn.btn-blue.lockButton",20);
 			//проверяем наличие добавленного номера
 			AssertText(phoneNumberToCheck, blockName);
 			//Удаляем контакт
@@ -539,7 +540,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			inputObj.SendKeys(anotherClient.Id.ToString());
 			WaitAjax(10);
 			browser.FindElementByCssSelector(blockNamePaymentsMove + "#myModalLabel").Click();
-			WaitAjax(10);
+			WaitAjax(20);
 			//Причина
 			inputObj = browser.FindElementByCssSelector(blockNamePaymentsMove + "input[name='comment']");
 			WaitForVisibleCss(blockNamePaymentsMove + "input[name='comment']");
@@ -866,14 +867,17 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 		[Test, Description("Страница клиента. Юр. лицо. Добавление и удаление услуги 'Отмена блокировок'")]
 		public void LegalServiceWorkLawyerAddRemove()
 		{
+			decimal totalSum = 10000;
 			//выставление начальных параметров, клиент активен, варнинг не показывается
 			string blockModelName = "#ModelForActivateService ";
 			var serviceEnd = SystemTime.Now().AddDays(10);
 			Assert.That(CurrentClient.Disabled, Is.EqualTo(false));
 			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false));
 			//добавление заказа на большую сумму (до минуса)
-			SimpleOrderAdding(10000); 
-			RunBillingProcessPayments(CurrentClient);
+			var serviceSum = totalSum;
+      totalSum -= CurrentClient.Balance;
+			SimpleOrderAdding(Convert.ToInt32(serviceSum));
+      RunBillingProcessPayments(CurrentClient);
 			RunBillingProcessWriteoffs(CurrentClient, false);
 			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.LegalClient);
@@ -910,7 +914,8 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				RecievedOn = SystemTime.Now(),
 				Sum = 5000
 			};
-			CurrentClient.Payments.Add(payment);
+			totalSum -= payment.Sum;
+      CurrentClient.Payments.Add(payment);
 			CurrentClient.PaidDay = false;
       DbSession.Save(payment);
 			DbSession.Save(CurrentClient);
@@ -937,6 +942,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				RecievedOn = SystemTime.Now(),
 				Sum = 2000
 			};
+			totalSum -= payment.Sum;
 			CurrentClient.PaidDay = false;
 			CurrentClient.Payments.Add(payment);
 			DbSession.Save(payment);
@@ -959,6 +965,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				RecievedOn = SystemTime.Now(),
 				Sum = 3000
 			};
+			totalSum -= payment.Sum;
 			CurrentClient.PaidDay = false;
 			CurrentClient.Payments.Add(payment);
 			DbSession.Save(payment);
@@ -968,7 +975,8 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			RunBillingProcessWriteoffs(CurrentClient, false);
 			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.LegalClient);
-			Assert.That(CurrentClient.LegalClient.Balance, Is.EqualTo(0));
+			totalSum = totalSum * -1;
+      Assert.That(CurrentClient.LegalClient.Balance, Is.EqualTo(totalSum));
 			//платеж (баланс = 0) должен убрать варнинг, а состояние клиента должно стать активным
 			Assert.That(CurrentClient.Disabled, Is.EqualTo(false));
 			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false));

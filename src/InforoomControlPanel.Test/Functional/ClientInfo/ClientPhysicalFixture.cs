@@ -439,6 +439,18 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 		[Test, Description("Страница клиента. Физ. лицо. Возврат скидки")]
 		public void SaleEditing()
 		{
+			SystemTime.Now = () => DateTime.Now;
+			var saleSettings = DbSession.Query<SaleSettings>().FirstOrDefault();
+			var defSetttings = SaleSettings.Defaults();
+			saleSettings.DaysForRepair = defSetttings.DaysForRepair;
+			saleSettings.FreeDaysVoluntaryBlocking = defSetttings.FreeDaysVoluntaryBlocking;
+			saleSettings.MaxSale = defSetttings.MaxSale;
+			saleSettings.MinSale = defSetttings.MinSale;
+			saleSettings.PeriodCount = defSetttings.PeriodCount;
+			saleSettings.SaleStep = defSetttings.SaleStep;
+			DbSession.Save(saleSettings);
+			DbSession.Flush();
+
 			Assert.That(CurrentClient.StartNoBlock, Is.Null);
 			string blockName = "#emptyBlock_PrivatePhysicalInfo ";
 			string blockNameNew = "#ModelForSale ";
@@ -465,9 +477,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			browser.FindElementByCssSelector(blockNameNew + ".btn.btn-success").Click();
 
 			DbSession.Refresh(CurrentClient);
-
 			//проверка скидки и периода отсчета после отработки "восстановления скидки"
-			var saleSettings = DbSession.Query<SaleSettings>().FirstOrDefault();
 			var monthOnStart = Convert.ToInt32((CurrentClient.Discount - saleSettings.MinSale) 
 				/ saleSettings.SaleStep + saleSettings.PeriodCount); //расчет периода отсчета 
 			Assert.That(CurrentClient.StartNoBlock.Value, Is.EqualTo(SystemTime.Now().AddMonths(-monthOnStart).Date));
@@ -479,7 +489,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			DbSession.Flush();
 			RunBillingProcessPayments(CurrentClient);
 			RunBillingProcessWriteoffs(CurrentClient, false);
-			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient); 
 			Assert.That(CurrentClient.StartNoBlock.Value, Is.EqualTo(SystemTime.Now().AddMonths(-monthOnStart).Date));
 			Assert.That(CurrentClient.Discount, Is.EqualTo(8), "Скидка отсутствует.");
 
@@ -533,7 +543,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Css(blockName + "[name='client.Contacts[1].Type']").SelectByText((typeClone).GetDescription());
 			//сохраняем изменения
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
-			WaitAjax(20);
+			WaitForVisibleCss(blockName + ".btn.btn-blue.lockButton", 20);
 			//проверяем наличие добавленного номера
 			AssertText(phoneNumberToCheck, blockName);
 			//Удаляем контакт
@@ -842,9 +852,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			WaitForVisibleCss(blockNamePaymentsMove + "input[name='clientReceiverId']");
 			inputObj.Clear();
 			inputObj.SendKeys(anotherClient.Id.ToString());
-			WaitAjax(10);
+			WaitAjax(20);
 			browser.FindElementByCssSelector(blockNamePaymentsMove + "#myModalLabel").Click();
-			WaitAjax(10);
+			WaitAjax(20);
 			//Причина
 			inputObj = browser.FindElementByCssSelector(blockNamePaymentsMove + "input[name='comment']");
 			WaitForVisibleCss(blockNamePaymentsMove + "input[name='comment']");
@@ -970,18 +980,23 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 
 			var currentSwitch =
 				DbSession.Query<Inforoom2.Models.Switch>().FirstOrDefault(s => s.Zone.Region == CurrentClient.GetRegion());
-
+			
 			Css(blockName + "[name='connection.Switch']")
 				.SelectByText(currentSwitch.Name + " (портов: " + currentSwitch.PortCount + ")");
 			//ожидание
-			WaitAjax();
-			WaitForVisibleCss(blockName + ".port.free");
-			browser.FindElementByCssSelector(blockName + ".port.free:first-child").Click();
+			WaitAjax(10);
+			browser.FindElementByCssSelector(blockName + "[data-target='#ModelForPortSelection']").Click();
+			WaitForVisibleCss(blockName + "#ModelForPortSelection .port.free:first-child",15);
+			browser.FindElementByCssSelector(blockName + "#ModelForPortSelection .port.free:first-child").Click();
+			WaitForVisibleCss(blockName + "#ModelForPortSelection .btn.btn-default");
+			browser.FindElementByCssSelector(blockName + "#ModelForPortSelection .btn.btn-default").Click();
 
+			WaitForVisibleCss(blockName + "input[name='connectSum']", 20);
 			var inputObj = browser.FindElementByCssSelector(blockName + "input[name='connectSum']");
 			inputObj.Clear();
 			inputObj.SendKeys(connectSum.ToString());
-			//сохранение изменений
+			//сохранение изменений 
+			WaitForHiddenCss(".modal-backdrop", 20);
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
 
 			DbSession.Refresh(CurrentClient);
@@ -1052,12 +1067,16 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Css(blockName + "[name='connection.Switch']")
 				.SelectByText(newSwitch.Name + " (портов: " + newSwitch.PortCount + ")");
 			//ожидание
+			WaitAjax(20);
+			browser.FindElementByCssSelector(blockName + "[data-target='#ModelForPortSelectionEdit']").Click();
+			WaitForVisibleCss(blockName + "#ModelForPortSelectionEdit .port.free");
+			browser.FindElementByCssSelector(blockName + "#ModelForPortSelectionEdit .port.free:first-child").Click();
+			browser.FindElementByCssSelector(blockName + "#ModelForPortSelectionEdit .btn.btn-default").Click();
+			WaitForHiddenCss(".modal-backdrop", 20);
+			WaitForVisibleCss(blockName + ".removeFixedIp",20);
 			WaitAjax(10);
-			WaitForVisibleCss(blockName + ".port.free");
-			browser.FindElementByCssSelector(blockName + ".port.free:first-child").Click();
-
 			browser.FindElementByCssSelector(blockName + ".removeFixedIp").Click();
-			WaitAjax();
+			WaitAjax(10);
 			//сохранение изменений
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
 
@@ -1074,7 +1093,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Open("Client/InfoPhysical/" + CurrentClient.Id);
 			//Редактируем 
 			browser.FindElementByCssSelector(blockName + ".btn.btn-blue.lockButton").Click();
-
+			WaitForVisibleCss(blockName + ".createFixedIp", 20);
 			browser.FindElementByCssSelector(blockName + ".createFixedIp").Click();
 			SafeWaitText("Фиксированный IP " + newLease.Ip.ToString(), 10);
 			//сохранение изменений
