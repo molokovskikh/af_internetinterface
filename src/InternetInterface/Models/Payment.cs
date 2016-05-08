@@ -55,7 +55,7 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual bool BillingAccount { get; set; }
 
-		[Property, Style]
+		[Property("`Virtual`"), Style]
 		public virtual bool Virtual { get; set; }
 
 		[Property]
