@@ -432,6 +432,7 @@
     <Compile Include="validators\ValidatorNotEmpty.cs" />
     <Compile Include="validators\CustomValidator.cs" />
     <Compile Include="validators\ValidatorDateTime.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
@@ -447,10 +448,7 @@
     <Content Include="Views\ClientRequest\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
-    <Folder Include="App_Start\" />
     <Folder Include="Content\" />
-    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Billing\Billing.csproj">
@@ -532,9 +530,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>Web.config</DependentUpon>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

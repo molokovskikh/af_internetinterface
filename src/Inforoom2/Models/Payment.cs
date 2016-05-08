@@ -33,7 +33,7 @@ namespace Inforoom2.Models
 		[Property, Description("Отметка о том,что обработано биллингом ")]
 		public virtual bool BillingAccount { get; set; }
 
-		[Property, Description("Характеризует платеж как бонусный/виртуальный")]
+		[Property(Column = "`Virtual`"), Description("Характеризует платеж как бонусный/виртуальный")]
 		public virtual bool? Virtual { get; set; }
 
 		[Property, Description("Комментарий к платежу")]

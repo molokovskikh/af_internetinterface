@@ -1547,6 +1547,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminOpenController.cs" />
     <Compile Include="Controllers\AdminAccountController.cs" />
@@ -1616,7 +1617,6 @@
     <Folder Include="assets\js\aci-tree\php\tree\Item 7\Item 4\Item 4\" />
     <Folder Include="assets\js\selectboxit\css\" />
     <Folder Include="Images\Uploaded\" />
-    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.MySql\Common.MySql\Common.MySql.csproj">
