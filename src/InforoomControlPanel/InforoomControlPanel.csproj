@@ -150,6 +150,10 @@
     <Content Include="assets\css\skins\yellow.min.css" />
     <Content Include="assets\css\ui-semantic\dropdown.min.css" />
     <Content Include="assets\css\ui-semantic\transition.min.css" />
+    <Content Include="assets\html_templates\switchtInfoTemplate_Huawei.html" />
+    <Content Include="assets\html_templates\switchtInfoTemplate_Linksys.html" />
+    <Content Include="assets\html_templates\switchtInfoTemplate_Dlink.html" />
+    <Content Include="assets\html_templates\switchtInfoTemplate_Catalyst.html" />
     <Content Include="assets\js\ui-semantic\transition.min.js" />
     <Content Include="assets\css\wysihtml5-color.css" />
     <Content Include="assets\fonts\glyphicons-halflings-regular.svg" />
@@ -1516,9 +1520,11 @@
     <Content Include="Images\image004.gif" />
     <Content Include="Images\image005.gif" />
     <Content Include="Images\inforoomForCard.jpg" />
+    <Content Include="Images\loading.gif" />
     <Content Include="Images\map.png" />
     <Content Include="Images\tick.png" />
     <Content Include="Images\toplink.png" />
+    <Content Include="Scripts\ClientEndpointCheckState.js" />
     <Content Include="Scripts\ConnectionRequestMarker.js" />
     <Content Include="Scripts\ClientController.ClientRegistration.js" />
     <Content Include="Scripts\AdminAddressController.js" />
@@ -1540,6 +1546,7 @@
     <Content Include="Scripts\jquery-ui-1.11.1.js" />
     <Content Include="assets\js\jquery.cookie.js" />
     <Content Include="Scripts\PaymentsCalendarFilter.js" />
+    <Content Include="assets\html_templates\switchtInfoTemplate_BaseInfo.html" />
     <Content Include="Scripts\Window.js" />
     <Content Include="Scripts\YandexMapHelper.js" />
     <Content Include="favicon.ico" />
@@ -1577,7 +1584,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\CatalystCommutateurInfo.cs" />
+    <Compile Include="Helpers\DlinkCommutateurInfo.cs" />
     <Compile Include="Helpers\EmployeePermissionViewHelper.cs" />
+    <Compile Include="Helpers\HardwareHelper.cs" />
+    <Compile Include="Helpers\HuaweiCommutateurInfo.cs" />
+    <Compile Include="Helpers\LinksysCommutateurInfo.cs" />
+    <Compile Include="Helpers\TelnetInterface.cs" />
     <Compile Include="Models\ViewModelClientOrder.cs" />
     <Compile Include="ReportTemplates\FilterReportModels.cs" />
     <Compile Include="ReportTemplates\LeaseReport.cs" />
@@ -2040,6 +2053,8 @@
     <Content Include="Views\Payments\PaymentCreate.cshtml" />
     <Content Include="Views\Payments\PaymentInfo.cshtml" />
     <Content Include="Views\Admin\Error.cshtml" />
+    <Content Include="Views\Switch\ClientEndPointState.cshtml" />
+    <Content Include="Views\Client\subviews\modelview\_PhysicalServiceManager.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <Content Include="Views\Switch\SwitchCreate.cshtml" />

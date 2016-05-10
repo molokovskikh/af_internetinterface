@@ -889,17 +889,18 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		protected List<string> GetEnumDropDownValues(Type type, string selectedValue = null)
 		{
-			var values = new List<string>();
+			var values = new List<Tuple<string, string>>();
 			var names = type.GetEnumNames();
 			foreach (var name in names) {
 				var value = Enum.Parse(type, name);
 				var description = value.GetDescription();
 				var selected = value.ToString() == selectedValue ? "selected='selected'" : "";
-				values.Add(string.Format("<option {0} value='{1}'>{2}</option>", selected, value, description));
+				values.Add(new Tuple<string, string>(string.Format("<option {0} value='{1}'>{2}</option>", selected, value, description), description));
 			}
-			values = values.OrderBy(s => s).ToList();
-			values.Insert(0, "<option value=''> </option>");
-			return values;
+			values = values.OrderBy(s => s.Item2).ToList();
+			var result = values.Select(s => s.Item1).ToList();
+			result.Insert(0, "<option value=''> </option>");
+			return result;
 		}
 
 		/// <summary>

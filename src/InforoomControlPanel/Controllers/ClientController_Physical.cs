@@ -289,6 +289,9 @@ namespace InforoomControlPanel.Controllers
 				}
 			}
 			ViewBag.ActionName = ((string) ViewBag.ActionName) + " hid";
+			ViewBag.ServiceToActivate =
+				DbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof(SpeedBoost)));
+
 			return View();
 		}
 

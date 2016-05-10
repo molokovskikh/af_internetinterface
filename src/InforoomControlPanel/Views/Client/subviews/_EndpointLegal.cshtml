@@ -68,7 +68,13 @@
 			<tr>
 				<td>Порт</td>
 				<td>
-					<span>@endpoint.Port</span>
+					<a target="_blank" class="endpointStateStatus portLink" title="Состояние точки подключения" href="@Url.Action("ClientEndPointState","Switch",new {id = endpoint.Id})"><span>@endpoint.Port</span></a>
+				</td>
+			</tr>
+			<tr>
+				<td><a class="blue c-pointer" onclick="GetPortConnectionState(@endpoint.Id)">Статус соединения</a></td>
+				<td>
+					<div class="endpointStateStatus@(endpoint.Id)">не установлен</div>
 				</td>
 			</tr>
 			<tr>

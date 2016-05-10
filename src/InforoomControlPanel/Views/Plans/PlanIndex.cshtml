@@ -1,7 +1,7 @@
 ﻿@using Inforoom2.Models
 @model dynamic
 @{
-	ViewBag.Title = "Список тарифов";
+	ViewBag.Title = "Список тарифов (по приоритету отображения у клиентов)";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	IList<Plan> plans = ViewBag.Plans;
 }
@@ -9,7 +9,7 @@
 	
 
 	<div class="form-group">
-		<a class="btn btn-green" href="@Url.Action("CreatePlan","Plans")">Добавить план</a>
+		<a class="btn btn-green" href="@Url.Action("CreatePlan","Plans")">Добавить тариф</a>
 	</div>
 
 

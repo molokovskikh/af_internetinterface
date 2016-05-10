@@ -60,10 +60,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				? CurrentClient.WhoRegistered.Name
 				: "нет"));
 			//тариф
-			AssertText("Тариф " + (CurrentClient.PhysicalClient.Plan != null
-				? CurrentClient.PhysicalClient.Plan.Name + " (" + CurrentClient.PhysicalClient.Plan.Price.ToString("0.00") + " р." +
-				  (CurrentClient.GetTariffPrice() != 0 ? " / " + CurrentClient.GetTariffPrice().ToString("0.00") + " р.)" : ")")
-				: "нет"));
+			AssertText($"{ CurrentClient.PhysicalClient.Plan.Name} ({CurrentClient.GetTariffPrice(true).ToString("0.00")} р. / { CurrentClient.PhysicalClient.Plan.Price.ToString("0.00")} р.)");
 			//Баланс
 			AssertText("Баланс " + CurrentClient.PhysicalClient.Balance.ToString("0.00"));
 			//Денежных средств
@@ -337,6 +334,63 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 		}
 
 
+		[Test, Description("Страница клиента. Физ. лицо. Добавление и удаление услуги 'Повышение скорости'")]
+		public void ServiceSpeedBoostAddRemove()
+		{
+			//выставление начальных параметров, клиент активен, варнинг не показывается
+			string blockModelName = "#ModelForActivateService ";
+			var packageSpeedList = DbSession.Query<PackageSpeed>().ToList();
+			var packageSpeed = packageSpeedList.FirstOrDefault(s => s.PackageId == 23);
+			var serviceEnd = SystemTime.Now().AddDays(10);
+			var enpoint = CurrentClient.Endpoints.FirstOrDefault();
+			var startPackegeId = enpoint.PackageId.Value;
+			RunBillingProcessPayments(CurrentClient);
+			RunBillingProcessWriteoffs(CurrentClient, false);
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.PhysicalClient);
+			DbSession.Refresh(enpoint);
+			Assert.That(enpoint.PackageId.Value, Is.EqualTo(startPackegeId)); 
+
+			//проверка на отсутствие услуги "отключения блокировки"
+			Assert.That(CurrentClient.ClientServices.Where(s => s.Service.Id == Service.GetIdByType(typeof(SpeedBoost))).ToList().Count, Is.EqualTo(0));
+			//открытие редактора сервиса "отключения блокировки"  
+			browser.FindElementByCssSelector(".InfoPhysical .list-group [data-target='#ModelForActivateService']").Click();
+			WaitAjax(10);
+			//выставление даты
+			WaitForVisibleCss(blockModelName + "input[name='endDate']", 10);
+			var inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='endDate']");
+			inputObj.Clear();
+			inputObj.SendKeys(serviceEnd.ToShortDateString());
+			//выставление даты
+			WaitForVisibleCss(blockModelName + "input[name='startDate']", 10);
+			inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='startDate']");
+			inputObj.Clear();
+			inputObj.SendKeys(SystemTime.Now().ToShortDateString());
+			//указание причины восстановления
+			browser.FindElementByCssSelector(blockModelName + ".message").Click();
+			//сохранение изменений
+			browser.FindElementByCssSelector(blockModelName + ".btn.btn-success").Click();
+
+			RunBillingProcessPayments(CurrentClient);
+			RunBillingProcessWriteoffs(CurrentClient, false);
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.PhysicalClient);
+			DbSession.Refresh(enpoint);
+			Assert.That(enpoint.PackageId.Value, Is.EqualTo(packageSpeed.PackageId));
+			//проверка на отсутствие услуги "отключения блокировки"
+			Assert.That(CurrentClient.ClientServices.Where(s => s.Service.Id == Service.GetIdByType(typeof(SpeedBoost))).ToList().Count, Is.EqualTo(1));
+			Open(browser.Url);
+			WaitForText("Номер лицевого счета");
+			//открытие редактора сервиса "отключения блокировки"  
+			browser.FindElementByCssSelector(".InfoPhysical .list-group [data-target='#ModelForActivateService']").Click();
+			WaitForVisibleCss("#ModelForActivateService .btn.btn-success", 20);
+			browser.FindElementByCssSelector("#ModelForActivateService .btn.btn-success").Click();
+			CurrentClient = DbSession.Query<Client>().FirstOrDefault(s => s.Id == CurrentClient.Id); 
+			DbSession.Refresh(enpoint);
+			Assert.That(enpoint.PackageId.Value, Is.EqualTo(startPackegeId));
+
+		}
+
 		[Test, Description("Страница клиента. Физ. лицо. Редактирование адреса")]
 		public void AddressEditing()
 		{
@@ -402,11 +456,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			string blockNameNew = "#ModelForPlan ";
 			var currentPlan = CurrentClient.PhysicalClient.Plan;
 			var anotherPlan = DbSession.Query<Plan>().FirstOrDefault(s => s != currentPlan); // зависит от региона <=========
+			 
 
-			AssertText("Тариф " + (currentPlan != null
-				? currentPlan.Name + " (" + currentPlan.Price.ToString("0.00") + " р." +
-				  (CurrentClient.GetTariffPrice() != 0 ? " / " + CurrentClient.GetTariffPrice().ToString("0.00") + " р.)" : ")")
-				: "нет"), blockName);
+      AssertText($"{currentPlan.Name} ({CurrentClient.GetTariffPrice(true).ToString("0.00")} р. / {currentPlan.Price.ToString("0.00")} р.)");
 
 			browser.FindElementByCssSelector(blockName + "[data-target='#ModelForPlan']").Click();
 
@@ -425,10 +477,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			browser.FindElementByCssSelector(blockNameNew + ".btn.btn-success").Click();
 
 			AssertText("Тариф клиента успешно изменен");
-			AssertText("Тариф " + (anotherPlan != null
-				? anotherPlan.Name + " (" + currentPlan.Price.ToString("0.00") + " р." +
-				  (CurrentClient.GetTariffPrice() != 0 ? " / " + CurrentClient.GetTariffPrice().ToString("0.00") + " р.)" : ")")
-				: "нет"), blockName);
+			AssertText($"{anotherPlan.Name} ({CurrentClient.GetTariffPrice(true).ToString("0.00")} р. / {anotherPlan.Price.ToString("0.00")} р.)");
 
 			planInHistory =
 				DbSession.Query<PlanHistoryEntry>().FirstOrDefault(s => s.PlanBefore == currentPlan && s.PlanAfter == anotherPlan);
@@ -986,8 +1035,10 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			//ожидание
 			WaitAjax(10);
 			browser.FindElementByCssSelector(blockName + "[data-target='#ModelForPortSelection']").Click();
+			WaitForText("Выбор порта 0");
 			WaitForVisibleCss(blockName + "#ModelForPortSelection .port.free:first-child",15);
 			browser.FindElementByCssSelector(blockName + "#ModelForPortSelection .port.free:first-child").Click();
+			WaitForText("Выбор порта 1");
 			WaitForVisibleCss(blockName + "#ModelForPortSelection .btn.btn-default");
 			browser.FindElementByCssSelector(blockName + "#ModelForPortSelection .btn.btn-default").Click();
 

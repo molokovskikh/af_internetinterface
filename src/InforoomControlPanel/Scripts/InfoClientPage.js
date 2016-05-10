@@ -424,6 +424,36 @@ function removeFixedIp() {
 	$(".createFixedIp").removeClass("hid");
 }
 
+function GetPortConnectionState(id) {
+	$(".endpointStateStatus" + id).html("<img src='" + $("[name='imagePathOfProcess']").val() + "' class='PortConnectionStateWait'/>"); 
+	$.ajax({
+		url: cli.getParam("baseurl") + "AdminOpen/ClientEndpointGetInfoShort?id=" + id,
+		type: 'POST',
+		dataType: "json",
+		success: function (data) {
+			var ip = false;
+			var state = false;
+
+			if (data != undefined && data != null && data.port != undefined && data.port != null) {
+				state = data.port;
+			}
+			if (data != undefined && data != null && data.lease != undefined) {
+				ip = data.lease != null;
+			}
+			var html = "<div class='PortConnectionState'><div class='ip " + (ip ? "isGreen" : "isRed") + "'>IP</div><div class='state " + (state ? "isGreen" : "isRed") + "'>порт</div></div>";
+			$(".endpointStateStatus" + id).html(html);
+		},
+		error: function () {
+			$(".endpointStateStatus" + id).html("<div class='PortConnectionState'>Состояние порта не установлено</div>");
+		},
+		statusCode: {
+			404: function () {
+				$(".endpointStateStatus" + id).html("<div class='PortConnectionState'>Состояние порта не установлено</div>");
+			}
+		}
+	});
+}
+
 function updatePortsState(data) {
 	var linkA = $("[name='clientUrlExampleA']");
 	var linkB = $("[name='clientUrlExampleB']");

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -107,5 +108,46 @@ namespace InforoomControlPanel.Controllers
 
 			return Json(result, JsonRequestBehavior.AllowGet);
 		}
+
+
+
+
+
+
+	 /// <summary>
+	 /// Основная информация о коммутаторе
+	 /// </summary>
+	 /// <returns></returns>
+	 public JsonResult ClientEndpointGetInfo(int id)
+	 {
+		 var cl = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == id);
+		 var rawData = HardwareHelper.GetPortInformator(cl);
+		 var data = new Dictionary<string, object>();
+		 if (rawData != null) {
+			 rawData.GetPortInfo(DbSession, data, id);
+		 }
+		 return Json(data, JsonRequestBehavior.AllowGet);
+	 }
+
+		/// <summary>
+		/// Основная информация о коммутаторе
+		/// </summary>
+		/// <returns></returns>
+		public JsonResult ClientEndpointGetInfoShort(int id)
+		{
+			var cl = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == id);
+			var rawData = HardwareHelper.GetPortInformator(cl);
+			var data = new Dictionary<string, object>();
+			if (rawData != null) {
+				rawData.GetStateOfPort(DbSession, data, id);
+			}
+			return Json(data, JsonRequestBehavior.AllowGet);
+		}
+
+
+
+
+
+
 	}
 }

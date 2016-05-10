@@ -65,7 +65,8 @@
 					<a class="c-pointer blue" title="Изменение тарифа" data-toggle="modal" data-target="#ModelForPlan">Тариф</a>
 				</td>
 				<td>
-					<span>@(client.PhysicalClient.Plan != null ? client.PhysicalClient.Plan.Name + " (" + client.PhysicalClient.Plan.Price.ToString("0.00") + " р."+ (client.GetTariffPrice(true) != 0 ? " / " + client.GetTariffPrice(true).ToString("0.00") + " р.)" : ")") : "нет")</span>
+					<span>@Html.Raw(client.PhysicalClient.Plan != null ? client.PhysicalClient.Plan.Name + " (" + (client.GetTariffPrice(true) != 0 ? "<span title='текущая стоимость'>"+ client.GetTariffPrice(true).ToString("0.00")+ " р.</span>"
+			 + " / " + "<span title='полная стоимость'>" + client.PhysicalClient.Plan.Price.ToString("0.00") + " р.</span>" : "<span title='полная стоимость'>" + client.PhysicalClient.Plan.Price.ToString("0.00") + " р.</span>") +")" : "нет")</span>
 				</td>
 			</tr>
 			<tr>
@@ -94,16 +95,26 @@
 			</tr>
 			<tr>
 				<td>
-					<span title="Доступ в глобальную сеть.">Глобальная сеть</span></td>
+					<span title="Доступ в глобальную сеть">Глобальная сеть</span></td>
 				<td>
-					<span>@(client.Disabled ? "Нет" : "Есть")</span>
+					@if (client.Disabled) {
+						<span class="red bold">Нет</span>
+					}
+					else {
+						<span>Да</span>
+					}
 				</td>
 			</tr>
 			<tr>
 				<td>
 					<span title="Warning">Блокирующие сообщения</span></td>
 				<td>
-					<span>@(client.ShowBalanceWarningPage ? "Вкл." : "Выкл.")</span>
+					@if (client.ShowBalanceWarningPage) {
+						<span class="red bold">Вкл.</span>
+					}
+					else {
+						<span>Выкл.</span>
+					} 
 				</td>
 			</tr>
 			<tr>

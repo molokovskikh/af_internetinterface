@@ -344,8 +344,8 @@ namespace Inforoom2.Models
 			if (PhysicalClient.Plan == null || (!isBlocked && (WorkingStartDate == null || Disabled)))
 				return 0;
 
-			var prePrice = AccountDiscounts(PhysicalClient.Plan.Price);
-			var finalPrice = AccountDiscounts(PhysicalClient.Plan.FinalPrice);
+			var prePrice = PhysicalClient.Plan.IgnoreDiscount? PhysicalClient.Plan.Price : AccountDiscounts(PhysicalClient.Plan.Price);
+			var finalPrice = PhysicalClient.Plan.IgnoreDiscount ? PhysicalClient.Plan.Price : AccountDiscounts(PhysicalClient.Plan.FinalPrice);
 			if ((PhysicalClient.Plan.FinalPriceInterval == 0 || PhysicalClient.Plan.FinalPrice == 0))
 				return prePrice;
 

@@ -325,14 +325,14 @@ var Base64 = {
 cli = new ControlPanel();
 
 function scrollTo(element, speed) {
-	speed = speed != null ? speed : 300;
+	speed = speed != null ? speed : 100;
 	$('html, body').animate({
 		scrollTop: $(element).offset().top
 	}, speed);
 }
 
 function scrollToPoint(point, speed) {
-	speed = speed != null ? speed : 300;
+	speed = speed != null ? speed : 100;
 	$('html, body').animate({
 		scrollTop: point
 	}, speed);

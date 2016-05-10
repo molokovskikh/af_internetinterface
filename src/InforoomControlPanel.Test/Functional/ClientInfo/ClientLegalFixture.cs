@@ -763,7 +763,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			//Коммутатора
 			Css(blockModelName + "[name='connection.Switch']")
 				.SelectByText(currentSwitch.Name + " (портов: " + currentSwitch.PortCount + ")");
-			WaitAjax(20);
+			WaitAjax(30);
 			//Порт
 			WaitForVisibleCss(blockModelName + ".port.free");
 			browser.FindElementByCssSelector(blockModelName + ".port.free:first-child").Click();

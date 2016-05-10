@@ -1,0 +1,82 @@
+﻿<% if(message != undefined && message != null){ %>
+<div class="alert alert-warning" role="alert">
+	<strong><%=message.MessageText%></strong>
+</div>
+<% } %>
+<% if(typeof interfaceLines != 'undefined' && interfaceLines != null && interfaceLines.hasOwnProperty('length') && interfaceLines.length > 0 ){ %>
+<div class="panel panel-blue">
+	<div class="panel-heading">
+		<h3 class="panel-title">Информация об активности порта</h3>
+	</div>
+	<div class="panel-body">
+		<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth">
+			<thead>
+			<% if ( interfaceLines.length > 0 ) { %>
+			<tr>
+				<% for ( var j = 0; j < interfaceLines[0].length; j++ ) { %>
+				<th>
+					<strong><%=interfaceLines[0][j] %></strong>
+				</th>
+				<% } %>
+			</tr>
+			<% } %>
+			</thead>
+			<tbody>
+			<% for ( var i = 1; i < interfaceLines.length; i++ ) { %>
+			<tr>
+				<% for ( var j = 0; j < interfaceLines[i].length; j++ ) { %>
+				<td>
+					<%=interfaceLines[i][j] %>
+				</td>
+				<% } %>
+			</tr>
+			<% } %>
+			</tbody>
+		</table>
+	</div>
+</div>
+<% } %>
+
+<% if(countersLines != undefined && countersLines != null && countersLines.hasOwnProperty('length')){ %>
+<div class="panel panel-blue">
+	<div class="panel-heading">
+		<h3 class="panel-title">Трафик, счетчики пакетов на порту</h3>
+	</div>
+	<div class="panel-body">
+		<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth">
+			<tbody>
+			<% for ( var i = 0; i < countersLines.length; i++ ) { %>
+			<tr>
+				<% for ( var j = 0; j < countersLines[i].length; j++ ) { %>
+				<td> 
+					<%=countersLines[i][j] %> 
+				</td>
+				<% } %>
+			</tr>
+			<% } %>
+			</tbody>
+		</table>
+	</div>
+</div>
+<% } %>
+
+<% if(interfaceCounters != undefined && interfaceCounters != null && interfaceCounters.hasOwnProperty('length')){ %>
+<div class="panel panel-blue">
+	<div class="panel-heading">
+		<h3 class="panel-title">Статистика ошибок порта</h3>
+	</div>
+	<div class="panel-body">
+		<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth">
+			<tbody>
+			<% for ( var i = 0; i < interfaceCounters.length; i++ ) { %>
+			<tr>
+				<td>
+					<%=interfaceCounters[i] %>
+				</td>
+			</tr>
+			<% } %>
+			</tbody>
+		</table>
+	</div>
+</div>
+<% } %>

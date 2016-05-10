@@ -87,19 +87,23 @@ namespace InforoomControlPanel.Controllers
 			var currentDate = DateTime.Now;
 			//Валидации даты
 			if (startDate.HasValue && endDate.HasValue) {
-				var lessThanPast = DateTime.Compare(endDate.Value.Date, SystemTime.Now().Date);
-				var lessThanCurrent = DateTime.Compare(endDate.Value.Date, startDate.Value.Date);
-				if (lessThanPast != 1 || lessThanCurrent != 1) {
+				var invalidDate = endDate.Value.Date <= SystemTime.Now().Date || startDate.Value.Date < SystemTime.Now().Date
+				                  || endDate.Value.Date <= startDate.Value.Date;
+				if (invalidDate) {
 					ErrorMessage("Дата окончания может быть выставлена только для будущего периода");
-					return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new {client.Id});
+					return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new { client.Id });
 				}
 			}
 			if (endDate.HasValue) {
-				var lessThanPast = DateTime.Compare(endDate.Value.Date, SystemTime.Now().Date);
-				if (lessThanPast != 1) {
+				var invalidDate = endDate.Value.Date <= SystemTime.Now().Date;
+				if (invalidDate) {
 					ErrorMessage("Дата окончания может быть выставлена только для будущего периода");
-					return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new {client.Id});
+					return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new { client.Id });
 				}
+			}
+			else {
+				ErrorMessage("Дата окончания может быть выставлена только для будущего периода");
+				return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new { client.Id });
 			}
 			if (servise.InterfaceControl) {
 				var clientService = new ClientService
@@ -156,7 +160,9 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult DiactivateService(int clientId, int serviceId)
 		{
 			var client = DbSession.Load<Client>(clientId);
-			var clientService = client.ClientServices.FirstOrDefault(c => c.Service.Id == serviceId && c.IsActivated);
+			var clientService = client.ClientServices.FirstOrDefault(c => (c.Service.Id == serviceId && c.IsActivated) 
+			|| (c.Service.Id == serviceId && !c.IsActivated && c.BeginDate != null && c.BeginDate.Value > SystemTime.Now()));
+
 			if (clientService != null) {
 				bool activationResult = clientService.TryDeactivate(DbSession);
 				if (activationResult) {
@@ -170,7 +176,7 @@ namespace InforoomControlPanel.Controllers
 				if (client.IsNeedRecofiguration)
 					SceHelper.UpdatePackageId(DbSession, client);
 				DbSession.Update(client);
-			}
+			} 
 			return RedirectToAction(client.IsPhysicalClient ? "InfoPhysical" : "InfoLegal", new {client.Id});
 		}
 

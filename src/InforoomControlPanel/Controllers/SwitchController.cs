@@ -7,6 +7,7 @@ using Inforoom2.Components;
 using Inforoom2.Models;
 using NHibernate.Linq;
 using System.Net;
+using InforoomControlPanel.Helpers;
 using Remotion.Linq.Clauses;
 
 namespace InforoomControlPanel.Controllers
@@ -258,6 +259,14 @@ namespace InforoomControlPanel.Controllers
 		{
 			SafeDelete<NetworkNode>(id);
 			return RedirectToAction("NetworkNodeList");
+		}
+
+		/// <summary>
+		/// Информация о соединении
+		/// </summary>
+		public ActionResult ClientEndPointState(int id)
+		{  
+			return View(id);
 		}
 	}
 }

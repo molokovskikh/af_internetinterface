@@ -1,0 +1,74 @@
+﻿@model Int32
+@{
+  int clientEndPointId = Model; 
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  ViewBag.Title = "Состояние точки подключения";
+}
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientEndpointCheckState.js?v=0")"></script>
+	<script>
+		$(function () {
+
+			var $templates = $('script[type="text/html"]');
+			$templates.each(function () {
+				//Only get non-inline templates
+				//No need to change code for production.
+				if ($(this).attr("src")) {
+					$.ajax(
+					  $(this).attr("src"),
+					  {
+					  	async: false,
+					  	context: this,
+					  	success: function(data) {
+							   $(this).html(data);
+						  }
+					  }
+					);
+				}
+			});
+
+			OnClientEndPointStart(@clientEndPointId);
+
+			$('#updateButton').on('click', function () {
+
+				OnClientEndPointStart(@clientEndPointId); 
+			})
+		});
+	</script>
+}
+
+<div class="panel panel-primary">
+	<div class="panel-body" style="padding-bottom: 0px;">
+		<button type="button" id="updateButton" data-loading-text="Идет опрос..." class="btn btn-green" autocomplete="off">
+			Опросить коммутатор
+		</button>
+	</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="ClientEndpointInfoBlock">
+
+				</div>
+			</div>
+		</div>
+</div>
+
+@Html.Hidden("UrlInfoPhysical", @Url.Action("InfoPhysical", "Client", new { @Id = "" }))
+@Html.Hidden("UrlInfoLegal", @Url.Action("InfoLegal", "Client", new { @Id = "" }))
+@Html.Hidden("UrlEditSwitch", @Url.Action("EditSwitch", "Switch", new { @Id = "" }))
+
+<script type="text/html" id="templateHideLoadingBlock">
+	<div class="wait">
+		<img src="@Url.Content("~/Images/loading.gif")"/>  
+	</div> 
+</script>
+
+<script type="text/html" id="templateError"> 
+	<div class="alert alert-warning" role="alert"><strong><%=this%></strong></div> 
+</script>
+
+<script type="text/html" src="@Url.Content("~/assets/html_templates/switchtInfoTemplate_BaseInfo.html")" id="templateBaseInfo"></script>
+<script type="text/html" src="@Url.Content("~/assets/html_templates/switchtInfoTemplate_Catalyst.html")" id="templateCatalystInfo"></script>
+<script type="text/html" src="@Url.Content("~/assets/html_templates/switchtInfoTemplate_Dlink.html")" id="templateDlinkInfo"></script>
+<script type="text/html" src="@Url.Content("~/assets/html_templates/switchtInfoTemplate_Linksys.html")" id="templateLinksysInfo"></script>
+<script type="text/html" src="@Url.Content("~/assets/html_templates/switchtInfoTemplate_Huawei.html")" id="templateHuaweiInfo"></script>
+ 
