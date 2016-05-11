@@ -136,110 +136,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			return RedirectToAction("RequestsList");
 		}
-
-		[HttpPost]
-		public JsonResult MarkerList()
-		{
-			var markerList = DbSession.Query<ConnectionRequestMarker>().OrderBy(s => s.Deleted).ThenBy(s => s.Name).ToList();
-
-			return Json(markerList, JsonRequestBehavior.AllowGet);
-		}
-
-		[HttpPost]
-		public JsonResult MarkerArchiveOut(int id)
-		{
-			var marker = DbSession.Query<ClientRequest>().FirstOrDefault(s => s.Id == id);
-			if (marker != null) {
-				marker.Archived = false;
-				DbSession.Save(marker);
-				return Json(true, JsonRequestBehavior.AllowGet);
-			}
-			else {
-				return Json(false, JsonRequestBehavior.AllowGet);
-			}
-		}
-
-		[HttpPost]
-		public JsonResult MarkerArchiveIn(int id)
-		{
-			var marker = DbSession.Query<ClientRequest>().FirstOrDefault(s => s.Id == id);
-			if (marker != null) {
-				marker.Archived = true;
-				DbSession.Save(marker);
-				return Json(true, JsonRequestBehavior.AllowGet);
-			}
-			else {
-				return Json(false, JsonRequestBehavior.AllowGet);
-			}
-		}
-
-		[HttpPost]
-		public JsonResult MarkerAdd(string name, string color)
-		{
-			if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(color)) {
-				var marker = new ConnectionRequestMarker();
-				marker.Name = name;
-				marker.Color = "#" + color.Replace("#", "");
-				marker.Deleted = true;
-				var errors = ValidationRunner.ValidateDeep(marker);
-				if (errors.Length == 0) {
-					if (!DbSession.Query<ConnectionRequestMarker>().Any(s => s.Name == marker.Name)) {
-						DbSession.Save(marker);
-					}
-					else {
-						return Json("Добавление завершилось ошибкой: запись с подобным именем уже существует",
-							JsonRequestBehavior.AllowGet);
-					}
-				}
-			}
-			else {
-				return Json("Добавление завершилось ошибкой: не все поля заполнены", JsonRequestBehavior.AllowGet);
-			}
-			return MarkerList();
-		}
-
-		[HttpPost]
-		public JsonResult MarkerUpdate(int id, string name, string color)
-		{
-			var marker = DbSession.Query<ConnectionRequestMarker>().FirstOrDefault(s => s.Id == id);
-			if (marker != null && !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(color)) {
-				marker.Name = name;
-				marker.Color = "#" + color.Replace("#", "");
-				var errors = ValidationRunner.ValidateDeep(marker);
-				if (errors.Length == 0) {
-					if (DbSession.Query<ConnectionRequestMarker>().Count(s => s.Id != id && s.Name == marker.Name) == 0) {
-						DbSession.Update(marker);
-					}
-					else {
-						return Json("Изменение завершилось ошибкой: запись с подобным именем уже существует",
-							JsonRequestBehavior.AllowGet);
-					}
-				}
-			}
-			else {
-				return Json("Изменение завершилось ошибкой: не все поля заполнены", JsonRequestBehavior.AllowGet);
-			}
-			return MarkerList();
-		}
-
-		[HttpPost]
-		public JsonResult MarkerRemove(int id)
-		{
-			var marker = DbSession.Query<ConnectionRequestMarker>().FirstOrDefault(s => s.Id == id && s.Deleted);
-			if (marker != null) {
-				var markerList = DbSession.Query<ClientRequest>().Where(s => s.Marker == marker).ToList();
-				foreach (var item in markerList) {
-					item.Marker = null;
-					DbSession.Save(item);
-				}
-				DbSession.Delete(marker);
-			}
-			else {
-				return Json("Удаление данного маркера невозможно", JsonRequestBehavior.AllowGet);
-			}
-			return MarkerList();
-		}
-
+		
 		/// <summary>
 		/// Отображает форму новой заявки
 		/// </summary>
@@ -458,6 +355,15 @@ namespace InforoomControlPanel.Controllers
 					clientRequest.Address.Floor = clientRequest.Floor;
 					clientRequest.Address.Entrance = clientRequest.Entrance.ToString();
 					clientRequest.Address.Apartment = clientRequest.Apartment.ToString();
+					client.PhysicalClient.Address = clientRequest.Address;
+				}
+				else {
+					client.PhysicalClient.Address = new Address() {
+						House = null,
+						Floor = clientRequest.Floor,
+						Entrance = clientRequest.Entrance.ToString(),
+						Apartment = clientRequest.Apartment.ToString()
+					};
 				}
 			}
 			else {
@@ -596,14 +502,14 @@ namespace InforoomControlPanel.Controllers
 				if (redirectToCard) {
 					return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 					                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"] +
-					                Url.Action("ConnectionCard", "Client", new {@id = client.Id}));
+					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]
+								+ $"Client/ConnectionCard/{client.Id}");
 				}
 				// переходим к информации о клиенте *в старой админке
 				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-				                "UserInfo/ShowPhysicalClient?filter.ClientCode=" + client.Id);
+				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"] 
+								+ $"Client/InfoPhysical/{client.Id}");
 			}
 			// адресные данные по запросу 
 			Street currentStreet = null;

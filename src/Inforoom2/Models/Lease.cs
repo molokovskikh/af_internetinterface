@@ -32,6 +32,11 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual int Port { get; set; }
+		
+		[Property]
+		public virtual string LeasedTo { get; set; }
+		
+		public virtual string Mac => LeasedTo?.Substring(0, 17); 
 
 		[ManyToOne(Column = "Pool", Cascade = "save-update")]
 		public virtual IpPool Pool { get; set; }

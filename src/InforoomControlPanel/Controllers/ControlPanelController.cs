@@ -29,7 +29,7 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			var employee = GetCurrentEmployee();
-			ModelCrudListener.SetEmployee(employee);
+		//	ModelCrudListener.SetEmployee(employee);
 			string name = ViewBag.ControllerName + "Controller_" + ViewBag.ActionName;
 			var permission = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
 			//@todo убрать проверку, на accessDenined, а вместо этого просто не генерировать его. В целом подумать
@@ -41,8 +41,8 @@ namespace InforoomControlPanel.Controllers
 		{
 			if (User == null || DbSession == null || !DbSession.IsConnected) {
 				return null;
-			}
-			return DbSession.Query<Employee>().FirstOrDefault(e => e.Login == User.Identity.Name);
+			}  
+      return DbSession.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName);
 		}
 
 		protected override void OnResultExecuting(ResultExecutingContext filterContext)
@@ -86,6 +86,16 @@ namespace InforoomControlPanel.Controllers
 				DbSession.Save(model);
 			}
 			return RedirectToAction(actionName, controllerName);
+		}
+
+		/// <summary>
+		/// Если произошли нежелательные изменения, сохранившиеся байндером ошибки,
+		/// нужно отменить транзакциою, чтоб они не попали в БД, при этом нужно отобразить валидацию,
+		/// ято не возможно, если делать это в Action методе => чистим транзакцию на форме, передавая ей сессию
+		/// </summary>
+		public void PreventSessionUpdate()
+		{
+			ViewBag.SessionToRefresh = DbSession;
 		}
 	}
 }

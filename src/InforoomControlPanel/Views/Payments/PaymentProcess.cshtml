@@ -1,16 +1,93 @@
 ﻿@using Inforoom2.Models
 @model dynamic
 @{
-	ViewBag.Title = "Список документов";
-	Layout = "~/Views/Shared/_Layout.cshtml"; 
+	ViewBag.Title = "Загрузка платежей";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	List<BankPayment> bankPaymentsList = ViewBag.Payments??new List<BankPayment>();
 }
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
-	
+	<div class="panel-body">
+		<div class="col-md-6">
+			@using (@Html.BeginForm("PaymentProcess", "Payments", FormMethod.Post, new {@class = "form-horizontal form-groups-bordered", EncType = "multipart/form-data"})) {
 
-
-	<div class="col-sm-9">
-		<div class="form-group">
-		 
-		</div> 
+				<div class="form-group">
+					<div class="col-md-5">
+						<label class="control-label">Выберете файл для загрузки в формате xml</label>
+					</div>
+					<div class="col-md-5">
+						<input type="file" id="uploadedFile" name="uploadedFile" class="file" />
+					</div>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-green" type="submit">Загрузить</button>
+				</div>
+			}
+		</div>
 	</div>
+	<div class="panel-body">
+		<div class="col-md-6">
+			<div class="form-group">
+				@using (@Html.BeginForm("CancelPayments", "Payments", FormMethod.Post, new {@class = "form-horizontal form-groups-bordered", EncType = "multipart/form-data"})) {
+					     <button class="btn btn-green" type="submit">Очистить</button>
+				     }
+			</div>
+			
+		</div>
+	</div>
+
+
+	<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+		<thead>
+			<tr role="row">
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+						<span>Получатель</span>
+
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+						<span>Дата платежа</span>
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+						<span>Плательщик</span>
+				</th>
+				<th class="sorting">
+						<span>Сумма</span>
+				</th>
+				<th class="sorting">
+						<span>Дата внесения платежа</span>
+				</th>
+				<th>
+					<span class="black">Действия</span>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in bankPaymentsList)
+			{
+				<tr>
+					<td>@item.Recipient.Name</td>
+					<td>@item.PayedOn.ToShortDateString()</td>
+					<td>
+						@if (item.Payer != null)
+						{
+							<a target="_blank" href="@Url.Action(item.Payer.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {item.Payer.Id})" class="idColumn @(item.Payer.PhysicalClient != null ? "linkPhysical" : "linkLegal")">
+								@item.Payer.Name
+							</a>
+						}
+						else
+						{
+							<strong>не опознан</strong>
+						}
+					</td>
+					<td>@item.Sum</td>
+					<td>@(item.RegistredOn )</td>
+					<td>@item.Comment</td>
+					<td>
+						<a href="@Url.Action("EditTemp", new {@id = item.GetHashCode()})" target="_blank" class="btn btn-green">редактировать</a>
+
+						<a href="@Url.Action("DeleteTemp", new {@id = item.GetHashCode()})" class="btn btn-red">удалить</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 </div>

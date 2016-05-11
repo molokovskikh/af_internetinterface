@@ -28,7 +28,7 @@
 					<h4 class="modal-title" id="myModalLabel">@(cService == null ? "Активация" : "Дективация") услуги</h4>
 				</div>
 				<div class="modal-body">
-					<h3 class="message">Услуга "<span>Отключение блокировок</span>" @(cService == null ? "" : cService.IsActivated?"(Уже активирована)":"(Еще не ативирована)")
+					<h3 class="message">Услуга "<span>Отключение блокировок</span>" @(cService == null ? "" : cService.IsActivated? "(Уже активна)" : "(Еще не активна)")
 					</h3>
 					@if (cService == null) {
 						<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">

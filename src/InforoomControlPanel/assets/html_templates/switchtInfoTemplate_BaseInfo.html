@@ -1,0 +1,110 @@
+﻿<div class="panel panel-blue">
+	<div class="panel-heading">
+		<h3 class="panel-title">Точка подключения № <%=point.pointId%></h3>
+	</div>
+	<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth">
+		<tbody>
+		<tr>
+			<td class="portInfoClient width-176">Клиент:</td>
+			<td>
+				<% if(point.clientType != 'False'){ %>
+				<a target="_blank" href="<%=url.InfoPhysical%>/<%=point.clientId%>"><%=point.clientName%> (<%=point.clientId%>)</a>
+				<% }else{ %>
+				<a target="_blank" class="linkLegal" href="<%=url.InfoLegal%>/<%=point.clientId%>"><%=point.clientName%></a>
+				<% } %>
+			</td>
+		</tr>
+		<tr>
+			<td class="">Коммутатор:</td>
+			<td>
+				<a target="_blank" href="<%=url.EditSwitch%>/<%=point.clientSwitchId%>"><%=point.clientSwitchName%> (<%=point.clientSwitchIp%>)</a>
+			</td>
+		</tr>
+		<tr>
+			<td>Порт:</td>
+			<td>
+				<b><%=point.clientPort%></b>
+			</td>
+		</tr>
+		<% if(lease != undefined && lease != null){ %>
+		<tr>
+			<td>Дата начала аренды:</td>
+			<td>
+				<%=lease.leaseBegin%>
+			</td>
+		</tr>
+		<tr>
+			<td>Дата конца аренды:</td>
+			<td>
+				<%=lease.leaseEnd%>
+			</td>
+		</tr>
+		<tr>
+			<td>IP по аренде:</td>
+			<td>
+				<b><%=lease.leaseIp%></b>
+				<span class="<%=(IPResult != lease.leaseIp?'red':'') %>">
+						<% if(IPResult != undefined && IPResult != null){ %>
+						// IP на порту коммутатора: <b><%=IPResult%></b>
+						<% }else{ %>
+						<b> // Не удалось определить IP на порту коммутатора</b>
+						<% } %>
+					</span>
+			</td>
+		</tr>
+		<tr>
+			<td>МАС по аренде:</td>
+			<td>
+				<b><%=lease.leaseMac%></b>
+				<span class="<%=(MACResult != lease.leaseMac?'red':'') %>">
+						<% if(MACResult != undefined && MACResult != null){ %>
+						// MAC на порту коммутатора: <b><%=MACResult%></b>
+						<% }else{ %>
+						<b> // Не удалось определить MAC на порту коммутатора</b>
+						<% } %>
+					</span>
+			</td>
+		</tr>
+		<% }else{ %>
+		<tr>
+			<td></td>
+			<td>
+				<span class="red">
+						Сессия DHCP не зарегистрирована
+					</span>
+			</td>
+		</tr>
+		<tr>
+			<td>IP на порту коммутатора:</td>
+			<td>
+				<span class="<%=(IPResult != undefined && IPResult != null?'red':'') %>">
+						<% if(IPResult != undefined && IPResult != null){ %>
+						<b><%=IPResult%></b>
+						<% }else{ %>
+						<b>не удалось определить</b>
+						<% } %>
+					</span>
+			</td>
+		</tr>
+		<tr>
+			<td>MAC на порту коммутатора:</td>
+			<td>
+				<span class="<%=(MACResult != undefined && MACResult != null?'red':'') %>">
+						<% if(MACResult != undefined && MACResult != null){ %>
+						<b><%=MACResult%></b>
+						<% }else{ %>
+						<b>не удалось определить</b>
+						<% } %>
+					</span>
+			</td>
+		</tr>
+			<tr>
+				<td>Отправлено запросов:</td>
+				<td>
+					<b><%=attempts%></b>
+				</td>
+			</tr>
+		<% } %>
+		</tbody>
+	</table>
+</div>

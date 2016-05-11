@@ -46,11 +46,10 @@ namespace InforoomControlPanel.Controllers
 
 			if (rentalHardware == null) {
 				ErrorMessage("Невозможно арендовать данное оборудование!");
-				return RedirectToAction("HardwareList", new {id});
+				return RedirectToAction("HardwareList", new { id });
 			}
 			var clientHardware =
-				new ClientRentalHardware
-				{
+				new ClientRentalHardware {
 					Hardware = rentalHardware,
 					Client = client,
 					GiveDate = SystemTime.Now()
@@ -84,7 +83,7 @@ namespace InforoomControlPanel.Controllers
 			SuccessMessage("Услуга успешно активирована!");
 
 			ViewBag.ClientHardware = clientRentalHardware;
-			return RedirectToAction("HardwareList", new {@id = clientRentalHardware.Client.Id});
+			return RedirectToAction("HardwareList", new { @id = clientRentalHardware.Client.Id });
 		}
 
 		/// <summary>
@@ -123,37 +122,31 @@ namespace InforoomControlPanel.Controllers
 		///     Деактивирует последнюю аренду клиента
 		/// </summary>
 		[HttpPost]
-		public ActionResult DiactivateHardwareRent(int id, uint hardware, string deactivateReason)
+		public ActionResult DiactivateHardwareRent(int id, int clientId, string deactivateReason)
 		{
-			var rentalHardware = DbSession.Query<RentalHardware>().First(i => i.Id == hardware);
-			var client = DbSession.Get<Client>(id);
-
-			// Обработка случая с деактивацией аренды
-			if (client.HardwareIsRented(rentalHardware)) {
-				var thisHardware = client.GetActiveRentalHardware(rentalHardware);
-
-				if (thisHardware == null || thisHardware.Client == null)
-					ErrorMessage("Невозможно деактивировать услугу!");
-				else {
-					//сохранение комментария
-					thisHardware.DeactivateComment = deactivateReason;
-					//валидация
-					var errors = ValidationRunner.Validate(thisHardware);
-					// если нет ошибок
-					if (errors.Count == 0) {
-						//деактивация аренды
-						var currentEmployee = GetCurrentEmployee();
-						thisHardware.Deactivate(DbSession, currentEmployee);
-						thisHardware.DeactivateCommentSend(DbSession, currentEmployee);
-						SuccessMessage("Услуга успешно деактивирована!");
-					}
-					else {
-						ViewBag.ClientHardware = thisHardware;
-						return View("UpdateHardwareRent");
-					}
-				}
+			var clientRentalHardware = DbSession.Query<ClientRentalHardware>().FirstOrDefault(i => i.Id == id && i.IsActive);
+			if (clientRentalHardware == null) {
+				ErrorMessage("Деактивация не выполнена: аренда уже деактивированна или отсутствует!");
+				RedirectToAction("HardwareList", new { @id = clientId });
+			} 
+			var client = DbSession.Get<Client>(clientId);
+			//сохранение комментария
+			clientRentalHardware.DeactivateComment = deactivateReason;
+			//валидация
+			var errors = ValidationRunner.Validate(clientRentalHardware);
+			// если нет ошибок
+			if (errors.Count == 0) {
+				//деактивация аренды
+				var currentEmployee = GetCurrentEmployee();
+				clientRentalHardware.Deactivate(DbSession, currentEmployee);
+				clientRentalHardware.DeactivateCommentSend(DbSession, currentEmployee);
+				SuccessMessage("Услуга успешно деактивирована!");
 			}
-			return RedirectToAction("HardwareList", new {@id = client.Id});
+			else {
+				ViewBag.ClientHardware = clientRentalHardware;
+				return View("UpdateHardwareRent");
+			}
+			return RedirectToAction("HardwareList", new { @id = client.Id });
 		}
 
 		/// <summary>
@@ -169,7 +162,7 @@ namespace InforoomControlPanel.Controllers
 				clientRentalHardware.DeactivateRentUpdateAppeal(DbSession, GetCurrentEmployee());
 			}
 			ViewBag.ClientHardware = clientRentalHardware;
-			return RedirectToAction("HardwareArchiveList", new {@id = clientRentalHardware.Client.Id});
+			return RedirectToAction("HardwareArchiveList", new { @id = clientRentalHardware.Client.Id });
 		}
 	}
 }

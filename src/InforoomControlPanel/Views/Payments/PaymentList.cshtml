@@ -4,7 +4,7 @@
 @using Inforoom2.Models
 @model dynamic
 @{
-	ViewBag.Title = "История платежей";
+	ViewBag.Title = "Банковские выписки";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	InforoomModelFilter<BankPayment> pager = ViewBag.pager;
 	var bankPaymentsList = pager.GetItems();
@@ -27,25 +27,24 @@
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-sm-2">Дата списания с </div>
-				<div class="col-sm-2">@pager.FormFilter(i => i.PayedOn, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control", @Id = "dateA" })</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.PayedOn, HtmlType.Date, ComparsionType.GreaterOrEqueal, new {@class = "form-control", @Id = "dateA"})</div>
 				<div class="col-sm-1">по</div>
-				<div class="col-sm-2">@pager.FormFilter(i => i.PayedOn, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control", @Id = "dateB" })</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.PayedOn, HtmlType.Date, ComparsionType.LowerOrEqual, new {@class = "form-control", @Id = "dateB"})</div>
 			</div>
 		</div>
 		<div class="panel-body">
-			<input type="hidden" id="firstYear" value="@firstYear" />
-			<input type="hidden" id="lastYear" value="@lastYear" />
-			<input type="hidden" id="firstMonth" value="@firstMonth" />
-			<input type="hidden" id="lastMonth" value="@lastMonth" />
-			<input type="hidden" id="currentMonth" value="@currentMonth" />
+			<input type="hidden" id="firstYear" value="@firstYear"/>
+			<input type="hidden" id="lastYear" value="@lastYear"/>
+			<input type="hidden" id="firstMonth" value="@firstMonth"/>
+			<input type="hidden" id="lastMonth" value="@lastMonth"/>
+			<input type="hidden" id="currentMonth" value="@currentMonth"/>
 
 
-			<input type="hidden" id="selectedMonth" name="mfilter.selectedMonth" value="" />
+			<input type="hidden" id="selectedMonth" name="mfilter.selectedMonth" value=""/>
 			<div class="row">
 				<div class="col-sm-2">
 					<select class=" form-control form-control" style="min-width: 100px; max-width: 280px;" id="currentYear" name="mfilter.selectedYear">
-						@for (int i = firstYear; i <= lastYear; i++)
-						{
+						@for (int i = firstYear; i <= lastYear; i++) {
 							<option value="@i" @(currentYear == i ? "selected=selected" : "")>@i</option>
 						}
 					</select>
@@ -100,35 +99,41 @@
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-sm-2">Получатель</div>
-				<div class="col-sm-3">@pager.FormFilter(i => i.Recipient.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Recipient.Name, HtmlType.Dropdown, ComparsionType.Equal, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
 			</div>
 		</div>
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-sm-2">ЛС</div>
-				<div class="col-sm-3">@pager.FormFilter(i => i.Payer.Id, HtmlType.number, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Payer.Id, HtmlType.number, ComparsionType.Equal, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
 			</div>
 		</div>
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-sm-2">Плательщик</div>
-				<div class="col-sm-3">@pager.FormFilter(i => i.PayerName, HtmlType.text, ComparsionType.Like, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.PayerName, HtmlType.text, ComparsionType.Like, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
 			</div>
 		</div>
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-sm-2">Только неопознанные</div>
-				<div class="col-sm-3">@pager.FormFilter(i => i.Payer, HtmlType.Dropdown, ComparsionType.IsNull, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Payer, HtmlType.Dropdown, ComparsionType.IsNull, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
 			</div>
 		</div>
 
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-sm-1">
-					@pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+					@pager.SubmitButton(new {@class = "btn btn-success btn-sm"})
 				</div>
 				<div class="col-sm-1">
-					@pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+					@pager.CleanButton(new {@class = "btn btn-success btn-sm"})
+				</div>
+				<div class="col-sm-1">
+					<a target="_blank" href="@Url.Action("PaymentCreate")" class="btn btn-blue btn-sm">Добавить платеж</a>
+				</div>
+				<div class="col-sm-1">
+					<a target="_blank" href="@Url.Action("PaymentProcess")" class="btn btn-blue btn-sm">Загрузка платежей</a>
 				</div>
 			</div>
 		</div>
@@ -151,64 +156,61 @@
 		</div>
 		<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 			<thead>
-				<tr role="row">
-					<th class="sorting" tabindex="0" aria-controls="table-2">
-						<a href="@pager.OrderBy(s => s.Recipient.Name)">
-							<span>Получатель</span>
-						</a>
+			<tr role="row">
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+					<a href="@pager.OrderBy(s => s.Recipient.Name)">
+						<span>Получатель</span>
+					</a>
 
-					</th>
-					<th class="sorting" tabindex="0" aria-controls="table-2">
-						<a href="@pager.OrderBy(s => s.PayedOn)">
-							<span>Дата платежа</span>
-						</a>
-					</th>
-					<th class="sorting" tabindex="0" aria-controls="table-2">
-						<a href="@pager.OrderBy(s => s.PayerName)">
-							<span>Плательщик</span>
-						</a>
-					</th>
-					<th class="sorting">
-						<a href="@pager.OrderBy(s => s.Sum)">
-							<span>Сумма</span>
-						</a>
-					</th>
-					<th class="sorting">
-						<a href="@pager.OrderBy(s => s.RegistredOn)">
-							<span>Дата внесения платежа</span>
-						</a>
-					</th>
-					<th>
-						<span class="black">Действия</span>
-					</th>
-				</tr>
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+					<a href="@pager.OrderBy(s => s.PayedOn)">
+						<span>Дата платежа</span>
+					</a>
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+					<a href="@pager.OrderBy(s => s.PayerName)">
+						<span>Плательщик</span>
+					</a>
+				</th>
+				<th class="sorting">
+					<a href="@pager.OrderBy(s => s.Sum)">
+						<span>Сумма</span>
+					</a>
+				</th>
+				<th class="sorting">
+					<a href="@pager.OrderBy(s => s.RegistredOn)">
+						<span>Дата внесения платежа</span>
+					</a>
+				</th>
+				<th>
+					<span class="black">Действия</span>
+				</th>
+			</tr>
 			</thead>
 			<tbody>
-				@foreach (var item in bankPaymentsList)
-				{
-					<tr>
-						<td>@item.Recipient.Name</td>
-						<td>@item.PayedOn.ToShortDateString()</td>
-						<td>
-							@if (item.Payer != null) {
-								<a target="_blank" href="@Url.Action(item.Payer.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {item.Payer.Id})" class="idColumn @(item.Payer.PhysicalClient != null ? "linkPhysical" : "linkLegal")">
-									@item.Payer.Name
-								</a>
-							}
-							else {
-								<strong>не опознан</strong>
-							}
-							
-						</td>
-						<td>@item.Sum</td>
-						<td>@(item.RegistredOn )</td>
-						<td>
-							
-							<a href="@Url.Action("PaymentEdit", new {@id = item.Id})" class="btn btn-green">редактировать</a>
+			@foreach (var item in bankPaymentsList) {
+				<tr>
+					<td>@item.Recipient.Name</td>
+					<td>@item.PayedOn.ToShortDateString()</td>
+					<td>
+						@if (item.Payer != null) {
+							<a target="_blank" href="@Url.Action(item.Payer.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {item.Payer.Id})" class="idColumn @(item.Payer.PhysicalClient != null ? "linkPhysical" : "linkLegal")">
+								@item.Payer.Name
+							</a>
+						}
+						else {
+							<strong>не опознан</strong>
+						}
+					</td>
+					<td>@item.Sum</td>
+					<td>@(item.RegistredOn )</td>
+					<td>
+						<a href="@Url.Action("PaymentInfo", new {@id = item.Id})" target="_blank" class="btn btn-green">просмотр</a>
 
-							<a href="@Url.Action("PaymentRemove", new {@id = item.Id})" class="btn btn-red">удалить</a>
-						</td>
-					</tr>
+						<a href="@Url.Action("PaymentRemove", new {@id = item.Id})" class="btn btn-red">удалить</a>
+					</td>
+				</tr>
 			}
 			</tbody>
 		</table>
@@ -216,4 +218,4 @@
 			@{ Html.RenderPartial("Pagination"); }
 		</div>
 	</div>
-</div>
+</div> 

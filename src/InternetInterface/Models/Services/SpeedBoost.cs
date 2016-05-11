@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.Linq;
 using Castle.ActiveRecord;
 using Common.Tools;
 using InternetInterface.Services;
@@ -16,6 +17,14 @@ namespace InternetInterface.Models.Services
 				return;
 			assignedService.Client.Endpoints.Each(e => e.PackageId = packageId);
 			assignedService.Client.IsNeedRecofiguration = true;
+		}
+
+		public override bool CanActivate(Client client)
+		{
+			if (client.ClientServices.Any(s => s.Service.Id == this.Id && !s.IsActivated && s.BeginWorkDate != null && s.BeginWorkDate > SystemTime.Now())) {
+				return false;
+			}
+			return true;
 		}
 
 		public override bool CanDeactivate(ClientService assignedService)

@@ -21,7 +21,7 @@ var servicemenFunc = function() {
 		console.log(id);
 		$("select[name*='ServiceMan.Id'] option").removeAttr("selected");
 		$("select[name*='ServiceMan.Id'] option[value='" + id + "']").attr("selected", "selected");
-
+		$("select[name*='ServiceMan.Id']").val(id);
 		TimePickerValue = $(".timepicker").val();
 		ServiceManDropDownValue = $("#ServiceManDropDown option:selected").val();
 	});

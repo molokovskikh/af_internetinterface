@@ -40,9 +40,12 @@ namespace InforoomControlPanel.Test.Functional.infrastructure
 		{
 			WaitForVisibleCss("#logoutLink");
 			Css("#logoutLink").Click();
+			CloseAllTabsButOne();
 		}
 		public void LoginForAdmin()
 		{
+			Open();
+			WaitForVisibleCss("#username",20);
 			Css("#username").SendKeys(Employee.Login);
 			Css("#password").SendKeys("1234");
 			Css(".btn-login").Click();

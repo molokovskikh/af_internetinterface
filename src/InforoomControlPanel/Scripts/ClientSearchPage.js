@@ -158,7 +158,8 @@ function additionalBlockVisibility() {
 	//проверяем, есть ли заполненные поля в блоке
 	var anyInputHasValue;
 	$(".additionalFilterBlock input, .additionalFilterBlock select").each(function() {
-		if ($(this).val() != null && $(this).val() != "" && $(this).attr("id") != "OpenInANewTab" && $(this).attr("name") != "openInANewTab") {
+		if ($(this).val() != null && $(this).val() != "" && $(this).attr("id") != "OpenInANewTab" && $(this).attr("name") != "openInANewTab"
+			&& $(this).attr("id") != "WithArchiveRents" && $(this).attr("name") != "mfilter.withArchiveRents") {
 			anyInputHasValue = true;
 		}
 	});
@@ -433,6 +434,9 @@ $(function() {
 			$(ipRentSerchName).val("");
 		}
 	});
+	var idInputForFocus = $("[name='mfilter.filter.Equal.Id']");
+	if (idInputForFocus.length > 0) $(idInputForFocus).focus();
+
 	if ($("[name='" + "mfilter.filter.Equal.Endpoint.Switch.Zone.Name" + "']").length > 0 && $("[name='" + "mfilter.filter.Equal.Endpoint.Switch.Name" + "']").length > 0) {
 		GetSwitchesByZone("mfilter.filter.Equal.Endpoint.Switch.Zone.Name", "mfilter.filter.Equal.Endpoint.Switch.Name");
 	}

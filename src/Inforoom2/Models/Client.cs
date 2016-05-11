@@ -298,17 +298,7 @@ namespace Inforoom2.Models
 		{
 			return RentalHardwareList.ToList().Exists(rh => rh.Hardware == hw && rh.IsActive);
 		}
-
-		/// <summary>
-		/// Метод получения у клиента текущей услуги "Аренда оборудования" 
-		/// </summary>
-		public virtual ClientRentalHardware GetActiveRentalHardware(RentalHardware hw)
-		{
-			var thisHardware = RentalHardwareList.Where(rh => rh.Hardware == hw && rh.IsActive).ToList();
-			return thisHardware.OrderBy(h => h.BeginDate).LastOrDefault();
-		}
-
-		public virtual bool CanUseService(Service service)
+		 public virtual bool CanUseService(Service service)
 		{
 			return service.IsActivableFor(this);
 		}
@@ -354,8 +344,8 @@ namespace Inforoom2.Models
 			if (PhysicalClient.Plan == null || (!isBlocked && (WorkingStartDate == null || Disabled)))
 				return 0;
 
-			var prePrice = AccountDiscounts(PhysicalClient.Plan.Price);
-			var finalPrice = AccountDiscounts(PhysicalClient.Plan.FinalPrice);
+			var prePrice = PhysicalClient.Plan.IgnoreDiscount? PhysicalClient.Plan.Price : AccountDiscounts(PhysicalClient.Plan.Price);
+			var finalPrice = PhysicalClient.Plan.IgnoreDiscount ? PhysicalClient.Plan.Price : AccountDiscounts(PhysicalClient.Plan.FinalPrice);
 			if ((PhysicalClient.Plan.FinalPriceInterval == 0 || PhysicalClient.Plan.FinalPrice == 0))
 				return prePrice;
 
@@ -363,7 +353,7 @@ namespace Inforoom2.Models
 			    WorkingStartDate.Value.AddMonths(PhysicalClient.Plan.FinalPriceInterval) <= SystemTime.Now())
 				return finalPrice;
 			return prePrice;
-		}
+		} 
 
 		public virtual decimal ToPay(bool isBlocked = false)
 		{
@@ -391,7 +381,7 @@ namespace Inforoom2.Models
 		protected virtual decimal AccountDiscounts(decimal price)
 		{
 			if (Discount > 0)
-				price *= 1 - Discount/100;
+				price *= 1 - ((decimal)Discount)/100;
 			return price;
 		}
 

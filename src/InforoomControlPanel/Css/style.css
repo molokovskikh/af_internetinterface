@@ -3,14 +3,21 @@
 	.main-content .servicemen.panel, .PrintTimeTable{ display: block !important;}
 	.pageBreak {page-break-after: always;} 
 } 
+ .panel.panel-blue{border-color: #337ab7 !important;}
+ .panel.panel-blue .panel-heading{    color: #fff !important;background-color: #337ab7 !important;border-color: #337ab7 !important;}
+ .panel.panel-blue h3{    color: #fff !important;}
+ .logo.hlink a{ font-size: 20px;font-weight: normal !important;}
  div a.linkLegal{color:#0D90D4;}
+  div a.linkLegal:hover {color:#0477B7} 
  div a.linkPhysical{color:#10A257;}
+  div a.linkPhysical:hover{color:#018A44;}
  .font-12{font-size: 12px;display: block;text-align: right;}
  .ListOrderArchive .phantomBlock{ max-width: 800px;}
  .no-margin{ margin: 0px !important;}
  .alert-danger{position: fixed;top: 18px;min-width: 572px;width: 62%;z-index: 99999;border:9px solid #BD3737; font-size: 13px;}
  span.red.bold{padding-left: 2px; font-weight: bold; color: #C70E0E;}
  .gray.bold{padding-left: 2px; font-weight: bold; color: #888888;}
+ .gray{color: #888888 !important;}
 .black{color: #333!important;}
 .red{color:#E60000!important;}
 .blue{color:#0D90D4!important;}
@@ -22,8 +29,10 @@
  .table thead a.checked.asc {color: #ff0000;}
  .hid{ display: none;}
  body { color: #424242; }
- body a{ color: #10A257;font-weight: bold; }
+ body a{ color: #00984A;font-weight: bold; }
  .max-width200{    max-width: 400px;}
+ .width-176{width: 176px !important}
+ .width-150{width: 150px !important}
  .contactList { padding-left: 20px;margin-top: 4px;} 
  .contactList .contact { margin-top: 3px;display: block;}
  .contactList .contact:hover { font-weight: bold;}
@@ -59,6 +68,21 @@
  #switchPorts .port.client{background: #F7ADAD;}
  #switchPorts .port.client:hover{background: #FF7878;}
  #switchPorts .port span{ position: relative;top: 12%;font-size: 13px;color:#333;}
+ #HardwareListForm .tableInside th.a{width: 350px!important;}
+ #HardwareListForm .tableInside th.b{width: 90px!important;}
+ #HardwareListForm .tableInside th.c{width: 226px!important;}
+ .endpointStateStatus.portLink{padding: 2px 14px 2px 14px;background: #EAEAEA;}
+ .PortConnectionStateWait{width: 74px;    position: absolute;margin-top: -36px;}
+ .PortConnectionState .ip{width: 46%;float: left;border-right: 10px solid #CACACA;padding-left: 12px;color: #fff !important; padding-top: 2px; font-size: 11px;}
+.PortConnectionState .ip.isRed{background: #CE0000 !important;}
+.PortConnectionState .ip.isGreen{background: #009E29 !important;}
+ .PortConnectionState .state{ width: 46%; float: left; padding-left: 12px; color: #fff !important;}
+ .PortConnectionState .state.isRed{ background: #CE0000 !important;}
+ .PortConnectionState .state.isGreen{background: #009E29 !important;}
+ .ClientEndpointInfoBlock{ max-width: 800px;padding-left: 15px;padding-right: 15px;}
+ .ClientEndpointInfoBlock .wait{vertical-align: middle;}
+ .ClientEndpointInfoBlock .wait img{display:table-cell;width: 200px;margin: auto;padding-bottom: 44px;}
+ .portInfoData{background: #EAEAEA;padding: 4px;color: #E80000;font-weight: bold;}  
  .table .no-end-point td{background: #E5FCFD !important;}
  .table .fixedIp{ display: inline-block;}
  .table .fixedIp.text{ width: 120px !important;}

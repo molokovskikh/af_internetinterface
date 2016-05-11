@@ -1,0 +1,80 @@
+﻿@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	BankPayment bankPayment = ViewBag.BankPayment ?? new BankPayment();
+	bankPayment.Payment = bankPayment.Payment ?? new Payment();
+	bankPayment.Payment.PaidOn = SystemTime.Now();
+	List<Recipient> recipientList = ViewBag.RecipientList;
+}
+<!-- Modal For Payments Cancel-->
+<div class="modal fade" id="ModelForPaymentCreate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			@using (@Html.BeginForm("PaymentCreate", "Payments", null, FormMethod.Post, new {@id = "PaymentCreateForm", @class = "form-horizontal form-groups-bordered", @onsubmit = "return onPaymentCreateForm();" })) {
+				<input id="paymentsCancelId" name="paymentId" type="hidden" value="">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Добавление платежа</h4>
+				</div>
+				<div class="modal-body">
+					<p>
+					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
+						<tbody>
+						<tr>
+							<td style="width: 120px;">
+								<label class="control-label">Дата</label>
+							</td>
+							<td>
+								@Html.TextBoxFor(o => bankPayment.Payment.PaidOn, bankPayment.Payment.PaidOn.ToString("dd.MM.yyyy"),
+									new
+									{
+										@Name = "bankPayment.PayedOn",
+										@data_format = "dd.mm.yyyy",
+										@class = "form-control",
+										@data_provide = "datepicker-inline",
+										@required = "required"
+									})
+							</td>
+						</tr>
+
+						<tr>
+							<td style="max-width: 60px;">ЛС-клиента</td>
+							<td>
+								<input class="form-control" name="bankPayment.Payer.Id" id="clientReciverId" onchange="getPaymentReciver('#clientReciverId', '#clientReciverMessage', false, 2);"
+								       onkeyup="getPaymentReciver('#clientReciverId', '#clientReciverMessage', true, 2);" value="" required>
+								<div id="clientReciverMessage"></div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label class="control-label">Сумма</label>
+							</td>
+							<td>@Html.TextBoxFor(model => bankPayment.Payment.Sum, new {@Name = "bankPayment.Sum", @Id = "BankPaymentSum", @class = "form-control", Type = "numeric", @required = "required", @Min="0", @Max="100000"})</td>
+						</tr>
+						<tr>
+							<td>
+								<label class="control-label">№ документа</label>
+							</td>
+							<td>@Html.TextBoxFor(model => bankPayment.DocumentNumber, new {@class = "form-control", Type = "numeric", @required = "required"})</td>
+						</tr>
+						<tr>
+							<td>
+								<label class="control-label">Получатель</label>
+							</td>
+							<td>@Html.DropDownListExtendedFor(i => bankPayment.Recipient, recipientList, obj => obj.Name, null, new {@class = "form-control"}, bankPayment.Recipient != null ? bankPayment.Recipient.Id.ToString() : "0")</td>
+						</tr>
+						</tbody>
+					</table>
+						<span id="paymentMoveMessage" class="error"></span></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+					<button type="submit" class="btn btn-success">Добавить платеж</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>

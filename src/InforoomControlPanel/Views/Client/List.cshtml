@@ -11,6 +11,7 @@
 	InforoomModelFilter<Client> pager = ViewBag.Pager;
 	IList<Client> clients = pager.GetItems();
 	var openInANewTab = false;
+	var withArchiveRents = (bool) (ViewBag.WithArchiveRents ?? false);
 	var emptyAddressString = "";
 }
 @section JavaScript{
@@ -173,6 +174,18 @@
 	</div>
 	<div class="panel-body">
 		<div class="row">
+			<div class="col-sm-2">Отсутствует доступ в глобальную сеть</div>
+			<div class="col-sm-3">@pager.FormFilter(i => i.Disabled, HtmlType.Dropdown, ComparsionType.Equal, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-sm-2">Выводятся блокирующие сообщения</div>
+			<div class="col-sm-3">@pager.FormFilter(i => i.ShowBalanceWarningPage, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="row">
 			<div class="col-sm-2">Онлайн</div>
 			<div class="col-sm-3">@pager.FormFilter(i => i.Endpoints.First().LeaseList.First().LeaseEnd, HtmlType.Dropdown, ComparsionType.LaterThanNowOrEmptyList, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
 		</div>
@@ -207,8 +220,22 @@
 	</div>
 	<div class="panel-body">
 		<div class="row">
+			<div class="col-sm-2">
+				<label class="c-pointer" for="WithArchiveRents">Учесть аренды в архиве</label>
+			</div>
+			@Html.CheckBox("mfilter.withArchiveRents", withArchiveRents, new { @Id = "WithArchiveRents", @class = "c-pointer" })
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="row">
 			<div class="col-sm-2">Наименование коммутатора</div>
 			<div class="col-sm-3">@pager.FormFilter(i => i.Endpoints.First().Switch.Name, HtmlType.text, ComparsionType.Like, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-sm-2">Тип коммутатора</div>
+			<div class="col-sm-3">@pager.FormFilter(i => i.Endpoints.First().Switch.Type, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
 		</div>
 	</div>
 	<div class="panel-body">
@@ -216,7 +243,7 @@
 			<div class="col-sm-2">
 				<label class="c-pointer" for="OpenInANewTab">Открывать единственную запись в новой вкладке</label>
 			</div>
-			@Html.CheckBoxFor(o => openInANewTab, new {@Id = "OpenInANewTab", @class = "c-pointer"})
+			@Html.CheckBoxFor(o => openInANewTab, new {@Id = "OpenInANewTab",  @class = "c-pointer"})
 		</div>
 	</div>
 </div>

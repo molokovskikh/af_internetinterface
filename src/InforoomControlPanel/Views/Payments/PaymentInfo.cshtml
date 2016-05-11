@@ -1,0 +1,135 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+@model dynamic
+@{
+	ViewBag.Title = "Информация о платеже";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	BankPayment bankPayment = ViewBag.BankPayment; 
+}
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/PaymentsCalendarFilter.js?v=1")"></script>
+}
+<div class="panel panel-primary">
+	<div class="panel-body">
+		<div class="col-md-6">
+			@if (!string.IsNullOrEmpty(bankPayment.PayerName) || !string.IsNullOrEmpty(bankPayment.PayerInn) || !string.IsNullOrEmpty(bankPayment.PayerAccountCode)) {
+				<h3>Отправитель</h3>
+				<table class="table table-bordered table-striped datatable dataTable no-footer">
+					<tr>
+						<td style="width: 166px;">
+							<label class="control-label">Наименование</label>
+						</td>
+						<td>
+							<span>@bankPayment.PayerName</span></td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">ИНН</label>
+						</td>
+						<td>
+							<span>@bankPayment.PayerInn</span></td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">Номер счета</label>
+						</td>
+						<td>
+							<span>@bankPayment.PayerAccountCode</span></td>
+					</tr>
+				</table>
+			}
+			@if (!string.IsNullOrEmpty(bankPayment.PayerBankDescription) || !string.IsNullOrEmpty(bankPayment.PayerBankBic) || !string.IsNullOrEmpty(bankPayment.PayerBankAccountCode)) {
+				<h3>Банк отправителя</h3>
+				<table class="table table-bordered table-striped datatable dataTable no-footer">
+					<tr>
+						<td style="width: 166px;">
+							<label class="control-label">Наименование</label>
+						</td>
+						<td>
+							<span>@bankPayment.PayerBankDescription</span></td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">БИК</label>
+						</td>
+						<td>
+							<span>@bankPayment.PayerBankBic</span></td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">Номер счета</label>
+						</td>
+						<td>
+							<span>@bankPayment.PayerBankAccountCode</span> </td>
+					</tr>
+				</table>
+			}
+			@if (!string.IsNullOrEmpty(bankPayment.Comment)) {
+				<table class="table table-bordered table-striped datatable dataTable no-footer">
+					<tr>
+						<td>
+							<strong class="control-label">Примечание</strong>
+						</td>
+						<td>
+							<span>@bankPayment.Comment</span></td>
+					</tr>
+				</table>
+			}
+			<h3>Платеж</h3>
+			<table class="table table-bordered table-striped datatable dataTable no-footer">
+				<tr>
+					<td style="width: 166px;">
+						<label class="control-label">Дата</label>
+					</td>
+					<td>
+						<span>@bankPayment.Payment.PaidOn.ToShortDateString()</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="control-label">Сумма</label>
+					</td>
+					<td>
+						<span>@bankPayment.Payment.Sum.ToString("0.00")</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="control-label">№ документа</label>
+					</td>
+					<td>
+						<span>@bankPayment.DocumentNumber</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="control-label">Получатель</label>
+					</td>
+					<td>
+						<span>@bankPayment.Recipient.Name</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="control-label">Получатель</label>
+					</td>
+					<td>
+						<span>@bankPayment.Payer.GetName() (@bankPayment.Payer.Id)</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="control-label">Примечание</label>
+					</td>
+					<td>
+						<span>@bankPayment.OperatorComment</span>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+
+<div class="form-group">
+	<button class="btn btn-blue" onclick=" location.href = '@Url.Action("PaymentList", "Payments")' ">Назад</button>
+</div>

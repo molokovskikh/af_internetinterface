@@ -78,12 +78,28 @@ namespace Inforoom2.Test.Infrastructure
 			catch (Exception e) {
 			}
 			GenerateObjects();
+			var allTabsToClose = GlobalDriver.WindowHandles.ToList(); 
+			browser.SwitchTo().Window(allTabsToClose[0]);
+		}
+
+		public void CloseAllTabsButOne()
+		{
+			var allTabsToClose = GlobalDriver.WindowHandles.ToList();
+
+			if (allTabsToClose.Count > 1)
+				for (int i = 1; i < allTabsToClose.Count; i++) {
+					if (GlobalDriver.CurrentWindowHandle != allTabsToClose[i]) {
+						GlobalDriver.SwitchTo().Window(allTabsToClose[i]);
+						GlobalDriver.Close();
+					}
+				}
 		}
 
 		[TearDown]
 		public override void IntegrationTearDown()
 		{
 			DbSession.Close();
+			CloseAllTabsButOne();
 		}
 
 		public static void Call(string url)
@@ -184,7 +200,7 @@ namespace Inforoom2.Test.Infrastructure
 			var exceptions =
 				"unresolvedphone,clientendpointinternetlogs,internetsessionslogs,partners,services,status,packagespeed,networkzones,accesscategories" +
 				"categoriesaccessset,connectbrigads,statuscorrelation,usercategories,additionalstatus," +
-				"salesettings,internetsettings,issues,recipients";
+				"salesettings,internetsettings,issues,recipients,ignoredinns";
 			parts = exceptions.Split(',');
 			foreach (var part in parts)
 				tables.RemoveAll(i => i == strategy.TableName(part));

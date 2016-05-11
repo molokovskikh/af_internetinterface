@@ -65,10 +65,12 @@ namespace Inforoom2.Helpers
 			_exceptionsForWarningMethodGet = new List<WarningRedirect>
 			{
 				new WarningRedirect() {Action = "FirstVisit".ToLower(), Controller = "personal"},
+				new WarningRedirect() {Action = "Payment".ToLower(), Controller = "personal"},
 				new WarningRedirect() {Action = "Profile".ToLower(), Controller = "personal"},
 				new WarningRedirect() {Action = "InternetPlanChanger".ToLower(), Controller = "service"},
 				new WarningRedirect() {Action = "Logout".ToLower(), Controller = "account"},
-				new WarningRedirect() {Action = "SubmitCallMeBackTicket".ToLower(), Controller = "warning"}
+				new WarningRedirect() {Action = "Login".ToLower(), Controller = "account"},
+        new WarningRedirect() {Action = "SubmitCallMeBackTicket".ToLower(), Controller = "warning"}
 			};
 
 		[Description("Контроллер, наследующийся от Inforoom2Controller")]

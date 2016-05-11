@@ -1,0 +1,114 @@
+﻿<% if(message != undefined && message != null){ %>
+<div class="alert alert-warning" role="alert">
+	<strong><%=message.MessageText%></strong>
+</div>
+<% } %>
+<% if((interfaceLines != undefined && interfaceLines != null)){ %>
+<div class="panel panel-blue">
+	<div class="panel-heading">
+		<h3 class="panel-title">Информация об активности порта</h3>
+	</div>
+	<div class="panel-body">
+		<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth">
+			<tbody>
+				<% for ( var i = 0; i < interfaceLines.length; i++ ) { %>
+				<% if(interfaceLines[i].Item1 == true) { %>
+				<tr>
+					<td class="portInfoClient width-176">
+						<%=interfaceLines[i].Item2 %>
+					</td>
+					<% if(interfaceLines.length > i+1 && interfaceLines[i+1].Item1 == false) { %>
+					<td>
+						<%=interfaceLines[i+1].Item2 %>
+					</td>
+					<% } %>
+				</tr>
+				<% } %>
+				<% } %>
+			</tbody>
+		</table>
+	</div>
+</div>
+<% } %>
+
+<% if(interfaceLines != undefined && interfaceLines != null){ %>
+<div class="panel panel-blue">
+	<div class="panel-heading">
+		<h3 class="panel-title">Трафик, счетчики пакетов на порту</h3>
+	</div>
+	<div class="panel-body">
+		<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth">
+			<tbody>
+			<tr>
+				<td class="width-176">Отправленные</td>
+				<td></td>
+			</tr>
+			<% for ( var i = 0; i < countersLines.length; i++ ) { %>
+			<% if(i % 2 == 0 && countersLines[i].Item1 == true) { %>
+			<tr>
+				<td>
+					<%=countersLines[i].Item2 %>
+				</td>
+				<td>
+					<% if(countersLines.length > i+1) { %>
+					<%=countersLines[i+1].Item2 %>
+					<% } %>
+				</td>
+			</tr>
+			<% } %>
+			<% } %>
+			</tbody>
+		</table>
+		<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth">
+			<tbody>
+			<tr>
+				<td class="width-176">Полученные</td>
+				<td></td>
+			</tr>
+			<% for ( var i = 0; i < countersLines.length; i++ ) { %>
+			<% if(i % 2 == 0 && countersLines[i].Item1 == false) { %>
+			<tr>
+				<td>
+					<%=countersLines[i].Item2 %>
+				</td>
+				<td>
+					<% if(countersLines.length > i+1) { %>
+					<%=countersLines[i+1].Item2 %>
+					<% } %>
+				</td>
+			</tr>
+			<% } %>
+			<% } %>
+			</tbody>
+		</table>
+	</div>
+</div>
+<% } %>
+
+<% if(interfaceCounters != undefined && interfaceCounters != null){ %>
+<div class="panel panel-blue">
+	<div class="panel-heading">
+		<h3 class="panel-title">Статистика ошибок порта</h3>
+	</div>
+	<div class="panel-body">
+		<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth">
+			<tbody>
+			<% for ( var i = 0; i < interfaceCounters.length; i++ ) { %>
+			<% if(i > 1 && interfaceCounters[i].Item1 == true) { %>
+			<tr>
+				<td class="portInfoClient width-176">
+					<%=interfaceCounters[i].Item2 %>
+				</td>
+				<% if(interfaceCounters.length > i+1) { %>
+				<td>
+					<%=interfaceCounters[i+1].Item2 %>
+				</td>
+				<% } %>
+			</tr>
+			<% } %>
+			<% } %>
+			</tbody>
+		</table>
+	</div>
+</div>
+<% } %>

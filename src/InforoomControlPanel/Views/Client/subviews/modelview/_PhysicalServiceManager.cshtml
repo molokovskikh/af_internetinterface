@@ -1,0 +1,59 @@
+﻿@model Inforoom2.Models.Client
+
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using Inforoom2.Models.Services
+@{
+	Layout = "";
+	Client client = Model;
+	Service serviceToActivate = ViewBag.ServiceToActivate;
+	var dateTimeNow = SystemTime.Now();
+	var dateTimeNever = "";
+	var serviceId = Service.GetIdByType(serviceToActivate);
+	var cService = serviceToActivate as SpeedBoost != null? client.ClientServices.FirstOrDefault(s => s.Service.Id == serviceId):null;
+}
+<!-- Modal For Order Add-->
+<div class="modal fade" id="ModelForActivateService" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			@using (@Html.BeginForm((cService == null ? "ActivateService" : "DiactivateService"), "Client", null, FormMethod.Post, new {  @class = "form-horizontal form-groups-bordered" }))
+			{
+				@Html.Hidden("clientId", client.Id)
+				<input name="serviceId" type="hidden" value="@serviceToActivate.Id">
+				
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">@(cService == null ? "Активация" : "Дективация") услуги</h4>
+				</div>
+				<div class="modal-body">
+					<h3 class="message">Услуга "<span>Увеличения скорости</span>" @(cService == null ? "" : cService.IsActivated? "(Уже активна)" : "(Еще не активна)")
+					</h3>
+					@if (cService == null) {
+						<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
+							<tbody> 
+							<tr>
+								<td>Начало действия</td>
+								<td>
+									@Html.TextBoxFor(o => dateTimeNow, dateTimeNow.ToString("dd.MM.yyyy"), new {required = "true", @Name = "startDate", @data_format = "dd.mm.yyyy", @class = "form-control", @data_provide = "datepicker-inline"})
+								</td>
+							</tr>
+							<tr>
+								<td>Конец действия</td>
+								<td>
+									@Html.TextBoxFor(o => dateTimeNever, dateTimeNever, new {required = "true", @now = dateTimeNow.ToString("dd.MM.yyyy"), @Name = "endDate", @data_format = "dd.mm.yyyy", @class = "form-control", @data_provide = "datepicker-inline"})
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					}
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+					<button type="submit" class="btn btn-success">@(cService == null ? "Активировать" : "Деактивировать")</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>

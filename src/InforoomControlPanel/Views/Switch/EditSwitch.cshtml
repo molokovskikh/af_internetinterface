@@ -64,7 +64,7 @@
 								<tbody>
 								@foreach (var item in Switch.Endpoints.OrderBy(s => s.Port).ToList()) {
 									<tr>
-										<td>@(@item.Id)</td>
+										<td><a target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld") + "Hardware/PortInfo?endPoint=" + item.Id)">@(item.Id)</a></td>
 										<td>@(string.Join(",<br/>", @item.LeaseList.Select(s => s.Ip)))</td>
 										<td>@(@item.Port)</td>
 										<td>

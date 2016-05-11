@@ -32,7 +32,7 @@ namespace InternetInterface.Services
 		public override void ForceDeactivate(ClientService assignedService)
 		{
 			var client = assignedService.Client;
-			var warning = client.LawyerPerson.NeedShowWarning();
+			var warning = client.LawyerPerson.NeedShowWarning() || client.Balance < 0;
 			client.ShowBalanceWarningPage = warning;
 			client.Disabled = warning;
 			client.Update();

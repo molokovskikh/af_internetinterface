@@ -47,7 +47,7 @@ a {color: #474747}
 		#CallMeBackWindow .definitely { position: absolute;left: 0px;bottom: 0px;margin: 40px;}
 .TestSpeed, .OfferContract { margin: 20px;text-align: center;}
 .OfferContract .thumbnail { display: inline-block;width: 180px;margin: 10px;border: 1px solid #e7e7e7;border-radius: 13px;padding: 10px; text-align: center; color: #474747;}
-
+.discountComment{    color: #868686;font-size: 13px;border-bottom: 1px solid #868686;}
 .TestSpeed { height: 500px;}
 .TestSpeed .heading, .OfferContract .heading, .Faq .heading { position: relative;left: 0;top: 0;width: 100%;}
 	.Faq .know { margin-top: 0px;}

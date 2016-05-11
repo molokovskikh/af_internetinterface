@@ -49,21 +49,13 @@ namespace InforoomControlPanel
 		{
 			try {
 				Exception exception = Server.GetLastError();
-
 #if DEBUG
 				throw exception;
 #endif
-				var currentUrl = HttpContext.Current.Request.Url.ToString();
-				var exText = string.Format("<a href='{0}'>{0}</a>", currentUrl.CutAfter(100)); 
-
-				var plainTextBytes =
-					Encoding.UTF8.GetBytes(string.Format("Произошла ошибка по адресу '{0}', '{1}' ", exText,
-						ExceptionTopHandler.GetExceptionTextMessage(exception)));
-				var text = Convert.ToBase64String(plainTextBytes);
-				Response.Cookies.Add(new HttpCookie("ErrorMessage", text) {Path = "/"});
-				if (Request.RequestContext != null) {
-					Response.Redirect(new UrlHelper(Request.RequestContext).Action("Statistic", "Admin") ?? "/");
-				}
+				var notifierMail = ConfigHelper.GetParam("ErrorNotifierMail");
+				var errorMessae = $" Source: {exception.Source}\n TargetSite: {exception.TargetSite}\n Message: {exception.Message}\n InnerException: {exception.InnerException}\n StackTrace: {exception.StackTrace}";
+        EmailSender.SendEmail(notifierMail, "[internet] Ошибка на сайте административной панели", errorMessae);
+				Response.Redirect(new UrlHelper(Request.RequestContext).Action("Error", "Admin"));
 			}
 			catch (Exception) {
 				//empty

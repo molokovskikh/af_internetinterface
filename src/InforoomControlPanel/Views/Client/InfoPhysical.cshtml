@@ -42,6 +42,10 @@
 				<i class="entypo-doc-text"></i>
 				Сервисная заявка
 			</a>
+			<a class="btn btn-success btn-sm btn-icon icon-left" data-toggle="modal" data-target="#ModelForActivateService">
+				<i class="entypo-cog"></i>
+				Увеличить скорость
+			</a>
 			<a class="btn btn-success btn-sm btn-icon icon-left" target="_blank" href="@Url.Action("AttachRequest", "ConnectionTeam", new {@id = client.Id, @type = "ClientConnectionRequest"})">
 				<i class="entypo-briefcase"></i>
 				Назначить в график
@@ -124,5 +128,6 @@
 		</div>
 	</div>
 </div>
+@Html.Partial("subviews/modelview/_PhysicalServiceManager", client)
  
 <div style="clear: both;"></div>

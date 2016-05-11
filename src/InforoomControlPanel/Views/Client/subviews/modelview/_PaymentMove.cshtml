@@ -28,7 +28,9 @@
 							<tr>
 								<td style="max-width: 60px;">ЛС-клиента</td>
 								<td>
-									<input class="form-control" id="clientReciverId" name="clientReceiverId" min="0" type="number" value="">
+									<input class="form-control" id="clientReciverId" name="clientReceiverId" min="0" type="text" value="" 
+										   onchange="getPaymentReciver('#clientReciverId', '#clientReciverMessage', false);"
+									       onkeyup="getPaymentReciver('#clientReciverId', '#clientReciverMessage', true);" value="" required>
 									<p id="clientReciverMessage"></p>
 								</td>
 							</tr>

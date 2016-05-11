@@ -357,6 +357,7 @@ namespace Inforoom2.Models
 
 		public virtual void UpdatePackageId(ClientEndpoint clientEndpoint)
 		{
+			if (clientEndpoint == null) return;
 			if (Plan != null && Client.Internet.ActivatedByUser)
 				clientEndpoint.PackageId = Plan.PackageSpeed.PackageId;
 			else

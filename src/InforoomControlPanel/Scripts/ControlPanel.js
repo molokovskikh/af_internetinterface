@@ -325,14 +325,14 @@ var Base64 = {
 cli = new ControlPanel();
 
 function scrollTo(element, speed) {
-	speed = speed != null ? speed : 300;
+	speed = speed != null ? speed : 100;
 	$('html, body').animate({
 		scrollTop: $(element).offset().top
 	}, speed);
 }
 
 function scrollToPoint(point, speed) {
-	speed = speed != null ? speed : 300;
+	speed = speed != null ? speed : 100;
 	$('html, body').animate({
 		scrollTop: point
 	}, speed);
@@ -427,12 +427,20 @@ function scrollPan_add(text_bool) {
 	}
 
 }
+String.format = function () {
+	var theString = arguments[0];
+	for (var i = 1; i < arguments.length; i++) {
+		var regEx = new RegExp("\\{" + (i - 1) + "\\}", "gm");
+		theString = theString.replace(regEx, arguments[i]);
+	}
+	return theString;
+}
 
 //Формирование закрывающейся панели для селектора отмеченного в свойстве
 function phantomFor() {
 	var phantoms = $("[phantomFor]");
 	if (phantoms.length > 0) {
-		phantoms.each(function () {
+		phantoms.each(function() {
 			var phantomAimStart = $($(this).attr("phantomFor"));
 
 			var phantomAim = $($(this).attr("phantomFor"));
@@ -447,7 +455,7 @@ function phantomFor() {
 				if ($(this).hasClass("entypo-down-open")) $(this).removeClass("entypo-down-open").addClass("entypo-right-open");
 			}
 
-			$(this).unbind("click").click(function () {
+			$(this).unbind("click").click(function() {
 
 				var phantomOnClick = $(this).attr("phantomOnClick");
 				if (phantomOnClick != undefined && phantomOnClick != "") {
@@ -456,13 +464,13 @@ function phantomFor() {
 				if (phantomAim.hasClass("hid")) {
 					phantomAim.removeClass("hid");
 					$(this).attr("phantomChecked", "true");
-							if ($(this).hasClass("entypo-right-open-mini")) $(this).removeClass("entypo-right-open-mini").addClass("entypo-down-open-mini");
-							if ($(this).hasClass("entypo-right-open")) $(this).removeClass("entypo-right-open").addClass("entypo-down-open");
+					if ($(this).hasClass("entypo-right-open-mini")) $(this).removeClass("entypo-right-open-mini").addClass("entypo-down-open-mini");
+					if ($(this).hasClass("entypo-right-open")) $(this).removeClass("entypo-right-open").addClass("entypo-down-open");
 
 				} else {
 					if (!phantomAim.hasClass("hid")) {
 						phantomAim.addClass("hid");
-						$(this).attr("phantomChecked","false");
+						$(this).attr("phantomChecked", "false");
 						if ($(this).hasClass("entypo-down-open-mini")) $(this).removeClass("entypo-down-open-mini").addClass("entypo-right-open-mini");
 						if ($(this).hasClass("entypo-down-open")) $(this).removeClass("entypo-down-open").addClass("entypo-right-open");
 					}
@@ -475,6 +483,72 @@ function phantomFor() {
 function changeValueFromHtml(objDonor, objRecipient) {
 	console.log($(objDonor).val());
 	$(objDonor).val($(objRecipient).html());
+}
+
+function getPaymentClientIdUpdate(clientReciverId, item) {
+	$(clientReciverId).val($(item).html());
+	$(clientReciverId).attr("recipient", $(item).attr("recipient"));
+}
+
+function getPaymentReciver(clientReciverId, messageId, onChange, clientType, funcOnResult) {
+	var AjaxFuncOnResult = funcOnResult;
+	clientType = clientType == undefined ? 0 : clientType;
+	if ($(clientReciverId).length > 0) {
+		if ($(clientReciverId).val() != null && $(clientReciverId).val() != "") {
+			var currentInputVal = $(clientReciverId).val();
+			if (onChange === true) {
+				$(clientReciverId).attr("style",'color: #1B96E0;font-weight: bold;');
+			} else {
+				$(clientReciverId).removeAttr("style");
+				var checkVal = parseInt(currentInputVal);
+				if (String(checkVal) === "NaN" || typeof checkVal != "number") {
+					$(clientReciverId).val("");
+				}
+			}
+
+			$.ajax({
+				url: cli.getParam("baseurl") + "Client/getClientName?id=" + currentInputVal + (clientType !== 0 ? "&clientType=" + clientType + "" : ""),
+				type: 'POST',
+				dataType: "json",
+				success: function(data) {
+					if (data != undefined && data.length > 0 && typeof data != "string") {
+						var _html = "<div style='height:100px; overflow-y: scroll;border-top: 1px solid #E8E8E8; border-bottom: 1px solid #E8E8E8;'><ul style='list-style=\"none;\"'>";
+						var format = "<li><strong class='c-pointer' onclick='getPaymentClientIdUpdate(\"{0}\",this);' recipient='{4}'>{1}</strong> - <a class='idColumn linkLegal' target='_blank' href='{2}'>{3}</a></li>";
+						if (onChange) {
+							format = "<li class='gray'><strong class='gray'>{1}</strong> - <a class='gray'>{3}</a></li>";
+						}
+						var hasHurrentValue = false;
+						for (var i = 0; i < data.length; i++) {
+							if ($(clientReciverId).val() == String(data[i].id)) {
+								hasHurrentValue = true;
+							}
+							_html += String.format(format, clientReciverId, data[i].id, data[i].url, data[i].name, data[i].recipient);
+						}
+						_html += "</ul></div>";
+						if (!hasHurrentValue && !onChange) {
+							$(clientReciverId).val("");
+						}
+						$(messageId).html(_html);
+						if (AjaxFuncOnResult != undefined && AjaxFuncOnResult != null) {
+							AjaxFuncOnResult();
+						}
+					} else {
+						$(messageId).html("Клиент с данным ЛС не найден");
+					}
+				},
+				error: function(data) {
+					$(messageId).html("Ответ не был получен");
+				},
+				statusCode: {
+					404: function() {
+						$(messageId).html("Ответ не был получен");
+					}
+				}
+			});
+		} else {
+			$(messageId).html("");
+		}
+	}
 }
 
 $(function() {

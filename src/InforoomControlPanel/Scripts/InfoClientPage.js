@@ -216,6 +216,18 @@ function clientContactValidation() {
 					$("#ContactValidationMessage").addClass("error");
 					$("#ContactValidationMessage").html(data);
 				} else {
+					$("#ClientContactsEditorForm [name *= '.ContactName']").each(function() {
+						if ($(this).val() === "" && $("#editBlock_contacts [name = '" + $(this).attr("name") + "']").val() === "") {
+							$(this).attr("noName", $(this).attr("name"));
+							$(this).removeAttr("name");
+						}
+					});
+					$("#ClientContactsEditorForm [noName *= '.ContactName']").each(function () {
+						if ($(this).val() !== "") {
+							$(this).attr("name", $(this).attr("noName"));
+							$(this).removeAttr("noName");
+						}
+					});
 					$("#ClientContactsEditorForm").submit();
 				}
 			},
@@ -235,6 +247,7 @@ function clientContactValidation() {
 
 function clientContactDelete(button) {
 	var trList = $("#emptyBlock_contacts table tr");
+	if ($("#editBlock_contacts #contactsTable .contactItem").length == 1) return;
 	for (var i = 0; i < trList.length; i++) {
 		var delItem = $(trList[i]).find("#" + $(button).attr("id"));
 		if (delItem.length > 0) {
@@ -335,37 +348,12 @@ function paymentMove(id) {
 	$("#paymentMoveMessage").html("Укажите кому и зачем Вам необходимо перевести платеж <strong>№" + id + "</strong> ?");
 }
 
-function getPaymentReciver() {
-	if ($("#clientReciverId").length > 0) {
-		if ($("#clientReciverId").val() != null && $("#clientReciverId").val() != "") {
-
-			$.ajax({
-				url: cli.getParam("baseurl") + "Client/getClientName?id=" + $("#clientReciverId").val(),
-				type: 'POST',
-				dataType: "json",
-				success: function(data) {
-					$("#clientReciverMessage").html(data);
-				},
-				error: function(data) {
-					$("#clientReciverMessage").html("Ответ не был получен");
-				},
-				statusCode: {
-					404: function() {
-						$("#clientReciverMessage").html("Ответ не был получен");
-					}
-				}
-			});
-		} else {
-			$("#clientReciverMessage").html("");
-		}
-	}
-}
-
 function updatePort(_this) {
 	if ($(_this).attr("href") == "" || $(_this).attr("href") == null) {
 		var portVal = $(_this).find("span").html();
 		$("#endpoint_Port").val(portVal);
 		$("#endpoint_PortVal").val(portVal);
+		$(".portInfoData").html(portVal);
 	}
 }
 
@@ -434,6 +422,36 @@ function removeFixedIp() {
 	$("#fixedIp").val("");
 	$(".removeFixedIp").addClass("hid");
 	$(".createFixedIp").removeClass("hid");
+}
+
+function GetPortConnectionState(id) {
+	$(".endpointStateStatus" + id).html("<img src='" + $("[name='imagePathOfProcess']").val() + "' class='PortConnectionStateWait'/>"); 
+	$.ajax({
+		url: cli.getParam("baseurl") + "AdminOpen/ClientEndpointGetInfoShort?id=" + id,
+		type: 'POST',
+		dataType: "json",
+		success: function (data) {
+			var ip = false;
+			var state = false;
+
+			if (data != undefined && data != null && data.port != undefined && data.port != null) {
+				state = data.port;
+			}
+			if (data != undefined && data != null && data.lease != undefined) {
+				ip = data.lease != null;
+			}
+			var html = "<div class='PortConnectionState'><div class='ip " + (ip ? "isGreen" : "isRed") + "'>IP</div><div class='state " + (state ? "isGreen" : "isRed") + "'>порт</div></div>";
+			$(".endpointStateStatus" + id).html(html);
+		},
+		error: function () {
+			$(".endpointStateStatus" + id).html("<div class='PortConnectionState'>Состояние порта не установлено</div>");
+		},
+		statusCode: {
+			404: function () {
+				$(".endpointStateStatus" + id).html("<div class='PortConnectionState'>Состояние порта не установлено</div>");
+			}
+		}
+	});
 }
 
 function updatePortsState(data) {
@@ -666,11 +684,7 @@ $(function() {
 	changeVisibilityUpdateEach();
 	$("div.Client.InfoPhysical").removeClass("hid");
 	$("div.Client.InfoLegal").removeClass("hid");
-
-	$("#clientReciverId").change(function() {
-		getPaymentReciver();
-	});
-
+	 
 	updateStaticIpEvents();
 
 	$("#switchPorts .port.free").attr("title", "свободный порт");
