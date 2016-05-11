@@ -59,7 +59,7 @@ namespace InforoomControlPanel.Helpers
 #if DEBUG
 			var telnet = new TelnetConnection("172.16.4.74", 23);
 #else
-			var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
+			var telnet = new TelnetConnection(point.Switch.Ip.ToString(), 23);
 #endif
 			try {
 #if DEBUG
@@ -113,7 +113,7 @@ namespace InforoomControlPanel.Helpers
 #if DEBUG
 					var telnet = new TelnetConnection("172.16.4.74", 23);
 #else
-			var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
+			var telnet = new TelnetConnection(point.Switch.Ip.ToString(), 23);
 #endif
 					try {
 #if DEBUG
