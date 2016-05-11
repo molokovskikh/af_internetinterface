@@ -30,7 +30,7 @@ namespace InforoomControlPanel.Helpers
 					telnet.Login(login, password, 100);
 					var port = 2.ToString();
 #else
-				var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
+				var telnet = new TelnetConnection(point.Switch.Ip.ToString(), 23);
 				telnet.Login(login, password, 100);
 				var port = point.Port.ToString();
 #endif
@@ -142,7 +142,7 @@ namespace InforoomControlPanel.Helpers
 #if DEBUG
 					var telnet = new TelnetConnection("172.16.4.246", 23);
 #else
-			var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
+			var telnet = new TelnetConnection(point.Switch.Ip.ToString(), 23);
 #endif
 					try {
 #if DEBUG

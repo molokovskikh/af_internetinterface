@@ -44,7 +44,7 @@ namespace InforoomControlPanel.Helpers
 					telnet.Login(login, password, 100);
 					var port = 3.ToString();
 #else
-				var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
+				var telnet = new TelnetConnection(point.Switch.Ip.ToString(), 23);
 				telnet.Login(login, password, 100);
 				var port = (CurrentSwitchModel == _switchModel[0] ? point.Port-49 : point.Port).ToString();
 #endif
@@ -122,7 +122,7 @@ namespace InforoomControlPanel.Helpers
 #if DEBUG
 					var telnet = new TelnetConnection(CurrentSwitchModel == _switchModel[0] ? "172.16.5.122" : "172.16.5.105", 23);
 #else
-				var telnet = new TelnetConnection(point.Switch.IP.ToString(), 23);
+				var telnet = new TelnetConnection(point.Switch.Ip.ToString(), 23);
 #endif
 					try {
 #if DEBUG
