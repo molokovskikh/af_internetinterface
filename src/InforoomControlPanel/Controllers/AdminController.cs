@@ -32,12 +32,6 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "Панель управления";
 		}
 
-		public ActionResult Error()
-		{ 
-            ViewBag.BreadCrumb = "";
-			return View(); 
-		}
-
 		public ActionResult Statistic()
 		{
 			var pager = new InforoomModelFilter<SiteVersionChange>(this);

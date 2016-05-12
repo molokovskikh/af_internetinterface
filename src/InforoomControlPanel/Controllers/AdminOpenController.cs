@@ -109,16 +109,17 @@ namespace InforoomControlPanel.Controllers
 			return Json(result, JsonRequestBehavior.AllowGet);
 		}
 
+		public ActionResult Error()
+		{
+			ViewBag.BreadCrumb = "";
+			return View();
+		}
 
-
-
-
-
-	 /// <summary>
-	 /// Основная информация о коммутаторе
-	 /// </summary>
-	 /// <returns></returns>
-	 public JsonResult ClientEndpointGetInfo(int id)
+		/// <summary>
+		/// Основная информация о коммутаторе
+		/// </summary>
+		/// <returns></returns>
+		public JsonResult ClientEndpointGetInfo(int id)
 	 {
 		 var cl = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == id);
 		 var rawData = HardwareHelper.GetPortInformator(cl);
