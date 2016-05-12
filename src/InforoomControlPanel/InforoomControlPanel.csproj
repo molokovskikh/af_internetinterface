@@ -2052,9 +2052,10 @@
     <Content Include="Views\Payments\modalviews\_PaymentCreate.cshtml" />
     <Content Include="Views\Payments\PaymentCreate.cshtml" />
     <Content Include="Views\Payments\PaymentInfo.cshtml" />
-    <Content Include="Views\Admin\Error.cshtml" />
+    <Content Include="Views\AdminOpen\Error.cshtml" />
     <Content Include="Views\Switch\ClientEndPointState.cshtml" />
     <Content Include="Views\Client\subviews\modelview\_PhysicalServiceManager.cshtml" />
+    <Content Include="Views\Shared\_LayoutEmpty.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <Content Include="Views\Switch\SwitchCreate.cshtml" />
