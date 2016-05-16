@@ -139,7 +139,7 @@
 					}
 				</td>
 				<td>@(lease.Endpoint != null ? lease.Endpoint.Id.ToString() : "")</td>
-				<td>@(lease.Endpoint != null ? lease.Endpoint.Client._Name.ToString() : "")</td>
+				<td>@(lease.Endpoint != null && lease.Endpoint.Client._Name != null ? lease.Endpoint.Client._Name.ToString() : "")</td>
 				<td>@(lease.Switch != null ? lease.Switch.Id.ToString() : "")</td>
 				<td>
 					@if (lease.Switch != null) {

@@ -16,6 +16,8 @@ using Inforoom2.Models.Services;
 using NHibernate.Linq;
 using NHibernate.Validator.Engine;
 using Region = Inforoom2.Models.Region;
+using System.Security.Principal;
+using System.Collections.Generic;
 
 namespace Inforoom2.Controllers
 {
@@ -67,7 +69,7 @@ namespace Inforoom2.Controllers
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
 			base.OnActionExecuting(filterContext);
-
+			AuthenticationByCookies();
 			var cookieCity = GetCookie("userCity");
 			if (!string.IsNullOrEmpty(cookieCity)) {
 				userCity = cookieCity;
@@ -76,8 +78,7 @@ namespace Inforoom2.Controllers
 			var CityList = DbSession.Query<Region>().Where(s => s.ShownOnMainPage).Select(s => s.Name).OrderBy(s => s).ToArray();
 			ViewBag.Cities = CityList;
 			//todo куда это девать?
-			var newCallMeBackTicket = new CallMeBackTicket()
-			{
+			var newCallMeBackTicket = new CallMeBackTicket() {
 				Name = (CurrentClient == null) ? "" : CurrentClient.Name,
 				PhoneNumber = (CurrentClient == null) ? "" : CurrentClient.PhoneNumber
 			};
@@ -126,6 +127,27 @@ namespace Inforoom2.Controllers
 					ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(userCity);
 					ViewBag.UserCity = userCity;
 					ViewBag.CurrentRegion = CurrentRegion ?? currentClientRegion;
+				}
+			}
+		}
+
+		public void AuthenticationByCookies()
+		{
+			if (FormsAuthentication.CookiesSupported) {
+				var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+				if (cookie != null) {
+					var ticket = FormsAuthentication.Decrypt(cookie.Value);
+					var clientId = 0;
+					if (ticket != null && !string.IsNullOrEmpty(ticket.UserData)) {
+						var impersonatedClientId = ticket.UserData;
+						int.TryParse(impersonatedClientId, out clientId);
+					}
+					var userName = ticket.Name;
+					if (clientId != 0) {
+						userName = clientId.ToString();
+					}
+					var identity = new GenericIdentity(userName, "Forms");
+					System.Web.HttpContext.Current.User = new CustomPrincipal(identity, new List<Permission>(), new List<Role>());
 				}
 			}
 		}
@@ -317,7 +339,7 @@ namespace Inforoom2.Controllers
 			drawing.Dispose();
 
 			//create a new image of the right size
-			img = new Bitmap((int) textSize.Width, (int) textSize.Height);
+			img = new Bitmap((int)textSize.Width, (int)textSize.Height);
 
 			drawing = Graphics.FromImage(img);
 
@@ -339,10 +361,10 @@ namespace Inforoom2.Controllers
 
 		private void ProcessCallMeBackTicket()
 		{
-			var binder = new EntityBinder(new string[] {}, new string[] {});
+			var binder = new EntityBinder(new string[] { }, new string[] { });
 			CallMeBackTicket callMeBackTicket;
 			try {
-				callMeBackTicket = (CallMeBackTicket) binder.MapModel(Request, typeof (CallMeBackTicket));
+				callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request, typeof(CallMeBackTicket));
 			}
 			catch (Exception e) {
 				return;
@@ -360,10 +382,9 @@ namespace Inforoom2.Controllers
 				DbSession.Save(callMeBackTicket);
 				if (callMeBackTicket.Client != null) {
 					var appeal = new Appeal("Клиент создал запрос на обратный звонок № " + callMeBackTicket.Id,
-						callMeBackTicket.Client, AppealType.FeedBack)
-					{
-						Employee = GetCurrentEmployee()
-					};
+						callMeBackTicket.Client, AppealType.FeedBack) {
+							Employee = GetCurrentEmployee()
+						};
 					DbSession.Save(appeal);
 				}
 				ViewBag.CallMeBackTicket = new CallMeBackTicket();
@@ -444,7 +465,8 @@ namespace Inforoom2.Controllers
 				return null;
 			}
 
-			if (geoAnswer == null) return null;
+			if (geoAnswer == null)
+				return null;
 			return geoAnswer.City;
 		}
 

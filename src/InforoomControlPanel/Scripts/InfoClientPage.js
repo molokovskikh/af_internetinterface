@@ -684,7 +684,8 @@ $(function() {
 	changeVisibilityUpdateEach();
 	$("div.Client.InfoPhysical").removeClass("hid");
 	$("div.Client.InfoLegal").removeClass("hid");
-	 
+	$("[name='newUserAppeal']").val("");
+	
 	updateStaticIpEvents();
 
 	$("#switchPorts .port.free").attr("title", "свободный порт");

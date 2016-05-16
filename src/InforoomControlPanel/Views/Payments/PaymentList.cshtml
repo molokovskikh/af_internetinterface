@@ -110,6 +110,12 @@
 		</div>
 		<div class="panel-body">
 			<div class="row">
+				<div class="col-sm-2">ИНН плательщика</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.PayerInn, HtmlType.text, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
 				<div class="col-sm-2">Плательщик</div>
 				<div class="col-sm-3">@pager.FormFilter(i => i.PayerName, HtmlType.text, ComparsionType.Like, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
 			</div>
@@ -121,19 +127,19 @@
 			</div>
 		</div>
 
-		<div class="panel-body">
+		<div class="panel-body-large">
 			<div class="row">
-				<div class="col-sm-1">
+				<div class="col-sm-2">
 					@pager.SubmitButton(new {@class = "btn btn-success btn-sm"})
 				</div>
-				<div class="col-sm-1">
+				<div class="col-sm-2">
 					@pager.CleanButton(new {@class = "btn btn-success btn-sm"})
 				</div>
-				<div class="col-sm-1">
-					<a target="_blank" href="@Url.Action("PaymentCreate")" class="btn btn-blue btn-sm">Добавить платеж</a>
+				<div class="col-sm-2">
+					<a target="_blank" href="@Url.Action("PaymentCreate")" id="addPayment" class="btn btn-blue btn-sm">Добавить платеж</a>
 				</div>
-				<div class="col-sm-1">
-					<a target="_blank" href="@Url.Action("PaymentProcess")" class="btn btn-blue btn-sm">Загрузка платежей</a>
+				<div class="col-sm-2">
+					<a target="_blank" href="@Url.Action("PaymentProcess")" id="loadPayment" class="btn btn-blue btn-sm">Загрузка платежей</a>
 				</div>
 			</div>
 		</div>
@@ -194,6 +200,9 @@
 					<td>@item.Recipient.Name</td>
 					<td>@item.PayedOn.ToShortDateString()</td>
 					<td>
+						@item.PayerInn
+					</td>
+					<td>
 						@if (item.Payer != null) {
 							<a target="_blank" href="@Url.Action(item.Payer.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {item.Payer.Id})" class="idColumn @(item.Payer.PhysicalClient != null ? "linkPhysical" : "linkLegal")">
 								@item.Payer.Name
@@ -203,10 +212,12 @@
 							<strong>не опознан</strong>
 						}
 					</td>
-					<td>@item.Sum</td>
+					<td>
+						<a href="@Url.Action("PaymentInfo", new { @id = item.Id })" target="_blank">@item.Sum</a>
+					</td>
 					<td>@(item.RegistredOn )</td>
 					<td>
-						<a href="@Url.Action("PaymentInfo", new {@id = item.Id})" target="_blank" class="btn btn-green">просмотр</a>
+						<a href="@Url.Action("PaymentEdit", new {@id = item.Id})" target="_blank" class="btn btn-green">редактировать</a>
 
 						<a href="@Url.Action("PaymentRemove", new {@id = item.Id})" class="btn btn-red">удалить</a>
 					</td>

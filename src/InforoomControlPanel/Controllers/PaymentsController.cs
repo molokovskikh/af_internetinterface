@@ -28,6 +28,47 @@ namespace InforoomControlPanel.Controllers
 	/// </summary>
 	public class PaymentsController : ControlPanelController
 	{
+		//todo: вывод после анализа перенесенного функ. : нужно правильно связать Payment и BankPayment, т.к. при изменении их связи теряются 
+
+		/// <summary>
+		/// Список платежей
+		/// </summary>
+		public ActionResult PaymentByEmployees()
+		{
+			var pager = new InforoomModelFilter<Client>(this);
+
+			var employeesListId = DbSession.Query<Client>().Where(s => s.WhoRegistered != null).Select(s => s.WhoRegistered.Id).Distinct().ToList();
+			var employeesList = DbSession.Query<Employee>().ToList();
+			employeesList = employeesList.Where(s => employeesListId.Any(d => d == s.Id)).OrderBy(s => s.Name).ToList();
+			//var dateA = DateTime.Parse(pager.GetParam("filter.GreaterOrEqueal.PaidOn"));
+			int currentEmployeeId = 0;
+			if (!string.IsNullOrEmpty(pager.GetParam("filter.Equal.WhoRegistered.Id"))) {
+				var first = pager.GetParam("filter.Equal.WhoRegistered.Id").Split(',');
+				int.TryParse(first.Length > 0 ? first[0] : "", out currentEmployeeId);
+			}
+			pager.ParamDelete("filter.Equal.WhoRegistered.Id");
+			currentEmployeeId = currentEmployeeId != 0 ? currentEmployeeId : 0;
+			if (currentEmployeeId != 0) {
+				pager.ParamSet("filter.Equal.WhoRegistered.Id", currentEmployeeId.ToString());
+			}
+			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
+				pager.SetOrderBy("WhoRegistered.Name", OrderingDirection.Asc);
+			if (string.IsNullOrEmpty(pager.GetParam("filter.GreaterOrEqueal.CreationDate")) &&
+			    string.IsNullOrEmpty(pager.GetParam("filter.LowerOrEqual.CreationDate"))) {
+				pager.ParamDelete("filter.GreaterOrEqueal.CreationDate");
+				pager.ParamDelete("filter.LowerOrEqual.CreationDate");
+				pager.ParamSet("filter.GreaterOrEqueal.CreationDate", SystemTime.Now().Date.FirstDayOfMonth().ToString("01.01.yyyy"));
+				pager.ParamSet("filter.LowerOrEqual.CreationDate", SystemTime.Now().Date.ToString("dd.MM.yyyy"));
+			}
+			var criteria = pager.GetCriteria();
+			ViewBag.TotalSum = 0; //pager.TotalSumByFieldName("Sum");
+
+			ViewBag.EmployeeCurrent = currentEmployeeId;
+			ViewBag.EmployeesList = employeesList;
+			ViewBag.pager = pager;
+			return View();
+		}
+
 		/// <summary>
 		/// Список платежей
 		/// </summary>
@@ -105,8 +146,7 @@ namespace InforoomControlPanel.Controllers
 				return View();
 			}
 			bankPayment.RegisterPayment();
-			var newPayment = new Payment()
-			{
+			var newPayment = new Payment() {
 				Client = bankPayment.Payer,
 				Sum = bankPayment.Sum,
 				RecievedOn = bankPayment.RegistredOn,
@@ -164,7 +204,7 @@ namespace InforoomControlPanel.Controllers
 Оператор: {4}
 Комментарий: {5}
 ", payment.Id, payment.Client.Id, payment.Client.Name, payment.Sum, GetCurrentEmployee().Name, comment);
-				var emails = str.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+				var emails = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 #if DEBUG
 #else
 						EmailSender.SendEmail(emails, "Уведомление об отмене платежа", appealText);
@@ -222,7 +262,7 @@ namespace InforoomControlPanel.Controllers
 				Session["payments"] = payments;
 				ViewBag.Payments = payments;
 			}
-			
+
 			else {
 				//var errors = payments.Select(p =>
 				//{
@@ -242,8 +282,13 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult EditTemp(int id)
 		{
 			BankPayment payment = FindTempPayment(id);
+			if (payment == null) {
+				ErrorMessage("Время сессии истекло. Загрузите выписку повторно.");
+				return RedirectToAction("PaymentProcess");
+			}
 			ViewBag.BankPayment = payment;
 			ViewBag.RecipientList = DbSession.Query<Recipient>().OrderBy(r => r.Name).ToList();
+			ViewBag.EditPaymentWithoutPayer = payment.Payer == null;
 			return View("PaymentEdit");
 		}
 
@@ -254,6 +299,10 @@ namespace InforoomControlPanel.Controllers
 				? DbSession.Query<Client>().FirstOrDefault(s => s.Id == bankPayment.Payer.Id)
 				: null;
 			var payment = FindTempPayment(bankPayment.Id);
+			if (payment == null) {
+				ErrorMessage("Время сессии истекло. Загрузите выписку повторно.");
+				return RedirectToAction("PaymentProcess");
+			}
 
 			payment.Sum = bankPayment.Sum;
 			payment.Payer = newPayer;
@@ -261,7 +310,7 @@ namespace InforoomControlPanel.Controllers
 			payment.PayedOn = bankPayment.PayedOn;
 			payment.OperatorComment = bankPayment.OperatorComment;
 			payment.UpdatePayerInn = bankPayment.UpdatePayerInn;
-
+			ViewBag.EditPaymentWithoutPayer = payment.Payer == null;
 			ViewBag.BankPayment = payment;
 			ViewBag.RecipientList = DbSession.Query<Recipient>().OrderBy(r => r.Name).ToList();
 			var errors = ValidationRunner.Validate(payment);
@@ -273,12 +322,12 @@ namespace InforoomControlPanel.Controllers
 			return View("PaymentEdit");
 		}
 
-		public void SavePayments()
+		public ActionResult SavePayments()
 		{
 			var payments = TempPayments();
 			if (payments == null) {
 				ErrorMessage("Время сессии истекло. Загрузите выписку повторно.");
-				return;
+				return null;
 			}
 
 			foreach (var payment in payments.ToList()) {
@@ -292,8 +341,7 @@ namespace InforoomControlPanel.Controllers
 					payment.RegisterPayment();
 					DbSession.Save(payment);
 					if (payment.Payer != null)
-						DbSession.Save(new Payment
-						{
+						DbSession.Save(new Payment {
 							Client = payment.Payer,
 							Sum = payment.Sum,
 							RecievedOn = payment.RegistredOn,
@@ -309,11 +357,10 @@ namespace InforoomControlPanel.Controllers
 
 			Session["payments"] = null;
 
-			RedirectToAction("PaymentList",
-				new Dictionary<string, string>
-				{
-					{"mfilter.filter.GreaterOrEqueal.PayedOn", payments.Min(p => p.PayedOn).ToShortDateString()},
-					{"mfilter.filter.LowerOrEqual.PayedOn", payments.Max(p => p.PayedOn).ToShortDateString()}
+			return RedirectToAction("PaymentList",
+				new Dictionary<string, string> {
+					{ "mfilter.filter.GreaterOrEqueal.PayedOn", payments.Min(p => p.PayedOn).ToShortDateString() },
+					{ "mfilter.filter.LowerOrEqual.PayedOn", payments.Max(p => p.PayedOn).ToShortDateString() }
 				});
 		}
 
@@ -326,188 +373,180 @@ namespace InforoomControlPanel.Controllers
 
 		private BankPayment FindTempPayment(int id)
 		{
-			return TempPayments().First(p => p.GetHashCode() == id);
+			var tempList = TempPayments();
+			if (tempList == null) {
+				return null;
+			}
+			return tempList.First(p => p.GetHashCode() == id);
 		}
 
 		private List<BankPayment> TempPayments()
 		{
-			return (List<BankPayment>) Session["payments"];
+			return (List<BankPayment>)Session["payments"];
 		}
 
 		public ActionResult DeleteTemp(int id)
 		{
 			var payment = FindTempPayment(id);
-			TempPayments().Remove(payment);
+			if (payment == null) {
+				ErrorMessage("Время сессии истекло. Загрузите выписку повторно.");
+				return RedirectToAction("PaymentProcess");
+			}
 
+			TempPayments().Remove(payment);
 			return RedirectToAction("PaymentProcess");
 		}
 
 
 		/////////////////////////////////////////Редактирование платежей не было нормально реализовано в старой админке 
 		/// (если бы этим функционалом пользовались возникали бы ошибки - вывод данный функционал не востребован - не переношу)
-		///// <summary>
-		///// Редактирование счета
-		///// </summary>
-		//[HttpGet]
-		//public ActionResult PaymentEdit(int id)
-		//{
-		//	ViewBag.BankPayment = DbSession.Query<BankPayment>().FirstOrDefault(s => s.Id == id);
-		//	ViewBag.RecipientList = DbSession.Query<Recipient>().OrderBy(s => s.Name).ToList();
+		/// <summary>
+		/// Редактирование счета
+		/// </summary>
+		[HttpGet]
+		public ActionResult PaymentEdit(int id)
+		{
+			ViewBag.BankPayment = DbSession.Query<BankPayment>().FirstOrDefault(s => s.Id == id);
+			ViewBag.RecipientList = DbSession.Query<Recipient>().OrderBy(s => s.Name).ToList();
 
-		//	return View();
-		//}
+			return View();
+		}
 
-		///// <summary>
-		///// Редактирование счета
-		///// </summary>
-		//[HttpPost]
-		//public ActionResult PaymentEdit(int oldPaymentId, BankPayment bankPayment)
-		//{
-		//	var oldBankPayment = DbSession.Query<BankPayment>().FirstOrDefault(s => s.Id == oldPaymentId);
+		/// <summary>
+		/// Редактирование счета
+		/// </summary>
+		[HttpPost]
+		public ActionResult PaymentEdit(int oldPaymentId, BankPayment bankPayment)
+		{
+			var oldBankPayment = DbSession.Query<BankPayment>().FirstOrDefault(s => s.Id == oldPaymentId);
 
-		//	if (oldBankPayment == null)
-		//	{
-		//		return RedirectToAction("PaymentList");
-		//	}
-		//	var newPayer = bankPayment.Payer != null
-		//		? DbSession.Query<Client>().FirstOrDefault(s => s.Id == bankPayment.Payer.Id)
-		//		: null;
+			if (oldBankPayment == null) {
+				return RedirectToAction("PaymentList");
+			}
+			var newPayer = bankPayment.Payer != null
+				? DbSession.Query<Client>().FirstOrDefault(s => s.Id == bankPayment.Payer.Id)
+				: null;
 
-		//	var oldBalance = oldBankPayment.Sum;
-		//	var oldPayer = oldBankPayment.Payer;
-		//	var oldPayment = oldBankPayment.Payment;
+			var oldBalance = oldBankPayment.Sum;
+			var oldPayer = oldBankPayment.Payer;
+			var oldPayment = oldBankPayment.Payment;
 
-		//	bankPayment.RegisterPayment();
+			bankPayment.RegisterPayment();
 
-		//	oldBankPayment.Sum = bankPayment.Sum;
-		//	oldBankPayment.Payer = newPayer;
-		//	oldBankPayment.DocumentNumber = bankPayment.DocumentNumber;
-		//	oldBankPayment.PayedOn = bankPayment.PayedOn;
-		//	oldBankPayment.OperatorComment = bankPayment.OperatorComment;
-		//	oldBankPayment.UpdatePayerInn = bankPayment.UpdatePayerInn;
+			oldBankPayment.Sum = bankPayment.Sum;
+			oldBankPayment.Payer = newPayer;
+			oldBankPayment.DocumentNumber = bankPayment.DocumentNumber;
+			oldBankPayment.PayedOn = bankPayment.PayedOn;
+			oldBankPayment.OperatorComment = bankPayment.OperatorComment;
+			oldBankPayment.UpdatePayerInn = bankPayment.UpdatePayerInn;
 
-		//	if (bankPayment.UpdatePayerInn)
-		//	{
-		//		oldBankPayment.UpdateInn();
-		//	}
+			if (bankPayment.UpdatePayerInn) {
+				oldBankPayment.UpdateInn();
+			}
 
-		//	var newBalance = bankPayment.Sum;
-		//	var newPayerFlag = oldPayer == null && oldBankPayment.Payer != null;
+			var newBalance = bankPayment.Sum;
+			var newPayerFlag = oldPayer == null && oldBankPayment.Payer != null;
 
-		//	var errors = ValidationRunner.Validate(oldBankPayment);
+			var errors = ValidationRunner.Validate(oldBankPayment);
 
-		//	if (errors.Length == 0)
-		//	{
-		//		if (oldPayer != null && oldBankPayment.Payer == oldPayer)
-		//		{
-		//			var client = oldBankPayment.Payer;
-		//			if (newBalance - oldBalance < 0 && oldBankPayment.Payer != null)
-		//			{
-		//				var userWriteOffNew = new UserWriteOff
-		//				{
-		//					Employee = GetCurrentEmployee(),
-		//					Client = client,
-		//					Sum = oldBalance - newBalance,
-		//					Date = SystemTime.Now(),
-		//					Comment = string.Format("Списание после редактирования банковского платежа (id = {0})", oldBankPayment.Id)
-		//				};
-		//				DbSession.Save(userWriteOffNew);
-		//				client.UserWriteOffs.Add(userWriteOffNew);
-		//				DbSession.Update(client);
-		//			}
-		//			if (newBalance - oldBalance > 0 && oldBankPayment.Payer != null)
-		//			{
-		//				var paymentNew = new Payment
-		//				{
-		//					Employee = GetCurrentEmployee(),
-		//					Client = client,
-		//					PaidOn = SystemTime.Now(),
-		//					RecievedOn = SystemTime.Now(),
-		//					Sum = newBalance - oldBalance,
-		//					Comment = string.Format("Зачисление после редактирования банковского платежа (id = {0})", oldBankPayment.Id)
-		//				};
-		//				DbSession.Save(paymentNew);
-		//				client.Payments.Add(paymentNew);
-		//				DbSession.Update(client);
-		//			}
-		//		}
-		//		if (newPayerFlag)
-		//		{
-		//			var paymentNew = new Payment
-		//			{
-		//				Employee = GetCurrentEmployee(),
-		//				Client = oldBankPayment.Payer,
-		//				PaidOn = SystemTime.Now(),
-		//				RecievedOn = SystemTime.Now(),
-		//				Sum = oldBankPayment.Sum,
-		//				Comment =
-		//					string.Format("Зачисление после редактирования банковского платежа (id = {0}), назначен плательщик",
-		//						oldBankPayment.Id)
-		//			};
-		//			DbSession.Save(paymentNew);
-		//			oldBankPayment.Payer.Payments.Add(paymentNew);
-		//			DbSession.Update(oldBankPayment.Payer);
-		//		}
-		//		if (oldPayer != null && oldPayer != oldBankPayment.Payer)
-		//		{
-		//			var paymentNew = new Payment
-		//			{
-		//				Employee = GetCurrentEmployee(),
-		//				Client = oldBankPayment.Payer,
-		//				PaidOn = SystemTime.Now(),
-		//				RecievedOn = SystemTime.Now(),
-		//				Sum = oldBankPayment.Sum,
-		//				Comment = string.Format("Зачисление после редактирования банковского платежа (id = {0})", oldBankPayment.Id),
-		//				BankPayment = oldBankPayment
-		//			};
-		//			oldBankPayment.Payment = paymentNew;
-		//			oldBankPayment.Payer.Payments.Add(paymentNew);
-		//			DbSession.Save(paymentNew);
-		//			DbSession.Save(oldBankPayment.Payer);
-		//			if (oldPayment != null)
-		//			{
-		//				Cancel(oldPayment,
-		//					string.Format("Изменение плательщика в банковском платеже {0} с '{1}' на '{2}'", oldBankPayment.Id, oldPayer.Name,
-		//						oldBankPayment.Payer.Name), GetCurrentEmployee());
-		//			}
-		//			else
-		//			{
-		//				var userWriteOffNew = new UserWriteOff
-		//				{
-		//					Employee = GetCurrentEmployee(),
-		//					Client = oldPayer,
-		//					Comment =
-		//						string.Format(
-		//							"Списание после смены плательщика, при редактировании банковского платежа №{0} \r\n Клиент стал: {1}",
-		//							oldBankPayment.Id, oldBankPayment.Payer.Id),
-		//					Date = SystemTime.Now(),
-		//					Sum = oldBankPayment.Sum
-		//				};
-		//				var appeal = new Appeal(
-		//					string.Format(
-		//						"После смены плательщика в платеже {0} было создано пользовательское списание, так как не был найден привязанный к банковскому платежу физический платеж для отмены",
-		//						oldBankPayment.Id), oldPayer, AppealType.System);
+			if (errors.Length == 0) {
+				if (oldPayer != null && oldBankPayment.Payer == oldPayer) {
+					var client = oldBankPayment.Payer;
+					if (newBalance - oldBalance < 0 && oldBankPayment.Payer != null) {
+						var userWriteOffNew = new UserWriteOff {
+							Employee = GetCurrentEmployee(),
+							Client = client,
+							Sum = oldBalance - newBalance,
+							Date = SystemTime.Now(),
+							Comment = string.Format("Списание после редактирования банковского платежа (id = {0})", oldBankPayment.Id)
+						};
+						DbSession.Save(userWriteOffNew);
+						client.UserWriteOffs.Add(userWriteOffNew);
+						DbSession.Update(client);
+					}
+					if (newBalance - oldBalance > 0 && oldBankPayment.Payer != null) {
+						var paymentNew = new Payment {
+							Employee = GetCurrentEmployee(),
+							Client = client,
+							PaidOn = SystemTime.Now(),
+							RecievedOn = SystemTime.Now(),
+							Sum = newBalance - oldBalance,
+							Comment = string.Format("Зачисление после редактирования банковского платежа (id = {0})", oldBankPayment.Id)
+						};
+						DbSession.Save(paymentNew);
+						client.Payments.Add(paymentNew);
+						DbSession.Update(client);
+					}
+				}
+				if (newPayerFlag) {
+					var paymentNew = new Payment {
+						Employee = GetCurrentEmployee(),
+						Client = oldBankPayment.Payer,
+						PaidOn = SystemTime.Now(),
+						RecievedOn = SystemTime.Now(),
+						Sum = oldBankPayment.Sum,
+						Comment =
+							string.Format("Зачисление после редактирования банковского платежа (id = {0}), назначен плательщик",
+								oldBankPayment.Id)
+					};
+					DbSession.Save(paymentNew);
+					oldBankPayment.Payer.Payments.Add(paymentNew);
+					DbSession.Update(oldBankPayment.Payer);
+				}
+				if (oldPayer != null && oldPayer != oldBankPayment.Payer) {
+					var paymentNew = new Payment {
+						Employee = GetCurrentEmployee(),
+						Client = oldBankPayment.Payer,
+						PaidOn = SystemTime.Now(),
+						RecievedOn = SystemTime.Now(),
+						Sum = oldBankPayment.Sum,
+						Comment = string.Format("Зачисление после редактирования банковского платежа (id = {0})", oldBankPayment.Id),
+						BankPayment = oldBankPayment
+					};
+					oldBankPayment.Payment = paymentNew;
+					oldBankPayment.Payer.Payments.Add(paymentNew);
+					DbSession.Save(paymentNew);
+					DbSession.Save(oldBankPayment.Payer);
+					if (oldPayment != null) {
+						Cancel(oldPayment,
+							string.Format("Изменение плательщика в банковском платеже {0} с '{1}' на '{2}'", oldBankPayment.Id, oldPayer.Name,
+								oldBankPayment.Payer.Name), GetCurrentEmployee());
+					}
+					else {
+						var userWriteOffNew = new UserWriteOff {
+							Employee = GetCurrentEmployee(),
+							Client = oldPayer,
+							Comment =
+								string.Format(
+									"Списание после смены плательщика, при редактировании банковского платежа №{0} \r\n Клиент стал: {1}",
+									oldBankPayment.Id, oldBankPayment.Payer.Id),
+							Date = SystemTime.Now(),
+							Sum = oldBankPayment.Sum
+						};
+						var appeal = new Appeal(
+							string.Format(
+								"После смены плательщика в платеже {0} было создано пользовательское списание, так как не был найден привязанный к банковскому платежу физический платеж для отмены",
+								oldBankPayment.Id), oldPayer, AppealType.System);
 
-		//				oldPayer.UserWriteOffs.Add(userWriteOffNew);
-		//				oldPayer.Appeals.Add(appeal);
+						oldPayer.UserWriteOffs.Add(userWriteOffNew);
+						oldPayer.Appeals.Add(appeal);
 
-		//				DbSession.Save(userWriteOffNew);
-		//				DbSession.Update(oldPayer);
-		//			}
-		//		}
-		//		DbSession.Save(oldBankPayment);
-		//		SuccessMessage($"Изменения в банковском платеже №{oldBankPayment.Id} сохранены успешно");
-		//	}
-		//	else
-		//	{
-		//		DbSession.Evict(oldBankPayment);
-		//		PreventSessionUpdate();
-		//	}
+						DbSession.Save(userWriteOffNew);
+						DbSession.Update(oldPayer);
+					}
+				}
+				DbSession.Save(oldBankPayment);
+				SuccessMessage($"Изменения в банковском платеже №{oldBankPayment.Id} сохранены успешно");
+			}
+			else {
+				DbSession.Evict(oldBankPayment);
+				PreventSessionUpdate();
+			}
 
-		//	ViewBag.RecipientList = DbSession.Query<Recipient>().OrderBy(s => s.Name).ToList();
+			ViewBag.RecipientList = DbSession.Query<Recipient>().OrderBy(s => s.Name).ToList();
 
-		//	ViewBag.BankPayment = oldBankPayment;
-		//	return View();
-		//}
+			ViewBag.BankPayment = oldBankPayment;
+			return View();
+		}
 	}
 }

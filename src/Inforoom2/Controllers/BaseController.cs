@@ -103,6 +103,10 @@ namespace Inforoom2.Controllers
 			SetCookie("WarningMessage", message);
 		}
 
+		public bool HeadersWritten()
+		{
+			return (bool)Response.GetType().GetProperty("HeadersWritten").GetValue(Response, null);
+		}
 
 		protected override void OnException(ExceptionContext filterContext)
 		{
@@ -113,14 +117,16 @@ namespace Inforoom2.Controllers
 			EmailSender.SendError(builder.ToString());
 
 			var showErrorPage = false;
-			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage);
-			DeleteCookie("SuccessMessage");
+			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage); 
+			if (!HeadersWritten()) {
+				DeleteCookie("SuccessMessage");
 
-			if (showErrorPage) {
-				filterContext.Result = new RedirectToRouteResult(
-					new RouteValueDictionary
-					{{"controller", "StaticContent"}, {"action", "Error"}});
-				filterContext.ExceptionHandled = true;
+				if (showErrorPage) {
+					filterContext.Result = new RedirectToRouteResult(
+						new RouteValueDictionary
+						{ { "controller", "StaticContent" }, { "action", "Error" } });
+					filterContext.ExceptionHandled = true;
+				}
 			}
 
 			log.ErrorFormat("{0} {1}", filterContext.Exception.Message, filterContext.Exception.StackTrace);
@@ -191,7 +197,7 @@ namespace Inforoom2.Controllers
 
 		public void DeleteCookie(string name)
 		{
-			Response.Cookies.Remove(name);
+				Response.Cookies.Remove(name); 
 		}
 
 		protected ActionResult Authenticate(string action, string controller, string username, bool shouldRemember,

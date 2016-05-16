@@ -1,0 +1,779 @@
+<?xml version="1.0" encoding="windows-1251"?><XMLExport>
+<FileEncoding>Windows</FileEncoding>
+<ProgramReceiver>PSBOnline2</ProgramReceiver>
+<ProgramReceiver>XMLExportReader</ProgramReceiver>
+<CreationDate>27.01.2016</CreationDate>
+<extrCond>
+<extractStartDate>26.01.2016</extractStartDate>
+<extractEndDate>26.01.2016</extractEndDate>
+<AccountCode>40702810602000758601</AccountCode>
+</extrCond>
+<accDescr>
+<extractStartDate>26.01.2016</extractStartDate>
+<extractEndDate>26.01.2016</extractEndDate>
+<AccountCode>40702810602000758601</AccountCode>
+<incomeAmount>1053546.73</incomeAmount>
+<incomeTurns>76101.77</incomeTurns>
+<outTurns>4594.32</outTurns>
+<outAmount>1125054.18</outAmount>
+</accDescr>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>3502</NDoc>
+<DatePorucheniya>26.01.2016</DatePorucheniya>
+<Summa>17.90</Summa>
+<AssignPayment>Лоза Сергей Васильевич;Горького 69-53;интернет;;кол-во док.
+1;Сумма платежей 17.90, комиссия Банка 0.00 руб., Комиссия НДС не
+облагается; // р/с 30233810413000100000</AssignPayment>
+<Payer>
+<Name>ЦЕНТРАЛЬНО-ЧЕРНОЗЕМНЫЙ БАНК СБЕРБАНКА РОССИИ Г.ВОРОНЕЖ//ЛОЗА СЕРГЕЙ
+ВАСИЛЬЕВИЧ////РОССИЯ 308000 БЕЛГОРОДСКАЯ Г БЕЛГОРОД УЛ ГОРЬКОГО Д 69 КВ
+53//</Name>
+<INN>7707083893</INN>
+<AccountCode>30302810277006000000</AccountCode>
+</Payer>
+<BankPayer>
+<Description>СЕВЕРНЫЙ БАНК ПАО СБЕРБАНК г ЯРОСЛАВЛЬ</Description>
+<BIC>047888670</BIC>
+<AccountCode>30101810500000000670</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;ИНФОРУМ&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<PayerKPP>366402001</PayerKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>234</NDoc>
+<DatePorucheniya>26.01.2016</DatePorucheniya>
+<Summa>352.41</Summa>
+<AssignPayment>Воронежский филиал ПАО ВымпелКом.Оплата расходов по оплает
+э/э оборуд-я, размещенного на основании дог. 07175от 25.06.13г. за 4
+кв.2015г. по сч. 4175 от 31.12.15г. НДС НЕ ОБЛАГАЕТСЯ</AssignPayment>
+<Payer>
+<Name>ВЫМПЕЛ-КОММУНИКАЦИИ ПУБЛИЧНОЕ АКЦИОНЕРНОЕ
+ОБЩЕСТВО//127083;РОССИЯ,,,МОСКВА,УЛ. 8-ГО МАРТА,Д.10,,СТР.14,//</Name>
+<INN>7713076301</INN>
+<AccountCode>40702810800700474600</AccountCode>
+</Payer>
+<BankPayer>
+<Description>АО КБ &quot;СИТИБАНК&quot; г МОСКВА</Description>
+<BIC>044525202</BIC>
+<AccountCode>30101810300000000202</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО ИНФОРУМ</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<PayerKPP>997750001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>61447</NDoc>
+<DatePorucheniya>26.01.2016</DatePorucheniya>
+<Summa>510.64</Summa>
+<AssignPayment>//ПРИЛОЖЕНИЕ//ООО Инфорум;по принятым платежам с 25/01/2016
+по 25/01/2016;на общую сумму 520,в т.ч.усл.банка 9.36,в кол-ве
+1,согл.эл.реестру 260116gb23632540236.10.TXT</AssignPayment>
+<Payer>
+<Name>ОАО &quot;СБЕРБАНК РОССИИ&quot; р/с 30233810749000600001 в
+ЗАПАДНО-УРАЛЬСКИЙ БАНК ПАО СБЕРБАНК г.ПЕРМЬ</Name>
+<INN>7707083893</INN>
+<AccountCode>30302810277006000000</AccountCode>
+</Payer>
+<BankPayer>
+<Description>СЕВЕРНЫЙ БАНК ПАО СБЕРБАНК г ЯРОСЛАВЛЬ</Description>
+<BIC>047888670</BIC>
+<AccountCode>30101810500000000670</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<PayerKPP>775001001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>211801</NDoc>
+<DatePorucheniya>26.01.2016</DatePorucheniya>
+<Summa>982.00</Summa>
+<AssignPayment>//ПРИЛОЖЕНИЕ//ООО Инфорум;по принятым платежам с 25/01/2016
+по 25/01/2016;на общую сумму 1000,в т.ч.усл.банка 18,в кол-ве
+1,согл.эл.реестру 260116gb23632540236.11.TXT</AssignPayment>
+<Payer>
+<Name>ОАО &quot;СБЕРБАНК РОССИИ&quot; р/с 30233810749000600001 в
+ЗАПАДНО-УРАЛЬСКИЙ БАНК ПАО СБЕРБАНК г.ПЕРМЬ</Name>
+<INN>7707083893</INN>
+<AccountCode>30302810277006000000</AccountCode>
+</Payer>
+<BankPayer>
+<Description>СЕВЕРНЫЙ БАНК ПАО СБЕРБАНК г ЯРОСЛАВЛЬ</Description>
+<BIC>047888670</BIC>
+<AccountCode>30101810500000000670</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<PayerKPP>775001001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>23317</NDoc>
+<DatePorucheniya>26.01.2016</DatePorucheniya>
+<Summa>3500.00</Summa>
+<AssignPayment>Оплата по счету №7 от 20.01.2016 за оказание услуги доступа к
+сети интернет за январь 2016г Без налога (НДС)</AssignPayment>
+<Payer>
+<Name>Общество с ограниченной ответственностью микрофинансовая организация
+&quot;Центр Финансовой Поддержки&quot;</Name>
+<INN>7733783309</INN>
+<AccountCode>40701810101400000152</AccountCode>
+</Payer>
+<BankPayer>
+<Description>АО &quot;АЛЬФА-БАНК&quot; г МОСКВА</Description>
+<BIC>044525593</BIC>
+<AccountCode>30101810200000000593</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>Общество с ограниченной ответственностью &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>400</NDoc>
+<DatePorucheniya>26.01.2016</DatePorucheniya>
+<Summa>3800.00</Summa>
+<AssignPayment>Оплата за услуги интернет по Дог.№ 14321 от 01.04.14 г. за
+дек 2015, сч №3936 от 31 дек 2015 г Сумма 3800-00 Без НДС</AssignPayment>
+<Payer>
+<Name>ОАО &quot;Валуйкисахар&quot; р/с 40702810907190100030 в БЕЛГОРОДСКОЕ
+ОТДЕЛЕНИЕ N8592 ПАО СБЕРБАНК г.БЕЛГОРОД</Name>
+<INN>3126000974</INN>
+<AccountCode>30302810277006000000</AccountCode>
+</Payer>
+<BankPayer>
+<Description>СЕВЕРНЫЙ БАНК ПАО СБЕРБАНК г ЯРОСЛАВЛЬ</Description>
+<BIC>047888670</BIC>
+<AccountCode>30101810500000000670</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<PayerKPP>312650001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>1302</NDoc>
+<DatePorucheniya>26.01.2016</DatePorucheniya>
+<Summa>3877.04</Summa>
+<AssignPayment>Платежи по дог 121/2014 от 21.07.2014 за
+25.01.2016-25.01.2016, 8 шт, принято 3988.72, комиссия 111.68 в т.ч НДС
+17.04 удержана, #25.01.2016, Сумма 3877-04</AssignPayment>
+<Payer>
+<Name>ООО &quot;ПРОЦЕССИНГОВОЕ АГЕНТСТВО&quot; р/с 40702810349770002119 в
+ЗАПАДНО-УРАЛЬСКИЙ БАНК ПАО СБЕРБАНК г.ПЕРМЬ</Name>
+<INN>5902882871</INN>
+<AccountCode>30302810277006000000</AccountCode>
+</Payer>
+<BankPayer>
+<Description>СЕВЕРНЫЙ БАНК ПАО СБЕРБАНК г ЯРОСЛАВЛЬ</Description>
+<BIC>047888670</BIC>
+<AccountCode>30101810500000000670</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>Общество с ограниченной ответственностью &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<PayerKPP>590301001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>768799</NDoc>
+<DatePorucheniya>26.01.2016</DatePorucheniya>
+<Summa>4000.00</Summa>
+<AssignPayment>Оплата за услуги доступа к сети интернет за декабрь 2015 г.
+по договору № 01741 от 21.09.2011 г. на основании счета № 4046 от 22.12.2015
+г. (1623259)_2207</AssignPayment>
+<Payer>
+<Name>ЦЕНТРАЛЬНО-ЧЕРНОЗЕМНЫЙ БАНК ПАО СБЕРБАНК р/с 60311810713000200000
+г.ВОРОНЕЖ</Name>
+<INN>7707083893</INN>
+<AccountCode>30302810277006000000</AccountCode>
+</Payer>
+<BankPayer>
+<Description>СЕВЕРНЫЙ БАНК ПАО СБЕРБАНК г ЯРОСЛАВЛЬ</Description>
+<BIC>047888670</BIC>
+<AccountCode>30101810500000000670</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<PayerKPP>366402001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>255</NDoc>
+<DatePorucheniya>26.01.2016</DatePorucheniya>
+<Summa>4300.00</Summa>
+<AssignPayment>Оплата по счету N 139 от 31.01.2016 за услуги доступа к
+сетиСумма 4300-00Без налога (НДС)</AssignPayment>
+<Payer>
+<Name>ООО &quot;Завод нефтяного и газового оборудования&quot; ООО
+&quot;ЗНИГО&quot;</Name>
+<INN>3604018052</INN>
+<AccountCode>40702810500250005126</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ФИЛИАЛ БАНКА ВТБ (ПАО) В Г. ВОРОНЕЖЕ г ВОРОНЕЖ</Description>
+<BIC>042007835</BIC>
+<AccountCode>30101810100000000835</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>44</NDoc>
+<DatePorucheniya>25.01.2016</DatePorucheniya>
+<Summa>4500.00</Summa>
+<AssignPayment>За предоставление услуг по сч.3976 от 31.12.2015 г. за
+декабрь 2015г НДС не облагается.</AssignPayment>
+<Payer>
+<Name>ИП МУХИНА ТАТЬЯНА БОРИСОВНА р/с 40802810713060100365 в
+ЦЕНТРАЛЬНО-ЧЕРНОЗЕМНЫЙ БАНК ПАО СБЕРБАНК г.ВОРОНЕЖ</Name>
+<INN>360400045235</INN>
+<AccountCode>30302810277006000000</AccountCode>
+</Payer>
+<BankPayer>
+<Description>СЕВЕРНЫЙ БАНК ПАО СБЕРБАНК г ЯРОСЛАВЛЬ</Description>
+<BIC>047888670</BIC>
+<AccountCode>30101810500000000670</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<PayerKPP>000000000</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>24</NDoc>
+<DatePorucheniya>25.01.2016</DatePorucheniya>
+<Summa>5000.00</Summa>
+<AssignPayment>По счету за декабрь 2015 г за услуги доступа к сети интернет
+НДС не облагается</AssignPayment>
+<Payer>
+<Name>МУП &quot;Борисоглебскавтотранс&quot; Борисоглебского городского
+округа Воронежской области р/с 40602810313060100017 в ЦЕНТРАЛЬНО-ЧЕРНОЗЕМНЫЙ
+БАНК ПАО СБЕРБАНК г.ВОРОНЕЖ</Name>
+<INN>3604014435</INN>
+<AccountCode>30302810277006000000</AccountCode>
+</Payer>
+<BankPayer>
+<Description>СЕВЕРНЫЙ БАНК ПАО СБЕРБАНК г ЯРОСЛАВЛЬ</Description>
+<BIC>047888670</BIC>
+<AccountCode>30101810500000000670</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО&quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<PayerKPP>360401001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>157</NDoc>
+<DatePorucheniya>26.01.2016</DatePorucheniya>
+<Summa>5000.00</Summa>
+<AssignPayment>Оплата за интернет за февраль 2016г. по дог. №07342 от
+20.03.2013г. Сумма 5000-00 Без налога (НДС)</AssignPayment>
+<Payer>
+<Name>ООО &quot;Аптека &quot;Добромед&quot; р/с 40702810868000099560 в
+УДМУРТСКОЕ ОТДЕЛЕНИЕ N8618 ПАО СБЕРБАНК г.ИЖЕВСК</Name>
+<INN>3662173000</INN>
+<AccountCode>30302810277006000000</AccountCode>
+</Payer>
+<BankPayer>
+<Description>СЕВЕРНЫЙ БАНК ПАО СБЕРБАНК г ЯРОСЛАВЛЬ</Description>
+<BIC>047888670</BIC>
+<AccountCode>30101810500000000670</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<PayerKPP>366201001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>48</NDoc>
+<DatePorucheniya>26.01.2016</DatePorucheniya>
+<Summa>5600.00</Summa>
+<AssignPayment>Оплата по счету № 3950 от 31.12.15г. за оказание услуг
+доступа к сети интернет за декабрь 2015г. Cумма 5600-00, без налога
+(НДС).</AssignPayment>
+<Payer>
+<Name>МУП &quot;Борисоглебская горэлектросеть&quot; р/с 40702810213060200195
+в ЦЕНТРАЛЬНО-ЧЕРНОЗЕМНЫЙ БАНК ПАО СБЕРБАНК г.ВОРОНЕЖ</Name>
+<INN>3604001066</INN>
+<AccountCode>30302810277006000000</AccountCode>
+</Payer>
+<BankPayer>
+<Description>СЕВЕРНЫЙ БАНК ПАО СБЕРБАНК г ЯРОСЛАВЛЬ</Description>
+<BIC>047888670</BIC>
+<AccountCode>30101810500000000670</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<PayerKPP>360401001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>516865</NDoc>
+<DatePorucheniya>26.01.2016</DatePorucheniya>
+<Summa>14440.31</Summa>
+<AssignPayment>//ПРИЛОЖЕНИЕ//ООО Инфорум;по принятым платежам с 25/01/2016
+по 25/01/2016;на общую сумму 14705,в т.ч.усл.банка 264.69,в кол-ве
+48,согл.эл.реестру 260116gb23632540236.13.TXT</AssignPayment>
+<Payer>
+<Name>ОАО &quot;СБЕРБАНК РОССИИ&quot; р/с 30233810749000600001 в
+ЗАПАДНО-УРАЛЬСКИЙ БАНК ПАО СБЕРБАНК г.ПЕРМЬ</Name>
+<INN>7707083893</INN>
+<AccountCode>30302810277006000000</AccountCode>
+</Payer>
+<BankPayer>
+<Description>СЕВЕРНЫЙ БАНК ПАО СБЕРБАНК г ЯРОСЛАВЛЬ</Description>
+<BIC>047888670</BIC>
+<AccountCode>30101810500000000670</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<PayerKPP>775001001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>395848</NDoc>
+<DatePorucheniya>26.01.2016</DatePorucheniya>
+<Summa>20221.47</Summa>
+<AssignPayment>//ПРИЛОЖЕНИЕ//ООО Инфорум;по принятым платежам с 25/01/2016
+по 25/01/2016;на общую сумму 20592.13,в т.ч.усл.банка 370.66,в кол-ве
+57,согл.эл.реестру 260116gb23632540236.12.TXT</AssignPayment>
+<Payer>
+<Name>ОАО &quot;СБЕРБАНК РОССИИ&quot; р/с 30233810749000600001 в
+ЗАПАДНО-УРАЛЬСКИЙ БАНК ПАО СБЕРБАНК г.ПЕРМЬ</Name>
+<INN>7707083893</INN>
+<AccountCode>30302810277006000000</AccountCode>
+</Payer>
+<BankPayer>
+<Description>СЕВЕРНЫЙ БАНК ПАО СБЕРБАНК г ЯРОСЛАВЛЬ</Description>
+<BIC>047888670</BIC>
+<AccountCode>30101810500000000670</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>ООО &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<SendDate>26.01.2016</SendDate>
+<PayerKPP>775001001</PayerKPP>
+<RecepientKPP>366601001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+<payment1C>
+<docType>Платежное поручение</docType>
+<payment>
+<NDoc>24</NDoc>
+<DatePorucheniya>26.01.2016</DatePorucheniya>
+<Summa>4594.32</Summa>
+<AssignPayment>Для зачисления на карту 4272290779007517 (Тарасенок Денис
+Николаевич; резидент). отпускные за 2015 г. Задолженности по налогам нет.
+НДС не облагается.</AssignPayment>
+<Payer>
+<Name>ООО &quot;Инфорум&quot;</Name>
+<INN>3666152146</INN>
+<AccountCode>40702810602000758601</AccountCode>
+</Payer>
+<BankPayer>
+<Description>ЯРОСЛАВСКИЙ Ф-Л ПАО &quot;ПРОМСВЯЗЬБАНК&quot; г.
+ЯРОСЛАВЛЬ</Description>
+<BIC>047888760</BIC>
+<AccountCode>30101810300000000760</AccountCode>
+</BankPayer>
+<Recepient>
+<Client>
+<Name>Счет для пополнений/списаний с банковских карт</Name>
+<INN>7710353606</INN>
+<AccountCode>30232810481100000009</AccountCode>
+</Client>
+</Recepient>
+<BankRecipient>
+<Description>ВТБ 24 (ПАО) г МОСКВА</Description>
+<BIC>044525716</BIC>
+<AccountCode>30101810100000000716</AccountCode>
+</BankRecipient>
+<TypePay>01</TypePay>
+<ExpiredDate>26.01.2016</ExpiredDate>
+<Queue>5</Queue>
+<DiscardDate>26.01.2016</DiscardDate>
+<PayerKPP>366601001</PayerKPP>
+<RecepientKPP>775001001</RecepientKPP>
+<KBK/>
+<OKATO/>
+<FiscalBasis/>
+<FiscalPeriod/>
+<FiscalNumber/>
+<FiscalDate/>
+<FiscalType/>
+</payment>
+</payment1C>
+</XMLExport>

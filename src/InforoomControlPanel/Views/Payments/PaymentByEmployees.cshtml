@@ -1,0 +1,173 @@
+﻿@using System.Globalization
+@using System.Web.Mvc.Html
+@using Inforoom2.Components
+@using Inforoom2.Models
+@model dynamic
+@{
+  ViewBag.Title = "Банковские выписки";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  InforoomModelFilter<Client> pager = ViewBag.pager;
+  var clientsList = pager.GetItems();
+  var employeeCurrent = ViewBag.EmployeeCurrent as int?;
+  var employeesList = (List<Employee>)ViewBag.EmployeesList;
+  decimal totalSum = ViewBag.TotalSum;
+
+  int firstYear = ViewBag.FirstYear ?? 0;
+  int firstMonth = ViewBag.FirstMonth ?? 0;
+  int lastYear = ViewBag.LastYear ?? 0;
+  int lastMonth = ViewBag.LastMonth ?? 0;
+  int currentYear = ViewBag.CurrentYear ?? 0;
+  int currentMonth = ViewBag.CurrentMonth ?? 0;
+}
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=1")"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/PaymentsCalendarFilter.js?v=1")"></script>
+}
+<div id="table-2_wrapper" class="clientMainTable dataTables_wrapper form-inline no-footer  clientTableFilter">
+	<form id="PaymentForm">
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Получатель</div>
+				<div class="col-sm-3">
+					<select class="form-control form-control cleanIndex0" style="min-width:280px; max-width:280px;" name="mfilter.filter.Equal.WhoRegistered.Id">
+						<option value="0"> </option>
+						@foreach (var employee in employeesList) {
+							<option @(employee.Id == employeeCurrent ? "selected" : "") value="@employee.Id">@employee.Name</option>
+						}
+					</select>
+				</div>
+			</div>
+		</div> 
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Дата регистрации клиента с </div>
+				<div class="col-sm-3 fix400">
+					@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.GreaterOrEqueal, new { @class = "form-control", @style = "width:101px;" })
+					<span style="display: inline-block; width: 22px; margin-left: 50px;">по</span>
+					@pager.FormFilter(i => i.CreationDate, HtmlType.Date, ComparsionType.LowerOrEqual, new { @class = "form-control", @style = "width:101px;" })
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Тип клиента</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.PhysicalClient, HtmlType.Dropdown, ComparsionType.IsNotNull, new { @Id = "FilterCondition_ClientType", @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">ЛС</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Id, HtmlType.text, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">ФИО / Наименование</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i._Name, HtmlType.text, ComparsionType.Like, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">
+					@pager.SubmitButton(new {@class = "btn btn-success btn-sm"})
+				</div>
+				<div class="col-sm-1">
+					@pager.CleanButton(new {@class = "btn btn-success btn-sm"})
+				</div>
+			</div>
+		</div>
+
+	</form>
+
+	<div id="table-2_wrapper">
+		<div class="totalCountOfItems">
+			Всего заказов: <strong>@pager.TotalItems</strong>
+		</div>
+		<div class="form-inline no-footer">
+			<div class="panel-body">
+				<div class="row">
+					@{ Html.RenderPartial("Pagination"); }
+				</div>
+			</div>
+		</div>
+		<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+			<thead>
+			<tr role="row">
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+					<a href="@pager.OrderBy(s => s.WhoRegistered.Name)">
+						<span>Регистратор</span>
+					</a>
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+					<a href="">
+						<span>Номер счета</span>
+					</a>
+				</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">
+					<a href="">
+						<span>Плательщик</span>
+					</a>
+				</th>
+				<th class="sorting">
+					<a href="">
+						<span>Тариф</span>
+					</a>
+				</th>
+				<th class="sorting">
+					<a href="">
+						<span>Баланс</span>
+					</a>
+				</th>
+				<th class="sorting">
+					<a href="">
+						<span>Статус</span>
+					</a>
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+			@foreach (var client in clientsList) {
+				<tr>
+					<td>@(client.WhoRegistered!=null ?client.WhoRegistered.Name:"")</td>
+					<td>
+						<a target="_blank" href="@Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {client.Id})" class="idColumn @(client.PhysicalClient != null ? "linkPhysical" : "linkLegal")"> @client.ClientId</a>
+					</td>
+					<td>
+						@client.GetName()
+						<br/>
+						<span class="gray bold c-pointer entypo-right-open-mini" phantomFor=".phantomBlock@(client.Id)">платежи: @client.Payments.Sum(s => s.Sum).ToString("0.00") руб.</span>
+						<div class="phantomBlock@(client.Id)">
+							<table class="table table-bordered table-striped datatable dataTable no-footer">
+								<thead>
+									<tr>
+										<th class="whiteBr">Сумма</th>
+										<th class="whiteBr">Дата регистрации</th>
+										<th class="whiteBr">Зарегистрировал</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var payment in client.Payments.ToList())
+									{
+									<tr>
+										<td>@(payment.Sum)</td>
+										<td>@(payment.PaidOn.ToShortDateString())</td>
+										<td>@(payment.Employee!=null?payment.Employee.Name:"")</td>
+									</tr>
+
+									}
+								</tbody>
+							</table>
+						</div>
+					</td>
+					<td>@client.GetPlan()</td>
+					<td>@client.GetBalance().ToString("0.00") руб.</td>
+					<td>@client.GetStatus().GetDescription()</td>
+				</tr>
+			}
+			</tbody>
+		</table>
+		<div class="row">
+			@{ Html.RenderPartial("Pagination"); }
+		</div>
+	</div>
+</div> 

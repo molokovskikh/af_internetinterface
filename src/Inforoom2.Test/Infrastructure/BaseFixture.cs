@@ -175,9 +175,8 @@ namespace Inforoom2.Test.Infrastructure
 
 			//Приоритет удаления данных
 
-			var order = "StaticIps,orderservices,orders,planchangerdata,planhtmlcontent,permissiontouser,roletouser,perm_role,user_role,roles,permissions,lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
-			            +
-			            "lawyerperson,physicalclients,clientendpoints,switchaddress,leases,NetworkSwitches,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
+			var order = "payments,bankpayments,StaticIps,orderservices,orders,planchangerdata,planhtmlcontent,permissiontouser,roletouser,perm_role,user_role,roles,permissions,lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
+									+ "lawyerperson,physicalclients,clientendpoints,switchaddress,leases,NetworkSwitches,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
 
 
 			var parts = order.Split(',');
@@ -235,6 +234,7 @@ namespace Inforoom2.Test.Infrastructure
 			GenerateAdmins();
 			GenerateSwitches();
 			GenerateClients();
+			GenerateLegalRecipient();
 			GenerateLegalClient();
 			GenerateContent();
 			GeneratePaymentsAndWriteoffs();
@@ -595,6 +595,25 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Save(dealer);
 		}
 
+		private void GenerateLegalRecipient()
+		{
+			if (DbSession.Query<Recipient>().Count() <= 1) {
+				for (int i = 0; i < 10; i++) {
+					DbSession.Save(new Recipient() {
+						Name = $"Master {i}",
+						INN = "3666152146",
+						KPP = "366601001",
+						BIC = "047888760",
+						BankAccountNumber = "40702810602000758601",
+						BankLoroAccount = "30101810300000000760",
+						Bank = "Ярославский филиал ОАО 'Промсвязьбанк'",
+						Boss = $"Master {i}",
+						FullName = $"Master J {i}"
+					});
+				}
+			}
+		}
+
 		private void GenerateLegalClient()
 		{
 			var legalClient = new Client
@@ -611,7 +630,8 @@ namespace Inforoom2.Test.Infrastructure
 					ContactPerson = "Семён",
 					Inn = "1234567890"
 				},
-				Status = Status.Get(StatusType.Worked, DbSession),
+        Recipient = DbSession.Query<Recipient>().FirstOrDefault(),
+        Status = Status.Get(StatusType.Worked, DbSession),
 				SendSmsNotification = false,
 				Disabled = false,
 				RatedPeriodDate = DateTime.Now,
@@ -621,8 +641,10 @@ namespace Inforoom2.Test.Infrastructure
 				Comment = ClientCreateHelper.ClientMark.legalClient.GetDescription(),
 				WhoRegistered = DbSession.Query<Employee>().FirstOrDefault(e => e.Login == Environment.UserName)
 			};
-			// TODO:UnusedClientAddresses
-			AttachDefaultServices(legalClient);
+
+			legalClient._Name = legalClient.LegalClient.Name;
+		// TODO:UnusedClientAddresses
+		AttachDefaultServices(legalClient);
 
 
 			//Создание Endpoint(а)

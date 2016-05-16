@@ -49,30 +49,29 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult List(bool openInANewTab = true, bool error = false)
 		{
 			InforoomModelFilter<Client> pager = null;
-			try
-			{
+			try {
 				pager = new InforoomModelFilter<Client>(this);
 				pager = ClientReports.GetGeneralReport(this, pager, false);
 			}
-			catch (Exception ex)
-			{
-				if (!(ex is FormatException))
-				{
+			catch (Exception ex) {
+				if (!(ex is FormatException)) {
 					throw ex;
 				}
 				pager = null;
 			}
-			if (pager == null)
-			{
-				return RedirectToAction("List", new { @error = true });
+			if (pager == null) {
+				if (!HeadersWritten()) {
+					return RedirectToAction("List", new { @error = true });
+				}
+				else {
+					return null;
+				}
 			}
-			if (error)
-			{
+			if (error) {
 				ErrorMessage("Ошибка ввода: неподдерживаемый формат введенных данных.");
 			}
-			if (!openInANewTab && pager.TotalItems == 1)
-			{
-				var clientList = pager.GetItems(); 
+			if (!openInANewTab && pager.TotalItems == 1) {
+				var clientList = pager.GetItems();
 
 				return RedirectToAction((clientList.First().PhysicalClient != null ? "InfoPhysical" : "InfoLegal"), "Client",
 					new { clientList.First().Id });

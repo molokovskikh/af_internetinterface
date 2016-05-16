@@ -54,24 +54,6 @@ namespace Inforoom2
 
 		protected void Application_PostAuthenticateRequest(Object sender, EventArgs e)
 		{
-			if (FormsAuthentication.CookiesSupported) {
-				var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
-				if (cookie != null) {
-					var ticket = FormsAuthentication.Decrypt(cookie.Value);
-					var clientId = 0;
-					if (ticket != null && !string.IsNullOrEmpty(ticket.UserData)) {
-						var impersonatedClientId = ticket.UserData;
-						int.TryParse(impersonatedClientId, out clientId);
-					}
-					var userName = ticket.Name;
-
-					if (clientId != 0) {
-						userName = clientId.ToString();
-					}
-					var identity = new GenericIdentity(userName, "Forms");
-					HttpContext.Current.User = new CustomPrincipal(identity, new List<Permission>(), new List<Role>());
-				}
-			}
 		}
 
 		public static void InitializeSessionFactory()

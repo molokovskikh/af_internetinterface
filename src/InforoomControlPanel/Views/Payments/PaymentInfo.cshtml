@@ -76,56 +76,74 @@
 				</table>
 			}
 			<h3>Платеж</h3>
-			<table class="table table-bordered table-striped datatable dataTable no-footer">
-				<tr>
-					<td style="width: 166px;">
-						<label class="control-label">Дата</label>
+				<table class="table table-bordered table-striped datatable dataTable no-footer">
+					<tr>
+						<td style="width: 166px;">
+							<label class="control-label">Дата</label>
+						</td>
+						<td>
+							@if (bankPayment.Payment != null) {
+								<span>@bankPayment.Payment.PaidOn.ToShortDateString()</span>
+							}
+							else {
+								<span>@bankPayment.PayedOn.ToShortDateString()</span>
+							}
 					</td>
-					<td>
-						<span>@bankPayment.Payment.PaidOn.ToShortDateString()</span>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label class="control-label">Сумма</label>
-					</td>
-					<td>
-						<span>@bankPayment.Payment.Sum.ToString("0.00")</span>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label class="control-label">№ документа</label>
-					</td>
-					<td>
-						<span>@bankPayment.DocumentNumber</span>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label class="control-label">Получатель</label>
-					</td>
-					<td>
-						<span>@bankPayment.Recipient.Name</span>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label class="control-label">Получатель</label>
-					</td>
-					<td>
-						<span>@bankPayment.Payer.GetName() (@bankPayment.Payer.Id)</span>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label class="control-label">Примечание</label>
-					</td>
-					<td>
-						<span>@bankPayment.OperatorComment</span>
-					</td>
-				</tr>
-			</table>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">Сумма</label>
+						</td>
+						<td>
+							@if (bankPayment.Payment != null) {
+								<span>@bankPayment.Payment.Sum.ToString("0.00")</span>
+							}
+							else {
+								<span>@bankPayment.Sum.ToString("0.00")</span>
+							}
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">№ документа</label>
+						</td>
+						<td>
+							<span>@bankPayment.DocumentNumber</span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">Получатель</label>
+						</td>
+						<td>
+							<span>@bankPayment.Recipient.Name</span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">Получатель</label>
+						</td>
+						<td>
+
+							@if (bankPayment.Payer != null)
+							{
+							<span>@bankPayment.Payer.GetName() (@bankPayment.Payer.Id)</span>
+							}
+							else
+							{
+							<strong>не опознан</strong>
+							}
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">Примечание</label>
+						</td>
+						<td>
+							<span>@bankPayment.OperatorComment</span>
+						</td>
+					</tr>
+				</table> 
 		</div>
 	</div>
 </div>
