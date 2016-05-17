@@ -8,6 +8,8 @@ using Inforoom2.Helpers;
 using Inforoom2.Intefaces;
 using Inforoom2.Models;
 using NHibernate.Linq;
+using System.Web.Security;
+using System.Security.Principal;
 
 namespace InforoomControlPanel.Controllers
 {
@@ -20,6 +22,25 @@ namespace InforoomControlPanel.Controllers
 			if (filterContext == null)
 				throw new ArgumentNullException("filterContext");
 
+			//if (FormsAuthentication.CookiesSupported)
+			//{
+			//	var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+			//	if (cookie != null)
+			//	{
+			//		var userData = FormsAuthentication.Decrypt(cookie.Value);
+			//		var username = userData.Name;
+			//		var identity = new GenericIdentity(username, "Forms");
+
+			//		Employee employee;
+			//		using (var session = Inforoom2.MvcApplication.SessionFactory.OpenSession())
+			//			employee = session.Query<Employee>().FirstOrDefault(k => k.Login == username);
+			//		HttpContext.Current.User = employee != null
+			//			? new CustomPrincipal(identity, employee.Permissions, employee.Roles)
+			//			: new CustomPrincipal(identity, new List<Permission>(), new List<Role>());
+			//	}
+			//}
+
+
 			//если клиент был залогинен по сети, то HTTPСontext не будет изменен
 			//в этом случае можно оттолкнуть от переменной CurrentClient
 			if (!filterContext.HttpContext.User.Identity.IsAuthenticated) {
@@ -29,7 +50,6 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			var employee = GetCurrentEmployee();
-		//	ModelCrudListener.SetEmployee(employee);
 			string name = ViewBag.ControllerName + "Controller_" + ViewBag.ActionName;
 			var permission = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
 			//@todo убрать проверку, на accessDenined, а вместо этого просто не генерировать его. В целом подумать

@@ -62,23 +62,10 @@ namespace InforoomControlPanel
 			}
 		}
 
-		protected void Application_PostAuthenticateRequest(Object sender, EventArgs e)
-		{
-			if (FormsAuthentication.CookiesSupported) {
-				var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
-				if (cookie != null) {
-					var userData = FormsAuthentication.Decrypt(cookie.Value);
-					var username = userData.Name;
-					var identity = new GenericIdentity(username, "Forms");
-					Employee employee;
-					using (var session = Inforoom2.MvcApplication.SessionFactory.OpenSession())
-						employee = session.Query<Employee>().FirstOrDefault(k => k.Login == username);
-					HttpContext.Current.User = employee != null
-						? new CustomPrincipal(identity, employee.Permissions, employee.Roles)
-						: new CustomPrincipal(identity, new List<Permission>(), new List<Role>());
-				}
-			}
-		}
+		//protected void Application_PostAuthenticateRequest(Object sender, EventArgs e)
+		//{
+	
+		//}
 
 		public static void InitializeSessionFactory()
 		{

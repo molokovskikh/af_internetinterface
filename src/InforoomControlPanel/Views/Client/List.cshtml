@@ -16,11 +16,11 @@
 }
 @section JavaScript{
 	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=3")"></script>
-	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js?v=3")"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js?v=001")"></script>
 }
 
 <div id="table-2_wrapper" class="clientMainTable dataTables_wrapper form-inline no-footer  clientTableFilter">
-<form>
+<form method="post">
 <h5 class="filterBlockHeader">Основное</h5>
 <div class="panel-body">
 	<div class="row">
@@ -397,6 +397,7 @@
 
 		(function() {
 			window.addEventListener('load', ClickOnTheOneClient, false);
+			$("input[name='mfilter.filter.Equal.Id']").focus();
 		})();
 	</script>
 }

@@ -30,7 +30,7 @@
 	<link rel="stylesheet" href="~/assets/css/neon-theme.css?v=1">
 	<link rel="stylesheet" href="~/assets/css/neon-forms.css?v=2">
 	<link rel="stylesheet" href="~/assets/css/custom.css?v=4">
-	<link rel="stylesheet" href="~/Css/style.css?v=7"></link>
+	<link rel="stylesheet" href="~/Css/style.css?v=8"></link>
 
 	<script src="~/assets/js/jquery-1.11.0.min.js?v=1"></script>
 
@@ -575,6 +575,15 @@
 						<span class="title">По банковским выпискам</span>
 					</a>
 				</li>
+			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_009005.ToString()) != null
+						 || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_009005.ToString())))
+			{
+			<li>
+				<a href="@Url.Action("PaymentByEmployees", "Payments")">
+					<span class="title">Платежи по регистраторам</span>
+				</a>
+			</li>
 			}
 		</ul>
 	</li>

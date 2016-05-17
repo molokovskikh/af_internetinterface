@@ -62,7 +62,7 @@
 }
 
 var addressHelper = new AddressHelper();
-var addressChangeFlagTimerSpeed = 100;
+var addressChangeFlagTimerSpeed = 1000;
 
 
 // AJAX-Ззапросы
@@ -74,7 +74,7 @@ getStreetChangedFlag = function (regionId, countStreet) {
 		return;
 	}
 	$.ajax({
-		url: cli.getParam("baseurl") + "Address/GetStreetNumberChangedFlag?regionId=" + regionId + "&count=" + countStreet,
+		url: cli.getParam("baseurl") + "AdminOpen/GetStreetNumberChangedFlag?regionId=" + regionId + "&count=" + countStreet,
 		type: 'POST',
 		dataType: "json",
 		success: function(data) {
@@ -94,7 +94,7 @@ getHouseChangedFlag = function (streetId, regionId, countHouse) {
 		return;
 	}
 	$.ajax({
-		url: cli.getParam("baseurl") + "Address/GetHouseNumberChangedFlag?streetId=" + streetId + "&count=" + countHouse + "&regionId=" + regionId,
+		url: cli.getParam("baseurl") + "AdminOpen/GetHouseNumberChangedFlag?streetId=" + streetId + "&count=" + countHouse + "&regionId=" + regionId,
 		type: 'POST',
 		dataType: "json",
 		success: function(data) {
@@ -114,14 +114,16 @@ getStreetList = function (regionId, funcAfter, countStreet) {
 		setTimeout(function() { streetChangedCheck(false); }, addressChangeFlagTimerSpeed);
 		return;
 	}
+	$("#StreetDropDown").css('background', '#F3D0D0');
 	$.ajax({
-		url: cli.getParam("baseurl") + "Address/GetStreetList?regionId=" + regionId,
+		url: cli.getParam("baseurl") + "AdminOpen/GetStreetList?regionId=" + regionId,
 		type: 'POST',
 		dataType: "json",
 		success: function(data) {
 			//функция заполнения списка улиц
 			funcAfter(data);
-			setTimeout(function() { streetChangedCheck(false); }, addressChangeFlagTimerSpeed);
+			setTimeout(function () { streetChangedCheck(false); }, addressChangeFlagTimerSpeed);
+			$("#StreetDropDown").css('background', '');
 			var pastVal = $("#StreetDropDown").attr("value");
 			if (pastVal != undefined && pastVal != null) {
 				var pastValElement = $("#StreetDropDown option[value='" + pastVal + "']");
@@ -143,13 +145,15 @@ getHouseList = function (streetId, regionId, funcAfter, countHouse) {
 		setTimeout(function() { houseChangedCheck(false); }, addressChangeFlagTimerSpeed);
 		return;
 	}
+	$("#HouseDropDown").css('background', '#F3D0D0');
 	$.ajax({
-		url: cli.getParam("baseurl") + "Address/GetHouseList?streetId=" + streetId + "&regionId=" + regionId,
+		url: cli.getParam("baseurl") + "AdminOpen/GetHouseList?streetId=" + streetId + "&regionId=" + regionId,
 		type: 'POST',
 		dataType: "json",
 		success: function(data) {
 			//функция заполнения списка домов  
 			funcAfter(data);
+			$("#HouseDropDown").css('background', '');
 			setTimeout(function() { houseChangedCheck(false); }, addressChangeFlagTimerSpeed);
 
 			var pastVal = $("#HouseDropDown").attr("value");
@@ -169,7 +173,7 @@ getHouseList = function (streetId, regionId, funcAfter, countHouse) {
 }
 getPlansList = function(regionId, funcAfter) {
 	$.ajax({
-		url: cli.getParam("baseurl") + "Address/GetPlansListForRegion?regionId=" + regionId,
+		url: cli.getParam("baseurl") + "AdminOpen/GetPlansListForRegion?regionId=" + regionId,
 		type: 'POST',
 		dataType: "json",
 		success: function(data) {

@@ -2,12 +2,14 @@
 @using Inforoom2.Models
 @model dynamic
 @{
-	ViewBag.Title = "Редактирование платежа";
-	Layout = "~/Views/Shared/_Layout.cshtml";
-	BankPayment bankPayment = ViewBag.BankPayment;
-	List<Recipient> recipientList = ViewBag.RecipientList;
-	var currentSum = bankPayment.Sum.ToString("0.00");
-	var updatePayerInn = true;
+  ViewBag.Title = "Редактирование платежа";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  BankPayment bankPayment = ViewBag.BankPayment;
+  List<Recipient> recipientList = ViewBag.RecipientList;
+  var editPaymentWithoutPayer = (bool)( ViewBag.EditPaymentWithoutPayer ??false);
+  var currentSum = bankPayment.Sum.ToString("0.00");
+  var updatePayerInn = true;
+
 }
 @section JavaScript{
 	<script type="text/javascript" src="@Url.Content("~/Scripts/PaymentsCalendarFilter.js?v=1")"></script>
@@ -79,6 +81,8 @@
 				</table>
 			}
 			@using (@Html.BeginForm()) {
+			  
+				@Html.Hidden("oldPaymentId", bankPayment.Id)
 				@Html.Hidden("bankPayment.Id", bankPayment.GetHashCode())
 				<table class="table table-bordered table-striped datatable dataTable no-footer">
 					<tr>
@@ -129,7 +133,7 @@
 							<label class="control-label">Плательщик</label>
 						</td>
 						<td>
-							<input class="form-control" name="bankPayment.Payer.Id" id="clientReciverId" onkeyup="getPaymentReciver('#clientReciverId', '#clientReciverMessage', true, 2);" value="@(bankPayment.Payer != null ?bankPayment.Payer.Id.ToString():"")" required>
+							<input class="form-control" name="bankPayment.Payer.Id" id="clientReciverId" onkeyup="getPaymentReciver('#clientReciverId', '#clientReciverMessage', true, 2);" value="@(bankPayment.Payer != null ? bankPayment.Payer.Id.ToString() : "")" @(editPaymentWithoutPayer ? "" : "required")/>
 							<div id="clientReciverMessage">
 								<div style="height: 100px; overflow-y: scroll; border-top: 1px solid #E8E8E8; border-bottom: 1px solid #E8E8E8;">
 									<ul style="list-style: none;">

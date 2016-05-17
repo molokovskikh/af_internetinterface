@@ -175,6 +175,12 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\paymentsForTest_txt.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\paymentsForTest_xml.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="..\global.local.config">
       <Link>global.local.config</Link>
     </None>
@@ -231,6 +237,7 @@
     <Compile Include="Functional\News\DeleteNewsBlockFixture.cs" />
     <Compile Include="Functional\News\EditNewsBlockFixture.cs" />
     <Compile Include="Functional\News\NewsFixture.cs" />
+    <Compile Include="Functional\Payments\PaymentsFixture.cs" />
     <Compile Include="Functional\Plans\FixedIpPriceChangeFixture.cs" />
     <Compile Include="Functional\Plans\CreatePlanFixture.cs" />
     <Compile Include="Functional\Plans\CreateInternetPlanChangerIndexFixture.cs" />

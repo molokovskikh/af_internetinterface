@@ -8,8 +8,6 @@
 	List<Status> statusList = ViewBag.StatusList;
 	List<Region> regionList = ViewBag.RegionList;
 	string clientStatusChangeComment = ViewBag.clientStatusChangeComment ?? "";
-	//var internetService = client.ClientServices.FirstOrDefault(s => s.Service.Name == "Internet");
-	//var isActivatedByUser = internetService != null ? internetService.ActivatedByUser : false;
 }
 <div class="panel panel-default blockJsLockControll">
 @using (@Html.BeginForm("InfoLegal", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
