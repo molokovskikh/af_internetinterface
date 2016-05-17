@@ -66,7 +66,11 @@
 				</td>
 				<td>
 					<span>@Html.Raw(client.PhysicalClient.Plan != null ? client.PhysicalClient.Plan.Name + " (" + (client.GetTariffPrice(true) != 0 ? "<span title='текущая стоимость'>"+ client.GetTariffPrice(true).ToString("0.00")+ " р.</span>"
-			 + " / " + "<span title='полная стоимость'>" + client.PhysicalClient.Plan.Price.ToString("0.00") + " р.</span>" : "<span title='полная стоимость'>" + client.PhysicalClient.Plan.Price.ToString("0.00") + " р.</span>") +")" : "нет")</span>
+			 + " / " + "<span title='полная стоимость'>" +
+			 (client.PhysicalClient.Plan.Price != 0 && client.PhysicalClient.Plan.FinalPrice != 0 ? client.PhysicalClient.Plan.FinalPrice : client.PhysicalClient.Plan.Price).ToString("0.00") 
+			 + " р.</span>" : "<span title='полная стоимость'>" +
+			(client.PhysicalClient.Plan.Price != 0 && client.PhysicalClient.Plan.FinalPrice!= 0 ? client.PhysicalClient.Plan.FinalPrice : client.PhysicalClient.Plan.Price)
+			.ToString("0.00") + " р.</span>") +")" : "нет")</span>
 				</td>
 			</tr>
 			<tr>
@@ -128,7 +132,7 @@
 					<a class="c-pointer blue" title="Возврат скидки" data-toggle="modal" data-target="#ModelForSale">Скидка</a>
 				</td>
 				<td>
-					<span>@client.Discount.ToString("0.00")%</span>
+					<span>@client.Discount.ToString("0.00")% @(client.Plan!=null && client.Plan.IgnoreDiscount?"( по текущему тарифу не применяется )":"")</span>
 				</td>
 			</tr>
 

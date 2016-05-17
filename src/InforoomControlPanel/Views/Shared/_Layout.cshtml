@@ -585,6 +585,15 @@
 				</a>
 			</li>
 			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_009006.ToString()) != null
+							 || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_009006.ToString())))
+			{
+			<li>
+				<a href="@Url.Action("LogRegResultList", "Admin")">
+					<span class="title">Логирование</span>
+				</a>
+			</li>
+			}
 		</ul>
 	</li>
 }

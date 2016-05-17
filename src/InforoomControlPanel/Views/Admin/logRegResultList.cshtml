@@ -12,6 +12,14 @@
 	<form>
 		<div class="panel-body">
 			<div class="row">
+				<div class="col-sm-1">Пользователь</div>
+				<div class="col-sm-2">
+					@modelFilter.FormFilter(i => i.Employee.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control" })
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
 				<div class="col-sm-1">Тип события</div>
 				<div class="col-sm-2">
 					@modelFilter.FormFilter(i => i.Type, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control" })

@@ -266,7 +266,7 @@ namespace InforoomControlPanel.Controllers
 				|| s.Id == (int) StatusType.Dissolved).OrderBy(s => s.Name).ToList();
 			//список коммутаторов для региона клиента
 			ViewBag.SwitchList =
-				DbSession.Query<Switch>().Where(s => s.Zone.Region == client.Address.Region).OrderBy(s => s.Name).ToList();
+				DbSession.Query<Switch>().Where(s => client.Address!=null && s.Zone.Region.Id == client.Address.Region.Id).OrderBy(s => s.Name).ToList();
 			//передаем на форму - список регионов
 			ViewBag.RegionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			//ViewBag.PlanList = DbSession.Query<Plan>().Where(s => !s.Disabled).OrderBy(s => s.Name).ToList();
