@@ -129,9 +129,6 @@ namespace Inforoom2.Helpers
 			//проверка необходимости редиректа пользователя:
 			//получение объекта с набором параметров для редиректа
 			warningRedirect = CheckClientForWarning();
-			if (warningRedirect == null && InforoomController.Session["WarningBlocked"] != null) {
-				SetWarningSessionFlagOff();
-			}
 			//если варнинг не собирается никуда редиректить и перед проверкой уже был задан эшен для перехода, возвращаем его в Context.Result 
 			RedirectTarget redirectTargetEnum;
 			Enum.TryParse(_currentAction, true, out redirectTargetEnum);
@@ -178,7 +175,7 @@ namespace Inforoom2.Helpers
 			var client = InforoomClient;
 			//учитываем различные ситуации, убирая ненужные условия из списка исключений
 			//клиенту без паспорта не показываем личный кабинет, а также если был переход к какому-то экшену до проверки варнинга (связано с PlanChanger)
-			if (client.PhysicalClient != null && (!client.HasPassportData() || InforoomContextResult != null)) {
+			if (client.PhysicalClient != null && ((!client.HasPassportData() && client.Balance >= 0) || InforoomContextResult != null)) {
 				var element =
 					_exceptionsForWarningMethodGet.FirstOrDefault(s => s.Action == "Profile".ToLower() && s.Controller == "personal");
 				if (element != null) {
@@ -301,7 +298,6 @@ namespace Inforoom2.Helpers
 			if (client == null) {
 				return GetWarningActionResult(RedirectTarget.DefaultPage);
 			}
-			SetWarningSessionFlagOn();
 			//Проверка юр.лица
 			if (client.LegalClient != null) {
 				//if (client.Disabled && client.Balance >= BalanceForWarningLegalPerson) {
@@ -346,7 +342,6 @@ namespace Inforoom2.Helpers
 					return GetWarningActionResult(RedirectTarget.PhysBlockedForRepair);
 				}
 			}
-			SetWarningSessionFlagOff();
 			//если предварительной переадресации не было и варнинг включен, 
 			//а все предыдущие условия не отработали, значит варнинг показывается зря - нужно убрать флаг
 			//только физ.лицам *(у юр лиц это делает только биллинг), у тоторых нет просроченного сервиса Planchanger
@@ -417,8 +412,9 @@ namespace Inforoom2.Helpers
 			return null;
 		}
 
+
 		/// <summary>
-		/// Выставляем Флаг о блокировке варнингом в сессии
+		/// Выставляем Флаг о блокировке варнингом в сессии (сейчас не используется, нужно взаимодействие с API Sce)
 		/// </summary>
 		public void SetWarningSessionFlagOn()
 		{
@@ -433,7 +429,7 @@ namespace Inforoom2.Helpers
 		}
 
 		/// <summary>
-		/// Убираем Флаг о блокировке варнингом в сессии
+		/// Убираем Флаг о блокировке варнингом в сессии (сейчас не используется, нужно взаимодействие с API Sce)
 		/// </summary>
 		public void SetWarningSessionFlagOff()
 		{
