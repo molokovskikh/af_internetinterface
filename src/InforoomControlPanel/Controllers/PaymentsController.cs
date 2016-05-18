@@ -79,7 +79,7 @@ namespace InforoomControlPanel.Controllers
 			//var dateA = DateTime.Parse(pager.GetParam("filter.GreaterOrEqueal.PaidOn"));
 
 			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
-				pager.SetOrderBy("PayedOn", OrderingDirection.Desc);
+				pager.SetOrderBy("Id", OrderingDirection.Desc);
 
 			var selectedMonth = pager.GetParam("selectedMonth");
 			var selectedYear = pager.GetParam("selectedYear");
@@ -227,7 +227,7 @@ namespace InforoomControlPanel.Controllers
 						paymentToDelete.PayedOn.ToShortDateString(), paymentToDelete.Sum, paymentToDelete.Comment), GetCurrentEmployee());
 			}
 			DbSession.Delete(paymentToDelete);
-			SuccessMessage($"Платеж от '{paymentToDelete.PayerName}' успешно удален");
+			SuccessMessage($"Платеж от '{(paymentToDelete.Payer!=null?paymentToDelete.Payer.Name:"")}' успешно удален");
 			return RedirectToAction("PaymentList");
 		}
 

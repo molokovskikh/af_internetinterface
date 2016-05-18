@@ -75,13 +75,13 @@ function OnLoad() {
 function onPaymentCreateForm() {
 	var noMistakes = true;
 	var html = "<ul>";
-	var valSum = parseInt($("#BankPaymentSum").val());
+	var valSum = parseFloat($("#BankPaymentSum").val().replace(',',"."));
 
 	if (String(valSum) === "NaN" || typeof valSum != "number") {
 		html = "<li>Укажите сумму</li>";
 		noMistakes = false;
 	}
-	if (valSum < 1) {
+	if (valSum <= 0) {
 		html = "<li>Сумма должна быть больше 0</li>";
 		noMistakes = false;
 	}

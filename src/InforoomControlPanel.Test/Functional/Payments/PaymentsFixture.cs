@@ -40,26 +40,7 @@ namespace InforoomControlPanel.Test.Functional.Payments
 		public void PaymentsManagement()
 		{
 			PaymentAdd();
-			PaymentEdit();
 			PaymentRemove();
-
-			//AssertText("Платеж успешно добавлен и ожидает обработки");
-
-			////Зачислить как бонус
-			//var inputObj = browser.FindElementByCssSelector(blockNamePaymentsAdd + "input[name='isBonus']");
-			//Assert.That(inputObj.GetAttribute("checked"), Is.Null, "Зачислить как бонус - не совпадает с должным.");
-			//inputObj.Click();
-
-			//browser.FindElementByCssSelector(blockNamePaymentsAdd + ".btn.btn-success").Click();
-
-			//Assert.That(CurrentClient.Balance, Is.LessThan(clientBalance + sum), "Баланс клиента не совпадает с должным.");
-
-			//RunBillingProcessPayments(CurrentClient);
-			//DbSession.Refresh(CurrentClient.PhysicalClient);
-
-			//Assert.That(CurrentClient.Balance, Is.GreaterThan(clientBalance + sum), "Баланс клиента не совпадает с должным.");
-			//AssertText("Платеж успешно добавлен и ожидает обработки");
-
 		}
 		
 		public void PaymentAdd()
@@ -103,52 +84,6 @@ namespace InforoomControlPanel.Test.Functional.Payments
 			Assert.That(CurrentClient.Balance, Is.EqualTo(currentBalance + paymentSum), "Баланс клиента не совпадает с должным.");
 			//нет возможности сохранять без инн
 		}
-		public void PaymentEdit(int paymentSumNew = 333)
-		{
-			Open("Payments/PaymentList");
-			string blockName = ".Payments.PaymentList ";
-			var currentBalance = CurrentClient.Balance;
-			var docNumber = 2;
-			//	var anotherRecipient = DbSession.Query<Recipient>().FirstOrDefault(s=>s.Id != CurrentClient.Recipient.Id);
-			var paymentSum = CurrentClient.Payments.OrderByDescending(s => s.Id).First().Sum;
-			browser.FindElementByCssSelector(blockName + "table a.btn.btn-green:first-of-type").Click();
-			blockName = ".Payments.PaymentEdit ";
-			ClosePreviousTab();
-			WaitForVisibleCss(blockName);
-
-			//ЛС-клиента
-			var inputObj = browser.FindElementByCssSelector(blockName + "input[name='bankPayment.Payer.Id']");
-			WaitForVisibleCss(blockName + "input[name='bankPayment.Payer.Id']");
-			inputObj.Clear();
-			WaitAjax(10);
-			//Сумма
-			inputObj = browser.FindElementByCssSelector(blockName + "input[name='bankPayment.Sum']");
-			WaitForVisibleCss(blockName + "input[name='bankPayment.Sum']");
-			inputObj.Clear();
-			inputObj.SendKeys(paymentSumNew.ToString());
-			//№ документа
-			inputObj = browser.FindElementByCssSelector(blockName + "input[name='bankPayment.DocumentNumber']");
-			WaitForVisibleCss(blockName + "input[name='bankPayment.DocumentNumber']");
-			inputObj.Clear();
-			inputObj.SendKeys(docNumber.ToString());
-			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
-			//нет возможности сохранять без инн
-			inputObj = browser.FindElementByCssSelector(blockName + "input[name='bankPayment.Payer.Id']");
-			WaitForVisibleCss(blockName + "input[name='bankPayment.Payer.Id']");
-			inputObj.Clear();
-			inputObj.SendKeys(CurrentClient.Id.ToString());
-			WaitAjax(10);
-			browser.FindElementByCssSelector(blockName + "#clientReciverMessage strong").Click();
-			WaitAjax(10);
-			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
-
-			RunBillingProcessPayments(CurrentClient);
-			DbSession.Refresh(CurrentClient);
-			DbSession.Refresh(CurrentClient.LegalClient);
-
-			Assert.That(CurrentClient.Balance, Is.EqualTo(currentBalance - (paymentSum - paymentSumNew)), "Баланс клиента не совпадает с должным.");
-
-		}
 		public void PaymentRemove()
 		{
 			//обновляем страницу клиента
@@ -172,11 +107,10 @@ namespace InforoomControlPanel.Test.Functional.Payments
 		public void TempPaymentsAdd()
 		{
 			TempPaymentListAdd();
-      TempPaymentEdit();
+			TempPaymentEdit();
 			TempPaymentRemove();
 			TempPaymentEdit();
       TempPaymentsSave();
-			TempPaymentAfterSaveEdit();
 			TempPaymentAfterSaveRemove();
 		}
 
@@ -275,42 +209,20 @@ namespace InforoomControlPanel.Test.Functional.Payments
 			Assert.That(CurrentClient.Payments.Count, Is.EqualTo(paymentsCount+1), "Кол-во платежей клиента не совпадает с должным.");
 		}
 
-		public void TempPaymentAfterSaveEdit()
-		{ 
-			CurrentClient.LegalClient.Inn = "123321";
-			DbSession.Save(CurrentClient);
-			DbSession.Flush();
-			var inn = CurrentClient.LegalClient.Inn;
+		public void TempPaymentAfterSaveRemove()
+		{
+			Open("Payments/PaymentList");
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.LegalClient);
 			var currentBalance = CurrentClient.Balance;
 			var paymentsCount = CurrentClient.Payments.Count;
 			var paymentSum = CurrentClient.Payments.OrderByDescending(s => s.Id).First().Sum;
-			decimal paymentSumNew = paymentSum + (1000 - paymentSum);
-			Open("Payments/PaymentList");
-			PaymentEdit((int)paymentSumNew);
+			PaymentRemove();
 			RunBillingProcessPayments(CurrentClient);
 			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.LegalClient);
-			Assert.That(CurrentClient.LegalClient.Inn, Is.Not.EqualTo(inn), "Инн клиента не совпадает с должным.");
-			Assert.That(CurrentClient.Balance, Is.EqualTo(currentBalance - paymentSum + paymentSumNew), "Баланс клиента не совпадает с должным.");
-			Assert.That(CurrentClient.Payments.Count, Is.EqualTo(paymentsCount + 1), "Кол-во платежей клиента не совпадает с должным.");
-		}
-
-		public void TempPaymentAfterSaveRemove()
-		{
-			//todo: Нужно правильно связать Payment и BankPayment, т.к. при изменении их связи теряются 
-
-			//Open("Payments/PaymentList");
-			//DbSession.Refresh(CurrentClient);
-			//DbSession.Refresh(CurrentClient.LegalClient);
-			//var currentBalance = CurrentClient.Balance;
-			//var paymentsCount = CurrentClient.Payments.Count;
-			//var paymentSum = CurrentClient.Payments.OrderByDescending(s => s.Id).First().Sum;
-			//PaymentRemove();
-			//RunBillingProcessPayments(CurrentClient);
-			//DbSession.Refresh(CurrentClient);
-			//DbSession.Refresh(CurrentClient.LegalClient);
-			//Assert.That(CurrentClient.Balance, Is.EqualTo(currentBalance - paymentSum), "Баланс клиента не совпадает с должным.");
-			//Assert.That(CurrentClient.Payments.Count, Is.EqualTo(paymentsCount-1), "Кол-во платежей клиента не совпадает с должным.");
+			Assert.That(CurrentClient.Balance, Is.EqualTo(currentBalance - paymentSum), "Баланс клиента не совпадает с должным.");
+			Assert.That(CurrentClient.Payments.Count, Is.EqualTo(paymentsCount - 1), "Кол-во платежей клиента не совпадает с должным.");
 		}
 
 	}
