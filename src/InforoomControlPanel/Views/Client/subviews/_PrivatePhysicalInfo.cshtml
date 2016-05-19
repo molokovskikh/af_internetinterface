@@ -42,7 +42,7 @@
 			</tr>
 			<tr>
 				<td>
-					<a class="c-pointer blue addressAjaxRunner" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForAddress" onclick="StartAddressAjaxRunner(this)">Адрес подключения</a>
+					<a class="c-pointer blue addressAjaxRunner" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForAddress" onclick="StartAddressAjaxRunner(this)">Адрес подключения<span> ( редактировать )</span></a>
 				</td>
 				<td style="width: 60%;">
 					<span>@client.PhysicalClient.Address.GetStringForPrint(city: false)</span>
@@ -62,7 +62,7 @@
 			</tr>
 			<tr>
 				<td>
-					<a class="c-pointer blue" title="Изменение тарифа" data-toggle="modal" data-target="#ModelForPlan">Тариф</a>
+					<a class="c-pointer blue" title="Изменение тарифа" data-toggle="modal" data-target="#ModelForPlan">Тариф<span> ( редактировать )</span></a>
 				</td>
 				<td>
 					<span>@Html.Raw(client.PhysicalClient.Plan != null ? client.PhysicalClient.Plan.Name + " (" + (client.GetTariffPrice(true) != 0 ? "<span title='текущая стоимость'>"+ client.GetTariffPrice(true).ToString("0.00")+ " р.</span>"
@@ -129,7 +129,7 @@
 			</tr>
 			<tr>
 				<td>
-					<a class="c-pointer blue" title="Возврат скидки" data-toggle="modal" data-target="#ModelForSale">Скидка</a>
+					<a class="c-pointer blue" title="Возврат скидки" data-toggle="modal" data-target="#ModelForSale">Скидка<span> ( редактировать )</span></a>
 				</td>
 				<td>
 					<span>@client.Discount.ToString("0.00")% @(client.Plan!=null && client.Plan.IgnoreDiscount?"( по текущему тарифу не применяется )":"")</span>

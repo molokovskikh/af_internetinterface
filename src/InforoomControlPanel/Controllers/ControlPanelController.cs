@@ -22,25 +22,6 @@ namespace InforoomControlPanel.Controllers
 			if (filterContext == null)
 				throw new ArgumentNullException("filterContext");
 
-			//if (FormsAuthentication.CookiesSupported)
-			//{
-			//	var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
-			//	if (cookie != null)
-			//	{
-			//		var userData = FormsAuthentication.Decrypt(cookie.Value);
-			//		var username = userData.Name;
-			//		var identity = new GenericIdentity(username, "Forms");
-
-			//		Employee employee;
-			//		using (var session = Inforoom2.MvcApplication.SessionFactory.OpenSession())
-			//			employee = session.Query<Employee>().FirstOrDefault(k => k.Login == username);
-			//		HttpContext.Current.User = employee != null
-			//			? new CustomPrincipal(identity, employee.Permissions, employee.Roles)
-			//			: new CustomPrincipal(identity, new List<Permission>(), new List<Role>());
-			//	}
-			//}
-
-
 			//если клиент был залогинен по сети, то HTTPСontext не будет изменен
 			//в этом случае можно оттолкнуть от переменной CurrentClient
 			if (!filterContext.HttpContext.User.Identity.IsAuthenticated) {

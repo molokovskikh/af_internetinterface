@@ -5,71 +5,89 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	Role role = ViewBag.Role;
 	List<Permission> permissions = ViewBag.Permissions;
+	var currentPermissionGroup = "";
 }
 <div class="panel panel-default">
 	<div class="panel-body">
 		@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
 		{
-			@Html.HiddenFor(i=>role.Id)
-			<div class="col-sm-6">
-				<div class="form-group">
-					<label class="col-sm-4 control-label">Название</label>
-					<div class="col-sm-8">
-						@Html.TextBoxFor(I=>role.Name,new { @class = "form-control" })
-						@ViewBag.Validation.GetError(role, "Name")
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-4 control-label">Описание</label>
-					<div class="col-sm-8">
-						@Html.TextBoxFor(I=>role.Description,new { @class = "form-control" })
-						@ViewBag.Validation.GetError(role, "Description")
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-sm-8">
-						<button class="btn btn-green" type="submit">Сохранить</button>
-					</div>
+		@Html.HiddenFor(i => role.Id)
+		<div class="col-sm-6">
+			<div class="form-group">
+				<label class="col-sm-4 control-label">Название</label>
+				<div class="col-sm-8">
+					@Html.TextBoxFor(I => role.Name, new { @class = "form-control" })
+					@ViewBag.Validation.GetError(role, "Name")
 				</div>
 			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label">Описание</label>
+				<div class="col-sm-8">
+					@Html.TextBoxFor(I => role.Description, new { @class = "form-control" })
+					@ViewBag.Validation.GetError(role, "Description")
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-8">
+					<button class="btn btn-green" type="submit">Сохранить</button>
+				</div>
+			</div>
+		</div>
 		}
-		@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
-		{
-			@Html.HiddenFor(i=>role.Id)
-			<div class="col-sm-6">
-				<div class="form-group">
-					Добавить право:
-				</div>
-				<div class="form-group">
-					<div class="col-sm-8">
-						@Html.DropDownListExtendedFor(i => role.Permissions, permissions.OrderBy(s=>s.Description).ToList(), i => i.Description, null, new { @class = "form-control" })
+	</div>
+	<div class="panel-body">
+		<div class="col-sm-6">
+			<div class="form-group">
+				Добавить право:
+			</div>
+
+			@foreach (var item in permissions.OrderBy(s => s.Description).ToList()) {
+				if (currentPermissionGroup != item.Description.Split('-').First().Replace(" ", "")) {
+					currentPermissionGroup = item.Description.Split('-').First().Replace(" ","");
+					<div class="form-group">
+						<strong class="black bold c-pointer entypo-right-open-mini" phantomFor=".disabledPermission@(currentPermissionGroup)">@item.Description.Split('-').First()</strong>
 					</div>
-					<div class="col-sm-4">
-						<button class="btn btn-green" type="submit">Добавить</button>
-					</div>
+				}
+				<div class="disabledPermission@(currentPermissionGroup)">
+					@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
+						@Html.HiddenFor(i => role.Id)
+						@Html.HiddenFor(s => item.Id, new { Name = "role.Permissions[].Id" })
+
+						<div class="form-group">
+							<div class="col-sm-8">
+								@item.Description
+							</div>
+							<div class="col-sm-4">
+								<button class="btn btn-green btn-sm" type="submit">Добавить</button>
+							</div>
+						</div>
+					}
 				</div>
-			</div>				
-		}	
+			}
+			</div>
 		<div class="col-sm-6">
 			<div class="form-group">
 				Права:
 			</div>
-			@foreach (var item in role.Permissions.OrderBy(s => s.Description).ToList()) {
-				<div class="form-group">@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+			@foreach (var item in role.Permissions.OrderBy(s => s.Description).ToList())
+			{
+			<div class="form-group">
+				@using (Html.BeginForm(ViewBag.ActionName as string, ViewBag.ControllerName as string, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
 				{
 
-					<div class="col-sm-10 listItem gray">
-						@Html.HiddenFor(i => role.Id)
-						@Html.HiddenForModelList(role, i => role.Permissions, item.Id)
-						<button type="submit" class="btn-link entypo-cancel-circled" style="color: red"></button>
-						@Html.Raw(item.Description)
-					</div> 
-						
-					 	}
-				</div>
+			<div class="col-sm-10 listItem gray">
+				@Html.HiddenFor(i => role.Id)
+				@Html.HiddenForModelList(role, i => role.Permissions, item.Id)
+				<button type="submit" class="btn-link entypo-cancel-circled" style="color: red"></button>
+				@Html.Raw(item.Description)
+			</div>
+
+			}
+		</div>
 			}
 		</div>
 	</div>
+
 </div>
 
 

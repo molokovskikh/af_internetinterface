@@ -140,7 +140,7 @@ namespace Inforoom2.Test.Functional.Personal
 
 			CheckWarningPageText("У вас не заполнены паспортные данные");
 			Css(".warning").Click();
-			AssertText("Просим внести свои паспортные данные:");
+			AssertText("свои паспортные данные:");
 			DbSession.Refresh(client);
 			Open("/Personal/Profile");
 			AssertText("У вас не заполнены паспортные данные");

@@ -101,7 +101,7 @@ namespace InforoomControlPanel.Controllers
 					result = string.Format("<b style='color:red'>Коммутатор ничего не ответил</b>");
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				result = string.Format("<b style='color:red'>Коммутатор ничего не ответил</b>");
 			}
