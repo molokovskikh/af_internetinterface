@@ -3,6 +3,8 @@
 	.main-content .servicemen.panel, .PrintTimeTable{ display: block !important;}
 	.pageBreak {page-break-after: always;} 
 } 
+ a.c-pointer.blue span{ color: #A5A5A5!important;font-weight: normal;}
+ a.c-pointer.blue:hover span{ color: #E86E6E!important;}
  .panel.panel-blue{border-color: #337ab7 !important;}
  .panel.panel-blue .panel-heading{    color: #fff !important;background-color: #337ab7 !important;border-color: #337ab7 !important;}
  .panel.panel-blue h3{    color: #fff !important;}

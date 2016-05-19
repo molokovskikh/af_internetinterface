@@ -4,7 +4,7 @@
 @using Inforoom2.Models
 @model dynamic
 @{
-  ViewBag.Title = "Банковские выписки";
+  ViewBag.Title = "Платежи по регистраторам";
   Layout = "~/Views/Shared/_Layout.cshtml";
   InforoomModelFilter<Client> pager = ViewBag.pager;
   var clientsList = pager.GetItems();
@@ -27,7 +27,7 @@
 	<form id="PaymentForm">
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-sm-2">Получатель</div>
+				<div class="col-sm-2">Регистратор</div>
 				<div class="col-sm-3">
 					<select class="form-control form-control cleanIndex0" style="min-width:280px; max-width:280px;" name="mfilter.filter.Equal.WhoRegistered.Id">
 						<option value="0"> </option>

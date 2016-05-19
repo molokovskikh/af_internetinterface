@@ -164,20 +164,18 @@
 			<thead>
 			<tr role="row">
 				<th class="sorting" tabindex="0" aria-controls="table-2">
-					<a href="@pager.OrderBy(s => s.Recipient.Name)">
-						<span>Получатель</span>
-					</a>
-
+						<span>Получатель</span> 
 				</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">
 					<a href="@pager.OrderBy(s => s.PayedOn)">
 						<span>Дата платежа</span>
 					</a>
 				</th>
+				<th tabindex="0" aria-controls="table-2">
+					<span>ИНН</span>
+				</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">
-					<a href="@pager.OrderBy(s => s.PayerName)">
 						<span>Плательщик</span>
-					</a>
 				</th>
 				<th class="sorting">
 					<a href="@pager.OrderBy(s => s.Sum)">
@@ -217,7 +215,7 @@
 					</td>
 					<td>@(item.RegistredOn )</td>
 					<td>
-						<a href="@Url.Action("PaymentEdit", new {@id = item.Id})" target="_blank" class="btn btn-green">редактировать</a>
+						@*<a href="@Url.Action("PaymentEdit", new {@id = item.Id})" target="_blank" class="btn btn-green">редактировать</a>*@
 
 						<a href="@Url.Action("PaymentRemove", new {@id = item.Id})" class="btn btn-red">удалить</a>
 					</td>

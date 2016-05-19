@@ -389,6 +389,8 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 					"Тип не совпадает.");
 			}
 			else {
+				inputObjList =
+				browser.FindElementsByCssSelector(blockName + "[name='client.Contacts[0].Type'] option");
 				Assert.That(inputObjList.Count, Is.Not.EqualTo(0), "Статус не совпадает.");
 			}
 			//создаем новый номер и проверяем его отсутствие на форме

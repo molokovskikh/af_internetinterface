@@ -20,6 +20,7 @@
 				<th class="sorting" tabindex="0" aria-controls="table-2">Скорость</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">Пакет</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">Стоимость</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Конечная Стоимость</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">Архивный</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">Комментарий</th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
@@ -34,6 +35,7 @@
 					<td>@item.Speed.ToString("F")</td>
 					<td>@item.PackageSpeed.Id</td>
 					<td>@item.Price</td>
+					<td>@(item.FinalPrice!=0?item.FinalPrice.ToString("0,00"):"")</td>
 					<td>@(item.Disabled ? "Да" : "Нет")</td>
 					<td><span style="width: 120px;display: block;">
 					@(item.Comments != null ?

@@ -136,7 +136,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			return RedirectToAction("RequestsList");
 		}
-		
+
 		/// <summary>
 		/// Отображает форму новой заявки
 		/// </summary>
@@ -240,8 +240,7 @@ namespace InforoomControlPanel.Controllers
 
 		private void InitClientRequest()
 		{
-			var clientRequest = new ClientRequest
-			{
+			var clientRequest = new ClientRequest {
 				IsContractAccepted = true
 			};
 			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
@@ -260,29 +259,23 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.IsHouseValidated = false;
 			ViewBag.ClientRequest = clientRequest;
 		}
-
-		// TODO: поправить процедуру!
+		 
 		protected Address GetAddressByYandexData(ClientRequest clientRequest)
 		{
-			var region = DbSession.Query<Region>().FirstOrDefault(r => r.Name == clientRequest.City);
+			var region = DbSession.Query<Region>().FirstOrDefault(r => r.Name.Replace(" ", "").ToLower() == clientRequest.City.Replace(" ", "").ToLower());
 
 			var street = DbSession.Query<Street>()
-				.FirstOrDefault(s => s.Name == clientRequest.YandexStreet && s.Region == region);
-			if (street == null) {
-				street = new Street(clientRequest.YandexStreet);
-			}
-			var house = DbSession.Query<House>().FirstOrDefault(h => h.Number == clientRequest.YandexHouse
-			                                                         && h.Street.Name == clientRequest.YandexStreet
-			                                                         && (h.Street.Region == region
+				.FirstOrDefault(s => s.Name.Replace(" ","").ToLower() == clientRequest.YandexStreet.Replace(" ", "").ToLower() && s.Region == region);
+			if (street == null)
+				return null;
+			var house = DbSession.Query<House>().FirstOrDefault(h => h.Number.Replace(" ", "").ToLower() == clientRequest.YandexHouse.Replace(" ", "").ToLower()
+																															 && h.Street.Name.Replace(" ", "").ToLower() == clientRequest.YandexStreet.Replace(" ", "").ToLower()
+																															 && (h.Street.Region == region
 			                                                             || h.Region == region));
-			if (house == null) {
-				house = new House(clientRequest.YandexHouse);
-			}
-			var address = GetList<Address>().FirstOrDefault(a => a.IsCorrectAddress
-			                                                     && a.House == house
-			                                                     && a.House.Street == street
-			                                                     && a.House.Street.Region == region);
-			return address;
+			if (house == null)
+				return null;
+
+			return new Address() { House = house };
 		}
 
 		/// <summary>
@@ -307,8 +300,7 @@ namespace InforoomControlPanel.Controllers
 			// Контакты находятся в отдельной таблице
 			client.Contacts = new List<Contact>();
 			if (clientRequest.ApplicantPhoneNumber != null) {
-				client.Contacts.Add(new Contact()
-				{
+				client.Contacts.Add(new Contact() {
 					Client = client,
 					ContactString =
 						clientRequest.ApplicantPhoneNumber.IndexOf('-') != -1
@@ -319,8 +311,7 @@ namespace InforoomControlPanel.Controllers
 				});
 			}
 			if (clientRequest.ApplicantPhoneNumber != null) {
-				client.Contacts.Add(new Contact()
-				{
+				client.Contacts.Add(new Contact() {
 					Client = client,
 					ContactString = clientRequest.Email,
 					Type = ContactType.Email,
@@ -356,6 +347,9 @@ namespace InforoomControlPanel.Controllers
 					clientRequest.Address.Entrance = clientRequest.Entrance.ToString();
 					clientRequest.Address.Apartment = clientRequest.Apartment.ToString();
 					client.PhysicalClient.Address = clientRequest.Address;
+					currentRegion = client.PhysicalClient.Address.Region;
+					houseToFind = client.PhysicalClient.Address.House;
+					currentStreet = client.PhysicalClient.Address.House.Street;
 				}
 				else {
 					client.PhysicalClient.Address = new Address() {
@@ -368,8 +362,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			else {
 				// формирование адреса
-				client.PhysicalClient.Address = new Address()
-				{
+				client.PhysicalClient.Address = new Address() {
 					House = houseToFind,
 					Floor = clientRequest.Floor,
 					Entrance = clientRequest.Entrance.ToString(),
@@ -444,8 +437,7 @@ namespace InforoomControlPanel.Controllers
 					client, client.GetType().GetProperty("PhysicalClient"), scapeNameDoubling, false, errors);
 			}
 			// убираем из списка ошибок те, которые допустимы в данном случае
-			errors.RemoveErrors(new List<string>()
-			{
+			errors.RemoveErrors(new List<string>() {
 				"Inforoom2.Models.PhysicalClient.PassportDate",
 				"Inforoom2.Models.PhysicalClient.CertificateName"
 			});
@@ -467,8 +459,7 @@ namespace InforoomControlPanel.Controllers
 				// добавляем клиенту стандартные сервисы 
 				var services =
 					DbSession.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet" || s.Name == "PlanChanger").ToList();
-				IList<ClientService> csList = services.Select(service => new ClientService
-				{
+				IList<ClientService> csList = services.Select(service => new ClientService {
 					Service = service,
 					Client = client,
 					BeginDate = DateTime.Now,
@@ -503,13 +494,13 @@ namespace InforoomControlPanel.Controllers
 					return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 					                "Clients/UpdateAddressByClient?clientId=" + client.Id +
 					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]
-								+ $"Client/ConnectionCard/{client.Id}");
+					                + $"Client/ConnectionCard/{client.Id}");
 				}
 				// переходим к информации о клиенте *в старой админке
 				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"] 
-								+ $"Client/InfoPhysical/{client.Id}");
+				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]
+				                + $"Client/InfoPhysical/{client.Id}");
 			}
 			// адресные данные по запросу 
 			Street currentStreet = null;
@@ -529,8 +520,7 @@ namespace InforoomControlPanel.Controllers
 				if (currentRegion == null) {
 					currentRegion = client.Address.House.Street.Region;
 				}
-				client.PhysicalClient.Address = new Address()
-				{
+				client.PhysicalClient.Address = new Address() {
 					House = currentHouse,
 					Floor = client.Address.Floor,
 					Entrance = client.Address.Entrance,
@@ -556,8 +546,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			else {
 				//если адрес пустой создаем новый дом ( not null )
-				client.PhysicalClient.Address = new Address()
-				{
+				client.PhysicalClient.Address = new Address() {
 					House = new House(),
 					Floor = 0,
 					Entrance = "",

@@ -64,7 +64,7 @@
 				</tr>
 				</thead>
 				<tbody>
-				@foreach (var item in client.Payments.OrderByDescending(s => s.PaidOn)) {
+				@foreach (var item in client.Payments.OrderByDescending(s => s.PaidOn).ThenByDescending(s => s.Id)) {
 					<tr class="payment @(item.Virtual.HasValue && item.Virtual.Value && item.BillingAccount ? "green" : !item.BillingAccount ? "red" : "")">
 						<td class="buttons">
 							@if (item.BillingAccount) {

@@ -4,17 +4,18 @@
 @using Inforoom2.Helpers
 @using Inforoom2.Models
 @{
-	Layout = "";
-	Client client = Model;
-	List<Switch> switchList = ViewBag.SwitchList;
-	ClientEndpoint endpoint = client.Endpoints.FirstOrDefault();
-	var leases = endpoint != null ? endpoint.LeaseList : new List<Lease>();
-	IList<PackageSpeed> packageSpeedList = ViewBag.PackageSpeedList;
-	IList<IpPoolRegion> ipPoolRegionList = ViewBag.IpPoolRegionList;
-	StaticIp[] staticAddress = ViewBag.StaticAddressArray ?? new StaticIp[0];
-	Inforoom2.Helpers.ConnectionHelper connection = ViewBag.Connection ?? new Inforoom2.Helpers.ConnectionHelper();
-	List<SwitchAddress> networkNodeList = ViewBag.networkNodeList;
-	var newEndpoint = endpoint == null;
+  Layout = "";
+  Client client = Model;
+  List<Switch> switchList = ViewBag.SwitchList;
+  ClientEndpoint endpoint = client.Endpoints.FirstOrDefault();
+  var leases = endpoint != null ? endpoint.LeaseList.OrderByDescending(s => s.LeaseBegin).ThenBy(s => s.LeaseEnd)
+  .GroupBy(s => s.Mac).Select(s => s.First()).ToList() : new List<Lease>();
+  IList<PackageSpeed> packageSpeedList = ViewBag.PackageSpeedList;
+  IList<IpPoolRegion> ipPoolRegionList = ViewBag.IpPoolRegionList;
+  StaticIp[] staticAddress = ViewBag.StaticAddressArray ?? new StaticIp[0];
+  Inforoom2.Helpers.ConnectionHelper connection = ViewBag.Connection ?? new Inforoom2.Helpers.ConnectionHelper();
+  List<SwitchAddress> networkNodeList = ViewBag.networkNodeList;
+  var newEndpoint = endpoint == null;
 
 }
 <div class="panel panel-default blockJsLockControll">
@@ -54,7 +55,7 @@
 				</tr>
 				<tr>
 					<td>
-						<a class="c-pointer blue addressAjaxRunner" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForPortSelection">Порт</a>
+						<a class="c-pointer blue addressAjaxRunner" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForPortSelection">Порт<span> ( редактировать )</span></a>
 						<div class="modal" id="ModelForPortSelection" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 							<div class="modal-dialog modal-lg">
 								<div class="modal-content">
@@ -189,7 +190,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td><a class="blue c-pointer" title="Опросить коммутатор" onclick="GetPortConnectionState(@endpoint.Id)">Статус соединения</a></td>
+					<td><a class="blue c-pointer" title="Опросить коммутатор" onclick="GetPortConnectionState(@endpoint.Id)">Статус соединения<span> ( опросить )</span></a></td>
 					<td>
 						<div class="endpointStateStatus@(endpoint.Id)">не установлен</div>
 					</td>
@@ -350,7 +351,7 @@
 				</tr> 
 				<tr>
 					<td>
-						<a class="c-pointer blue addressAjaxRunner" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForPortSelectionEdit">Порт</a>
+						<a class="c-pointer blue addressAjaxRunner" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForPortSelectionEdit">Порт<span> ( редактировать )</span></a>
 						<div class="modal" id="ModelForPortSelectionEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 							<div class="modal-dialog modal-lg">
 								<div class="modal-content">

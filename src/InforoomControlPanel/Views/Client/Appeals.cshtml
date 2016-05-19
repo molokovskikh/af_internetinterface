@@ -115,12 +115,8 @@
 				<td>@request.Date</td>
 				<td>@EnumExtension.GetDescription(request.AppealType)</td>
 				<td>
-					@if (request.Client != null) {
-					<a @(request.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") class="idColumn" target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld")
-					                                                                                                                   + (String.Format("UserInfo/{0}?filter.ClientCode=", request.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-					                                                                                                                   + request.Client.Id)">
-						@request.Client.Id
-					</a>
+					@if (request.Client != null){
+					<a target="_blank" href="@Url.Action(request.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new { request.Client.Id})" class="idColumn @(request.Client.PhysicalClient != null ? "linkPhysical" : "linkLegal")"> @request.Client.ClientId</a>
 					}
 				</td>
 				<td>@(request.Client!=null?request.Client.GetName():"")</td>

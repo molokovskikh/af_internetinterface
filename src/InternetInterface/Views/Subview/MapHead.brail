@@ -25,7 +25,10 @@
 				</th>
 				<% end %>
 				<% if MapPartner.AccesPartner("SSI"): %>
-				<th>${App.LinkTo("Платежи по регистраторам", @Payers, @Filter)}</th>
+				<th>
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Payments/PaymentByEmployees">Платежи по регистраторам</a>
+				<div style="display:none;">	${App.LinkTo("Платежи по регистраторам", @Payers, @Filter)}</div>
+				</th>
 				<% end %>
 				<% if (MapPartner.AccesPartner("SSI") or MapPartner.AccesPartner("PFA")): %>
 				<th>
@@ -87,9 +90,16 @@
 				<% end %>
 				<% if MapPartner.AccesPartner("SSI"): %>
 				<th>
-					${App.LinkTo("Загрузить платежи", @Payments, @ProcessPayments)} <br />
-					${App.LinkTo("Банковские выписки", @Payments, @Index)} <br />
-					${App.LinkTo("Новый платеж", @Payments, @New)} <br />
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Payments/PaymentProcess">Загрузить платежи</a>
+					<br/>
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Payments/PaymentList">Банковские выписки</a>
+					<br/>
+					<a style="color:#00a651; font-weight: bold;" href="${InternetInterface.Helpers.GlobalNames.AdminPanelNew}Payments/PaymentCreate">Новый платеж</a>
+					<div style="display:none;">
+						${App.LinkTo("Загрузить платежи", @Payments, @ProcessPayments)} <br />
+						${App.LinkTo("Банковские выписки", @Payments, @Index)} <br />
+						${App.LinkTo("Новый платеж", @Payments, @New)} <br />
+					</div>
 				</th>
 				<% end %>
 				<% if MapPartner.AccesPartner("SSI"): %>

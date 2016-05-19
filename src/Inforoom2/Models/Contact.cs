@@ -105,7 +105,7 @@ namespace Inforoom2.Models
 
 		[Description("Связанный номер")] ConnectedPhone,
 
-		[Description("EMail")] Email,
+		[Description("Email")] Email,
 
 		[Description("Финансовые вопросы")] FinancePhone,
 
@@ -113,8 +113,8 @@ namespace Inforoom2.Models
 
 		[Description("Телефон для смс рассылки")] SmsSending,
 
-		[Description("техническая информация")] TechPhone,
+		[Description("Техническая информация")] TechPhone,
 
-		[Description("EMail для рассылки счетов/актов")] ActEmail
+		//[Description("EMail для рассылки счетов/актов")] ActEmail
 	}
 }

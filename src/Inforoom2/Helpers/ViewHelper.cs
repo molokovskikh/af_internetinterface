@@ -221,7 +221,7 @@ namespace Inforoom2.Helpers
 				case HtmlTag.input:
 					//Форматируем дату
 					if (value is DateTime)
-						value = (DateTime) value == DateTime.MinValue ? "" : ((DateTime) value).ToString("dd.MM.yy");
+						value = (DateTime) value == DateTime.MinValue ? "" : ((DateTime) value).ToString("dd.MM.yyyy");
 
 					html = string.Format("<{0} id=\"{1}\" {2} type=\"{3}\" name =\"{4}\" value=\"{5}\">", tag, id, attributes, type,
 						name, value);

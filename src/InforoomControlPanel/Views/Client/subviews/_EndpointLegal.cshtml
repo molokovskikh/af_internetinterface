@@ -42,7 +42,8 @@
 			<tr>
 				<td>Арендованный IP</td>
 				<td>
-					@Html.Raw(string.Join(", ", endpoint.LeaseList.Select(lease => "<br/><span " + (lease != null && lease.LeaseEnd < SystemTime.Now() ? "style=color:#E60000;font-weight:bold;" : "") + ">" + lease.Ip.ToString() + "</span>").ToList()))
+					@Html.Raw(string.Join(", ", endpoint.LeaseList.OrderByDescending(s => s.LeaseBegin).ThenBy(s => s.LeaseEnd)
+	.GroupBy(s => s.Mac).Select(s => s.First()).OrderBy(s=>s.Ip.ToString()).ToList().Select(lease => "<br/><span " + (lease != null && lease.LeaseEnd < SystemTime.Now() ? "style=color:#E60000;font-weight:bold;" : "") + ">" + lease.Ip.ToString() + "</span>").ToList()))
 				</td>
 			</tr>
 			<tr>
@@ -52,7 +53,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td><a class="c-pointer blue addressAjaxRunner" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForUpdateConnectionAddress" onclick="GetOrderConnectionAddress('@order.Id')">Адрес подключения</a></td>
+				<td><a class="c-pointer blue addressAjaxRunner" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForUpdateConnectionAddress" onclick="GetOrderConnectionAddress('@order.Id')">Адрес подключения <span> ( редактировать )</span></a></td>
 				<td>
 					@order.ConnectionAddress
 				</td>
@@ -72,7 +73,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td><a class="blue c-pointer" onclick="GetPortConnectionState(@endpoint.Id)">Статус соединения</a></td>
+				<td><a class="blue c-pointer" onclick="GetPortConnectionState(@endpoint.Id)">Статус соединения<span> ( опросить )</span></a></td>
 				<td>
 					<div class="endpointStateStatus@(endpoint.Id)">не установлен</div>
 				</td>

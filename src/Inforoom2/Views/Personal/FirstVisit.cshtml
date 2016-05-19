@@ -16,9 +16,9 @@
 @{ Html.RenderPartial("Menu"); }
 @using (@Html.BeginForm("FirstVisit", "Personal", null, FormMethod.Post)) {
 	<div class="right-block">
-		<h4 class="secondary-header">Добрый день. Система обнаружила, что у вас не полностью заполнены данные. Просим внести свои паспортные данные:</h4>
+		<h4 class="secondary-header">Добрый день. Просим Вас внести/подтвердить свои паспортные данные:</h4>
 		@Html.HiddenFor(i => physicalClient.Id)
-		@if (physicalClient.Client.AbsentPassportData()) {
+		@if (!physicalClient.Client.Lunched || physicalClient.Client.AbsentPassportData()) {
 			<div>
 				<div class="personals">Фамилия:</div>
 				@Html.ValidationEditor(validationRunner, physicalClient, "Surname", new {@class = "personal"}, HtmlTag.input, HtmlType.text)

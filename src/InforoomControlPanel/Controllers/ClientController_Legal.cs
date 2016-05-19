@@ -138,14 +138,26 @@ namespace InforoomControlPanel.Controllers
 					}
 				}
 				// проводим валидацию модели клиента
-				var errors = ValidationRunner.ValidateDeep(clientModel);
-
-				//если появились ошибки в любом из подпредставлений, кроме контактов, удаляем их
-				if (subViewName != "_Contacts") {
-					errors.RemoveErrors(new List<string>()
-					{
-						"Inforoom2.Models.Client.Contacts"
-					});
+				//		errors = ValidationRunner.ValidateDeep(clientModel);
+				var errors = new ValidationErrors();
+				if (subViewName == "_PrivateLegalInfo") {
+					errors = ValidationRunner.Validate(clientModel);
+					errors.AddRange(ValidationRunner.Validate(clientModel.LegalClient));
+				}
+				if (subViewName == "_Appeals") {
+					clientModel.Appeals.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
+				}
+				if (subViewName == "_Contacts") {
+					clientModel.Contacts.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
+				}
+				if (subViewName == "_Payments") {
+					clientModel.Payments.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
+				}
+				if (subViewName == "_WriteOffs") {
+					clientModel.WriteOffs.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
+				}
+				if (subViewName == "_Endpoint") {
+					clientModel.Endpoints.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
 				}
 
 				if (string.IsNullOrEmpty(clientStatusChangeComment) && clientStatus != 0 &&
@@ -294,7 +306,7 @@ namespace InforoomControlPanel.Controllers
 				|| s.Id == (int) StatusType.Dissolved).OrderBy(s => s.Name).ToList();
 			//список коммутаторов для региона клиента
 			ViewBag.SwitchList =
-				DbSession.Query<Switch>().Where(s => s.Zone.Region == client.LegalClient.Region).OrderBy(s => s.Name).ToList();
+				DbSession.Query<Switch>().Where(s => client.LegalClient.Region != null && s.Zone.Region.Id == client.LegalClient.Region.Id).OrderBy(s => s.Name).ToList();
 			//передаем на форму - список регионов
 			ViewBag.RegionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			//ViewBag.PlanList = DbSession.Query<Plan>().Where(s => !s.Disabled).OrderBy(s => s.Name).ToList();
@@ -440,7 +452,8 @@ namespace InforoomControlPanel.Controllers
 					PackageId = endpoint.PackageId ?? 0,
 					Monitoring = endpoint.Monitoring,
 					LeaseList =
-						endpoint.LeaseList.Select(s => new Tuple<string, bool>(s.Ip.ToString(), s.LeaseEnd < SystemTime.Now())).ToList(),
+						endpoint.LeaseList.OrderByDescending(s=>s.LeaseBegin).ThenBy(s=>s.LeaseEnd)
+						.GroupBy(s => s.Mac).Select(s => new Tuple<string, bool>(s.First().Ip.ToString(), s.First().LeaseEnd < SystemTime.Now())).ToList(),
 					StaticIpList =
 						endpoint.StaticIpList.Select(s => new {@Id = s.Id, @Ip = s.Ip, @Mask = s.Mask, @Subnet = s.GetSubnet()}).ToList()
 				};

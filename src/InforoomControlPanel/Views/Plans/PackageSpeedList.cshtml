@@ -4,15 +4,17 @@
 @model dynamic
 
 @{
-	ViewBag.Title = "Список Скоростей";
-	Layout = "~/Views/Shared/_Layout.cshtml";
-	string action = ViewBag.ActionName;
-	string controller = ViewBag.ControllerName;
-	ValidationRunner runner = ViewBag.Validation;
+  ViewBag.Title = "Список Скоростей";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  string action = ViewBag.ActionName;
+  string controller = ViewBag.ControllerName;
+  ValidationRunner runner = ViewBag.Validation;
 
-	InforoomModelFilter<PackageSpeed> pager = ViewBag.Pager;
-	IList<PackageSpeed> packageSpeedList = pager.GetItems();
-	var packageSpeed = (PackageSpeed)ViewBag.PackageSpeed ?? new PackageSpeed();
+  InforoomModelFilter<PackageSpeed> pager = ViewBag.Pager;
+  IList<PackageSpeed> packageSpeedList = pager.GetItems();
+  var currentPackageSpeed = packageSpeedList.Where(s => s.Confirmed).OrderBy(s => s.Speed)
+	  .GroupBy(s => s.Speed).Select(grp => grp.First()).ToList();
+  var packageSpeed = (PackageSpeed)ViewBag.PackageSpeed ?? new PackageSpeed();
 }
 
 <div class="col-md-6" style="padding-bottom: 40px;">
@@ -66,7 +68,7 @@
 							<span>@item.GetSpeed()</span>
 						</td>
 						<td class="col-sm-1">
-							<span>@item.Description</span>
+							<span @Html.Raw(currentPackageSpeed.Any(s=>s.Id == item.Id)? "class=\"blue bold\" title='Выводится в списке назначения скорости тарифа'":"")>@item.Description</span>
 						</td>
 						<td class="col-sm-1">
 							<span>@item.PackageId</span>

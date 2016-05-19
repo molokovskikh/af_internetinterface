@@ -112,17 +112,26 @@ namespace InforoomControlPanel.Controllers
 							clientModel, AppealType.System, GetCurrentEmployee()));
 					}
 				}
-				// проводим валидацию модели клиента
-				var errors = ValidationRunner.ValidateDeep(clientModel);
-
-				//если появились ошибки в любом из подпредставлений, кроме контактов, удаляем их
-				if (subViewName != "_Contacts") {
-					errors.RemoveErrors(new List<string>()
-					{
-						"Inforoom2.Models.Client.Contacts"
-					});
+				var errors = new ValidationErrors();
+				if (subViewName == "_PrivatePhysicalInfo") {
+					errors = ValidationRunner.Validate(clientModel);
+					errors.AddRange(ValidationRunner.Validate(clientModel.PhysicalClient));
 				}
-				//проводим валидацию "паспортных данных"
+				if (subViewName == "_Appeals") {
+					clientModel.Appeals.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
+				}
+				if (subViewName == "_Contacts") {
+					clientModel.Contacts.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
+				}
+				if (subViewName == "_Payments") {
+					clientModel.Payments.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
+				}
+				if (subViewName == "_WriteOffs") {
+					clientModel.WriteOffs.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
+				}
+				if (subViewName == "_Endpoint") {
+					clientModel.Endpoints.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
+				}
 				if (subViewName == "_PassportData") {
 					errors = ValidationRunner.Validate(clientModel.PhysicalClient);
 				}
@@ -266,7 +275,7 @@ namespace InforoomControlPanel.Controllers
 				|| s.Id == (int) StatusType.Dissolved).OrderBy(s => s.Name).ToList();
 			//список коммутаторов для региона клиента
 			ViewBag.SwitchList =
-				DbSession.Query<Switch>().Where(s => s.Zone.Region == client.Address.Region).OrderBy(s => s.Name).ToList();
+				DbSession.Query<Switch>().Where(s => client.Address!=null && s.Zone.Region.Id == client.Address.Region.Id).OrderBy(s => s.Name).ToList();
 			//передаем на форму - список регионов
 			ViewBag.RegionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			//ViewBag.PlanList = DbSession.Query<Plan>().Where(s => !s.Disabled).OrderBy(s => s.Name).ToList();

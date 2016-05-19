@@ -51,7 +51,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			//Город
 			AssertText("Город " + CurrentClient.GetRegion().Name);
 			//Адрес подключения
-			AssertText("Адрес подключения " + CurrentClient.PhysicalClient.Address.GetStringForPrint(city: false).Trim());
+			AssertText("Адрес подключения ( редактировать ) " + CurrentClient.PhysicalClient.Address.GetStringForPrint(city: false).Trim());
 			//Дата регистрации
 			AssertText("Дата регистрации " +
 			           (CurrentClient.CreationDate.HasValue ? CurrentClient.CreationDate.Value.ToString("dd.MM.yyyy") : "нет"));
@@ -72,7 +72,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			//СМС рассылка
 			AssertText("СМС рассылка " + (CurrentClient.SendSmsNotification ? "да" : "нет"));
 			//Скидка
-			AssertText("Скидка " + CurrentClient.Discount.ToString("0.00") + "%");
+			AssertText("Скидка ( редактировать ) " + CurrentClient.Discount.ToString("0.00") + "%");
 			//Дата начала расчетного периода
 			AssertText("Дата начала расчетного периода " + CurrentClient.RatedPeriodDate.Value.ToShortDateString());
 			//Количество бесплатных дней
@@ -575,6 +575,8 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Assert.That(inputObjList.FirstOrDefault(s => s.Text != "").Text, Is.EqualTo((type).GetDescription()), "Тип не совпадает.");
 			}
 			else {
+				inputObjList =
+					browser.FindElementsByCssSelector(blockName + "[name='client.Contacts[0].Type'] option");
 				Assert.That(inputObjList.Count, Is.Not.EqualTo(0), "Статус не совпадает.");
 			}
 			//создаем новый номер и проверяем его отсутствие на форме

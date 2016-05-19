@@ -250,8 +250,11 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		[HttpPost]
 		public
-		JsonResult GetStaticIp(int id)
+		JsonResult GetStaticIp(int? id)
 		{
+			if (!id.HasValue)
+				return Json("", JsonRequestBehavior.AllowGet);
+
 			var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Endpoint.Id == id);
 			return
 				Json(lease != null &&

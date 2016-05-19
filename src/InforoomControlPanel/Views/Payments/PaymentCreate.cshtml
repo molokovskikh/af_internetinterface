@@ -12,7 +12,7 @@
 	List<Recipient> recipientList = ViewBag.RecipientList;
 }
 @section JavaScript{
-	<script type="text/javascript" src="@Url.Content("~/Scripts/PaymentsCalendarFilter.js?v=1")"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/PaymentsCalendarFilter.js?v=2")"></script>
 }
 <div class="panel panel-primary">
 	<div class="panel-body">
@@ -80,7 +80,7 @@
 					</p>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+					<a class="btn btn-blue" onclick="location.href = '@Url.Action("PaymentList", "Payments")'">Банковские выписки</a>
 					<button type="submit" class="btn btn-success">Добавить платеж</button>
 				</div>
 			}
