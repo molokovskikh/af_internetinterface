@@ -22,7 +22,7 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Модель физического клиента
 	/// </summary>
-	[Class(0, Table = "PhysicalClients", Schema = "internet", NameType = typeof (PhysicalClient)), Description("Клиент")]
+	[Class(0, Table = "PhysicalClients", Schema = "internet", NameType = typeof(PhysicalClient)), Description("Клиент")]
 	public class PhysicalClient : BaseModel, ILogAppeal, IClientExpander
 	{
 		[Property, Description("Пароль физического клиента")]
@@ -172,8 +172,7 @@ namespace Inforoom2.Models
 			var comment = string.Format("Изменение тарифа, старый '{0}' новый '{1}'", Plan.Name, planTo.Name);
 			Plan = planTo;
 			WriteOff(price);
-			var writeOff = new UserWriteOff
-			{
+			var writeOff = new UserWriteOff {
 				Client = Client,
 				Date = SystemTime.Now(),
 				Sum = price,
@@ -224,8 +223,7 @@ namespace Inforoom2.Models
 			}
 			moneyWriteoff = sum - virtualWriteoff;
 
-			return new WriteOff
-			{
+			return new WriteOff {
 				Client = Client,
 				WriteOffDate = SystemTime.Now(),
 				WriteOffSum = Math.Round(sum, 2),
@@ -250,9 +248,9 @@ namespace Inforoom2.Models
 				var randomNumber = new byte[1];
 				do {
 					rngCsp.GetBytes(randomNumber);
-				} while (!(randomNumber[0] < (availableChars.Length - 1)*(Byte.MaxValue/(availableChars.Length - 1))));
+				} while (!(randomNumber[0] < (availableChars.Length - 1) * (Byte.MaxValue / (availableChars.Length - 1))));
 
-				availableChars_elem = (randomNumber[0]%(availableChars.Length - 1)) + 1;
+				availableChars_elem = (randomNumber[0] % (availableChars.Length - 1)) + 1;
 
 				password += availableChars[availableChars_elem];
 			}
@@ -269,8 +267,7 @@ namespace Inforoom2.Models
 
 		public virtual List<string> GetAppealFields()
 		{
-			return new List<string>()
-			{
+			return new List<string>() {
 				"Name",
 				"Surname",
 				"Patronymic",
@@ -294,7 +291,7 @@ namespace Inforoom2.Models
 			if (property == "Plan") {
 				// получаем псевдоним из описания 
 				property = this.Plan.GetDescription();
-				var oldPlan = oldPropertyValue == null ? null : ((Plan) oldPropertyValue);
+				var oldPlan = oldPropertyValue == null ? null : ((Plan)oldPropertyValue);
 				var currentPlan = this.Plan;
 				if (oldPlan != null) {
 					message += property + " было: " + oldPlan.Name + " <br/>";
@@ -336,7 +333,7 @@ namespace Inforoom2.Models
 
 		public virtual DateTime? GetDissolveDate()
 		{
-			return ((StatusType) Client.Status.Id) == StatusType.Dissolved ? Client.StatusChangedOn : null;
+			return ((StatusType)Client.Status.Id) == StatusType.Dissolved ? Client.StatusChangedOn : null;
 		}
 
 		public virtual string GetPlan()
@@ -351,13 +348,14 @@ namespace Inforoom2.Models
 
 		public virtual StatusType GetStatus()
 		{
-			return ((StatusType) Client.Status.Id);
+			return ((StatusType)Client.Status.Id);
 		}
 
 
 		public virtual void UpdatePackageId(ClientEndpoint clientEndpoint)
 		{
-			if (clientEndpoint == null) return;
+			if (clientEndpoint == null)
+				return;
 			if (Plan != null && Client.Internet.ActivatedByUser)
 				clientEndpoint.PackageId = Plan.PackageSpeed.PackageId;
 			else
@@ -415,11 +413,11 @@ namespace Inforoom2.Models
 					//обновляем/задаем поля точки подключения
 					if (clientEntPoint.Ip == null && !string.IsNullOrEmpty(connection.StaticIp)) {
 						decimal priceForIp = 0;
-						var priceItem =  dbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof (FixedIp)));
+						var priceItem = dbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof(FixedIp)));
 						if (priceItem != null) {
 							priceForIp = priceItem.Price;
 						}
-                        dbSession.Save(new UserWriteOff(client, priceForIp,
+						dbSession.Save(new UserWriteOff(client, priceForIp,
 							string.Format("Плата за фиксированный Ip адрес ({0})", connection.StaticIp)));
 					}
 					clientEntPoint.Client = client;
@@ -441,12 +439,12 @@ namespace Inforoom2.Models
 						if (client.Status.Additional.Count > 0 && client.Status.Additional.Any(s => s.ShortName == "Refused")) {
 							client.Status.Additional.Clear();
 						}
-					} 
+					}
 
 					//обновляем значение даты подключения клиента
 					client.ConnectedDate = DateTime.Now;
-					if (client.Status.Id == (uint) StatusType.BlockedAndNoConnected)
-						client.Status = dbSession.Load<Status>((int) StatusType.BlockedAndConnected);
+					if (client.Status.Id == (uint)StatusType.BlockedAndNoConnected)
+						client.Status = dbSession.Load<Status>((int)StatusType.BlockedAndConnected);
 
 					//синхронизируем сервисы клиента на основе settings(ов)
 					client.SyncServices(dbSession, settings);
@@ -483,24 +481,26 @@ namespace Inforoom2.Models
 					//	_connectSum = 0m;
 
 					//создаем платеж за подключение
-					if (!string.IsNullOrEmpty(connectSum) && _connectSum != -1) {
+					if (!string.IsNullOrEmpty(connectSum) && _connectSum > 0) {
 						ConnectSum = _connectSum;
 						var payments = dbSession.Query<PaymentForConnect>().Where(p => p.EndPoint == clientEntPoint).ToList();
 						if (!payments.Any())
-							dbSession.Save(new PaymentForConnect(_connectSum, clientEntPoint));
+							dbSession.Save(new PaymentForConnect(_connectSum, clientEntPoint, employee));
 						else {
 							var payment = payments.First();
 							payment.Sum = _connectSum;
+							payment.Paid = false;
 							dbSession.Save(payment);
+							dbSession.Save(new Appeal($"Добавлен платеж за подключение {payment.Sum} руб. Точка № {payment.EndPoint.Id}. ", client, AppealType.System, employee));
+							dbSession.Save(client);
 						}
-						dbSession.Save(client);
+						//обновляем PackageId у SCE клиента
+						SceHelper.UpdatePackageId(dbSession, client);
 					}
-					//обновляем PackageId у SCE клиента
-					SceHelper.UpdatePackageId(dbSession, client);
-				}
-				else {
-					if (staticAddress.Length > 0) {
-						errorMessage += (String.IsNullOrEmpty(errorMessage) ? "" : ". ") + "Ошибка ввода IP адреса. ";
+					else {
+						if (staticAddress.Length > 0) {
+							errorMessage += (String.IsNullOrEmpty(errorMessage) ? "" : ". ") + "Ошибка ввода IP адреса. ";
+						}
 					}
 				}
 			}

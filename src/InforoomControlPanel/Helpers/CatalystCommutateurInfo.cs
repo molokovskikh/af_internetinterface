@@ -53,7 +53,8 @@ namespace InforoomControlPanel.Helpers
 						"</span>" + "<br/>")
 						.Implode(string.Empty);
 
-					command = string.Format("sh int status | inc Fa0/{0}", port);
+					//			command = string.Format("sh int status | inc Fa0/{0} ", port);
+					command = string.Format("show interfaces fastEthernet 0/{0} status", port);
 					telnet.WriteLine(command);
 					var portIsActive = HardwareHelper.ResultInArray(telnet.Read(), command).Contains("connected");
 					//Проверяем, что порт активен

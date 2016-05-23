@@ -259,23 +259,26 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.IsHouseValidated = false;
 			ViewBag.ClientRequest = clientRequest;
 		}
-		 
+
 		protected Address GetAddressByYandexData(ClientRequest clientRequest)
 		{
 			var region = DbSession.Query<Region>().FirstOrDefault(r => r.Name.Replace(" ", "").ToLower() == clientRequest.City.Replace(" ", "").ToLower());
+			if (clientRequest.YandexStreet != null) {
+				var street = DbSession.Query<Street>()
+					.FirstOrDefault(s => s.Name.Replace(" ", "").ToLower() == clientRequest.YandexStreet.Replace(" ", "").ToLower() && s.Region == region);
+				if (street == null)
+					return null;
+			}
+			if (clientRequest.YandexStreet != null && clientRequest.YandexHouse != null) {
+				var house = DbSession.Query<House>().FirstOrDefault(h => h.Number.Replace(" ", "").ToLower() == clientRequest.YandexHouse.Replace(" ", "").ToLower()
+				                                                         && h.Street.Name.Replace(" ", "").ToLower() == clientRequest.YandexStreet.Replace(" ", "").ToLower()
+				                                                         && (h.Street.Region == region || h.Region == region));
+				if (house == null)
+					return null;
+				return new Address() { House = house };
+			}
 
-			var street = DbSession.Query<Street>()
-				.FirstOrDefault(s => s.Name.Replace(" ","").ToLower() == clientRequest.YandexStreet.Replace(" ", "").ToLower() && s.Region == region);
-			if (street == null)
-				return null;
-			var house = DbSession.Query<House>().FirstOrDefault(h => h.Number.Replace(" ", "").ToLower() == clientRequest.YandexHouse.Replace(" ", "").ToLower()
-																															 && h.Street.Name.Replace(" ", "").ToLower() == clientRequest.YandexStreet.Replace(" ", "").ToLower()
-																															 && (h.Street.Region == region
-			                                                             || h.Region == region));
-			if (house == null)
-				return null;
-
-			return new Address() { House = house };
+			return null;
 		}
 
 		/// <summary>

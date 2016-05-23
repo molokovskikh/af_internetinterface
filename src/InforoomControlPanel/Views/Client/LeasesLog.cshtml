@@ -89,7 +89,12 @@
 				<td>@(lease.EndpointId.ToString() )</td>
 				<td>@Html.Raw(lease.HwId)</td>
 				<td>@(lease.LeaseBegin)</td>
-				<td>@(lease.LeaseEnd)</td>
+				@if (lease.HwId.IndexOf("blue bold") != -1) {
+					<td><span class="blue bold">@(lease.LeaseEnd)<span></span></td>
+				}
+				else {
+					<td>@(lease.LeaseEnd)</td>
+				}
 			</tr>
 		}
 		</tbody>
