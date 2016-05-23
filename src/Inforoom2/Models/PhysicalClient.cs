@@ -401,7 +401,8 @@ namespace Inforoom2.Models
 			errorMessage = connection.Validate(dbSession, true, endpointId);
 
 			decimal _connectSum = -1;
-			var validateSum =
+			connectSum = connectSum.Replace( ".", ",");
+      var validateSum =
 				!(!string.IsNullOrEmpty(connectSum) &&
 				  (!decimal.TryParse(connectSum, out _connectSum) || (_connectSum <= 0 && client.PhysicalClient != null)));
 			if (!validateSum)

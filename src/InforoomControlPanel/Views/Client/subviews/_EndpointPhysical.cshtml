@@ -16,7 +16,6 @@
   Inforoom2.Helpers.ConnectionHelper connection = ViewBag.Connection ?? new Inforoom2.Helpers.ConnectionHelper();
   List<SwitchAddress> networkNodeList = ViewBag.networkNodeList;
   var newEndpoint = endpoint == null;
-
 }
 <div class="panel panel-default blockJsLockControll">
 
@@ -126,7 +125,8 @@
 				<tr>
 					<td>Сумма за подключение</td>
 					<td>
-						<input class="form-control" name="connectSum" min="0" type="number" value="" step="any">
+						<input class="form-control" name="connectSum" min="0" type="number" value="@Html.Raw(
+												  client.PhysicalClient.ConnectSum > 0 ? client.PhysicalClient.ConnectSum.ToString("0.00").Replace(",",".") : "")" step="any">
 					</td>
 				</tr>
 				</tbody>
