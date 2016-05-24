@@ -211,7 +211,7 @@
 					else {
 						if (client.ConnectionRequest != null && client.ConnectionRequest.ServiceMan != null && client.ConnectionRequest.Status == false) {
 							<a target="_blank" class="c-pointer" href="@Url.Action("AttachRequest", "ConnectionTeam", new {@Id = client.Id, @type = ServicemenScheduleItem.Type.ClientConnectionRequest})">
-								<span>выполняет @client.ConnectionRequest.ServiceMan.Employee.Name - @(client.ConnectionRequest.EndTime.HasValue ? client.ConnectionRequest.EndTime.Value.ToString("dd.MM.yyyy HH:mm") : "")</span>
+								<span>выполняет @client.ConnectionRequest.ServiceMan.Employee.Name - @(client.ConnectionRequest.EndTime.HasValue ? client.ConnectionRequest.BeginTime.Value.ToString("dd.MM.yyyy HH:mm") + " - "+ client.ConnectionRequest.EndTime.Value.ToString("HH:mm") : "")</span>
 							</a>
 						}
 						else {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Web;
 using System.Web.Mvc;
 using Common.Tools;
@@ -8,6 +9,7 @@ using Common.Tools.Calendar;
 using Inforoom2.Components;
 using Inforoom2.Controllers;
 using Inforoom2.Models;
+using InforoomControlPanel.Controllers;
 using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Transform;
@@ -51,37 +53,56 @@ namespace InforoomControlPanel.ReportTemplates
 					.ToList();
 			var endpointsFromLog = endpointsFromLogRaw.Select(s => s.ClientendpointId.Value).ToList();
 
-			endpointsFromLog.Each(s =>
-			{
+			endpointsFromLog.Each(s => {
 				if (!endPointList.Any(d => d == s)) {
 					endPointList.Add(s);
 				}
 			});
-			endPointList.Each(s =>
-			{
+			endPointList.Each(s => {
 				objList.AddRange(
 					dbSession.Query<Internetsessionslog>()
-						.Where(d => d.EndpointId.HasValue && d.EndpointId.Value == s && d.LeaseBegin >= dateA && d.LeaseBegin <= dateB)
+						.Where(d => d.EndpointId != null && d.EndpointId.Value == s && d.LeaseBegin >= dateA && d.LeaseBegin <= dateB)
 						.ToList());
 			});
+
 
 			var appeals =
 				client.Appeals.Where(s => s.AppealType == AppealType.Statistic && s.Date >= dateA && s.Date <= dateB).ToList();
 			if (appeals.Count > 0) {
-				objList.AddEach(appeals.Select(s => new Internetsessionslog()
-				{
+				objList.AddEach(appeals.Select(s => new Internetsessionslog() {
 					Id = s.Id,
 					IP = "<b>Событие</b>",
 					HwId = "<span style='color:#860202;'>" + s.Message + "</span>",
 					LeaseBegin = s.Date
 				}).ToList());
 			}
+			var currenrLeaseListRaw = client.Endpoints.SelectMany(s => s.LeaseList.Select(l => l).ToList()).ToList();
 
-			objList = objList.OrderByDescending(s => s.LeaseBegin).ToList();
+			foreach (var lease in currenrLeaseListRaw) {
+				var currentLease = objList.FirstOrDefault(s => s.EndpointId!=null && s.GetIpString().ToString() == lease.Ip.ToString() && s.HwId.IndexOf(lease.Mac) != -1 && s.EndpointId == lease.Endpoint.Id && s.LeaseBegin == lease.LeaseBegin);
+				if (currentLease != null) {
+					currentLease.IP = $"<span class='blue bold'>{lease.Ip.ToString()}</span>";
+					currentLease.HwId = $"<span class='blue bold'>{lease.Mac}</span>";
+					currentLease.LeaseBegin = lease.LeaseBegin;
+					currentLease.LeaseEnd = lease.LeaseEnd;
+				}
+				else {
+					objList.Add(new Internetsessionslog() {
+						Id = lease.Id,
+						EndpointId = lease.Endpoint.Id,
+						IP = $"<span class='blue bold'>{lease.Ip.ToString()}</span>",
+						HwId = $"<span class='blue bold'>{lease.Mac}</span>",
+						LeaseBegin = lease.LeaseBegin,
+						LeaseEnd = lease.LeaseEnd
+					});
+				}
+			}
+			var controllerBase = (ControlPanelController)controller;
+			objList = objList.OrderByDescending(s => s.LeaseBegin).ThenByDescending(s => s.Id).ThenByDescending(s=>s.LeaseEnd).ToList();
 			items = objList.Count;
-			objList = objList.Skip(itemsPerPage*(pageNumber-1)).Take(itemsPerPage).ToList();
+			objList = objList.Skip(itemsPerPage * (pageNumber - 1)).Take(itemsPerPage).ToList();
 			pager.SetTotalItems(items);
-
+			controllerBase.PreventSessionUpdate();
 			return objList;
 		}
 	}

@@ -30,12 +30,12 @@ namespace Inforoom2.Models
 		{
 		}
 
-		public PaymentForConnect(decimal sum, ClientEndpoint point)
+		public PaymentForConnect(decimal sum, ClientEndpoint point,Employee employee = null)
 		{
 			Sum = sum;
 			EndPoint = point;
 			RegDate = SystemTime.Now();
-			Employee = null;
+			Employee = employee;
 		}
 	}
 }

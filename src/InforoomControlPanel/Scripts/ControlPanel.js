@@ -490,13 +490,15 @@ function getPaymentClientIdUpdate(clientReciverId, item) {
 	$(clientReciverId).attr("recipient", $(item).attr("recipient"));
 }
 
+var getPaymentOnClientChange = false;
 function getPaymentReciver(clientReciverId, messageId, onChange, clientType, funcOnResult) {
 	var AjaxFuncOnResult = funcOnResult;
+	getPaymentOnClientChange = onChange;
 	clientType = clientType == undefined ? 0 : clientType;
 	if ($(clientReciverId).length > 0) {
 		if ($(clientReciverId).val() != null && $(clientReciverId).val() != "") {
 			var currentInputVal = $(clientReciverId).val();
-			if (onChange === true) {
+			if (getPaymentOnClientChange === true) {
 				$(clientReciverId).attr("style",'color: #1B96E0;font-weight: bold;');
 			} else {
 				$(clientReciverId).removeAttr("style");
@@ -514,7 +516,7 @@ function getPaymentReciver(clientReciverId, messageId, onChange, clientType, fun
 					if (data != undefined && data.length > 0 && typeof data != "string") {
 						var _html = "<div style='height:100px; overflow-y: scroll;border-top: 1px solid #E8E8E8; border-bottom: 1px solid #E8E8E8;'><ul style='list-style=\"none;\"'>";
 						var format = "<li><strong class='c-pointer' onclick='getPaymentClientIdUpdate(\"{0}\",this);' recipient='{4}'>{1}</strong> - <a class='idColumn linkLegal' target='_blank' href='{2}'>{3}</a></li>";
-						if (onChange) {
+						if (getPaymentOnClientChange) {
 							format = "<li class='gray'><strong class='gray'>{1}</strong> - <a class='gray'>{3}</a></li>";
 						}
 						var hasHurrentValue = false;
@@ -525,7 +527,7 @@ function getPaymentReciver(clientReciverId, messageId, onChange, clientType, fun
 							_html += String.format(format, clientReciverId, data[i].id, data[i].url, data[i].name, data[i].recipient);
 						}
 						_html += "</ul></div>";
-						if (!hasHurrentValue && !onChange) {
+						if (!hasHurrentValue && !getPaymentOnClientChange) {
 							$(clientReciverId).val("");
 						}
 						$(messageId).html(_html);
@@ -533,14 +535,23 @@ function getPaymentReciver(clientReciverId, messageId, onChange, clientType, fun
 							AjaxFuncOnResult();
 						}
 					} else {
+						if (AjaxFuncOnResult != undefined && AjaxFuncOnResult != null) {
+							AjaxFuncOnResult();
+						}
 						$(messageId).html("Клиент с данным ЛС не найден");
 					}
 				},
-				error: function(data) {
+				error: function (data) {
+					if (AjaxFuncOnResult != undefined && AjaxFuncOnResult != null) {
+						AjaxFuncOnResult();
+					}
 					$(messageId).html("Ответ не был получен");
 				},
 				statusCode: {
-					404: function() {
+					404: function () {
+						if (AjaxFuncOnResult != undefined && AjaxFuncOnResult != null) {
+							AjaxFuncOnResult();
+						}
 						$(messageId).html("Ответ не был получен");
 					}
 				}

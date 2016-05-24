@@ -1,0 +1,66 @@
+﻿@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+
+@{
+	ViewBag.Title = "Подключеные дома";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	List<Region> regions = ViewBag.Regions ?? new List<Region>();
+	List<SwitchAddress> addresses = ViewBag.Result ?? new List<SwitchAddress>();
+	int regionId = ViewBag.CurrentRegion;
+	int streetId = ViewBag.CurrentStreet;
+	int houseId = ViewBag.CurrentHouse;
+}
+@section JavaScript{
+<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js?v=001")"></script>
+}
+
+	<form method="post">
+		<h5 class="filterBlockHeader">Адрес</h5>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-3 fix230 addressDetailsBlock">
+					<span class="addressDetails top-bottom">Регион</span><select id="RegionDropDown" class="form-control form-control addressSearch" name="regionId" value="@regionId">
+						@foreach (var item in regions) {
+							<option value="@item.Id">@item.Name</option>
+						}	
+					</select>
+					<span class="addressDetails top-bottom">Улица</span> <select id="StreetDropDown" class="form-control form-control addressSearch"name="streetId"  value="@streetId"></select>
+					<span class="addressDetails top-bottom">Дом</span> <select id="HouseDropDown" class="form-control form-control addressSearch" name="houseId" value="@houseId"></select>
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-1">
+					<input class="btn btn-success" type="submit" value="Поиск">
+				</div>
+				<div class="col-sm-1">
+					<a href="/Client/List" class="btn btn-success btn-sm">Сбросить фильтр</a>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+		<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
+			<thead>
+			<tr role="row">
+				<th class="sorting" tabindex="0" aria-controls="table-2">Название</th>
+				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
+			</tr>
+			</thead>
+			@foreach (var item in addresses)
+	{
+	<tr>
+		<td>@(item.House.Street.Name:"")</td>
+		<td>@item.House.Number</td>
+	</tr>
+	}
+			<tbody></tbody>
+		</table>
+	</div> 

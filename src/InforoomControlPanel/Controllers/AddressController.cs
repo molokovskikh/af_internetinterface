@@ -133,6 +133,44 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		/// <summary>
+		/// Создание нового адреса коммутатора
+		/// </summary>
+		[HttpGet]
+		public ActionResult ConnectedHouses()
+		{
+			var regions = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
+			var result = new List<SwitchAddress>();
+			ViewBag.Regions = regions;
+			ViewBag.Result = result;
+			ViewBag.CurrentRegion = 0;
+			ViewBag.CurrentStreet = 0;
+			ViewBag.CurrentHouse = 0;
+			return View();
+		}
+
+		[HttpPost]
+		public ActionResult ConnectedHouses(int? regionId, int? streetId, int? houseId)
+		{
+			var result = new List<SwitchAddress>();
+			if (houseId.HasValue && houseId != 0) {
+				result.AddRange(DbSession.Query<SwitchAddress>().Where(s => s.House.Id == houseId));
+			}
+			else if (streetId.HasValue && streetId != 0) {
+				result.AddRange(DbSession.Query<SwitchAddress>().Where(s => s.House.Street.Id == streetId));
+			}
+
+			var regions = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
+      ViewBag.Regions = regions;
+			ViewBag.Result = result;
+			ViewBag.CurrentRegion = regionId??0;
+			ViewBag.CurrentStreet = streetId ?? 0;
+			ViewBag.CurrentHouse = houseId ?? 0;
+
+			return View();
+		}
+
+
+		/// <summary>
 		/// Изменение адреса коммутатора
 		/// </summary>
 		[HttpPost]
@@ -199,7 +237,7 @@ namespace InforoomControlPanel.Controllers
 			var criteria = pager.GetCriteria();
 			criteria.SetResultTransformer(new DistinctRootEntityResultTransformer());
 			if (!string.IsNullOrEmpty(pager.GetParam("Name")))
-				criteria.Add(Restrictions.Like("Name", "%"+pager.GetParam("Name")+"%"));
+				criteria.Add(Restrictions.Like("Name", "%" + pager.GetParam("Name") + "%"));
 			if ((!string.IsNullOrEmpty(pager.GetParam("Region.Id"))) && pager.GetParam("Region.Id") != "0")
 				criteria.Add(Restrictions.Eq("Region.Id", Int32.Parse(pager.GetParam("Region.Id"))));
 			pager.Execute();
@@ -227,8 +265,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult CreateCity([EntityBinder] City Сity)
 		{
 			var errors = ValidationRunner.ValidateDeep(Сity);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(Сity);
 				SuccessMessage("Город успешно добавлен");
 				return RedirectToAction("CityList");
@@ -267,8 +304,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult CreateRegion([EntityBinder] Region Region)
 		{
 			var errors = ValidationRunner.ValidateDeep(Region);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(Region);
 				SuccessMessage("Регион успешно добавлен");
 				return RedirectToAction("RegionList");
@@ -478,8 +514,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult EditCity([EntityBinder] City City)
 		{
 			var errors = ValidationRunner.Validate(City);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(City);
 				SuccessMessage("Город успешно изменен");
 				return RedirectToAction("CityList");
@@ -497,7 +532,7 @@ namespace InforoomControlPanel.Controllers
 		{
 			var Region = DbSession.Get<Region>(id);
 			ViewBag.Region = Region;
-			
+
 			var citys = DbSession.Query<City>().OrderBy(s => s.Name).ToList();
 			var parents = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			ViewBag.Citys = citys;
@@ -512,8 +547,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult EditRegion([EntityBinder] Region Region)
 		{
 			var errors = ValidationRunner.Validate(Region);
-			if (errors.Length == 0)
-			{
+			if (errors.Length == 0) {
 				DbSession.Save(Region);
 				SuccessMessage("Регион успешно изменен");
 				return RedirectToAction("RegionList");
@@ -560,6 +594,5 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.House = House;
 			return View("CreateHouse");
 		}
-
 	}
 }

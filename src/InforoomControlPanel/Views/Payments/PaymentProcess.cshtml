@@ -88,7 +88,7 @@
 							@if (item.Payer != null)
 							{
 							<a target="_blank" href="@Url.Action(item.Payer.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {item.Payer.Id})" class="idColumn @(item.Payer.PhysicalClient != null ? "linkPhysical" : "linkLegal")">
-								@item.Payer.Name
+								@item.Payer._Name
 							</a>
 							}
 							else

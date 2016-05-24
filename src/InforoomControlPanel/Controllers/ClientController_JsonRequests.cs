@@ -160,17 +160,17 @@ namespace InforoomControlPanel.Controllers
 			int.TryParse(id, out idCurrent);
 			var idList =
 				DbSession.CreateSQLQuery("SELECT Id, Name, PhysicalClient, Recipient FROM internet.clients WHERE " +
-				                         (idCurrent == 0 ? $" Name LIKE '{id}%'" : $"CAST(Id AS CHAR) LIKE '{idCurrent}%'") +
+				                         (idCurrent == 0 ? $" Name LIKE '{id}%' OR Name LIKE '{id}'": $"CAST(Id AS CHAR) LIKE '{idCurrent}%' OR CAST(Id AS CHAR) LIKE '{idCurrent}'") +
 				                         (clientType == 0
 					                         ? ""
 					                         : (clientType == 1 ? " AND PhysicalClient IS NOT NULL " : " AND PhysicalClient IS NULL ")))
 					.List();
 			var listToReturn = new List<object>();
-			if (idList != null) {
+			if (idList != null && idList.Count>0) {
 				int idClient = 0;
 				int idRecipient = 0;
 				for (int i = 0; i < idList.Count; i++) {
-					bool isPhysical = (idList[i] as object[])[1] != null;
+					bool isPhysical = (idList[i] as object[])[2] != null;
 					string name = ((idList[i] as object[])[1] ?? "").ToString();
 					int.TryParse(((idList[i] as object[])[0] ?? "").ToString(), out idClient);
 					int.TryParse(((idList[i] as object[])[3] ?? "").ToString(), out idRecipient);

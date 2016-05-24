@@ -869,14 +869,14 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 		[Test, Description("Страница клиента. Юр. лицо. Добавление и удаление услуги 'Отмена блокировок'")]
 		public void LegalServiceWorkLawyerAddRemove()
 		{
-			decimal totalSum = 10000;
+			decimal totalSum = 11000;
 			//выставление начальных параметров, клиент активен, варнинг не показывается
 			string blockModelName = "#ModelForActivateService ";
 			var serviceEnd = SystemTime.Now().AddDays(10);
 			Assert.That(CurrentClient.Disabled, Is.EqualTo(false));
 			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false));
 			//добавление заказа на большую сумму (до минуса)
-			var serviceSum = totalSum;
+			var serviceSum = totalSum - 1000; //периодическая услуга
       totalSum -= CurrentClient.Balance;
 			SimpleOrderAdding(Convert.ToInt32(serviceSum));
       RunBillingProcessPayments(CurrentClient);
@@ -977,8 +977,8 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			RunBillingProcessWriteoffs(CurrentClient, false);
 			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.LegalClient);
-			totalSum = totalSum * -1;
-      Assert.That(CurrentClient.LegalClient.Balance, Is.EqualTo(totalSum));
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			Assert.That(CurrentClient.LegalClient.Balance, Is.EqualTo(totalSum));
 			//платеж (баланс = 0) должен убрать варнинг, а состояние клиента должно стать активным
 			Assert.That(CurrentClient.Disabled, Is.EqualTo(false));
 			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false));
