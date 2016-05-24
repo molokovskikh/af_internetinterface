@@ -25,8 +25,7 @@
 		</p>
 
 		<p>Дополнительную информацию можно узнать по телефону технической поддержки клиентов:</p>
-		<p>8-920-22-999-87</p>
-		<p>8-473-22-999-87</p>
+		<p>@(client.GetRegion().RegionOfficePhoneNumber)</p> 
 	}
 	<form method="post" action="@Url.Action("TryToDisableWarning", "Warning")">
 		<input name="referer" type="hidden" value="!{referer}">

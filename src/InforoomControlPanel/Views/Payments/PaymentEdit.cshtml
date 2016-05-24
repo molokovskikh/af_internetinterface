@@ -133,7 +133,7 @@
 							<label class="control-label">Плательщик</label>
 						</td>
 						<td>
-							<input class="form-control" name="bankPayment.Payer.Id" id="clientReciverId" onkeyup="getPaymentReciver('#clientReciverId', '#clientReciverMessage', true, 2);" value="@(bankPayment.Payer != null ? bankPayment.Payer.Id.ToString() : "")" @(editPaymentWithoutPayer ? "" : "required")/>
+							<input class="form-control" name="bankPayment.Payer.Id" id="clientReciverId" onkeyup="getPaymentReciver('#clientReciverId', '#clientReciverMessage', true, 0);" value="@(bankPayment.Payer != null ? bankPayment.Payer.Id.ToString() : "")" required/>
 							<div id="clientReciverMessage">
 								<div style="height: 100px; overflow-y: scroll; border-top: 1px solid #E8E8E8; border-bottom: 1px solid #E8E8E8;">
 									<ul style="list-style: none;">

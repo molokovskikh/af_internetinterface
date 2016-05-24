@@ -101,7 +101,7 @@ function getPaymentReciverUpdateList() {
 		objWithRecipient.each(function() {
 			if (currentVal === $(this).html()) {
 				var recipient = $(this).attr('recipient');
-				if (recipient != undefined && recipient !== "") {
+				if (recipient != undefined && recipient !== "" && recipient !== "0") {
 					$("#RecipientDropDown option").removeClass("hid");
 					$("#RecipientDropDown option").addClass("hid");
 					var shownObj = $("#RecipientDropDown option[value='" + recipient + "']");
@@ -112,6 +112,8 @@ function getPaymentReciverUpdateList() {
 						$("#RecipientDropDown").val("");
 					}
 
+				} else {
+					$("#RecipientDropDown option").removeClass("hid");
 				}
 			}
 		});
@@ -123,7 +125,7 @@ $(function() {
 
 	$("#clientReciverId").change(
 		function() {
-			getPaymentReciver('#clientReciverId', '#clientReciverMessage', false, 2, function() {
+			getPaymentReciver('#clientReciverId', '#clientReciverMessage', false, 0, function() {
 				getPaymentReciverUpdateList();
 				$($("#clientReciverMessage [onclick*='getPaymentClientIdUpdate']")).click(function() {
 					getPaymentReciverUpdateList();

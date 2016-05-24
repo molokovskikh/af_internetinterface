@@ -45,7 +45,7 @@ namespace InforoomControlPanel.Test.Functional.infrastructure
 		public void LoginForAdmin()
 		{
 			Open();
-			WaitForVisibleCss("#username",20);
+			WaitForVisibleCss("#username",30);
 			Css("#username").SendKeys(Employee.Login);
 			Css("#password").SendKeys("1234");
 			Css(".btn-login").Click();

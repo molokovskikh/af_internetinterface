@@ -2057,6 +2057,7 @@
     <Content Include="Views\Client\subviews\modelview\_PhysicalServiceManager.cshtml" />
     <Content Include="Views\Shared\_LayoutEmpty.cshtml" />
     <Content Include="Views\Payments\PaymentByEmployees.cshtml" />
+    <Content Include="Views\Address\ConnectedHouses.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <Content Include="Views\Switch\SwitchCreate.cshtml" />
