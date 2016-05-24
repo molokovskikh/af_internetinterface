@@ -204,7 +204,24 @@ namespace Inforoom2.Components
 				if (!key.Contains(Prefix))
 					continue;
 				var name = key.Replace(Prefix + ".", "");
-				Params[name] = request[key];
+				if (Controller.HttpContext.Request.HttpMethod == "POST") {
+					var resultToSplit = request[key].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+					if (resultToSplit.Length == 1) {
+						Params[name] = resultToSplit[0];
+					}
+					else {
+						if (resultToSplit.Length > 1 && resultToSplit[0] == resultToSplit[1]) {
+							Params[name] = resultToSplit[0];
+						}
+						else {
+							Params[name] = request[key];
+						}
+					}
+				}
+				else {
+					Params[name] = request[key];
+				}
+
 				OverridenParams.Add(name);
 			}
 		}
