@@ -79,7 +79,8 @@ namespace InforoomControlPanel.ReportTemplates
 			var currenrLeaseListRaw = client.Endpoints.SelectMany(s => s.LeaseList.Select(l => l).ToList()).ToList();
 
 			foreach (var lease in currenrLeaseListRaw) {
-				var currentLease = objList.FirstOrDefault(s => s.EndpointId!=null && s.GetIpString().ToString() == lease.Ip.ToString() && s.HwId.IndexOf(lease.Mac) != -1 && s.EndpointId == lease.Endpoint.Id && s.LeaseBegin == lease.LeaseBegin);
+				var currentLease = objList.FirstOrDefault(s => s.EndpointId!=null && s.GetIpString() !=null
+				&& s.GetIpString().ToString() == lease.Ip.ToString() && s.HwId.IndexOf(lease.Mac) != -1 && s.EndpointId == lease.Endpoint.Id && s.LeaseBegin == lease.LeaseBegin);
 				if (currentLease != null) {
 					currentLease.IP = $"<span class='blue bold'>{lease.Ip.ToString()}</span>";
 					currentLease.HwId = $"<span class='blue bold'>{lease.Mac}</span>";
