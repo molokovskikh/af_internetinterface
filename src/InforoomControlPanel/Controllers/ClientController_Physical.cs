@@ -830,7 +830,7 @@ namespace InforoomControlPanel.Controllers
 			var oldPlan = client.PhysicalClient.Plan;
 			if (oldPlan != newPlan) {
 				client.PhysicalClient.Plan = newPlan;
-
+				client.Endpoints.ForEach(e => e.PackageId = newPlan.PackageSpeed.PackageId);
 				DbSession.Save(client);
 				Inforoom2.Helpers.SceHelper.UpdatePackageId(DbSession, client);
 

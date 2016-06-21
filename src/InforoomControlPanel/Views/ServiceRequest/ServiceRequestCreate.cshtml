@@ -15,9 +15,7 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Клиент</label>
 					<div class="col-sm-5">
-						<a @(serviceRequest.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
-						                                                                                         + (String.Format("UserInfo/{0}?filter.ClientCode=", serviceRequest.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-						                                                                                         + serviceRequest.Client.Id)">
+						<a @(serviceRequest.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") href="@Url.Action(serviceRequest.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {serviceRequest.Client.Id})">
 							@serviceRequest.Client.Fullname</a>
 					</div>
 				</div>
@@ -88,9 +86,7 @@
 				<a href="@Url.Action("ServiceRequestEdit", "ServiceRequest", new {id = request.Id})" target="_blank">@request.Id</a>
 			</td>
 			<td>
-				<a @(request.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld")
-				                                                                                  + (String.Format("UserInfo/{0}?filter.ClientCode=", request.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-				                                                                                  + request.Client.Id)">
+				<a @(request.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") target="_blank" href="@Url.Action(request.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {request.Client.Id})">
 					@request.Client.Id</a>
 			</td>
 			<td>@(request.Client.PhysicalClient != null ? request.Client.PhysicalClient.FullName : request.Client._Name)</td>

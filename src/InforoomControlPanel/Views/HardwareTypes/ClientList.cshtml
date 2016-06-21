@@ -82,13 +82,9 @@
 					<td><a href="@Url.Action("InfoPhysical", "Client", new { id = item.Id })">@item.PhysicalClient.FullName</a></td>
 					<td><a href="@Url.Action("InfoPhysical", "Client", new { id = item.Id })">@item.RentalHardwareList.Count(s => s.IsActive)</a></td>
 					<td>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("InfoPhysical", "Client", new { id = item.Id })">
+						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action(item.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {item.Id})">
 							<i class="entypo-plus-circled"></i>
 							Просмотреть
-						</a>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@string.Format("{0}UserInfo/ShowPhysicalClient?filter.ClientCode={1}", @ConfigHelper.GetParam("adminPanelOld"), item.Id)"> 
-							<i class="entypo-plus-circled"></i>
-							ЛК в старом ИИ
 						</a>
 					</td>
 				</tr>

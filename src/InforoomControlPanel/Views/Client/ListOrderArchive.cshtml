@@ -62,7 +62,7 @@
 		<tbody>
 			@foreach (var item in clientOrder)
 			{
-				<tr class="serv">
+				<tr class="serv@((item.IsToBeClosed() &&!item.IsDeactivated)?" backIsRed":"")">
 					<td>@item.Number</td>
 					<td>@(item.BeginDate.HasValue && item.BeginDate.Value != DateTime.MinValue ? item.BeginDate.Value.ToShortDateString() : "")</td>
 					<td>@(item.EndDate.HasValue && item.EndDate.Value!=DateTime.MinValue ? item.EndDate.Value.ToShortDateString() : "")</td>

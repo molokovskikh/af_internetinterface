@@ -140,7 +140,7 @@ namespace Billing
 						updateClient.LawyerPerson.Balance += Convert.ToDecimal(payment.Sum);
 						payment.BillingAccount = true;
 						//Разблокировка при положительном балансе
-						if (updateClient.LawyerPerson.Balance >= 0) {
+						if (updateClient.LawyerPerson.Balance >= 0 && updateClient.Status.Id != (int)StatusType.Dissolved) {
 							updateClient.SetStatus(StatusType.Worked, session);
 							updateClient.CreareAppeal("Клиент разблокирован", AppealType.Statistic);
 						}

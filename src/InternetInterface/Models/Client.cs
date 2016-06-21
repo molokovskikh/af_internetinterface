@@ -61,7 +61,8 @@ namespace InternetInterface.Models
 			PercentBalance = 0.8m;
 			Status = settings.DefaultStatus;
 			Recipient = settings.DefaultRecipient;
-			foreach (var defaultService in settings.DefaultServices) ClientServices.Add(new ClientService(this, defaultService));
+			foreach (var defaultService in settings.DefaultServices)
+				ClientServices.Add(new ClientService(this, defaultService));
 		}
 
 		public Client(LawyerPerson person, Partner partner)
@@ -322,7 +323,7 @@ namespace InternetInterface.Models
 
 		public virtual bool HavePaymentToStart()
 		{
-			if (Status.Type == StatusType.BlockedForRepair)
+			if (Status.Type == StatusType.BlockedForRepair || Status.Type == StatusType.Dissolved)
 				return false;
 			var forbiddenByService = ClientServices.Any(s => s.Service.BlockingAll && s.IsActivated);
 			if (forbiddenByService)
@@ -412,7 +413,8 @@ namespace InternetInterface.Models
 			var result = String.Empty;
 			if (!String.IsNullOrEmpty(query)) {
 				var contacts = Contacts.Where(c => c.Text.Contains(query));
-				foreach (var contact in contacts) doContact(contact);
+				foreach (var contact in contacts)
+					doContact(contact);
 			}
 			if (String.IsNullOrEmpty(result)) {
 				return Contact;
@@ -824,7 +826,9 @@ where CE.Client = {0}", Id))
 		/// </summary>
 		public virtual void Enable(bool showBalanceWarningPage = false)
 		{
-			SetStatus(Status.Find((uint)StatusType.Worked),showBalanceWarningPage:showBalanceWarningPage);
+			if (Status.Type != StatusType.Dissolved) {
+				SetStatus(Status.Find((uint)StatusType.Worked), showBalanceWarningPage: showBalanceWarningPage);
+			}
 		}
 
 		/// <summary>
@@ -1110,7 +1114,7 @@ where CE.Client = {0}", Id))
 
 		public virtual void SetStatus(StatusType status, ISession session, bool showBalanceWarningPage = false)
 		{
-			SetStatus(session.Load<Status>((uint)status),showBalanceWarningPage:showBalanceWarningPage);
+			SetStatus(session.Load<Status>((uint)status), showBalanceWarningPage: showBalanceWarningPage);
 		}
 
 		public virtual void SetStatus(Status status, decimal sale = 0m, bool showBalanceWarningPage = false)
@@ -1134,7 +1138,7 @@ where CE.Client = {0}", Id))
 					RatedPeriodDate = null;
 				DebtDays = 0;
 				ShowBalanceWarningPage = showBalanceWarningPage;
-			} 
+			}
 			else if (status.Type == StatusType.Dissolved) {
 				Sale = sale;
 			}

@@ -146,9 +146,7 @@
 						<a href="@Url.Action("ServiceRequestEdit", "ServiceRequest", new { id = request.Id })">@request.Id</a>
 					</td>
 					<td>
-						<a @(request.Client.PhysicalClient == null ? "style=color:#0D90D4;" : "") href="@(ConfigHelper.GetParam("adminPanelOld")
-						                                                                                  + (String.Format("UserInfo/{0}?filter.ClientCode=", request.Client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-						                                                                                  + request.Client.Id)">@request.Client.Id</a>
+						<a target="_blank" href="@Url.Action(request.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {request.Client.Id})" class="idColumn @(request.Client.PhysicalClient != null ? "linkPhysical" : "linkLegal")"> @request.Client.Id</a>	
 					</td>
 					<td>@(request.Client.PhysicalClient != null ? request.Client.PhysicalClient.FullName : request.Client._Name)</td>
 					<td>@(request.Description != null ? request.Description.Length > 100 ? request.Description.Substring(0, 100) + "..." : request.Description : "")</td>

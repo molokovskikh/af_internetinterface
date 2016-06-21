@@ -144,6 +144,35 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Assert.That(CurrentClient.Discount, Is.EqualTo(0), "Скидка не совпадает.");
 				Assert.That(internetService.IsActivated, Is.EqualTo(false), "Сервис 'Интернет' не совпадает.");
 				Assert.That(CurrentClient.Endpoints.Count, Is.EqualTo(0), "Отмена блокировки не совпадает.");
+
+				//Добавляем платеж, статус измениться не должен
+				var payment = new Payment()
+				{
+					Client = CurrentClient,
+					Employee = Employee,
+					PaidOn = SystemTime.Now(),
+					RecievedOn = SystemTime.Now(),
+					Sum = 10000
+				};
+				CurrentClient.Payments.Add(payment);
+				DbSession.Save(payment); 
+				//запускаем биллинг
+				CurrentClient.PaidDay = false;
+				DbSession.Save(CurrentClient);
+				RunBillingProcessPayments();
+				RunBillingProcessWriteoffs();
+				//Обновляем модель клиента
+				DbSession.Refresh(CurrentClient);
+				DbSession.Refresh(CurrentClient.LegalClient);
+				DbSession.Refresh(internetService);
+				//Проверяем изменения
+				Assert.That(CurrentClient.Status.Type, Is.EqualTo(StatusType.Dissolved), "Статус не совпадает.");
+				Assert.That(CurrentClient.Disabled, Is.EqualTo(true), "Состояние не совпадает.");
+				Assert.That(CurrentClient.AutoUnblocked, Is.EqualTo(false), "Состояние не совпадает.");
+				Assert.That(CurrentClient.Discount, Is.EqualTo(0), "Скидка не совпадает.");
+				Assert.That(internetService.IsActivated, Is.EqualTo(false), "Сервис 'Интернет' не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count, Is.EqualTo(0), "Отмена блокировки не совпадает.");
+
 			}
 		}
 
@@ -820,7 +849,14 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			WaitForText("Закрытие заказа", 10);
 			//сохранение изменений
 			browser.FindElementByCssSelector("#ModelForOrderRemove .btn-success").Click();
-
+			CurrentClient.PaidDay = false;
+			DbSession.Save(CurrentClient);
+			DbSession.Flush();
+			RunBillingProcessPayments(CurrentClient);
+			RunBillingProcessWriteoffs(CurrentClient, false);
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.LegalClient);
+			Open("Client/InfoLegal/" + CurrentClient.Id);
 			WaitForText("Номер лицевого счета", 10);
 			AssertNoText("3377800", "#emptyBlock_legalOrders", "Заказ не отменен!");
 		}

@@ -48,7 +48,8 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult ListOrderArchive(int id)
 		{
 			var pager = new InforoomModelFilter<ClientOrder>(this);
-			pager.GetCriteria(s => s.Client.Id == id && s.IsDeactivated);
+			var date = SystemTime.Now();
+			pager.GetCriteria(s => s.Client.Id == id && (s.EndDate <= date || s.IsDeactivated));
 			var ordertList = pager.GetItems();
 			var client = DbSession.Query<Client>().FirstOrDefault(s => s.Id == id);
 			ViewBag.Client = client;
@@ -107,7 +108,7 @@ namespace InforoomControlPanel.Controllers
 			bool updateSce = false;
 			// Получаем клиента
 			if (clientModelItem != null && clientModelItem as Client != null) {
-				var clientModel = (Client) clientModelItem;
+				var clientModel = (Client)clientModelItem;
 				//подпредставление "контакты"
 				if (subViewName == "_Contacts") {
 					var listForAppeal = new List<string>();
@@ -119,8 +120,7 @@ namespace InforoomControlPanel.Controllers
 						DbSession.Delete(item);
 					}
 					//обновление контактов, задание нужных полей при добавлении
-					clientModel.Contacts.Each(s =>
-					{
+					clientModel.Contacts.Each(s => {
 						s.Client = clientModel;
 						s.ContactString = s.ContactFormatString;
 						s.ContactName = s.ContactName == string.Empty ? null : s.ContactName; // в БД по умолчанию Null а не пустое значение  
@@ -158,12 +158,17 @@ namespace InforoomControlPanel.Controllers
 				}
 				if (subViewName == "_Endpoint") {
 					clientModel.Endpoints.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
+					updateSce = true;
 				}
-
-				if (string.IsNullOrEmpty(clientStatusChangeComment) && clientStatus != 0 &&
-				    clientStatus != (int) clientModel.Status.Type
-				    && clientStatus == (int) StatusType.Dissolved) {
-					errors.Add(new InvalidValue("Не указана причина изменения статуса", typeof (Status), "clientStatusChangeComment",
+				if (subViewName == "_legalOrders") {
+					clientModel.LegalClientOrders.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
+					updateSce = true;
+				}
+				
+        if (string.IsNullOrEmpty(clientStatusChangeComment) && clientStatus != 0 &&
+				    clientStatus != (int)clientModel.Status.Type
+				    && clientStatus == (int)StatusType.Dissolved) {
+					errors.Add(new InvalidValue("Не указана причина изменения статуса", typeof(Status), "clientStatusChangeComment",
 						clientModel,
 						clientModel, new List<object>()));
 					ErrorMessage("Не указана причина изменения статуса");
@@ -171,12 +176,12 @@ namespace InforoomControlPanel.Controllers
 				}
 
 				//обновление статуса клиента, если он отличается от текущего
-				if (clientStatus != 0 && clientStatus != (int) clientModel.Status.Type && errors.Length == 0) {
+				if (clientStatus != 0 && clientStatus != (int)clientModel.Status.Type && errors.Length == 0) {
 					var newStatus = DbSession.Query<Status>().FirstOrDefault(s => s.Id == clientStatus);
 					var messageAlert = clientModel.TryToChangeStatus(DbSession, newStatus, GetCurrentEmployee(), ref updateSce);
 					if (!string.IsNullOrEmpty(messageAlert)) {
 						ErrorMessage(messageAlert);
-						errors.Add(new InvalidValue("", typeof (Status), "Name", newStatus, newStatus, new List<object>()));
+						errors.Add(new InvalidValue("", typeof(Status), "Name", newStatus, newStatus, new List<object>()));
 					}
 					else {
 						clientModel.Appeals.Add(new Appeal($"Комментарий к изменению статуса: {clientStatusChangeComment}",
@@ -195,8 +200,7 @@ namespace InforoomControlPanel.Controllers
 						Inforoom2.Helpers.SceHelper.UpdatePackageId(DbSession, clientModel);
 					}
 					return RedirectToAction("InfoLegal",
-						new
-						{
+						new {
 							@id = id,
 							@clientModelItem = clientModelItem,
 							@subViewName = subViewName,
@@ -215,8 +219,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			//--------------------------------------------------------------------------------------| Получение списка оповещений
 			// список оповещений
-			var appeals = client.Appeals.Select(s => new Appeal()
-			{
+			var appeals = client.Appeals.Select(s => new Appeal() {
 				Client = s.Client,
 				AppealType = s.AppealType,
 				Date = s.Date,
@@ -226,15 +229,13 @@ namespace InforoomControlPanel.Controllers
 			}).ToList();
 			//если задан тип сообщений, фильтруем по типу
 			if (appealType != 0) {
-				appeals = appeals.Where(s => (int) s.AppealType == appealType).ToList();
+				appeals = appeals.Where(s => (int)s.AppealType == appealType).ToList();
 			}
 			else {
 				//при выводе всех сообщений, нужно учесть комментарии к сервисным заявкам
 				string pattern = "<li><span>{0}</span> - <span>{1}:</span><br/><span>{2}</span></li>";
-				appeals.AddEach(client.ServiceRequests.Select(s =>
-				{
-					return new Appeal()
-					{
+				appeals.AddEach(client.ServiceRequests.Select(s => {
+					return new Appeal() {
 						Client = s.Client,
 						AppealType = AppealType.All,
 						Date = s.CreationDate,
@@ -242,7 +243,7 @@ namespace InforoomControlPanel.Controllers
 						inforoom2 = true,
 						Message =
 							"<p>Сервисная заявка № <a target=_blank href=" +
-							Url.Action("ServiceRequestEdit", "ServiceRequest", new {@id = s.Id}) + ">" +
+							Url.Action("ServiceRequestEdit", "ServiceRequest", new { @id = s.Id }) + ">" +
 							s.Id + "</a>. " + s.Description + "</p>" + "<p><ul>" +
 							String.Join("", s.ServiceRequestComments.Select(d =>
 								string.Format(pattern, d.CreationDate, d.Author.Name, d.Comment)).ToList()
@@ -255,8 +256,7 @@ namespace InforoomControlPanel.Controllers
 			//--------------------------------------------------------------------------------------| Получение списка списаний
 			//получение списка списаний
 			var writeoffsAndUserWriteOff = new List<object>();
-			writeoffsAndUserWriteOff.AddRange(client.WriteOffs.Select(s => new WriteOff()
-			{
+			writeoffsAndUserWriteOff.AddRange(client.WriteOffs.Select(s => new WriteOff() {
 				Id = s.Id,
 				Sale = s.Sale,
 				Comment = s.Comment,
@@ -267,8 +267,7 @@ namespace InforoomControlPanel.Controllers
 				MoneySum = s.MoneySum
 			}).ToList());
 			//дополнение списка пользовательскими списаниями
-			writeoffsAndUserWriteOff.AddRange(client.UserWriteOffs.Select(s => new UserWriteOff()
-			{
+			writeoffsAndUserWriteOff.AddRange(client.UserWriteOffs.Select(s => new UserWriteOff() {
 				Comment = s.Comment,
 				Date = s.Date,
 				Sum = s.Sum,
@@ -279,7 +278,7 @@ namespace InforoomControlPanel.Controllers
 			//сортировка списка списаний
 			writeoffsAndUserWriteOff =
 				writeoffsAndUserWriteOff.OrderByDescending(
-					s => s as WriteOff != null ? ((WriteOff) s).WriteOffDate : ((UserWriteOff) s).Date).ToList();
+					s => s as WriteOff != null ? ((WriteOff)s).WriteOffDate : ((UserWriteOff)s).Date).ToList();
 			//--------------------------------------------------------------------------------------| Передача значений на форму
 			var activeServices = client.RentalHardwareList.Where(rh => rh.IsActive).ToList();
 			ViewBag.RentIsActive = activeServices.Count > 0;
@@ -301,9 +300,9 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.IpPoolRegionList = DbSession.Query<IpPoolRegion>().Where(s => s.Region == client.GetRegion()).ToList();
 			//передаем на форму - список статусов клиента
 			ViewBag.StatusList = DbSession.Query<Status>().Where(s =>
-				s.Id == (int) StatusType.Worked
-				|| s.Id == (int) StatusType.NoWorked
-				|| s.Id == (int) StatusType.Dissolved).OrderBy(s => s.Name).ToList();
+				s.Id == (int)StatusType.Worked
+				|| s.Id == (int)StatusType.NoWorked
+				|| s.Id == (int)StatusType.Dissolved).OrderBy(s => s.Name).ToList();
 			//список коммутаторов для региона клиента
 			ViewBag.SwitchList =
 				DbSession.Query<Switch>().Where(s => client.LegalClient.Region != null && s.Zone.Region.Id == client.LegalClient.Region.Id).OrderBy(s => s.Name).ToList();
@@ -312,12 +311,12 @@ namespace InforoomControlPanel.Controllers
 			//ViewBag.PlanList = DbSession.Query<Plan>().Where(s => !s.Disabled).OrderBy(s => s.Name).ToList();
 
 			ViewBag.ServiceToActivate =
-				DbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof (WorkLawyer)));
+				DbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof(WorkLawyer)));
 			//передаем на форму - клиента
 			ViewBag.Client = client;
 
 
-			ViewBag.ActionName = ((string) ViewBag.ActionName) + " hid";
+			ViewBag.ActionName = ((string)ViewBag.ActionName) + " hid";
 			return View();
 		}
 
@@ -338,7 +337,7 @@ namespace InforoomControlPanel.Controllers
 		{
 			//создание нового оповещения
 			if (!string.IsNullOrEmpty(newUserAppeal)) {
-				var newAppeal = new Appeal(newUserAppeal, client, AppealType.User) {Employee = GetCurrentEmployee()};
+				var newAppeal = new Appeal(newUserAppeal, client, AppealType.User) { Employee = GetCurrentEmployee() };
 				newAppeal.Message = newAppeal.Message.ReplaceSharpWithRedmine();
 				DbSession.Save(newAppeal);
 			}
@@ -354,7 +353,8 @@ namespace InforoomControlPanel.Controllers
 			bool noEndpoint)
 		{
 			if (staticAddress != null)
-				foreach (var item in staticAddress) item.Mask = item.Mask.HasValue && item.Mask.Value == 0 ? 32 : item.Mask;
+				foreach (var item in staticAddress)
+					item.Mask = item.Mask.HasValue && item.Mask.Value == 0 ? 32 : item.Mask;
 			if (client == null || client.Id == 0 || client.LegalClient == null) {
 				return RedirectToAction("List");
 			}
@@ -364,7 +364,7 @@ namespace InforoomControlPanel.Controllers
 			if (message != "") {
 				ErrorMessage(message);
 				DbSession.Refresh(client);
-				return RedirectToAction("InfoLegal", new {@Id = client.Id, @subViewName = subViewName});
+				return RedirectToAction("InfoLegal", new { @Id = client.Id, @subViewName = subViewName });
 			}
 
 			//обработка модели клиента, сохранение, передача необходимых данных на форму.
@@ -375,32 +375,40 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult DeleteClientEndpoint(int endpointId)
 		{
 			var endpoint = DbSession.Load<ClientEndpoint>(endpointId);
-			endpoint.Client.RemoveEndpoint(endpoint, DbSession);
-			DbSession.Save(endpoint.Client);
+			var date = SystemTime.Now();
+			if (endpoint.Client.IsLegalClient && endpoint.Client.LegalClientOrders.Count(s => s.EndDate > date && (s.Disabled || s.IsDeactivated == false) && s.EndPoint.Id == endpointId) > 0) {
+				ErrorMessage("Точка подключения не может быть удалена, т.к. она используется в других действующих заказах.");
+			}
+			else {
+				endpoint.Client.RemoveEndpoint(endpoint, DbSession);
+				DbSession.Save(endpoint.Client);
+				SuccessMessage("Точка подключения была успешно удалена."); 
+				endpoint.Client.Appeals.Add(new Appeal($"Точка подключения №{endpointId} была удалена.", endpoint.Client,AppealType.Statistic,GetCurrentEmployee()));
+      }
 			//	DbSession.Save(new Appeal("", endpoint.Client, AppealType.System));
-			return RedirectToAction("InfoLegal", new {endpoint.Client.Id});
+			return RedirectToAction("InfoLegal", new { endpoint.Client.Id });
 		}
 
 		[HttpPost]
 		public ActionResult CloseClientOrder(int orderId, DateTime? orderCloseDate)
 		{
 			var order = DbSession.Load<ClientOrder>(orderId);
-			if (orderCloseDate != null)
+			if (orderCloseDate != null) {
+				order.Disabled = false;
 				order.EndDate = orderCloseDate;
+			}
 			else {
-				order.IsDeactivated = true;
+				order.Disabled = true;
 				order.EndDate = DateTime.Today;
 			}
 			order.SendMailAboutClose(DbSession, GetCurrentEmployee());
 
-			var message = order.IsDeactivated
-				? $"Заказ №{order.Number} успешно закрыт и перенесен в архив"
-				: $"Заказ №{order.Number} будет закрыт и перенесен в архив {order.EndDate.GetValueOrDefault().ToShortDateString()}";
+			var message = $"Заказ №{order.Number} будет закрыт и перенесен в архив {order.EndDate.GetValueOrDefault().ToShortDateString()}";
 			order.Client.Appeals.Add(new Appeal(message, order.Client, AppealType.System, GetCurrentEmployee()));
 			SuccessMessage(message);
 			DbSession.Save(order);
 
-			return RedirectToAction("InfoLegal", new {order.Client.Id});
+			return RedirectToAction("InfoLegal", new { order.Client.Id });
 		}
 
 
@@ -413,7 +421,7 @@ namespace InforoomControlPanel.Controllers
 			var order = DbSession.Get<ClientOrder>(orderId);
 			order.ConnectionAddress = newAddress;
 			DbSession.Save(order);
-			return RedirectToAction("InfoLegal", new {order.Client.Id, subViewName = "_LegalOrders"});
+			return RedirectToAction("InfoLegal", new { order.Client.Id, subViewName = "_LegalOrders" });
 		}
 
 		/// <summary>
@@ -441,8 +449,7 @@ namespace InforoomControlPanel.Controllers
 				}
 				var lastUsage = lastUsageCause.OrderByDescending(s => s.Id).FirstOrDefault();
 				string address = lastUsage != null ? lastUsage.ConnectionAddress : "";
-				var endpointBox = new ViewModelClientEndpoint()
-				{
+				var endpointBox = new ViewModelClientEndpoint() {
 					Id = endpoint.Id,
 					Switch = endpoint.Switch.Id,
 					Ip = endpoint.Ip != null ? endpoint.Ip.ToString() : "",
@@ -452,10 +459,10 @@ namespace InforoomControlPanel.Controllers
 					PackageId = endpoint.PackageId ?? 0,
 					Monitoring = endpoint.Monitoring,
 					LeaseList =
-						endpoint.LeaseList.OrderByDescending(s=>s.LeaseBegin).ThenBy(s=>s.LeaseEnd)
-						.GroupBy(s => s.Mac).Select(s => new Tuple<string, bool>(s.First().Ip.ToString(), s.First().LeaseEnd < SystemTime.Now())).ToList(),
+						endpoint.LeaseList.OrderByDescending(s => s.LeaseBegin).ThenBy(s => s.LeaseEnd)
+							.GroupBy(s => s.Mac).Select(s => new Tuple<string, bool>(s.First().Ip.ToString(), s.First().LeaseEnd < SystemTime.Now())).ToList(),
 					StaticIpList =
-						endpoint.StaticIpList.Select(s => new {@Id = s.Id, @Ip = s.Ip, @Mask = s.Mask, @Subnet = s.GetSubnet()}).ToList()
+						endpoint.StaticIpList.Select(s => new { @Id = s.Id, @Ip = s.Ip, @Mask = s.Mask, @Subnet = s.GetSubnet() }).ToList()
 				};
 				return Json(endpointBox, JsonRequestBehavior.AllowGet);
 			}
@@ -471,15 +478,14 @@ namespace InforoomControlPanel.Controllers
 			if (id != null && id != 0) {
 				var order = DbSession.Get<ClientOrder>(id);
 				if (order != null) {
-					var orderBox = new ViewModelClientOrder()
-					{
+					var orderBox = new ViewModelClientOrder() {
 						EndPoint = order.EndPoint != null ? order.EndPoint.Id : 0,
 						Number = order.Number,
 						BeginDate = order.BeginDate.GetValueOrDefault().ToShortDateString(),
 						EndDate = order.EndDate.HasValue ? order.EndDate.Value.ToShortDateString() : "",
 						OrderServices =
 							order.OrderServices.Select(
-								s => new OrderService() {Id = s.Id, Cost = s.Cost, Description = s.Description, IsPeriodic = s.IsPeriodic})
+								s => new OrderService() { Id = s.Id, Cost = s.Cost, Description = s.Description, IsPeriodic = s.IsPeriodic })
 								.ToList(),
 						ClientEndpoints = order.Client.Endpoints.Select(s => s.Id).ToList()
 					};
@@ -489,8 +495,7 @@ namespace InforoomControlPanel.Controllers
 			if ((id == null || id == 0) && clientId != 0) {
 				var client = DbSession.Get<Client>(clientId);
 				if (client != null) {
-					var orderBox = new ViewModelClientOrder()
-					{
+					var orderBox = new ViewModelClientOrder() {
 						EndPoint = 0,
 						Number = client.LegalClientOrders.Select(s => s.Number).MaxOrDefault() + 1,
 						BeginDate = SystemTime.Now().ToShortDateString(),

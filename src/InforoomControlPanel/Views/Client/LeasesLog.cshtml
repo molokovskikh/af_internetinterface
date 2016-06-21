@@ -6,7 +6,7 @@
 @using Inforoom2.Models
 @using InforoomControlPanel.ReportTemplates
 @{
-	ViewBag.Title = "Обращения";
+	ViewBag.Title = "Аренды";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	var client = (Client) ViewBag.Client;
 	FilterReport<Internetsessionslog> pager = ViewBag.Pager;
@@ -20,9 +20,7 @@
 		@Html.HiddenFor(s => client.Id, new {@name = "Id"})
 		<h4>
 			Статистика работы клиента:
-			<a @(client.PhysicalClient == null ? "style=color:#0D90D4;" : "") class="idColumn" target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld")
-			                                                                                                           + (String.Format("UserInfo/{0}?filter.ClientCode=", client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-			                                                                                                           + client.Id)">
+			<a @(client.PhysicalClient == null ? "style=color:#0D90D4;" : "") class="idColumn" target="_blank" href="@Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {client.Id})">
 				@client.Id
 			</a> -
 			<a class="clientName" target="_blank" href="@(client.PhysicalClient == null ? Url.Action("InfoLegal", new {id = client.Id}) : Url.Action("InfoPhysical", new {id = client.Id}))">

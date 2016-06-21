@@ -319,7 +319,7 @@
 					<a target="_blank" href="@Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {client.Id})" class="idColumn @(client.PhysicalClient != null ? "linkPhysical" : "linkLegal")"> @client.ClientId</a>
 				</td>
 				<td @(client.IsOnlineCheck() ? " class=online " : "")>
-					<a class="clientName" target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld") + (String.Format("UserInfo/{0}?filter.ClientCode=", client.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson")) + client.Id)">
+					<a class="clientName" target="_blank" href="@Url.Action(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {client.Id})">
 						<span>@(clientItem.GetName())</span>
 					</a>
 				</td>
