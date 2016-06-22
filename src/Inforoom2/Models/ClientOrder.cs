@@ -5,6 +5,7 @@ using System.Web;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Intefaces;
@@ -32,6 +33,10 @@ namespace Inforoom2.Models
 
 		[Property, Description("Дата окончания заказа")]
 		public virtual DateTime? EndDate { get; set; }
+
+		//состояние заказа, выставленное пользователем
+		[Property]
+		public virtual bool Disabled { get; set; }
 
 		//обработана ли активация заказ, устанавливает биллинг нужен для учета списаний не периодических услуг
 		[Property, Description("Активирован")]
@@ -74,6 +79,11 @@ namespace Inforoom2.Models
 				"EndPoint",
 				"OrderServices"
 			};
+		}
+
+		public virtual bool IsToBeClosed()
+		{
+			return EndDate.HasValue && EndDate.Value <= SystemTime.Now().Date;
 		}
 
 		public virtual string GetAdditionalAppealInfo(string property, object oldPropertyValue, ISession session)

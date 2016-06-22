@@ -172,7 +172,7 @@
 				<tr>
 					<td>IP-пул</td>
 					<td>
-						<span>@(endpoint.Pool != null ? endpoint.Pool.Id + ( ipPoolRegionList.Count>0? " (" + ipPoolRegionList.FirstOrDefault(s => s.IpPool.Id == endpoint.Pool.Id).Description + ")" : "") : "")</span>
+						<span>@(endpoint.Pool != null ? endpoint.Pool.Id + ( ipPoolRegionList.Count(s => s.IpPool.Id == endpoint.Pool.Id) >0? " (" + ipPoolRegionList.FirstOrDefault(s => s.IpPool.Id == endpoint.Pool.Id).Description + ")" : "") : "")</span>
 					</td>
 				</tr>
 				<tr>
@@ -180,7 +180,7 @@
 						<a target="_blank" href="@Url.Action("EditSwitch","Switch",new { endpoint.Switch.Id})"> Коммутатор</a>
 					</td>
 					<td>
-						<a target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld") + "Hardware/PortInfo?endPoint=" + endpoint.Id)">@(endpoint.Switch.Name + " (" + endpoint.Switch.Ip.ToString() + ")")</a>
+						<a target="_blank" href="@Url.Action("ClientEndPointState","Switch",new {id = endpoint.Id})">@(endpoint.Switch.Name + " (" + endpoint.Switch.Ip.ToString() + ")")</a>
 					</td>
 				</tr>
 				<tr>

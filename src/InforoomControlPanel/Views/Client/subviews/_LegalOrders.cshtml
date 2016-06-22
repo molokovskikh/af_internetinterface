@@ -44,7 +44,7 @@
 						<td class="orderColumn">
 							<div id="@(orderList[i].Id)" class="order">
 								<h5>
-									<strong class="orderTitle entypo-right-open-mini">
+									<strong class="orderTitle entypo-right-open-mini@(orderList[i].IsToBeClosed() && !orderList[i].IsDeactivated?" backIsRed":"")">
 										Информация о заказе №<span class="red bold">@(orderList[i].Number)</span>
 										@{
 											var comment = orderList[i].EndPoint == null && orderList[i].OrderServices.Count > 0 ? orderList[i].OrderServices.FirstOrDefault().Description : "";

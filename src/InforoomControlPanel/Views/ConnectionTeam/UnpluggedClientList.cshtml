@@ -107,9 +107,7 @@
 		@foreach (var item in Clients) {
 			<tr role="row" class="odd">
 				<td>
-					<a @(item.PhysicalClient == null ? "style=color:#0D90D4;" : "") target="_blank" href="@(ConfigHelper.GetParam("adminPanelOld")
-					                                                                        + (String.Format("UserInfo/{0}?filter.ClientCode=", item.PhysicalClient != null ? "ShowPhysicalClient" : "ShowLawyerPerson"))
-					                                                                        + item.Id)">
+					<a @(item.PhysicalClient == null ? "style=color:#0D90D4;" : "") target="_blank" href="@Url.Action(item.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {item.Id})">
 						@item.Id</a>
 				</td>
 				<td>@item.Fullname</td>

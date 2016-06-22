@@ -82,7 +82,12 @@
 								<span>@item.Id</span>
 							}
 							else {
-								<a target="_blank" href="@Url.Action("ContractOfAgency", new {item.Id})">@item.Id</a>
+								if (item.Client.IsPhysicalClient) {
+									<a target="_blank" href="@Url.Action("ContractOfAgency", new { item.Id })">@item.Id</a>
+								}
+								else {
+									<span>@item.Id</span>
+								}
 							}
 
 						</td>

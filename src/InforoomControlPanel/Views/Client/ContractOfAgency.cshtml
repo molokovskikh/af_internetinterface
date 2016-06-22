@@ -46,13 +46,13 @@
 		<strong>ДОГОВОР ПОРУЧЕНИЯ № @payment.Id</strong>
 	</h3>
 	<p>
-		г. Воронеж&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@System.DateTime.Now.ToString("D")
+		г. Воронеж&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@(payment.RecievedOn != null ? payment.RecievedOn.ToString("D") : "")
 	</p>
 	Гражданин <b>@payment.Client.Fullname,</b><br>
 	@payment.Client.PhysicalClient.SafeIdDocName <b>@payment.Client.PhysicalClient.PassportSeries \ @payment.Client.PhysicalClient.PassportNumber выдан @payment.Client.PhysicalClient.PassportResidention</b><br>
 	Зарегистрирован по адресу <b>@payment.Client.PhysicalClient.RegistrationAddress</b><br>
 	именуемый в дальнейшем «Доверитель» с одной стороны и<br>
-	@employee.Name<br>
+	@(payment.Employee != null ? payment.Employee.Name : "")<br>
 	именуемый в дальнейшем «Поверенный» с другой стороны, заключили настоящий договор о нижеследующем:<br>
 
 	<h4>1. Предмет договора</h4>
@@ -96,7 +96,7 @@
 		<strong>Расписка</strong>
 	</h3>
 	<div>
-		<b>Я, @employee.Name, получил(а) от гражданина</b> @payment.Client.Fullname денежную сумму в размере <b>@payment.SumToLiteral()</b> в исполнении по Договору Поручению № <b>@payment.Id</b>
+		<b>Я, @(payment.Employee != null ? payment.Employee.Name : ""), получил(а) от гражданина</b> @payment.Client.Fullname денежную сумму в размере <b>@payment.SumToLiteral()</b> в исполнении по Договору Поручению № <b>@payment.Id</b>
 	</div>
 	<table class="sing" style=" font-size: 12px;">
 		<tr>

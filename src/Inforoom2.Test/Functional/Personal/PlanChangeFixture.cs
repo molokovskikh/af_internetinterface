@@ -59,7 +59,8 @@ namespace Inforoom2.Test.Functional.Personal
 			PlanChangerFixtureOn(0);
 			var anotherClient = DbSession.Query<Client>().First(i => i.Comment == ClientCreateHelper.ClientMark.clientWithRegionalPlan.GetDescription());
 			LoginForClient(anotherClient);
-			AssertText("ЛИЧНЫЙ КАБИНЕТ: ПРОФИЛЬ");
+			Open("/");
+			AssertText("НОВОСТИ");
 		}
 
 		[Test(Description = "Проверка отработки актуального PlanChanger сервиса у клиента - с целевым планом")]
@@ -67,7 +68,8 @@ namespace Inforoom2.Test.Functional.Personal
 		{
 			PlanChangerFixtureOn(100);
 			LoginForClient(CurrentClient);
-			AssertText("ЛИЧНЫЙ КАБИНЕТ: ПРОФИЛЬ");
+			Open("/");
+			AssertText("НОВОСТИ");
 		}
 
 		[Test(Description = "Проверка отработки просроченного PlanChanger сервиса у клиента - с целевым планом")]
@@ -75,7 +77,8 @@ namespace Inforoom2.Test.Functional.Personal
 		{
 			PlanChangerFixtureOn(0);
 			LoginForClient(CurrentClient);
-			AssertText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
+			Open("/");
+			AssertNoText("НОВОСТИ");
 		}
 
 
@@ -84,6 +87,7 @@ namespace Inforoom2.Test.Functional.Personal
 		{
 			PlanChangerFixtureOn(0);
 			LoginForClient(CurrentClient);
+			Open("/");
 			browser.FindElementByCssSelector("#changeTariffButtonCheap").Click();
 			browser.FindElementByCssSelector(".window .click.ok").Click();
 			// клиент должен перейти на дешелый тириф
@@ -95,6 +99,7 @@ namespace Inforoom2.Test.Functional.Personal
 		{
 			PlanChangerFixtureOn(0);
 			LoginForClient(CurrentClient);
+			Open("/");
 			browser.FindElementByCssSelector("#changeTariffButtonFast").Click();
 			browser.FindElementByCssSelector(".window .click.ok").Click();
 			// клиент должен перейти на быстрый тириф
@@ -104,56 +109,24 @@ namespace Inforoom2.Test.Functional.Personal
 		[Test(Description = "Проверка возврата переадресации Warning(ом) с главной станицы на выбор тарифа, если отработал PlanChanger (проверка паспортных данных)")]
 		public void PlanChangerWithWarningFixtureFromMainToPlanChange()
 		{
-			var passportSeries = "1234";
-			var passportNumber = "123456";
-			var passportResidention = "УФМС россии по гор. Воронежу, по райнону Северный"; // "Паспортно-визовое отделение по району северный гор. Воронежа";
-			var passportAddress = "г. Борисоглебск, улица ленина, 20"; //"г. Воронеж, студенческая ул, д12";
-
 			CurrentClient = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("без паспортных данных"));
 			PlanChangerFixtureOn(0, false);
 			LoginForClient(CurrentClient);
-			AssertText("У вас не заполнены паспортные данные");
-			Css(".warning").Click();
-
 			Open("/");
-			AssertNoText("НОВОСТИ");
-			AssertText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
-			Open("Warning");
-			Css(".warning").Click();
-
-			var series = browser.FindElementByCssSelector("input[name='physicalClient.PassportSeries']");
-			series.SendKeys(passportSeries);
-
-			var number = browser.FindElementByCssSelector("input[name='physicalClient.PassportNumber']");
-			number.SendKeys(passportNumber);
-
-			var date = browser.FindElementByCssSelector("input[name='physicalClient.PassportDate']");
-			date.Click();
-			var popup = browser.FindElementByCssSelector("a.ui-state-default");
-			popup.Click();
-
-			date = browser.FindElementByCssSelector("input[name='physicalClient.BirthDate']");
-			date.Click();
-			popup = browser.FindElementByCssSelector("a.ui-state-default");
-			popup.Click();
-			//date.SendKeys("18.12.2014");
-
-			var residention = browser.FindElementByCssSelector("input[name='physicalClient.PassportResidention']");
-			residention.SendKeys(passportResidention);
-
-			var address = browser.FindElementByCssSelector("input[name='physicalClient.RegistrationAddress']");
-			address.SendKeys(passportAddress);
-
-			var button = browser.FindElementByCssSelector(".right-block .button");
-			button.Click();
-
-			AssertText("Данные успешно заполнены");
 			AssertText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
 			browser.FindElementByCssSelector("#changeTariffButtonCheap").Click();
 			browser.FindElementByCssSelector(".window .click.ok").Click();
 			// клиент должен перейти на дешелый тириф
 			AssertText("Тариф успешно изменен");
 			AssertText(DbSession.Query<Plan>().First(s => s == PlanChangerDataItem.CheapPlan).Name);
+			Open("/Personal/Plans");
+			AssertText("У вас не заполнены паспортные данные");
+			Open("/Personal/Payment");
+      AssertText("У вас не было платежей");
+			Open("/Personal/Service");
+			AssertText("У вас не заполнены паспортные данные");
+			Open("/Personal/Bonus");
+			AssertText("У вас не заполнены паспортные данные");
 		}
 
 		[Test(Description = "Проверка конфликта Warning с PlanChanger, отсутствие паспоротных данных")]
@@ -162,13 +135,23 @@ namespace Inforoom2.Test.Functional.Personal
 			CurrentClient = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("без паспортных данных"));
 			PlanChangerFixtureOn(0, false);
 			LoginForClient(CurrentClient);
-
+			Open("/");
+			AssertText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
+			browser.FindElementByCssSelector("#changeTariffButtonCheap").Click();
+			browser.FindElementByCssSelector(".window .click.ok").Click();
+			// клиент должен перейти на дешелый тириф
+			AssertText("Тариф успешно изменен");
+			Open("/");
+			AssertText("НОВОСТИ");
+			Open("Warning");
 			AssertText("У вас не заполнены паспортные данные");
 			Css(".warning").Click();
 			var textbox = browser.FindElement(By.CssSelector("#physicalClient_PassportNumber"));
 			textbox.SendKeys("7121551");
 			var button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
+			Open("Warning");
+			AssertText("У вас не заполнены паспортные данные");
 			Css(".warning").Click();
 			var date = browser.FindElementByCssSelector("input[name='physicalClient.BirthDate']");
 			date.Click();
@@ -176,19 +159,10 @@ namespace Inforoom2.Test.Functional.Personal
 			popup.Click();
 			button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
-
-			AssertText("Для заполнения недостающих паспортных данных необходимо обратиться в офис компании");
-			Css(".warning").Click();
-			AssertText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
-			browser.FindElementByCssSelector("#changeTariffButtonCheap").Click();
-			browser.FindElementByCssSelector(".window .click.ok").Click();
-			// клиент должен перейти на дешелый тириф
-
-			AssertText("Тариф успешно изменен");
-			Open("/");
-			AssertText("НОВОСТИ");
 			Open("Warning");
 			AssertText("Для заполнения недостающих паспортных данных необходимо обратиться в офис компании");
+			Css(".warning").Click();
+			AssertText("НОВОСТИ");
 		}
 
 		[Test(Description = "Проверка конфликта Warning с PlanChanger, низкий баланс")]
@@ -197,7 +171,7 @@ namespace Inforoom2.Test.Functional.Personal
 			CurrentClient = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("нормальный клиент"));
 			PlanChangerFixtureOn(0, false);
 			LoginForClient(CurrentClient);
-
+			Open("/");
 			CurrentClient.PhysicalClient.Balance = -5;
 			DbSession.Save(CurrentClient);
 			DbSession.Flush();
@@ -209,8 +183,7 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession.Save(CurrentClient);
 			DbSession.Flush();
 			RunBillingProcessWriteoffs(CurrentClient);
-			Open("Personal/Profile");
-
+			Open("/");
 			AssertText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
 			browser.FindElementByCssSelector("#changeTariffButtonCheap").Click();
 			browser.FindElementByCssSelector(".window .click.ok").Click();
@@ -244,6 +217,7 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession.Refresh(CurrentClient);
 
 			LoginForClient(CurrentClient);
+			Open("/");
 
 			AssertText("Ваш лицевой счет заблокирован за неуплату, для разблокировки необходимо внести");
 
@@ -253,9 +227,9 @@ namespace Inforoom2.Test.Functional.Personal
 			button.Click();
 			button = browser.FindElementByCssSelector("input[value=Подключить]");
 			button.Click();
-			AssertText("Услуга \"Обещанный платеж\" активирована на период");
-			Open("Personal/Profile");
-
+				AssertText("Услуга \"Обещанный платеж\" активирована на период");
+				Open("Personal/Profile");
+			Open("/");
 			AssertText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
 			browser.FindElementByCssSelector("#changeTariffButtonFast").Click();
 			//	browser.FindElementByCssSelector("#changeTariffButtonCheap").Click();

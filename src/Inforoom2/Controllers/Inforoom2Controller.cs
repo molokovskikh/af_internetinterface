@@ -102,9 +102,10 @@ namespace Inforoom2.Controllers
 
 			//вызов у сервисов OnWebsiteVisit(),
 			// PlanChanger возвращает значение в filterContext.Result 
-			TrigerServices(filterContext);
+			var filterContextResultBeforeService = filterContext.Result;
+      TrigerServices(filterContext);
 			//это значение нужно обработать варнингом, т.к. оно менее приоритетно.
-			var warningHelper = new WarningHelper(filterContext);
+			var warningHelper = new WarningHelper(filterContext, filterContextResultBeforeService);
 			warningHelper.TryWarningToRedirect();
 			if (filterContext.Result != null) {
 				return;

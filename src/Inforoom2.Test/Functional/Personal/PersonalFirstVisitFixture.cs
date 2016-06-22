@@ -34,7 +34,6 @@ namespace Inforoom2.Test.Functional.Personal
 
 			LoginForClient(Client);
 			//Появляется варнинг, первое, что необходимо сделать - ввести паспортные данные.
-			Css(".warning").Click();
 			AssertText("Серия паспорта");
 
 			var series = browser.FindElementByCssSelector("input[name='physicalClient.PassportSeries']");

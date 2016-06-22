@@ -455,7 +455,8 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			string blockName = "#emptyBlock_PrivatePhysicalInfo ";
 			string blockNameNew = "#ModelForPlan ";
 			var currentPlan = CurrentClient.PhysicalClient.Plan;
-			var anotherPlan = DbSession.Query<Plan>().FirstOrDefault(s => s != currentPlan); // зависит от региона <=========
+			var currentPackageId = CurrentClient.Endpoints.First().PackageId;
+			var anotherPlan = DbSession.Query<Plan>().FirstOrDefault(s => s.PackageSpeed.PackageId != currentPlan.PackageSpeed.PackageId); // зависит от региона <=========
 			 
 
       AssertText($"{currentPlan.Name} ({CurrentClient.GetTariffPrice(true).ToString("0.00")} р. / {currentPlan.Price.ToString("0.00")} р.)");
@@ -477,12 +478,15 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			browser.FindElementByCssSelector(blockNameNew + ".btn.btn-success").Click();
 
 			AssertText("Тариф клиента успешно изменен");
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.PhysicalClient);
 			AssertText($"{anotherPlan.Name} ({CurrentClient.GetTariffPrice(true).ToString("0.00")} р. / {anotherPlan.Price.ToString("0.00")} р.)");
-
 			planInHistory =
 				DbSession.Query<PlanHistoryEntry>().FirstOrDefault(s => s.PlanBefore == currentPlan && s.PlanAfter == anotherPlan);
 			// зависит от региона <=========
+			 
 			Assert.That(planInHistory, Is.Not.Null, "Запись в истории отсутствует.");
+			Assert.That(currentPackageId, Is.Not.EqualTo(CurrentClient.Endpoints.First().PackageId), "Скорость не изменилась.");
 		}
 
 		[Test, Description("Страница клиента. Физ. лицо. Возврат скидки")]

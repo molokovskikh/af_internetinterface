@@ -1,7 +1,0 @@
-{
-  "name": "internetinterface",
-  "private": true,
-  "devDependencies": {
-    "qunit": "~1.15.0"
-  }
-}

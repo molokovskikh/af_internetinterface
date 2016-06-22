@@ -136,22 +136,19 @@ namespace Inforoom2.Test.Functional.Personal
 		public void NoPassport()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("без паспортных данных"));
-			TrySetWarningForClient(client);
-
-			CheckWarningPageText("У вас не заполнены паспортные данные");
-			Css(".warning").Click();
-			AssertText("свои паспортные данные:");
-			DbSession.Refresh(client);
+			client.Lunched = false;
+			DbSession.Save(client);
+			DbSession.Flush();
+			LoginForClient(client);
 			Open("/Personal/Profile");
-			AssertText("У вас не заполнены паспортные данные");
-			Css(".warning").Click();
-
+			AssertText("свои паспортные данные:"); 
 			var textbox = browser.FindElement(By.CssSelector("#physicalClient_PassportNumber"));
 			textbox.SendKeys("7121551");
 			var button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
 			AssertText("Данные успешно заполнены");
-			Open("/Personal/Profile");
+			Open("/Personal/Plans");
+			AssertText("У вас не заполнены паспортные данные");
 			Css(".warning").Click();
 			var date = browser.FindElementByCssSelector("input[name='physicalClient.BirthDate']");
 			date.Click();
@@ -159,6 +156,7 @@ namespace Inforoom2.Test.Functional.Personal
 			popup.Click();
 			button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
+			Open("warning");
 			AssertText("Для заполнения недостающих паспортных данных необходимо обратиться в офис компании");
 			Css(".warning").Click();
 			AssertText("НОВОСТИ");
@@ -237,9 +235,9 @@ namespace Inforoom2.Test.Functional.Personal
 			const string textToCheck = "Внимание";
 			LoginForClient(client);
 			Open("Warning");
+			AssertText(textToCheck);
 			Open("Personal/Profile");
-			AssertText(textToCheck);
-			AssertText(textToCheck);
+			AssertNoText(textToCheck);
 			Open("Personal/Notifications");
 			AssertText(textToCheck);
 			Open("Service/BlockAccount");
