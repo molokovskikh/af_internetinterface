@@ -44,6 +44,7 @@ namespace Inforoom2.Controllers
 			}
 		}
 
+		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "User,Cookies")]
 		public ActionResult FirstVisit()
 		{
 			if (CurrentClient.Lunched && CurrentClient.HasPassportData())
@@ -113,6 +114,7 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
+		[OutputCache(Duration = 300, Location = System.Web.UI.OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "User,Cookies")]
 		public new ActionResult Profile()
 		{
 			if (CurrentClient != null
@@ -157,6 +159,7 @@ namespace Inforoom2.Controllers
 		/// Отобажает содержимое файла-плейлиста на экране
 		/// </summary>
 		/// <returns>Файл плейлиста</returns>
+		/// 
 		public ActionResult Playlist()
 		{
 			var text = CurrentClient.Plan.GetPlaylist();
@@ -190,6 +193,7 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
+		[OutputCache(Duration = 300, Location = System.Web.UI.OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "User,Cookies")]
 		public ActionResult Payment()
 		{
 			const string writeOffAnaliticsFormat = "<br/><sub class='rentWriteOff'>* аренда оборудования - {0}</sub>";
@@ -256,18 +260,20 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
+		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server, VaryByCustom = "User,Cookies")]
 		public ActionResult Credit()
 		{
 			ViewBag.Title = "Доверительный платеж";
 			return View();
 		}
 
+		[OutputCache(Duration = 300, Location = System.Web.UI.OutputCacheLocation.Server, VaryByCustom = "User,Cookies")]
 		public ActionResult UserDetails()
 		{
 			ViewBag.Title = "Данные пользователя";
 			return View();
 		}
-
+		 
 		public ActionResult Service()
 		{
 			ViewBag.Title = "Услуги";
@@ -350,6 +356,7 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
+		[OutputCache(Duration = 500, Location = System.Web.UI.OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "User,Cookies")]
 		public ActionResult Bonus()
 		{
 			ViewBag.Title = "Бонусы";

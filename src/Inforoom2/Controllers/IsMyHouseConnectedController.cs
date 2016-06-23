@@ -6,8 +6,10 @@ using NHibernate.Linq;
 
 namespace Inforoom2.Controllers
 {
+	 
 	public class IsMyHouseConnectedController : Inforoom2Controller
 	{
+		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server, VaryByCustom = "Cookies")]
 		public ActionResult Index()
 		{
 			var address = new Address { House = new House { Street = new Street { Region = new Region() } } };

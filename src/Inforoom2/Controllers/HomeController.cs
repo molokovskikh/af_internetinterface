@@ -9,6 +9,8 @@ namespace Inforoom2.Controllers
 {
 	public class HomeController : Inforoom2Controller
 	{
+
+		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server, VaryByCustom = "User,Cookies")]
 		public ActionResult Index()
 		{
 			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
@@ -16,6 +18,7 @@ namespace Inforoom2.Controllers
 			{
 				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
 			}
+
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			ViewBag.Message = "HomeController";
 			var news = DbSession.Query<NewsBlock>().Where(k => k.IsPublished && (k.Region == CurrentRegion 
@@ -40,6 +43,7 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
+		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "User,Cookies")]
 		public ActionResult Plans(int? id)
 		{
 			ViewBag.Client = CurrentClient;
@@ -54,11 +58,13 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
+		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "User,Cookies")]
 		public ActionResult PricesList()
 		{
 			return View("ExtraServicesPriceList");
 		}
 
+		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server, VaryByParam = "*")]
 		public ActionResult ViewNewsBlock(int id)
 		{
 			var newsBlock = DbSession.Get<NewsBlock>(id);

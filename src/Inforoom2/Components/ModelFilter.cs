@@ -372,7 +372,7 @@ namespace Inforoom2.Components
 		/// <param name="value">Значение параметра</param>
 		protected void AddFilterToCriteria(ICriteria criteria, string key, string value)
 		{
-			if (string.IsNullOrEmpty(value))
+			if (string.IsNullOrEmpty(value) || string.IsNullOrEmpty(value.Replace(",","")))
 				return;
 
 			//Сначала мы получаем тип сравнения

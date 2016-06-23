@@ -18,6 +18,7 @@ using NHibernate.Validator.Engine;
 using Region = Inforoom2.Models.Region;
 using System.Security.Principal;
 using System.Collections.Generic;
+using System.Configuration;
 
 namespace Inforoom2.Controllers
 {
@@ -68,6 +69,14 @@ namespace Inforoom2.Controllers
 
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
+			if (ControllerContext.RouteData.Values["controller"].ToString().ToLower() == "warning" &&
+			    filterContext.HttpContext.Request.Browser.Browser == "Unknown" &&
+			    filterContext.HttpContext.Request.Browser.Platform == "Unknown" &&
+			    filterContext.HttpContext.Request.Browser.Version == "0.0" &&
+			    filterContext.HttpContext.Request.Browser.ClrVersion == null) {
+				filterContext.Result = new RedirectResult(ConfigurationManager.AppSettings["errorPath"]);
+				return;
+			}
 			base.OnActionExecuting(filterContext);
 			AuthenticationByCookies();
 			var cookieCity = GetCookie("userCity");
@@ -103,7 +112,7 @@ namespace Inforoom2.Controllers
 			//вызов у сервисов OnWebsiteVisit(),
 			// PlanChanger возвращает значение в filterContext.Result 
 			var filterContextResultBeforeService = filterContext.Result;
-      TrigerServices(filterContext);
+			TrigerServices(filterContext);
 			//это значение нужно обработать варнингом, т.к. оно менее приоритетно.
 			var warningHelper = new WarningHelper(filterContext, filterContextResultBeforeService);
 			warningHelper.TryWarningToRedirect();

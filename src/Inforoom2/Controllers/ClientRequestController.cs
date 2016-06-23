@@ -53,7 +53,7 @@ namespace Inforoom2.Controllers
 			return View("Index");
 		}
 
-		[HttpPost]
+		[HttpPost] 
 		public JsonResult CheckForUnusualAddress(string city, string street, string house, string address)
 		{
 			object result = new {};
@@ -134,14 +134,12 @@ namespace Inforoom2.Controllers
 			InitRequestPlans();
 		}
 
+		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server, VaryByCustom = "User,Cookies")]
 		private List<Plan> InitRequestPlans()
 		{
 			// Получаем список всех неархивных планов
 			var plans =
 				DbSession.Query<Plan>().Where(p => p.Disabled == false && p.AvailableForNewClients).OrderBy(s => s.Name).ToList();
-			// Закоментил т.к. изменился метод ввода
-			// Забираем не архивные планы, которые не имеют региона или соответсвуют текущему региону
-			// plans = plans.Where(p => !p.Disabled && (p.RegionPlans.Count == 0 || p.RegionPlans.Select(i => i.Region).Contains(CurrentRegion))).ToList(); 
 			ViewBag.Plans = plans;
 			return plans;
 		}
