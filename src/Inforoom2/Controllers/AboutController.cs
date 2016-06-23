@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.UI;
 using Inforoom2.Models;
 using NHibernate.Driver;
 using NHibernate.Linq;
@@ -15,6 +16,7 @@ namespace Inforoom2.Controllers
 		/// <summary>
 		/// Страница о компании
 		/// </summary>
+		[OutputCache(Duration = 600, Location = OutputCacheLocation.Server, VaryByCustom = "Cookies")]
 		public ActionResult Index()
 		{
 			AddJavascriptParam("office_region", CurrentRegion.Name);
@@ -28,6 +30,7 @@ namespace Inforoom2.Controllers
 		/// <summary>
 		/// Реквизиты компании
 		/// </summary>
+		[OutputCache(Duration = 600, Location = OutputCacheLocation.Server, VaryByCustom = "Cookies")]
 		public ActionResult Details()
 		{
 			return View();
@@ -36,6 +39,7 @@ namespace Inforoom2.Controllers
 		/// <summary>
 		/// Страница оплаты, если пользователь не авторизован
 		/// </summary>
+		[OutputCache(Duration = 600, Location = OutputCacheLocation.Server, VaryByCustom = "Cookies")]
 		public ActionResult Payment()
 		{
 			ViewBag.UserAccount = CurrentClient != null ? CurrentClient.Id.ToString() : "";
@@ -46,6 +50,7 @@ namespace Inforoom2.Controllers
 		/// <summary>
 		/// Списки подключенных домов
 		/// </summary>
+		[OutputCache(Duration = 600, Location = OutputCacheLocation.Server, VaryByCustom = "Cookies")]
 		public ActionResult ConnectedHousesLists()
 		{
 			var region = DbSession.Query<Region>().FirstOrDefault(s => s.Name == CurrentRegion.City.Name);

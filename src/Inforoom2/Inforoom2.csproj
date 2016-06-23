@@ -230,6 +230,7 @@
     <Content Include="Images\upward.png" />
     <Content Include="Images\wifi.png" />
     <Content Include="Images\x_office_calendar.png" />
+    <Content Include="Pure\Error.html" />
     <Content Include="Scripts\AboutIndex.js" />
     <Content Include="Scripts\AdminAddressController.js" />
     <Content Include="Scripts\ClientRequest.js" />

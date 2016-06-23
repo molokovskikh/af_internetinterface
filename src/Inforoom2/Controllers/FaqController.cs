@@ -17,6 +17,8 @@ namespace Inforoom2.Controllers
 		/// <summary>
 		/// Отображает список вопросов и ответов, а также форму нового вопроса
 		/// </summary>
+		/// 
+		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server, VaryByCustom = "Cookies")]
 		public ActionResult Index()
 		{
 			var questions = DbSession.Query<Question>().Where(k => k.IsPublished).OrderBy(k => k.Priority).ToList();
@@ -83,6 +85,8 @@ namespace Inforoom2.Controllers
 		/// <summary>
 		/// Страница техподдержки
 		/// </summary>
+		/// 
+		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server, VaryByCustom = "Cookies")]
 		public ActionResult TechSupport()
 		{
 			Index();

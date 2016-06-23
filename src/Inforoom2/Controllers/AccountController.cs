@@ -32,6 +32,7 @@ namespace Inforoom2.Controllers
 			}
 		}
 
+		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server)]
 		public ActionResult Login()
 		{
 			return View();
@@ -58,7 +59,7 @@ namespace Inforoom2.Controllers
 			ViewBag.Username = username;
 			return View();
 		}
-
+		
 		public ActionResult Logout()
 		{
 			FormsAuthentication.SignOut();
