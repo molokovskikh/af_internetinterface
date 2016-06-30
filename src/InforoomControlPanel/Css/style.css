@@ -24,7 +24,7 @@
  .gray{color: #888888 !important;}
 .black{color: #333!important;}
 .red{color:#E60000!important;}
-.blue{color:#0D90D4!important;}
+.blue{color:#1091d4!important;}
  .listItem.gray:hover{background: #E2E2E2 !important;}
  .error{color:red; font-weight:600 !important;}
  .servicemen table { table-layout:fixed; overflow:hidden;}
@@ -65,6 +65,9 @@
  .fileUploadPathWrapper{ padding-bottom: 0px;}
  .fileUploadPath{width: 286px;padding-left: 4px;padding-top: 2px;}
  .fileUpload input.upload {position: absolute;top: 0;right: 0;margin: 0;padding: 0;font-size: 20px;cursor: pointer;opacity: 0;filter: alpha(opacity=0);}
+ .ClientEndPointStateBaseInfo .rent{float: left;}
+ .ClientEndPointStateBaseInfo .time{float: left;display: block;margin-top: 16px;position: absolute;}
+ .ClientEndPointStateBaseInfo td{ min-width: 128px !important;}
  #switchPorts tbody.large{  border: 1px solid #808080;border-bottom: none;border-left: none;border-top: 4px solid #333;}
  #switchPorts tbody.large tr:nth-child(2n) {border-bottom: 4px solid #333;}
  #switchPorts tbody{  border: 1px solid #808080;border-bottom: none;border-left: none;}

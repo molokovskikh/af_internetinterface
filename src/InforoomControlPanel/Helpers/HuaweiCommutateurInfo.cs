@@ -8,11 +8,17 @@ using Common.Tools;
 using Inforoom2.Models;
 using NHibernate;
 using NHibernate.Linq;
+using NHibernate.Proxy;
 
 namespace InforoomControlPanel.Helpers
 {
 	public class HuaweiCommutateurInfo : CommutateurInfo, IPortInfo
 	{
+		public void GetStateOfCable(ISession session, IDictionary propertyBag, int endPointId)
+		{
+			propertyBag["state"] = "Не поддерживается";
+		}
+
 		/// <summary>
 		/// Получение информации о коммутаторе
 		/// </summary>
@@ -83,8 +89,10 @@ namespace InforoomControlPanel.Helpers
 				telnet.WriteLine(command);
 				Thread.Sleep(1000);
 				string macInfoString = telnet.Read();
-				var macInfo = HardwareHelper.ResultInArray(macInfoString, command);
-				GetSnoopingInfo(macInfo, propertyBag);
+
+				var macInfo = macInfoString.Substring(macInfoString.IndexOf("IP Address"), macInfoString.IndexOf("print count:") - macInfoString.IndexOf("IP Address"));
+
+				GetSnoopingInfo(point, macInfo.Split('\n'), propertyBag);
 			}
 			finally {
 				telnet.WriteLine("quite");
@@ -149,26 +157,43 @@ namespace InforoomControlPanel.Helpers
 			}
 		}
 
-		protected void GetSnoopingInfo(string[] macInfo, IDictionary propertyBag)
+		IEnumerable<string> CutMac(string str, int chunkSize)
 		{
-			if (macInfo.Length > 30) {
-				for (int i = 0; i < macInfo.Length; i++) {
-					if (macInfo[i].IndexOf("-----------------------------------------------------------------------") != -1 &&
-					    macInfo.Length > i + 2) {
-						propertyBag["IPResult"] = macInfo[i].Replace("-", "");
-						var currentMac = macInfo[++i].Replace("-", "").ToUpper();
-						if (currentMac.Length == 12) {
-							currentMac = currentMac.Insert(2, "-").Insert(5, "-").Insert(8, "-").Insert(11, "-").Insert(14, "-");
-						}
-						propertyBag["message"] = null;
-						propertyBag["MACResult"] = currentMac;
-						break;
+			for (int i = 0; i < str.Length; i += chunkSize) {
+				yield return str.Substring(i, chunkSize);
+			}
+		}
+
+		protected void GetSnoopingInfo(ClientEndpoint endpoint, string[] macInfo, IDictionary propertyBag)
+		{
+			var list = new List<Tuple<string, string, string, string, string, string>>();
+			if (macInfo.Length == 0) {
+				propertyBag["message"] = Message.Error("Соединение на порту отсутствует");
+				return;
+			}
+			foreach (var item in macInfo) {
+				var val = item.Replace("\r", "").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				if ((val.FirstOrDefault() ?? "").Count(s => s == '.') == 3) {
+					var ip = val[0];
+
+					var mac = CutMac(val[1].Replace("-", ""), 2).Implode("-").ToUpper();
+					var lease = endpoint.LeaseList.FirstOrDefault(s => s.Mac == mac && s.Ip.ToString() == ip);
+					if (lease != null) {
+						list.Add(new Tuple<string, string, string, string, string, string>(
+							mac,
+							ip, lease.Mac, lease.Ip.ToString(), lease.LeaseBegin.ToString(), lease.LeaseEnd.ToString()));
+					}
+					else {
+						list.Add(new Tuple<string, string, string, string, string, string>(
+							mac,
+							ip, "", "", "", ""));
 					}
 				}
 			}
-			else {
-				propertyBag["message"] = Message.Error("Соединение на порту отсутствует");
-			}
+			list.AddRange(endpoint.LeaseList.Where(s => !list.Any(d => d.Item1 == s.Mac && d.Item2 == s.Ip.ToString())).Select(
+				s => new Tuple<string, string, string, string, string, string>("", "", s.Mac, s.Ip.ToString(), s.LeaseBegin.ToString(), s.LeaseEnd.ToString())));
+			propertyBag["message"] = null;
+			propertyBag["AddressList"] = list;
 		}
 
 		protected void GetInfo(string interfaces, IDictionary propertyBag)

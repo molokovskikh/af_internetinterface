@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading;
@@ -12,6 +13,11 @@ namespace InforoomControlPanel.Helpers
 {
 	public class CatalystCommutateurInfo : CommutateurInfo, IPortInfo
 	{
+		public void GetStateOfCable(ISession session, IDictionary propertyBag, int endPointId)
+		{
+			propertyBag["state"] = "Не поддерживается";
+		}
+
 		public void GetPortInfo(ISession session, IDictionary propertyBag, int endPointId)
 		{
 			var point = session.Load<ClientEndpoint>(endPointId);
@@ -59,32 +65,14 @@ namespace InforoomControlPanel.Helpers
 					var portIsActive = HardwareHelper.ResultInArray(telnet.Read(), command).Contains("connected");
 					//Проверяем, что порт активен
 					if (portIsActive) {
-						command = string.Format("show mac address-table interface fastEthernet 0/{0} | inc a0/{0}", port);
+					
+						command = string.Format("show ip dh sn bi in fa 0/{0}", port);
 						telnet.WriteLine(command);
-						var macInfo = HardwareHelper.ResultInArray(telnet.Read(), command);
-						if (macInfo.Length > 0) {
-							var macAddr = string.Empty;
-							var chetFlag = 0;
-							foreach (var _char in macInfo[1].Replace(".", string.Empty)) {
-								if (chetFlag < 2) {
-									macAddr += _char;
-									chetFlag++;
-								}
-								else {
-									chetFlag = 1;
-									macAddr += ":" + _char;
-								}
-							}
-							macAddr = macAddr.ToUpper();
+						var ipInfo = telnet.Read();
+						ipInfo = ipInfo.Substring(ipInfo.IndexOf("MacAddress"));
+						GetSnoopingInfo(point, ipInfo.Split('\n'), propertyBag);
 
-							propertyBag["MACResult"] = macAddr.Replace(":", "-");
 
-							command = string.Format("show ip dh sn bi | inc {0}", macAddr);
-							telnet.WriteLine(command);
-							var ipInfo = HardwareHelper.ResultInArray(telnet.Read(), command);
-
-							propertyBag["IPResult"] = ipInfo[1];
-						}
 						command = string.Format("show interfaces fastEthernet 0/{0} counters", port);
 						telnet.WriteLine(command);
 						var counterInfo = telnet.Read();
@@ -178,6 +166,35 @@ namespace InforoomControlPanel.Helpers
 					Thread.Sleep(1000);
 				}
 			}
+		}
+
+		protected void GetSnoopingInfo(ClientEndpoint endpoint, string[] macInfo, IDictionary propertyBag)
+		{
+			var list = new List<Tuple<string, string, string, string, string, string>>();
+			if (macInfo.Length == 0) {
+				propertyBag["message"] = Message.Error("Соединение на порту отсутствует");
+				return;
+			}
+			foreach (var item in macInfo) {
+				var val = item.Replace("\r", "").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				if ((val.FirstOrDefault() ?? "").Count(s => s == ':') > 0) {
+					var ip = val[1];
+					var mac = val[0].Split(':').Implode("-").ToUpper();
+					var lease = endpoint.LeaseList.FirstOrDefault(s => s.Mac == mac && s.Ip.ToString() == ip);
+					if (lease != null) {
+						list.Add(new Tuple<string, string, string, string, string, string>(
+							mac, ip, lease.Mac, lease.Ip.ToString(), lease.LeaseBegin.ToString(), lease.LeaseEnd.ToString()));
+					}
+					else {
+						list.Add(new Tuple<string, string, string, string, string, string>(
+							mac, ip, "", "", "", ""));
+					}
+				}
+			}
+			list.AddRange(endpoint.LeaseList.Where(s => !list.Any(d => d.Item1 == s.Mac && d.Item2 == s.Ip.ToString())).Select(
+				s => new Tuple<string, string, string, string, string, string>("", "", s.Mac, s.Ip.ToString(), s.LeaseBegin.ToString(), s.LeaseEnd.ToString())));
+			propertyBag["message"] = null;
+			propertyBag["AddressList"] = list;
 		}
 	}
 }

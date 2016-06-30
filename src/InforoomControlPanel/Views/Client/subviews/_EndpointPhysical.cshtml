@@ -195,7 +195,13 @@
 						<div class="endpointStateStatus@(endpoint.Id)">не установлен</div>
 					</td>
 				</tr>
-				<tr>
+					<tr>
+						<td><a class="blue c-pointer" onclick="GetCableConnectionState(@endpoint.Id)">Целостность кабеля<span> ( опросить )</span></a></td>
+						<td>
+							<div class="endpointCableStatus@(endpoint.Id)">не установлена</div>
+						</td>
+					</tr>
+					<tr>
 					<td>Скорость</td>
 					<td>
 						<span>@(endpoint.PackageId.HasValue ? PackageSpeed.GetSpeedForPackageId(packageSpeedList, endpoint.PackageId.Value).ToString() : "0 ") мбит/с</span>

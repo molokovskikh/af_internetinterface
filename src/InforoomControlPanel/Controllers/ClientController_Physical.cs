@@ -77,12 +77,12 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult InfoPhysical(int id, object clientModelItem = null, string subViewName = "", int appealType = 0,
 			int writeOffState = 0, int clientStatus = 0, string clientStatusChangeComment = "")
 		{
-			Client client;
+		 Client client;
 			//--------------------------------------------------------------------------------------| Обработка представлений (редактирование клиента)
 			bool updateSce = false;
 			// Получаем клиента
 			if (clientModelItem != null && clientModelItem as Client != null) {
-				var clientModel = (Client) clientModelItem;
+				var clientModel = (Client)clientModelItem;
 				//подпредставление "контакты"
 				if (subViewName == "_Contacts") {
 					var listForAppeal = new List<string>();
@@ -94,11 +94,10 @@ namespace InforoomControlPanel.Controllers
 						DbSession.Delete(item);
 					}
 					//обновление контактов, задание нужных полей при добавлении
-					clientModel.Contacts.Each(s =>
-					{
+					clientModel.Contacts.Each(s => {
 						s.Client = clientModel;
 						s.ContactString = s.ContactFormatString;
-						s.ContactName = s.ContactName == string.Empty? null : s.ContactName; // в БД по умолчанию Null а не пустое значение  
+						s.ContactName = s.ContactName == string.Empty ? null : s.ContactName; // в БД по умолчанию Null а не пустое значение  
 						if (s.Date == DateTime.MinValue) {
 							s.Date = SystemTime.Now();
 						}
@@ -137,37 +136,40 @@ namespace InforoomControlPanel.Controllers
 				}
 
 				if (string.IsNullOrEmpty(clientStatusChangeComment) && clientStatus != 0 &&
-				    clientStatus != (int) clientModel.Status.Type
-				    && clientStatus == (int) StatusType.Dissolved) {
-					errors.Add(new InvalidValue("Не указана причина изменения статуса", typeof (Status), "clientStatusChangeComment",
+				    clientStatus != (int)clientModel.Status.Type
+				    && clientStatus == (int)StatusType.Dissolved) {
+					errors.Add(new InvalidValue("Не указана причина изменения статуса", typeof(Status), "clientStatusChangeComment",
 						clientModel,
 						clientModel, new List<object>()));
 					ErrorMessage("Не указана причина изменения статуса");
 					ViewBag.clientStatusChangeComment = clientStatusChangeComment;
 				}
 				//обновлдение статуса клиента, если он отличается от текущего
-				if (clientStatus != 0 && clientStatus != (int) clientModel.Status.Type && errors.Length == 0) {
+				if (clientStatus != 0 && clientStatus != (int)clientModel.Status.Type && errors.Length == 0) {
 					var newStatus = DbSession.Query<Status>().FirstOrDefault(s => s.Id == clientStatus);
 					var messageAlert = clientModel.TryToChangeStatus(DbSession, newStatus, GetCurrentEmployee(), ref updateSce);
 					if (!string.IsNullOrEmpty(messageAlert)) {
 						ErrorMessage(messageAlert);
-						errors.Add(new InvalidValue("", typeof (Status), "Name", newStatus, newStatus, new List<object>()));
+						errors.Add(new InvalidValue("", typeof(Status), "Name", newStatus, newStatus, new List<object>()));
 					}
 					else {
-						clientModel.Appeals.Add(new Appeal($"Комментарий к изменению статуса: {clientStatusChangeComment}",
-							clientModel, AppealType.System, GetCurrentEmployee()));
+						if (!string.IsNullOrEmpty(clientStatusChangeComment)) {
+							clientModel.Appeals.Add(new Appeal($"Комментарий к изменению статуса: {clientStatusChangeComment}",
+								clientModel, AppealType.System, GetCurrentEmployee()));
+						}
 					}
 				}
 				//если нет ошибок
 				if (errors.Length == 0) {
+					if (clientModel._Name != clientModel.PhysicalClient.FullName)
+						clientModel._Name = clientModel.PhysicalClient.FullName;
 					// сохраняем модель
 					DbSession.Update(clientModel);
 					if (updateSce) {
 						Inforoom2.Helpers.SceHelper.UpdatePackageId(DbSession, clientModel);
 					}
 					return RedirectToAction("InfoPhysical",
-						new
-						{
+						new {
 							@id = id,
 							@clientModelItem = clientModelItem,
 							@subViewName = subViewName,
@@ -186,8 +188,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			//--------------------------------------------------------------------------------------| Получение списка оповещений
 			// список оповещений
-			var appeals = client.Appeals.Select(s => new Appeal()
-			{
+			var appeals = client.Appeals.Select(s => new Appeal() {
 				Client = s.Client,
 				AppealType = s.AppealType,
 				Date = s.Date,
@@ -197,15 +198,13 @@ namespace InforoomControlPanel.Controllers
 			}).ToList();
 			//если задан тип сообщений, фильтруем по типу
 			if (appealType != 0) {
-				appeals = appeals.Where(s => (int) s.AppealType == appealType).ToList();
+				appeals = appeals.Where(s => (int)s.AppealType == appealType).ToList();
 			}
 			else {
 				//при выводе всех сообщений, нужно учесть комментарии к сервисным заявкам
 				string pattern = "<li><span>{0}</span> - <span>{1}:</span><br/><span>{2}</span></li>";
-				appeals.AddEach(client.ServiceRequests.Select(s =>
-				{
-					return new Appeal()
-					{
+				appeals.AddEach(client.ServiceRequests.Select(s => {
+					return new Appeal() {
 						Client = s.Client,
 						AppealType = AppealType.All,
 						Date = s.CreationDate,
@@ -213,7 +212,7 @@ namespace InforoomControlPanel.Controllers
 						inforoom2 = true,
 						Message =
 							"<p>Сервисная заявка № <a target=_blank href=" +
-							Url.Action("ServiceRequestEdit", "ServiceRequest", new {@id = s.Id}) + ">" +
+							Url.Action("ServiceRequestEdit", "ServiceRequest", new { @id = s.Id }) + ">" +
 							s.Id + "</a>. " + s.Description + "</p>" + "<p><ul>" +
 							String.Join("", s.ServiceRequestComments.Select(d =>
 								string.Format(pattern, d.CreationDate, d.Author.Name, d.Comment)).ToList()
@@ -226,8 +225,7 @@ namespace InforoomControlPanel.Controllers
 			//--------------------------------------------------------------------------------------| Получение списка списаний
 			//получение списка списаний
 			var writeoffsAndUserWriteOff = new List<object>();
-			writeoffsAndUserWriteOff.AddRange(client.WriteOffs.Select(s => new WriteOff()
-			{
+			writeoffsAndUserWriteOff.AddRange(client.WriteOffs.Select(s => new WriteOff() {
 				Id = s.Id,
 				Sale = s.Sale,
 				Comment = s.Comment,
@@ -238,8 +236,7 @@ namespace InforoomControlPanel.Controllers
 				MoneySum = s.MoneySum
 			}).ToList());
 			//дополнение списка пользовательскими списаниями
-			writeoffsAndUserWriteOff.AddRange(client.UserWriteOffs.Select(s => new UserWriteOff()
-			{
+			writeoffsAndUserWriteOff.AddRange(client.UserWriteOffs.Select(s => new UserWriteOff() {
 				Comment = s.Comment,
 				Date = s.Date,
 				Sum = s.Sum,
@@ -250,7 +247,7 @@ namespace InforoomControlPanel.Controllers
 			//сортировка списка списаний
 			writeoffsAndUserWriteOff =
 				writeoffsAndUserWriteOff.OrderByDescending(
-					s => s as WriteOff != null ? ((WriteOff) s).WriteOffDate : ((UserWriteOff) s).Date).ToList();
+					s => s as WriteOff != null ? ((WriteOff)s).WriteOffDate : ((UserWriteOff)s).Date).ToList();
 			//--------------------------------------------------------------------------------------| Передача значений на форму
 			//передаем на форму - текущее представление (для фокусировки на нем)
 			ViewBag.CurrentSubViewName = subViewName;
@@ -270,12 +267,12 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.IpPoolRegionList = DbSession.Query<IpPoolRegion>().Where(s => s.Region == client.GetRegion()).ToList();
 			//передаем на форму - список статусов клиента
 			ViewBag.StatusList = DbSession.Query<Status>().Where(s =>
-				s.Id == (int) StatusType.Worked
-				|| s.Id == (int) StatusType.NoWorked
-				|| s.Id == (int) StatusType.Dissolved).OrderBy(s => s.Name).ToList();
+				s.Id == (int)StatusType.Worked
+				|| s.Id == (int)StatusType.NoWorked
+				|| s.Id == (int)StatusType.Dissolved).OrderBy(s => s.Name).ToList();
 			//список коммутаторов для региона клиента
 			ViewBag.SwitchList =
-				DbSession.Query<Switch>().Where(s => client.Address!=null && s.Zone.Region.Id == client.Address.Region.Id).OrderBy(s => s.Name).ToList();
+				DbSession.Query<Switch>().Where(s => client.Address != null && s.Zone.Region.Id == client.Address.Region.Id).OrderBy(s => s.Name).ToList();
 			//передаем на форму - список регионов
 			ViewBag.RegionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			//ViewBag.PlanList = DbSession.Query<Plan>().Where(s => !s.Disabled).OrderBy(s => s.Name).ToList();
@@ -297,7 +294,7 @@ namespace InforoomControlPanel.Controllers
 					ViewBag.NetworkNodeList = networkNodeList;
 				}
 			}
-			ViewBag.ActionName = ((string) ViewBag.ActionName) + " hid";
+			ViewBag.ActionName = ((string)ViewBag.ActionName) + " hid";
 			ViewBag.ServiceToActivate =
 				DbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof(SpeedBoost)));
 
@@ -321,7 +318,7 @@ namespace InforoomControlPanel.Controllers
 		{
 			//создание нового оповещения
 			if (!string.IsNullOrEmpty(newUserAppeal)) {
-				var newAppeal = new Appeal(newUserAppeal, client, AppealType.User) {Employee = GetCurrentEmployee()};
+				var newAppeal = new Appeal(newUserAppeal, client, AppealType.User) { Employee = GetCurrentEmployee() };
 				newAppeal.Message = newAppeal.Message.ReplaceSharpWithRedmine();
 				DbSession.Save(newAppeal);
 			}
@@ -346,8 +343,7 @@ namespace InforoomControlPanel.Controllers
 			client.PhysicalClient.Patronymic = "";
 			client.PhysicalClient.CertificateType = 0;
 			client.PhysicalClient.CertificateType = CertificateType.Passport;
-			client.PhysicalClient.Address = new Address()
-			{
+			client.PhysicalClient.Address = new Address() {
 				House = new House(),
 				Floor = 0,
 				Entrance = "",
@@ -402,8 +398,7 @@ namespace InforoomControlPanel.Controllers
 					client, client.GetType().GetProperty("PhysicalClient"), scapeNameDoubling, false, errors);
 			}
 			// убираем из списка ошибок те, которые допустимы в данном случае
-			errors.RemoveErrors(new List<string>()
-			{
+			errors.RemoveErrors(new List<string>() {
 				"Inforoom2.Models.PhysicalClient.PassportDate",
 				"Inforoom2.Models.PhysicalClient.CertificateName"
 			});
@@ -418,8 +413,7 @@ namespace InforoomControlPanel.Controllers
 				// добавляем клиенту стандартные сервисы 
 				var services =
 					DbSession.Query<Service>().Where(s => s.Name == "IpTv" || s.Name == "Internet" || s.Name == "PlanChanger").ToList();
-				IList<ClientService> csList = services.Select(service => new ClientService
-				{
+				IList<ClientService> csList = services.Select(service => new ClientService {
 					Service = service,
 					Client = client,
 					BeginDate = DateTime.Now,
@@ -582,8 +576,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult Edit([EntityBinder] Client client, string viewName = "")
 		{
 			var errors = ValidationRunner.ValidateDeep(client);
-			errors.RemoveErrors(new List<string>()
-			{
+			errors.RemoveErrors(new List<string>() {
 				"Inforoom2.Models.PhysicalClient.PassportDate",
 				"Inforoom2.Models.PhysicalClient.CertificateName"
 			});
@@ -664,7 +657,7 @@ namespace InforoomControlPanel.Controllers
 
 			return View();
 		}
-		
+
 		public ActionResult ConnectionCard(int Id, string updateKeySt = "")
 		{
 			var client = DbSession.Query<Client>().FirstOrDefault(s => s.Id == Id);
@@ -692,9 +685,9 @@ namespace InforoomControlPanel.Controllers
 		[HttpPost]
 		public ActionResult ConnectionCardPasswordUpdate(int Id, string updatePasswordKey)
 		{
-			return RedirectToAction("ConnectionCard", new {Id, updateKeySt = updatePasswordKey});
+			return RedirectToAction("ConnectionCard", new { Id, updateKeySt = updatePasswordKey });
 		}
-		 
+
 		/// <summary>
 		/// Закрепление неизвестного номера за клиентом
 		/// </summary>
@@ -709,8 +702,7 @@ namespace InforoomControlPanel.Controllers
 			if (phone != null && client != null) {
 				var number = phone.Phone;
 				var registrator = GetCurrentEmployee();
-				var contact = new Contact()
-				{
+				var contact = new Contact() {
 					Client = client,
 					ContactString = number,
 					Type = ContactType.ConnectedPhone,
@@ -718,8 +710,7 @@ namespace InforoomControlPanel.Controllers
 				};
 				DbSession.Save(contact);
 				DbSession.Delete(phone);
-				var appeal = new Appeal
-				{
+				var appeal = new Appeal {
 					Client = client,
 					Date = DateTime.Now,
 					AppealType = AppealType.System,
@@ -733,7 +724,7 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage("Не удалось привязать выбранный номер к данному клиенту");
 			}
 			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-				new {@Id = client.Id, @subViewName = subViewName});
+				new { @Id = client.Id, @subViewName = subViewName });
 		}
 
 		/// <summary>
@@ -755,10 +746,9 @@ namespace InforoomControlPanel.Controllers
 				if (writeOff.Sale <= client.Discount) {
 					ErrorMessage("Клиент не нуждается в восстановлении скидки!");
 				}
-				else
-				{
+				else {
 					var saleSettings = DbSession.Query<SaleSettings>().FirstOrDefault();
-					if (string.IsNullOrEmpty(comment) == false && saleSettings!= null) {
+					if (string.IsNullOrEmpty(comment) == false && saleSettings != null) {
 						client.Discount = (int)writeOff.Sale.Value;
 						var monthOnStart = Convert.ToInt32((client.Discount - saleSettings.MinSale) / saleSettings.SaleStep + saleSettings.PeriodCount);
 						client.StartNoBlock = SystemTime.Now().AddMonths(-monthOnStart).Date;
@@ -773,7 +763,7 @@ namespace InforoomControlPanel.Controllers
 						if (str == null)
 							throw new Exception("Параметр приложения SaleUpdateMail должен быть задан в config");
 
-						var emails = str.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+						var emails = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 #if DEBUG
 #else
 						EmailSender.SendEmail(emails, "Уведомление о возврате скидки", appealText);
@@ -785,7 +775,7 @@ namespace InforoomControlPanel.Controllers
 			else {
 				ErrorMessage("У клиента нет было скидки!");
 			}
-			return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction("InfoPhysical", new { @Id = client.Id, @subViewName = subViewName });
 		}
 
 		[HttpPost]
@@ -804,7 +794,7 @@ namespace InforoomControlPanel.Controllers
 				//для тестов просто редирект - TODO: поправить, когда перенесется админка.
 				if (ConfigHelper.GetParam("PhysicalAddressEditingFlag", true) != null &&
 				    ConfigHelper.GetParam("PhysicalAddressEditingFlag") == "true") {
-					return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+					return RedirectToAction("InfoPhysical", new { @Id = client.Id, @subViewName = subViewName });
 				}
 
 				return Redirect(ConfigHelper.GetParam("adminPanelOld") +
@@ -817,7 +807,7 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-				new {@Id = client.Id, @subViewName = subViewName});
+				new { @Id = client.Id, @subViewName = subViewName });
 		}
 
 		[HttpPost]
@@ -825,7 +815,7 @@ namespace InforoomControlPanel.Controllers
 		{
 			var newPlan = DbSession.Query<Plan>().FirstOrDefault(s => s.Id == plan);
 			if (newPlan == null) {
-				return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+				return RedirectToAction("InfoPhysical", new { @Id = client.Id, @subViewName = subViewName });
 			}
 			var oldPlan = client.PhysicalClient.Plan;
 			if (oldPlan != newPlan) {
@@ -837,8 +827,7 @@ namespace InforoomControlPanel.Controllers
 				SuccessMessage("Тариф клиента успешно изменен");
 
 				// добавление записи в историю тарифов пользователя
-				var planHistory = new PlanHistoryEntry
-				{
+				var planHistory = new PlanHistoryEntry {
 					Client = client,
 					DateOfChange = SystemTime.Now(),
 					PlanAfter = newPlan,
@@ -851,8 +840,7 @@ namespace InforoomControlPanel.Controllers
 					string.Format(
 						"Изменение тарифа оператором. Тариф изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.",
 						oldPlan.Name, oldPlan.Price, newPlan.Name, newPlan.Price, 0);
-				var appeal = new Appeal(msg, client, AppealType.Statistic)
-				{
+				var appeal = new Appeal(msg, client, AppealType.Statistic) {
 					Employee = GetCurrentEmployee()
 				};
 				DbSession.Save(appeal);
@@ -865,7 +853,7 @@ namespace InforoomControlPanel.Controllers
 				DbSession.Save(client);
 			}
 
-			return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction("InfoPhysical", new { @Id = client.Id, @subViewName = subViewName });
 		}
 
 
@@ -875,15 +863,17 @@ namespace InforoomControlPanel.Controllers
 			string subViewName = "")
 		{
 			if (staticAddress != null)
-				foreach (var item in staticAddress) item.Mask = item.Mask.HasValue && item.Mask.Value == 0 ? 32 : item.Mask;
+				foreach (var item in staticAddress) {
+					item.Mask = item.Mask.HasValue && item.Mask.Value == 0 ? 32 : item.Mask;
+				}
 			string errorMessage = "";
 			if (connection.Switch == 0) {
 				ErrorMessage("Ошибка при обновлении подключения. Коммутатор не выбран!");
-				return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+				return RedirectToAction("InfoPhysical", new { @Id = client.Id, @subViewName = subViewName });
 			}
 			if (connection.Port == "0") {
 				ErrorMessage("Ошибка при обновлении подключения. Укажите порт!");
-				return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+				return RedirectToAction("InfoPhysical", new { @Id = client.Id, @subViewName = subViewName });
 			}
 			client.PhysicalClient.SaveSwitchForClient(DbSession, endpointId, connectSum, connection, staticAddress,
 				out errorMessage, GetCurrentEmployee());
@@ -891,7 +881,7 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage(errorMessage);
 			}
 
-			return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
+			return RedirectToAction("InfoPhysical", new { @Id = client.Id, @subViewName = subViewName });
 		}
 	}
 }
