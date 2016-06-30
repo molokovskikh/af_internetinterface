@@ -26,6 +26,63 @@ namespace InforoomControlPanel.Helpers
 			}
 		}
 
+		public void GetStateOfCable(ISession session, IDictionary propertyBag, int endPointId)
+		{
+			propertyBag["state"] = "Не опрошен";
+			var rowGeneralInformation = "";
+			//коммутатор выводит на 1 таб больше в инф. о пакетах
+			PropertyBag = propertyBag;
+			int attemptsToGetData = 5;
+			var point = session.Load<ClientEndpoint>(endPointId);
+
+			//Авторизация, как у linksys
+			var login = ConfigurationManager.AppSettings["linksysLogin"];
+			var password = ConfigurationManager.AppSettings["linksysPassword"];
+			while (attemptsToGetData > 0) {
+				try {
+#if DEBUG
+					//для модели Des-3028
+					var telnet = new TelnetConnection("172.16.4.130", 23);
+					//для модели Des-3526
+					if (CurrentSwitchModel == _switchModel[1]) {
+						telnet = new TelnetConnection("172.16.5.115", 23);
+					}
+#else
+			var telnet = new TelnetConnection(point.Switch.Ip.ToString(), 23);
+#endif
+					try {
+#if DEBUG
+						telnet.Login(login, password, 100);
+						var port = 3.ToString();
+#else
+				telnet.Login(login, password, 100);
+				var port = point.Port.ToString();
+#endif
+						//общие сведения
+						Thread.Sleep(2000);
+						var command = string.Format("cable_diag ports {0}", port);
+						telnet.WriteLine(command);
+						telnet.WriteLine("q");
+						Thread.Sleep(15000);
+						rowGeneralInformation = telnet.Read().ToLower();
+					}
+					finally {
+						telnet.WriteLine("logout");
+					}
+					GetCabelStateInformation(rowGeneralInformation, propertyBag);
+					break;
+				}
+				catch (Exception ex) {
+					attemptsToGetData--;
+					if (attemptsToGetData <= 0) {
+						break;
+					}
+					//ожидание перед повтором
+					Thread.Sleep(1000);
+				}
+			}
+		}
+
 		private IDictionary PropertyBag { get; set; }
 
 		/// <summary>
@@ -193,9 +250,10 @@ namespace InforoomControlPanel.Helpers
 				command = string.Format("show fdb port {0}", port);
 				telnet.WriteLine(command);
 				Thread.Sleep(500);
-				string macInfoString = telnet.Read();
-				var macInfo = HardwareHelper.ResultInArray(macInfoString, command);
-				GetSnoopingInfo(macInfo, propertyBag);
+				var macInfo = telnet.Read();
+				macInfo = macInfo.Substring(macInfo.IndexOf("MAC Address"));
+
+				GetSnoopingInfo(point, macInfo.Split('\n'), propertyBag);
 
 				//обработка полученных сведений
 				GetDataBySwitchModel(rowGeneralInformation, rowPackageCounter, rowErrorCounter, propertyBag);
@@ -362,21 +420,36 @@ namespace InforoomControlPanel.Helpers
 			return dataList;
 		}
 
-		protected void GetSnoopingInfo(string[] macInfo, IDictionary propertyBag)
+
+		protected void GetSnoopingInfo(ClientEndpoint endpoint, string[] macInfo, IDictionary propertyBag)
 		{
-			if (macInfo.Length > 10) {
-				for (int i = 0; i < macInfo.Length; i++) {
-					if (macInfo[i].Length == 17 && macInfo[i].Count(s => s == '-') == 5) {
-						var currentMac = macInfo[i].ToUpper();
-						propertyBag["MACResult"] = currentMac;
-						propertyBag["message"] = null;
-						break;
+			var list = new List<Tuple<string, string, string, string, string, string>>();
+			if (macInfo.Length == 0) {
+				propertyBag["message"] = Message.Error("Соединение на порту отсутствует");
+				return;
+			}
+			foreach (var item in macInfo) {
+				var val = item.Replace("\r", "").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				for (int i = 0; i < val.Length; i++) {
+					if (val[i].Count(s => s == '-') == 5) {
+						var ip = "не определен"; //не выводится
+						var mac = val[i].Split(':').Implode("-").ToUpper();
+						var lease = endpoint.LeaseList.FirstOrDefault(s => s.Mac == mac);
+						if (lease != null) {
+							list.Add(new Tuple<string, string, string, string, string, string>(
+								mac, ip, lease.Mac, lease.Ip.ToString(), lease.LeaseBegin.ToString(), lease.LeaseEnd.ToString()));
+						}
+						else {
+							list.Add(new Tuple<string, string, string, string, string, string>(
+								mac, ip, "", "", "", ""));
+						}
 					}
 				}
 			}
-			else {
-				propertyBag["message"] = Message.Error("Соединение на порту отсутствует");
-			}
+			list.AddRange(endpoint.LeaseList.Where(s => !list.Any(d => d.Item1 == s.Mac && d.Item4 == s.Ip.ToString())).Select(
+				s => new Tuple<string, string, string, string, string, string>("", "", s.Mac, s.Ip.ToString(), s.LeaseBegin.ToString(), s.LeaseEnd.ToString())));
+			propertyBag["message"] = null;
+			propertyBag["AddressList"] = list;
 		}
 
 		/// <summary>
@@ -465,6 +538,41 @@ namespace InforoomControlPanel.Helpers
 			}
 			return lineList;
 		}
+
+		private void GetCabelStateInformation(string rowGeneralInformation, IDictionary propertyBag)
+		{
+			if (rowGeneralInformation.IndexOf("no cable") != -1) {
+				propertyBag["state"] = "Не подключен";
+			}
+			if (rowGeneralInformation.IndexOf(" ok ") != -1) {
+				propertyBag["state"] = "";
+			}
+			if (rowGeneralInformation.IndexOf("pair1 open") != -1) {
+				var cut1 = rowGeneralInformation.Substring(rowGeneralInformation.IndexOf("pair1 open"));
+				var at = cut1.IndexOf("at");
+				var atL = "at".Length;
+				var value1 = cut1.Substring(at + atL, cut1.IndexOf(" m ") - at - atL).Trim();
+
+				cut1 = rowGeneralInformation.Substring(rowGeneralInformation.IndexOf("pair2 open"));
+				at = cut1.IndexOf("at");
+				var value2 = cut1.Substring(at + atL, cut1.IndexOf(" m") - at - atL).Trim();
+
+				propertyBag["state"] = $"Разрыв на {value1}м. / {value2}м. ";
+			}
+			if (rowGeneralInformation.IndexOf("pair1 short") != -1) {
+				var cut1 = rowGeneralInformation.Substring(rowGeneralInformation.IndexOf("pair1 short"));
+				var at = cut1.IndexOf("at");
+				var atL = "at".Length;
+				var value1 = cut1.Substring(at + atL, cut1.IndexOf(" m ") - at - atL).Trim();
+
+				cut1 = rowGeneralInformation.Substring(rowGeneralInformation.IndexOf("pair2 short"));
+				at = cut1.IndexOf("at");
+				var value2 = cut1.Substring(at + atL, cut1.IndexOf(" m") - at - atL).Trim();
+
+				propertyBag["state"] = $"Замыкание на {value1}м. / {value2}м. ";
+			}
+		}
+
 
 		/// <summary>
 		/// Конкатенация строк сфорвированных "обработчиком строк"

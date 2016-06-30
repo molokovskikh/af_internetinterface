@@ -454,6 +454,32 @@ function GetPortConnectionState(id) {
 	});
 }
 
+function GetCableConnectionState(id) {
+	$(".endpointCableStatus" + id).html("<img src='" + $("[name='imagePathOfProcess']").val() + "' class='PortConnectionStateWait'/>");
+	$.ajax({
+		url: cli.getParam("baseurl") + "AdminOpen/ClientEndpointGetCableState?id=" + id,
+		type: 'POST',
+		dataType: "json",
+		success: function (data) { 
+			var state = "Состояние порта не установлено";
+
+			if (data != undefined && data != null && data.state != undefined && data.state != null) {
+				state = data.state;
+			} 
+			var html = "<div class='PortConnectionState'><div class='state " + (state == '' ? "isGreen" : "isRed") + "'>" + (state == '' ? "Проблем не обнаружено" : state ) + "</div></div>";
+			$(".endpointCableStatus" + id).html(html);
+		},
+		error: function () {
+			$(".endpointCableStatus" + id).html("<div class='PortConnectionState'>Состояние порта не установлено</div>");
+		},
+		statusCode: {
+			404: function () {
+				$(".endpointCableStatus" + id).html("<div class='PortConnectionState'>Состояние порта не установлено</div>");
+			}
+		}
+	});
+}
+
 function updatePortsState(data) {
 	var linkA = $("[name='clientUrlExampleA']");
 	var linkB = $("[name='clientUrlExampleB']");

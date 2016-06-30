@@ -114,6 +114,8 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "";
 			return View();
 		}
+		
+
 
 		/// <summary>
 		/// Основная информация о коммутаторе
@@ -145,7 +147,21 @@ namespace InforoomControlPanel.Controllers
 			return Json(data, JsonRequestBehavior.AllowGet);
 		}
 
-
+		/// <summary>
+		/// Основная информация о коммутаторе
+		/// </summary>
+		/// <returns></returns>
+		public JsonResult ClientEndpointGetCableState(int id)
+		{
+			var cl = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == id);
+			var rawData = HardwareHelper.GetPortInformator(cl);
+			var data = new Dictionary<string, object>();
+			if (rawData != null)
+			{
+				rawData.GetStateOfCable(DbSession, data, id);
+			}
+			return Json(data, JsonRequestBehavior.AllowGet);
+		} 
 
 		/// <summary>
 		/// Возвращение списка улиц по региону.

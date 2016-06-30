@@ -13,6 +13,7 @@ namespace InforoomControlPanel.Helpers
 	{
 		void GetPortInfo(ISession session, IDictionary propertyBag, int endPointId);
 		void GetStateOfPort(ISession session, IDictionary propertyBag, int endPointId);
+		void GetStateOfCable(ISession session, IDictionary propertyBag, int endPointId);
 	} 
 
 	public class HardwareHelper
@@ -79,6 +80,9 @@ namespace InforoomControlPanel.Helpers
 		{
 			propertyBag["MACResult"] = null;
 			propertyBag["IPResult"] = null;
+
+
+			propertyBag["AddressList"] = new List<Tuple<string,string,string,string>>();
 			propertyBag["message"] = null;
 			propertyBag["attempts"] = 1;
 

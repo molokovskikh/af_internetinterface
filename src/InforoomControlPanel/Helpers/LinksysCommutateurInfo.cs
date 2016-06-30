@@ -27,6 +27,50 @@ namespace InforoomControlPanel.Helpers
 			}
 		}
 
+		public void GetStateOfCable(ISession session, IDictionary propertyBag, int endPointId)
+		{
+			propertyBag["state"] = "Не поддерживается";
+			var point = session.Load<ClientEndpoint>(endPointId);
+			int attemptsToGetData = 5;
+			var login = ConfigurationManager.AppSettings["linksysLogin"];
+			var password = ConfigurationManager.AppSettings["linksysPassword"];
+			if (point.Switch.Name.IndexOf("SF300") == -1)
+				return;
+
+			while (attemptsToGetData > 0) {
+				try {
+#if DEBUG
+					var telnet = new TelnetConnection("172.16.5.105", 23);
+					telnet.Login(login, password, 100);
+					var port = 3.ToString();
+#else
+				var telnet = new TelnetConnection(point.Switch.Ip.ToString(), 23);
+				telnet.Login(login, password, 100);
+				var port = (point.Port).ToString();
+#endif
+
+					Thread.Sleep(1000);
+					telnet.WriteLine("N");
+					Thread.Sleep(1000);
+					var command = string.Format("test cable-diagnostics tdr interface FastEthernet {0}", port);
+					telnet.WriteLine(command);
+					Thread.Sleep(15000);
+					var rowGeneralInformation = telnet.Read().ToLower();
+					telnet.WriteLine("exit");
+					GetCabelStateInformation(rowGeneralInformation, propertyBag);
+					break;
+				}
+				catch (Exception ex) {
+					attemptsToGetData--;
+					if (attemptsToGetData <= 0) {
+						break;
+					}
+					//ожидание перед повтором
+					Thread.Sleep(1000);
+				}
+			}
+		}
+
 		public void GetPortInfo(ISession session, IDictionary propertyBag, int endPointId)
 		{
 			var point = session.Load<ClientEndpoint>(endPointId);
@@ -81,8 +125,9 @@ namespace InforoomControlPanel.Helpers
 						CurrentSwitchModel == _switchModel[0] ? "GigabitEthernet" : "FastEthernet", port);
 					telnet.WriteLine(command);
 					Thread.Sleep(500);
-					var macInfo = HardwareHelper.ResultInArray(telnet.Read(), command);
-					GetSnoopingInfo(macInfo, propertyBag);
+					var macInfo = telnet.Read();
+					macInfo = macInfo.Substring(macInfo.IndexOf("IP Address"));
+          GetSnoopingInfo(point, macInfo.Split('\n'), propertyBag);
 
 					telnet.WriteLine("exit");
 					propertyBag["message"] = null;
@@ -193,16 +238,33 @@ namespace InforoomControlPanel.Helpers
 			propertyBag["countersLines"] = RenameTable(mashineLines);
 		}
 
-		protected void GetSnoopingInfo(string[] macInfo, IDictionary propertyBag)
+		protected void GetSnoopingInfo(ClientEndpoint endpoint, string[] macInfo, IDictionary propertyBag)
 		{
-			if (macInfo.Length > 20) {
-				propertyBag["IPResult"] = macInfo[21];
-				propertyBag["MACResult"] = macInfo[20].Split(':').Select(i => i.ToUpper()).Implode("-");
-				propertyBag["message"] = null;
-			}
-			else {
+			var list = new List<Tuple<string, string, string, string, string, string>>();
+			if (macInfo.Length == 0) {
 				propertyBag["message"] = Message.Error("Соединение на порту отсутствует");
+				return;
 			}
+			foreach (var item in macInfo) {
+				var val = item.Replace("\r", "").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				if ((val.FirstOrDefault() ?? "").Count(s => s == ':') > 0) {
+					var ip = val[1];
+					var mac = val[0].Split(':').Implode("-").ToUpper();
+					var lease = endpoint.LeaseList.FirstOrDefault(s => s.Mac == mac && s.Ip.ToString() == ip);
+					if (lease != null) {
+						list.Add(new Tuple<string, string, string, string, string, string>(
+							mac, ip, lease.Mac, lease.Ip.ToString(), lease.LeaseBegin.ToString(), lease.LeaseEnd.ToString()));
+					}
+					else {
+						list.Add(new Tuple<string, string, string, string, string, string>(
+							mac, ip, "", "", "", ""));
+					}
+				}
+			}
+			list.AddRange(endpoint.LeaseList.Where(s => !list.Any(d => d.Item1 == s.Mac && d.Item2 == s.Ip.ToString())).Select(
+				s => new Tuple<string, string, string, string, string, string>("", "", s.Mac, s.Ip.ToString(), s.LeaseBegin.ToString(), s.LeaseEnd.ToString())));
+			propertyBag["message"] = null;
+			propertyBag["AddressList"] = list;
 		}
 
 		private IEnumerable<string[]> DeleteEmptyLines(IEnumerable<string[]> data)
@@ -217,6 +279,37 @@ namespace InforoomControlPanel.Helpers
 		private IEnumerable<string[]> RenameTable(IEnumerable<string[]> data)
 		{
 			return data.Select(stringse => stringse.Select(s => HardwareHelper.GetFieldName(s.Trim())).ToArray()).ToList();
+		}
+
+		private void GetCabelStateInformation(string rowGeneralInformation, IDictionary propertyBag)
+		{
+			if (rowGeneralInformation.IndexOf("not connected") != -1)
+				propertyBag["state"] = "Не подключен";
+			if (rowGeneralInformation.IndexOf("bad") != -1)
+				propertyBag["state"] = "Поврежден";
+			if (rowGeneralInformation.IndexOf("good") != -1)
+				propertyBag["state"] = "";
+			if (rowGeneralInformation.IndexOf("mismatch") != -1) {
+				var cut1 = rowGeneralInformation.Substring(rowGeneralInformation.IndexOf("mismatch"));
+				var at = cut1.IndexOf("at");
+				var atL = "at".Length;
+				var value1 = cut1.Substring(at + atL, cut1.IndexOf(" m") - at - atL).Trim();
+				propertyBag["state"] = $"Поврежден на {value1}м. ";
+			}
+			if (rowGeneralInformation.IndexOf("circuit") != -1) {
+				var cut1 = rowGeneralInformation.Substring(rowGeneralInformation.IndexOf("circuit"));
+				var at = cut1.IndexOf("at");
+				var atL = "at".Length;
+				var value1 = cut1.Substring(at + atL, cut1.IndexOf(" m") - at - atL).Trim();
+				propertyBag["state"] = $"Замыкание на {value1}м. ";
+			}
+			if (rowGeneralInformation.IndexOf("is open") != -1) {
+				var cut1 = rowGeneralInformation.Substring(rowGeneralInformation.IndexOf("is open"));
+				var at = cut1.IndexOf("at");
+				var atL = "at".Length;
+				var value1 = cut1.Substring(at + atL, cut1.IndexOf(" m") - at - atL).Trim();
+				propertyBag["state"] = $"Разрыв на {value1}м. ";
+			}
 		}
 	}
 }

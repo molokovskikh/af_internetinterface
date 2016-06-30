@@ -164,8 +164,8 @@ namespace InforoomControlPanel.Controllers
 					clientModel.LegalClientOrders.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
 					updateSce = true;
 				}
-				
-        if (string.IsNullOrEmpty(clientStatusChangeComment) && clientStatus != 0 &&
+
+				if (string.IsNullOrEmpty(clientStatusChangeComment) && clientStatus != 0 &&
 				    clientStatus != (int)clientModel.Status.Type
 				    && clientStatus == (int)StatusType.Dissolved) {
 					errors.Add(new InvalidValue("Не указана причина изменения статуса", typeof(Status), "clientStatusChangeComment",
@@ -184,8 +184,10 @@ namespace InforoomControlPanel.Controllers
 						errors.Add(new InvalidValue("", typeof(Status), "Name", newStatus, newStatus, new List<object>()));
 					}
 					else {
-						clientModel.Appeals.Add(new Appeal($"Комментарий к изменению статуса: {clientStatusChangeComment}",
-							clientModel, AppealType.System, GetCurrentEmployee()));
+						if (!string.IsNullOrEmpty(clientStatusChangeComment)) {
+							clientModel.Appeals.Add(new Appeal($"Комментарий к изменению статуса: {clientStatusChangeComment}",
+								clientModel, AppealType.System, GetCurrentEmployee()));
+						}
 					}
 				}
 				//если нет ошибок
@@ -382,9 +384,9 @@ namespace InforoomControlPanel.Controllers
 			else {
 				endpoint.Client.RemoveEndpoint(endpoint, DbSession);
 				DbSession.Save(endpoint.Client);
-				SuccessMessage("Точка подключения была успешно удалена."); 
-				endpoint.Client.Appeals.Add(new Appeal($"Точка подключения №{endpointId} была удалена.", endpoint.Client,AppealType.Statistic,GetCurrentEmployee()));
-      }
+				SuccessMessage("Точка подключения была успешно удалена.");
+				endpoint.Client.Appeals.Add(new Appeal($"Точка подключения №{endpointId} была удалена.", endpoint.Client, AppealType.Statistic, GetCurrentEmployee()));
+			}
 			//	DbSession.Save(new Appeal("", endpoint.Client, AppealType.System));
 			return RedirectToAction("InfoLegal", new { endpoint.Client.Id });
 		}
