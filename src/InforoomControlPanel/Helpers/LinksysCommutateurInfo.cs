@@ -29,7 +29,7 @@ namespace InforoomControlPanel.Helpers
 
 		public void GetStateOfCable(ISession session, IDictionary propertyBag, int endPointId)
 		{
-			propertyBag["state"] = "Не поддерживается";
+			propertyBag["state"] = "Не опрошен";
 			var point = session.Load<ClientEndpoint>(endPointId);
 			int attemptsToGetData = 5;
 			var login = ConfigurationManager.AppSettings["linksysLogin"];
@@ -54,7 +54,7 @@ namespace InforoomControlPanel.Helpers
 					Thread.Sleep(1000);
 					var command = string.Format("test cable-diagnostics tdr interface FastEthernet {0}", port);
 					telnet.WriteLine(command);
-					Thread.Sleep(15000);
+					Thread.Sleep(20000);
 					var rowGeneralInformation = telnet.Read().ToLower();
 					telnet.WriteLine("exit");
 					GetCabelStateInformation(rowGeneralInformation, propertyBag);

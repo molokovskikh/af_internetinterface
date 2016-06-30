@@ -63,7 +63,7 @@ namespace InforoomControlPanel.Helpers
 						var command = string.Format("cable_diag ports {0}", port);
 						telnet.WriteLine(command);
 						telnet.WriteLine("q");
-						Thread.Sleep(15000);
+						Thread.Sleep(20000);
 						rowGeneralInformation = telnet.Read().ToLower();
 					}
 					finally {
