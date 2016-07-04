@@ -16,6 +16,60 @@ namespace InforoomControlPanel.Helpers
 		private readonly string[] _switchModel = { "3028", "3526" };
 		private string CurrentSwitchModel { get; set; }
 
+		public void CleanErrors(ISession session, int endPointId)
+		{
+			var rowGeneralInformation = "";
+			//коммутатор выводит на 1 таб больше в инф. о пакетах
+			int attemptsToGetData = 5;
+			var point = session.Load<ClientEndpoint>(endPointId);
+
+			//Авторизация, как у linksys
+			var login = ConfigurationManager.AppSettings["linksysLogin"];
+			var password = ConfigurationManager.AppSettings["linksysPassword"];
+			while (attemptsToGetData > 0) {
+				try {
+#if DEBUG
+					//для модели Des-3028
+					var telnet = new TelnetConnection("172.16.4.130", 23);
+					//для модели Des-3526
+					if (CurrentSwitchModel == _switchModel[1]) {
+						telnet = new TelnetConnection("172.16.5.115", 23);
+					}
+#else
+			var telnet = new TelnetConnection(point.Switch.Ip.ToString(), 23);
+#endif
+					try {
+#if DEBUG
+						telnet.Login(login, password, 100);
+						var port = 3.ToString();
+#else
+				telnet.Login(login, password, 100);
+				var port = point.Port.ToString();
+#endif
+						//общие сведения
+						Thread.Sleep(4000);
+						var command = string.Format("clear counters ports {0}", port);
+						telnet.WriteLine(command);
+						telnet.WriteLine("q");
+						Thread.Sleep(2000);
+						rowGeneralInformation = telnet.Read().ToLower();
+					}
+					finally {
+						telnet.WriteLine("logout");
+					}
+					break;
+				}
+				catch (Exception ex) {
+					attemptsToGetData--;
+					if (attemptsToGetData <= 0) {
+						break;
+					}
+					//ожидание перед повтором
+					Thread.Sleep(1000);
+				}
+			}
+		}
+
 		private void GetSwitchCurrentModel(string switchName)
 		{
 			foreach (string t in _switchModel) {
@@ -63,7 +117,7 @@ namespace InforoomControlPanel.Helpers
 						var command = string.Format("cable_diag ports {0}", port);
 						telnet.WriteLine(command);
 						telnet.WriteLine("q");
-						Thread.Sleep(15000);
+						Thread.Sleep(20000);
 						rowGeneralInformation = telnet.Read().ToLower();
 					}
 					finally {

@@ -14,6 +14,54 @@ namespace InforoomControlPanel.Helpers
 {
 	public class HuaweiCommutateurInfo : CommutateurInfo, IPortInfo
 	{
+		public void CleanErrors(ISession session, int endPointId)
+		{
+			//кол-во попыток при неудачном опросе
+			int attemptsToGetData = 5;
+			var point = session.Load<ClientEndpoint>(endPointId);
+			//Авторизация, как у linksys
+			var login = ConfigurationManager.AppSettings["linksysLogin"];
+			var password = ConfigurationManager.AppSettings["linksysPassword"];
+
+			while (attemptsToGetData > 0) {
+				try {
+#if DEBUG
+					var telnet = new TelnetConnection("172.16.4.74", 23);
+#else
+			var telnet = new TelnetConnection(point.Switch.Ip.ToString(), 23);
+#endif
+					try {
+#if DEBUG
+						telnet.Login(login, password, 100);
+						var port = 9.ToString();
+#else
+				telnet.Login(login, password, 100);
+				var port = point.Port.ToString();
+#endif
+						//получение сведения от коммутатора
+						Thread.Sleep(1000);
+						var command = string.Format("reset counters interface Ethernet 0/0/{0}", port);
+						telnet.WriteLine(command);
+						Thread.Sleep(2000);
+						//обработка полученных сведений 
+						var interfaces = telnet.Read();
+					}
+					finally {
+						telnet.WriteLine("quite");
+					}
+					break;
+				}
+				catch (Exception ex) {
+					attemptsToGetData--;
+					if (attemptsToGetData <= 0) {
+						break;
+					}
+					//ожидание перед повтором
+					Thread.Sleep(1000);
+				}
+			}
+		}
+
 		public void GetStateOfCable(ISession session, IDictionary propertyBag, int endPointId)
 		{
 			propertyBag["state"] = "Не поддерживается";

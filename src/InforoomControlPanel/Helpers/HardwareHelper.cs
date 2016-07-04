@@ -11,6 +11,7 @@ namespace InforoomControlPanel.Helpers
 {
 	public interface IPortInfo
 	{
+		void CleanErrors(ISession session, int endPointId);
 		void GetPortInfo(ISession session, IDictionary propertyBag, int endPointId);
 		void GetStateOfPort(ISession session, IDictionary propertyBag, int endPointId);
 		void GetStateOfCable(ISession session, IDictionary propertyBag, int endPointId);
