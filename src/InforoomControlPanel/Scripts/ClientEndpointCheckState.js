@@ -3,7 +3,12 @@ var errorContainer = '<h4 class="media-heading">{0}</h4>';
 
 function OnClientEndPointStart(clientEndPointId) {
 	$(containterCss).html("");
-	GetBaseInfoInto(clientEndPointId, GetBlockInfoInto, GetError);
+	GetBaseInfoInto(clientEndPointId, GetBlockInfoInto, GetError, 0);
+}
+
+function OnClientEndPointCleanErrors(clientEndPointId) {
+	$(containterCss).html("");
+	GetBaseInfoInto(clientEndPointId, GetBlockInfoInto, GetError, 1);
 }
 
 function GetError() {
@@ -39,10 +44,10 @@ function HideLoadingBlock() {
 }
 
 
-function GetBaseInfoInto(id, func, error) {
+function GetBaseInfoInto(id, func, error, requestType) {
 	ShowLoadingBlock();
 	$.ajax({
-		url: cli.getParam("baseurl") + "AdminOpen/ClientEndpointGetInfo?id=" + id,
+		url: cli.getParam("baseurl") + "AdminOpen/ClientEndpointGetInfo?id=" + id + "&type=" + requestType,
 		type: 'POST',
 		dataType: "json",
 		success: function(data) {

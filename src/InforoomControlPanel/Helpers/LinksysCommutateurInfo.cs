@@ -27,6 +27,49 @@ namespace InforoomControlPanel.Helpers
 			}
 		}
 
+		public void CleanErrors(ISession session, int endPointId)
+		{
+			var point = session.Load<ClientEndpoint>(endPointId);
+			int attemptsToGetData = 5;
+			var login = ConfigurationManager.AppSettings["linksysLogin"];
+			var password = ConfigurationManager.AppSettings["linksysPassword"];
+
+			while (attemptsToGetData > 0) {
+				try {
+#if DEBUG
+					var telnet = new TelnetConnection("172.16.5.105", 23);
+					telnet.Login(login, password, 100);
+					var port = 3.ToString();
+#else
+				var telnet = new TelnetConnection(point.Switch.Ip.ToString(), 23);
+				telnet.Login(login, password, 100);
+				var port = (point.Port).ToString();
+#endif
+
+					Thread.Sleep(3000);
+					telnet.WriteLine("N");
+					Thread.Sleep(1000);
+					var command = point.Switch.Name.ToUpper().IndexOf("SF300") != -1 ?
+						string.Format("clear counters FastEthernet {0}", port)
+						: string.Format("clear counters GigabitEthernet {0}", port);
+					telnet.WriteLine(command);
+					Thread.Sleep(3000);
+					var rowGeneralInformation = telnet.Read().ToLower();
+					telnet.WriteLine("exit");
+					break;
+				}
+				catch (Exception ex) {
+					attemptsToGetData--;
+					if (attemptsToGetData <= 0) {
+						break;
+					}
+					//ожидание перед повтором
+					Thread.Sleep(1000);
+				}
+			}
+		}
+
+
 		public void GetStateOfCable(ISession session, IDictionary propertyBag, int endPointId)
 		{
 			propertyBag["state"] = "Не опрошен";
@@ -34,7 +77,7 @@ namespace InforoomControlPanel.Helpers
 			int attemptsToGetData = 5;
 			var login = ConfigurationManager.AppSettings["linksysLogin"];
 			var password = ConfigurationManager.AppSettings["linksysPassword"];
-			if (point.Switch.Name.IndexOf("SF300") == -1)
+			if (point.Switch.Name.ToUpper().IndexOf("SF300") == -1)
 				return;
 
 			while (attemptsToGetData > 0) {
@@ -127,7 +170,7 @@ namespace InforoomControlPanel.Helpers
 					Thread.Sleep(500);
 					var macInfo = telnet.Read();
 					macInfo = macInfo.Substring(macInfo.IndexOf("IP Address"));
-          GetSnoopingInfo(point, macInfo.Split('\n'), propertyBag);
+					GetSnoopingInfo(point, macInfo.Split('\n'), propertyBag);
 
 					telnet.WriteLine("exit");
 					propertyBag["message"] = null;

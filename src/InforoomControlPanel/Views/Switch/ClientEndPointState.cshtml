@@ -29,10 +29,12 @@
 
 			OnClientEndPointStart(@clientEndPointId);
 
-			$('#updateButton').on('click', function () {
-
-				OnClientEndPointStart(@clientEndPointId); 
-			})
+			$('#updateButton').on('click', function() {
+				OnClientEndPointStart(@clientEndPointId);
+			});
+			$('#cleanErrorsButton').on('click', function () {
+				OnClientEndPointCleanErrors(@clientEndPointId);
+			});
 		});
 	</script>
 }
@@ -41,6 +43,9 @@
 	<div class="panel-body" style="padding-bottom: 0px;">
 		<button type="button" id="updateButton" data-loading-text="Идет опрос..." class="btn btn-green" autocomplete="off">
 			Опросить коммутатор
+		</button>
+		<button type="button" id="cleanErrorsButton" data-loading-text="Очистка ошибок..." class="btn btn-green" autocomplete="off">
+			Очистить ошибки
 		</button>
 	</div>
 		<div class="panel-body">

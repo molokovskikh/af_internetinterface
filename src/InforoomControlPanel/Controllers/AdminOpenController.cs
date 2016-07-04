@@ -121,12 +121,15 @@ namespace InforoomControlPanel.Controllers
 		/// Основная информация о коммутаторе
 		/// </summary>
 		/// <returns></returns>
-		public JsonResult ClientEndpointGetInfo(int id)
+		public JsonResult ClientEndpointGetInfo(int id, int type)
 	 {
 		 var cl = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == id);
 		 var rawData = HardwareHelper.GetPortInformator(cl);
 		 var data = new Dictionary<string, object>();
 		 if (rawData != null) {
+			 if (type == 1) {
+					rawData.CleanErrors(DbSession, id);
+				}
 			 rawData.GetPortInfo(DbSession, data, id);
 		 }
 		 return Json(data, JsonRequestBehavior.AllowGet);

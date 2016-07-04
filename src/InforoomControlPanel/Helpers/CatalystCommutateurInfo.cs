@@ -13,6 +13,55 @@ namespace InforoomControlPanel.Helpers
 {
 	public class CatalystCommutateurInfo : CommutateurInfo, IPortInfo
 	{
+		public void CleanErrors(ISession session, int endPointId)
+		{
+			//кол-во попыток при неудачном опросе
+			int attemptsToGetData = 5;
+			var point = session.Load<ClientEndpoint>(endPointId);
+			//Авторизация, как у linksys
+			var login = ConfigurationManager.AppSettings["catalystLogin"];
+			var password = ConfigurationManager.AppSettings["catalystPassword"];
+
+			while (attemptsToGetData > 0) {
+				try {
+#if DEBUG
+					var telnet = new TelnetConnection("172.16.4.246", 23);
+#else
+			var telnet = new TelnetConnection(point.Switch.Ip.ToString(), 23);
+#endif
+					try {
+#if DEBUG
+						telnet.Login(login, password, 100);
+						var port = 2.ToString();
+#else
+				telnet.Login(login, password, 100);
+				var port = point.Port.ToString();
+#endif
+						//получение сведения от коммутатора
+						Thread.Sleep(1000);
+						var command = string.Format("clear counters fastEthernet 0/{0}", port);
+						telnet.WriteLine(command);
+						Thread.Sleep(1000);
+						telnet.WriteLine("Y");
+						Thread.Sleep(2000);
+						var info = telnet.Read();
+					}
+					finally {
+						telnet.WriteLine("exit");
+					}
+					break;
+				}
+				catch (Exception ex) {
+					attemptsToGetData--;
+					if (attemptsToGetData <= 0) {
+						break;
+					}
+					//ожидание перед повтором
+					Thread.Sleep(1000);
+				}
+			}
+		}
+
 		public void GetStateOfCable(ISession session, IDictionary propertyBag, int endPointId)
 		{
 			propertyBag["state"] = "Не поддерживается";
@@ -65,7 +114,6 @@ namespace InforoomControlPanel.Helpers
 					var portIsActive = HardwareHelper.ResultInArray(telnet.Read(), command).Contains("connected");
 					//Проверяем, что порт активен
 					if (portIsActive) {
-					
 						command = string.Format("show ip dh sn bi in fa 0/{0}", port);
 						telnet.WriteLine(command);
 						var ipInfo = telnet.Read();
