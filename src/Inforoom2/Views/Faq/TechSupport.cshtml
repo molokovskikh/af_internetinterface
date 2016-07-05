@@ -24,10 +24,24 @@
 
 
 <div class="networking">
-	@using (@Html.BeginForm("TechSupport", "Faq", FormMethod.Post)) {
+	@using (@Html.BeginForm("TechSupport", "Faq", FormMethod.Post, new { EncType = "multipart/form-data" })) {
 		<div>
 			<div class="ties">Email : </div>
 			@Html.ValidationEditor(validationRunner, ticket, "Email", new { @class = "entry" }, HtmlTag.input, HtmlType.text)
+		</div>
+		<div>
+			<div class="ties">Файл <br/> <span class="font14">(jpeg, jpg, png, bmp, doc, docx)</span>:</div>
+			<div class="fileUploadBlock">
+				<input id="uploadFile" class="fileUploadPath" placeholder="Выберете файл для загрузки в формате xml / txt" disabled="disabled"/>
+				<div class="fileUpload btn btn-gold">
+					<input type="file" id="uploadedFile" name="uploadedFile" class="upload" />
+					<script>
+						document.getElementById("uploadedFile").onchange = function () {
+							document.getElementById("uploadFile").value = this.value;
+						};
+					</script>
+				</div> 
+			</div>
 		</div>
 		<div>
 			<div class="ties">Текст вопроса* : </div>

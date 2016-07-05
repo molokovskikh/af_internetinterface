@@ -103,9 +103,13 @@ margin-bottom: 20px;margin-left: 478px;margin-top: 17px;padding: 5px 44px;}
 .turn {float: right;font-size: 18px;margin-right: 16px;width: 105px;text-decoration: underline;cursor: pointer;margin-top: -39px;}
 .upward  {display: inline-block;width: 10px;height: 10px;background: url("../images/arro.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);}
 .upward.active {background: url("../images/upward.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);}
-.networking {height: 290px;margin-left: 30px;margin-top: 18px;width: 950px;}
+.networking {height: 322px;margin-left: 30px;margin-top: 18px;width: 950px;}
 .problem {height: auto;margin-bottom: 161px;margin-left: 89px;;width: 900px;}
 .problem .active {color: #a71b22;}
+.fileUploadBlock {display: inline-block;}
+.fileUploadBlock #uploadFile {width: 622px;}
+.fileUploadBlock #uploadedFile {margin-top: 10px;color: #bd0000;}
+.font14 { font-size: 14px;}
 .answer {color: black;font-family: PTSans;font-size: 14px;height: auto;line-height: 25px;text-decoration: none;width: 985px;}
 .question {margin-bottom: 8px;font-size: 18px;cursor: pointer;}
 .question .pointer {width: 20px;height: 7px; background: url("../images/arro.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);display: inline-block;margin-left: 7px;}
