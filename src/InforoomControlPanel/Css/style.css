@@ -60,6 +60,7 @@
  .emptyBlock .orderListBorder .orderColumn{ border-bottom: 2px solid #677BB1!important;}
  .emptyBlock .panel-heading .panel-title.bold{    padding-left: 10px;}
  .emptyBlock .online td{background: #BDE8BC !important; }
+ .InfoPhysicalNaviPan a{border: 1px solid #fff !important;}
  .appeal.Block.statusDissolved td{background: #FF5454 !important;}
  .fileUpload {position: relative;overflow: hidden;margin: 10px;}
  .fileUploadPathWrapper{ padding-bottom: 0px;}

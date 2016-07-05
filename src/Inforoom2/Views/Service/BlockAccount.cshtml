@@ -32,7 +32,7 @@
 			@Html.HiddenFor(modelItem => service.Id)
 			<p>
 				<input type="hidden" id ="blockingEndDate" name="blockingEndDate" value="@(blockingEndDate):00"/>
-				Заблокировать на @Html.TextBoxFor(modelItem => weeksCount, null, new {@id= "weeksCount", @type = "number", @class = "personal", @Style = "width: 100px;", @Name = "", min= "1", @onchange = "getMonth(this)" }) нед., до <span id="dateInWeeks" class="red-font">@blockingEndDate</span>
+				Заблокировать на @Html.TextBoxFor(modelItem => weeksCount, null, new {@id= "weeksCount", @type = "number", @class = "personal", @step="1", @Style = "width: 100px;", @Name = "", min= "1", @onchange = "getMonth(this)" }) нед., до <span id="dateInWeeks" class="red-font">@blockingEndDate</span>
 				<input id="ConnectBtn" class="button" type="submit" value="Подключить"/>
 			</p>
 		}

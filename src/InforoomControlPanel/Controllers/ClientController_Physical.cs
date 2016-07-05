@@ -77,7 +77,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult InfoPhysical(int id, object clientModelItem = null, string subViewName = "", int appealType = 0,
 			int writeOffState = 0, int clientStatus = 0, string clientStatusChangeComment = "")
 		{
-		 Client client;
+			Client client;
 			//--------------------------------------------------------------------------------------| Обработка представлений (редактирование клиента)
 			bool updateSce = false;
 			// Получаем клиента
@@ -808,6 +808,22 @@ namespace InforoomControlPanel.Controllers
 
 			return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
 				new { @Id = client.Id, @subViewName = subViewName });
+		}
+
+		[HttpPost]
+		public ActionResult DiactivateBlockAccountService(int id)
+		{
+			var client = DbSession.Load<Client>(id);
+			var clientService = client.ClientServices.FirstOrDefault(c => c.Service.Id == Service.GetIdByType(typeof(BlockAccountService)) && c.IsActivated);
+			if (clientService == null) {
+				ErrorMessage("Услуга уже была деактивирована.");
+				return RedirectToAction("InfoPhysical", new { @Id = client.Id });
+			}
+			SuccessMessage(clientService.DeActivateFor(client, DbSession));
+			Inforoom2.Helpers.SceHelper.UpdatePackageId(DbSession, client);
+			client.Appeals.Add(new Appeal($"Услуга 'Добровольная блокировка' была отменена оператором.", client, AppealType.User, GetCurrentEmployee()));
+			DbSession.Update(client);
+			return RedirectToAction("InfoPhysical", new { @Id = client.Id });
 		}
 
 		[HttpPost]

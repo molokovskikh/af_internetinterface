@@ -1,0 +1,31 @@
+﻿@model Inforoom2.Models.Client
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@{
+	Layout = "";
+	Client client = Model;
+}
+<!-- Modal For WriteOffs Cancel-->
+<div class="modal fade" id="ModelBlockAccountCancel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			@using (@Html.BeginForm("DiactivateBlockAccountService", "Client", null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" }))
+			{
+				@Html.Hidden("id", client.Id) 
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Принудительное отключение услуги</h4>
+				</div>
+				<div class="modal-body">
+					<p><span id="writeOffDeleteMessage">Вы действительно хотите деактивировать услугу <strong>"Добровольная блокировка"</strong></span></p> 
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+					<button type="submit" class="btn btn-red">Отключить</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>
