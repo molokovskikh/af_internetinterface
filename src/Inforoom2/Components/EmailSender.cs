@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Net.Mail;
+using System.Net.Mime;
+using System.Web;
 using Inforoom2.Models;
 
 namespace Inforoom2.Components
@@ -23,7 +25,7 @@ namespace Inforoom2.Components
 			foreach (var s in to) SendEmail(s, subject, body);
 		}
 
-		public static void SendEmail(string to, string subject, string body)
+		public static void SendEmail(string to, string subject, string body, HttpPostedFileBase uploadedFile = null)
 		{
 			var sendMailToClientFlag = ConfigurationManager.AppSettings["SendMailToClientFlag"];
 			if (string.IsNullOrEmpty(sendMailToClientFlag)) {
@@ -39,10 +41,14 @@ namespace Inforoom2.Components
 			smtp.Host = ConfigurationManager.AppSettings["SmtpServer"];
 			smtp.Port = 25;
 			smtp.UseDefaultCredentials = false;
+			if (uploadedFile!=null) {
+				var attachment = new Attachment(uploadedFile.InputStream, uploadedFile.FileName);
+      mail.Attachments.Add(attachment);
+			}
 #if DEBUG
 #else
 					smtp.Send(mail);
-			#endif
+#endif
 		}
 
 		public static void SendError(string message)

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using Inforoom2.Components;
 using Inforoom2.Models;
@@ -33,7 +35,7 @@ namespace Inforoom2.Controllers
 		/// Обрабатывает отправку нового вопроса
 		/// </summary>
 		[HttpPost]
-		public ActionResult Index(Ticket ticket)
+		public ActionResult Index(Ticket ticket, HttpPostedFileBase uploadedFile = null)
 		{
 			var client = CurrentClient;
 			if (client != null) {
@@ -60,7 +62,7 @@ namespace Inforoom2.Controllers
 				var email = ConfigurationManager.AppSettings["MailSenderAddress"];
 #endif
 				try {
-					EmailSender.SendEmail(email, "Запрос в техподдержку с ivrn.net от " + ticket.Email, builder.ToString());
+					EmailSender.SendEmail(email, "Запрос в техподдержку с ivrn.net от " + ticket.Email, builder.ToString(), uploadedFile);
 				}
 				catch (Exception) {
 					ErrorMessage("Извините, произошла ошибка");
@@ -97,9 +99,15 @@ namespace Inforoom2.Controllers
 		/// Обрабатывает отправку нового вопроса
 		/// </summary>
 		[HttpPost]
-		public ActionResult TechSupport(Ticket ticket)
+		public ActionResult TechSupport(Ticket ticket, HttpPostedFileBase uploadedFile = null)
 		{
-			Index(ticket);
+			if (uploadedFile != null) {
+				string[] extensionsAllowed = { ".jpeg", ".jpg", ".png", ".bmp", ".doc", ".docx" };
+				if (extensionsAllowed.All(s => s == new FileInfo(uploadedFile.FileName).Extension.ToLower())) {
+					uploadedFile = null;
+				}
+			}
+			Index(ticket, uploadedFile);
 			return View();
 		}
 	}

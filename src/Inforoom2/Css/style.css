@@ -11,7 +11,7 @@ body { background: #9EA5AD!important;}
 a.corpred, .corpred { color: #a61c21 !important;}
 textarea { resize: none;}
 ul { padding: 0px;}
-
+.hid { display: none !important;}
 .blockBefore{width: 100px;}
 .dateToBlockBefore{width: 100px;}
 .menu ul { width: 100%!important;}
