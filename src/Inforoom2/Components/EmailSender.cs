@@ -17,15 +17,19 @@ namespace Inforoom2.Components
 
 		public static void SendEmail(IList<PhysicalClient> users, string subject, string body)
 		{
-			foreach (var physicalClient in users) SendEmail(physicalClient.Email, subject, body);
+			foreach (var physicalClient in users) {
+				SendEmail(physicalClient.Email, subject, body);
+			}
 		}
 
 		public static void SendEmail(string[] to, string subject, string body)
 		{
-			foreach (var s in to) SendEmail(s, subject, body);
+			foreach (var s in to) {
+				SendEmail(s, subject, body);
+			}
 		}
 
-		public static void SendEmail(string to, string subject, string body, HttpPostedFileBase uploadedFile = null)
+		public static void SendEmail(string to, string subject, string body, HttpPostedFileBase[] uploadedFile = null)
 		{
 			var sendMailToClientFlag = ConfigurationManager.AppSettings["SendMailToClientFlag"];
 			if (string.IsNullOrEmpty(sendMailToClientFlag)) {
@@ -41,9 +45,13 @@ namespace Inforoom2.Components
 			smtp.Host = ConfigurationManager.AppSettings["SmtpServer"];
 			smtp.Port = 25;
 			smtp.UseDefaultCredentials = false;
-			if (uploadedFile!=null) {
-				var attachment = new Attachment(uploadedFile.InputStream, uploadedFile.FileName);
-      mail.Attachments.Add(attachment);
+			if (uploadedFile != null) {
+				foreach (var item in uploadedFile) {
+					if (item != null) {
+						var attachment = new Attachment(item.InputStream, item.FileName);
+						mail.Attachments.Add(attachment);
+					}
+				}
 			}
 #if DEBUG
 #else

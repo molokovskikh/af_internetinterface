@@ -527,6 +527,9 @@
     <Content Include="Views\Warning\PhysFirstPayment.cshtml" />
     <Content Include="Views\Warning\PhysPassportData.cshtml" />
     <Content Include="Views\WarningLaw\LawDisabled.cshtml" />
+    <Content Include="Views\Faq\web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Web.test2.config" />
     <None Include="Web.release.config">
       <SubType>Designer</SubType>

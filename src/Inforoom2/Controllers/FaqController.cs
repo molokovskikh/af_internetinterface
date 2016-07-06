@@ -35,7 +35,7 @@ namespace Inforoom2.Controllers
 		/// Обрабатывает отправку нового вопроса
 		/// </summary>
 		[HttpPost]
-		public ActionResult Index(Ticket ticket, HttpPostedFileBase uploadedFile = null)
+		public ActionResult Index(Ticket ticket, HttpPostedFileBase[] uploadedFile = null)
 		{
 			var client = CurrentClient;
 			if (client != null) {
@@ -66,7 +66,7 @@ namespace Inforoom2.Controllers
 				}
 				catch (Exception) {
 					ErrorMessage("Извините, произошла ошибка");
-					return View();
+					return RedirectToAction("TechSupport");
 				}
 
 				if (ticket.Client != null) {
@@ -81,6 +81,9 @@ namespace Inforoom2.Controllers
 			}
 			else
 				ViewBag.ShowQuestionForm = true;
+			if (uploadedFile != null && uploadedFile.Length > 0) {
+				return RedirectToAction("TechSupport");
+			}
 			return View();
 		}
 
@@ -99,12 +102,18 @@ namespace Inforoom2.Controllers
 		/// Обрабатывает отправку нового вопроса
 		/// </summary>
 		[HttpPost]
-		public ActionResult TechSupport(Ticket ticket, HttpPostedFileBase uploadedFile = null)
+		public ActionResult TechSupport(Ticket ticket, HttpPostedFileBase[] uploadedFile = null)
 		{
 			if (uploadedFile != null) {
+				uploadedFile = uploadedFile.Where(s => s != null).ToArray();
 				string[] extensionsAllowed = { ".jpeg", ".jpg", ".png", ".bmp", ".doc", ".docx" };
-				if (extensionsAllowed.All(s => s == new FileInfo(uploadedFile.FileName).Extension.ToLower())) {
-					uploadedFile = null;
+				if (!uploadedFile.All(d => extensionsAllowed.Any(s => {
+					var tempInfo = new FileInfo(d.FileName);
+					return tempInfo.Extension.ToLower() == s && d.ContentLength <= 2400000;
+				})) || uploadedFile.Length > 5) {
+					ErrorMessage(uploadedFile.Length > 5 ? "Количество файлов превышает допустимое: макс. 5"
+						: "Добавленные файлы не соответствуют установленному формату.");
+					return RedirectToAction("TechSupport");
 				}
 			}
 			Index(ticket, uploadedFile);
