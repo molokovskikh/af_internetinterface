@@ -11,45 +11,80 @@
 
 <div class="heading">@ViewBag.Title</div>
 <div class="whiteblock">
-		<div class="boy"></div>
-		<div class="whiteblocktext">
-			<p>Вы можете быть уверены — специалисты "Инфорум" ответят на Ваш звонок и окажут квалифицированную помощь. Служба техподдержки работает круглосуточно, без выходных.</p>
-			<p>Также вы можете заказать обратный звонок или позвонить по круглосуточному номеру - <a href="">@ViewBag.RegionOfficePhoneNumber</a>
-			</p>
-			<p>Вы можете описать свою проблему при помощи формы, расположенной ниже. Наши специалисты ответят на ваши вопросы, прислав письмо на указанный адрес эл. почты.</p>
+	<div class="boy"></div>
+	<div class="whiteblocktext">
+		<p>Вы можете быть уверены — специалисты "Инфорум" ответят на Ваш звонок и окажут квалифицированную помощь. Служба техподдержки работает круглосуточно, без выходных.</p>
+		<p>
+			Также вы можете заказать обратный звонок или позвонить по круглосуточному номеру - <a href="">@ViewBag.RegionOfficePhoneNumber</a>
+		</p>
+		<p>Вы можете описать свою проблему при помощи формы, расположенной ниже. Наши специалисты ответят на ваши вопросы, прислав письмо на указанный адрес эл. почты.</p>
 
-		</div>
-		</div>
-		<div class="know">
-
-
-<div class="networking">
-	@using (@Html.BeginForm("TechSupport", "Faq", FormMethod.Post, new { EncType = "multipart/form-data" })) {
-		<div>
-			<div class="ties">Email : </div>
-			@Html.ValidationEditor(validationRunner, ticket, "Email", new { @class = "entry" }, HtmlTag.input, HtmlType.text)
-		</div>
-		<div>
-			<div class="ties">Файл <br/> <span class="font14">(jpeg, jpg, png, bmp, doc, docx)</span>:</div>
-			<div class="fileUploadBlock">
-				<input id="uploadFile" class="fileUploadPath" placeholder="Выберете файл для загрузки в формате xml / txt" disabled="disabled"/>
-				<div class="fileUpload btn btn-gold">
-					<input type="file" id="uploadedFile" name="uploadedFile" class="upload" />
-					<script>
-						document.getElementById("uploadedFile").onchange = function () {
-							document.getElementById("uploadFile").value = this.value;
-						};
-					</script>
-				</div> 
-			</div>
-		</div>
-		<div>
-			<div class="ties">Текст вопроса* : </div>
-			@Html.ValidationEditor(validationRunner, ticket, "Text", new { @class = "entry" }, HtmlTag.textarea, HtmlType.none)
-		</div>
-		 @Html.HiddenFor(k=>ticket.Client)
-		 @Html.HiddenFor(k=>ticket.Id)
-		<input type="submit" class="set"  value="Отправить вопрос"/>
-	}
+	</div>
 </div>
+<div class="know">
+
+
+	<div class="networking">
+		@using (@Html.BeginForm("TechSupport", "Faq", FormMethod.Post, new { EncType = "multipart/form-data" })) {
+			<div>
+				<div class="ties">Email : </div>
+				@Html.ValidationEditor(validationRunner, ticket, "Email", new { @class = "entry" }, HtmlTag.input, HtmlType.text)
+			</div>
+			<div>
+				<div class="ties">
+					Файл (макс.вес: 2 мб) <br/> <span class="font14">(jpeg, jpg, png, bmp, doc, docx)</span>:
+				</div>
+				<div class="fileUploadBlock">
+					<div class="fileBlock">
+						<div>Файл<span class="number" fileItem="0">1</span></div>
+						<input id="uploadFile" class="fileUploadPath" placeholder="Выберете файл для загрузки в формате jpeg, jpg, png, bmp, doc, docx (макс.вес: 2 мб)" disabled="disabled"/>
+						<div class="fileUpload btn btn-gold">
+							<input type="file" id="uploadedFile" name="uploadedFile" class="upload"/>
+						</div>
+					</div>
+				</div>
+				<div class="addButton">
+					<span class="resend c-pointer" onclick="addElement(this)">Добавить</span>
+				</div>
+				<script type="text/javascript">
+					document.getElementById("uploadedFile").onchange = function() {
+						document.getElementById("uploadFile").value = this.value;
+					}
+
+					function addElement(this_) {
+						var item = $(".fileBlock").last().clone();
+						var number = $(item).find(".number");
+						var index = 1 + parseInt(number.attr("fileItem"));						
+						item.find("input").each(function() {
+							$(this).val("");
+						});
+						number.attr("fileItem", index);
+						number.html(1 + index);
+						var fileUploadPath = $(item).find(".fileUploadPath");
+						fileUploadPath.attr("id", "uploadFile" + index);
+						var upload = $(item).find(".upload");
+						upload.change(function () { 
+							$("#uploadFile" + $(this).parents(".fileBlock").find(".number").attr("fileItem")).val($(this).val());
+						});
+						upload.attr("id", "uploadedFile" + index);
+						$(".fileUploadBlock").append(item);
+						
+						$("div.networking").css("height", $("div.networking").height() + item.height() + parseInt(item.css("padding-top"))
+							+ parseInt(item.css("padding-bottom")) + parseInt(item.css("border-top-width")) + parseInt(item.css("border-bottom-width")));
+
+						if (index == 4) { @*со скобками < или > проблема для байндера TODO: учесть в байндере использование скобок в js*@
+							$(this_).addClass("hid"); 
+						}
+					}
+				</script>
+			</div>
+			<div>
+				<div class="ties">Текст вопроса* : </div>
+				@Html.ValidationEditor(validationRunner, ticket, "Text", new { @class = "entry" }, HtmlTag.textarea, HtmlType.none)
+			</div>
+			@Html.HiddenFor(k => ticket.Client)
+			@Html.HiddenFor(k => ticket.Id)
+			<input type="submit" class="set" value="Отправить вопрос"/>
+		}
+	</div>
 </div>

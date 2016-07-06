@@ -27,7 +27,7 @@ namespace Inforoom2.Controllers
 	public class BaseController : Controller
 	{
 		public ISession DbSession;
-		protected static readonly ILog log = LogManager.GetLogger(typeof (BaseController));
+		protected static readonly ILog log = LogManager.GetLogger(typeof(BaseController));
 		protected ValidationRunner ValidationRunner;
 
 		public BaseController()
@@ -49,7 +49,7 @@ namespace Inforoom2.Controllers
 			ViewBag.Validation = ValidationRunner;
 
 			ViewBag.JavascriptParams = new Dictionary<string, string>();
-			var currentDate = (Int32) (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+			var currentDate = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 			AddJavascriptParam("Timestamp", currentDate.ToString());
 		}
 
@@ -117,7 +117,7 @@ namespace Inforoom2.Controllers
 			EmailSender.SendError(builder.ToString());
 
 			var showErrorPage = false;
-			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage); 
+			bool.TryParse(ConfigurationManager.AppSettings["ShowErrorPage"], out showErrorPage);
 			if (!HeadersWritten()) {
 				DeleteCookie("SuccessMessage");
 
@@ -158,9 +158,8 @@ namespace Inforoom2.Controllers
 
 			//Я не понимаю зачем нужна следующая команда
 			session = CurrentSessionContext.Unbind(MvcApplication.SessionFactory);
-			if (session.IsOpen)
+			if (session != null && session.IsOpen)
 				session.Close();
-
 		}
 
 		protected List<TModel> GetList<TModel>()
@@ -187,17 +186,17 @@ namespace Inforoom2.Controllers
 		public void SetCookie(string name, string value)
 		{
 			if (value == null) {
-				Response.Cookies.Add(new HttpCookie(name, "false") {Path = "/", Expires = SystemTime.Now()});
+				Response.Cookies.Add(new HttpCookie(name, "false") { Path = "/", Expires = SystemTime.Now() });
 				return;
 			}
 			var plainTextBytes = Encoding.UTF8.GetBytes(value);
 			var text = Convert.ToBase64String(plainTextBytes);
-			Response.Cookies.Add(new HttpCookie(name, text) {Path = "/"});
+			Response.Cookies.Add(new HttpCookie(name, text) { Path = "/" });
 		}
 
 		public void DeleteCookie(string name)
 		{
-				Response.Cookies.Remove(name); 
+			Response.Cookies.Remove(name);
 		}
 
 		protected ActionResult Authenticate(string action, string controller, string username, bool shouldRemember,
@@ -263,7 +262,7 @@ namespace Inforoom2.Controllers
 			controller.OnActionExecuting(c);
 
 			// Получение результата действия   
-			var actionResult = (ActionResult) actionMethod.Invoke(controller, parameters);
+			var actionResult = (ActionResult)actionMethod.Invoke(controller, parameters);
 
 			// Передача полученного результата текущему действию
 			actionResult.ExecuteResult(controller.ControllerContext);

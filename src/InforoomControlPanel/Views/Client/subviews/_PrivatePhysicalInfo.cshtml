@@ -3,6 +3,7 @@
 @using Inforoom2.Components
 @using Inforoom2.Helpers
 @using Inforoom2.Models
+@using Inforoom2.Models.Services
 @{
 	Layout = "";
 	Client client = Model;
@@ -94,7 +95,13 @@
 			<tr class="@(client.Status.Type == StatusType.NoWorked || client.Status.Type == StatusType.Dissolved ? "appeal Block" : "") @(client.Status.Type == StatusType.Dissolved ? "statusDissolved" : "")">
 				<td>Статус клиента</td>
 				<td>
-					<span>@client.Status.Name</span>
+					@if (client.HasActiveService<BlockAccountService>()) {
+						<a class="c-pointer blue" title="Принудительное отключение услуги" data-target="#ModelBlockAccountCancel" data-toggle="modal">
+							<strong class="red">@client.Status.Name</strong><span> ( отключить )</span></a>
+					}
+					else {
+						<span>@client.Status.Name</span>
+					}
 				</td>
 			</tr>
 			<tr>
@@ -298,3 +305,7 @@
 @Html.Partial("subviews/modelview/_PhysicalPlanEdit", client)
 @Html.Partial("subviews/modelview/_PhysicalSaleUpdate", client)
 @Html.Partial("subviews/modelview/_PhysicalAddressEdit", client)
+
+@if (client.HasActiveService<BlockAccountService>()) {
+	@Html.Partial("subviews/modelview/_PhysicalBlockAccountCancel", client)
+}
