@@ -57,6 +57,37 @@ namespace Billing
 			}
 		}
 
+		public void SafeProcessClientEndpointSwitcher()
+		{
+			try {
+				_mutex.WaitOne();
+				WithTransaction(session => {
+					var newEndPoints = session.Query<ClientEndpoint>().Where(c => c.IsEnabled == null && c.Client.Disabled == false).ToList();
+					foreach (var endpoint in newEndPoints) {
+						endpoint.IsEnabled = true;
+						var client = endpoint.Client;
+
+						if (client.RatedPeriodDate == null && !client.Disabled) {
+							client.RatedPeriodDate = DateTime.Now;
+							client.UpdateAndFlush();
+						}
+						if (client.BeginWork == null && !client.Disabled) {
+							client.Status = Status.Find((uint)StatusType.Worked);
+							client.BeginWork = DateTime.Now;
+							client.UpdateAndFlush();
+						}
+						endpoint.UpdateAndFlush();
+					}
+				});
+			}
+			catch (Exception ex) {
+				_log.Error("При активации точек подключения", ex);
+			}
+			finally {
+				_mutex.ReleaseMutex();
+			}
+		}
+
 		public void SafeProcessPayments()
 		{
 			try {
@@ -86,7 +117,7 @@ namespace Billing
 			WithTransaction(ActivateServices);
 
 			WithTransaction(session => {
-				var newEndPointForConnect = session.Query<ClientEndpoint>().Where(c => c.Client.PhysicalClient != null && !c.PayForCon.Paid && c.Client.BeginWork != null).ToList();
+				var newEndPointForConnect = session.Query<ClientEndpoint>().Where(c => c.Client.PhysicalClient != null && !c.PayForCon.Paid).ToList();
 				foreach (var clientEndpoint in newEndPointForConnect) {
 					var writeOff = new UserWriteOff(clientEndpoint.Client, clientEndpoint.PayForCon.Sum, "Плата за подключение");
 					session.Save(writeOff);
@@ -100,18 +131,18 @@ namespace Billing
 				var payments = session.Query<Payment>().Where(p => !p.BillingAccount && !p.IsDuplicate);
 				////Поиск дублируемых платежей
 				foreach (var payment in payments) {
-                    if (session.Query<Payment>().Any(p => p.RecievedOn >= SystemTime.Now().Date.AddDays(-48)
-																	&& p.IsDuplicate == false
-																	&& p.TransactionId != null
-																	&& p.Agent != null
-																	&& p.Id != payment.Id
-																	&& p.TransactionId == payment.TransactionId
-																	&& p.Agent == payment.Agent)) {
+					if (session.Query<Payment>().Any(p => p.RecievedOn >= SystemTime.Now().Date.AddDays(-48)
+					                                      && p.IsDuplicate == false
+					                                      && p.TransactionId != null
+					                                      && p.Agent != null
+					                                      && p.Id != payment.Id
+					                                      && p.TransactionId == payment.TransactionId
+					                                      && p.Agent == payment.Agent)) {
 						//Если платеж дублирован, маркеруем, пропускаем платеж
 						payment.IsDuplicate = true;
 						session.Save(payment);
-	                    session.Flush();
-                        continue;
+						session.Flush();
+						continue;
 					}
 					var updateClient = payment.Client;
 					if (updateClient.PhysicalClient != null) {
@@ -122,15 +153,17 @@ namespace Billing
 							updateClient.AutoUnblocked = true;
 						}
 						if (updateClient.RatedPeriodDate != null) {
-							if (updateClient.PhysicalClient.Balance >= updateClient.GetPriceIgnoreDisabled() * updateClient.PercentBalance) {
+							if (updateClient.PhysicalClient.Balance >= updateClient.GetPriceIgnoreDisabled() * updateClient.PercentBalance
+							    && PlanChanger.CheckPlanChangerWarningPage(session, updateClient) == false) {
 								updateClient.ShowBalanceWarningPage = false;
 								if (updateClient.IsChanged(c => c.ShowBalanceWarningPage))
 									updateClient.CreareAppeal("Отключена страница Warning, клиент внес платеж", AppealType.Statistic);
 							}
 
 							//Возможность сервисам отреагировать на платеж
-							foreach (var clientService in updateClient.ClientServices.ToList())
+							foreach (var clientService in updateClient.ClientServices.ToList()) {
 								clientService.PaymentProcessed();
+							}
 						}
 						ProcessBonusesForFirstPayment(payment, session);
 					}
@@ -441,8 +474,9 @@ namespace Billing
 				//Отсылаем смс если клиенту осталось работать 2 дня или меньше
 				SendWarningSMS(session, client);
 
-				//Обработка отображения предупреждения о балансе
-				UpdateWarnings(client);
+				if (PlanChanger.CheckPlanChangerWarningPage(session, client) == false)
+					//Обработка отображения предупреждения о балансе
+					UpdateWarnings(client);
 			}
 
 			//Обработка аренды оборудования 
@@ -523,7 +557,7 @@ namespace Billing
 				c.BeginWork != null)
 				.ToList();
 			foreach (var client in bonusesClients) {
-				if (client.Payments.Where(s=>!s.IsDuplicate).Sum(p => p.Sum) >= needToAgentSum * agentSettings) {
+				if (client.Payments.Where(s => !s.IsDuplicate).Sum(p => p.Sum) >= needToAgentSum * agentSettings) {
 					var request = client.Request;
 					request.PaidBonus = true;
 					session.Save(request);
@@ -605,24 +639,36 @@ namespace Billing
 		private void UpdateRatedPeriodDate(Client client)
 		{
 			var phisicalClient = client.PhysicalClient;
+			//если баланс клиента положительный 
+			//не отключен
+			//аттестационный период задан
 			if (phisicalClient.Balance >= 0 && !client.Disabled && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue) {
 				var dtNow = SystemTime.Now();
-				// Если дата расчетного периода (с поправкой на долговые дни) ровно на 1 месяц позади текущей даты
+				//разница между текущей датой и месяцем после аттестационного периода = отрицательному значению долговых дней
 				if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).Days == -client.DebtDays) {
 					var dtFrom = client.RatedPeriodDate.Value;
 					var dtTo = dtNow;
-					// Фактически обнулить кол-во долговых дней у клиента
+					//добавляем разницу между текущей датой и аттестационным периодом  к долговым дням
 					client.DebtDays += dtFrom.Day - dtTo.Day;
 					var thisMonth = dtNow.Month;
-					// Задать расчетный период с поправкой на долговые дни и на текущий месяц
+					//к текущей дате добавляем полученное число долговых дней 
+					//задаем полученное значение аттестационному периоду
 					client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
+					//пока месяц аттестационного периода не равен месяцу текущему
 					while (client.RatedPeriodDate.Value.Month != thisMonth) {
+						//вычитаем из аттестационного периода по одному дню
 						client.RatedPeriodDate = client.RatedPeriodDate.Value.AddDays(-1);
 					}
 				}
+				//если баланс клиента отрицательный   
+				//или клиент отключен 
+				//или аттестационный период не задан
+				//
+				// и разница между текущей датой и месяцем после аттестационного периода = отрицательному значению долговых дней
 				else if ((client.RatedPeriodDate.Value.AddMonths(1).Date - dtNow.Date).TotalDays < -client.DebtDays) {
-					// Задать расчетный период с поправкой на долговые дни
+					//назначаем аттестационному периоду значение текущей даты, добавляя долговые дни
 					client.RatedPeriodDate = dtNow.AddDays(client.DebtDays);
+					//обнуляем долговые дни
 					client.DebtDays = 0;
 				}
 			}

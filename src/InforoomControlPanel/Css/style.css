@@ -69,6 +69,9 @@
  .ClientEndPointStateBaseInfo .rent{float: left;}
  .ClientEndPointStateBaseInfo .time{float: left;display: block;margin-top: 16px;position: absolute;}
  .ClientEndPointStateBaseInfo td{ min-width: 128px !important;}
+ .endpointTitle { font-weight: bold; color: #c1c1c1;}
+ .endpointTitle.enabled{ color: #009250;}
+ .endpointTitle.disabled{ color: #C70E0E;}
  #switchPorts tbody.large{  border: 1px solid #808080;border-bottom: none;border-left: none;border-top: 4px solid #333;}
  #switchPorts tbody.large tr:nth-child(2n) {border-bottom: 4px solid #333;}
  #switchPorts tbody{  border: 1px solid #808080;border-bottom: none;border-left: none;}

@@ -35,6 +35,9 @@ namespace InternetInterface.Models
 		public virtual uint Id { get; set; }
 
 		[Property]
+		public virtual bool? IsEnabled { get; set; }
+
+		[Property]
 		public virtual bool Disabled { get; set; }
 
 		[Property(ColumnType = "InternetInterface.Helpers.IPUserType, InternetInterface"), Auditable("Фиксированный IP")]

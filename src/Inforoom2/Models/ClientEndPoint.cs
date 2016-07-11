@@ -25,6 +25,9 @@ namespace Inforoom2.Models
 		}
 
 		[Property]
+		public virtual bool? IsEnabled { get; set; }
+
+		[Property]
 		public virtual bool Disabled { get; set; }
 
 		[Property(Column = "PackageId"), Description("PackageId")]

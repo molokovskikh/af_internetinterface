@@ -86,7 +86,7 @@ namespace InternetInterface.Background
 			}
 			foreach (var client in clients) {
 				//Формируем сообщения для пользователей
-				var url = "http://stat.ivrn.net/ii/UserInfo/ShowPhysicalClient?filter.ClientCode=" + client.Id;
+				var url = $"http://stat.ivrn.net/cp/Client/{(client.PhysicalClient!=null ? "InfoPhysical" : "InfoLegal")}/" + client.Id;
 				sb.Append("<br/>\n<a href='" + url + "'>");
 				sb.Append(client.Id);
 				sb.Append("</a>");

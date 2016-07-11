@@ -39,7 +39,7 @@ namespace InternetInterface.Models.Services
 							if (!clientService.Client.ShowBalanceWarningPage) {
 								clientService.Client.ShowBalanceWarningPage = true;
 								SceHelper.UpdatePackageId(session, clientService.Client);
-                                clientService.Client.CreareAppeal("Клиент был заблокирован в связи с прекращением действия тарифа '"
+								clientService.Client.CreareAppeal("Клиент был заблокирован в связи с прекращением действия тарифа '"
 								                                  + clientService.Client.PhysicalClient.Tariff.Name + "'.", AppealType.Statistic);
 							}
 						}
@@ -53,6 +53,8 @@ namespace InternetInterface.Models.Services
 		// проверка, если клиент уже заблокирован
 		public static bool CheckPlanChangerWarningPage(ISession session, Client client)
 		{
+			if (client.PhysicalClient == null)
+				return false;
 			// получение сведения об изменении тарифов
 			var planChangerList = session.Query<PlanChangerData>().ToList();
 			foreach (var changer in planChangerList) {
@@ -68,8 +70,8 @@ namespace InternetInterface.Models.Services
 						if (client.ClientServices.Any(s => s.Service.HumanName == "PlanChanger")
 						    && client.PhysicalClient.LastTimePlanChanged != Convert.ToDateTime("01.01.0001")
 						    && (client.PhysicalClient.LastTimePlanChanged.AddDays(changer.Timeout) < SystemTime.Now())) {
-								// клиент забокирован PlanChanger
-								return client.ShowBalanceWarningPage;
+							// клиент забокирован PlanChanger
+							return client.ShowBalanceWarningPage;
 						}
 					}
 				}
