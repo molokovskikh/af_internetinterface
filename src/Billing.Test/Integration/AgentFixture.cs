@@ -64,8 +64,11 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				client.BeginWork = DateTime.Now;
 				client.Request = request;
+				var clientEndPoint = new ClientEndpoint { Client = client };
+				clientEndPoint.Save();
 				client.Save();
 			}
+			billing.SafeProcessClientEndpointSwitcher();
 			billing.ProcessWriteoffs();
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
@@ -78,6 +81,7 @@ namespace Billing.Test.Integration
 				payment.Save();
 				client.Payments.Add(payment);
 			}
+			client.Save();
 			billing.ProcessPayments();
 			billing.ProcessWriteoffs();
 			billing.ProcessWriteoffs();

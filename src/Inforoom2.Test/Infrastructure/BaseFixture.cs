@@ -78,7 +78,7 @@ namespace Inforoom2.Test.Infrastructure
 			catch (Exception e) {
 			}
 			GenerateObjects();
-			var allTabsToClose = GlobalDriver.WindowHandles.ToList(); 
+			var allTabsToClose = GlobalDriver.WindowHandles.ToList();
 			browser.SwitchTo().Window(allTabsToClose[0]);
 		}
 
@@ -104,15 +104,14 @@ namespace Inforoom2.Test.Infrastructure
 
 		public static void Call(string url)
 		{
-			if (!string.IsNullOrEmpty(url))
-			{
+			if (!string.IsNullOrEmpty(url)) {
 				var wc = new WebClient();
 				wc.DownloadString(new Uri(url));
 				System.Threading.Thread.Sleep(1000);
 				wc.Dispose();
 			}
-
 		}
+
 		protected bool IsTextExists(string text)
 		{
 			var body = browser.FindElementByCssSelector("body").Text;
@@ -176,7 +175,7 @@ namespace Inforoom2.Test.Infrastructure
 			//Приоритет удаления данных
 
 			var order = "payments,bankpayments,StaticIps,orderservices,orders,planchangerdata,planhtmlcontent,permissiontouser,roletouser,perm_role,user_role,roles,permissions,lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
-									+ "lawyerperson,physicalclients,clientendpoints,switchaddress,leases,NetworkSwitches,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
+			            + "lawyerperson,physicalclients,clientendpoints,switchaddress,leases,NetworkSwitches,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
 
 
 			var parts = order.Split(',');
@@ -186,9 +185,9 @@ namespace Inforoom2.Test.Infrastructure
 			}
 
 			////Собираем остальные таблицы при помощи моделей проекта
-			var types = Assembly.GetAssembly(typeof (BaseModel)).GetTypes().ToList();
+			var types = Assembly.GetAssembly(typeof(BaseModel)).GetTypes().ToList();
 			foreach (var t in types) {
-				var attribute = Attribute.GetCustomAttribute(t, typeof (ClassAttribute)) as ClassAttribute;
+				var attribute = Attribute.GetCustomAttribute(t, typeof(ClassAttribute)) as ClassAttribute;
 				if (attribute != null) {
 					var name = strategy.TableName(attribute.Table);
 					tables.Add(name.ToLower());
@@ -201,8 +200,9 @@ namespace Inforoom2.Test.Infrastructure
 				"categoriesaccessset,connectbrigads,statuscorrelation,usercategories,additionalstatus," +
 				"salesettings,internetsettings,issues,recipients,ignoredinns";
 			parts = exceptions.Split(',');
-			foreach (var part in parts)
+			foreach (var part in parts) {
 				tables.RemoveAll(i => i == strategy.TableName(part));
+			}
 
 
 			//Чистим таблицы
@@ -240,7 +240,7 @@ namespace Inforoom2.Test.Infrastructure
 			GeneratePaymentsAndWriteoffs();
 			GenerateAgent();
 			GenerateEmployeeSettings();
-            DbSession.Flush();
+			DbSession.Flush();
 		}
 
 		//private void GenerateServices()
@@ -414,7 +414,7 @@ namespace Inforoom2.Test.Infrastructure
 
 		private void GenerateEmployeeSettings()
 		{
-			var  settings = new EmployeeTariff();
+			var settings = new EmployeeTariff();
 			settings.ActionName = "WorkedClient";
 			settings.Sum = 101;
 			settings.Description = "";
@@ -552,11 +552,11 @@ namespace Inforoom2.Test.Infrastructure
 				var controllers =
 					Assembly.Load("InforoomControlPanel")
 						.GetTypes()
-						.Where(i => i.IsSubclassOf(typeof (InforoomControlPanel.Controllers.ControlPanelController)))
+						.Where(i => i.IsSubclassOf(typeof(InforoomControlPanel.Controllers.ControlPanelController)))
 						.ToList();
 				foreach (var controller in controllers) {
 					var methods = controller.GetMethods();
-					var actions = methods.Where(i => i.ReturnType == typeof (ActionResult)).ToList();
+					var actions = methods.Where(i => i.ReturnType == typeof(ActionResult)).ToList();
 					foreach (var action in actions) {
 						var name = controller.Name + "_" + action.Name;
 						var right = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
@@ -576,7 +576,7 @@ namespace Inforoom2.Test.Infrastructure
 			RenewActionPermissions();
 			var permissions = DbSession.Query<Permission>().ToList();
 
-			Role role = new Role {Name = "Admin", Description = "tempRoleDescription", Permissions = permissions};
+			Role role = new Role { Name = "Admin", Description = "tempRoleDescription", Permissions = permissions };
 			DbSession.Save(role);
 
 			IList<Role> roles = new List<Role>();
@@ -591,7 +591,7 @@ namespace Inforoom2.Test.Infrastructure
 			}
 			emp.Roles = roles;
 			DbSession.Save(emp);
-			var dealer = new Agent() {Name = emp.Name};
+			var dealer = new Agent() { Name = emp.Name };
 			DbSession.Save(dealer);
 		}
 
@@ -616,10 +616,8 @@ namespace Inforoom2.Test.Infrastructure
 
 		private void GenerateLegalClient()
 		{
-			var legalClient = new Client
-			{
-				LegalClient = new LegalClient()
-				{
+			var legalClient = new Client {
+				LegalClient = new LegalClient() {
 					Balance = 1000,
 					Region = DbSession.Query<Region>().First(),
 					Name = "Первый юрик на деревне",
@@ -630,8 +628,8 @@ namespace Inforoom2.Test.Infrastructure
 					ContactPerson = "Семён",
 					Inn = "1234567890"
 				},
-        Recipient = DbSession.Query<Recipient>().FirstOrDefault(),
-        Status = Status.Get(StatusType.Worked, DbSession),
+				Recipient = DbSession.Query<Recipient>().FirstOrDefault(),
+				Status = Status.Get(StatusType.Worked, DbSession),
 				SendSmsNotification = false,
 				Disabled = false,
 				RatedPeriodDate = DateTime.Now,
@@ -643,8 +641,8 @@ namespace Inforoom2.Test.Infrastructure
 			};
 
 			legalClient._Name = legalClient.LegalClient.Name;
-		// TODO:UnusedClientAddresses
-		AttachDefaultServices(legalClient);
+			// TODO:UnusedClientAddresses
+			AttachDefaultServices(legalClient);
 
 
 			//Создание Endpoint(а)
@@ -670,8 +668,7 @@ namespace Inforoom2.Test.Infrastructure
 			//CreateSwitch adding based on client address
 			var ipPool = DbSession.Query<IpPool>().FirstOrDefault();
 			if (ipPool == null) {
-				ipPool = new IpPool()
-				{
+				ipPool = new IpPool() {
 					Begin = 1541080064,
 					End = 1541080319,
 					LeaseTime = 3600,
@@ -681,8 +678,7 @@ namespace Inforoom2.Test.Infrastructure
 			}
 
 			//ClientEndpoint adding based on client address
-			var endpoint = new ClientEndpoint
-			{
+			var endpoint = new ClientEndpoint {
 				PackageId = 100,
 				Client = legalClient,
 				Ip = addr,
@@ -700,10 +696,8 @@ namespace Inforoom2.Test.Infrastructure
 
 		private void GenerateClients()
 		{
-			var normalClient = new Client
-			{
-				PhysicalClient = new PhysicalClient
-				{
+			var normalClient = new Client {
+				PhysicalClient = new PhysicalClient {
 					Password = HashedDefaultClientPasword,
 					PhoneNumber = "4951234567",
 					Email = "test@client.ru",
@@ -774,8 +768,9 @@ namespace Inforoom2.Test.Infrastructure
 			unpluggedClient.PhysicalClient.BirthDate = DateTime.MinValue;
 			unpluggedClient.PhysicalClient.PassportDate = DateTime.MinValue;
 			unpluggedClient.SetStatus(StatusType.BlockedAndConnected, DbSession);
-			foreach (var service in unpluggedClient.ClientServices)
+			foreach (var service in unpluggedClient.ClientServices) {
 				service.IsActivated = false;
+			}
 			DbSession.Save(unpluggedClient);
 
 			//без паспортных данных
@@ -798,12 +793,12 @@ namespace Inforoom2.Test.Infrastructure
 
 			//Клиент с низким балансом
 			var lowBalanceClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.lowBalanceClient);
-			lowBalanceClient.Balance = lowBalanceClient.Plan.Price/100*5;
+			lowBalanceClient.Balance = lowBalanceClient.Plan.Price / 100 * 5;
 			DbSession.Save(lowBalanceClient);
 
 			//Клиент с сервисной заявкой
 			var servicedClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.servicedClient);
-			servicedClient.SetStatus(DbSession.Get<Status>((int) StatusType.BlockedForRepair));
+			servicedClient.SetStatus(DbSession.Get<Status>((int)StatusType.BlockedForRepair));
 			var serviceRequest = new ServiceRequest();
 			serviceRequest.BlockClientAndWriteOffs = true;
 			serviceRequest.Client = servicedClient;
@@ -814,11 +809,10 @@ namespace Inforoom2.Test.Infrastructure
 
 			//Клиент с услугой добровольная блокировка
 			var frozenClient = CloneClient(normalClient, ClientCreateHelper.ClientMark.frozenClient);
-			frozenClient.SetStatus(DbSession.Get<Status>((int) StatusType.VoluntaryBlocking));
+			frozenClient.SetStatus(DbSession.Get<Status>((int)StatusType.VoluntaryBlocking));
 			var blockAccountService =
 				DbSession.Query<Service>().Where(s => s.IsActivableFromWeb).OfType<BlockAccountService>().FirstOrDefault();
-			var clientService = new ClientService
-			{
+			var clientService = new ClientService {
 				BeginDate = DateTime.Now,
 				EndDate = DateTime.Now.AddDays(35),
 				Service = blockAccountService,
@@ -875,8 +869,7 @@ namespace Inforoom2.Test.Infrastructure
 			IList<ClientService> csList =
 				services.Select(
 					service =>
-						new ClientService
-						{
+						new ClientService {
 							Service = service,
 							Client = client,
 							BeginDate = DateTime.Now,
@@ -890,8 +883,7 @@ namespace Inforoom2.Test.Infrastructure
 
 		private ClientService CloneService(ClientService service)
 		{
-			var obj = new ClientService
-			{
+			var obj = new ClientService {
 				Service = service.Service,
 				Client = service.Client,
 				BeginDate = service.BeginDate,
@@ -904,10 +896,8 @@ namespace Inforoom2.Test.Infrastructure
 		// 
 		protected Client CloneClient(Client client, ClientCreateHelper.ClientMark mark)
 		{
-			var obj = new Client
-			{
-				PhysicalClient = new PhysicalClient
-				{
+			var obj = new Client {
+				PhysicalClient = new PhysicalClient {
 					Password = HashedDefaultClientPasword,
 					PhoneNumber = client.PhoneNumber,
 					Email = client.Email,
@@ -1019,8 +1009,7 @@ namespace Inforoom2.Test.Infrastructure
 
 			var ipPool = DbSession.Query<IpPool>().FirstOrDefault();
 			if (ipPool == null) {
-				ipPool = new IpPool()
-				{
+				ipPool = new IpPool() {
 					Begin = 1541080064,
 					End = 1541080319,
 					LeaseTime = 3600,
@@ -1029,8 +1018,7 @@ namespace Inforoom2.Test.Infrastructure
 				DbSession.Save(ipPool);
 			}
 			//ClientEndpoint adding based on client address
-			var endpoint = new ClientEndpoint
-			{
+			var endpoint = new ClientEndpoint {
 				PackageId = client.Plan.PackageSpeed.PackageId,
 				Client = client,
 				Ip = addr,
@@ -1110,8 +1098,7 @@ namespace Inforoom2.Test.Infrastructure
 			plan.AvailableForOldClients = true;
 			plan.IsServicePlan = false;
 			plan.AvailableForNewClients = true;
-			plan.RegionPlans.Add(new RegionPlan()
-			{
+			plan.RegionPlans.Add(new RegionPlan() {
 				Plan = plan,
 				Region = DbSession.Query<Region>().FirstOrDefault()
 			});
@@ -1436,6 +1423,15 @@ namespace Inforoom2.Test.Infrastructure
 		{
 			var billing = GetBilling();
 			billing.ProcessPayments();
+			if (client != null) {
+				DbSession.Refresh(client);
+			}
+		}
+
+		protected void RunBillingProcessClientEndpointSwitcher(Client client = null)
+		{
+			var billing = GetBilling();
+			billing.SafeProcessClientEndpointSwitcher();
 			if (client != null) {
 				DbSession.Refresh(client);
 			}

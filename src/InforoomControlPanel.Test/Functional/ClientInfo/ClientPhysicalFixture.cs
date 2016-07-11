@@ -529,7 +529,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			DbSession.Close();
 			DbSession = DbSession.SessionFactory.OpenSession();
 			DbSession.BeginTransaction();
-			CurrentClient = DbSession.Query<Client>().FirstOrDefault(s => s.Id == CurrentClient.Id); 
+			CurrentClient = DbSession.Query<Client>().FirstOrDefault(s => s.Id == CurrentClient.Id);
 			Assert.That(CurrentClient.HasActiveService<BlockAccountService>(), Is.EqualTo(false), "Конец. У клиента не должна быть активированна услуга 'Добровольная блокировка'");
 			Assert.That(CurrentClient.Status, Is.EqualTo(Status.Get(StatusType.Worked, DbSession)));
 			Assert.That(CurrentClient.Disabled, Is.EqualTo(false));
@@ -1064,8 +1064,12 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Type = ContactType.SmsSending,
 				Client = CurrentClient
 			});
+			CurrentClient.RatedPeriodDate = null;
+			CurrentClient.WorkingStartDate = null;
 			DbSession.Save(CurrentClient);
 			DbSession.Flush();
+			Assert.That(CurrentClient.WorkingStartDate, Is.Null, "Поле BlockDate должно быть пустым");
+			Assert.That(CurrentClient.RatedPeriodDate, Is.Null, "Поле RatedPeriodDate должно быть пустым");
 
 			CurrentClient.PaidDay = false;
 			DbSession.Save(CurrentClient);
@@ -1104,6 +1108,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 
 			var clientEntPoint = CurrentClient.Endpoints.FirstOrDefault();
 			Assert.That(clientEntPoint, Is.Not.Null, "Подключение отсутствует.");
+			Assert.That(CurrentClient.Endpoints.First().IsEnabled, Is.Null, "У клиента еще не должно быть активированной точки подключения");
 			var payment =
 				DbSession.Query<PaymentForConnect>().FirstOrDefault(p => p.EndPoint == clientEntPoint && p.Sum == connectSum);
 			Assert.That(payment, Is.Not.Null, "Платеж отсутствует.");
@@ -1113,13 +1118,22 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Assert.That(CurrentClient.Balance, Is.GreaterThan(currentBalance - connectSum),
 				"Баланс клиента не совпадает с должным.");
 
+			CurrentClient.PaidDay = false;
 			DbSession.Save(CurrentClient);
 			DbSession.Flush();
 			RunBillingProcessPayments(CurrentClient);
 			RunBillingProcessWriteoffs(CurrentClient, false);
 			DbSession.Refresh(CurrentClient.PhysicalClient);
-
+			RunBillingProcessClientEndpointSwitcher(CurrentClient);
+			DbSession.Flush();
+      DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.PhysicalClient);
 			Assert.That(CurrentClient.Balance, Is.EqualTo(currentBalance - connectSum), "Баланс клиента не совпадает с должным.");
+			var endpoint = CurrentClient.Endpoints.First();
+			DbSession.Refresh(endpoint);
+			Assert.That(CurrentClient.WorkingStartDate, Is.Not.Null, "Поле BlockDate должно быть пустым");
+			Assert.That(CurrentClient.RatedPeriodDate, Is.Not.Null, "Поле RatedPeriodDate должно быть пустым");
+			Assert.That(endpoint.IsEnabled, Is.EqualTo(true), "У клиента еще должна быть активированная точка подключения");
 		}
 
 		[Test, Description("Страница клиента. Физ. лицо. Редактирование информации по подключению")]

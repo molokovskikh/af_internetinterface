@@ -341,7 +341,7 @@ namespace Inforoom2.Models
 		/// </summary>
 		public virtual decimal GetTariffPrice(bool isBlocked = false)
 		{
-			if (PhysicalClient.Plan == null || (!isBlocked && (WorkingStartDate == null || Disabled)))
+			if (PhysicalClient.Plan == null || (!isBlocked && Disabled))
 				return 0;
 
 			var prePrice = PhysicalClient.Plan.IgnoreDiscount? PhysicalClient.Plan.Price : AccountDiscounts(PhysicalClient.Plan.Price);

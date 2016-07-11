@@ -12,7 +12,9 @@
 } 
 	<div class="line-through"></div>
 	<h5>
-		<strong class="black margin-left">Точка подключения № <span class="red bold">@order.EndPoint.Id</span></strong>
+		<strong class="black margin-left">Точка подключения №
+			<span class="endpointTitle@(endpoint.IsEnabled.HasValue? endpoint.IsEnabled.Value ?" enabled":" disabled":"")">@order.EndPoint.Id</span>
+		</strong>
 		@if ((order.IsActivated && order.IsDeactivated || order.IsToBeClosed()) && order.EndPoint != null) {
 			<a class="c-pointer" data-toggle="modal" data-target="#ModelForEndpointProofDelete" onclick="deleteEndpointProof(@order.EndPoint.Id)">
 				- <span class="red bold">удалить</span>

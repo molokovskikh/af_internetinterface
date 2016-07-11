@@ -16,28 +16,41 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Payment_for_connect_fixture()
 		{
+			var startSum = 300;
 			client.BeginWork = null;
 			session.Save(client);
 			var clientEndPoint = new ClientEndpoint { Client = client };
 			var paymentForConnect = new PaymentForConnect(500, clientEndPoint);
-			client.PhysicalClient.Balance = 200;
+			client.PhysicalClient.Balance = startSum;
 			session.Save(clientEndPoint);
 			session.Save(paymentForConnect);
 			session.Save(client.PhysicalClient);
+			Assert.AreEqual(client.Balance, startSum);
+			Assert.AreEqual(client.Disabled, false);
+			var cost = client.GetSumForRegularWriteOff();
 
 			Process();
 
-			client = session.Get<Client>(client.Id);
+			client = session.Get<Client>(client.Id); 
 			Assert.IsNull(client.BeginWork);
-			Assert.AreEqual(client.Balance, 200);
-			client.BeginWork = DateTime.Now;
+			Assert.AreEqual(client.Disabled, true);
+			Assert.AreEqual(client.Balance, (startSum - paymentForConnect.Sum - cost));
+			client.PhysicalClient.Balance = startSum;
+			session.Save(client.PhysicalClient);
+			Assert.IsNull(client.BeginWork);
+			Assert.AreEqual(client.Balance, startSum);
+
+			Process();
+
+			client = session.Get<Client>(client.Id); 
+			Assert.AreEqual(client.Disabled, false);
+			Assert.AreEqual(client.Balance, startSum);
+			Assert.IsNotNull(client.BeginWork);
 			session.Save(client);
 
 			Process();
 
 			client = session.Get<Client>(client.Id);
-			Assert.IsNotNull(client.BeginWork);
-			Assert.AreEqual(client.Balance, -300);
 			var userWtiteOffs = client.UserWriteOffs.First();
 			Assert.AreEqual(userWtiteOffs.Sum, 500);
 			Assert.AreEqual(userWtiteOffs.Comment, "Плата за подключение");
@@ -132,7 +145,7 @@ namespace Billing.Test.Integration
 		}
 
 		[Test(Description = "При обработке платежа происходит установка флага автоматической разблокировки, " +
-							"в случае восстановления работы этого происходить не должно")]
+		                    "в случае восстановления работы этого происходить не должно")]
 		public void Do_not_auto_unblock_on_payment()
 		{
 			client.RatedPeriodDate = DateTime.Now;
@@ -159,6 +172,7 @@ namespace Billing.Test.Integration
 			session.Clear();
 			billing.ProcessPayments();
 			billing.ProcessWriteoffs();
+			billing.SafeProcessClientEndpointSwitcher();
 		}
 
 		[Test(Description = "Разблокировка юр. лиц при положительном балансе")]
@@ -484,14 +498,13 @@ namespace Billing.Test.Integration
 		public void TestForClonePaymentIgnorance()
 		{
 			//создаем 2 агентов
-			var agent1 = new Partner() {Name = "SB"};
+			var agent1 = new Partner() { Name = "SB" };
 			var agent2 = new Partner() { Name = "SV" };
 			session.Save(agent1);
 			session.Save(agent2);
 			//Создание 6 платежей (3 валидные и 3 нет)
 			//Родительский платеж
-			var payment = new Payment
-			{
+			var payment = new Payment {
 				RecievedOn = SystemTime.Now(),
 				TransactionId = "777",
 				Client = client,
@@ -501,8 +514,7 @@ namespace Billing.Test.Integration
 			};
 			//Нужны 2 дубликата
 			session.Save(payment);
-			payment = new Payment
-			{
+			payment = new Payment {
 				RecievedOn = SystemTime.Now(),
 				TransactionId = "777",
 				Client = client,
@@ -511,8 +523,7 @@ namespace Billing.Test.Integration
 				Sum = 999
 			};
 			session.Save(payment);
-			payment = new Payment
-			{
+			payment = new Payment {
 				RecievedOn = SystemTime.Now(),
 				TransactionId = "777",
 				Client = client,
@@ -521,8 +532,7 @@ namespace Billing.Test.Integration
 				Sum = 999
 			};
 			//Дубль, просроченный (больше 48)
-			payment = new Payment
-			{
+			payment = new Payment {
 				RecievedOn = SystemTime.Now().AddDays(-49),
 				TransactionId = "777",
 				Client = client,
@@ -533,8 +543,7 @@ namespace Billing.Test.Integration
 			session.Save(payment);
 			//Дубль с другим агентом
 			session.Save(payment);
-			payment = new Payment
-			{
+			payment = new Payment {
 				RecievedOn = SystemTime.Now(),
 				TransactionId = "777",
 				Client = client,
@@ -544,8 +553,7 @@ namespace Billing.Test.Integration
 			};
 			session.Save(payment);
 			//Дубль с другой транзакцией
-			payment = new Payment
-			{
+			payment = new Payment {
 				RecievedOn = SystemTime.Now(),
 				TransactionId = "776",
 				Client = client,
@@ -555,8 +563,7 @@ namespace Billing.Test.Integration
 			};
 			session.Save(payment);
 			//Дубль, отмеченный, как дубль
-			payment = new Payment
-			{
+			payment = new Payment {
 				RecievedOn = SystemTime.Now(),
 				TransactionId = "776",
 				Client = client,
@@ -568,14 +575,14 @@ namespace Billing.Test.Integration
 			session.Save(payment);
 			session.Flush();
 			//Обработка платежей
-            billing.ProcessPayments(); 
+			billing.ProcessPayments();
 			//Проверка отработки биллинга
 			var payments = session.Query<Payment>().Where(s => !s.BillingAccount && s.IsDuplicate).ToList();
 			//Один дубль уже был, должны были быть отмечены еще 2
 			Assert.That(payments.Count, Is.EqualTo(3));
 			payments = session.Query<Payment>().Where(s => s.BillingAccount && !s.IsDuplicate).ToList();
 			//Три платежа должны были пройти
-			Assert.That(payments.Count, Is.EqualTo(3));  
+			Assert.That(payments.Count, Is.EqualTo(3));
 		}
 	}
 }

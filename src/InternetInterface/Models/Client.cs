@@ -780,9 +780,7 @@ where CE.Client = {0}", Id))
 		}
 
 		public virtual decimal GetTariffPrice()
-		{
-			if (BeginWork == null)
-				return 0;
+		{ 
 			if (Disabled)
 				return 0;
 			return GetPriceForTariff();
