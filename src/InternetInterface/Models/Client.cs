@@ -61,8 +61,9 @@ namespace InternetInterface.Models
 			PercentBalance = 0.8m;
 			Status = settings.DefaultStatus;
 			Recipient = settings.DefaultRecipient;
-			foreach (var defaultService in settings.DefaultServices)
+			foreach (var defaultService in settings.DefaultServices) {
 				ClientServices.Add(new ClientService(this, defaultService));
+			}
 		}
 
 		public Client(LawyerPerson person, Partner partner)
@@ -413,8 +414,9 @@ namespace InternetInterface.Models
 			var result = String.Empty;
 			if (!String.IsNullOrEmpty(query)) {
 				var contacts = Contacts.Where(c => c.Text.Contains(query));
-				foreach (var contact in contacts)
+				foreach (var contact in contacts) {
 					doContact(contact);
+				}
 			}
 			if (String.IsNullOrEmpty(result)) {
 				return Contact;
@@ -780,7 +782,7 @@ where CE.Client = {0}", Id))
 		}
 
 		public virtual decimal GetTariffPrice()
-		{ 
+		{
 			if (Disabled)
 				return 0;
 			return GetPriceForTariff();
@@ -1133,7 +1135,7 @@ where CE.Client = {0}", Id))
 				//если мы возобновили работу после поломки то дата начала периода тарификации не должна изменяться
 				//если ее сбросить списания начнутся только когда клиент получит аренду
 				if (Status.Type != StatusType.BlockedForRepair)
-					RatedPeriodDate = null;
+					RatedPeriodDate = SystemTime.Now();
 				DebtDays = 0;
 				ShowBalanceWarningPage = showBalanceWarningPage;
 			}

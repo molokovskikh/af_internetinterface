@@ -15,7 +15,7 @@ namespace InternetInterface.Test.Functional
 	[TestFixture]
 	internal class SearchFixture : ClientFunctionalFixture
 	{
-		[SetUp]
+		[SetUp,Ignore("Функционал перенесен")]
 		public void Setup()
 		{
 			Open("Search/SearchUsers");
