@@ -67,8 +67,9 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Do_not_deactivate_voluntary_blocking_on_payment()
 		{
-			using (new SessionScope())
+			using (new SessionScope()) {
 				Activate(typeof(VoluntaryBlockin));
+			}
 
 			new Payment(client, 500).Save();
 
@@ -163,8 +164,9 @@ namespace Billing.Test.Integration
 				service = Activate(typeof(VoluntaryBlockin), DateTime.Now.AddDays(100));
 			}
 			billing.ProcessWriteoffs();
-			using (new SessionScope())
+			using (new SessionScope()) {
 				Assert.That(WriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(0));
+			}
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				Assert.That(WriteOff.Queryable.AsQueryable().Count(), Is.EqualTo(1));
@@ -455,8 +457,9 @@ namespace Billing.Test.Integration
 				int i1 = i;
 				SystemTime.Now = () => DateTime.Now.AddDays(i1 + 3);
 			}
-			using (new SessionScope())
+			using (new SessionScope()) {
 				Assert.That(WriteOff.Queryable.AsQueryable().Where(c => c.Client == client).ToList().Sum(w => w.WriteOffSum), Is.EqualTo(0));
+			}
 
 			SystemTime.Now = () => DateTime.Now.AddDays(countDays + 3);
 			billing.ProcessPayments();
@@ -523,6 +526,7 @@ namespace Billing.Test.Integration
 		{
 			ClientService service;
 			PhysicalClient physClient;
+			var currentDate = SystemTime.Now();
 			const int countDays = 3;
 			using (new SessionScope()) {
 				physClient = client.PhysicalClient;
@@ -530,7 +534,7 @@ namespace Billing.Test.Integration
 				physClient.Update();
 				client.Disabled = true;
 				client.AutoUnblocked = true;
-				client.RatedPeriodDate = SystemTime.Now();
+				client.RatedPeriodDate = currentDate;
 				client.Update();
 
 				service = Activate(typeof(DebtWork), SystemTime.Now().AddDays(countDays));
@@ -555,7 +559,7 @@ namespace Billing.Test.Integration
 				Assert.IsFalse(client.Disabled);
 				Assert.IsFalse(client.PaidDay);
 				Assert.IsTrue(client.AutoUnblocked);
-				Assert.IsNull(client.RatedPeriodDate);
+				Assert.AreNotEqual(client.RatedPeriodDate, currentDate); //дата не зануляется, а обновляется (клиент должен платить абонентскую плату и без лизы)
 
 				service = new ClientService {
 					Client = client,
@@ -587,8 +591,9 @@ namespace Billing.Test.Integration
 				Assert.IsFalse(client.Disabled);
 			}
 			billing.ProcessPayments();
-			using (new SessionScope())
+			using (new SessionScope()) {
 				client.Refresh();
+			}
 			Assert.IsFalse(client.Disabled);
 		}
 

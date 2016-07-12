@@ -44,7 +44,7 @@ namespace Billing.Test.Integration
 
 			client = session.Get<Client>(client.Id); 
 			Assert.AreEqual(client.Disabled, false);
-			Assert.AreEqual(client.Balance, startSum);
+			Assert.AreEqual(client.Balance, startSum - cost);
 			Assert.IsNotNull(client.BeginWork);
 			session.Save(client);
 

@@ -408,7 +408,7 @@ namespace Inforoom2.Models
 				//если мы возобновили работу после поломки то дата начала периода тарификации не должна изменяться
 				//если ее сбросить списания начнутся только когда клиент получит аренду
 				if (Status.Type != StatusType.BlockedForRepair)
-					RatedPeriodDate = null;
+					RatedPeriodDate = SystemTime.Now();
 				DebtDays = 0;
 				ShowBalanceWarningPage = false;
 			}
