@@ -37,6 +37,9 @@ namespace InternetInterface.Models
 		public virtual string Description { get; set; }
 
 		[Property]
+		public virtual int? StoppageMonths { get; set; }
+
+		[Property]
 		public virtual int Price { get; set; }
 
 		[Property]

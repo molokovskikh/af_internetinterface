@@ -294,7 +294,7 @@ namespace Inforoom2.Controllers
 		public ActionResult Notifications(Contact contact)
 		{
 			contact.ContactString = string.IsNullOrEmpty(contact.ContactString) ? "" : contact.ContactString.Trim();
-      var client = CurrentClient;
+			var client = CurrentClient;
 			var errors = ValidationRunner.Validate(contact);
 			//Валидация контакта 
 			if (errors.Length == 0) {
@@ -382,20 +382,25 @@ namespace Inforoom2.Controllers
 
 			if (isOnceOnlyUsed) {
 				ErrorMessage("На данный тариф нельзя перейти вновь.");
-				return View("Plans");
+				return RedirectToAction("Plans");
 			}
 			//todo - наверно надо подумать как эти провеки засунуть куда следует
 			var beginDate = client.WorkingStartDate ?? new DateTime();
-			if (beginDate == DateTime.MinValue || beginDate.AddMonths(2) >= SystemTime.Now()) {
-				ErrorMessage("Нельзя менять тариф, в первые 2 месяца после подключения");
-				return View("Plans");
+			var stoppage = client.PhysicalClient.Plan.StoppageMonths.HasValue ? client.PhysicalClient.Plan.StoppageMonths : 2;
+			if (beginDate == DateTime.MinValue) {
+				ErrorMessage($"Нельзя менять тариф до получения доступа в сеть.");
+				return RedirectToAction("Plans");
+			}
+			if (beginDate.AddMonths(stoppage.Value) >= SystemTime.Now()) {
+				ErrorMessage($"Нельзя менять тариф, в первые {stoppage} месяца после подключения");
+				return RedirectToAction("Plans");
 			}
 
 			var oldPlan = client.PhysicalClient.Plan;
 			var result = client.PhysicalClient.RequestChangePlan(plan);
 			if (result == null) {
 				ErrorMessage("Не достаточно средств для смены тарифного плана");
-				return View("Plans");
+				return RedirectToAction("Plans");
 			}
 
 			DbSession.Save(client);
