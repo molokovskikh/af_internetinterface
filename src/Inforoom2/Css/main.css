@@ -1,4 +1,4 @@
-@font-face {
+	@font-face {
     font-family: PDFDinTextPro; 
     src: url(../fonts/PDFDinTextPro.ttf); /* Путь к файлу со шрифтом */
 }
@@ -133,6 +133,7 @@ margin-left: 369px;margin-top: 25px;padding: 5px 60px;}
 font-size: 14px;height: 29px;padding-bottom: 3px;width: 127px;}
 .logon a {font-size: 14px;color: #ffffff;text-decoration: underline;font-family: PDFDinTextPro;margin-left: 15px;cursor: pointer;}
 .profiles {display: inline-block;width: 438px;height:400px;margin-left: 365px;vertical-align: top;}
+.profiles.height {height:440px;}
 .number {width: 435px;height: 35px;border-bottom:3px solid #d7d1d1; height: 55px;}
 .numbertext {font-size: 18px;font-style: oblique;color: #474747;padding-left: 10px;display: inline-block;padding-top: 19px;}
 .shelf.row {font-size: 22px;}

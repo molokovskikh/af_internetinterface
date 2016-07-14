@@ -66,6 +66,7 @@
     <Compile Include="DeleteFixIpIfClientLongDisable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SendNullTariffLawyerPerson.cs" />
+    <Compile Include="EmailNotification.cs" />
     <Compile Include="SendSmsNotification.cs" />
     <Compile Include="SendUnknowEndPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

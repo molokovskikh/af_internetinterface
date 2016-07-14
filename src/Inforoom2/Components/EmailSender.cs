@@ -54,6 +54,7 @@ namespace Inforoom2.Components
 				}
 			}
 #if DEBUG
+			smtp.Send(mail);
 #else
 					smtp.Send(mail);
 #endif

@@ -13,23 +13,25 @@ namespace InternetInterface.Models
 {
 	public enum ContactType
 	{
-		[Description("Мобильный номер")] MobilePhone,
+		[Description("Мобильный номер")] MobilePhone = 0,
 
-		[Description("Домашний номер")] HousePhone,
+		[Description("Домашний номер")] HousePhone = 1,
 
-		[Description("Связанный номер")] ConnectedPhone,
+		[Description("Связанный номер")] ConnectedPhone = 2,
 
-		[Description("EMail")] Email,
+		[Description("Email")] Email = 3,
 
-		[Description("Финансовые вопросы")] FinancePhone,
+		[Description("Финансовые вопросы")] FinancePhone = 4,
 
-		[Description("Главный телефон")] HeadPhone,
+		[Description("Главный телефон")] HeadPhone = 5,
 
-		[Description("Телефон для смс рассылки")] SmsSending,
+		[Description("Телефон для смс рассылки")] SmsSending = 6,
 
-		[Description("техническая информация")] TechPhone,
+		[Description("Техническая информация")] TechPhone = 7,
 
-		[Description("EMail для рассылки счетов/актов")] ActEmail
+		[Description("Email для рассылки уведомлений (не подтвержденный)")] NotificationEmailRaw = 8,
+
+		[Description("Email для рассылки уведомлений (подтвержденный)")] NotificationEmailConfirmed = 9
 	}
 
 	[ActiveRecord(Table = "Contacts", Schema = "Internet", Lazy = true), Auditable]

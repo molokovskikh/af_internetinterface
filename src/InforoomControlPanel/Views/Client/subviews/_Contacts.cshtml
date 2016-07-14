@@ -75,17 +75,20 @@
 			<td>
 				<select class="form-control enabled" data-val="true" data-val-required="Требуется поле Type." id="client_Contacts_2__Type" name="client.Contacts[0].Type">
 					<option selected="selected" value="@((int)ContactType.MobilePhone)">Мобильный номер</option>
-					@if (client.PhysicalClient != null){
-					<option value="@((int)ContactType.HousePhone)">Домашний номер</option>
+					@if (client.PhysicalClient != null) {
+						<option value="@((int)ContactType.HousePhone)">Домашний номер</option>
 					}
-					else
-					{
-					<option value="@((int)ContactType.HeadPhone)">Главный телефон</option>
-					<option value="@((int)ContactType.FinancePhone)">Финансовые вопросы</option>
-					<option value="@((int)ContactType.TechPhone)">Техническая информация</option>
+					else {
+						<option value="@((int)ContactType.HeadPhone)">Главный телефон</option>
+						<option value="@((int)ContactType.FinancePhone)">Финансовые вопросы</option>
+						<option value="@((int)ContactType.TechPhone)">Техническая информация</option>
 					}
 					<option value="@((int)ContactType.ConnectedPhone)">Связанный номер</option>
-					<option value="@((int)ContactType.Email)">EMail</option>
+					@if (client.PhysicalClient != null) {
+						<option value="@((int)ContactType.NotificationEmailRaw)">Email для рассылки уведомлений (не подтвержденный)</option>
+						<option value="@((int)ContactType.NotificationEmailConfirmed)">Email для рассылки уведомлений (подтвержденный)</option>
+					}
+					<option value="@((int)ContactType.Email)">Email</option>
 				</select>
 				<div class="success">
 					<div class="icon"></div>
@@ -139,17 +142,19 @@
 						<td>
 							<select class="form-control enabled" data-val="true" data-val-required="Требуется поле Type." name="client.Contacts[0].Type">
 								<option selected="selected" value="@((int)ContactType.MobilePhone)">Мобильный номер</option>
-								@if (client.PhysicalClient != null)
-								{
-								<option value="@((int)ContactType.HousePhone)">Домашний номер</option>
+								@if (client.PhysicalClient != null) {
+									<option value="@((int)ContactType.HousePhone)">Домашний номер</option>
 								}
-								else
-								{
-								<option value="@((int)ContactType.HeadPhone)">Главный телефон</option>
-								<option value="@((int)ContactType.FinancePhone)">Финансовые вопросы</option>
-								<option value="@((int)ContactType.TechPhone)">Техническая информация</option>
+								else {
+									<option value="@((int)ContactType.HeadPhone)">Главный телефон</option>
+									<option value="@((int)ContactType.FinancePhone)">Финансовые вопросы</option>
+									<option value="@((int)ContactType.TechPhone)">Техническая информация</option>
 								}
 								<option value="@((int)ContactType.ConnectedPhone)">Связанный номер</option>
+								@if (client.PhysicalClient != null) {
+									<option value="@((int)ContactType.NotificationEmailRaw)">Email для рассылки уведомлений (не подтвержденный)</option>
+									<option value="@((int)ContactType.NotificationEmailConfirmed)">Email для рассылки уведомлений (подтвержденный)</option>
+								}
 								<option value="@((int)ContactType.Email)">EMail</option>
 							</select>
 						</td>
@@ -177,12 +182,17 @@
 								@if (client.PhysicalClient != null){
 								<option @(client.Contacts[i].Type==ContactType.HousePhone ? "selected=selected":"") value="@((int)ContactType.HousePhone)">Домашний номер</option>
 								}
-								else{
+								else
+								{
 								<option @(client.Contacts[i].Type==ContactType.HeadPhone ? "selected=selected":"") value="@((int)ContactType.HeadPhone)">Главный телефон</option>
 								<option @(client.Contacts[i].Type==ContactType.FinancePhone ? "selected=selected":"") value="@((int)ContactType.FinancePhone)">Финансовые вопросы</option>
 								<option @(client.Contacts[i].Type==ContactType.TechPhone ? "selected=selected":"") value="@((int)ContactType.TechPhone)">Техническая информация</option>
 								}
 								<option @(client.Contacts[i].Type==ContactType.ConnectedPhone ? "selected=selected":"") value="@((int)ContactType.ConnectedPhone)">Связанный номер</option>
+								@if (client.PhysicalClient != null) {
+									<option @(client.Contacts[i].Type == ContactType.NotificationEmailRaw ? "selected=selected" : "") value="@((int)ContactType.NotificationEmailRaw)">Email для рассылки уведомлений (не подтвержденный)</option>
+									<option @(client.Contacts[i].Type == ContactType.NotificationEmailConfirmed ? "selected=selected" : "") value="@((int)ContactType.NotificationEmailConfirmed)">Email для рассылки уведомлений (подтвержденный)</option>
+								}
 								<option @(client.Contacts[i].Type==ContactType.Email ? "selected=selected":"") value="@((int)ContactType.Email)">EMail</option>
 							</select>
 							@ViewBag.Validation.GetError(client.Contacts, "Type")

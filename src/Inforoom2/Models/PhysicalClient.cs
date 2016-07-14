@@ -401,8 +401,8 @@ namespace Inforoom2.Models
 			errorMessage = connection.Validate(dbSession, true, endpointId);
 
 			decimal _connectSum = -1;
-			connectSum = connectSum.Replace( ".", ",");
-      var validateSum =
+			connectSum = connectSum.Replace(".", ",");
+			var validateSum =
 				!(!string.IsNullOrEmpty(connectSum) &&
 				  (!decimal.TryParse(connectSum, out _connectSum) || (_connectSum <= 0 && client.PhysicalClient != null)));
 			if (!validateSum)
@@ -505,6 +505,16 @@ namespace Inforoom2.Models
 					}
 				}
 			}
+		} 
+
+		public virtual Contact GetClientNotificationEmail(bool confirmed = true)
+		{
+			Contact contactMail = null;
+			if (confirmed)
+				contactMail = Client.Contacts.FirstOrDefault(s => s.Type == ContactType.NotificationEmailConfirmed);
+			else
+				contactMail = Client.Contacts.FirstOrDefault(s => s.Type == ContactType.NotificationEmailRaw);
+			return contactMail ?? new Contact() { Client = Client, Type = ContactType.NotificationEmailRaw };
 		}
 
 		public virtual void AddEndpoint(ISession dbSession, ClientEndpoint endpoint, SettingsHelper settings)
