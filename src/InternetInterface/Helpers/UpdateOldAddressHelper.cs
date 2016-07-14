@@ -29,7 +29,7 @@ namespace InternetInterface.Helpers
 								LEFT JOIN  internet.inforoom2_city AS hc ON hr._City = hc.Id 
 								WHERE c.Id={0}", clientId)).UniqueResult();
 			if (propObj != null) {
-				var aList = (object[]) propObj;
+				var aList = (object[])propObj;
 				var regionExists = dbSession.Query<RegionHouse>().FirstOrDefault(s => s.Name == (aList[8] ?? aList[0]));
 				var streetExists = dbSession.Query<Street>().FirstOrDefault(s => s.Name == aList[1]);
 				if (streetExists == null) {
@@ -49,7 +49,7 @@ namespace InternetInterface.Helpers
 						break;
 					}
 				}
-				newHouse.Number = Convert.ToInt32(strToInt);
+				newHouse.Number = string.IsNullOrEmpty(strToInt) ? 0 : Convert.ToInt32(strToInt);
 				newHouse.Case = justStr.Substring(strToInt.Length, justStr.Length - strToInt.Length);
 				newHouse.Street = aList[1].ToString();
 				newHouse.Region = regionExists ?? new RegionHouse() { Name = (aList[8] ?? aList[0]).ToString() };
@@ -59,11 +59,9 @@ namespace InternetInterface.Helpers
 					@" UPDATE internet.physicalclients SET City='{0}',Street='{1}',House='{2}',Floor='{3}',Apartment='{4}', Entrance='{5}',HouseObj={6}, CaseHouse='{8}'  WHERE Id={7}",
 					streetOrHouseTown, aList[1], newHouse.Number, aList[3] == "" ? "0" : aList[3], aList[4] == "" ? "0" : aList[4],
 					aList[5] == "" ? "0" : aList[5], newHouse.Id, aList[6], newHouse.Case) + "; " +
-					string.Format(" UPDATE internet.clients SET Address='улица {1} дом {2} квартира {4} подъезд {5} этаж {3}' " + " WHERE Id={6}", (aList[8] ?? aList[0]),
-					aList[1], newHouse.Number + newHouse.Case, aList[3] == "" ? "0" : aList[3], aList[4] == "" ? "0" : aList[4], aList[5] == "" ? "0" : aList[5], clientId)).UniqueResult();
+				                         string.Format(" UPDATE internet.clients SET Address='улица {1} дом {2} квартира {4} подъезд {5} этаж {3}' " + " WHERE Id={6}", (aList[8] ?? aList[0]),
+					                         aList[1], newHouse.Number + newHouse.Case, aList[3] == "" ? "0" : aList[3], aList[4] == "" ? "0" : aList[4], aList[5] == "" ? "0" : aList[5], clientId)).UniqueResult();
 			}
-			
 		}
-
 	}
 }

@@ -93,9 +93,9 @@ namespace Inforoom2.Controllers
 
 					CurrentClient.SetStatus(Status.Get(StatusType.Worked, DbSession));
 
-					var internet = CurrentClient.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Internet);
+					var internet = CurrentClient.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Internet);
 					internet.ActivateFor(CurrentClient, DbSession);
-					var iptv = CurrentClient.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Iptv);
+					var iptv = CurrentClient.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Iptv);
 					iptv.ActivateFor(CurrentClient, DbSession);
 
 					if (CurrentClient.IsNeedRecofiguration)
@@ -210,15 +210,13 @@ namespace Inforoom2.Controllers
 			var payments =
 				DbSession.Query<Payment>().Where(p => p.Client.Id == client.Id && p.RecievedOn > SystemTime.Now().AddMonths(-3));
 
-			var historyList = userWriteOffs.Select(userWriteOff => new BillingHistory
-			{
+			var historyList = userWriteOffs.Select(userWriteOff => new BillingHistory {
 				Date = userWriteOff.Date,
 				Sum = userWriteOff.Sum,
 				Description = userWriteOff.Comment
 			}).ToList();
 
-			var userWiteOffList = writeOffs.ToList().Select(writeOff =>
-			{
+			var userWiteOffList = writeOffs.ToList().Select(writeOff => {
 				//Комментарий о списании за арендуемое оборудование, при его наличии. 
 				var commentWriteOff = "";
 				if (writeOff.Comment != null
@@ -228,8 +226,7 @@ namespace Inforoom2.Controllers
 						writeOff.Comment.Substring(0, writeOff.Comment.IndexOf(":")));
 				}
 				//создаем эл-т отображаемого списка
-				return new BillingHistory
-				{
+				return new BillingHistory {
 					Date = writeOff.WriteOffDate,
 					Sum = writeOff.WriteOffSum,
 					Description = "Абонентская плата" + commentWriteOff
@@ -273,7 +270,7 @@ namespace Inforoom2.Controllers
 			ViewBag.Title = "Данные пользователя";
 			return View();
 		}
-		 
+
 		public ActionResult Service()
 		{
 			ViewBag.Title = "Услуги";
@@ -283,76 +280,59 @@ namespace Inforoom2.Controllers
 
 		public ActionResult Notifications()
 		{
-			var client = CurrentClient;
-			var smsContact = client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending);
-			if (smsContact == null) {
-				smsContact = new Contact();
-				smsContact.Type = ContactType.SmsSending;
+			var notificationContact = CurrentClient.Contacts.FirstOrDefault(c => c.Type == ContactType.NotificationEmailConfirmed || c.Type == ContactType.NotificationEmailRaw);
+			if (notificationContact == null) {
+				notificationContact = new Contact();
+				notificationContact.Type = ContactType.NotificationEmailRaw;
 			}
-			ViewBag.Contact = smsContact;
-			ViewBag.IsSmsNotificationActive = client.SendSmsNotification;
+			ViewBag.Contact = notificationContact;
 			ViewBag.Title = "Уведомления";
 			return View();
 		}
 
-
 		[HttpPost]
 		public ActionResult Notifications(Contact contact)
 		{
-			var client = CurrentClient;
+			contact.ContactString = string.IsNullOrEmpty(contact.ContactString) ? "" : contact.ContactString.Trim();
+      var client = CurrentClient;
 			var errors = ValidationRunner.Validate(contact);
-			//Валидация контакта
-			if (contact.ContactString != null && contact.ContactString.Length == 10)
-				// добавление символа "-" при сохранении номера в БД
-			{
-				contact.ContactString = contact.ContactString.IndexOf('-') != -1
-					? contact.ContactString
-					: contact.ContactString.Insert(3, "-");
-			}
-			if (client.SendSmsNotification == false) {
+			//Валидация контакта 
+			if (errors.Length == 0) {
 				var contactValidation = new ValidatorContacts();
-					// Принудительная валидация модели контактов по атрибуту ValidatorContacts
+				// Принудительная валидация модели контактов по атрибуту ValidatorContacts
 				ViewBag.ContactValidation = contactValidation;
 				errors = errors.Length != 0
 					? errors
 					: ValidationRunner.ForcedValidationByAttribute<Contact>(contact, s => s.ContactString, contactValidation);
 			}
-
 			if (errors.Length == 0) {
-				var smsContact = client.Contacts.FirstOrDefault(c => c.Type == ContactType.SmsSending);
-				if (smsContact == null) {
-					smsContact = contact;
-					smsContact.Date = SystemTime.Now();
-					smsContact.Comment = "Пользователь создал из личного кабинета";
-					client.Contacts.Add(smsContact);
-				}
-				if (client.SendSmsNotification) {
-					client.SendSmsNotification = false;
-					var appeal = new Appeal("Клиент отписался от смс рассылки", client, AppealType.User)
-					{
-						Employee = GetCurrentEmployee()
-					};
-					DbSession.Save(appeal);
-					SuccessMessage("Вы успешно отписались от смс рассылки");
+				var notificationContact = client.Contacts.FirstOrDefault(c => c.Type == ContactType.NotificationEmailRaw || c.Type == ContactType.NotificationEmailConfirmed);
+				if (notificationContact == null) {
+					notificationContact = contact;
+					notificationContact.Date = SystemTime.Now();
+					notificationContact.Comment = "Пользователь создал из личного кабинета";
+					client.Contacts.Add(notificationContact);
+					notificationContact.Client = client;
 				}
 				else {
-					client.SendSmsNotification = true;
-					var appeal = new Appeal("Клиент подписался на смс рассылку", client, AppealType.User)
-					{
-						Employee = GetCurrentEmployee()
-					};
-					DbSession.Save(appeal);
-					SuccessMessage("Вы успешно подписались на смс рассылку");
+					notificationContact.ContactString = contact.ContactString;
 				}
-				if (!client.Contacts.Any(s => s.ContactString.Replace("-", "") == contact.ContactString.Replace("-", ""))) {
-					smsContact.ContactString = contact.ContactString;
+				if (notificationContact.Type == ContactType.NotificationEmailConfirmed) {
+					notificationContact.ClientNotificationEmailRestore();
+					var appeal = new Appeal("Клиент отписался от рассылки почтовых уведомлений", client, AppealType.User, GetCurrentEmployee());
+					DbSession.Save(appeal);
+					DbSession.Save(notificationContact);
+					SuccessMessage("Вы успешно отписались от рассылки почтовых уведомлений");
+					DbSession.Save(notificationContact);
+					return RedirectToAction("Notifications");
 				}
 				DbSession.Save(client);
-				ViewBag.Contact = contact;
+				ViewBag.Contact = notificationContact;
+				SuccessMessage("На указанный почтовый адрес выслано сообщение с подтверждением.");
+				notificationContact.ClientNotificationEmailConfirmationGet(Url.Action("NotificationsEmailConfirmation"));
 				return RedirectToAction("Notifications");
 			}
 			ViewBag.Contact = contact;
-			ViewBag.IsSmsNotificationActive = client.SendSmsNotification;
 			return View();
 		}
 
@@ -361,6 +341,28 @@ namespace Inforoom2.Controllers
 		{
 			ViewBag.Title = "Бонусы";
 			return View();
+		}
+
+		public ActionResult NotificationsEmailConfirmation(string id)
+		{
+			var contact = CurrentClient.PhysicalClient.GetClientNotificationEmail(false);
+			var currentType = contact.Type;
+			contact.ClientNotificationEmailConfirmationSet(id);
+			if (currentType != contact.Type && contact.Type == ContactType.NotificationEmailConfirmed) {
+				SuccessMessage("Адрес для рассылки почтовых уведомлений подтвержден!");
+				DbSession.Save(contact);
+				var appeal = new Appeal("Клиент подписался на рассылку почтовых уведомлений", CurrentClient, AppealType.User, GetCurrentEmployee());
+				DbSession.Save(appeal);
+			}
+			else {
+				if (currentType == contact.Type && contact.Type == ContactType.NotificationEmailConfirmed) {
+					SuccessMessage("Адрес для рассылки уведомлений уже подтвержден.");
+				}
+				else {
+					ErrorMessage("Подтверждение почтового адреса завершилось ошибкой. Повторите запрос на подтверждение.");
+				}
+			}
+			return RedirectToAction("Notifications");
 		}
 
 		/// <summary>
@@ -401,8 +403,7 @@ namespace Inforoom2.Controllers
 			var warning = (client.GetWorkDays() <= 3) ? " Обратите внимание, что у вас низкий баланс!" : "";
 			SuccessMessage("Тариф успешно изменен." + warning);
 			// добавление записи в историю тарифов пользователя
-			var planHistory = new PlanHistoryEntry
-			{
+			var planHistory = new PlanHistoryEntry {
 				Client = CurrentClient,
 				DateOfChange = SystemTime.Now(),
 				PlanAfter = plan,
@@ -413,8 +414,7 @@ namespace Inforoom2.Controllers
 
 			var msg = string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.",
 				oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, result.Sum);
-			var appeal = new Appeal(msg, client, AppealType.User)
-			{
+			var appeal = new Appeal(msg, client, AppealType.User) {
 				Employee = GetCurrentEmployee()
 			};
 			DbSession.Save(appeal);
@@ -434,7 +434,7 @@ namespace Inforoom2.Controllers
 
 			var deferredPayment = services.FirstOrDefault(i => i is DeferredPayment);
 			deferredPayment = BaseModel.UnproxyOrDefault(deferredPayment) as DeferredPayment;
-			var inforoomServices = new List<Service> {blockAccountService, deferredPayment};
+			var inforoomServices = new List<Service> { blockAccountService, deferredPayment };
 
 			ViewBag.Client = client;
 			//@todo Убрать исключения для статического IP, когда будет внедрено ручное включение сервиса

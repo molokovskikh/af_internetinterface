@@ -34,6 +34,9 @@
 						break;
 					}
 				}
+				if (string.IsNullOrEmpty(cutNumber)) {
+					return new { Number = 0, Key = "0", House = s };
+				}
 				return new { Number = Convert.ToInt32(cutNumber), Key = s.Number.Substring(s.Number.IndexOf(cutNumber)), House = s };
 			}
 				).ToList();

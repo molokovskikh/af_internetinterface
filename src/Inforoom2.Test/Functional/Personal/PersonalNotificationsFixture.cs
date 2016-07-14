@@ -18,48 +18,48 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession.Flush();
 			Open("Personal/Notifications");
 			var phone = browser.FindElementByCssSelector("input[id=contact_ContactString]");
-			phone.SendKeys("8556478974");
+			phone.SendKeys("test@mail.test");
 			browser.FindElementByCssSelector(".button").Click();
-			AssertText("Вы успешно подписались на смс рассылку");
+			AssertText("На указанный почтовый адрес выслано сообщение с подтверждением.");
 		}
 
 		/// <summary>
 		/// Подписаться на уведомления не удалось,номер телефона не ввели
 		/// </summary>
-		[Test, Description("Не введен номер телефона")]
+		[Test, Description("Не введен контакт")]
 		public void NotificationsNot()
 		{
 			Open("Personal/Notifications");
 			var phone = browser.FindElementByCssSelector("input[id=contact_ContactString]");
 			phone.SendKeys("");
 			browser.FindElementByCssSelector(".button").Click();
-			AssertText("Введите номер телефона");
+			AssertText("Введите контакт");
 		}
 
 		/// <summary>
 		/// Подписаться на уведомления не удалось,номер телефона ввели неверно
 		/// </summary>
-		[Test, Description("Неправильно введен номер телефона")]
+		[Test, Description("Неправильно введен контакт")]
 		public void NotificationsWrong()
 		{
 			Open("Personal/Notifications");
 			var phone = browser.FindElementByCssSelector("input[id=contact_ContactString]");
-			phone.SendKeys("4663767478239463");
+			phone.SendKeys("test@mailtest");
 			browser.FindElementByCssSelector(".button").Click();
-			AssertText("Номер телефона введен неправильно");
+			AssertText("Адрес email указан неверно");
 		}
 
 		/// <summary>
 		/// Подписаться на уведомления не удалось,номер телефона ввели неверно
 		/// </summary>
-		[Test, Description("Неправильно введен номер телефона")]
+		[Test, Description("Неправильно введен контакт")]
 		public void NotificationsWrongTwo()
 		{
 			Open("Personal/Notifications");
 			var phone = browser.FindElementByCssSelector("input[id=contact_ContactString]");
-			phone.SendKeys("964-589-5414");
+			phone.SendKeys("testmail.test");
 			browser.FindElementByCssSelector(".button").Click();
-			AssertText("Номер телефона введен неправильно");
+			AssertText("Адрес email указан неверно");
 		}
 	}
 }

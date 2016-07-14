@@ -27,18 +27,21 @@ namespace Inforoom2.validators
 			// обработка списка
 			if (value is List<Contact> || value is IList<Contact>) {
 				var contactList = (IList<Contact>)value;
-				if (contactList.Count==0)
-				{
+				if (contactList.Count == 0) {
 					AddError("<strong class='msg'>Введите номер телефона</strong>");
 				}
-				foreach (var currentContact in contactList) RunContact(currentContact, true);
+				foreach (var currentContact in contactList) {
+					RunContact(currentContact, true);
+				}
 			}
 		}
 
 		protected void RunContact(Contact currentContact, bool htmlError = false)
 		{
 			// проверка email
-			if (currentContact.Type == ContactType.Email) {
+			if (currentContact.Type == ContactType.Email
+			    || currentContact.Type == ContactType.NotificationEmailRaw
+			    || currentContact.Type == ContactType.NotificationEmailConfirmed) {
 				// проверка NotEmpty
 				if (currentContact.ContactString == string.Empty) {
 					if (htmlError) {
