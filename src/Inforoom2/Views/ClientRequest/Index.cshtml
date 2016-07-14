@@ -47,23 +47,23 @@
 		</div>
 		<div class="block">
 			<div class="addon">Дом:</div>
-			@Html.ValidationEditor(validationRunner, clientRequest, "HouseNumber", new { @class = "addons", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text, IsHouseValidated)
+			@Html.ValidationEditor(validationRunner, clientRequest, "HouseNumber", new { @class = "addons margin-zero padding-left-4", onkeyup = "typeWatcher(1000)", @style="width:170px;" }, HtmlTag.input, HtmlType.text, IsHouseValidated)
 		</div>
 		<div class="block">
-			<div class="addon">Корпус:</div>
-			@Html.ValidationEditor(validationRunner, clientRequest, "Housing", new { @class = "addons", onkeyup = "typeWatcher(1000)" }, HtmlTag.input, HtmlType.text)
+			<div class="addon centre">Корпус:</div>
+			@Html.ValidationEditor(validationRunner, clientRequest, "Housing", new { @class = "addons margin-zero padding-left-4", onkeyup = "typeWatcher(1000)", @style = "width:160px;" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div class="block">
 			<div class="addon">Квартира:</div>
-			@Html.ValidationEditor(validationRunner, clientRequest, "Apartment", new { @class = "addons" }, HtmlTag.input, HtmlType.text)
+			@Html.ValidationEditor(validationRunner, clientRequest, "Apartment", new { @class = "addons margin-zero padding-left-4" }, HtmlTag.input, HtmlType.text)
 		</div>
-		<div class="block">
-			<div class="addon">Подъезд:</div>
-			@Html.ValidationEditor(validationRunner, clientRequest, "Entrance", new { @class = "addons" }, HtmlTag.input, HtmlType.text)
+		<div class="block padding-left-7">
+			<div class="addon centre">Подъезд:</div>
+			@Html.ValidationEditor(validationRunner, clientRequest, "Entrance", new { @class = "addons margin-zero padding-left-4" }, HtmlTag.input, HtmlType.text)
 		</div>
-		<div class="block">
-			<div class="addon">Этаж:</div>
-			@Html.ValidationEditor(validationRunner, clientRequest, "Floor", new { @class = "addons" }, HtmlTag.input, HtmlType.text)
+		<div class="block padding-left-7">
+			<div class="addon centre">Этаж:</div>
+			@Html.ValidationEditor(validationRunner, clientRequest, "Floor", new { @class = "addons margin-zero padding-left-4" }, HtmlTag.input, HtmlType.text)
 		</div>
 		<div>
 			@if (IsRedirected) {

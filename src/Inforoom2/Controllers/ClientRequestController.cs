@@ -48,7 +48,7 @@ namespace Inforoom2.Controllers
 			ViewBag.IsCityValidated = false;
 			ViewBag.IsStreetValidated = false;
 			ViewBag.IsHouseValidated = false;
-			ViewBag.Regions = DbSession.Query<Region>().ToList();
+			ViewBag.Regions = DbSession.Query<Region>().Where(s => s.ShownOnMainPage).OrderBy(s => s.Name).ToList();
 			ViewBag.ClientRequest = clientRequest;
 			return View("Index");
 		}

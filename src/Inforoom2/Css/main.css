@@ -11,6 +11,9 @@ body {margin:0px; background: #aaafb5;font-family: PDFDinTextPro;}
 ul {margin: 0px;}
 a {text-decoration: none;color: #474747;}
 .notext { font-size: 0px;}
+.margin-zero{margin: 0px !important;}
+.padding-left-7{    padding-left: 7px;}
+.padding-left-4{    padding-left: 4px;}
 .centre {text-align: center;}
 .wrapper {width:1182px; background: #ffffff; height: auto;margin:0px auto;position: relative;overflow: visible; }
 .top {background-color:#373737;height:51px;position: relative;width:1182px;}
