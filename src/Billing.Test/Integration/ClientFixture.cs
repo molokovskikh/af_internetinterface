@@ -16,7 +16,7 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Payment_for_connect_fixture()
 		{
-			var startSum = 300;
+			decimal startSum = 300;
 			client.BeginWork = null;
 			session.Save(client);
 			var clientEndPoint = new ClientEndpoint { Client = client };
@@ -28,21 +28,44 @@ namespace Billing.Test.Integration
 			Assert.AreEqual(client.Balance, startSum);
 			Assert.AreEqual(client.Disabled, false);
 			var cost = client.GetSumForRegularWriteOff();
+			Assert.IsNull(client.BeginWork);
+			Assert.AreEqual(cost, 0);
 
-			Process();
 
-			client = session.Get<Client>(client.Id); 
+			session.Flush();
+			if (session.Transaction.IsActive)
+				session.Transaction.Commit();
+			//в результате работы биллинга объекты могут быть удалены например ClientService
+			//если сделать Refresh для такого объекта в коллекции которого есть такой объект то это приведет к ошибке
+			session.Clear();
+			billing.ProcessPayments();
+			billing.ProcessWriteoffs();
+
+			Assert.AreEqual(cost, 0);
+
+			client = session.Get<Client>(client.Id);
 			Assert.IsNull(client.BeginWork);
 			Assert.AreEqual(client.Disabled, true);
-			Assert.AreEqual(client.Balance, (startSum - paymentForConnect.Sum - cost));
+			Assert.AreEqual(client.Balance, startSum - paymentForConnect.Sum);
+			client.SetStatus(Status.Get(StatusType.Worked, session));
+			client.PaidDay = false;
 			client.PhysicalClient.Balance = startSum;
 			session.Save(client.PhysicalClient);
-			Assert.IsNull(client.BeginWork);
-			Assert.AreEqual(client.Balance, startSum);
+			session.Save(client);
 
 			Process();
 
-			client = session.Get<Client>(client.Id); 
+			client = session.Get<Client>(client.Id);
+			Assert.IsNotNull(client.BeginWork);
+			Assert.AreNotEqual(cost, client.GetSumForRegularWriteOff());
+			cost = client.GetSumForRegularWriteOff();
+			Assert.AreEqual(client.Disabled, false);
+			Assert.AreEqual(client.Balance, (startSum - cost)); 
+			startSum = client.Balance;
+
+			Process();
+
+			client = session.Get<Client>(client.Id);
 			Assert.AreEqual(client.Disabled, false);
 			Assert.AreEqual(client.Balance, startSum - cost);
 			Assert.IsNotNull(client.BeginWork);
@@ -170,9 +193,9 @@ namespace Billing.Test.Integration
 			//в результате работы биллинга объекты могут быть удалены например ClientService
 			//если сделать Refresh для такого объекта в коллекции которого есть такой объект то это приведет к ошибке
 			session.Clear();
+			billing.SafeProcessClientEndpointSwitcher();
 			billing.ProcessPayments();
 			billing.ProcessWriteoffs();
-			billing.SafeProcessClientEndpointSwitcher();
 		}
 
 		[Test(Description = "Разблокировка юр. лиц при положительном балансе")]
