@@ -15,18 +15,31 @@
 		Текущий тарифный план: @client.Plan.Name
 	</div>
 	<br/>
-	@if (beginDate.AddMonths(2) >= SystemTime.Now()) {
+	@if (beginDate == DateTime.MinValue) {
 		<div class="paragraph">
-			<b>Вы пока не можете сменить тарифный план, т.к. подключились к нам менее 2-х месяцев назад.</b>
+			<b>Вы не можете сменить тарифный план до получения доступа в сеть.</b>
+		</div>
+	}
+	@if (beginDate != DateTime.MinValue && beginDate.AddMonths(client.Plan.StoppageMonths??2) >= SystemTime.Now()) {
+		<div class="paragraph">
+			<b>Вы пока не можете сменить тарифный план, т.к. подключились к нам менее @(client.Plan.StoppageMonths ?? 2)-х месяцев назад.</b>
 		</div>
 	}
 	<br/>
 	<table class="cost">
 		<tr class="menucost">
-			<td class="namemenu"><div class="namemenubg"></div>Название</td>
-			<td class="namemenu"><div class="namemenubg"></div>Скорость</td>
-			<td class="namemenu"><div class="namemenubg "></div>Абонентская плата</td>
-			<td class="namemenu"><div class="namemenubg "></div>Стоимость перехода</td>
+			<td class="namemenu">
+				<div class="namemenubg"></div>Название
+			</td>
+			<td class="namemenu">
+				<div class="namemenubg"></div>Скорость
+			</td>
+			<td class="namemenu">
+				<div class="namemenubg "></div>Абонентская плата
+			</td>
+			<td class="namemenu">
+				<div class="namemenubg "></div>Стоимость перехода
+			</td>
 			<td class="namemenu td">Действие</td>
 		</tr>
 		@foreach (var plan in plans) {
@@ -41,14 +54,14 @@
 					@if (plan.Id == client.Plan.Id) {
 						<div class="paragraph">Текущий</div>
 					}
-					else if (beginDate.AddMonths(2) < SystemTime.Now()) {
+					else if (beginDate.AddMonths(client.Plan.StoppageMonths ?? 2) < SystemTime.Now()) {
 						using (@Html.BeginForm("ChangePlan", "Personal", FormMethod.Post, new { id = "changeplan" })) {
 							@Html.HiddenFor(modelItem => plan.Id)
 							if (client.Plan.IsOnceOnly) {
-								<input class="connectfee" title="Обратный переход на текущий тариф не возможен." type="submit" value="Сменить" />
+								<input class="connectfee" title="Обратный переход на текущий тариф не возможен." type="submit" value="Сменить"/>
 							}
 							else {
-								<input class="connectfee" type="submit" value="Сменить" />
+								<input class="connectfee" type="submit" value="Сменить"/>
 							}
 						}
 					}

@@ -48,6 +48,9 @@ namespace Inforoom2.Models
 		[Property(Column = "TextPrice")]
 		public virtual string TextPrice { get; set; }
 
+		[Property]
+		public virtual int? StoppageMonths { get; set; }
+
 		[Property(Column = "_IsServicePlan")]
 		public virtual bool IsServicePlan { get; set; }
 

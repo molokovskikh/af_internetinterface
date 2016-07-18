@@ -92,7 +92,7 @@ namespace Inforoom2.Test.Functional.Personal
 			AssertNoText("50 на 50");
 			var regionStreet = Client.PhysicalClient.Address.House.Street.Region;
 			var regionHouse = Client.PhysicalClient.Address.House.Region;
-			Assert.That(regionStreet, Is.Not.EqualTo(regionHouse),  "Регион дома не дожен соответствовать региону улицы");
+			Assert.That(regionStreet, Is.Not.EqualTo(regionHouse), "Регион дома не дожен соответствовать региону улицы");
 			//клиент без региона дома
 			Client.PhysicalClient.Address.House.Region = null;
 			DbSession.Save(Client.PhysicalClient.Address.House);
@@ -129,7 +129,7 @@ namespace Inforoom2.Test.Functional.Personal
 			Assert.That(writeoff, Is.Null, "У клиента не должно быть списания денежных средств за смену тарифа");
 		}
 
-		[Test(Description = "Новому клиенту не доступна смена тарифа первые два месяца.")]
+		[Test(Description = "Новому клиенту не доступна смена тарифа первые несколько месяцев.")]
 		public void PlanRecentClient()
 		{
 			var Client = DbSession.Query<Client>().First(i => i.Comment == ClientCreateHelper.ClientMark.recentClient.GetDescription());
@@ -138,8 +138,27 @@ namespace Inforoom2.Test.Functional.Personal
 			AssertText("Вы пока не можете сменить тарифный план, т.к. подключились к нам менее 2-х месяцев назад.");
 			var button = browser.FindElementsByCssSelector(".connectfee");
 			Assert.That(button.Count, Is.EqualTo(0), "На странице не должны отображаться кнопки для смены тарифа");
+			Client.Plan.StoppageMonths = 3;
+			DbSession.Save(Client.Plan);
+			DbSession.Flush();
+			Open("Personal/Plans");
+			AssertText("Вы пока не можете сменить тарифный план, т.к. подключились к нам менее 3-х месяцев назад.");
+			button = browser.FindElementsByCssSelector(".connectfee");
+			Assert.That(button.Count, Is.EqualTo(0), "На странице не должны отображаться кнопки для смены тарифа");
+			Client.Plan.StoppageMonths = 0;
+			DbSession.Save(Client.Plan);
+			DbSession.Flush();
+			Open("Personal/Plans");
+			AssertNoText("Вы пока не можете сменить тарифный план, т.к");
+			button = browser.FindElementsByCssSelector(".connectfee");
+			Assert.That(button.Count, Is.EqualTo(6), "На странице не должны отображаться кнопки для смены тарифа");
+			Client.Plan.StoppageMonths = null;
+			DbSession.Save(Client.Plan);
+			DbSession.Flush();
+			Open("Personal/Plans");
+			AssertText("Вы пока не можете сменить тарифный план, т.к. подключились к нам менее 2-х месяцев назад.");
+			button = browser.FindElementsByCssSelector(".connectfee");
+			Assert.That(button.Count, Is.EqualTo(0), "На странице не должны отображаться кнопки для смены тарифа");
 		}
-
-
 	}
 }
