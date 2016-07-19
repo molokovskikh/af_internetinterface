@@ -132,8 +132,8 @@ namespace Inforoom2.Models
 		[DataType(DataType.Date)]
 		public virtual DateTime? StatusChangedOn { get; set; }
 
-		[Property(Column = "BeginWork"),
-		 Description("Дата первой аренды -проставляется DHCP-сервером во время получения клиентом первой аренды")]
+		//дата начала работы клиента, выставляется, когда активируется точка подключения Биллингом, потом начинаются списания. 
+		[Property(Column = "BeginWork")]//раньше Description("Дата первой аренды -проставляется DHCP-сервером во время получения клиентом первой аренды")
 		public virtual DateTime? WorkingStartDate { get; set; }
 
 		[Property, Description("Дата, по которой определяется когда бесплатные дни должны обновиться")]
@@ -790,6 +790,8 @@ namespace Inforoom2.Models
 					Discount = 0;
 					Disabled = true;
 					AutoUnblocked = false;
+					//затираем дату начала работы, чтобы не списывалась абон плата
+					WorkingStartDate = null;
 				}
 				SetStatus(NewStatus.Type, dbSession);
 
