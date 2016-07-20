@@ -327,6 +327,10 @@ function Inforoom() {
 		return date;
 	};
 
+	this.SetValueInto = function(val, selector) {
+		$(selector).val(val);
+	}
+
 	//Запускаем конструктор
 	this.initialize();
 } 
@@ -433,6 +437,7 @@ var Base64 = {
 		}
 		return string;
 	}
+
 }
 
 	cli = new Inforoom(); 

@@ -7,20 +7,22 @@
 @{
 	ViewBag.Title = "Список подключенных домов";
 	string currentRegionName = ViewBag.CurrentRegion;
-	List<string> streets = ViewBag.Streets;
-	List<House> houses = ViewBag.Houses;
-	houses = houses.OrderBy(s=>s.Street.Name).ToList();
+	List<ConnectedHouse> connectedHouses = ViewBag.ConnectedHouses;
+	List<Street> connectedStreets = connectedHouses.Select(s => s.Street).GroupBy(s => s.Id).Select(grp => grp.First()).OrderBy(s => s.Name).ToList();
 }
 
 <h2 class="heading">@ViewBag.Title</h2>
 <div class="paddedBlock paragraph">
-	<h3 class="font-header">Подключенные дома по городу  @ViewBag.CurrentRegion<br/>
-		<i>(для просмотра списка подключенных домов других городов, необходимо изменить город на сайте в левом верхнем углу)</i></h3>	
-	@{
-		foreach (var streetName in streets) {
-			@(streetName + " : ")
 
-			var currentHouses = houses.Where(s => s.Street.Name == streetName ).ToList().GroupBy(s => s.Number).Select(group => group.First()).ToList();
+	<h3 class="font-header">
+		Подключенные дома по городу @ViewBag.CurrentRegion<br/>
+		<i>(для просмотра списка подключенных домов других городов, необходимо изменить город на сайте в левом верхнем углу)</i>
+	</h3>
+	@{
+		foreach (var street in connectedStreets) {
+			@(street.Name + " : ")
+
+			var currentHouses = connectedHouses.Where(s => s.Street.Id == street.Id).ToList().GroupBy(s => s.Number).Select(group => group.First()).ToList();
 
 			//конвертируем дома для сортировки
 			//на доме с буквой,доходим до буквы и останавливаемся,возвращая только цифру
@@ -42,7 +44,7 @@
 				).ToList();
 
 			//сортируем дома по возрастанию
-			houseList = houseList.OrderBy(s => s.Number).ThenBy(s=>s.Key).ToList();
+			houseList = houseList.OrderBy(s => s.Number).ThenBy(s => s.Key).ToList();
 
 			//соединяем все дома в строку,разделяя запятой
 			var house = string.Join(", ", houseList.Select(s => s.House.Number.ToUpper()));

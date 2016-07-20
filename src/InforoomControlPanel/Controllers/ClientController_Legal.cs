@@ -378,14 +378,16 @@ namespace InforoomControlPanel.Controllers
 		{
 			var endpoint = DbSession.Load<ClientEndpoint>(endpointId);
 			var date = SystemTime.Now();
-			if (endpoint.Client.IsLegalClient && endpoint.Client.LegalClientOrders.Count(s => s.EndDate > date && (s.Disabled || s.IsDeactivated == false) && s.EndPoint.Id == endpointId) > 0) {
+			if (endpoint.Client.IsLegalClient && endpoint.Client.LegalClientOrders.Count(s => 
+			s.EndDate > date && (s.Disabled || s.IsDeactivated == false) && s.EndPoint.Id == endpointId) > 0) {
 				ErrorMessage("Точка подключения не может быть удалена, т.к. она используется в других действующих заказах.");
 			}
 			else {
 				endpoint.Client.RemoveEndpoint(endpoint, DbSession);
 				DbSession.Save(endpoint.Client);
 				SuccessMessage("Точка подключения была успешно удалена.");
-				endpoint.Client.Appeals.Add(new Appeal($"Точка подключения №{endpointId} была удалена.", endpoint.Client, AppealType.Statistic, GetCurrentEmployee()));
+				endpoint.Client.Appeals.Add(new Appeal($"Точка подключения №{endpointId} была удалена.",
+					endpoint.Client, AppealType.Statistic, GetCurrentEmployee()));
 			}
 			//	DbSession.Save(new Appeal("", endpoint.Client, AppealType.System));
 			return RedirectToAction("InfoLegal", new { endpoint.Client.Id });

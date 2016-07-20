@@ -329,6 +329,7 @@
     <Compile Include="Intefaces\IModelWithPriority.cs" />
     <Compile Include="Intefaces\ILogAppeal.cs" />
     <Compile Include="Intefaces\IServicemenScheduleItem.cs" />
+    <Compile Include="Models\ConnectedHouse.cs" />
     <Compile Include="Models\IgnoredInn.cs" />
     <Compile Include="Models\SiteVersionChange.cs" />
     <Compile Include="Models\ConnectionRequestMarker.cs" />

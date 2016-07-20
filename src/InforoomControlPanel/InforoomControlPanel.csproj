@@ -1525,6 +1525,7 @@
     <Content Include="Images\tick.png" />
     <Content Include="Images\toplink.png" />
     <Content Include="Scripts\ClientEndpointCheckState.js" />
+    <Content Include="Scripts\ConnectedHouses.js" />
     <Content Include="Scripts\ConnectionRequestMarker.js" />
     <Content Include="Scripts\ClientController.ClientRegistration.js" />
     <Content Include="Scripts\AdminAddressController.js" />
@@ -1555,6 +1556,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ConnectedHousesController.cs" />
+    <Compile Include="Models\ViewModelConnectedHouse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminOpenController.cs" />
@@ -2054,6 +2057,10 @@
     <Content Include="Views\Payments\PaymentByEmployees.cshtml" />
     <Content Include="Views\Address\ConnectedHouses.cshtml" />
     <Content Include="Views\Client\subviews\modelview\_PhysicalBlockAccountCancel.cshtml" />
+    <Content Include="Views\ConnectedHouses\Index.cshtml" />
+    <Content Include="Views\ConnectedHouses\modelviews\_ConnectedHouseAdd.cshtml" />
+    <Content Include="Views\ConnectedHouses\modelviews\_SynchronizeConnectedHouse.cshtml" />
+    <Content Include="Views\ConnectedHouses\modelviews\_ConnectedHouseEdit.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <Content Include="Views\Switch\SwitchCreate.cshtml" />

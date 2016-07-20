@@ -499,6 +499,14 @@
 					</a>
 				</li>
 			}
+			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_007006.ToString()) != null
+						 || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_007006.ToString()))){
+				<li>
+					<a href="@Url.Action("Index", "ConnectedHouses")">
+						<span class="title">Подключенные Дома</span>
+					</a>
+				</li>
+			}
 		</ul>
 	</li>
 }

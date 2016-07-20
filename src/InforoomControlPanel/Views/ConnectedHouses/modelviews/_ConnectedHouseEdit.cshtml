@@ -1,0 +1,171 @@
+﻿ 
+	@using Common.Tools
+	@using Inforoom2.Components
+	@using Inforoom2.Helpers
+	@using Inforoom2.Models
+	@using InforoomControlPanel.Models
+	@{
+		Layout = "";
+		ConnectedHouse connectedHouse = new ConnectedHouse();
+		int currentRegion = ViewBag.CurrentRegion;
+		int modelId = 0;
+		List<Street> streetList = ViewBag.StreetList;
+	}
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ConnectedHouses.js?v=1")"></script>
+	<script type="text/javascript">
+		$(function() {
+			var type = window.location.hash.substr(1);
+			if (type != undefined) {
+				$("[name='streetId']").val(type);
+			}
+		});
+	</script>
+}
+	<!-- Modal For WriteOffs Add-->
+<div class="modal" id="ModelForConnectionHouseEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			@using (@Html.BeginForm("HouseEdit", "ConnectedHouses", null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
+				@Html.Hidden("regionId", currentRegion)
+				<input type="hidden" id="connectedHouseId" name="model.Id" value="0">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel"><strong>Добавление подключенного дома</strong></h4>
+				</div>
+				<div class="modal-body">
+					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
+						<tbody>
+						<tr>
+							<td>Улица</td>
+							<td>
+								<select name="model.Street" class="form-control" style="display: inline; width: 240px">
+									@foreach (var item in streetList) {
+										<option value="@item.Id">@item.Name</option>
+									}
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>Номер дома</td>
+							<td>
+								@Html.TextBoxFor(model => connectedHouse.Number, new { @class = "form-control", @Name = "model.House" })
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label for="modelDisabled">Отображать</label>
+							</td>
+							<td>
+								<select name="model.Disabled" class="form-control" style="display: inline; width: 240px">
+									<option value="false">Да</option>
+									<option value="true">Нет</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>Комментарий</td>
+							<td>
+								@Html.TextBoxFor(model => connectedHouse.Comment, new { @class = "form-control", @Name = "model.Comment" })
+							</td>
+						</tr>
+							<tr>
+								<td><a target="_blank" id="searchClientLink" servHref="@Url.Action("List","Client")/?mfilter.clientregionfilter.=@currentRegion&mfilter.filter.Equal.PhysicalClient.Address.House.Street.Id={0}&mfilter.filter.Equal.PhysicalClient.Address.House.Number={1}">физ. лица по адресу</a></td>
+								<td>
+								 </td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" name="delete" value="false" class="btn btn-success">Сохранить</button>
+					<button type="submit" name="delete" value="true" class="btn btn-danger">Удалить</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+<!-- Modal For WriteOffs Add-->
+<div class="modal" id="ModelForConnectionHouseBatchProcessing" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+
+			@using (@Html.BeginForm("HouseGenerate", "ConnectedHouses", null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
+				@Html.Hidden("regionId", currentRegion)
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel"><strong>Пакетная обработка подключенных домов</strong> (только целые знач., без корпусов)</h4>
+				</div>
+				<div class="modal-body">
+					<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer clientTable" role="grid" aria-describedby="table-2_info">
+						<tbody>
+						<tr>
+							<td>Улица</td>
+							<td>
+								<select name="streetId" class="form-control" style="display: inline; width: 240px">
+									@foreach (var item in streetList) {
+										<option value="@item.Id">@item.Name</option>
+									}
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>Номер дома - от:</td>
+							<td>
+								<input class="form-control" onkeyup="checkTneHouseNumberOnPackageForm();"  name="numberFirst" min="0" max="9999" type="number" value="" required="required">
+							</td>
+						</tr>
+						<tr>
+							<td>Номер дома - до:</td>
+							<td>
+								<input class="form-control" onkeyup="checkTneHouseNumberOnPackageForm();" name="numberLast" min="0" max="9999" type="number" value="" required="required">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label for="modelDisabled">Сторона улицы</label>
+							</td>
+							<td>
+								<select name="side" class="form-control" style="display: inline; width: 240px">
+									<option value="0">Обе</option>
+									<option value="1">Левая</option>
+									<option value="2">Правая</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label for="modelDisabled">Отображать</label>
+							</td>
+							<td>
+								<select name="disabled" class="form-control" style="display: inline; width: 240px">
+									<option value="false">Да</option>
+									<option value="true">Нет</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label for="modelDisabled">Действие</label>
+							</td>
+							<td>
+								<select name="state" class="form-control" style="display: inline; width: 240px">
+									<option value="0">Добавить/Обновить</option>
+									<option value="1">Добавить</option>
+									<option value="2">Обновить</option>
+									<option value="3">Удалить</option>
+								</select>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+					<button type="submit" class="btn btn-success">Обработать</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>
