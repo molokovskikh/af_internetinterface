@@ -96,6 +96,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				DbSession.Save(CurrentClient);
 				RunBillingProcessPayments();
 				RunBillingProcessWriteoffs();
+				RunBillingProcessClientEndpointSwitcher();
 				//Обновляем модель клиента
 				DbSession.Refresh(CurrentClient);
 				DbSession.Refresh(CurrentClient.PhysicalClient);
@@ -103,6 +104,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				//Проверяем изменения
 				Assert.That(CurrentClient.Status.Type, Is.EqualTo(StatusType.Worked), "Статус не совпадает.");
 				Assert.That(CurrentClient.Disabled, Is.EqualTo(false), "Состояние не совпадает.");
+				Assert.That(CurrentClient.WorkingStartDate, Is.Not.Null, "Дата начала работы не совпадает.");
 				Assert.That(CurrentClient.AutoUnblocked, Is.EqualTo(true), "Состояние не совпадает.");
 				Assert.That(CurrentClient.DebtDays, Is.EqualTo(0), "Долговые дни не совпадают.");
 				Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false), "Отображение варнинга не совпадает.");
@@ -115,6 +117,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				DbSession.Save(CurrentClient);
 				RunBillingProcessPayments();
 				RunBillingProcessWriteoffs();
+				RunBillingProcessClientEndpointSwitcher();
 				DbSession.Flush();
 				//Обновляем модель клиента
 				DbSession.Refresh(CurrentClient);
@@ -123,6 +126,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				//Проверяем изменения
 				Assert.That(CurrentClient.Status.Type, Is.EqualTo(StatusType.NoWorked), "Статус не совпадает.");
 				Assert.That(CurrentClient.Disabled, Is.EqualTo(true), "Состояние не совпадает.");
+				Assert.That(CurrentClient.WorkingStartDate, Is.Not.Null, "Дата начала работы не совпадает.");
 				Assert.That(CurrentClient.AutoUnblocked, Is.EqualTo(false), "Состояние не совпадает.");
 				Assert.That(CurrentClient.Discount, Is.EqualTo(0), "Скидка не совпадает.");
 				Assert.That(CurrentClient.StartNoBlock, Is.Null, "Отмена блокировки не совпадает.");
@@ -136,6 +140,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				DbSession.Save(CurrentClient);
 				RunBillingProcessPayments();
 				RunBillingProcessWriteoffs();
+				RunBillingProcessClientEndpointSwitcher();
 				//Обновляем модель клиента
 				DbSession.Refresh(CurrentClient);
 				DbSession.Refresh(CurrentClient.PhysicalClient);
@@ -147,6 +152,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Assert.That(CurrentClient.Discount, Is.EqualTo(0), "Скидка не совпадает.");
 				Assert.That(internetService.IsActivated, Is.EqualTo(false), "Сервис 'Интернет' не совпадает.");
 				Assert.That(CurrentClient.Endpoints.Count, Is.EqualTo(0), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.WorkingStartDate, Is.Null, "Дата начала работы не совпадает.");
 			}
 		}
 
@@ -250,6 +256,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			else {
 				Assert.That(inputObjList.Count, Is.Not.EqualTo(0), "Статус не совпадает.");
 			}
+			CurrentClient.Endpoints.Add(new ClientEndpoint() { Client = CurrentClient, Switch = DbSession.Query<Inforoom2.Models.Switch>().FirstOrDefault() });
+			DbSession.Save(CurrentClient);
+			DbSession.Flush();
 			//Проверки последствий смены:
 			CheckStatusChangeEffect(StatusType.Worked);
 		}
@@ -1126,7 +1135,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			DbSession.Refresh(CurrentClient.PhysicalClient);
 			RunBillingProcessClientEndpointSwitcher(CurrentClient);
 			DbSession.Flush();
-      DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.PhysicalClient);
 			Assert.That(CurrentClient.Balance, Is.EqualTo(currentBalance - connectSum), "Баланс клиента не совпадает с должным.");
 			var endpoint = CurrentClient.Endpoints.First();
