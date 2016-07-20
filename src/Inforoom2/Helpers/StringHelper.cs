@@ -16,7 +16,7 @@ namespace Inforoom2.Helpers
 			var timeStr = "";
 			if (leftEventTime.Days > 0) {
 				timeStr += leftEventTime.Days;
-				timeStr += (leftEventTime.Days%20 == 1) ? " день." : ((leftEventTime.Days%20 >= 5) ? " дней." : " дня.");
+				timeStr += (leftEventTime.Days % 20 == 1) ? " день." : ((leftEventTime.Days % 20 >= 5) ? " дней." : " дня.");
 			}
 			else {
 				if (leftEventTime.Hours > 0) {
@@ -37,12 +37,14 @@ namespace Inforoom2.Helpers
 
 		public static string CutForBrowser(this string self, int charsNumber)
 		{
+			if (self == null)
+				return self;
 			var stArray = self.Split(' ');
 			var stResult = "";
 			for (int i = 0; i < stArray.Length; i++) {
 				var chArray = new List<char>();
 				for (int j = 0; j < stArray[i].Length; j++) {
-					if (j >= charsNumber && j%charsNumber == 0) {
+					if (j >= charsNumber && j % charsNumber == 0) {
 						chArray.AddRange("<wbr>".ToCharArray());
 					}
 					chArray.Add(stArray[i][j]);

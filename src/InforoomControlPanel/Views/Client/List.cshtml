@@ -107,6 +107,12 @@
 			</div>
 		</div>
 	</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-sm-2">ИНН</div>
+			<div class="col-sm-3">@pager.FormFilter(i => i.LegalClient.Inn, HtmlType.text, ComparsionType.Like, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+		</div>
+	</div>
 </div>
 <h5 class="filterBlockHeader">Адрес</h5>
 <div class="panel-body">

@@ -75,6 +75,7 @@ namespace InforoomControlPanel.Helpers
 			[Description("Ссылка - Адреса - Регионы")] Block_007003,
 			[Description("Ссылка - Адреса - Улицы")] Block_007004,
 			[Description("Ссылка - Адреса - Дома")] Block_007005,
+			[Description("Ссылка - Адреса - Подключенные Дома")] Block_007006,
 			[Description("Ссылка - Оборудование")] Block_008000,
 			[Description("Ссылка - Оборудование - Список оборудования")] Block_008001,
 			[Description("Ссылка - Оборудование - Список клиентов")] Block_008002,

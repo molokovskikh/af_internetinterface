@@ -165,6 +165,10 @@
       <Project>{4436a72e-730b-497c-989c-42bbb4208024}</Project>
       <Name>InforoomControlPanel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\InternetInterface.Background\InternetInterface.Background.csproj">
+      <Project>{3D0FEB94-663A-421F-B28E-621E365879D7}</Project>
+      <Name>InternetInterface.Background</Name>
+    </ProjectReference>
     <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">
       <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
       <Name>InternetInterface</Name>
@@ -205,6 +209,7 @@
     <Compile Include="Functional\Account\AccountFixture.cs" />
     <Compile Include="Functional\Account\LogoutFixture.cs" />
     <Compile Include="Functional\BinderTest\BinderFixture.cs" />
+    <Compile Include="Functional\About\AboutFixture.cs" />
     <Compile Include="Functional\Home\CallMeBackOnActionsFixture.cs" />
     <Compile Include="Functional\Home\CallMeBackFixtureUnregistered.cs" />
     <Compile Include="Functional\Home\HomeFixture.cs" />

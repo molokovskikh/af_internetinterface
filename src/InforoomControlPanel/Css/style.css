@@ -72,6 +72,13 @@
  .endpointTitle { font-weight: bold; color: #c1c1c1;}
  .endpointTitle.enabled{ color: #009250;}
  .endpointTitle.disabled{ color: #C70E0E;}
+ .connectedHouses{}
+ .connectedHouses td a.house{display: inline-block;min-width: 36px;height: 38px;background: #f1f1f1;border: 1px solid #c1c1c1;color: #24809c;text-align: center;margin: 1px; padding-left: 4px;padding-right: 4px;}
+ .connectedHouses td a.house:hover{ border: 1px solid #4bab32;}
+ .connectedHouses td a.house.disabled {background: #ffe8e8;color: #333;border: 1px solid #000;}
+ .connectedHouses td a.house.custom {background: #e8f1e5;}
+ .connectedHouses td a.house span{position: relative;top: 10px;}
+.connectedHouses td a.house.selected span{ background: #fbf176;}
  #switchPorts tbody.large{  border: 1px solid #808080;border-bottom: none;border-left: none;border-top: 4px solid #333;}
  #switchPorts tbody.large tr:nth-child(2n) {border-bottom: 4px solid #333;}
  #switchPorts tbody{  border: 1px solid #808080;border-bottom: none;border-left: none;}

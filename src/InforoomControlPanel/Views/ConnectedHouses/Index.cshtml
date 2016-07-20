@@ -1,0 +1,127 @@
+﻿@using System.Activities.Expressions
+@using System.Activities.Statements
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using InforoomControlPanel.Models
+@{
+	ViewBag.Title = "Подключенные дома";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	List<Region> regions = ViewBag.Regions;
+	List<Street> streetList = ViewBag.StreetList;
+	int currentRegion = ViewBag.CurrentRegion;
+	List<ViewModelConnectedHouses>  connectedHouses = ViewBag.ConnectedHouses;
+}
+
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ConnectedHouses.js?v=1")"></script>
+}
+ 
+	@using (@Html.BeginForm("Index", "ConnectedHouses", null, FormMethod.Get, new { @class = "form-horizontal form-groups-bordered" })) {
+		<ul class="list-group">
+			<li class="list-group-item">
+				<label>Регион:</label>
+				<select name="regionId" class="form-control" style="display: inline; width: 240px">
+					<option @(currentRegion == 0 ? "selected='selected'" : "")></option>
+					@foreach (var item in regions) {
+						<option @(currentRegion == item.Id ? "selected='selected'" : "") value="@item.Id">@item.Name</option>
+					}
+				</select>
+				<button type="submit" class="btn btn-success" style="display: inline;">
+					Поиск
+				</button>
+			</li>
+		</ul>
+	} 
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="panel-body">
+					<a class="btn btn-success btn-icon icon-left" data-toggle="modal" data-target="#ModelForConnectionHouseAdd">
+						<i class="entypo-plus"></i>
+						Добавить
+					</a>
+					<a class="btn btn-success btn-icon icon-left" data-toggle="modal" data-target="#ModelForConnectionHouseBatchProcessing">
+						<i class="entypo-plus"></i>
+						Пакетная обработка
+					</a>
+					<a class="btn btn-blue btn-icon icon-left" data-toggle="modal" data-target="#ModelForSynchronization">
+						<i class="entypo-link"></i>
+						Синхронизация
+					</a>
+				</div>
+			</div>
+			</div>
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="panel-body">
+					<strong>Поиск по улицам:</strong>
+					<input type="text" value="" class="form-control" id="streetKeySearch"/>
+				</div>
+				<div class="panel-body">
+					<table class="markerTable">
+						<tbody>
+							<tr>
+								<td>
+									<div class="legend-mark" style="background-color: #b0dca3;"></div>
+								</td>
+								<td>Добавлено пользователем</td>
+								<td>
+									<div class="legend-mark" style="background-color: #F3E5C3;"></div>
+								</td>
+								<td>Добавлено при синхронизации</td>
+								<td>
+									<div class="legend-mark" style="background-color: #D2D7EC;"></div>
+								</td>
+								<td>Не отображаемые</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				</div>
+		</div>
+			<div class="row">
+				<div class="col-lg-6">
+					<table class="table hiddenOverflow table-bordered table-striped datatable dataTable no-footer connectedHouses">
+						<thead>
+							<tr>
+								<th>Улица / Номер дома</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var item in streetList)
+							{
+								<tr class="street" skey="@item.Id">
+									<td>
+										<div class="row">
+											<div class="col-md-6">
+												<a class="c-pointer" data-toggle="modal" onclick="updateStreetValueOnPackageForm(@item.Id)" data-target="#ModelForConnectionHouseBatchProcessing">
+													<strong class="c-pointer">@item.Name.ToLower()</strong>
+												</a>
+											</div>
+											<div class="col-md-6">
+												<input type="text" value="" class="form-control" idKey="@item.Id" />
+											</div>
+										</div>
+									</td>
+								</tr>
+								<tr class="street" skey="@item.Id">
+									<td>
+										@foreach (var house in connectedHouses.Where(s => s.Street.Id == item.Id).SelectMany(s => s.Houses).ToList())
+										{
+											<a title="@house.Comment.CutForBrowser(50)" class="house c-pointer@(house.Disabled ? " disabled" : "")@(house.IsCustom ? " custom" : "")" idKey="@item.Id" data-toggle="modal" data-target="#ModelForConnectionHouseEdit" onclick="ConnectedHouse.UiEvents.LoadModel(@house.Id);"><span>@house.Number</span></a>
+										}
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+
+				</div>
+			</div>
+		</div>
+</div>
+
+@Html.Partial("modelviews/_ConnectedHouseAdd", connectedHouses)
+@Html.Partial("modelviews/_ConnectedHouseEdit", connectedHouses)
+@Html.Partial("modelviews/_SynchronizeConnectedHouse")
