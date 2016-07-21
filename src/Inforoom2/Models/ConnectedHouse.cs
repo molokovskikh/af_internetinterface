@@ -180,11 +180,13 @@ SELECT c.Id, c.Region, c.Street, c.Number, c.IsCustom, c.Disabled  FROM internet
 						}
 					}
 					else {
-						houseExists.Disabled = disabled;
-						houseExists.IsCustom = true;
-						listOfNewHouses.Add(houseExists);
-						if (save)
-							dbSession.Update(houseExists);
+						if (houseExists != null) {
+							houseExists.Disabled = disabled;
+							houseExists.IsCustom = true;
+							listOfNewHouses.Add(houseExists);
+							if (save)
+								dbSession.Update(houseExists);
+						}
 					}
 				}
 			}
