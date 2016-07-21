@@ -753,8 +753,8 @@ namespace Billing
 				return;
 
 			var description = new StringBuilder();
-			description.AppendLine("Баланс клиента, равный " + client.Balance.ToString("F2") + " р., не пополнялся более 30 дней.");
-			description.AppendLine(String.Format("http://stat.ivrn.net/ii/UserInfo/ShowPhysicalClient?filter.ClientCode={0}", client.Id));
+			description.AppendLine("Баланс клиента, равный " + client.Balance.ToString("F2") + " р., не пополнялся более 1 сутки.");
+			description.AppendLine(String.Format("http://stat.ivrn.net/cp/Client/InfoPhysical/{0}", client.Id));
 
 			description.AppendLine();
 			var redmineIssue = new RedmineIssue {
