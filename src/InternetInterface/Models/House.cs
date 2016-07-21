@@ -139,14 +139,14 @@ INNER JOIN internet.clients as c on ph.Id = c.PhysicalClient
 WHERE 
 (c.`Status` = 5 OR c.`Status` = 7 OR c.`Status` = 9 OR c.`Status` = 11)
 GROUP BY h.Id) 
-AND ((targetR2.Id = {0} AND targetR.Id IS NULL) OR ( targetR.Id = {0}))
+AND (( targetR.Id = {0}) OR (targetR.Id IS NULL AND targetR2.Id = {0}  ))
 ORDER BY targetS.Id
 ", region.Id)).List<object[]>();
 				foreach (var item in currentAddressesRaw) {
 					currentAddresses.Add(new Tuple<int, int?, int, string>(
 						Convert.ToInt32(item[0]),
-						item[1] == null ? null : new Nullable<Int32>(Convert.ToInt32(item[0])),
-						Convert.ToInt32(item[2]),
+						item[1] == null ? null : new Nullable<Int32>(Convert.ToInt32(item[1])),
+						Convert.ToInt32(item[2] ?? 0),
 						item[3].ToString()
 						));
 				}
@@ -154,21 +154,21 @@ ORDER BY targetS.Id
 
 				var currentConnectedHouses = new List<Tuple<int, int, int, string, bool, bool>>();
 				var currentConnectedHousesRaw = dbSession.CreateSQLQuery(string.Format(@"
-SELECT c.Id, c.Region, c.Street, c.Number, c.IsCustom FROM internet.inforoom2_connectedhouses as c WHERE c.Region = {0} ", region.Id)).List<object[]>();
+SELECT c.Id, c.Region, c.Street, c.Number, c.IsCustom, c.Disabled  FROM internet.inforoom2_connectedhouses as c WHERE c.Region = {0} ", region.Id)).List<object[]>();
 				foreach (var item in currentConnectedHousesRaw) {
 					currentConnectedHouses.Add(new Tuple<int, int, int, string, bool, bool>(
-						Convert.ToInt32(item[0]),
-						Convert.ToInt32(item[1]),
-						Convert.ToInt32(item[2]),
+						Convert.ToInt32(item[0] ?? 0),
+						Convert.ToInt32(item[1] ?? 0),
+						Convert.ToInt32(item[2] ?? 0),
 						item[3].ToString(),
-						Convert.ToInt32(item[3]) == 1,
-						Convert.ToInt32(item[4]) == 1
+						Convert.ToInt32(item[4] ?? 0) == 1,
+						Convert.ToInt32(item[5] ?? 0) == 1
 						));
 				}
 				currentConnectedHousesRaw.Clear();
 
 				foreach (var item in currentAddresses) {
-					int regionId = Convert.ToInt32(item.Item2 ?? item.Item1);
+					int regionId = item.Item2 ?? item.Item1;
 					int streetId = Convert.ToInt32(item.Item3);
 					string houseNumber = item.Item4;
 					var existedConnectedHouse = currentConnectedHouses.FirstOrDefault(s => s.Item2 == regionId && s.Item3 == streetId && s.Item4 == houseNumber);

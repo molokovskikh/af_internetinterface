@@ -155,6 +155,7 @@ namespace InforoomControlPanel.Controllers
 				sHouse.Number = model.House;
 				sHouse.Disabled = model.Disabled;
 				sHouse.Comment = model.Comment;
+				sHouse.IsCustom = true;
 				var errors = ValidationRunner.Validate(sHouse);
 				if (errors.Length == 0) {
 					DbSession.Save(sHouse);
