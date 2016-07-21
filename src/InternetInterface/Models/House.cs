@@ -121,6 +121,10 @@ namespace InternetInterface.Models
 		{
 			var regionList = dbSession.Query<RegionHouse>().ToList();
 			foreach (var region in regionList) {
+				if (!region.GenerateConnectedHouses) {
+					dbSession.CreateSQLQuery(string.Format(@"DELETE FROM internet.inforoom2_connectedhouses WHERE IsCustom = 0 AND Region = {0}", region.Id)).UniqueResult();
+					continue;
+				}
 				var currentAddresses = new List<Tuple<int, int?, int, string>>();
 				var currentAddressesRaw = dbSession.CreateSQLQuery(string.Format(@"
 SELECT targetR2.Id as Region2, targetR.Id as Region1, targetS.Id as Street, targetH.Number as Number

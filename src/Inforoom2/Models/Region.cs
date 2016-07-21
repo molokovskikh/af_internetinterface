@@ -68,5 +68,7 @@ namespace Inforoom2.Models
 		{
 			return Children.Count > 0;
 		}
+		[Property]
+		public virtual bool GenerateConnectedHouses { get; set; }
 	}
 }
