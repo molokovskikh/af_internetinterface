@@ -514,6 +514,7 @@ namespace Inforoom2.Test.Infrastructure
 			region.Name = "Борисоглебск";
 			region.RegionOfficePhoneNumber = "8-800-2000-600";
 			region.City = bor;
+			region.GenerateConnectedHouses = true;
 			region.OfficeAddress = "Третьяковская улица д6Б";
 			region.OfficeGeomark = "51.3663252,42.08180200000004";
 			region.ShownOnMainPage = true;
