@@ -161,13 +161,13 @@ namespace Inforoom2.Helpers
 			var client = InforoomClient;
 
 			if ((redirectTargetEnum != RedirectTarget.NoRedirect && redirectTargetEnum != RedirectTarget.PhysPassportData)
-					|| (redirectTargetEnum == RedirectTarget.PhysPassportData && !IsResultChangedByServices && _currentAction != "internetplanchanger")) {
+			    || (redirectTargetEnum == RedirectTarget.PhysPassportData && !IsResultChangedByServices && _currentAction != "internetplanchanger")) {
 				var element =
 					_exceptionsForWarningMethodGet.FirstOrDefault(s => s.Action == "InternetPlanChanger".ToLower() && s.Controller == "service");
 				if (element != null) {
 					element.Disabled = true;
 				}
-			} 
+			}
 			//учитываем различные ситуации, добавляя нужные условия из списка исключений
 			if (client.PhysicalClient != null && client.Balance < 0) {
 				_exceptionsForWarningMethodPost.Add(new WarningRedirect() { Action = "deferredpayment", Controller = "service" });
@@ -200,7 +200,7 @@ namespace Inforoom2.Helpers
 			var client = InforoomClient;
 
 			if ((redirectTargetEnum != RedirectTarget.NoRedirect && redirectTargetEnum != RedirectTarget.PhysPassportData)
-					|| (redirectTargetEnum == RedirectTarget.PhysPassportData && (!IsResultChangedByServices && _currentAction != "internetplanchanger"))) {
+			    || (redirectTargetEnum == RedirectTarget.PhysPassportData && (!IsResultChangedByServices && _currentAction != "internetplanchanger"))) {
 				var element =
 					_exceptionsForWarningMethodGet.FirstOrDefault(s => s.Action == "InternetPlanChanger".ToLower() && s.Controller == "service");
 				if (element != null) {
@@ -281,6 +281,9 @@ namespace Inforoom2.Helpers
 			if (client.PhysicalClient != null && client.Status.Type == StatusType.BlockedForRepair) {
 				//выставляем статус "Подключен"
 				client.SetStatus(StatusType.Worked, InforoomController.DbSession);
+				foreach (var item in client.Endpoints) {
+					item.PackageId = client.PhysicalClient.Plan.PackageSpeed.PackageId;
+				}
 			}
 			//иначе, если клиент деактивирован 
 			else if (client.Disabled) {
