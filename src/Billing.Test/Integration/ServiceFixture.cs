@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using Castle.ActiveRecord;
 using Common.Tools;
@@ -728,24 +730,42 @@ namespace Billing.Test.Integration
 		}
 
 		[Test]
-		public void WorkLawyerTest()
+		public void WorkLawyerTestWarningPage()
 		{
+			var warningParamRaw = ConfigurationManager.AppSettings["LawyerPersonBalanceWarningRate"];
+			var warningParam = (decimal)float.Parse(warningParamRaw, CultureInfo.InvariantCulture);
+
+			var serviceSum = 1000;
 			Client client;
 			using (new SessionScope()) {
 				client = new Client() {
+					Status = ArHelper.WithSession(s => Status.Get(StatusType.Worked, s)),
 					LawyerPerson = new LawyerPerson {
 						Name = "testLawyerPerson",
-						Balance = -3000,
+						Balance = (-serviceSum * warningParam) - 1,
 						Region = ArHelper.WithSession(s => s.Query<RegionHouse>().FirstOrDefault())
 					}
 				};
 				client.Save();
+				var order = new Order(client.LawyerPerson) { BeginDate = DateTime.Now.AddDays(-4) };
+
+				var service = new OrderService(order, serviceSum, true);
+				order.Client = client;
+				order.OrderServices.Add(service);
+				ArHelper.WithSession(s => s.Save(service));
+				ArHelper.WithSession(s => s.Save(order));
+				client.Orders.Add(order);
+				client.Save();
 			}
 			billing.ProcessPayments();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.IsTrue(client.ShowBalanceWarningPage);
+				Assert.False(client.Disabled);
 			}
+
+
 			ClientService cService;
 			using (new SessionScope()) {
 				client.Refresh();
@@ -757,9 +777,11 @@ namespace Billing.Test.Integration
 				ActiveRecordMediator.Save(cService);
 			}
 			billing.ProcessPayments();
+			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
 				Assert.False(client.ShowBalanceWarningPage);
+				Assert.False(client.Disabled);
 				Assert.That(client.ClientServices.Count, Is.EqualTo(1));
 			}
 			SystemTime.Now = () => DateTime.Now.AddDays(1);
@@ -770,6 +792,81 @@ namespace Billing.Test.Integration
 				Assert.That(client.ClientServices.Count, Is.EqualTo(1));
 			}
 			SystemTime.Now = () => DateTime.Now.AddDays(2);
+			billing.ProcessWriteoffs();
+			using (new SessionScope()) {
+				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
+				Assert.That(client.ClientServices.Count, Is.EqualTo(0));
+				Assert.True(client.ShowBalanceWarningPage);
+				Assert.False(client.Disabled);
+			}
+		}
+
+		[Test]
+		public void WorkLawyerTestDisabled()
+		{
+			var serviceSum = 1000;
+
+			var disableParamRaw = ConfigurationManager.AppSettings["LawyerPersonBalanceBlockingRate"];
+			var disableParam = (decimal)float.Parse(disableParamRaw, CultureInfo.InvariantCulture);
+
+
+			Client client;
+			using (new SessionScope()) {
+				client = new Client() {
+					Status = ArHelper.WithSession(s => Status.Get(StatusType.Worked, s)),
+					LawyerPerson = new LawyerPerson {
+						Name = "testLawyerPerson",
+						Balance = -serviceSum * disableParam,
+						Region = ArHelper.WithSession(s => s.Query<RegionHouse>().FirstOrDefault())
+					}
+				};
+				client.Save();
+				var order = new Order(client.LawyerPerson) { BeginDate = DateTime.Now.AddDays(-4) };
+
+				var service = new OrderService(order, serviceSum, true);
+				order.Client = client;
+				order.OrderServices.Add(service);
+				ArHelper.WithSession(s => s.Save(service));
+				ArHelper.WithSession(s => s.Save(order));
+				client.Orders.Add(order);
+				client.Save();
+			}
+			billing.ProcessPayments();
+			billing.ProcessWriteoffs();
+			using (new SessionScope()) {
+				client.Refresh();
+				Assert.IsTrue(client.ShowBalanceWarningPage);
+				Assert.IsTrue(client.Disabled);
+			}
+
+
+			ClientService cService;
+			using (new SessionScope()) {
+				client.Refresh();
+				cService = new ClientService {
+					Client = client,
+					EndWorkDate = DateTime.Now.AddDays(2),
+					Service = Service.Type<WorkLawyer>()
+				};
+				ActiveRecordMediator.Save(cService);
+			}
+			billing.ProcessPayments();
+			billing.ProcessWriteoffs();
+			using (new SessionScope()) {
+				client.Refresh();
+				Assert.False(client.ShowBalanceWarningPage);
+				Assert.False(client.Disabled);
+				Assert.That(client.ClientServices.Count, Is.EqualTo(1));
+			}
+			SystemTime.Now = () => DateTime.Now.AddDays(1);
+			billing.ProcessWriteoffs();
+			using (new SessionScope()) {
+				client.Refresh();
+				Assert.False(client.ShowBalanceWarningPage);
+				Assert.That(client.ClientServices.Count, Is.EqualTo(1));
+			}
+			SystemTime.Now = () => DateTime.Now.AddDays(2);
+			billing.ProcessWriteoffs();
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);

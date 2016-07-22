@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -32,9 +34,19 @@ namespace InternetInterface.Services
 		public override void ForceDeactivate(ClientService assignedService)
 		{
 			var client = assignedService.Client;
-			var warning = client.LawyerPerson.NeedShowWarning() || client.Balance < 0;
+
+			var warningParamRaw = ConfigurationManager.AppSettings["LawyerPersonBalanceWarningRate"];
+			var warningParam = (decimal)float.Parse(warningParamRaw, CultureInfo.InvariantCulture);
+
+			var disableParamRaw = ConfigurationManager.AppSettings["LawyerPersonBalanceBlockingRate"];
+			var disableParam = (decimal)float.Parse(disableParamRaw, CultureInfo.InvariantCulture);
+
+			var warning = client.LawyerPerson.NeedShowWarning() && client.LawyerPerson.Tariff.HasValue
+			              && (client.Balance < -(client.LawyerPerson.Tariff * warningParam));
+			var disable = warning && (client.Balance <= -(client.LawyerPerson.Tariff * disableParam));
+
 			client.ShowBalanceWarningPage = warning;
-			client.Disabled = warning;
+			client.Disabled = disable;
 			client.Update();
 			if (warning) {
 				client.CreareAppeal(string.Format("В результате деактивации услуги {0} клиент был заблокирован.",
