@@ -753,7 +753,7 @@ namespace Billing
 				return;
 
 			var description = new StringBuilder();
-			description.AppendLine("Баланс клиента, равный " + client.Balance.ToString("F2") + " р., не пополнялся более 1 сутки.");
+			description.AppendLine("Баланс клиента, равный " + client.Balance.ToString("F2") + " р., не пополнялся более 1 суток.");
 			description.AppendLine(String.Format("http://stat.ivrn.net/cp/Client/InfoPhysical/{0}", client.Id));
 
 			description.AppendLine();
