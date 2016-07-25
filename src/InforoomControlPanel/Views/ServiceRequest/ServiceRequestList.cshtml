@@ -36,13 +36,13 @@
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-2">Статус заявки</div>
-			<div class="col-sm-2">@modelFilter.FormFilterManual("ServiceRequestStatus", HtmlType.Dropdown, serviceRequestStatusList)</div>
+			<div class="col-sm-2">@modelFilter.FormFilterManual("ServiceRequestStatus", HtmlType.Dropdown, serviceRequestStatusList, orderByValue: true)</div>
 		</div>
 	</div>
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-2">Дата</div>
-			<div class="col-sm-2">@modelFilter.FormFilterManual("DataFilter", HtmlType.Dropdown, datePeriodTypeList)</div>
+			<div class="col-sm-2">@modelFilter.FormFilterManual("DataFilter", HtmlType.Dropdown, datePeriodTypeList, orderByValue: true)</div>
 		</div>
 	</div>
 	<div class="panel-body">

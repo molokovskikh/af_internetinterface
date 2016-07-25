@@ -679,7 +679,7 @@ namespace Inforoom2.Components
 		/// <param name="type">Тип HTML контрола</param>
 		/// <param name="additional">Дополнительные параметры</param>
 		/// <returns></returns>
-		public HtmlString FormFilterManual(string name, HtmlType type, object additional = null)
+		public HtmlString FormFilterManual(string name, HtmlType type, object additional = null, bool orderByValue = false, bool orderDesc = false)
 		{
 			var attrs = new Dictionary<string, string>();
 			if (Params[name] != null)
@@ -688,7 +688,7 @@ namespace Inforoom2.Components
 			attrs["name"] = Prefix + "." + name;
 			attrs["class"] = "form-control";
 			PropertiesUsedInFilter.Add(name);
-			var html = GenerateHtml(type, attrs, ComparsionType.Equal, additional);
+			var html = GenerateHtml(type, attrs, ComparsionType.Equal, additional, orderByValue: orderByValue, orderDesc: orderDesc);
 			var ret = new HtmlString(html);
 			return ret;
 		}
@@ -705,7 +705,7 @@ namespace Inforoom2.Components
 		/// <returns></returns>
 		public HtmlString FormFilter(Expression<Func<TModel, object>> expression, HtmlType type, ComparsionType comparsionType,
 			object htmlAttributes = null, object additional = null, Expression<Func<TModel, object>> listItemText = null,
-			Expression<Func<TModel, object>> listItemValue = null)
+			Expression<Func<TModel, object>> listItemValue = null, bool orderByValue = false)
 		{
 			var name = ExtractFieldNameFromLambda(expression);
 			var propertyText = listItemText != null ? ExtractFieldNameFromLambda(listItemText) : "";
@@ -724,7 +724,7 @@ namespace Inforoom2.Components
 			if (Params[paramName] != null)
 				attrs["value"] = Params[paramName];
 			PropertiesUsedInFilter.Add(paramName);
-			var html = GenerateHtml(type, attrs, comparsionType, additional, propertyText, propertyValue);
+			var html = GenerateHtml(type, attrs, comparsionType, additional, propertyText, propertyValue, orderByValue);
 			var ret = new HtmlString(html);
 			return ret;
 		}
@@ -759,7 +759,7 @@ namespace Inforoom2.Components
 		/// <param name="listItemText">Выводимый текст</param>
 		/// <returns></returns>
 		protected string GenerateHtml(HtmlType type, Dictionary<string, string> o, ComparsionType comparsionType,
-			object additional = null, string listItemText = "", string listItemValue = "")
+			object additional = null, string listItemText = "", string listItemValue = "", bool orderByValue = false, bool orderDesc = false)
 		{
 			o["class"] = " form-control " + o["class"];
 			//заполняем выбранное значение, если оно есть
@@ -794,11 +794,16 @@ namespace Inforoom2.Components
 
 				var customValueList = additional as NameValueCollection;
 				if (customValueList != null) {
-					var orderedList = customValueList.AllKeys.Select(s => new Tuple<string, string>(s, customValueList[s])).OrderBy(s => s.Item2).ToList();
+					var orderedListRaw = customValueList.AllKeys.Select(s => new Tuple<string, string>(s, customValueList[s]));
+					var orderedList = orderByValue ?
+						orderDesc ? orderedListRaw.OrderByDescending(s => s.Item1).ToList()
+							: orderedListRaw.OrderBy(s => s.Item1).ToList()
+						: orderDesc ? orderedListRaw.OrderByDescending(s => s.Item2).ToList()
+							: orderedListRaw.OrderBy(s => s.Item2).ToList();
 
 					values = orderedList.Select(
 						i =>
-							string.Format("<option {2} value='{0}'>{1}</option>", i, i.Item2,
+							string.Format("<option {2} value='{0}'>{1}</option>", i.Item1, i.Item2,
 								selectedValue == i.Item1 ? "selected='selected'" : "")).ToList();
 				}
 				else
