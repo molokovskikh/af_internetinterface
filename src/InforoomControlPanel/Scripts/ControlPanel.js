@@ -509,7 +509,7 @@ function getPaymentReciver(clientReciverId, messageId, onChange, clientType, fun
 			}
 
 			$.ajax({
-				url: cli.getParam("baseurl") + "Client/getClientName?id=" + currentInputVal + (clientType !== 0 ? "&clientType=" + clientType + "" : ""),
+				url: cli.getParam("baseurl") + "Client/getClientName?id=" + encodeURI(currentInputVal) + (clientType !== 0 ? "&clientType=" + clientType + "" : ""),
 				type: 'POST',
 				dataType: "json",
 				success: function(data) {

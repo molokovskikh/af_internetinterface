@@ -22,7 +22,7 @@
 		foreach (var street in connectedStreets) {
 			@(street.Name + " : ")
 
-			var currentHouses = connectedHouses.Where(s => s.Street.Id == street.Id).ToList().GroupBy(s => s.Number).Select(group => group.First()).ToList();
+			var currentHouses = connectedHouses.Where(s => s.Street.Id == street.Id && !s.Disabled).ToList().GroupBy(s => s.Number).Select(group => group.First()).ToList();
 
 			//конвертируем дома для сортировки
 			//на доме с буквой,доходим до буквы и останавливаемся,возвращая только цифру
