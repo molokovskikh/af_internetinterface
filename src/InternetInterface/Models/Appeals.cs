@@ -62,6 +62,8 @@ namespace InternetInterface.Models
 	[ActiveRecord(Schema = "internet", Lazy = true)]
 	public class Appeals : ValidActiveRecordLinqBase<Appeals>
 	{
+		private Partner _partner;
+
 		public Appeals()
 		{
 			Date = DateTime.Now;
@@ -73,6 +75,14 @@ namespace InternetInterface.Models
 			Client = client;
 			AppealType = appealType;
 			Partner = InitializeContent.TryGetPartner();
+		}
+
+		public Appeals(string appeal, Client client, AppealType appealType, Partner partner) : this()
+		{
+			Appeal = appeal;
+			Client = client;
+			AppealType = appealType;
+			_partner = Partner = partner;
 		}
 
 		[PrimaryKey]

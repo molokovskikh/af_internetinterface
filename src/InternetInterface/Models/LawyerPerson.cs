@@ -114,21 +114,7 @@ namespace InternetInterface.Models
 
 			//Деактивируем услуги, оставляем заметки, освобождаем порты, если необходимо
 			toDeactivate.Each(o => {
-				o.IsDeactivated = true;
-				client.CreareAppeal(String.Format("Деактивирован заказ {0}", o.Description));
-				var endpoint = o.EndPoint;
-				if (endpoint != null) {
-					o.EndPoint = null;
-					if (!client.Orders.Select(x => x.EndPoint).Contains(endpoint)) {
-						if (dbSession == null) {
-							client.Endpoints.Remove(endpoint);
-						}
-						else {
-							//TODO: важно! SQL запрос необходим для удаления элемента (прежний вариант с отчисткой списка удалял клиентов у endpoint(ов))
-							dbSession.CreateSQLQuery("DELETE FROM internet.clientendpoints WHERE Id = " + endpoint.Id).UniqueResult();
-						}
-					}
-				}
+				o.Deactivate(dbSession);
 			});
 
 			//Создаем списания за включение услуги (для единоразовых услуг)
@@ -138,7 +124,7 @@ namespace InternetInterface.Models
 				.Where(s => !s.IsPeriodic)
 				.Select(s => new WriteOff(client, s)));
 			//Активируем услуги
-			toActivate.Each(o => o.IsActivated = true);
+			toActivate.Each(o => { o.Activate(dbSession); });
 
 			//Если сейчас не последний день месяца, то выходим
 			//То есть до этого момента обрабатываются единоразовые списания

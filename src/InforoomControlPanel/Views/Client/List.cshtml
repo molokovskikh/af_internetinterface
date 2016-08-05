@@ -208,6 +208,12 @@
 	</div>
 	<div class="panel-body">
 		<div class="row">
+			<div class="col-sm-2">Номер точки подключения</div>
+			<div class="col-sm-3">@pager.FormFilter(i => i.Endpoints.First().Id, HtmlType.text, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="row">
 			<div class="col-sm-2">Регистратор</div>
 			<div class="col-sm-3">@pager.FormFilter(i => i.WhoRegistered.Name, HtmlType.Dropdown, ComparsionType.Equal, new {@class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
 		</div>

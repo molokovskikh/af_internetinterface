@@ -69,7 +69,7 @@ namespace Inforoom2.Controllers
 #else
 				var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == address);
 #endif
-				if (CurrentClient.Endpoints.Count == 0 && lease != null) {
+				if (CurrentClient.Endpoints.Count(s => !s.Disabled) == 0 && lease != null) {
 					//var settings = new Settings(session);
 					if (string.IsNullOrEmpty(lease.Switch.Name)) {
 						var addr = CurrentClient.PhysicalClient.Address;

@@ -231,6 +231,7 @@
     <Compile Include="Functional\ClientActions\PrivateMessageFixture.cs" />
     <Compile Include="Functional\ClientActions\LogAppealFixture.cs" />
     <Compile Include="Functional\ClientInfo\ClientLegalFixture.cs" />
+    <Compile Include="Functional\ClientInfo\ClientLegalOrdersFixture.cs" />
     <Compile Include="Functional\ClientInfo\ClientPhysicalFixture.cs" />
     <Compile Include="Functional\ConnectedHouses\ConnectedHousesFixture.cs" />
     <Compile Include="Functional\Infrastructure\ControlPanelBaseFixture.cs" />

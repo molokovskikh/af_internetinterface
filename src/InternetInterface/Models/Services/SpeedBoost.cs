@@ -15,7 +15,7 @@ namespace InternetInterface.Models.Services
 			var packageId = NullableConvert.ToInt32(ConfigurationManager.AppSettings["SpeedBoostPackageId"]);
 			if (packageId == null)
 				return;
-			assignedService.Client.Endpoints.Each(e => e.PackageId = packageId);
+			assignedService.Client.Endpoints.Where(s=>!s.Disabled).Each(e => e.PackageId = packageId);
 			assignedService.Client.IsNeedRecofiguration = true;
 		}
 

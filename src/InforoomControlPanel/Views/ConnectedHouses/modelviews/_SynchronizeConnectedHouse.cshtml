@@ -7,7 +7,7 @@
 	int currentRegion = ViewBag.CurrentRegion;
 }
 <!-- Modal For Order Add-->
-<div class="modal fade" id="ModelForSynchronization" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="ModelForSynchronization" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			@using (@Html.BeginForm("SynchronizeConnections", "ConnectedHouses", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))

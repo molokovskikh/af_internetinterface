@@ -26,6 +26,7 @@ using ServiceRequest = Inforoom2.Models.ServiceRequest;
 using Status = Inforoom2.Models.Status;
 using StatusType = Inforoom2.Models.StatusType;
 using Street = Inforoom2.Models.Street;
+using Newtonsoft.Json;
 
 namespace InforoomControlPanel.Controllers
 {
@@ -157,7 +158,7 @@ namespace InforoomControlPanel.Controllers
 					clientModel.WriteOffs.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
 				}
 				if (subViewName == "_Endpoint") {
-					clientModel.Endpoints.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
+					clientModel.Endpoints.Where(s => !s.Disabled).Each(s => errors.AddRange(ValidationRunner.Validate(s)));
 					updateSce = true;
 				}
 				if (subViewName == "_legalOrders") {
@@ -221,7 +222,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			//--------------------------------------------------------------------------------------| Получение списка оповещений
 			// список оповещений
-			var appeals = client.Appeals.Select(s => new Appeal() {
+			var appeals = client.Appeals == null || client.Appeals.Count == 0 ? new List<Appeal>() : client.Appeals.Select(s => new Appeal() {
 				Client = s.Client,
 				AppealType = s.AppealType,
 				Date = s.Date,
@@ -355,20 +356,23 @@ namespace InforoomControlPanel.Controllers
 			bool noEndpoint)
 		{
 			if (staticAddress != null)
-				foreach (var item in staticAddress)
+				foreach (var item in staticAddress) {
 					item.Mask = item.Mask.HasValue && item.Mask.Value == 0 ? 32 : item.Mask;
+				}
 			if (client == null || client.Id == 0 || client.LegalClient == null) {
 				return RedirectToAction("List");
 			}
 			string message = "";
 			client.LegalClient.UpdateClientOrder(DbSession, order, endpoint, connection, staticAddress, noEndpoint,
+				//если сообщение заполнено, значит есть ошибки, необходим откат транзакции*
 				GetCurrentEmployee(), out message);
 			if (message != "") {
 				ErrorMessage(message);
 				DbSession.Refresh(client);
+				//откат транзакции
+				PreventSessionUpdate();
 				return RedirectToAction("InfoLegal", new { @Id = client.Id, @subViewName = subViewName });
 			}
-
 			//обработка модели клиента, сохранение, передача необходимых данных на форму.
 			return InfoLegal(client.Id, clientModelItem: client, subViewName: subViewName);
 		}
@@ -378,15 +382,15 @@ namespace InforoomControlPanel.Controllers
 		{
 			var endpoint = DbSession.Load<ClientEndpoint>(endpointId);
 			var date = SystemTime.Now();
-			if (endpoint.Client.IsLegalClient && endpoint.Client.LegalClientOrders.Count(s => 
-			s.EndDate > date && (s.Disabled || s.IsDeactivated == false) && s.EndPoint.Id == endpointId) > 0) {
-				ErrorMessage("Точка подключения не может быть удалена, т.к. она используется в других действующих заказах.");
+			if (endpoint.Client.IsLegalClient && endpoint.Client.LegalClientOrders.Count(s =>
+				(s.EndDate > date || s.EndDate == null) && (s.Disabled == false || s.IsDeactivated == false) && s.EndPoint.Id == endpointId) > 0) {
+				ErrorMessage("Точка подключения не может быть деактивирована, т.к. она используется в других действующих заказах.");
 			}
 			else {
 				endpoint.Client.RemoveEndpoint(endpoint, DbSession);
 				DbSession.Save(endpoint.Client);
-				SuccessMessage("Точка подключения была успешно удалена.");
-				endpoint.Client.Appeals.Add(new Appeal($"Точка подключения №{endpointId} была удалена.",
+				SuccessMessage("Точка подключения была успешно деактивирована.");
+				endpoint.Client.Appeals.Add(new Appeal($"Точка подключения №{endpointId} была деактивирована.",
 					endpoint.Client, AppealType.Statistic, GetCurrentEmployee()));
 			}
 			//	DbSession.Save(new Appeal("", endpoint.Client, AppealType.System));
@@ -445,7 +449,16 @@ namespace InforoomControlPanel.Controllers
 		[HttpPost]
 		public JsonResult UpdateEndpoint(int id, int order = 0)
 		{
+			EndpointStateBox tempState = null;
+			var orderObj = DbSession.Get<ClientOrder>(order);
+			//проверка наличия изменений
+
 			var endpoint = DbSession.Get<ClientEndpoint>(id);
+
+			if (orderObj != null && orderObj.HasEndPointFutureState && orderObj.EndPoint != null && orderObj.EndPoint.Id == id) {
+				tempState = orderObj.EndPointFutureState;
+			}
+
 			if (endpoint != null) {
 				var lastUsageCause = endpoint.Client.LegalClientOrders.Where(s => s.EndPoint != null && s.EndPoint.Id == id);
 				if (order != 0) {
@@ -456,16 +469,18 @@ namespace InforoomControlPanel.Controllers
 				var endpointBox = new ViewModelClientEndpoint() {
 					Id = endpoint.Id,
 					Switch = endpoint.Switch.Id,
-					Ip = endpoint.Ip != null ? endpoint.Ip.ToString() : "",
-					Pool = endpoint.Pool != null ? endpoint.Pool.Id : 0,
+					Ip = tempState != null && tempState.ConnectionHelper != null ? tempState.ConnectionHelper.StaticIp :
+						endpoint.Ip != null ? endpoint.Ip.ToString() : "",
+					Pool = tempState != null && tempState.ConnectionHelper != null ? tempState.ConnectionHelper.Pool.HasValue ? tempState.ConnectionHelper.Pool.Value : 0
+						: endpoint.Pool != null ? endpoint.Pool.Id : 0,
 					Port = endpoint.Port,
 					ConnectionAddress = address,
-					PackageId = endpoint.PackageId ?? 0,
-					Monitoring = endpoint.Monitoring,
-					LeaseList =
-						endpoint.LeaseList.OrderByDescending(s => s.LeaseBegin).ThenBy(s => s.LeaseEnd)
-							.GroupBy(s => s.Mac).Select(s => new Tuple<string, bool>(s.First().Ip.ToString(), s.First().LeaseEnd < SystemTime.Now())).ToList(),
-					StaticIpList =
+					PackageId = tempState != null && tempState.ConnectionHelper != null ? tempState.ConnectionHelper.PackageId : endpoint.PackageId ?? 0,
+					Monitoring = tempState != null && tempState.ConnectionHelper != null ? tempState.ConnectionHelper.Monitoring : endpoint.Monitoring,
+					LeaseList = endpoint.LeaseList.OrderByDescending(s => s.LeaseBegin).ThenBy(s => s.LeaseEnd)
+						.GroupBy(s => s.Mac).Select(s => new Tuple<string, bool>(s.First().Ip.ToString(), s.First().LeaseEnd < SystemTime.Now())).ToList(),
+					StaticIpList = tempState != null ? tempState.StaticIpList != null && tempState.StaticIpList.Length > 0
+						? tempState.StaticIpList.Select(s => new { @Id = s.Id, @Ip = s.Ip, @Mask = s.Mask, @Subnet = s.GetSubnet() }).ToList() : new StaticIp[0].Select(s => new { @Id = s.Id, @Ip = s.Ip, @Mask = s.Mask, @Subnet = s.GetSubnet() }).ToList() :
 						endpoint.StaticIpList.Select(s => new { @Id = s.Id, @Ip = s.Ip, @Mask = s.Mask, @Subnet = s.GetSubnet() }).ToList()
 				};
 				return Json(endpointBox, JsonRequestBehavior.AllowGet);
@@ -491,7 +506,7 @@ namespace InforoomControlPanel.Controllers
 							order.OrderServices.Select(
 								s => new OrderService() { Id = s.Id, Cost = s.Cost, Description = s.Description, IsPeriodic = s.IsPeriodic })
 								.ToList(),
-						ClientEndpoints = order.Client.Endpoints.Select(s => s.Id).ToList()
+						ClientEndpoints = order.Client.Endpoints.Where(s => !s.Disabled).Select(s => s.Id).ToList()
 					};
 					return Json(orderBox, JsonRequestBehavior.AllowGet);
 				}
@@ -505,7 +520,7 @@ namespace InforoomControlPanel.Controllers
 						BeginDate = SystemTime.Now().ToShortDateString(),
 						EndDate = "",
 						OrderServices = new List<OrderService>(),
-						ClientEndpoints = client.Endpoints.Select(s => s.Id).ToList()
+						ClientEndpoints = client.Endpoints.Where(s => !s.Disabled).Select(s => s.Id).ToList()
 					};
 					return Json(orderBox, JsonRequestBehavior.AllowGet);
 				}

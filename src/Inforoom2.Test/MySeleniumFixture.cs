@@ -36,6 +36,7 @@ namespace Inforoom2.Test
 			if (GlobalDriver != null)
 				return;
 
+			var dd = AppDomain.CurrentDomain.BaseDirectory;
 			var version = Directory.GetDirectories("../../../../packages/", "*ChromeDriver*").FirstOrDefault();
 			var chromeOptions = new ChromeOptionsWithPrefs();
 			chromeOptions.prefs = new Dictionary<string, object>

@@ -58,10 +58,11 @@
 									<strong class="right">
 										@if (!orderList[i].IsActivated)
 										{
-											<a class="c-pointer blue addressAjaxRunner" title="Редактировать заказ" data-toggle="modal" data-target="#ModelForOrderEdit" onclick="onModalOrderEditOpen(@orderList[i].Id)">редактировать<span> ( редактировать )</span></a>
+											<a class="c-pointer blue addressAjaxRunner" title="Редактировать заказ" data-toggle="modal" data-target="#ModelForOrderEdit" onclick="onModalOrderEditOpen(@orderList[i].Id)">редактировать</a>
 										}
 										<a class="c-pointer red addressAjaxRunner" title="Удалить заказ" data-toggle="modal" data-target="#ModelForOrderRemove" onclick="updateModelForOrderClose(@orderList[i].Id, '@(
-												orderList[i].EndDate.HasValue? orderList[i].EndDate.Value.ToString("dd.MM.yyyy"):"")')" >@Html.Raw(orderList[i].EndDate.HasValue?"<b>закрыть<b>": "закрыть")</a>
+												orderList[i].EndDate.HasValue? orderList[i].EndDate.Value.ToString("dd.MM.yyyy"):"")')" >@Html.Raw(orderList[i].EndDate.HasValue? "<b>закрыть</b>" : "закрыть")
+										</a>
 									</strong>
 								</h5>
 								<div class="orderBody hid">
@@ -103,7 +104,7 @@
 										</table>
 									}
 
-									@if (orderList[i].EndPoint != null)
+									@if (orderList[i].EndPoint != null || (orderList[i].HasEndPointFutureState))
 									{
 										@Html.Partial("subviews/_EndpointLegal", orderList[i])
 									}

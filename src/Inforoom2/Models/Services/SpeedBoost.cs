@@ -15,7 +15,7 @@ namespace Inforoom2.Models.Services
 			//var packageId = NullableConvert.ToInt32(ConfigurationManager.AppSettings["SpeedBoostPackageId"]);
 			//if (packageId == null)
 			//	return;
-			//assignedService.Client.Endpoints.Each(e => e.PackageId = packageId);
+			//assignedService.Client.Endpoints.Where(s=>!s.Disabled).Each(e => e.PackageId = packageId);
 			assignedService.Client.IsNeedRecofiguration = true;
 		}
 
@@ -30,7 +30,7 @@ namespace Inforoom2.Models.Services
 		public override void Deactivate(ClientService assignedService, ISession session)
 		{
 			base.Deactivate(assignedService, session);
-			assignedService.Client.PhysicalClient.UpdatePackageId(assignedService.Client.Endpoints.FirstOrDefault());
+			assignedService.Client.PhysicalClient.UpdatePackageId(assignedService.Client.Endpoints.FirstOrDefault(s=>!s.Disabled));
 			assignedService.Client.IsNeedRecofiguration = true;
 		}
 		 

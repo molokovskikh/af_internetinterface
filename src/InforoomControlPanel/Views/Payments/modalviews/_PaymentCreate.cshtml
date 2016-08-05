@@ -10,7 +10,7 @@
 	List<Recipient> recipientList = ViewBag.RecipientList;
 }
 <!-- Modal For Payments Cancel-->
-<div class="modal fade" id="ModelForPaymentCreate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="ModelForPaymentCreate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			@using (@Html.BeginForm("PaymentCreate", "Payments", null, FormMethod.Post, new {@id = "PaymentCreateForm", @class = "form-horizontal form-groups-bordered", @onsubmit = "return onPaymentCreateForm();" })) {

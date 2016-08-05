@@ -44,7 +44,7 @@ namespace InforoomControlPanel.ReportTemplates
 			DateTime.TryParse(pager.GetParam("filter.GreaterOrEqueal.LeaseBegin"), out dateA);
 			DateTime.TryParse(pager.GetParam("filter.LowerOrEqual.LeaseBegin"), out dateB);
 			dateB = dateB.AddHours(23).AddMinutes(59).AddSeconds(59);
-			var endPointList = client.Endpoints.Select(s => s.Id).ToList();
+			var endPointList = client.Endpoints.Where(s=>!s.Disabled).Select(s => s.Id).ToList();
 			pager.ParamSet("Id", client.Id.ToString());
 			var endpointsFromLogRaw =
 				dbSession.Query<ClientEndpointLog>()
@@ -76,7 +76,7 @@ namespace InforoomControlPanel.ReportTemplates
 					LeaseBegin = s.Date
 				}).ToList());
 			}
-			var currenrLeaseListRaw = client.Endpoints.SelectMany(s => s.LeaseList.Select(l => l).ToList()).ToList();
+			var currenrLeaseListRaw = client.Endpoints.Where(s=>!s.Disabled).SelectMany(s => s.LeaseList.Select(l => l).ToList()).ToList();
 
 			foreach (var lease in currenrLeaseListRaw) {
 				var currentLease = objList.FirstOrDefault(s => s.EndpointId!=null && s.GetIpString() !=null

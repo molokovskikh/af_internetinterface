@@ -214,7 +214,7 @@ namespace Inforoom2.Controllers
 					int.TryParse(endpointIdString, out endpointId);
 				}
 				if (endpointId != 0) {
-					endpoint = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == endpointId);
+					endpoint = DbSession.Query<ClientEndpoint>().FirstOrDefault(s =>  s.Id == endpointId && !s.Disabled );
 				}
 			}
 			//sce кидает опознанного пользователя на варнинг, с номером его эндпойнта 

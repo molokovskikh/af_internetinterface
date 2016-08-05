@@ -15,13 +15,14 @@
     IList<IpPoolRegion> ipPoolRegionList = ViewBag.IpPoolRegionList;
 }
 <!-- Modal For Order Edit-->
-<div class="modal fade" id="ModelForOrderEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="ModelForOrderEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 <div class="modal-dialog modal-lg">
 <div class="modal-content">
 @using (@Html.BeginForm("EditClientOrder", "Client", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {
 	@Html.HiddenFor(o => client.Id)
 	@Html.HiddenFor(o => endpoint.Id)
 	<input name="order.Id" type="hidden" value="">
+	<input name="OrderEndpointId" type="hidden" value="0">
 	<input id="subViewName" name="subViewName" type="hidden" value="_legalOrders">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -109,9 +110,9 @@
 				</td>
 			</tr>
 			<tr class="oldClientEndpointPanel">
-				<td>Использовать существующее подключение</td>
+				<td>Использовать следующее подключение</td>
 				<td>
-					<select id="ClientEndpointDropDown" name="order.EndPoint.Id" class="form-control" onchange="CheckForNewEndpointUsing(this)"></select> 
+					<select id="ClientEndpointDropDown" name="order.EndPoint.Id" class="form-control" onchange="CheckForNewEndpointUsing(this)"><option selected="selected">Новая точка подключения</option></select> 
 				</td>
 			</tr>
 			</tbody>
@@ -119,47 +120,17 @@
 	</div>
 	<div class="newClientEndpointPanel">
 		<table class="table table-bordered table-striped datatable dataTable no-footer clientTable tableFullWidth" role="grid">
+			<thead>
+			<tr>
+				<th class="col-sm-2"></th>
+				<th></th>
+			</tr>
+			</thead>
 			<tbody>
-			<tr>
-				<td>Статус коммутатора</td>
-				<td style="width: 60%;">
-						@if (endpoint != null) {
-							@Html.Hidden("endpointId", endpoint.Id)
-						}
-						<span class="switchstatus">нет ответа</span>
-				</td>
-			</tr>
-			<tr>
-				<td>Фиксированный IP</td>
-				<td>
-						<input data-val="true" data-val-number="The field Id must be a number." data-val-required="Требуется поле Id." id="fixedIp" name="connection.StaticIp" type="hidden" value="">
-						<span class="fixedIp"></span>
-						<a class="createFixedIp c-pointer" onclick="createFixedIp(0)">назначить</a>
-						<a class="removeFixedIp c-pointer hid" onclick="removeFixedIp();">удалить</a>
-				</td>
-			</tr>
-			<tr>
-				<td>Арендованный IP</td>
-				<td>
-					<div id="rentIpList"></div> 
-				</td>
-			</tr>
-			<tr>
-				<td>IP-пул</td>
-				<td>
-					@Html.DropDownListExtendedFor(o => endpoint.Pool, ipPoolRegionList, obj => obj.Description, f => new {@value = f.IpPool.Id}, new {@Name = "connection.Pool", @class = "form-control"}, endpoint != null && endpoint.Pool != null ? endpoint.Pool.Id : 0, true)
-				</td>
-			</tr>
-				<tr>
-					<td>Адрес</td>
-					<td>
-						@Html.TextBoxFor(o => order.ConnectionAddress, new { @class = "form-control", @name = "connection.Address" })
-					</td>
-				</tr>
 			<tr>
 				<td>Коммутатор</td>
 				<td>
-					@Html.DropDownListExtendedFor(o => endpoint.Switch, switchList, obj => obj.Name + " (портов: " + obj.PortCount + ")", f => new {@maxPorts = f.PortCount}, new {@Name = "connection.Switch", @class = "form-control"}, endpoint != null && endpoint.Switch != null ? endpoint.Switch.Id : 0, true)
+					@Html.DropDownListExtendedFor(o => endpoint.Switch, switchList, obj => obj.Name + " (портов: " + obj.PortCount + ")", f => new { @maxPorts = f.PortCount }, new { @Name = "connection.Switch", @class = "form-control" }, endpoint != null && endpoint.Switch != null ? endpoint.Switch.Id : 0, true)
 				</td>
 			</tr>
 			<tr>
@@ -170,7 +141,7 @@
 						@{
 							int columns = 24;
 							var pcount = endpoint != null && endpoint.Switch != null ? endpoint.Switch.PortCount : 1;
-							int itemsInRow = pcount < 24 ? 1 : ((pcount/columns) + ((pcount > columns) && ((pcount%columns) > 0) ? 1 : 0));
+							int itemsInRow = pcount < 24 ? 1 : ((pcount / columns) + ((pcount > columns) && ((pcount % columns) > 0) ? 1 : 0));
 							int currentPort = 1;
 						}
 						@for (int j = 0; j < itemsInRow; j++) {
@@ -194,17 +165,52 @@
 				<td>Порт</td>
 				<td>
 					<div class="col-sm-4 date-picker-box" style="padding-left: 0px;">
-						@Html.Hidden("endpointId", endpoint != null ? endpoint.Port : 0, new {@Name = "connection.Port", @id = "endpoint_PortVal"})
-						@Html.TextBoxFor(o => endpoint.Port, new {@Name = "connection_Port", @class = "form-control", @type = "number", @min = "0", @max = (columns*itemsInRow).ToString(), @disabled = "disabled"})
+						@Html.Hidden("endpointId", endpoint != null ? endpoint.Port : 0, new { @Name = "connection.Port", @id = "endpoint_PortVal" })
+						@Html.TextBoxFor(o => endpoint.Port, new { @Name = "connection_Port", @class = "form-control", @type = "number", @min = "0", @max = (columns * itemsInRow).ToString(), @disabled = "disabled" })
 					</div>
 				</td>
 			</tr>
+			<tr>
+				<td>Статус коммутатора</td>
+				<td style="width: 60%;">
+					@Html.Hidden("endpointId", endpoint != null ? endpoint.Id : 0)
+					<span class="switchstatus">нет ответа</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Фиксированный IP</td>
+				<td>
+					<input data-val="true" data-val-number="The field Id must be a number." data-val-required="Требуется поле Id." id="fixedIp" name="connection.StaticIp" type="hidden" value="">
+					<span class="fixedIp"></span>
+					<a class="createFixedIp c-pointer" onclick="createFixedIp(0)">назначить</a>
+					<a class="removeFixedIp c-pointer hid" onclick="removeFixedIp();">удалить</a>
+				</td>
+			</tr> 
+			<tr>
+				<td>Арендованный IP</td>
+				<td>
+					<div id="rentIpList"></div>
+				</td>
+			</tr>
+			<tr>
+				<td>IP-пул</td>
+				<td>
+					@Html.DropDownListExtendedFor(o => endpoint.Pool, ipPoolRegionList, obj => obj.Description, f => new { @value = f.IpPool.Id }, new { @Name = "connection.Pool", @class = "form-control" }, endpoint != null && endpoint.Pool != null ? endpoint.Pool.Id : 0, true)
+				</td>
+			</tr>
+			<tr>
+				<td>Адрес</td>
+				<td>
+					@Html.TextBoxFor(o => order.ConnectionAddress, new { @class = "form-control", @name = "connection.Address" })
+				</td>
+			</tr>
+
 			<tr>
 				<td>
 					<label class="c-pointer" for="endpointToBeChecked">Мониторинг</label>
 				</td>
 				<td>
-					@Html.CheckBoxFor(o => endpoint.Monitoring, new {@Name = "connection.Monitoring", @class = "c-pointer", id = "endpointToBeChecked"})
+					@Html.CheckBoxFor(o => endpoint.Monitoring, new { @Name = "connection.Monitoring", @class = "c-pointer", id = "endpointToBeChecked" })
 				</td>
 			</tr>
 			<tr>
@@ -242,14 +248,14 @@
 										<span>-</span><span>Удалить</span>
 									</a>
 								</td>
-							</tr> 
+							</tr>
 							@for (int i = 0; i < endpoint.StaticIpList.Count; i++) {
 								<tr class="staticIpElement">
 									<td>
-										<div> 
-											@Html.TextBoxFor(o => endpoint.StaticIpList[i].Ip, new {@Name = "staticAddress[" + i + "].Ip", @class = "form-control fixedIp text", @type = "text", data_minlength = "7", maxlength = "15", required = "required"})
+										<div>
+											@Html.TextBoxFor(o => endpoint.StaticIpList[i].Ip, new { @Name = "staticAddress[" + i + "].Ip", @class = "form-control fixedIp text", @type = "text", data_minlength = "7", maxlength = "15", required = "required" })
 											@Html.TextBoxFor(o => endpoint.StaticIpList[i].Mask != 0 ? endpoint.StaticIpList[i].Mask : 32, new { @Name = "staticAddress[" + i + "].Mask", @class = "form-control fixedIp value", @type = "number", @max = "30" })
-	</div>
+										</div>
 									</td>
 									<td>
 										<span class="subnet">@endpoint.StaticIpList[i].GetSubnet()</span>

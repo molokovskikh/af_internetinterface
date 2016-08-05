@@ -30,7 +30,7 @@ namespace Inforoom2.Test.Functional.Personal
 		protected void OpenWarningPage(Client client)
 		{
 			LoginForClient(client);
-			var endpoint = client.Endpoints.First();
+			var endpoint = client.Endpoints.First(s => !s.Disabled);
 			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == endpoint);
 			var ipstr = lease.Ip.ToString();
 			Open("Warning?ip=" + ipstr);

@@ -28,7 +28,7 @@ namespace Inforoom2.Test.Functional.Personal
 			var iptv = Client.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Iptv);
 
 			Assert.That(Client.Lunched, Is.False);
-			Assert.That(Client.Endpoints.Count, Is.EqualTo(0));
+			Assert.That(Client.Endpoints.Count(s => !s.Disabled), Is.EqualTo(0));
 			Assert.That(internet.IsActivated, Is.False);
 			Assert.That(iptv.IsActivated, Is.False);
 
@@ -71,8 +71,8 @@ namespace Inforoom2.Test.Functional.Personal
 
 			//Проверяем объекты
 			Assert.That(client.Lunched, Is.True);
-			Assert.That(client.Endpoints.Count, Is.EqualTo(1));
-			Assert.That(client.Endpoints.First().PackageId, Is.EqualTo(client.Plan.PackageSpeed.PackageId), "PackageId должен равняться PackageId тарифа.");
+			Assert.That(client.Endpoints.Count(s => !s.Disabled), Is.EqualTo(1));
+			Assert.That(client.Endpoints.First(s => !s.Disabled).PackageId, Is.EqualTo(client.Plan.PackageSpeed.PackageId), "PackageId должен равняться PackageId тарифа.");
 			Assert.That(internet.IsActivated, Is.True);
 			Assert.That(iptv.IsActivated, Is.True);
 

@@ -27,11 +27,13 @@ namespace InforoomControlPanel.Test.Functional.infrastructure
 			//Добавление прав
 			Call(BuildTestUrl("AdminOpen/RenewActionPermissionsJs"));
 			var permissions = DbSession.Query<Permission>().ToList();
-			foreach (var item in permissions) employee.Permissions.Add(item);
+			foreach (var item in permissions) {
+				employee.Permissions.Add(item);
+			}
 			DbSession.Save(employee);
-			DbSession.Flush(); 
+			DbSession.Flush();
 			//Авторизация
-			DefaultEmployeePassword =  ConfigurationManager.AppSettings["DefaultEmployeePassword"];
+			DefaultEmployeePassword = ConfigurationManager.AppSettings["DefaultEmployeePassword"];
 			LoginForAdmin();
 		}
 
@@ -42,10 +44,11 @@ namespace InforoomControlPanel.Test.Functional.infrastructure
 			Css("#logoutLink").Click();
 			CloseAllTabsButOne();
 		}
+
 		public void LoginForAdmin()
 		{
 			Open();
-			WaitForVisibleCss("#username",30);
+			WaitForVisibleCss("#username", 60);
 			Css("#username").SendKeys(Employee.Login);
 			Css("#password").SendKeys("1234");
 			Css(".btn-login").Click();

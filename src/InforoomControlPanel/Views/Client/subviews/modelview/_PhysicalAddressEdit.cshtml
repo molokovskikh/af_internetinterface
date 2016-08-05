@@ -10,7 +10,7 @@
 	List<Region> regionList = ViewBag.RegionList;
 }
 <!-- Modal For Address -->
-<div class="modal fade" id="ModelForAddress" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="ModelForAddress" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			@using (@Html.BeginForm("ChangeAddress", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))

@@ -160,13 +160,13 @@ namespace InforoomControlPanel.Controllers
 			int.TryParse(id, out idCurrent);
 			var idList =
 				DbSession.CreateSQLQuery("SELECT Id, Name, PhysicalClient, Recipient FROM internet.clients WHERE " +
-				                         (idCurrent == 0 ? $" Name LIKE '{id}%' OR Name LIKE '{id}'": $"CAST(Id AS CHAR) LIKE '{idCurrent}%' OR CAST(Id AS CHAR) LIKE '{idCurrent}'") +
+				                         (idCurrent == 0 ? $" Name LIKE '{id}%' OR Name LIKE '{id}'" : $"CAST(Id AS CHAR) LIKE '{idCurrent}%' OR CAST(Id AS CHAR) LIKE '{idCurrent}'") +
 				                         (clientType == 0
 					                         ? ""
 					                         : (clientType == 1 ? " AND PhysicalClient IS NOT NULL " : " AND PhysicalClient IS NULL ")))
 					.List();
 			var listToReturn = new List<object>();
-			if (idList != null && idList.Count>0) {
+			if (idList != null && idList.Count > 0) {
 				int idClient = 0;
 				int idRecipient = 0;
 				for (int i = 0; i < idList.Count; i++) {
@@ -176,15 +176,14 @@ namespace InforoomControlPanel.Controllers
 					int.TryParse(((idList[i] as object[])[3] ?? "").ToString(), out idRecipient);
 					if (idClient != 0) {
 						listToReturn.Add(
-							new
-							{
+							new {
 								@name = name,
 								@id = idClient,
 								@url = clientType == 0
-									? Url.Action(isPhysical ? "InfoPhysical" : "InfoLegal", new {id = idClient})
+									? Url.Action(isPhysical ? "InfoPhysical" : "InfoLegal", new { id = idClient })
 									: (clientType == 1
-										? Url.Action("InfoPhysical", new {id = idClient})
-										: Url.Action("InfoLegal", new {id = idClient})),
+										? Url.Action("InfoPhysical", new { id = idClient })
+										: Url.Action("InfoLegal", new { id = idClient })),
 								@recipient = idRecipient
 							});
 					}
@@ -212,8 +211,8 @@ namespace InforoomControlPanel.Controllers
 			if (switchItem != null) {
 				var ports =
 					switchItem.Endpoints.Select(
-						s => new {@endpoint = s.Port, @client = s.Client.Id, @type = s.Client.PhysicalClient != null ? 0 : 1}).ToList();
-				var data = new {Ports = ports, Comment = switchItem.Description};
+						s => new { @endpoint = s.Port, @client = s.Client.Id, @type = s.Client.PhysicalClient != null ? 0 : 1 }).ToList();
+				var data = new { Ports = ports, Comment = switchItem.Description };
 				return Json(data, JsonRequestBehavior.AllowGet);
 			}
 			return Json(null, JsonRequestBehavior.AllowGet);
@@ -249,22 +248,14 @@ namespace InforoomControlPanel.Controllers
 		/// получение Ip для фиксирования
 		/// </summary>
 		[HttpPost]
-		public
-		JsonResult GetStaticIp(int? id)
+		public JsonResult GetStaticIp(int? id)
 		{
 			if (!id.HasValue)
 				return Json("", JsonRequestBehavior.AllowGet);
 
-			var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Endpoint.Id == id);
+			var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Endpoint.Id == id && !l.Endpoint.Disabled);
 			return
-				Json(lease != null &&
-				     lease.Ip
-				     != null
-					? lease.Ip.ToString
-						()
-					: "",
-					JsonRequestBehavior.AllowGet
-					);
+				Json(lease != null && lease.Ip != null ? lease.Ip.ToString() : "", JsonRequestBehavior.AllowGet);
 		}
 
 		/// <summary>
@@ -277,7 +268,7 @@ namespace InforoomControlPanel.Controllers
 				return Json("Ошибка в отправке данных", JsonRequestBehavior.AllowGet);
 			}
 			for (int i = 0; i < contacts.Length; i++) {
-				var contactForValidation = new Contact() {ContactString = contacts[i], Type = (ContactType) types[i]};
+				var contactForValidation = new Contact() { ContactString = contacts[i], Type = (ContactType)types[i] };
 				var errors = ValidationRunner.ForcedValidationByAttribute<Contact>(contactForValidation, s => s.ContactString,
 					new Inforoom2.validators.ValidatorContacts());
 				if (errors.Length != 0) {

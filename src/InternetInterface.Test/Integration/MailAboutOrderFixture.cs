@@ -59,7 +59,7 @@ namespace InternetInterface.Test.Integration
 			Assert.That(email.Body, Is.StringContaining("Зарегистрировано создание заказа для Юр.Лица"));
 		}
 
-		[Test(Description = "Проверяет, создалось ли письмо при изменении заказа")]
+		[Test(Description = "Проверяет, создалось ли письмо при изменении заказа"), Ignore("Функционал перенесен в новую админку")]
 		public void EditOrderSender()
 		{
 			order = session.Load<Order>(order.Id);
@@ -80,7 +80,7 @@ namespace InternetInterface.Test.Integration
 			Assert.That(client.Appeals.Where(p => p.Appeal.Contains("Зарегистрировано закрытие заказа для Юр.Лица")).ToList().Count, Is.EqualTo(1));
 		}
 
-		[Test(Description = "Проверяет, создалось ли обращение и письмо при создании услуги")]
+		[Test(Description = "Проверяет, создалось ли обращение и письмо при создании услуги"), Ignore("Функционал перенесен в новую админку")]
 		public void InsertServiceOrderSender()
 		{
 			orderService = new OrderService {

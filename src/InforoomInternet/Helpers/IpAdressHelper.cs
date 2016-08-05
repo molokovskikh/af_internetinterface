@@ -46,7 +46,7 @@ namespace InforoomInternet.Helpers
 							return true;
 					}
 					return false;
-				}).Select(s => s.EndPoint).FirstOrDefault();
+				}).Select(s => s.EndPoint).FirstOrDefault(s => !s.Disabled);
 			}
 			return endpoint;
 		}

@@ -41,9 +41,8 @@ namespace InforoomControlPanel.Controllers
 		public JsonResult PingEndpoint(int id)
 		{
 			string result = "";
-			try
-			{
-				var endpoint = DbSession.Query<ClientEndpoint>().First(i => i.Id == id);
+			try {
+				var endpoint = DbSession.Query<ClientEndpoint>().First(i => i.Id == id && !i.Disabled);
 				var ip = endpoint.Switch.Ip;
 				Ping pingSender = new Ping();
 				PingOptions options = new PingOptions();
@@ -58,7 +57,9 @@ namespace InforoomControlPanel.Controllers
 
 				// отправлять 4 пакета
 				var replyArray = new PingReply[4];
-				for (int i = 0; i < replyArray.Length; i++) replyArray[i] = pingSender.Send(ip, timeout, buffer, options);
+				for (int i = 0; i < replyArray.Length; i++) {
+					replyArray[i] = pingSender.Send(ip, timeout, buffer, options);
+				}
 
 				//Отобразить пользователю:
 				//-Минимальное время,
@@ -68,10 +69,8 @@ namespace InforoomControlPanel.Controllers
 				//-Количество пакетов, которое вернулось.
 				Int64 returnedPackagesNumber = 0;
 				// проверка вернувшихся пакетов
-				for (int i = 0; i < replyArray.Length; i++)
-				{
-					if (i == 0)
-					{
+				for (int i = 0; i < replyArray.Length; i++) {
+					if (i == 0) {
 						minRoundtripTime = replyArray[i].RoundtripTime;
 						maxRoundtripTime = replyArray[i].RoundtripTime;
 					}
@@ -79,14 +78,13 @@ namespace InforoomControlPanel.Controllers
 						? replyArray[i].RoundtripTime
 						: minRoundtripTime;
 					maxRoundtripTime = maxRoundtripTime < replyArray[i].RoundtripTime && replyArray[i].RoundtripTime != 0 &&
-									   replyArray[i].Status == IPStatus.Success
+					                   replyArray[i].Status == IPStatus.Success
 						? replyArray[i].RoundtripTime
 						: maxRoundtripTime;
 					returnedPackagesNumber += replyArray[i].Status == IPStatus.Success ? 1 : 0;
 				}
 				//если вернулся хотя бы один пакет
-				if (returnedPackagesNumber > 0)
-				{
+				if (returnedPackagesNumber > 0) {
 					result =
 						string.Format(
 							"<b style='color:{0}'>Статус: Онлайн,<br/> Пришло пакетов: {1},<br/> Скорость ответа минимальная: {2} мс.<br/> Скорость ответамаксимальная: {3} мс.</b>",
@@ -96,13 +94,11 @@ namespace InforoomControlPanel.Controllers
 							maxRoundtripTime);
 					// если ни один пакет не вернулся
 				}
-				else
-				{
+				else {
 					result = string.Format("<b style='color:red'>Коммутатор ничего не ответил</b>");
 				}
 			}
-			catch (Exception ex)
-			{
+			catch (Exception ex) {
 				result = string.Format("<b style='color:red'>Коммутатор ничего не ответил</b>");
 			}
 
@@ -114,7 +110,6 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.BreadCrumb = "";
 			return View();
 		}
-		
 
 
 		/// <summary>
@@ -122,18 +117,18 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		/// <returns></returns>
 		public JsonResult ClientEndpointGetInfo(int id, int type)
-	 {
-		 var cl = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == id);
-		 var rawData = HardwareHelper.GetPortInformator(cl);
-		 var data = new Dictionary<string, object>();
-		 if (rawData != null) {
-			 if (type == 1) {
+		{
+			var cl = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == id && !s.Disabled);
+			var rawData = HardwareHelper.GetPortInformator(cl);
+			var data = new Dictionary<string, object>();
+			if (rawData != null) {
+				if (type == 1) {
 					rawData.CleanErrors(DbSession, id);
 				}
-			 rawData.GetPortInfo(DbSession, data, id);
-		 }
-		 return Json(data, JsonRequestBehavior.AllowGet);
-	 }
+				rawData.GetPortInfo(DbSession, data, id);
+			}
+			return Json(data, JsonRequestBehavior.AllowGet);
+		}
 
 		/// <summary>
 		/// Основная информация о коммутаторе
@@ -141,9 +136,12 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public JsonResult ClientEndpointGetInfoShort(int id)
 		{
-			var cl = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == id);
-			var rawData = HardwareHelper.GetPortInformator(cl);
 			var data = new Dictionary<string, object>();
+			var cl = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == id && !s.Disabled);
+			if (cl == null) {
+				return Json(data, JsonRequestBehavior.AllowGet);
+			}
+			var rawData = HardwareHelper.GetPortInformator(cl);
 			if (rawData != null) {
 				rawData.GetStateOfPort(DbSession, data, id);
 			}
@@ -156,15 +154,17 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public JsonResult ClientEndpointGetCableState(int id)
 		{
-			var cl = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == id);
-			var rawData = HardwareHelper.GetPortInformator(cl);
 			var data = new Dictionary<string, object>();
-			if (rawData != null)
-			{
+			var cl = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == id && !s.Disabled);
+			if (cl == null) {
+				return Json(data, JsonRequestBehavior.AllowGet);
+			}
+			var rawData = HardwareHelper.GetPortInformator(cl);
+			if (rawData != null) {
 				rawData.GetStateOfCable(DbSession, data, id);
 			}
 			return Json(data, JsonRequestBehavior.AllowGet);
-		} 
+		}
 
 		/// <summary>
 		/// Возвращение списка улиц по региону.
@@ -191,15 +191,13 @@ namespace InforoomControlPanel.Controllers
 		public JsonResult GetHouseNumberChangedFlag(int streetId, int count, int regionId = 0)
 		{
 			var equals = false;
-			if (regionId != 0)
-			{
+			if (regionId != 0) {
 				equals = DbSession.Query<House>().Count(s => (s.Region == null || regionId == s.Region.Id) &&
-																										 ((s.Street.Region.Id == regionId && s.Street.Id == streetId) || (s.Street.Id == streetId && s.Region.Id == regionId)) &&
-																										 (s.Street.Region.Id == regionId && s.Region == null || (s.Street.Id == streetId && s.Region.Id == regionId))
+				                                             ((s.Street.Region.Id == regionId && s.Street.Id == streetId) || (s.Street.Id == streetId && s.Region.Id == regionId)) &&
+				                                             (s.Street.Region.Id == regionId && s.Region == null || (s.Street.Id == streetId && s.Region.Id == regionId))
 					) != count;
 			}
-			else
-			{
+			else {
 				equals = DbSession.Query<House>().Count(s => s.Street.Id == streetId) != count;
 			}
 			return Json(equals, JsonRequestBehavior.AllowGet);
@@ -236,15 +234,13 @@ namespace InforoomControlPanel.Controllers
 		public JsonResult GetHouseList(int streetId, int regionId = 0)
 		{
 			var query = DbSession.Query<House>();
-			if (regionId != 0)
-			{
+			if (regionId != 0) {
 				query = query.Where(s => (s.Region == null || regionId == s.Region.Id) &&
-																 ((s.Street.Region.Id == regionId && s.Street.Id == streetId) || (s.Street.Id == streetId && s.Region.Id == regionId)) &&
-																 (s.Street.Region.Id == regionId && s.Region == null || (s.Street.Id == streetId && s.Region.Id == regionId))
+				                         ((s.Street.Region.Id == regionId && s.Street.Id == streetId) || (s.Street.Id == streetId && s.Region.Id == regionId)) &&
+				                         (s.Street.Region.Id == regionId && s.Region == null || (s.Street.Id == streetId && s.Region.Id == regionId))
 					);
 			}
-			else
-			{
+			else {
 				query = query.Where(s => s.Street.Id == streetId);
 			}
 			var houses = query.Select(s => new {
@@ -276,8 +272,5 @@ namespace InforoomControlPanel.Controllers
 				}).OrderBy(s => s.Name).ToList();
 			return Json(planList, JsonRequestBehavior.AllowGet);
 		}
-
-
-
 	}
 }

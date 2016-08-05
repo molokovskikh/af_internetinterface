@@ -175,7 +175,7 @@ namespace Inforoom2.Test.Infrastructure
 			//Приоритет удаления данных
 
 			var order = "connectedhouses,payments,bankpayments,StaticIps,orderservices,orders,planchangerdata,planhtmlcontent,permissiontouser,roletouser,perm_role,user_role,roles,permissions,lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
-									+ "lawyerperson,physicalclients,clientendpoints,switchaddress,leases,NetworkSwitches,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
+			            + "lawyerperson,physicalclients,clientendpoints,switchaddress,leases,NetworkSwitches,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
 
 
 			var parts = order.Split(',');
@@ -734,7 +734,7 @@ namespace Inforoom2.Test.Infrastructure
 			AttachEndpoint(normalClient);
 			DbSession.Save(normalClient);
 
-			var lease = CreateLease(normalClient.Endpoints.First());
+			var lease = CreateLease(normalClient.Endpoints.First(s => !s.Disabled));
 			DbSession.Save(lease);
 
 			// c тарифом, игнорирующим скидку
@@ -789,7 +789,7 @@ namespace Inforoom2.Test.Infrastructure
 			lease = DbSession.Query<Lease>().First(i => i.Endpoint == unpluggedClient.Endpoints.First());
 			lease.Endpoint = null;
 			DbSession.Save(lease);
-			unpluggedClient.Endpoints.Remove(unpluggedClient.Endpoints.First());
+			unpluggedClient.Endpoints.First().Disabled = true;
 			DbSession.Flush();
 
 			//Клиент с низким балансом
@@ -938,13 +938,13 @@ namespace Inforoom2.Test.Infrastructure
 				service.Client = obj;
 				obj.ClientServices.Add(service);
 			}
-			foreach (var item in client.Endpoints) {
+			foreach (var item in client.Endpoints.Where(s => !s.Disabled).ToList()) {
 				var endpoint = AttachEndpoint(obj);
 				endpoint.Switch = item.Switch;
 				endpoint.Client = obj;
 			}
 			DbSession.Save(obj);
-			var lease = CreateLease(obj.Endpoints.First());
+			var lease = CreateLease(obj.Endpoints.First(s => !s.Disabled));
 			DbSession.Save(lease);
 			return obj;
 		}
@@ -1352,7 +1352,7 @@ namespace Inforoom2.Test.Infrastructure
 
 		public void NetworkLoginForClient(Client Client)
 		{
-			var endpoint = Client.Endpoints.First();
+			var endpoint = Client.Endpoints.First(s => !s.Disabled);
 			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == endpoint);
 			var ipstring = lease.Ip.ToString();
 			Open("Home?ip=" + ipstring);
@@ -1408,6 +1408,22 @@ namespace Inforoom2.Test.Infrastructure
 			Thread.Sleep(9000);
 		}
 
+		/// <summary>
+		/// Биллиинг - полный цикл
+		/// </summary>
+		/// <param name="client"></param>
+		public void RunBillingProcess(Client client = null)
+		{
+			RunBillingProcessPayments();
+			RunBillingProcessWriteoffs(null, false);
+			RunBillingProcessClientEndpointSwitcher(client);
+		}
+
+		/// <summary>
+		/// обработка списаний, деактивация клиента при характерном балансе, warning
+		/// </summary>
+		/// <param name="client"></param>
+		/// <param name="checkForWarning"></param>
 		protected void RunBillingProcessWriteoffs(Client client = null, bool checkForWarning = true)
 		{
 			var billing = GetBilling();
@@ -1420,6 +1436,10 @@ namespace Inforoom2.Test.Infrastructure
 			}
 		}
 
+		/// <summary>
+		/// обработка платежей, активация/деактивация заказов, активация клиента при характерном балансе
+		/// </summary>
+		/// <param name="client"></param>
 		protected void RunBillingProcessPayments(Client client = null)
 		{
 			var billing = GetBilling();
@@ -1429,6 +1449,10 @@ namespace Inforoom2.Test.Infrastructure
 			}
 		}
 
+		/// <summary>
+		/// активация точек подключения, активация списаний у клиентов (при проставлении BeginWork)
+		/// </summary>
+		/// <param name="client"></param>
 		protected void RunBillingProcessClientEndpointSwitcher(Client client = null)
 		{
 			var billing = GetBilling();
@@ -1441,7 +1465,7 @@ namespace Inforoom2.Test.Infrastructure
 		protected void OpenWarningPage(Client client)
 		{
 			LoginForClient(client);
-			var endpoint = client.Endpoints.First();
+			var endpoint = client.Endpoints.First(s => !s.Disabled);
 			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == endpoint);
 			var ipstr = lease.Ip.ToString();
 			Open("Warning?ip=" + ipstr);

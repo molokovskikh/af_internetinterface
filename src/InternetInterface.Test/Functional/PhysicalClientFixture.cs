@@ -29,7 +29,7 @@ namespace InternetInterface.Test.Functional
 			Css("input#SaveConnectionBtn").Click();
 			var order = session.Get<Order>(client.Id);
 			Assert.Null(order);
-			var endpoint = session.Query<ClientEndpoint>().First(i => i.Client == client);
+			var endpoint = session.Query<ClientEndpoint>().First(i => i.Client == client && !i.Disabled);
 			Assert.NotNull(endpoint);
 			Assert.False(browser.PageSource.Contains("class=\"err\""));
 		}

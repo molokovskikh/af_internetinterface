@@ -12,7 +12,7 @@ using NUnit.Framework;
 
 namespace InternetInterface.Test.Functional
 {
-	[TestFixture]
+	[TestFixture, Ignore("Функционал перенесен")]
 	internal class SearchFixture : ClientFunctionalFixture
 	{
 		[SetUp,Ignore("Функционал перенесен")]

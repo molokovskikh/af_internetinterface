@@ -109,6 +109,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Assert.That(CurrentClient.DebtDays, Is.EqualTo(0), "Долговые дни не совпадают.");
 				Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false), "Отображение варнинга не совпадает.");
 				Assert.That(internetService.IsActivated, Is.EqualTo(true), "Сервис 'Интернет' не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => !s.Disabled), Is.GreaterThan(0), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => s.Disabled),
+					Is.EqualTo(CurrentClient.Endpoints.Count - CurrentClient.Endpoints.Count(s => !s.Disabled)), "Отмена блокировки не совпадает.");
 			}
 			//Статус - Отключен
 			if (status == StatusType.NoWorked) {
@@ -131,7 +134,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Assert.That(CurrentClient.Discount, Is.EqualTo(0), "Скидка не совпадает.");
 				Assert.That(CurrentClient.StartNoBlock, Is.Null, "Отмена блокировки не совпадает.");
 				Assert.That(internetService.IsActivated, Is.EqualTo(false), "Сервис 'Интернет' не совпадает.");
-				Assert.That(CurrentClient.Endpoints.Count, Is.GreaterThan(0), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => !s.Disabled), Is.GreaterThan(0), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => s.Disabled),
+					Is.EqualTo(CurrentClient.Endpoints.Count - CurrentClient.Endpoints.Count(s => !s.Disabled)), "Отмена блокировки не совпадает.");
 			}
 			//Статус - Расторгнут
 			if (status == StatusType.Dissolved) {
@@ -151,7 +156,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Assert.That(CurrentClient.AutoUnblocked, Is.EqualTo(false), "Состояние не совпадает.");
 				Assert.That(CurrentClient.Discount, Is.EqualTo(0), "Скидка не совпадает.");
 				Assert.That(internetService.IsActivated, Is.EqualTo(false), "Сервис 'Интернет' не совпадает.");
-				Assert.That(CurrentClient.Endpoints.Count, Is.EqualTo(0), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => !s.Disabled), Is.EqualTo(0), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => s.Disabled),
+					Is.EqualTo(CurrentClient.Endpoints.Count - CurrentClient.Endpoints.Count(s => !s.Disabled)), "Отмена блокировки не совпадает.");
 				Assert.That(CurrentClient.WorkingStartDate, Is.Null, "Дата начала работы не совпадает.");
 			}
 		}
@@ -350,7 +357,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			var packageSpeedList = DbSession.Query<PackageSpeed>().ToList();
 			var packageSpeed = packageSpeedList.FirstOrDefault(s => s.PackageId == 23);
 			var serviceEnd = SystemTime.Now().AddDays(10);
-			var enpoint = CurrentClient.Endpoints.FirstOrDefault();
+			var enpoint = CurrentClient.Endpoints.FirstOrDefault(s => !s.Disabled);
 			var startPackegeId = enpoint.PackageId.Value;
 			RunBillingProcessPayments(CurrentClient);
 			RunBillingProcessWriteoffs(CurrentClient, false);
@@ -462,7 +469,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			string blockName = "#emptyBlock_PrivatePhysicalInfo ";
 			string blockNameNew = "#ModelForPlan ";
 			var currentPlan = CurrentClient.PhysicalClient.Plan;
-			var currentPackageId = CurrentClient.Endpoints.First().PackageId;
+			var currentPackageId = CurrentClient.Endpoints.First(s => !s.Disabled).PackageId;
 			var anotherPlan = DbSession.Query<Plan>().FirstOrDefault(s => s.PackageSpeed.PackageId != currentPlan.PackageSpeed.PackageId); // зависит от региона <=========
 
 
@@ -493,7 +500,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			// зависит от региона <=========
 
 			Assert.That(planInHistory, Is.Not.Null, "Запись в истории отсутствует.");
-			Assert.That(currentPackageId, Is.Not.EqualTo(CurrentClient.Endpoints.First().PackageId), "Скорость не изменилась.");
+			Assert.That(currentPackageId, Is.Not.EqualTo(CurrentClient.Endpoints.First(s => !s.Disabled).PackageId), "Скорость не изменилась.");
 		}
 
 		[Test, Description("Страница клиента. Физ. лицо. Отключение услуги 'Добровольная блокировка'")]
@@ -1113,11 +1120,11 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
 
 			DbSession.Refresh(CurrentClient);
-			AssertText(CurrentClient.Endpoints.First().Id.ToString(), blockName);
+			AssertText(CurrentClient.Endpoints.First(s => !s.Disabled).Id.ToString(), blockName);
 
-			var clientEntPoint = CurrentClient.Endpoints.FirstOrDefault();
+			var clientEntPoint = CurrentClient.Endpoints.FirstOrDefault(s => !s.Disabled);
 			Assert.That(clientEntPoint, Is.Not.Null, "Подключение отсутствует.");
-			Assert.That(CurrentClient.Endpoints.First().IsEnabled, Is.Null, "У клиента еще не должно быть активированной точки подключения");
+			Assert.That(CurrentClient.Endpoints.First(s => !s.Disabled).IsEnabled, Is.Null, "У клиента еще не должно быть активированной точки подключения");
 			var payment =
 				DbSession.Query<PaymentForConnect>().FirstOrDefault(p => p.EndPoint == clientEntPoint && p.Sum == connectSum);
 			Assert.That(payment, Is.Not.Null, "Платеж отсутствует.");
@@ -1138,7 +1145,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.PhysicalClient);
 			Assert.That(CurrentClient.Balance, Is.EqualTo(currentBalance - connectSum), "Баланс клиента не совпадает с должным.");
-			var endpoint = CurrentClient.Endpoints.First();
+			var endpoint = CurrentClient.Endpoints.First(s => !s.Disabled);
 			DbSession.Refresh(endpoint);
 			Assert.That(CurrentClient.WorkingStartDate, Is.Not.Null, "Поле BlockDate должно быть пустым");
 			Assert.That(CurrentClient.RatedPeriodDate, Is.Not.Null, "Поле RatedPeriodDate должно быть пустым");
@@ -1149,7 +1156,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 		public void ConnectionEditing()
 		{
 			string blockName = "#emptyBlock_endpoint ";
-			var currentEndPoint = CurrentClient.Endpoints.First();
+			var currentEndPoint = CurrentClient.Endpoints.First(s => !s.Disabled);
 			var packageSpeedList = DbSession.Query<PackageSpeed>().ToList();
 			var iPfixed = currentEndPoint.LeaseList.LastOrDefault().Ip.ToString();
 			var iPrented = currentEndPoint.Ip.ToString();
@@ -1222,7 +1229,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			//сохранение изменений
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
 
-			var endpointresult = CurrentClient.Endpoints.FirstOrDefault();
+			var endpointresult = CurrentClient.Endpoints.FirstOrDefault(s => !s.Disabled);
 			DbSession.Refresh(endpointresult);
 
 			Assert.That(endpointresult.Ip, Is.EqualTo(newLease.Ip), "Статус не совпадает.");

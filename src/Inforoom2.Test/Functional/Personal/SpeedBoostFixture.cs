@@ -34,7 +34,7 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession.Flush();
 			GetBilling().ProcessPayments();
 			DbSession.Refresh(client);
-			bool allEndpointsOk = !client.Endpoints.Any(e => e.PackageId != boostedSpeed);
+			bool allEndpointsOk = !client.Endpoints.Any(e => e.PackageId != boostedSpeed && !e.Disabled);
 			Assert.IsTrue(allEndpointsOk, "не все свичи переведены на повышенную скорость");
 
 			cServive.EndDate = SystemTime.Now().AddDays(-1);
@@ -45,7 +45,7 @@ namespace Inforoom2.Test.Functional.Personal
 			client = DbSession.Query<Client>().First(i => i.Comment == ClientCreateHelper.ClientMark.normalClient.GetDescription());
 			DbSession.Refresh(client);
 
-			allEndpointsOk = !client.Endpoints.Any(e => e.PackageId != tariffSpeed);
+			allEndpointsOk = !client.Endpoints.Any(e => e.PackageId != tariffSpeed && !e.Disabled);
 			Assert.IsTrue(allEndpointsOk, "не все свичи переведены на обычную скорость");
 		}
 	}

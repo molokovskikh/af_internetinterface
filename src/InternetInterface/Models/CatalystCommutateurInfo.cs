@@ -19,7 +19,7 @@ namespace InternetInterface.Models
 		{
 			var point = session.Load<ClientEndpoint>(endPointId);
 			propertyBag["point"] = point;
-			propertyBag["lease"] = session.Query<Lease>().FirstOrDefault(l => l.Endpoint == point);
+			propertyBag["lease"] = session.Query<Lease>().FirstOrDefault(l => l.Endpoint == point && !l.Endpoint.Disabled);
 			var login = ConfigurationManager.AppSettings["catalystLogin"];
 			var password = ConfigurationManager.AppSettings["catalystPassword"];
 

@@ -113,8 +113,8 @@ namespace InternetInterface.Controllers
 				Flash["Client"] = physicalClient;
 				Flash["AccountNumber"] = client.Id.ToString("00000");
 				Flash["ConnectSumm"] = physicalClient.ConnectSum;
-				if (client.Endpoints.Count > 0)
-					Flash["WhoConnected"] = client.Endpoints.First().WhoConnected;
+				if (client.Endpoints.Count(s=>!s.Disabled) > 0)
+					Flash["WhoConnected"] = client.Endpoints.First(s=>!s.Disabled).WhoConnected;
 				else
 					Flash["WhoConnected"] = null;
 				Flash["ConnectInfo"] = client.GetConnectInfo(DbSession).FirstOrDefault();

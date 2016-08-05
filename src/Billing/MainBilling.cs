@@ -62,7 +62,7 @@ namespace Billing
 			try {
 				_mutex.WaitOne();
 				WithTransaction(session => {
-					var newEndPoints = session.Query<ClientEndpoint>().Where(c => c.IsEnabled == null && c.Client.Disabled == false).ToList();
+					var newEndPoints = session.Query<ClientEndpoint>().Where(c => c.IsEnabled == null && c.Client.Disabled == false && !c.Disabled).ToList();
 					foreach (var endpoint in newEndPoints) {
 						endpoint.IsEnabled = true;
 						var client = endpoint.Client;
@@ -117,7 +117,7 @@ namespace Billing
 			WithTransaction(ActivateServices);
 
 			WithTransaction(session => {
-				var newEndPointForConnect = session.Query<ClientEndpoint>().Where(c => c.Client.PhysicalClient != null && !c.PayForCon.Paid).ToList();
+				var newEndPointForConnect = session.Query<ClientEndpoint>().Where(c =>c.Client.PhysicalClient != null && !c.PayForCon.Paid && !c.Disabled ).ToList();
 				foreach (var clientEndpoint in newEndPointForConnect) {
 					var writeOff = new UserWriteOff(clientEndpoint.Client, clientEndpoint.PayForCon.Sum, "Плата за подключение");
 					session.Save(writeOff);

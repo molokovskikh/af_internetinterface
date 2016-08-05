@@ -98,7 +98,7 @@ namespace InternetInterface.Models
 		{
 			var lease = session.Query<Lease>().FirstOrDefault(l => l.Ip == ip);
 			if (lease != null) {
-				return session.Query<ClientEndpoint>().FirstOrDefault(e => e.Port == lease.Port && e.Switch == lease.Switch);
+				return session.Query<ClientEndpoint>().FirstOrDefault(e =>e.Port == lease.Port && e.Switch == lease.Switch && !e.Disabled);
 			}
 			return null;
 		}

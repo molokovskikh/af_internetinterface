@@ -129,7 +129,7 @@ namespace InforoomControlPanel.Controllers
 					clientModel.WriteOffs.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
 				}
 				if (subViewName == "_Endpoint") {
-					clientModel.Endpoints.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
+					clientModel.Endpoints.Where(s => !s.Disabled).Each(s => errors.AddRange(ValidationRunner.Validate(s)));
 				}
 				if (subViewName == "_PassportData") {
 					errors = ValidationRunner.Validate(clientModel.PhysicalClient);
@@ -188,7 +188,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			//--------------------------------------------------------------------------------------| Получение списка оповещений
 			// список оповещений
-			var appeals = client.Appeals.Select(s => new Appeal() {
+			var appeals = client.Appeals == null || client.Appeals.Count == 0 ? new List<Appeal>() : client.Appeals.Select(s => new Appeal() {
 				Client = s.Client,
 				AppealType = s.AppealType,
 				Date = s.Date,
@@ -836,7 +836,7 @@ namespace InforoomControlPanel.Controllers
 			var oldPlan = client.PhysicalClient.Plan;
 			if (oldPlan != newPlan) {
 				client.PhysicalClient.Plan = newPlan;
-				client.Endpoints.ForEach(e => e.PackageId = newPlan.PackageSpeed.PackageId);
+				client.Endpoints.Where(s => !s.Disabled).ForEach(e => e.PackageId = newPlan.PackageSpeed.PackageId);
 				DbSession.Save(client);
 				Inforoom2.Helpers.SceHelper.UpdatePackageId(DbSession, client);
 

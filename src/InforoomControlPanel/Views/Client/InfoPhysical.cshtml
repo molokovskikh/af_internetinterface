@@ -6,17 +6,17 @@
 @using NHibernate
 
 @{
-  Client client = ViewBag.Client;
-  bool rentIsActive = ViewBag.RentIsActive;
-  ClientEndpoint endpoint = client.Endpoints.FirstOrDefault();
-  var lease = endpoint != null ? endpoint.LeaseList.OrderByDescending(s => s.LeaseBegin).ThenBy(s => s.LeaseEnd)
-  .GroupBy(s => s.Mac).Select(s => s.First()).LastOrDefault() : null;
-  ViewBag.Title = "Информация по клиенту"+ ( lease != null && lease.LeaseEnd > SystemTime.Now() ? " (он-лайн) ":"") +": " + client.PhysicalClient.FullName + " (" + client.ClientId + ") ";
-  Layout = "~/Views/Shared/_Layout.cshtml";
-  string action = ViewBag.ActionName;
-  string controller = ViewBag.ControllerName;
-  Employee currentEmployee = ViewBag.CurrentEmployee;
-  string currentSubViewName = ViewBag.CurrentSubViewName;
+	Client client = ViewBag.Client;
+	bool rentIsActive = ViewBag.RentIsActive;
+	ClientEndpoint endpoint = client.Endpoints.FirstOrDefault(s => !s.Disabled);
+	var lease = endpoint != null ? endpoint.LeaseList.OrderByDescending(s => s.LeaseBegin).ThenBy(s => s.LeaseEnd)
+	.GroupBy(s => s.Mac).Select(s => s.First()).LastOrDefault() : null;
+	ViewBag.Title = "Информация по клиенту"+ ( lease != null && lease.LeaseEnd > SystemTime.Now() ? " (он-лайн) ":"") +": " + client.PhysicalClient.FullName + " (" + client.ClientId + ") ";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	string action = ViewBag.ActionName;
+	string controller = ViewBag.ControllerName;
+	Employee currentEmployee = ViewBag.CurrentEmployee;
+	string currentSubViewName = ViewBag.CurrentSubViewName;
 
 }
 

@@ -21,6 +21,7 @@ namespace InternetInterface.Test.Integration
 		{
 			[OneToOne(PropertyRef = "TestObj")]
 			public TestObj link { get; set; }
+
 			[ValidateNonEmpty]
 			public string name { get; set; }
 		}

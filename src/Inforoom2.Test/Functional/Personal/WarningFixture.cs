@@ -211,7 +211,7 @@ namespace Inforoom2.Test.Functional.Personal
 		{
 			//У неподключенного клиента нет точки подключения
 			Logout();
-			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == null);
+				var lease = DbSession.Query<Lease>().First(i => i.Endpoint == null);
 			var ipstr = lease.Ip.ToString();
 			Open("Warning?ip=" + ipstr);
 			AssertText("Протестировать скорость");
@@ -259,8 +259,8 @@ namespace Inforoom2.Test.Functional.Personal
 			legalClient.Disabled = false;
 			DbSession.Save(legalClient);
 			Assert.That(legalClient, Is.Not.EqualTo(null), "В БД отсутствует юр.лицо");
-			Assert.That(legalClient.Endpoints.Count > 0, Is.EqualTo(true), "У юр. лица отсутствует точка подключения");
-			Open("Warning?ip=" + legalClient.Endpoints.First().Ip);
+			Assert.That(legalClient.Endpoints.Count(s => !s.Disabled) > 0, Is.EqualTo(true), "У юр. лица отсутствует точка подключения");
+			Open("Warning?ip=" + legalClient.Endpoints.First(s => !s.Disabled).Ip);
 			AssertText("Протестировать скорость");
 		}
 
@@ -274,8 +274,8 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession.Save(legalClient);
 			DbSession.Flush();
 			Assert.That(legalClient, Is.Not.EqualTo(null), "В БД отсутствует юр.лицо");
-			Assert.That(legalClient.Endpoints.Count > 0, Is.EqualTo(true), "У юр. лица отсутствует точка подключения");
-			Open("Warning?ip=" + legalClient.Endpoints.First().Ip);
+			Assert.That(legalClient.Endpoints.Count(s => !s.Disabled) > 0, Is.EqualTo(true), "У юр. лица отсутствует точка подключения");
+			Open("Warning?ip=" + legalClient.Endpoints.First(s => !s.Disabled).Ip);
 			AssertText("Вам необходимо оплатить услуги, в противном случае доступ в Интернет будет заблокирован");
 			var button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
@@ -299,8 +299,8 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession.Save(legalClient);
 			DbSession.Flush();
 			Assert.That(legalClient, Is.Not.EqualTo(null), "В БД отсутствует юр.лицо");
-			Assert.That(legalClient.Endpoints.Count > 0, Is.EqualTo(true), "У юр. лица отсутствует точка подключения");
-			Open("Warning?ip=" + legalClient.Endpoints.First().Ip);
+			Assert.That(legalClient.Endpoints.Count(s => !s.Disabled) > 0, Is.EqualTo(true), "У юр. лица отсутствует точка подключения");
+			Open("Warning?ip=" + legalClient.Endpoints.First(s => !s.Disabled).Ip);
 			AssertText("Для продолжения работы в интернете необходимо оплатить услуги.");
 			var button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
@@ -313,7 +313,7 @@ namespace Inforoom2.Test.Functional.Personal
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("нормальный клиент"));
 			LoginForClient(client);
 			Open("/");
-			var endpoint = client.Endpoints.First();
+			var endpoint = client.Endpoints.First(s=> !s.Disabled);
 			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == endpoint);
 			var ipstr = lease.Ip.ToString();
 			string testUrl = BuildTestUrl("Personal/Profile");

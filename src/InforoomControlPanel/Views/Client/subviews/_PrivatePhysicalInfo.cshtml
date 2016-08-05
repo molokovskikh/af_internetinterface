@@ -9,7 +9,7 @@
 	Client client = Model;
 	List<Status> statusList = ViewBag.StatusList;
 	string clientStatusChangeComment = ViewBag.clientStatusChangeComment ?? "";
-	ClientEndpoint endpoint = client.Endpoints.FirstOrDefault();
+	ClientEndpoint endpoint = client.Endpoints.FirstOrDefault(s => !s.Disabled);
 	var lease = endpoint != null ? endpoint.LeaseList.LastOrDefault() : null;
 }
 <div class="panel panel-default blockJsLockControll">

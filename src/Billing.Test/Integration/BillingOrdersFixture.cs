@@ -228,7 +228,7 @@ namespace Billing.Test.Integration
 				.Where(ap => ap.Appeal.Contains("Деактивирован заказ"))
 				.ToList();
 			Assert.AreEqual(1, appealsList.Count);
-			Assert.AreEqual(0, lawyerClient.Endpoints.Count);
+			Assert.AreEqual(0, lawyerClient.Endpoints.Count(s => !s.Disabled));
 		}
 
 		[Test(Description = "Проверяет, отображается ли пользователю страница с предупреждением, если баланс уходит в минус")]

@@ -8,20 +8,21 @@ using Castle.Components.Validator;
 using Common.Tools;
 using Inforoom2.Helpers;
 using Inforoom2.Intefaces;
-using InternetInterface.Models;
 using NHibernate;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
 using NHibernate.Linq;
 using System.Globalization;
 using Inforoom2.Models.Services;
+using Newtonsoft.Json;
+using NHibernate.Bytecode;
 
 namespace Inforoom2.Models
 {
 	/// <summary>
 	/// Юридическое лицо
 	/// </summary>
-	[Class(0, Table = "LawyerPerson", Schema = "internet", NameType = typeof (LegalClient))]
+	[Class(0, Table = "LawyerPerson", Schema = "internet", NameType = typeof(LegalClient))]
 	public class LegalClient : BaseModel, IClientExpander, ILogAppeal
 	{
 		[Property(NotNull = true), Description("Баланс юридического лица")]
@@ -62,8 +63,7 @@ namespace Inforoom2.Models
 
 		public virtual List<string> GetAppealFields()
 		{
-			return new List<string>()
-			{
+			return new List<string>() {
 				"Balance",
 				"PeriodEnd",
 				"Region",
@@ -90,7 +90,7 @@ namespace Inforoom2.Models
 			if (property == "Region") {
 				// получаем псевдоним из описания 
 				property = this.GetDescription("Region");
-				var oldPlan = oldPropertyValue == null ? null : ((Region) oldPropertyValue);
+				var oldPlan = oldPropertyValue == null ? null : ((Region)oldPropertyValue);
 				var currentPlan = this.Region;
 				if (oldPlan != null) {
 					message += property + " было: " + oldPlan.Name + " <br/>";
@@ -122,8 +122,8 @@ namespace Inforoom2.Models
 		public virtual bool NeedShowWarning()
 		{
 			var param = ConfigHelper.GetParam("LawyerPersonBalanceWarningRate");
-			var rate = (decimal) float.Parse(param, CultureInfo.InvariantCulture);
-			var cond = Balance < -((Plan ?? 0)*rate) && Balance < 0;
+			var rate = (decimal)float.Parse(param, CultureInfo.InvariantCulture);
+			var cond = Balance < -((Plan ?? 0) * rate) && Balance < 0;
 			return cond;
 		}
 
@@ -160,7 +160,7 @@ namespace Inforoom2.Models
 					.OrderByDescending(f => f.EndDate.Value)
 					.FirstOrDefault();
 
-			return ((StatusType) Client.Status.Id) != StatusType.Dissolved ? null : lastClosedOrder?.EndDate;
+			return ((StatusType)Client.Status.Id) != StatusType.Dissolved ? null : lastClosedOrder?.EndDate;
 		}
 
 		public virtual string GetPlan()
@@ -175,13 +175,13 @@ namespace Inforoom2.Models
 
 		public virtual StatusType GetStatus()
 		{
-			return ((StatusType) Client.Status.Id);
+			return ((StatusType)Client.Status.Id);
 		}
 
 		public static void GetBaseDataForRegistration(ISession dbSession, Client client, Employee employee)
 		{
 			client.Recipient = dbSession.Query<Recipient>().FirstOrDefault(r => r.INN != null && r.INN == "3666152146");
-			client.Status = dbSession.Query<Status>().FirstOrDefault(r => r.Id == (int) StatusType.BlockedAndNoConnected);
+			client.Status = dbSession.Query<Status>().FirstOrDefault(r => r.Id == (int)StatusType.BlockedAndNoConnected);
 			client.Disabled = true;
 			client.Type = ClientType.Lawer;
 			client._Name = client.LegalClient.ShortName;
@@ -194,68 +194,6 @@ namespace Inforoom2.Models
 			client.SendSmsNotification = false;
 			client._oldAdressStr = client.LegalClient.ActualAddress;
 			client.YearCycleDate = null;
-		}
-
-		public virtual void UpdateStaticAddressList(ref ClientEndpoint currentEndpoint, StaticIp[] staticAddress,
-			Employee employee)
-		{
-			var appealUpdate = "";
-			var appealRemove = "";
-			var appealInsert = "";
-
-			var recipientsToRemove = currentEndpoint.StaticIpList.Where(s => !staticAddress.Any(d => d.Ip == s.Ip)).ToList();
-			currentEndpoint.StaticIpList.RemoveEach(recipientsToRemove);
-			//Формирование оповещения--->
-			if (recipientsToRemove.Count > 0) {
-				appealRemove =
-					$" <br/><strong>удалены услуги:</strong> <br/>{string.Join("<br/>", recipientsToRemove.Select(s => $"<br/><i>было</i> {s.Ip} : {s.Mask} ").ToList())}";
-			} //<----Формирование оповещения
-
-			if (staticAddress != null) {
-				for (int i = 0; i < staticAddress.Length; i++) {
-					bool isToBeAdded = true;
-					for (int j = 0; j < currentEndpoint.StaticIpList.Count; j++) {
-						if (staticAddress[i].Id != 0 && currentEndpoint.StaticIpList[j].Id == staticAddress[i].Id) {
-							//Формирование оповещения--->
-							if (currentEndpoint.StaticIpList[j].Ip != staticAddress[i].Ip ||
-							    currentEndpoint.StaticIpList[j].Mask != staticAddress[i].Mask) {
-								appealUpdate += (appealUpdate == string.Empty ? " <br/><strong>обновлены ip:</strong>" : "");
-								appealUpdate +=
-									$"<br/><i>было</i> {currentEndpoint.StaticIpList[j].Ip} : {currentEndpoint.StaticIpList[j].Mask}";
-								appealUpdate += $"<br/><i>стало</i> {staticAddress[i].Ip} : {staticAddress[i].Mask}";
-							} //<---Формирование оповещения
-
-							currentEndpoint.StaticIpList[j].Ip = staticAddress[i].Ip;
-							currentEndpoint.StaticIpList[j].Mask = staticAddress[i].Mask;
-							currentEndpoint.StaticIpList[j].EndPoint = currentEndpoint;
-							isToBeAdded = false;
-							break;
-						}
-					}
-					if (isToBeAdded && Regex.IsMatch(staticAddress[i].Ip, NetworkSwitch.IPRegExp)) {
-						var newItem = new StaticIp()
-						{
-							EndPoint = currentEndpoint,
-							Ip = staticAddress[i].Ip,
-							Mask = staticAddress[i].Mask
-						};
-						currentEndpoint.StaticIpList.Add(newItem);
-
-						//Формирование оповещения--->
-						if (appealInsert == string.Empty)
-							appealInsert = "<br/><strong>добавлены ip:</strong>";
-						appealInsert +=
-							$"<br/> {newItem.Ip} : {staticAddress[i].Mask}";
-						//<---Формирование оповещения
-					}
-				}
-			}
-			appealInsert = appealInsert + appealUpdate + appealRemove;
-			if (appealInsert != string.Empty) {
-				currentEndpoint.Client.Appeals.Add(new Appeal($"По подключению №{currentEndpoint.Id} " + appealInsert,
-					currentEndpoint.Client, AppealType.System,
-					employee));
-			}
 		}
 
 
@@ -316,49 +254,116 @@ namespace Inforoom2.Models
 			}
 		}
 
-		private void SetStaticIpAsOrderService(ISession dbSession, ClientOrder order, string staticIp)
+		/// <summary>
+		/// Обновление Endpoint(a) 
+		/// </summary>
+		/// <param name="dbSession">Сессия хибера</param>
+		/// <param name="currentOrder">Текущий заказ</param>
+		/// <param name="currentEndpoint">Текущая точка подключения</param>
+		/// <param name="futureEndpoint">Будушая точка подключения (созданная для конкретного заказа)</param>
+		/// <param name="connection">Настройки подключения</param>
+		/// <param name="employee">Пользователь</param>
+		/// <returns></returns>
+		private string UpdateClientEndpointByConnectionSettings(ISession dbSession, ref ClientOrder currentOrder, ref ClientEndpoint currentEndpoint,
+			Inforoom2.Helpers.ConnectionHelper connection, Employee employee)
 		{
-			decimal priceForIp = 0;
-			var priceItem = dbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof(FixedIp)));
-			if (priceItem != null)
-			{
-				priceForIp = priceItem.Price;
+			int port = 0;
+			int.TryParse(connection.Port ?? "0", out port);
+			currentOrder.EndPointFutureState = null;
+			var changesState = LegalOrderEndpointHelper.CheckChangesState(currentOrder, currentEndpoint, connection);
+
+			if (changesState == LegalOrderEndpointHelper.ChangesState.CurrentEndpointInsert
+			    || changesState == LegalOrderEndpointHelper.ChangesState.CurrentEndpointUpdateDisabled
+			    || changesState == LegalOrderEndpointHelper.ChangesState.FutureEndpointUpdate) {
+				currentEndpoint = currentEndpoint ?? new ClientEndpoint();
+				currentEndpoint.Client = currentOrder.Client;
+				currentEndpoint.PackageId = connection.PackageId;
+				currentEndpoint.Monitoring = connection.Monitoring;
+				currentEndpoint.Pool = connection.GetPool(dbSession);
+				currentEndpoint.Switch = connection.GetSwitch(dbSession);
+				currentEndpoint.Port = port;
+				currentEndpoint.IsEnabled = null;
+				currentEndpoint.Disabled = true;
+				if (changesState == LegalOrderEndpointHelper.ChangesState.CurrentEndpointInsert)
+					return $"по которому создана новая точка подключения:<br/> <strong>коммутатор:</strong> {currentEndpoint.Switch?.Name} <strong>порт:</strong> {currentEndpoint.Port}";
+				else
+					return "";
 			}
-			var staticIpService = new OrderService
-			{
-				Cost = priceForIp,
-				Order = order,
-				Description = string.Format("Плата за фиксированный Ip адрес ({0})", staticIp)
-			};
-			dbSession.Save(staticIpService);
-			order.OrderServices.Add(staticIpService);
+
+			if (changesState == LegalOrderEndpointHelper.ChangesState.CurrentEndpointUpdateFull
+			    || changesState == LegalOrderEndpointHelper.ChangesState.FutureStateUpdateFull) {
+				var currentSwitch = connection.GetSwitch(dbSession);
+				var newEndpoint = new ClientEndpoint();
+				newEndpoint.Client = currentOrder.Client;
+				newEndpoint.PackageId = connection.PackageId;
+				newEndpoint.Monitoring = connection.Monitoring;
+				newEndpoint.Pool = connection.GetPool(dbSession);
+				newEndpoint.Switch = currentSwitch;
+				newEndpoint.Port = port;
+				newEndpoint.Disabled = true;
+				currentEndpoint = newEndpoint;
+				return "";
+			}
+
+			if (changesState == LegalOrderEndpointHelper.ChangesState.CurrentEndpointUpdatePartial ||
+			    changesState == LegalOrderEndpointHelper.ChangesState.FutureStateUpdatePartial) {
+				var newStateOfEndpoint = new EndpointStateBox();
+				newStateOfEndpoint.ConnectionHelper = connection;
+				newStateOfEndpoint.EmployeeId = employee.Id;
+				currentOrder.EndPointFutureState = newStateOfEndpoint;
+				return "";
+			}
+
+			if (currentOrder.EndPoint != null && currentOrder.EndPoint.Id != 0 && currentEndpoint != null && currentEndpoint.Id != 0 && currentEndpoint.Id != currentOrder.EndPoint.Id) {
+				if (currentOrder.EndPoint.Disabled && currentOrder.EndPoint.IsEnabled == null) {
+					currentOrder.Client.Endpoints.Remove(currentOrder.EndPoint);
+					dbSession.Delete(currentOrder.EndPoint);
+				}
+				return "";
+			}
+
+			return "";
 		}
 
+		/// <summary>
+		/// Обновление/Создание заказа юр.лица
+		/// </summary>
+		/// <param name="dbSession">Сессия хибера</param>
+		/// <param name="order">Заказ</param>
+		/// <param name="endpoint">Точка подключения</param>
+		/// <param name="connection">Информация по подключению</param>
+		/// <param name="staticAddress">Статические адреса</param>
+		/// <param name="noEndpoint">Необходимо ли искользовать точку подключения в заказе</param>
+		/// <param name="employee">Пользователь</param>
+		/// <param name="message">Сообщение (исходящее)</param>
 		public virtual void UpdateClientOrder(ISession dbSession, ClientOrder order,
 			ClientEndpoint endpoint, Inforoom2.Helpers.ConnectionHelper connection, StaticIp[] staticAddress,
 			bool noEndpoint, Employee employee, out string message)
 		{
+			order.EndPointFutureState = null;
+			var client = Client;
 			var newOrder = false;
+			var changesJustForANewEndoint = false;
+			EndpointStateBox orderPastEndPointFutureState = null;
 			message = "";
-			//получаем базовые значения
+			//получение базовых значений
 			var settings = new SettingsHelper(dbSession);
 			staticAddress = staticAddress ?? new StaticIp[0];
+			//валидация дат по заказу
 			if (order.BeginDate.HasValue && order.EndDate.HasValue) {
-				var lessThanPast = DateTime.Compare(order.EndDate.Value.Date, SystemTime.Now().Date);
-				var lessThanCurrent = DateTime.Compare(order.EndDate.Value.Date, order.BeginDate.Value.Date);
-				if (lessThanPast != 1 || lessThanCurrent != 1) {
+				var lessThanPast = order.EndDate.Value.Date <= SystemTime.Now().Date; //DateTime.Compare(order.EndDate.Value.Date, SystemTime.Now().Date);
+				var lessThanCurrent = order.EndDate.Value.Date < order.BeginDate.Value.Date; //DateTime.Compare(order.EndDate.Value.Date, order.BeginDate.Value.Date);
+				if (lessThanPast || lessThanCurrent) {
 					message = "Дата окончания может быть выставлена только для будущего периода";
 					return;
 				}
 			}
-
-			var client = Client;
-			//проверка необходимости обновлять заказ
-			var currentOrder = client.LegalClientOrders.FirstOrDefault(s => s.Id == order.Id);
-
+			//получение заказа из БД
+			ClientOrder currentOrder = order.Id != 0 ? client.LegalClientOrders.FirstOrDefault(s => s.Id == order.Id) : null;
 			order.OrderServices = order.OrderServices ?? new List<OrderService>();
-
+			//если таковой в БД есть, обновляем его поля 
 			if (currentOrder != null) {
+				orderPastEndPointFutureState = currentOrder.EndPointFutureState;
 				currentOrder.Number = order.Number;
 				currentOrder.BeginDate = order.BeginDate;
 				currentOrder.EndDate = order.EndDate;
@@ -367,54 +372,36 @@ namespace Inforoom2.Models
 				currentOrder.OrderServices = currentOrder.OrderServices ?? new List<OrderService>();
 			}
 			else {
+				//если заказа в БД не оказалось, использование нового
 				order.Client = Client;
 				currentOrder = order;
 				newOrder = true;
 			}
-
+			//проверка привязки точки подключения к заказу
 			string endpointNewAppeal = "";
 			if (noEndpoint) {
+				if (currentOrder.EndPoint != null && currentOrder.EndPoint.Id != 0 && currentOrder.EndPoint.Disabled && currentOrder.EndPoint.IsEnabled == null) {
+					currentOrder.Client.Endpoints.Remove(currentOrder.EndPoint);
+					dbSession.Delete(currentOrder.EndPoint);
+				}
 				currentOrder.EndPoint = null;
+				currentOrder.EndPointFutureState = null;
 			}
 			else {
-				var currentEndpoint = client.Endpoints.FirstOrDefault(s => s.Id == endpoint.Id);
-				int port = 0;
-				int.TryParse(connection.Port ?? "0", out port);
+				//если привязка есть,
+				//попыка получить точку подключения из БД по текущему Id 
+				//или Id из нового состояния точки подключения (новой т.п.)
 
-				if (currentEndpoint != null) {
-					currentEndpoint.PackageId = connection.PackageId;
-					currentEndpoint.Monitoring = connection.Monitoring;
-					currentEndpoint.Pool = connection.GetPool(dbSession);
-					currentEndpoint.Switch = connection.GetSwitch(dbSession);
-					currentEndpoint.Port = port;
-
-				}
-				else {
-					currentEndpoint = endpoint;
-					currentEndpoint.Client = client;
-					currentEndpoint.PackageId = connection.PackageId;
-					currentEndpoint.Monitoring = connection.Monitoring;
-					currentEndpoint.Pool = connection.GetPool(dbSession);
-					currentEndpoint.Switch = connection.GetSwitch(dbSession);
-					currentEndpoint.Port = port;
-					endpointNewAppeal =
-						$"по которому создана новая точка подключения:<br/> <strong>коммутатор:</strong> {currentEndpoint.Switch.Name} <strong>порт:</strong> {currentEndpoint.Port}";
-
-					///Не понял зачем нужно это поле - не используется. 
-					//if (client.AdditionalStatus != null && client.AdditionalStatus.ShortName == "Refused")
-					//{
-					//	client.AdditionalStatus = null;
-					//	client.AdditionalStatus = null;
-					//}
-				}
-
-
+				var currentEndpoint = client.Endpoints.FirstOrDefault(s => s.Id == endpoint.Id) ?? endpoint;
+				currentOrder.EndPointFutureState = null;
+				//обновление точки подключения
+				endpointNewAppeal = UpdateClientEndpointByConnectionSettings(dbSession, ref currentOrder, ref currentEndpoint, connection, employee);
+				//валидация 
 				if (currentEndpoint.Switch == null) {
 					message = "Заказ не сохранен : не указан коммутатор для точки подключения";
 					return;
 				}
-
-				if (currentEndpoint.Switch.PortCount < currentEndpoint.Port) {
+				if (currentEndpoint.Switch.PortCount < currentEndpoint.Port || currentEndpoint.Port == 0) {
 					message = "Заказ не сохранен : у коммутатора отсутствует указанный порт";
 					return;
 				}
@@ -423,36 +410,41 @@ namespace Inforoom2.Models
 					return;
 				}
 
-				if (client.Status.Id == (int) StatusType.BlockedAndNoConnected)
-					client.Status = dbSession.Load<Status>((int) StatusType.BlockedAndConnected);
 
-				if (staticAddress != null && staticAddress.Length > 0) {
-					if (client.WorkingStartDate == null)
-						client.WorkingStartDate = DateTime.Now;
-					if (client.RatedPeriodDate == null)
-						client.RatedPeriodDate = DateTime.Now;
-				}
+				//правим статус зарегистрированного клиента
+				if (client.Status.Id == (int)StatusType.BlockedAndNoConnected)
+					client.Status = dbSession.Load<Status>((int)StatusType.BlockedAndConnected);
 
-				IPAddress address;
-				if (connection.StaticIp != null && IPAddress.TryParse(connection.StaticIp, out address)) {
-					if (currentEndpoint.Ip == null) {
-						SetStaticIpAsOrderService(dbSession, order, connection.StaticIp);
+
+				if (!currentOrder.HasEndPointFutureState) {
+					IPAddress address;
+					if (connection.StaticIp != null && IPAddress.TryParse(connection.StaticIp, out address)) {
+						//подключение услуги "фиксированный ip"
+						if (currentEndpoint.Ip == null) {
+							order.SetStaticIpAsOrderService(dbSession, order, connection.StaticIp);
+						}
+						currentEndpoint.Ip = address;
 					}
-					currentEndpoint.Ip = address;
+					else
+						currentEndpoint.Ip = null;
+
+					currentOrder.EndPoint = currentEndpoint;
+					if (currentEndpoint.Id == 0) {
+						client.Endpoints.Add(currentEndpoint);
+					}
+					dbSession.Save(currentEndpoint);
+					currentOrder.UpdateStaticAddressList(ref currentEndpoint, staticAddress, employee);
 				}
-				else
-					currentEndpoint.Ip = null;
-
-				client.ConnectedDate = DateTime.Now;
-
-				UpdateStaticAddressList(ref currentEndpoint, staticAddress, employee);
-
-				currentOrder.EndPoint = currentEndpoint;
-
-				client.Endpoints.Add(currentEndpoint);
-				//синхронизация (нужна предварительная валидация клиента и др.)
-				client.SyncServices(dbSession, settings);
+				else {
+					currentOrder.EndPoint = currentEndpoint;
+					//добалвяем в новое состояние список статических адресов
+					var epState = currentOrder.EndPointFutureState;
+					epState.StaticIpList = staticAddress;
+					currentOrder.EndPointFutureState = epState;
+				}
 			}
+
+
 			if (newOrder) {
 				client.LegalClientOrders.Add(currentOrder);
 				currentOrder.Client.Appeals.Add(new Appeal(
@@ -463,9 +455,9 @@ namespace Inforoom2.Models
 			else {
 				currentOrder.Client.Appeals.Add(new Appeal($"Обновлен заказ №<strong>{currentOrder.Number}</strong>", currentOrder.Client,
 					AppealType.System, employee));
-				currentOrder.SendMailAboutUpdate(dbSession,employee);
-            }
-
+				currentOrder.SendMailAboutUpdate(dbSession, employee);
+			}
+			//TODO: это верно? 
 			if (client.Disabled && client.LegalClientOrders.Count > 0)
 				client.Disabled = false;
 		}

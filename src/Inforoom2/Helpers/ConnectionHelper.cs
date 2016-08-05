@@ -6,7 +6,15 @@ using NHibernate.Linq;
 
 namespace Inforoom2.Helpers
 {
-	public class ConnectionHelper
+
+	public class EndpointStateBox
+	{ 
+		public BaseConnectionHelper ConnectionHelper { get; set; }
+		public StaticIp[] StaticIpList { get; set; }
+		public int EmployeeId { get; set; }
+	}
+
+	public class BaseConnectionHelper
 	{
 		public string Port { get; set; }
 		public int? Pool { get; set; }
@@ -15,7 +23,10 @@ namespace Inforoom2.Helpers
 		public string StaticIp { get; set; }
 		public bool Monitoring { get; set; }
 		public int PackageId { get; set; }
+	}
 
+	public class ConnectionHelper : BaseConnectionHelper
+	{
 		public IpPool GetPool(ISession dbSession)
 		{
 			return Pool.HasValue ? dbSession.Query<IpPool>().FirstOrDefault(s => s.Id == Pool.Value) : null;
@@ -35,7 +46,7 @@ namespace Inforoom2.Helpers
 		{
 			int number = -1;
 			Int32.TryParse(this.Port, out number);
-			return number != -1 ? (int?) number : null;
+			return number != -1 ? (int?)number : null;
 		}
 
 		public string Validate(ISession dbSession, bool register, int endpointId = 0)
@@ -49,7 +60,7 @@ namespace Inforoom2.Helpers
 			if (Int32.TryParse(this.Port, out res)) {
 				if (res > switchItem.PortCount || res < 0)
 					return "Порт должен быть в пределах от 0 до " + switchItem.PortCount;
-				if (switchItem.Endpoints.Any(s => s.Port == res && s.Id != endpointId))
+				if (switchItem.Endpoints.Any(s => s.Port == res && s.Id != endpointId && !s.Disabled))
 					return "Такая пара порт/коммутатор уже существует";
 			}
 			return string.Empty;
