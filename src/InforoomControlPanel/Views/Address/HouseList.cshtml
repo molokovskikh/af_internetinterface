@@ -18,6 +18,10 @@
 	regionList["0"] = " ";
 	regions.Each(i => regionList[i.Id.ToString()] = i.Name.ToString());
 }
+
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js?v=001")"></script>
+}
 <div class="form-group">
 	<a class="btn btn-success btn-sm btn-icon icon-left" href='@Url.Action("CreateHouse", "Address")'>
 		<i class="entypo-plus"></i>
@@ -27,19 +31,22 @@
 <panel class="panel panel-default">
 	<form>
 		<div class="row">
-			<div class="col-sm-1"><label>Регион</label> </div>
-			<div class="col-sm-2">@pager.FormFilterManual("Region.Id", HtmlType.Dropdown, regionList)</div>
-			<input type="submit" class="btn btn-success btn-sm" />
+			<div class="col-sm-1"><label>Регион</label>
+			</div>
+			<div class="col-sm-2">@pager.FormFilterManual("Region.Id", HtmlType.Dropdown, regionList, id: "RegionDropDown")</div>
+			<input type="submit" class="btn btn-success btn-sm"/>
 		</div>
 		<div class="row">
-			<div class="col-sm-1"><label>Улица</label> </div>
-			<div class="col-sm-2">@pager.FormFilterManual("Street.Id", HtmlType.Dropdown, streetList)</div>
-			<input type="submit" class="btn btn-success btn-sm" />
+			<div class="col-sm-1"><label>Улица</label>
+			</div>
+			<div class="col-sm-2">@pager.FormFilterManual("Street.Id", HtmlType.Dropdown, streetList, id: "StreetDropDown")</div>
+			<input type="submit" class="btn btn-success btn-sm"/>
 		</div>
 		<div class="row">
-			<div class="col-sm-1"><label>Номер</label> </div>
+			<div class="col-sm-1"><label>Дом</label>
+			</div>
 			<div class="col-sm-2">@pager.FormFilterManual("Number", HtmlType.text)</div>
-			<input type="submit" class="btn btn-success btn-sm" />
+			<input type="submit" class="btn btn-success btn-sm"/>
 		</div>
 		@pager.GenerateInputs()
 	</form>
@@ -50,7 +57,7 @@
 			<tr role="row">
 				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Street.Region)">Регион (Регион улицы)</a></th>
 				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Street)">Улица</a></th>
-				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Number)">Номер</a></th>
+				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Number)">Дом</a></th>
 				<th class="sorting" tabindex="0" aria-controls="table-2"><a href="@pager.OrderBy(s => s.Confirmed)">Проверенно яндексом</a></th>
 				<th class="sorting" tabindex="0" aria-controls="table-2">Действия</th>
 			</tr>
