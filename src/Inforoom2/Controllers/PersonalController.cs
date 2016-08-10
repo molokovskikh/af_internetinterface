@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web.Mvc;
+using Common.MySql;
 using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
@@ -25,6 +26,7 @@ using Status = Inforoom2.Models.Status;
 using StatusType = Inforoom2.Models.StatusType;
 using UserWriteOff = Inforoom2.Models.UserWriteOff;
 using WriteOff = Inforoom2.Models.WriteOff;
+using System.Configuration;
 
 namespace Inforoom2.Controllers
 {
@@ -65,11 +67,24 @@ namespace Inforoom2.Controllers
 				var ip = Request.UserHostAddress;
 				var address = IPAddress.Parse(ip);
 #if DEBUG
-				var lease = DbSession.Query<Lease>().First();
+				var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Endpoint == null);
 #else
-				var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == address);
+				var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == address && l.Endpoint == null);
 #endif
-				if (CurrentClient.Endpoints.Count(s => !s.Disabled) == 0 && lease != null) {
+				ClientEndpoint currentEnpoint = null;
+				if (lease != null) {
+					currentEnpoint = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => !s.Disabled && s.Switch.Id == lease.Switch.Id && s.Port == lease.Port);
+					if (currentEnpoint != null) {
+						ErrorMessage("Ошибка: точка подключения не задана!");
+						var email = ConfigurationManager.AppSettings["ErrorNotifierMail"];
+						var href = $"<a href='http://stat.ivrn.net/cp/Client/{(physicalClient.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal")}/" + physicalClient.Client.Id + $"'>{physicalClient.Client.Id}</a>";
+						//отправка сообщения об ошибки
+						EmailSender.SendEmail(new string[] { email },
+							"Ошибка в  Inforoom2 при автоматическом создании точки подключения по ЛС " + physicalClient.Client.Id,
+							$"При создании точки подключения для клиента {href} выяснилось, <br/>что на порту коммутатора уже находится точка подключения {currentEnpoint.Id}");
+					}
+				}
+				if (CurrentClient.Endpoints.Count(s => !s.Disabled) == 0 && lease != null && currentEnpoint == null) {
 					//var settings = new Settings(session);
 					if (string.IsNullOrEmpty(lease.Switch.Name)) {
 						var addr = CurrentClient.PhysicalClient.Address;

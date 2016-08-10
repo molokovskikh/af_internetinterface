@@ -312,7 +312,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			DbSession.Save(payment);
 			DbSession.Save(CurrentClient);
 			DbSession.Flush();
-			RunBillingProcessPayments(CurrentClient);
+			RunBillingProcess(CurrentClient);
 			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.LegalClient);
 			//платеж не должен отразиться на варнинге и состоянии клиента
@@ -320,7 +320,13 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false));
 			//проверяем состояние клиента после отработки услуги "отключения блокировки"
 			SystemTime.Now = () => tempDate.FirstDayOfMonth().AddDays(31).Date;
-			RunBillingProcess(CurrentClient);
+			CurrentClient.PaidDay = false;
+			DbSession.Save(CurrentClient);
+			DbSession.Flush();
+			RunBillingProcess();
+			DbSession.Flush();
+			DbSession.Clear();
+			CurrentClient = DbSession.Query<Client>().FirstOrDefault(s => s.Id == CurrentClient.Id);
 			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.LegalClient);
 			//клиент не должен быть активен и ему отображается варнинг
@@ -364,7 +370,6 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			RunBillingProcess(CurrentClient);
 			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.LegalClient);
-			Open("Client/InfoLegal/" + CurrentClient.Id);
 			Assert.That(CurrentClient.LegalClient.Balance, Is.EqualTo(totalSum));
 			//платеж (баланс = 0) должен убрать варнинг, а состояние клиента должно стать активным
 			Assert.That(CurrentClient.Disabled, Is.EqualTo(false));
