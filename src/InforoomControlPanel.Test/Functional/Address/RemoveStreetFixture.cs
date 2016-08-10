@@ -20,7 +20,7 @@ namespace InforoomControlPanel.Test.Functional.Address
             var row = targetStreet.FindElement(By.XPath(".."));
             var button = row.FindElement(By.CssSelector("a.btn-red"));
             button.Click();
-            AssertText("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
+            AssertText("Невозможно удалить");
             //проверяем что в базе данных улица не удалилась
             var deleteStreet = DbSession.Query<Street>().FirstOrDefault(p => p.Id == street.Id);
             Assert.That(deleteStreet, Is.Not.Null, "Улица не должена удалиться в базе данных");
@@ -42,7 +42,7 @@ namespace InforoomControlPanel.Test.Functional.Address
             var row = targetStreet.FindElement(By.XPath(".."));
             var button = row.FindElement(By.CssSelector("a.btn-red"));
             button.Click();
-            AssertText("Объект успешно удален!");
+            AssertText("Улица успешно удалена!");
             //проверяем что в базе данных улица  удалилась
             var deleteStreet = DbSession.Query<Street>().FirstOrDefault(p => p.Id == street.Id);
             Assert.That(deleteStreet, Is.Null, "Улица должена удалиться в базе данных");

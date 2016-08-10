@@ -20,7 +20,7 @@ namespace InforoomControlPanel.Test.Functional.Address
             var row = targetCity.FindElement(By.XPath(".."));
             var button = row.FindElement(By.CssSelector("a.btn-red"));
             button.Click();
-            AssertText("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
+            AssertText("Невозможно удалить");
             //проверяем что в базе данных город не удалился
             var deleteCity = DbSession.Query<City>().FirstOrDefault(p => p.Id == city.Id);
             Assert.That(deleteCity, Is.Not.Null, "Город не должен удалиться в базе данных");

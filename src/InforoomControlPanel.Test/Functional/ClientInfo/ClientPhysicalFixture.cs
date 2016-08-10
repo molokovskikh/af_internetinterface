@@ -451,7 +451,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			//сохраняем изменения
 			browser.FindElementByCssSelector(blockNameNew + ".btn.btn-success").Click();
 
-			WaitForText("Номер лицевого счета", 10);
+			WaitForText("Номер лицевого счета", 30);
 			DbSession.Refresh(CurrentClient.PhysicalClient.Address);
 			AssertText(CurrentClient.PhysicalClient.Address.GetStringForPrint(city: false), blockName);
 		}
