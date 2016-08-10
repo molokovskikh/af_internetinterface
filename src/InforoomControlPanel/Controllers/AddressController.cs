@@ -5,6 +5,7 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Web.Mvc;
 using Inforoom2.Components;
+using Inforoom2.Helpers;
 using Inforoom2.Models;
 using NHibernate.Criterion;
 using NHibernate.Linq;
@@ -160,9 +161,9 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			var regions = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
-      ViewBag.Regions = regions;
+			ViewBag.Regions = regions;
 			ViewBag.Result = result;
-			ViewBag.CurrentRegion = regionId??0;
+			ViewBag.CurrentRegion = regionId ?? 0;
 			ViewBag.CurrentStreet = streetId ?? 0;
 			ViewBag.CurrentHouse = houseId ?? 0;
 
@@ -266,9 +267,14 @@ namespace InforoomControlPanel.Controllers
 		{
 			var errors = ValidationRunner.ValidateDeep(Сity);
 			if (errors.Length == 0) {
-				DbSession.Save(Сity);
-				SuccessMessage("Город успешно добавлен");
-				return RedirectToAction("CityList");
+				if (DbSession.Query<City>().Any(s => s.Name == Сity.Name)) {
+					ErrorMessage($"Город с названием '{Сity.Name}' уже существует!");
+				}
+				else {
+					DbSession.Save(Сity);
+					SuccessMessage("Город успешно добавлен");
+					return RedirectToAction("CityList");
+				}
 			}
 
 			CreateCity();
@@ -304,13 +310,21 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult CreateRegion([EntityBinder] Region Region)
 		{
 			var errors = ValidationRunner.ValidateDeep(Region);
-			if (errors.Length == 0) {
-				DbSession.Save(Region);
-				SuccessMessage("Регион успешно добавлен");
-				return RedirectToAction("RegionList");
+			if (Region.Parent != null && Region.Parent.Id == 0) {
+				Region.Parent = null;
 			}
-
+			if (errors.Length == 0) {
+				if (DbSession.Query<Region>().Any(s => s.Name == Region.Name)) {
+					ErrorMessage($"Регион с названием '{Region.Name}' уже существует!");
+				}
+				else {
+					DbSession.Save(Region);
+					SuccessMessage("Регион успешно добавлен");
+					return RedirectToAction("RegionList");
+				}
+			}
 			CreateRegion();
+			PreventSessionUpdate();
 			ViewBag.Region = Region;
 			return View("CreateRegion");
 		}
@@ -322,7 +336,25 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult RemoveCity(int id)
 		{
-			SafeDelete<City>(id);
+			var itemToDelete = DbSession.Query<City>().FirstOrDefault(s => s.Id == id);
+			if (itemToDelete != null) {
+				var listOfRegions = DbSession.Query<Region>().Where(s => s.City.Id == id).ToList();
+				var reasonNotToRemove = "";
+
+				if (listOfRegions.Count > 0) {
+					reasonNotToRemove += $" <p>- Регионы ({listOfRegions.Count}): {string.Join(", ", listOfRegions.Select(s => s.Name).ToList()).CutAfter(500)}.</p> ";
+				}
+				if (reasonNotToRemove == string.Empty) {
+					DbSession.Delete(itemToDelete);
+					SuccessMessage("Объект успешно удален!");
+				}
+				else {
+					ErrorMessage($"<p>Невозможно удалить город, т.к. существуют зависимые </p> {reasonNotToRemove}");
+				}
+			}
+			else {
+				ErrorMessage("Объект уже был удален!");
+			}
 			return RedirectToAction("CityList");
 		}
 
@@ -333,7 +365,26 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult RemoveRegion(int id)
 		{
-			SafeDelete<Region>(id);
+			var itemToDelete = DbSession.Query<Region>().FirstOrDefault(s => s.Id == id);
+			if (itemToDelete != null) {
+				var reasonNotToRemove = "";
+
+				if (itemToDelete.Children.Count > 0) {
+					reasonNotToRemove += $" <p>- Дочернии регионы ({itemToDelete.Children.Count}): {string.Join(", ", itemToDelete.Children.Select(s => s.Name).ToList()).CutAfter(500)}.</p> ";
+				}
+				if (itemToDelete.Streets.Count > 0) {
+					reasonNotToRemove += $" <p>- Улицы ({itemToDelete.Streets.Count}): {string.Join(", ", itemToDelete.Streets.Select(s => s.Name).ToList()).CutAfter(500)}.</p> ";
+				}
+				if (reasonNotToRemove == string.Empty) {
+					SafeDelete<Region>(id);
+				}
+				else {
+					ErrorMessage($"<p>Невозможно удалить регион, т.к. существуют зависимые </p> {reasonNotToRemove}");
+				}
+			}
+			else {
+				ErrorMessage("Объект уже был удален!");
+			}
 			return RedirectToAction("RegionList");
 		}
 
@@ -344,7 +395,37 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult RemoveStreet(int id)
 		{
-			SafeDelete<Street>(id);
+			var itemToDelete = DbSession.Query<Street>().FirstOrDefault(s => s.Id == id);
+			if (itemToDelete != null) {
+				var reasonNotToRemove = "";
+
+				var childrenElementsSwitch = DbSession.Query<SwitchAddress>().Where(s => s.Street.Id == id).ToList();
+
+				var houseList = DbSession.Query<House>().Where(s => (s.Region == null || itemToDelete.Region.Id == s.Region.Id) &&
+				                                                    ((s.Street.Region.Id == itemToDelete.Region.Id && s.Street.Id == itemToDelete.Id) || (s.Street.Id == itemToDelete.Id && s.Region.Id == itemToDelete.Region.Id)) &&
+				                                                    (s.Street.Region.Id == itemToDelete.Region.Id && s.Region == null || (s.Street.Id == itemToDelete.Id && s.Region.Id == itemToDelete.Region.Id))
+					).Select(s => s.Number).OrderBy(s => s).ToList();
+
+				if (itemToDelete.Houses.Count > 0) {
+					reasonNotToRemove += $" <p>- Дома ({houseList.Count}): {string.Join(", ", houseList).CutAfter(500)}.</p> ";
+				}
+
+				if (childrenElementsSwitch.Count > 0) {
+					reasonNotToRemove += $" <p>- На улице находятся коммутаторы ({childrenElementsSwitch.Count}) :" +
+					                     $" {string.Join(", ", childrenElementsSwitch.Select(s => $"<a class='inline' target='_blank' href='{Url.Action("EditSwitchAddress", "Address", new { @id = s.Id })}'>{s.NetworkNode.Name}</a>").ToList()).CutAfter(500)}.</p> ";
+				}
+				if (reasonNotToRemove == string.Empty) {
+					DbSession.Delete(itemToDelete);
+					SuccessMessage("Улица успешно удалена!");
+				}
+				else {
+					ErrorMessage($"<p>Невозможно удалить улицу {itemToDelete.Name}, т.к. существуют зависимые </p> {reasonNotToRemove}");
+				}
+			}
+			else {
+				ErrorMessage("Улица уже была удалена!");
+			}
+
 			return RedirectToAction("StreetList");
 		}
 
@@ -355,7 +436,33 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult RemoveHouse(int id)
 		{
-			SafeDelete<House>(id);
+			var itemToDelete = DbSession.Query<House>().FirstOrDefault(s => s.Id == id);
+			var childrenElements = DbSession.Query<Client>().Where(s => s.PhysicalClient.Address.House.Id == id).ToList();
+			var childrenElementsSwitch = DbSession.Query<SwitchAddress>().Where(s => s.House.Id == id).ToList();
+
+			if (itemToDelete != null) {
+				var reasonNotToRemove = "";
+
+				if (childrenElements.Count > 0) {
+					reasonNotToRemove += $" <p>- В доме зарегистрированы клиенты ({childrenElements.Count}) :" +
+					                     $" {string.Join(", ", childrenElements.Select(s => $"<a class='inline' target='_blank' href='{Url.Action((s.PhysicalClient != null ? "InfoPhysical" : "InfoLegal"), "Client", new { @id = s.Id })}'>{s.Id}</a>").ToList()).CutAfter(500)}.</p> ";
+				}
+
+				if (childrenElementsSwitch.Count > 0) {
+					reasonNotToRemove += $" <p>- В доме находятся коммутаторы ({childrenElementsSwitch.Count}) :" +
+					                     $" {string.Join(", ", childrenElementsSwitch.Select(s => $"<a class='inline' target='_blank' href='{Url.Action("EditSwitchAddress", "Address", new { @id = s.Id })}'>{s.NetworkNode.Name}</a>").ToList()).CutAfter(500)}.</p> ";
+				}
+				if (reasonNotToRemove == string.Empty) {
+					DbSession.Delete(itemToDelete);
+					SuccessMessage("Объект успешно удален!");
+				}
+				else {
+					ErrorMessage($"<p>Невозможно удалить дом '{itemToDelete.Number}' по улице '{itemToDelete.Street.Name}', потому что </p> {reasonNotToRemove}");
+				}
+			}
+			else {
+				ErrorMessage("Объект уже был удален!");
+			}
 			return RedirectToAction("HouseList");
 		}
 
@@ -380,23 +487,29 @@ namespace InforoomControlPanel.Controllers
 		/// Создание нового адреса улицы
 		/// </summary>
 		[HttpPost]
-		public ActionResult CreateStreet([EntityBinder] Street Street, string yandexStreet, string yandexPosition)
+		public ActionResult CreateStreet([EntityBinder] Street street, string yandexStreet, string yandexPosition)
 		{
 			//По возможности используем формализацию яндекса
-			if (Street.Confirmed) {
-				Street.Name = yandexStreet;
-				Street.Geomark = yandexPosition;
+			if (street.Confirmed) {
+				street.Name = yandexStreet;
+				street.Geomark = yandexPosition;
 			}
 
-			var errors = ValidationRunner.ValidateDeep(Street);
+			var errors = ValidationRunner.ValidateDeep(street);
 			if (errors.Length == 0) {
-				DbSession.Save(Street);
-				SuccessMessage("Улица успешно добавлена");
-				return RedirectToAction("StreetList");
+				if (DbSession.Query<Street>().Any(s => s.Name == street.Name && s.Region.Id == street.Region.Id)) {
+					ErrorMessage($"Улица с названием '{street.Name}' В регионе '{street.Region.Name}' уже существует!");
+				}
+				else {
+					DbSession.Save(street);
+					SuccessMessage("Улица успешно добавлена");
+					return RedirectToAction("StreetList");
+				}
 			}
 
 			CreateStreet();
-			ViewBag.Street = Street;
+			PreventSessionUpdate();
+			ViewBag.Street = street;
 			return View("CreateStreet");
 		}
 
@@ -405,32 +518,38 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult EditStreet(int id)
 		{
-			var Street = DbSession.Get<Street>(id);
+			var street = DbSession.Get<Street>(id);
 			var regions = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
-			ViewBag.Region = Street.Region;
+			ViewBag.Region = street.Region;
 			ViewBag.Regions = regions;
-			ViewBag.Street = Street;
+			ViewBag.Street = street;
 			return View("CreateStreet");
 		}
 
 		[HttpPost]
-		public ActionResult EditStreet([EntityBinder] Street Street, string yandexStreet, string yandexPosition)
+		public ActionResult EditStreet([EntityBinder] Street street, string yandexStreet, string yandexPosition)
 		{
 			//По возможности используем формализацию яндекса
-			if (Street.Confirmed) {
-				Street.Name = yandexStreet;
-				Street.Geomark = yandexPosition;
+			if (street.Confirmed) {
+				street.Name = yandexStreet;
+				street.Geomark = yandexPosition;
 			}
 
-			var errors = ValidationRunner.ValidateDeep(Street);
+			var errors = ValidationRunner.ValidateDeep(street);
 			if (errors.Length == 0) {
-				DbSession.Save(Street);
-				SuccessMessage("Улица успешно изменена");
-				return RedirectToAction("StreetList");
+				if (DbSession.Query<Street>().Any(s => s.Name == street.Name && s.Region.Id == street.Region.Id && s.Id != street.Id)) {
+					ErrorMessage($"Улица с названием '{street.Name}' В регионе '{street.Region.Name}' уже существует!");
+				}
+				else {
+					DbSession.Save(street);
+					SuccessMessage("Улица успешно изменена");
+					return RedirectToAction("StreetList");
+				}
 			}
 
-			EditStreet(Street.Id);
-			ViewBag.Street = Street;
+			EditStreet(street.Id);
+			PreventSessionUpdate();
+			ViewBag.Street = street;
 			return View("CreateStreet");
 		}
 
@@ -489,13 +608,20 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			var errors = ValidationRunner.Validate(House);
+
 			if (errors.Length == 0) {
-				DbSession.Save(House);
-				SuccessMessage("Дом успешно добавлен");
-				return RedirectToAction("HouseList");
+				if (DbSession.Query<House>().Any(s => s.Number == House.Number && s.Street.Id == House.Street.Id && s.Id != House.Id)) {
+					ErrorMessage($"Дом под номером '{House.Number}' на улице '{House.Street.Name}' уже существует!");
+				}
+				else {
+					DbSession.Save(House);
+					SuccessMessage("Дом успешно добавлен");
+					return RedirectToAction("HouseList");
+				}
 			}
 
 			CreateHouse(House.Id);
+			PreventSessionUpdate();
 			ViewBag.House = House;
 			return View("CreateHouse");
 		}
@@ -511,15 +637,24 @@ namespace InforoomControlPanel.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult EditCity([EntityBinder] City City)
+		public ActionResult EditCity(City City)
 		{
+			var currentCity = DbSession.Get<City>(City.Id);
 			var errors = ValidationRunner.Validate(City);
 			if (errors.Length == 0) {
-				DbSession.Save(City);
-				SuccessMessage("Город успешно изменен");
-				return RedirectToAction("CityList");
+				if (DbSession.Query<City>().Any(s => s.Name == City.Name && s.Id != City.Id)) {
+					ErrorMessage($"Город с названием '{City.Name}' уже существует!");
+				}
+				else {
+					if (currentCity != null) {
+						currentCity.Name = City.Name;
+					}
+					DbSession.Save(currentCity);
+					SuccessMessage("Город успешно изменен");
+					return RedirectToAction("CityList");
+				}
 			}
-
+			PreventSessionUpdate();
 			EditCity(City.Id);
 			ViewBag.City = City;
 			return View();
@@ -547,13 +682,21 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult EditRegion([EntityBinder] Region Region)
 		{
 			var errors = ValidationRunner.Validate(Region);
-			if (errors.Length == 0) {
-				DbSession.Save(Region);
-				SuccessMessage("Регион успешно изменен");
-				return RedirectToAction("RegionList");
+			if (Region.Parent != null && Region.Parent.Id == 0) {
+				Region.Parent = null;
 			}
-
+			if (errors.Length == 0) {
+				if (DbSession.Query<Region>().Any(s => s.Name == Region.Name && s.Id != Region.Id)) {
+					ErrorMessage($"Регион с названием '{Region.Name}' уже существует!");
+				}
+				else {
+					DbSession.Save(Region);
+					SuccessMessage("Регион успешно изменен");
+					return RedirectToAction("RegionList");
+				}
+			}
 			EditCity(Region.Id);
+			PreventSessionUpdate();
 			ViewBag.Region = Region;
 			return View();
 		}
@@ -584,13 +727,20 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			var errors = ValidationRunner.Validate(House);
+
 			if (errors.Length == 0) {
-				DbSession.Save(House);
-				SuccessMessage("Дом успешно изменен");
-				return RedirectToAction("HouseList");
+				if (DbSession.Query<House>().Any(s => s.Number == House.Number && s.Street.Id == House.Street.Id && s.Id != House.Id)) {
+					ErrorMessage($"Дом под номером '{House.Number}' на улице '{House.Street.Name}' уже существует!");
+				}
+				else {
+					DbSession.Save(House);
+					SuccessMessage("Дом успешно изменен");
+					return RedirectToAction("HouseList");
+				}
 			}
 
 			EditHouse(House.Id);
+			PreventSessionUpdate();
 			ViewBag.House = House;
 			return View("CreateHouse");
 		}

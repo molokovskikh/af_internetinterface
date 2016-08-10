@@ -792,10 +792,10 @@ namespace InforoomControlPanel.Controllers
 				SuccessMessage("Адрес изменен успешно");
 
 				//для тестов просто редирект - TODO: поправить, когда перенесется админка.
-				//if (ConfigHelper.GetParam("PhysicalAddressEditingFlag", true) != null &&
-				//    ConfigHelper.GetParam("PhysicalAddressEditingFlag") == "true") {
-				//	return RedirectToAction("InfoPhysical", new { @Id = client.Id, @subViewName = subViewName });
-				//}
+#if DEBUG 
+				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+					new { @Id = client.Id, @subViewName = subViewName });
+#endif
 
 				return Redirect(ConfigHelper.GetParam("adminPanelOld") +
 				                "Clients/UpdateAddressByClient?clientId=" + client.Id +

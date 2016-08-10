@@ -20,7 +20,7 @@ namespace InforoomControlPanel.Test.Functional.Address
             var row = targethouse.FindElement(By.XPath(".."));
             var button = row.FindElement(By.CssSelector("a.btn-red"));
             button.Click();
-            AssertText("Объект не удалось удалить! Возможно уже был связан с другими объектами.");
+            AssertText("Невозможно удалить дом");
             //проверяем что в базе данных дом не удалился
             var deleteHouse = DbSession.Query<House>().FirstOrDefault(p => p.Id == house.Id);
             Assert.That(deleteHouse, Is.Not.Null, "Дом не должен удалиться в базе данных");

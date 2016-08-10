@@ -27,6 +27,7 @@
 .black{color: #333!important;}
 .red{color:#E60000!important;}
 .blue{color:#1091d4!important;}
+.inline{display: inline-block;}
  .listItem.gray:hover{background: #E2E2E2 !important;}
  .error{color:red; font-weight:600 !important;}
  .servicemen table { table-layout:fixed; overflow:hidden;}
