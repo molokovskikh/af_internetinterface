@@ -311,7 +311,6 @@ namespace Inforoom2.Models
 				newStateOfEndpoint.ConnectionHelper = connection;
 				newStateOfEndpoint.EmployeeId = employee.Id;
 				currentOrder.EndPointFutureState = newStateOfEndpoint;
-				return "";
 			}
 
 			if (currentOrder.EndPoint != null && currentOrder.EndPoint.Id != 0 && currentEndpoint != null && currentEndpoint.Id != 0 && currentEndpoint.Id != currentOrder.EndPoint.Id) {
@@ -439,7 +438,8 @@ namespace Inforoom2.Models
 						currentOrder.UpdateStaticAddressList(ref currentEndpoint, staticAddress, employee);
 					}
 					else {
-						if (!(currentEndpoint.StaticIpList.Count == staticAddress.Length && currentEndpoint.StaticIpList.Any(s => staticAddress.Any(f => f.Ip == s.Ip && f.Mask == s.Mask)))) {
+						if (!(currentEndpoint.StaticIpList.Count == staticAddress.Length
+						      && (currentEndpoint.StaticIpList.Count == 0 || currentEndpoint.StaticIpList.Any(s => staticAddress.Any(f => f.Ip == s.Ip && f.Mask == s.Mask))))) {
 							var newStateOfEndpoint = new EndpointStateBox();
 							newStateOfEndpoint.EmployeeId = employee.Id;
 							newStateOfEndpoint.ConnectionHelper = null;

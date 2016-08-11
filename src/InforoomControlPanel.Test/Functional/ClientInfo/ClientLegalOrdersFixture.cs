@@ -649,6 +649,45 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Assert.IsTrue(CurrentClient.LegalClientOrders.Count(s => s.IsActivated && s.IsDeactivated) == 1);
 			Assert.IsTrue(CurrentClient.Endpoints.Count == 2);
 			Assert.IsTrue(CurrentClient.Endpoints.Any(s => s.Id == orderCurrent.EndPoint.Id && s.Disabled));
+
+			UpdateDBSession();
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			//создаем новый заказ без статических адресов
+			OrderWithConnection(false);
+			UpdateDBSession();
+
+			orderCurrent = CurrentClient.LegalClientOrders.OrderByDescending(s => s.Id).First();
+			currentEndpoint = orderCurrent.EndPoint;
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(orderCurrent);
+			DbSession.Refresh(orderCurrent.EndPoint);
+
+			var newEndpointId = currentEndpoint.Id;
+
+			var oldEndpoint = CurrentClient.Endpoints.First(s => s.Disabled == false && s.IsEnabled == true);
+			Assert.That(currentEndpoint.IsEnabled, Is.EqualTo(null));
+			Assert.That(currentEndpoint.Disabled, Is.EqualTo(true));
+
+			//Редактирование заказа изменяем основные значения (коммутатор, порт), должна создаться новая точка подключения
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			WaitForText("Номер лицевого счета", 10);
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  a[title='Редактировать заказ']").Click();
+			WaitForText("Редактирование заказа", 10);
+
+			WaitForVisibleCss(blockModelName + $"[name='order.EndPoint.Id'] option[value='{oldEndpoint.Id}']", 60);
+
+			WaitForVisibleCss(blockModelName + ".port.free[title='свободный порт']", 60);
+			Css(blockModelName + "[name='order.EndPoint.Id']").SelectByText(oldEndpoint.Id.ToString());
+			WaitAjax();
+			WaitForVisibleCss(blockModelName + ".port.free[title='свободный порт']", 60);
+
+			//сохранение изменений
+			browser.FindElementByCssSelector(blockModelName + ".btn-success").Click();
+			UpdateDBSession();
+			DbSession.Refresh(CurrentClient);
+			Assert.That(DbSession.Query<ClientEndpoint>().Any(s => s.Id == newEndpointId), Is.EqualTo(false));
 		}
 	}
 }
