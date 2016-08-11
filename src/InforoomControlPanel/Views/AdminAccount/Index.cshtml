@@ -1,7 +1,8 @@
-﻿@model dynamic
+﻿@using Common.Tools
+@model dynamic
 
 @{
-	ViewBag.Title = "title";
+	ViewBag.Title = "";
 
 	string username = string.Empty;
 	string password = string.Empty;
@@ -12,7 +13,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<meta name="description" content="Neon Admin Panel"/>
+	<meta name="description" content="Admin Panel"/>
 	<meta name="author" content=""/>
 
 	<title>Inforoom | Панель управления</title>
@@ -39,7 +40,7 @@
 
 
 </head>
-<body class="page-body login-page login-form-fall" data-url="http://neon.dev">
+<body class="page-body login-page login-form-fall">
 
 
 <!-- This is needed when you send requests via Ajax -->
@@ -52,11 +53,7 @@
 	<div class="login-header login-caret server-message">
 
 		<div class="login-content ">
-
-			<a href="index.html" class="logo">
-				<img src="~/assets/images/logo@2x.png" width="120" alt=""/>
-			</a>
-
+ 
 			<p class="description">Добро пожаловать. Вам необходимо ввести пароль, чтобы получить доступ к панели управления.</p>
 
 			<!-- progress bar indicator -->
@@ -116,11 +113,10 @@
 
 			<div class="login-bottom-links">
 
-				<a href="extra-forgot-password.html" class="link">Забыли пароль?</a>
 
 				<br/>
 
-				<a href="#">Инфорум</a> - <a href="#">2015</a>
+				<a href="#">Инфорум</a> - <a href="#">@SystemTime.Now().Year</a>
 
 			</div>
 

@@ -45,7 +45,19 @@
 				@foreach (var item in client.Contacts) {
 					<tr>
 						<td>
-							<span>@item.ContactPhoneSplitFormat</span></td>
+							@if (item.Type == ContactType.ConnectedPhone
+									 || item.Type == ContactType.FinancePhone
+									 || item.Type == ContactType.HeadPhone
+									 || item.Type == ContactType.MobilePhone
+									 || item.Type == ContactType.HousePhone
+									 || item.Type == ContactType.TechPhone
+									 || item.Type == ContactType.SmsSending) {
+								<a href="sip:8@(item.ContactFormatString)"><span>@item.ContactPhoneSplitFormat</span></a>
+							}
+							else {
+								<span>@item.ContactPhoneSplitFormat</span>
+							}
+						</td>
 						<td>
 							<span>@item.Type.GetDescription()</span></td>
 						<td>
