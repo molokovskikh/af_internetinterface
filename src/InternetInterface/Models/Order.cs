@@ -231,21 +231,22 @@ namespace InternetInterface.Models
 					var newEndPointState = newEndPointStateRaw;
 					var connection = newEndPointState.ConnectionHelper;
 					//обновляем значения Endpoint
-					currentEndpoint.PackageId = connection.PackageId;
-					currentEndpoint.Monitoring = connection.Monitoring;
-					currentEndpoint.Pool = (connection.Pool.HasValue ? (uint?)Convert.ToUInt32(connection.Pool.Value) : null);
+					if (connection != null) {
+						currentEndpoint.PackageId = connection.PackageId;
+						currentEndpoint.Monitoring = connection.Monitoring;
+						currentEndpoint.Pool = (connection.Pool.HasValue ? (uint?)Convert.ToUInt32(connection.Pool.Value) : null);
 
-					//Обновляем фиксированный Ip
-					IPAddress address;
-					if (connection.StaticIp != null && IPAddress.TryParse(connection.StaticIp, out address)) {
-						if (currentEndpoint.Ip == null) {
-							SetStaticIpAsOrderService(dbSession, this, connection.StaticIp);
+						//Обновляем фиксированный Ip
+						IPAddress address;
+						if (connection.StaticIp != null && IPAddress.TryParse(connection.StaticIp, out address)) {
+							if (currentEndpoint.Ip == null) {
+								SetStaticIpAsOrderService(dbSession, this, connection.StaticIp);
+							}
+							currentEndpoint.Ip = address;
 						}
-						currentEndpoint.Ip = address;
+						else
+							currentEndpoint.Ip = null;
 					}
-					else
-						currentEndpoint.Ip = null;
-
 					Partner currentPartner = null;
 #if DEBUG
 					currentPartner = dbSession?.Query<Partner>().FirstOrDefault(s => s.Id == newEndPointState.EmployeeId); //условие для поддержки старых тестов
@@ -253,7 +254,7 @@ namespace InternetInterface.Models
 				currentPartner = dbSession.Query<Partner>().FirstOrDefault(s => s.Id == newEndPointState.EmployeeId);
 #endif
 					//Обновляем статические Ip
-					UpdateStaticAddressList(ref currentEndpoint, newEndPointState.StaticIpList, currentPartner);
+					UpdateStaticAddressList(ref currentEndpoint, newEndPointState.StaticIpList ?? new StaticIp[0], currentPartner);
 				}
 				EndPointFutureState = null;
 			}
@@ -284,6 +285,7 @@ namespace InternetInterface.Models
 			Client.Appeals.Add(new Appeals() { Appeal = String.Format("Деактивирован заказ {0}", Description), AppealType = AppealType.System, Date = SystemTime.Now(), Client = Client });
 			if (EndPoint != null) {
 				if (!Client.Orders.Where(s => s.IsDeactivated == false && s.Id != this.Id).Select(x => x.EndPoint).Contains(EndPoint)) {
+					Client.Appeals.Add(new Appeals() { Appeal = $"Точка подключения №{EndPoint.Id} (коммутатор: {EndPoint.Switch?.Id} - {EndPoint.Switch?.Name}, порт: {EndPoint.Port}) была деактивирована.", AppealType = AppealType.System, Date = SystemTime.Now(), Client = Client });
 					if (dbSession == null) {
 						ConnectionAddress = ConnectionAddress + $" (коммутатор: {EndPoint.Switch?.Id} - {EndPoint.Switch?.Name}, порт: {EndPoint.Port})";
 						EndPoint.Switch = null;
@@ -292,7 +294,7 @@ namespace InternetInterface.Models
 					}
 					else {
 						dbSession.CreateSQLQuery("UPDATE internet.clientendpoints SET Disabled = 1 , Switch = null , Port = null WHERE Id = " + EndPoint.Id).UniqueResult();
-						dbSession.CreateSQLQuery($"UPDATE internet.orders SET ConnectionAddress = ' (коммутатор: {EndPoint.Switch?.Id} - {EndPoint.Switch?.Name}, порт: {EndPoint.Port}) ' WHERE Id = " + EndPoint.Id).UniqueResult();
+						dbSession.CreateSQLQuery($"UPDATE internet.orders SET ConnectionAddress = ' (коммутатор: {EndPoint.Switch?.Id} - {EndPoint.Switch?.Name}, порт: {EndPoint.Port}) ' WHERE Id = {Id}").UniqueResult();
 					}
 				}
 			}

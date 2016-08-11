@@ -73,7 +73,7 @@ namespace Inforoom2.Controllers
 #endif
 				ClientEndpoint currentEnpoint = null;
 				if (lease != null) {
-					currentEnpoint = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => !s.Disabled && s.Switch.Id == lease.Switch.Id && s.Port == lease.Port);
+					currentEnpoint = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Switch.Id == lease.Switch.Id && s.Port == lease.Port);
 					if (currentEnpoint != null) {
 						ErrorMessage("Ошибка: точка подключения не задана!");
 						var email = ConfigurationManager.AppSettings["ErrorNotifierMail"];
@@ -84,8 +84,7 @@ namespace Inforoom2.Controllers
 							$"При создании точки подключения для клиента {href} выяснилось, <br/>что на порту коммутатора уже находится точка подключения {currentEnpoint.Id}");
 					}
 				}
-				if (CurrentClient.Endpoints.Count(s => !s.Disabled) == 0 && lease != null && currentEnpoint == null) {
-					//var settings = new Settings(session);
+				if (CurrentClient.Endpoints.Count == 0 && lease != null && currentEnpoint == null) {
 					if (string.IsNullOrEmpty(lease.Switch.Name)) {
 						var addr = CurrentClient.PhysicalClient.Address;
 						if (addr != null)

@@ -711,17 +711,16 @@ namespace Inforoom2.Models
 			return true;
 		}
 
-		public virtual bool RemoveEndpoint(ClientEndpoint endpoint, ISession dbSession)
+		public virtual string RemoveEndpoint(ClientEndpoint endpoint, ISession dbSession)
 		{
-			//		if (Endpoints.Count(s => !s.Disabled) > 1 || LegalClient != null) 
-
+			var connectionAddress = $" коммутатор: {endpoint.Switch?.Id} - {endpoint.Switch?.Name}, порт: {endpoint.Port}";
 			endpoint.Switch = null;
 			endpoint.Port = 0;
 
 			endpoint.Disabled = true;
 			dbSession.Save(endpoint);
 			dbSession.Flush();
-			return true;
+			return connectionAddress;
 		}
 
 		/// <summary>

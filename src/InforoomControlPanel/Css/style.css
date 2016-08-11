@@ -3,6 +3,7 @@
 	.main-content .servicemen.panel, .PrintTimeTable{ display: block !important;}
 	.pageBreak {page-break-after: always;} 
 } 
+ .endpointStateChanged td{background: #ffffbf !important;}
  .red-h { color: #ce2205 !important;}
  .padding-bt-10{ padding-bottom: 10px;}
  .backIsRed td{ background: #ffebeb !important;}

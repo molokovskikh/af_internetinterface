@@ -387,13 +387,12 @@ namespace InforoomControlPanel.Controllers
 				ErrorMessage("Точка подключения не может быть деактивирована, т.к. она используется в других действующих заказах.");
 			}
 			else {
-				endpoint.Client.RemoveEndpoint(endpoint, DbSession);
+				var connectionAddress = endpoint.Client.RemoveEndpoint(endpoint, DbSession);
 				DbSession.Save(endpoint.Client);
-				SuccessMessage("Точка подключения была успешно деактивирована.");
-				endpoint.Client.Appeals.Add(new Appeal($"Точка подключения №{endpointId} была деактивирована.",
+				SuccessMessage($"Точка подключения №{endpointId} была успешно деактивирована.");
+				endpoint.Client.Appeals.Add(new Appeal($"Точка подключения №{endpointId} ({connectionAddress}) была деактивирована.",
 					endpoint.Client, AppealType.Statistic, GetCurrentEmployee()));
 			}
-			//	DbSession.Save(new Appeal("", endpoint.Client, AppealType.System));
 			return RedirectToAction("InfoLegal", new { endpoint.Client.Id });
 		}
 

@@ -29,14 +29,16 @@
 	</div>
 	<table id="table-2" class="table hiddenOverflow table-bordered table-striped datatable no-footer clientTable border-right-white tableFullWidth" role="grid" aria-describedby="table-2_info">
 		<tbody>
-		<tr>
-			<td>
-				<a target="_blank" href="@Url.Action("EditSwitch", "Switch", new { endpoint.Switch.Id })"> Коммутатор</a>
-			</td>
-			<td>
-				<a target="_blank" href="@Url.Action("ClientEndPointState", "Switch", new { id = endpoint.Id })">@(endpoint.Switch.Name + " (" + endpoint.Switch.Ip.ToString() + ")")</a>
-			</td>
-		</tr>
+		@if (endpoint.Switch != null) {
+			<tr>
+				<td>
+					<a target="_blank" href="@Url.Action("EditSwitch", "Switch", new { endpoint.Switch.Id })"> Коммутатор</a>
+				</td>
+				<td>
+					<a target="_blank" href="@Url.Action("ClientEndPointState", "Switch", new { id = endpoint.Id })">@(endpoint.Switch.Name + " (" + endpoint.Switch.Ip.ToString() + ")")</a>
+				</td>
+			</tr>
+		}
 		<tr>
 			<td>Порт</td>
 			<td>
@@ -59,7 +61,7 @@
 			</tr>
 		}
 		@if (futureState != null && futureState.ConnectionHelper != null && !string.IsNullOrEmpty(futureState.ConnectionHelper.StaticIp)) {
-			<tr>
+			<tr @(futureState.ConnectionHelper.StaticIp != (endpoint.Ip != null ? @endpoint.Ip.MapToIPv4().ToString() : "") ? "class=endpointStateChanged" : "")>
 				<td>Фиксированный IP</td>
 				<td>
 					<span>@futureState.ConnectionHelper.StaticIp</span>
@@ -83,7 +85,7 @@
 				</td>
 			</tr>
 		}
-		<tr>
+		<tr @((futureState != null && futureState.ConnectionHelper != null && futureState.ConnectionHelper.Pool != (endpoint.Pool != null ? (int?)endpoint.Pool.Id : null)) ? "class=endpointStateChanged" : "")>
 			<td>IP-пул</td>
 			<td>
 				@if (futureState != null && futureState.ConnectionHelper != null && futureState.ConnectionHelper.Pool != null) {
@@ -101,8 +103,8 @@
 			</td>
 		</tr>
 		<tr>
-			<td> 
-					<a class="c-pointer blue addressAjaxRunner" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForUpdateConnectionAddress" onclick="GetOrderConnectionAddress('@order.Id')">Адрес подключения <span> ( редактировать )</span></a>
+			<td>
+				<a class="c-pointer blue addressAjaxRunner" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForUpdateConnectionAddress" onclick="GetOrderConnectionAddress('@order.Id')">Адрес подключения <span> ( редактировать )</span></a>
 			</td>
 			<td>
 				@order.ConnectionAddress
@@ -126,7 +128,7 @@
 				</td>
 			</tr>
 		}
-		<tr>
+		<tr @((futureState != null && futureState.ConnectionHelper != null && futureState.ConnectionHelper.PackageId != endpoint.PackageId) ? "class=endpointStateChanged" : "")>
 			<td>Скорость</td>
 			<td>
 
@@ -139,7 +141,7 @@
 				}
 			</td>
 		</tr>
-		<tr>
+		<tr @((futureState != null && futureState.ConnectionHelper != null && futureState.ConnectionHelper.Monitoring != endpoint.Monitoring) ? "class=endpointStateChanged" : "")>
 			<td>Мониторинг</td>
 			<td>
 				@if (futureState != null && futureState.ConnectionHelper != null && futureState.ConnectionHelper.Monitoring != endpoint.Monitoring) {
@@ -151,7 +153,7 @@
 			</td>
 		</tr>
 		@if (endpoint.StaticIpList.Count > 0 || futureState != null && futureState.StaticIpList != null && futureState.StaticIpList.Count() > 0) {
-			<tr>
+			<tr @((futureState != null && futureState.StaticIpList != null && futureState.StaticIpList.GetHashCode() != endpoint.StaticIpList.GetHashCode()) ? "class=endpointStateChanged" : "")>
 				<td>Статические адреса</td>
 				<td>
 					<div class="ipStaticList">

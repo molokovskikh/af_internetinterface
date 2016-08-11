@@ -429,11 +429,24 @@ namespace Inforoom2.Models
 						currentEndpoint.Ip = null;
 
 					currentOrder.EndPoint = currentEndpoint;
+					var newEndpointCreated = false;
 					if (currentEndpoint.Id == 0) {
+						newEndpointCreated = true;
 						client.Endpoints.Add(currentEndpoint);
 					}
 					dbSession.Save(currentEndpoint);
-					currentOrder.UpdateStaticAddressList(ref currentEndpoint, staticAddress, employee);
+					if (newEndpointCreated) {
+						currentOrder.UpdateStaticAddressList(ref currentEndpoint, staticAddress, employee);
+					}
+					else {
+						if (!(currentEndpoint.StaticIpList.Count == staticAddress.Length && currentEndpoint.StaticIpList.Any(s => staticAddress.Any(f => f.Ip == s.Ip && f.Mask == s.Mask)))) {
+							var newStateOfEndpoint = new EndpointStateBox();
+							newStateOfEndpoint.EmployeeId = employee.Id;
+							newStateOfEndpoint.ConnectionHelper = null;
+							newStateOfEndpoint.StaticIpList = staticAddress;
+							currentOrder.EndPointFutureState = newStateOfEndpoint;
+						}
+					}
 				}
 				else {
 					currentOrder.EndPoint = currentEndpoint;

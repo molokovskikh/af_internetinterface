@@ -49,7 +49,7 @@
 										@{
 											var comment = orderList[i].EndPoint == null && orderList[i].OrderServices.Count > 0 ? orderList[i].OrderServices.FirstOrDefault().Description : "";
 											comment = orderList[i].EndPoint != null && !string.IsNullOrEmpty(orderList[i].ConnectionAddress)
-												? orderList[i].ConnectionAddress : (orderList[i].EndPoint != null ? orderList[i].EndPoint.Switch.Name + " (порт " + orderList[i].EndPoint.Port + ")" : comment);
+												? orderList[i].ConnectionAddress : (orderList[i].EndPoint != null && orderList[i].EndPoint.Switch != null? orderList[i].EndPoint.Switch.Name + " (порт " + orderList[i].EndPoint.Port + ")" : comment);
 											}
 										<span class="gray left" title="@comment">
 												@comment.CutAfter(40)

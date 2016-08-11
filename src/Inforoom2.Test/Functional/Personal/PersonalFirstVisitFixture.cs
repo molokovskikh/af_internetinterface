@@ -40,13 +40,14 @@ namespace Inforoom2.Test.Functional.Personal
 
 			Client = DbSession.Query<Client>().ToList().First(i => i.Comment == clientMark);
 			Client.Disabled = true;
-			DbSession.Save(Client);
+			Client.Endpoints.RemoveEach(Client.Endpoints);
+      DbSession.Save(Client);
 			DbSession.Flush();
 			var internet = Client.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Internet);
 			var iptv = Client.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Iptv);
 
 			Assert.That(Client.Lunched, Is.False);
-			Assert.That(Client.Endpoints.Count(s => !s.Disabled), Is.EqualTo(0));
+			Assert.That(Client.Endpoints.Count, Is.EqualTo(0));
 			Assert.That(internet.IsActivated, Is.False);
 			Assert.That(iptv.IsActivated, Is.False);
 
