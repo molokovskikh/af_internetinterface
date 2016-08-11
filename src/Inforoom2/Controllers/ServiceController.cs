@@ -215,7 +215,7 @@ namespace Inforoom2.Controllers
 			client.PhysicalClient.Plan = plan;
 			client.SetStatus(StatusType.Worked, DbSession);
 			if (client.Internet.ActivatedByUser)
-				client.Endpoints.ForEach(e => e.PackageId = plan.PackageSpeed.PackageId);
+				client.Endpoints.Where(s=>!s.Disabled).ForEach(e => e.PackageId = plan.PackageSpeed.PackageId);
 			DbSession.Save(client);
 			SuccessMessage("Тариф успешно изменен.");
 			// добавление записи в историю тарифов пользователя

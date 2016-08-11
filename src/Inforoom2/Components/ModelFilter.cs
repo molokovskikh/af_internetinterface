@@ -679,12 +679,14 @@ namespace Inforoom2.Components
 		/// <param name="type">Тип HTML контрола</param>
 		/// <param name="additional">Дополнительные параметры</param>
 		/// <returns></returns>
-		public HtmlString FormFilterManual(string name, HtmlType type, object additional = null, bool orderByValue = false, bool orderDesc = false)
+		public HtmlString FormFilterManual(string name, HtmlType type, object additional = null, bool orderByValue = false, bool orderDesc = false, string id = "")
 		{
 			var attrs = new Dictionary<string, string>();
 			if (Params[name] != null)
 				attrs["value"] = Params[name];
-
+			if (!string.IsNullOrEmpty(id)) {
+				attrs["id"] = id;
+			}
 			attrs["name"] = Prefix + "." + name;
 			attrs["class"] = "form-control";
 			PropertiesUsedInFilter.Add(name);

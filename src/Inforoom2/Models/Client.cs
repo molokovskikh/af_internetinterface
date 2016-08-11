@@ -21,7 +21,7 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Модель пользователя
 	/// </summary>
-	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof (Client)), Description("Клиент")]
+	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof(Client)), Description("Клиент")]
 	public class Client : BaseModel, ILogAppeal, IServicemenScheduleItem, IClientExpander
 	{
 		public Client()
@@ -54,7 +54,7 @@ namespace Inforoom2.Models
 
 		[Bag(0, Table = "ServicemenScheduleItems")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof (ServicemenScheduleItem))]
+		[OneToMany(2, ClassType = typeof(ServicemenScheduleItem))]
 		public virtual IList<ServicemenScheduleItem> ServicemenScheduleItems { get; set; }
 
 		/// <summary>
@@ -62,7 +62,7 @@ namespace Inforoom2.Models
 		/// </summary>
 		[Bag(0, Table = "ServiceRequest")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof (ServiceRequest))]
+		[OneToMany(2, ClassType = typeof(ServiceRequest))]
 		public virtual IList<ServiceRequest> ServiceRequests { get; protected set; }
 
 		public virtual ServicemenScheduleItem ConnectionRequest
@@ -133,7 +133,7 @@ namespace Inforoom2.Models
 		public virtual DateTime? StatusChangedOn { get; set; }
 
 		//дата начала работы клиента, выставляется, когда активируется точка подключения Биллингом, потом начинаются списания. 
-		[Property(Column = "BeginWork")]//раньше Description("Дата первой аренды -проставляется DHCP-сервером во время получения клиентом первой аренды")
+		[Property(Column = "BeginWork")] //раньше Description("Дата первой аренды -проставляется DHCP-сервером во время получения клиентом первой аренды")
 		public virtual DateTime? WorkingStartDate { get; set; }
 
 		[Property, Description("Дата, по которой определяется когда бесплатные дни должны обновиться")]
@@ -154,7 +154,7 @@ namespace Inforoom2.Models
 		[OneToOne(PropertyRef = "Client")]
 		public virtual PrivateMessage Message { get; set; }
 
-		[Property(Column = "RedmineTask"), Description("Задача в Redmine")  ]
+		[Property(Column = "RedmineTask"), Description("Задача в Redmine")]
 		public virtual string RedmineTask { get; set; }
 
 		[ManyToOne(Column = "Recipient", Cascade = "save-update")]
@@ -162,42 +162,42 @@ namespace Inforoom2.Models
 
 		[Bag(0, Table = "ClientServices", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof (ClientService))]
+		[OneToMany(2, ClassType = typeof(ClientService))]
 		public virtual IList<ClientService> ClientServices { get; set; }
 
 		[Bag(0, Table = "Payments")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof (Payment))]
+		[OneToMany(2, ClassType = typeof(Payment))]
 		public virtual IList<Payment> Payments { get; set; }
 
 		[Bag(0, Table = "ClientEndpoints", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "client")]
-		[OneToMany(2, ClassType = typeof (ClientEndpoint))]
+		[OneToMany(2, ClassType = typeof(ClientEndpoint))]
 		public virtual IList<ClientEndpoint> Endpoints { get; set; }
 
 		[Bag(0, Table = "Contacts", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "client")]
-		[OneToMany(2, ClassType = typeof (Contact)), ValidatorContacts]
+		[OneToMany(2, ClassType = typeof(Contact)), ValidatorContacts]
 		public virtual IList<Contact> Contacts { get; set; }
 
 		[Bag(0, Table = "UserWriteOffs", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof (UserWriteOff))]
+		[OneToMany(2, ClassType = typeof(UserWriteOff))]
 		public virtual IList<UserWriteOff> UserWriteOffs { get; set; }
 
 		[Bag(0, Table = "WriteOff", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof (WriteOff))]
+		[OneToMany(2, ClassType = typeof(WriteOff))]
 		public virtual IList<WriteOff> WriteOffs { get; set; }
 
 		[Bag(0, Table = "Appeals", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof (Appeal))]
+		[OneToMany(2, ClassType = typeof(Appeal))]
 		public virtual IList<Appeal> Appeals { get; set; }
 
 		[Bag(0, Table = "ClientRentalHardware", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Client")]
-		[OneToMany(2, ClassType = typeof (ClientRentalHardware))]
+		[OneToMany(2, ClassType = typeof(ClientRentalHardware))]
 		public virtual IList<ClientRentalHardware> RentalHardwareList { get; set; }
 
 		[Property(Column = "SendSmsNotifocation"), Description("СМС уведомление")]
@@ -217,7 +217,7 @@ namespace Inforoom2.Models
 		//TODO: перенесено из старой админки (нужен рефакторинг)
 		[Bag(0, Table = "Orders", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "ClientId")]
-		[OneToMany(2, ClassType = typeof (ClientOrder)), Description("Заказы")]
+		[OneToMany(2, ClassType = typeof(ClientOrder)), Description("Заказы")]
 		public virtual IList<ClientOrder> LegalClientOrders { get; set; }
 
 		public virtual string ClientId
@@ -246,7 +246,7 @@ namespace Inforoom2.Models
 
 		public virtual ClientService Internet
 		{
-			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof (Internet)); }
+			get { return ClientServices.First(s => NHibernateUtil.GetClass(s.Service) == typeof(Internet)); }
 		}
 
 		public virtual bool HasActiveService(Service service)
@@ -256,7 +256,7 @@ namespace Inforoom2.Models
 
 		public virtual ClientService FindActiveService<T>()
 		{
-			return ClientServices.FirstOrDefault(c => c.IsActivated && NHibernateUtil.GetClass(c.Service) == typeof (T));
+			return ClientServices.FirstOrDefault(c => c.IsActivated && NHibernateUtil.GetClass(c.Service) == typeof(T));
 		}
 
 		public virtual bool HasActiveService<T>()
@@ -277,11 +277,13 @@ namespace Inforoom2.Models
 		/// </summary>
 		public virtual void SyncServices(ISession session, SettingsHelper settings)
 		{
+			if (PhysicalClient == null)
+				return;
 			var service = settings.Services.OfType<FixedIp>().FirstOrDefault();
 			if (service == null)
 				return;
 
-			foreach (var endpoint in Endpoints) {
+			foreach (var endpoint in Endpoints.Where(s => !s.Disabled).ToList()) {
 				if (endpoint.Ip != null) {
 					TryActivate(session, service, endpoint);
 				}
@@ -298,14 +300,15 @@ namespace Inforoom2.Models
 		{
 			return RentalHardwareList.ToList().Exists(rh => rh.Hardware == hw && rh.IsActive);
 		}
-		 public virtual bool CanUseService(Service service)
+
+		public virtual bool CanUseService(Service service)
 		{
 			return service.IsActivableFor(this);
 		}
 
 		public virtual decimal GetInterval()
 		{
-			return (((DateTime) RatedPeriodDate).AddMonths(1) - (DateTime) RatedPeriodDate).Days + DebtDays;
+			return (((DateTime)RatedPeriodDate).AddMonths(1) - (DateTime)RatedPeriodDate).Days + DebtDays;
 		}
 
 		/// <summary>
@@ -314,15 +317,15 @@ namespace Inforoom2.Models
 		/// <returns>Расчётное кол-во дней работы без пополнения баланса</returns>
 		public virtual int GetWorkDays()
 		{
-			var priceInDay = Plan.Price/DateTime.Now.DaysInMonth(); // ToDo Улучшить алгоритм вычисления
-			return (int) Math.Floor(Balance/priceInDay);
+			var priceInDay = Plan.Price / DateTime.Now.DaysInMonth(); // ToDo Улучшить алгоритм вычисления
+			return (int)Math.Floor(Balance / priceInDay);
 		}
 
 		public virtual decimal GetSumForRegularWriteOff()
 		{
 			var daysInInterval = GetInterval();
 			var price = GetPrice();
-			return Math.Round(price/daysInInterval, 2);
+			return Math.Round(price / daysInInterval, 2);
 		}
 
 		public virtual decimal GetPrice()
@@ -344,7 +347,7 @@ namespace Inforoom2.Models
 			if (PhysicalClient.Plan == null || (!isBlocked && (WorkingStartDate == null || Disabled)))
 				return 0;
 
-			var prePrice = PhysicalClient.Plan.IgnoreDiscount? PhysicalClient.Plan.Price : AccountDiscounts(PhysicalClient.Plan.Price);
+			var prePrice = PhysicalClient.Plan.IgnoreDiscount ? PhysicalClient.Plan.Price : AccountDiscounts(PhysicalClient.Plan.Price);
 			var finalPrice = PhysicalClient.Plan.IgnoreDiscount ? PhysicalClient.Plan.Price : AccountDiscounts(PhysicalClient.Plan.FinalPrice);
 			if ((PhysicalClient.Plan.FinalPriceInterval == 0 || PhysicalClient.Plan.FinalPrice == 0))
 				return prePrice;
@@ -353,7 +356,7 @@ namespace Inforoom2.Models
 			    WorkingStartDate.Value.AddMonths(PhysicalClient.Plan.FinalPriceInterval) <= SystemTime.Now())
 				return finalPrice;
 			return prePrice;
-		} 
+		}
 
 		public virtual decimal ToPay(bool isBlocked = false)
 		{
@@ -381,13 +384,13 @@ namespace Inforoom2.Models
 		protected virtual decimal AccountDiscounts(decimal price)
 		{
 			if (Discount > 0)
-				price *= 1 - ((decimal)Discount)/100;
+				price *= 1 - ((decimal)Discount) / 100;
 			return price;
 		}
 
 		public virtual void SetStatus(StatusType status, ISession session)
 		{
-			SetStatus(session.Load<Status>((Int32) status));
+			SetStatus(session.Load<Status>((Int32)status));
 		}
 
 		public virtual void SetStatus(Status status)
@@ -550,7 +553,7 @@ namespace Inforoom2.Models
 
 		public virtual bool IsOnlineCheck()
 		{
-			var isOnLineFilter = Endpoints.FirstOrDefault()?.LeaseList.FirstOrDefault()?.LeaseEnd;
+			var isOnLineFilter = Endpoints.FirstOrDefault(s => !s.Disabled)?.LeaseList.FirstOrDefault()?.LeaseEnd;
 			if (isOnLineFilter != null) {
 				return isOnLineFilter.Value >= SystemTime.Now();
 			}
@@ -611,8 +614,7 @@ namespace Inforoom2.Models
 
 		public virtual List<string> GetAppealFields()
 		{
-			return new List<string>()
-			{
+			return new List<string>() {
 				"LegalClient",
 				"Status",
 				"RedmineTask"
@@ -626,55 +628,55 @@ namespace Inforoom2.Models
 			return "";
 		}
 
-		public virtual object GetExtendedClient => PhysicalClient != null ? (object) PhysicalClient : LegalClient;
+		public virtual object GetExtendedClient => PhysicalClient != null ? (object)PhysicalClient : LegalClient;
 
 		public virtual IList<Contact> GetContacts()
 		{
-			return ((IClientExpander) GetExtendedClient).GetContacts();
+			return ((IClientExpander)GetExtendedClient).GetContacts();
 		}
 
 		public virtual string GetConnetionAddress()
 		{
-			return ((IClientExpander) GetExtendedClient).GetConnetionAddress();
+			return ((IClientExpander)GetExtendedClient).GetConnetionAddress();
 		}
 
 		public virtual string GetName()
 		{
-			return ((IClientExpander) GetExtendedClient).GetName();
+			return ((IClientExpander)GetExtendedClient).GetName();
 		}
 
 		public virtual DateTime? GetRegistrationDate()
 		{
-			return ((IClientExpander) GetExtendedClient).GetRegistrationDate();
+			return ((IClientExpander)GetExtendedClient).GetRegistrationDate();
 		}
 
 		public virtual DateTime? GetDissolveDate()
 		{
-			return ((IClientExpander) GetExtendedClient).GetDissolveDate();
+			return ((IClientExpander)GetExtendedClient).GetDissolveDate();
 		}
 
 		public virtual string GetPlan()
 		{
-			return ((IClientExpander) GetExtendedClient).GetPlan();
+			return ((IClientExpander)GetExtendedClient).GetPlan();
 		}
 
 		public virtual decimal GetBalance()
 		{
-			return ((IClientExpander) GetExtendedClient).GetBalance();
+			return ((IClientExpander)GetExtendedClient).GetBalance();
 		}
 
 		public virtual StatusType GetStatus()
 		{
-			return ((IClientExpander) GetExtendedClient).GetStatus();
+			return ((IClientExpander)GetExtendedClient).GetStatus();
 		}
 
 		public virtual List<string> GetFreePorts()
 		{
 			var result = new List<string>();
-			if (Endpoints.Count == 0 || Endpoints[0].Switch == null)
+			if (Endpoints.Count(s => !s.Disabled) == 0 || Endpoints.FirstOrDefault(s => !s.Disabled).Switch == null)
 				return result;
-			var deniedPorts = Endpoints[0].Switch.Endpoints.Select(e => e.Port);
-			for (int i = 1; i <= Endpoints[0].Switch.PortCount; i++) {
+			var deniedPorts = Endpoints.FirstOrDefault(s => !s.Disabled).Switch.Endpoints.Select(e => e.Port);
+			for (int i = 1; i <= Endpoints.FirstOrDefault(s => !s.Disabled).Switch.PortCount; i++) {
 				if (!deniedPorts.Contains(i))
 					result.Add(i.ToString());
 			}
@@ -683,15 +685,14 @@ namespace Inforoom2.Models
 
 		public virtual bool HaveService<T>()
 		{
-			return ClientServices.Any(c => NHibernateUtil.GetClass(c.Service) == typeof (T));
+			return ClientServices.Any(c => NHibernateUtil.GetClass(c.Service) == typeof(T));
 		}
 
 		public virtual bool TryActivate(ISession dbSession, Service service, ClientEndpoint endpoint = null, Employee employee = null)
 		{
-			if (ClientServices.Any(s => s.Client.Endpoints.Contains(endpoint) && s.Service == service))
+			if (ClientServices.Any(s => s.Client.Endpoints.Where(f => !f.Disabled).Contains(endpoint) && s.Service == service))
 				return false;
-			var clientService = new ClientService()
-			{
+			var clientService = new ClientService() {
 				Client = this,
 				Service = service,
 				Endpoint = endpoint,
@@ -703,25 +704,23 @@ namespace Inforoom2.Models
 
 		public virtual bool TryDeactivate(ISession dbSession, Service service, ClientEndpoint endpoint = null)
 		{
-			var clientService = ClientServices.FirstOrDefault(s => s.Endpoint == endpoint && s.Service == service);
+			var clientService = ClientServices.FirstOrDefault(s => s.Endpoint == endpoint && s.Endpoint != null && !s.Endpoint.Disabled && s.Service == service);
 			if (clientService == null)
 				return false;
 			clientService.Deactivate(dbSession);
 			return true;
 		}
 
-		//TODO: Это нужно будет удалить после того, как старая админка прекратит свое существование. НЕЛЬЗЯ УДАЛЯТЬ ЭНДПОИНТЫ - нужен ФЛАГ!
-		public virtual bool RemoveEndpoint(ClientEndpoint endpoint, ISession dbSession)
+		public virtual string RemoveEndpoint(ClientEndpoint endpoint, ISession dbSession)
 		{
-			//TODO: важно! SQL запрос необходим для удаления элемента (прежний вариант с отчисткой списка удалял клиентов у endpoint(ов))
-			if (Endpoints.Count > 1 || LegalClient != null) {
-				ClientServices.RemoveEach(ClientServices.Where(s => s.Endpoint == endpoint));
-				dbSession.Save(endpoint);
-				dbSession.Flush();
-				dbSession.CreateSQLQuery("DELETE FROM internet.clientendpoints WHERE Id = " + endpoint.Id).UniqueResult();
-				return true;
-			}
-			return false;
+			var connectionAddress = $" коммутатор: {endpoint.Switch?.Id} - {endpoint.Switch?.Name}, порт: {endpoint.Port}";
+			endpoint.Switch = null;
+			endpoint.Port = 0;
+
+			endpoint.Disabled = true;
+			dbSession.Save(endpoint);
+			dbSession.Flush();
+			return connectionAddress;
 		}
 
 		/// <summary>
@@ -764,7 +763,8 @@ namespace Inforoom2.Models
 				}
 				if (NewStatus.Type != StatusType.Dissolved) {
 					AutoUnblocked = true;
-					if (Disabled) Appeals.Add(new Appeal("Клиент был разблокирован оператором", this, AppealType.Statistic, employee));
+					if (Disabled)
+						Appeals.Add(new Appeal("Клиент был разблокирован оператором", this, AppealType.Statistic, employee));
 					if (ShowBalanceWarningPage)
 						Appeals.Add(new Appeal("Оператором отключена страница Warning", this, AppealType.Statistic, employee));
 					Disabled = false;
@@ -773,7 +773,7 @@ namespace Inforoom2.Models
 				if (NewStatus.Type == StatusType.Dissolved) {
 					if (HaveService<BlockAccountService>()) {
 						var thisService = ClientServices
-							.Where(cs => NHibernateUtil.GetClass(cs.Service) == typeof (BlockAccountService) && cs.IsActivated)
+							.Where(cs => NHibernateUtil.GetClass(cs.Service) == typeof(BlockAccountService) && cs.IsActivated)
 							.ToList().FirstOrDefault();
 
 						if (thisService != null) {
@@ -783,10 +783,13 @@ namespace Inforoom2.Models
 					}
 					//Endpoints удалять не нужно TODO: после перехода на новую админку поправить!
 					var endpointLog =
-						Endpoints.Where(e => e.Switch != null)
+						Endpoints.Where(e => !e.Disabled && e.Switch != null)
 							.Implode(e => String.Format("Удалено подключение: коммутатор {0} порт {1}", e.Switch.Name, e.Port), Environment.NewLine);
 					Appeals.Add(new Appeal(endpointLog, this, AppealType.System, employee));
-					Endpoints.Clear();
+					Endpoints.Each(s => {
+						s.Disabled = true;
+						dbSession.Save(s);
+					});
 					Discount = 0;
 					Disabled = true;
 					AutoUnblocked = false;

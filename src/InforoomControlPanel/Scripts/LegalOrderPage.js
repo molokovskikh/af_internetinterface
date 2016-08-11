@@ -45,9 +45,20 @@ function onModalOrderEditOpen(id) {
 function StartEvents(thisMain) {
 	//события для коммутатора, при изменении значения
 	$(thisMain).find("#SwitchDropDown").unbind("change").change(function() {
+		checkLastEndpointState();
 		//получить занятые порты
 		GetBusyPorts();
 	});
+}
+
+function updatePort(_this) {
+	if ($(_this).attr("href") == "" || $(_this).attr("href") == null) {
+		var portVal = $(_this).find("span").html();
+		$("#endpoint_Port").val(portVal);
+		$("#endpoint_PortVal").val(portVal);
+		$(".portInfoData").html(portVal);
+		checkLastEndpointState();
+	}
 }
 
 //-------------------------------------------------------| статические ip |-------------------------------------------------------------------//
@@ -145,10 +156,17 @@ function EndpointIsUsedSet(val) {
 
 //проверка на формирование нового подлючения в заказе
 function CheckForNewEndpointUsing(obj) {
-	if ($(obj).val() == "") {
+	var endpointTempVal = $(ModalEdit + "[name='OrderEndpointId']").val();
+	var endpointTempValLast = $(ModalEdit + "[name='order.EndPoint.Id']").val();
+	var endpointTempValExists = $(ModalEdit + "[name='order.EndPoint.Id'] option[value='" + endpointTempVal + "']").length > 0;
+	endpointTempVal = endpointTempVal == endpointTempValLast || !endpointTempValExists ? endpointTempVal : 0;
+	var endpointVal = parseInt($(obj).val());
+	endpointVal = (String(endpointVal) == "NaN" ? endpointTempVal : endpointVal);
+	if ((endpointVal == null || endpointVal == "") && endpointTempVal == 0) {
+		$(obj).val("Новая точка подключения");
 		CleanEndPoint();
 	} else {
-		UpdateEndpoint($(obj).val(), $(ModalEdit + "[name='order.Id']").val());
+		UpdateEndpoint(endpointVal == undefined || endpointVal == null ? endpointTempVal : endpointVal, $(ModalEdit + "[name='order.Id']").val());
 	}
 }
 
@@ -171,7 +189,7 @@ function updateEndpointForm(data) {
 
 		$(NewClientEndpointPanel_style + "[name='connection.StaticIp']").val(data.Ip);
 		$(NewClientEndpointPanel_style + ".fixedIp").html(data.Ip);
-		if (data.Ip != "") {
+		if (data.Ip != undefined && data.Ip != "" && data.Ip != null) {
 			$(".removeFixedIp").removeClass("hid");
 			if (!$(".createFixedIp").hasClass("hid")) {
 				$(".createFixedIp").addClass("hid");
@@ -182,6 +200,10 @@ function updateEndpointForm(data) {
 				$(".removeFixedIp").addClass("hid");
 			}
 		}
+		$(ModalEdit + "[name='order.EndPoint.Id']").attr("lastChangesDisable", "true");
+		$(ModalEdit + "[name='order.EndPoint.Id']").attr("lastPoint", data.Id);
+		$(ModalEdit + "[name='order.EndPoint.Id']").attr("lastSwitch", data.Switch);
+		$(ModalEdit + "[name='order.EndPoint.Id']").attr("lastPort", data.Port);
 
 		$(NewClientEndpointPanel_style + "[name='connection.Pool']").val(data.Pool);
 		$(NewClientEndpointPanel_style + "[name='connection.Switch']").val(data.Switch);
@@ -190,6 +212,10 @@ function updateEndpointForm(data) {
 		$(NewClientEndpointPanel_style + "[name='connection_Port']").val(data.Port);
 		$(NewClientEndpointPanel_style + "[name='connection.PackageId']").val(data.PackageId);
 		$(NewClientEndpointPanel_style + "[name='order.ConnectionAddress']").val(data.ConnectionAddress);
+
+		$(ModalEdit + "[name='order.EndPoint.Id']").attr("lastChangesDisable", "false");
+
+
 		//обновление списка статических ip
 		updateStaticIpListForModal(data.StaticIpList);
 		UpdateRentIp(data.LeaseList);
@@ -376,26 +402,39 @@ function updateOrderForm(data) {
 		$(ModalEdit + "[name='order.Number']").val(data.Number);
 		$(ModalEdit + "[name='order.BeginDate']").val(data.BeginDate);
 		$(ModalEdit + "[name='order.EndDate']").val(data.EndDate);
+		$(ModalEdit + "[name='endpoint.Id']").val(data.EndPoint);
+		$(ModalEdit + "[name='OrderEndpointId']").val(data.EndPoint);
+
 		//если точка подключения отсутствует, вызов события клика мыши, скрывающее форму и изменяющее вид чекбокса
 		if (data.EndPoint != 0) {
 			$(ModalEdit + ".createFixedIp").attr("onclick", "createFixedIp(" + data.EndPoint + ")");
 			// показываем новую точку подключения 
 			EndpointIsUsedSet(false);
 		} else {
-			// скрываем новую точку подключения 
-			EndpointIsUsedSet(true);
+			if (data.OrderServices.length > 0) {
+				// скрываем новую точку подключения 
+				EndpointIsUsedSet(true);
+			} else {
+				// показываем новую точку подключения 
+				EndpointIsUsedSet(false);
+			}
 		}
 		//обновлени списка услуг заказа
 		UpdateOrderServicesList(data.OrderServices);
 		//обновляем точку подключения, если она задана
 		$(ClientEndpointPanel_style + "[name='order.EndPoint.Id']").html("");
 		if (data.ClientEndpoints != null && data.ClientEndpoints != undefined) {
-			var html = "<option></option>";
+			var html = "<option>Новая точка подключения</option>";
 			for (var i = 0; i < data.ClientEndpoints.length; i++) {
 				html += "<option value='" + data.ClientEndpoints[i] + "'>" + data.ClientEndpoints[i] + "</option>";
 			}
 			$(ClientEndpointPanel_style + "[name='order.EndPoint.Id']").html(html);
-			$(ClientEndpointPanel_style + "[name='order.EndPoint.Id']").val(data.EndPoint);
+			if ($(ClientEndpointPanel_style + "[name='order.EndPoint.Id'] option[value='" + data.EndPoint + "']").length === 0) {
+				$(ClientEndpointPanel_style + "[name='order.EndPoint.Id']").val("Новая точка подключения");
+			} else {
+				$(ClientEndpointPanel_style + "[name='order.EndPoint.Id']").val(data.EndPoint);
+			}
+
 			$(ClientEndpointPanel_style + "[name='order.EndPoint.Id']").change();
 		}
 	}
@@ -440,9 +479,25 @@ function UpdateOrder(id, clientId) {
 }
 
 //-------------------------------------------------------| вспомогательное |-------------------------------------------------------------------//
+function checkLastEndpointState() {
+	if ($(ModalEdit + "[name='order.EndPoint.Id']").attr("lastChangesDisable") == "true") {
+		return;
+	}
+	var lastPointVal = $(ModalEdit + "[name='order.EndPoint.Id']").attr("lastPoint");
+	var lastSwitchVal = $(ModalEdit + "[name='order.EndPoint.Id']").attr("lastSwitch");
+	var lastPortVal = $(ModalEdit + "[name='order.EndPoint.Id']").attr("lastPort");
+
+	var currentPointVal = $(ModalEdit + "[name='order.EndPoint.Id']").val();
+	var currentSwitchVal = $(ModalEdit + "[name='connection.Switch']").val();
+	var currentPortVal = $(ModalEdit + "[name='connection.Port']").val();
+
+	if ((lastSwitchVal != currentSwitchVal || lastPortVal != currentPortVal) && (((lastPointVal == undefined || currentPointVal == undefined) && lastPointVal === currentPointVal) || lastPointVal == currentPointVal)) {
+		$(ModalEdit + "[name='order.EndPoint.Id']").val("Новая точка подключения");
+	}
+}
 
 //обновление формы закрытия заказа 
-function updateModelForOrderClose(id,date) {
+function updateModelForOrderClose(id, date) {
 	$("#ModelForOrderRemove [name='orderId']").val(id);
 	$("#ModelForOrderRemove [name='orderCloseDate']").val(date);
 }

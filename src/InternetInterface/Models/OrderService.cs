@@ -12,7 +12,7 @@ namespace InternetInterface.Models
 	/// <summary>
 	/// Услуга
 	/// </summary>
-	[ActiveRecord("OrderServices", Schema = "Internet", Lazy = true), Auditable, LogDelete(typeof(LogDeleteOrderService)), LogInsert(typeof(LogInsertOrderService))]
+	[ActiveRecord("OrderServices", Schema = "Internet", Lazy = true), Auditable, LogDelete(typeof(LogDeleteOrderService))]
 	public class OrderService
 	{
 		public OrderService()
@@ -33,13 +33,13 @@ namespace InternetInterface.Models
 		[PrimaryKey]
 		public virtual uint Id { get; set; }
 
-		[Property, ValidateNonEmpty("Услуги должны иметь читаемые имена"), ValidateRegExp(@"\S+", "Услуги должны иметь читаемые имена"), Description("Описание"), Auditable("Описание"), SendEmailAboutOrder]
+		[Property, ValidateNonEmpty("Услуги должны иметь читаемые имена"), ValidateRegExp(@"\S+", "Услуги должны иметь читаемые имена"), Description("Описание"), Auditable("Описание")]
 		public virtual string Description { get; set; }
 
-		[Property, Description("Стоимость"), Auditable("Стоимость услуги"), ValidateGreaterOrEqualZero("Стоимость услуги не может быть меньше нуля"), SendEmailAboutOrder]
+		[Property, Description("Стоимость"), Auditable("Стоимость услуги"), ValidateGreaterOrEqualZero("Стоимость услуги не может быть меньше нуля")]
 		public virtual decimal Cost { get; set; }
 
-		[Property, Description("Услуга периодичная"), Auditable("Периодичность"), SendEmailAboutOrder]
+		[Property, Description("Услуга периодичная"), Auditable("Периодичность")]
 		public virtual bool IsPeriodic { get; set; }
 
 		[BelongsTo(Column = "OrderId")]
@@ -50,8 +50,8 @@ namespace InternetInterface.Models
 			get
 			{
 				if (Order == null
-					|| Order.Client == null
-					|| Order.Client.LawyerPerson == null)
+				    || Order.Client == null
+				    || Order.Client.LawyerPerson == null)
 					return 0;
 				if (Order.OrderStatus == OrderStatus.New)
 					return 0;

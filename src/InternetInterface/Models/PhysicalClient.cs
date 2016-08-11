@@ -312,7 +312,7 @@ namespace InternetInterface.Models
 
 		public virtual void UpdatePackageId()
 		{
-			Client.Endpoints.Each(UpdatePackageId);
+			Client.Endpoints.Where(s=>!s.Disabled).Each(UpdatePackageId);
 		}
 
 		public virtual void UpdatePackageId(ClientEndpoint clientEndpoint)

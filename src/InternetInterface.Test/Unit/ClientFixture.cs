@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Net;
 using Castle.Components.Validator;
 using Common.Tools;
@@ -157,7 +158,7 @@ namespace InternetInterface.Test.Unit
 				EndWorkDate = DateTime.Today.AddDays(1)
 			});
 			client.ClientServices.Each(s => s.TryActivate());
-			Assert.AreEqual(23, client.Endpoints[0].PackageId);
+			Assert.AreEqual(23, client.Endpoints.FirstOrDefault(f => !f.Disabled).PackageId);
 			Assert.IsTrue(client.IsNeedRecofiguration);
 		}
 

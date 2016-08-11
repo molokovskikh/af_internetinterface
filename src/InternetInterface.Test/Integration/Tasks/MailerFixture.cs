@@ -69,7 +69,7 @@ namespace InternetInterface.Test.Integration.Tasks
 
 			client = session.Get<Client>(client.Id);
 			Assert.AreEqual(client.Disabled, true);
-			Assert.IsTrue(client.Endpoints[0].Ip.Equals(new IPAddress(1541080065)));
+			Assert.IsTrue(client.Endpoints.FirstOrDefault(s => !s.Disabled).Ip.Equals(new IPAddress(1541080065)));
 			Assert.AreEqual(client.BlockDate.Value.Date, DateTime.Now.Date);
 			SystemTime.Now = () => DateTime.Now.AddDays(61);
 
@@ -77,7 +77,7 @@ namespace InternetInterface.Test.Integration.Tasks
 
 			client = session.Get<Client>(client.Id);
 			Assert.AreEqual(client.Disabled, true);
-			Assert.IsNull(client.Endpoints[0].Ip);
+			Assert.IsNull(client.Endpoints.FirstOrDefault(s => !s.Disabled).Ip);
 			Assert.IsNull(client.BlockDate);
 		}
 

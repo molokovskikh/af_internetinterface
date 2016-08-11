@@ -6,130 +6,182 @@
 @{
 	Layout = "";
 	ClientOrder order = Model;
-	var endpoint = Model.EndPoint;
 	IList<PackageSpeed> packageSpeedList = ViewBag.PackageSpeedList;
 	IList<IpPoolRegion> ipPoolRegionList = ViewBag.IpPoolRegionList;
+	var endpoint = Model.EndPoint;
+	var futureState = order.HasEndPointFutureState ? order.EndPointFutureState : null;
 } 
 	<div class="line-through"></div>
-	<h5>
+	<div class="padding-bt-10">
 		<strong class="black margin-left">Точка подключения №
-			<span class="endpointTitle@(endpoint.IsEnabled.HasValue? endpoint.IsEnabled.Value ?" enabled":" disabled":"")">@order.EndPoint.Id</span>
+			<span class="endpointTitle@(endpoint.IsEnabled.HasValue ? endpoint.IsEnabled.Value && !endpoint.Disabled ? " enabled" : " disabled" : "")">@endpoint.Id</span>
 		</strong>
-		@if ((order.IsActivated && order.IsDeactivated || order.IsToBeClosed()) && order.EndPoint != null) {
-			<a class="c-pointer" data-toggle="modal" data-target="#ModelForEndpointProofDelete" onclick="deleteEndpointProof(@order.EndPoint.Id)">
-				- <span class="red bold">удалить</span>
-			</a>
-		} 
-	</h5>
+		<div class="endpointSettings">
+			@if (order.HasEndPointFutureState || order.HasEndPointNeverBeenEnabled) {
+				<strong class="red-h">Настройки еще не вступили в силу</strong>
+			}
+			@if ((order.IsActivated && order.IsDeactivated || order.IsToBeClosed()) && endpoint != null && !endpoint.Disabled) {
+				<a class="c-pointer deactivate" data-toggle="modal" data-target="#ModelForEndpointProofDelete" onclick="deleteEndpointProof(@endpoint.Id)">
+					- <span>деактивировать</span>
+				</a>
+			}
+		</div>
+	</div>
 	<table id="table-2" class="table hiddenOverflow table-bordered table-striped datatable no-footer clientTable border-right-white tableFullWidth" role="grid" aria-describedby="table-2_info">
 		<tbody>
+		@if (endpoint.Switch != null) {
+			<tr>
+				<td>
+					<a target="_blank" href="@Url.Action("EditSwitch", "Switch", new { endpoint.Switch.Id })"> Коммутатор</a>
+				</td>
+				<td>
+					<a target="_blank" href="@Url.Action("ClientEndPointState", "Switch", new { id = endpoint.Id })">@(endpoint.Switch.Name + " (" + endpoint.Switch.Ip.ToString() + ")")</a>
+				</td>
+			</tr>
+		}
+		<tr>
+			<td>Порт</td>
+			<td>
+				@if (endpoint.Disabled) {
+					<span>@endpoint.Port</span>
+				}
+				else {
+					<a target="_blank" class="endpointStateStatus portLink" title="Состояние точки подключения" href="@Url.Action("ClientEndPointState", "Switch", new { id = endpoint.Id })">
+						<span>@endpoint.Port</span></a>
+				}
+			</td>
+		</tr>
+		@if (endpoint != null) {
 			<tr>
 				<td>Статус коммутатора</td>
 				<td style="width: 60%;">
-					@if (endpoint != null) {
-					 @Html.Hidden("endpointId", endpoint.Id)
-					}
+					@Html.Hidden("endpointId", endpoint.Id)
 					<span class="switchstatus">нет ответа</span>
 				</td>
 			</tr>
-			@if (endpoint.Ip != null)
-			{
-				<tr>
-					<td>Фиксированный IP</td>
-					<td>
-						<span>@endpoint.Ip.MapToIPv4().ToString()</span>
-					</td>
-				</tr>
-			}
+		}
+		@if (futureState != null && futureState.ConnectionHelper != null && !string.IsNullOrEmpty(futureState.ConnectionHelper.StaticIp)) {
+			<tr @(futureState.ConnectionHelper.StaticIp != (endpoint.Ip != null ? @endpoint.Ip.MapToIPv4().ToString() : "") ? "class=endpointStateChanged" : "")>
+				<td>Фиксированный IP</td>
+				<td>
+					<span>@futureState.ConnectionHelper.StaticIp</span>
+				</td>
+			</tr>
+		}
+		else if (endpoint.Ip != null) {
+			<tr>
+				<td>Фиксированный IP</td>
+				<td>
+					<span>@endpoint.Ip.MapToIPv4().ToString()</span>
+				</td>
+			</tr>
+		}
+		@if (endpoint != null) {
 			<tr>
 				<td>Арендованный IP</td>
 				<td>
-					@Html.Raw(string.Join(", ", endpoint.LeaseList.OrderByDescending(s => s.LeaseBegin).ThenBy(s => s.LeaseEnd)
-	.GroupBy(s => s.Mac).Select(s => s.First()).OrderBy(s=>s.Ip.ToString()).ToList().Select(lease => "<br/><span " + (lease != null && lease.LeaseEnd < SystemTime.Now() ? "style=color:#E60000;font-weight:bold;" : "") + ">" + lease.Ip.ToString() + "</span>").ToList()))
+					@Html.Raw(string.Join(",<br/> ", endpoint.LeaseList.OrderByDescending(s => s.LeaseBegin).ThenBy(s => s.LeaseEnd)
+						.GroupBy(s => s.Mac).Select(s => s.First()).OrderBy(s => s.Ip.ToString()).ToList().Select(lease => "<span " + (lease != null && lease.LeaseEnd < SystemTime.Now() ? "style=color:#E60000;font-weight:bold;" : "") + ">" + lease.Ip.ToString() + "</span>").ToList()))
 				</td>
 			</tr>
+		}
+		<tr @((futureState != null && futureState.ConnectionHelper != null && futureState.ConnectionHelper.Pool != (endpoint.Pool != null ? (int?)endpoint.Pool.Id : null)) ? "class=endpointStateChanged" : "")>
+			<td>IP-пул</td>
+			<td>
+				@if (futureState != null && futureState.ConnectionHelper != null && futureState.ConnectionHelper.Pool != null) {
+					<span>
+							@( ipPoolRegionList.FirstOrDefault(s => s.IpPool.Id == futureState.ConnectionHelper.Pool) != null
+								   ? futureState.ConnectionHelper.Pool + " (" + ipPoolRegionList.FirstOrDefault(s => s.IpPool.Id == futureState.ConnectionHelper.Pool).Description + ")" : "")
+						</span>
+				}
+				else {
+					<span>
+							@(endpoint.Pool != null && ipPoolRegionList.FirstOrDefault(s => s.IpPool.Id == endpoint.Pool.Id) != null
+								  ? endpoint.Pool.Id + " (" + ipPoolRegionList.FirstOrDefault(s => s.IpPool.Id == endpoint.Pool.Id).Description + ")" : "")
+					</span>
+				}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<a class="c-pointer blue addressAjaxRunner" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForUpdateConnectionAddress" onclick="GetOrderConnectionAddress('@order.Id')">Адрес подключения <span> ( редактировать )</span></a>
+			</td>
+			<td>
+				@order.ConnectionAddress
+			</td>
+		</tr>
+		@if (!endpoint.Disabled) {
 			<tr>
-				<td>IP-пул</td>
 				<td>
-					<span>@(endpoint.Pool != null && ipPoolRegionList.FirstOrDefault(s => s.IpPool.Id == endpoint.Pool.Id) != null ? endpoint.Pool.Id + " (" + ipPoolRegionList.FirstOrDefault(s => s.IpPool.Id == endpoint.Pool.Id).Description + ")" : "")</span>
+					<a class="blue c-pointer" onclick="GetPortConnectionState(@endpoint.Id)">Статус соединения<span> ( опросить )</span></a>
 				</td>
-			</tr>
-			<tr>
-				<td><a class="c-pointer blue addressAjaxRunner" title="Редактирование адреса подключения" data-toggle="modal" data-target="#ModelForUpdateConnectionAddress" onclick="GetOrderConnectionAddress('@order.Id')">Адрес подключения <span> ( редактировать )</span></a></td>
-				<td>
-					@order.ConnectionAddress
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<a target="_blank" href="@Url.Action("EditSwitch","Switch",new { endpoint.Switch.Id})"> Коммутатор</a>
-				</td>
-				<td>
-					<a target="_blank" href="@Url.Action("ClientEndPointState","Switch",new {id = endpoint.Id})">@(endpoint.Switch.Name + " (" + endpoint.Switch.Ip.ToString() + ")")</a>
-				</td>
-			</tr>
-			<tr>
-				<td>Порт</td>
-				<td>
-					<a target="_blank" class="endpointStateStatus portLink" title="Состояние точки подключения" href="@Url.Action("ClientEndPointState","Switch",new {id = endpoint.Id})"><span>@endpoint.Port</span></a>
-				</td>
-			</tr>
-			<tr>
-				<td><a class="blue c-pointer" onclick="GetPortConnectionState(@endpoint.Id)">Статус соединения<span> ( опросить )</span></a></td>
 				<td>
 					<div class="endpointStateStatus@(endpoint.Id)">не установлен</div>
 				</td>
 			</tr>
 			<tr>
-				<td><a class="blue c-pointer" onclick="GetCableConnectionState(@endpoint.Id)">Целостность кабеля<span> ( опросить )</span></a></td>
+				<td>
+					<a class="blue c-pointer" onclick="GetCableConnectionState(@endpoint.Id)">Целостность кабеля<span> ( опросить )</span></a>
+				</td>
 				<td>
 					<div class="endpointCableStatus@(endpoint.Id)">не установлена</div>
 				</td>
 			</tr>
-			<tr>
-				<td>Скорость</td>
-				<td>
-					<span>@(endpoint.PackageId.HasValue ? PackageSpeed.GetSpeedForPackageId(packageSpeedList, endpoint.PackageId.Value).ToString() : "0 ") мбит/с</span>
-				</td>
-			</tr>
-			<tr>
-				<td>Мониторинг</td>
-				<td>
+		}
+		<tr @((futureState != null && futureState.ConnectionHelper != null && futureState.ConnectionHelper.PackageId != endpoint.PackageId) ? "class=endpointStateChanged" : "")>
+			<td>Скорость</td>
+			<td>
+
+				@if (futureState != null && futureState.ConnectionHelper != null && futureState.ConnectionHelper.PackageId != 0 && futureState.ConnectionHelper.PackageId != endpoint.PackageId) {
+					<span>@PackageSpeed.GetSpeedForPackageId(packageSpeedList, futureState.ConnectionHelper.PackageId).ToString() мбит/с</span>
+				}
+				else {
+					<span>@(endpoint.PackageId.HasValue
+						        ? PackageSpeed.GetSpeedForPackageId(packageSpeedList, endpoint.PackageId.Value).ToString() : "0 ") мбит/с</span>
+				}
+			</td>
+		</tr>
+		<tr @((futureState != null && futureState.ConnectionHelper != null && futureState.ConnectionHelper.Monitoring != endpoint.Monitoring) ? "class=endpointStateChanged" : "")>
+			<td>Мониторинг</td>
+			<td>
+				@if (futureState != null && futureState.ConnectionHelper != null && futureState.ConnectionHelper.Monitoring != endpoint.Monitoring) {
+					<span>@(futureState.ConnectionHelper.Monitoring ? "да" : "нет")</span>
+				}
+				else {
 					<span>@(endpoint.Monitoring ? "да" : "нет")</span>
+				}
+			</td>
+		</tr>
+		@if (endpoint.StaticIpList.Count > 0 || futureState != null && futureState.StaticIpList != null && futureState.StaticIpList.Count() > 0) {
+			<tr @((futureState != null && futureState.StaticIpList != null && futureState.StaticIpList.GetHashCode() != endpoint.StaticIpList.GetHashCode()) ? "class=endpointStateChanged" : "")>
+				<td>Статические адреса</td>
+				<td>
+					<div class="ipStaticList">
+						<table class="table table-bordered table-striped datatable no-footer tableFullWidth" role="grid">
+							<thead>
+							<tr role="row">
+								<th tabindex="0" aria-controls="table-2">IP адрес / маска</th>
+								<th tabindex="0" aria-controls="table-2">Маска</th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach (var item in (futureState != null && futureState.StaticIpList != null ? futureState.StaticIpList : null) ?? endpoint.StaticIpList) {
+								<tr>
+									<td>
+										<span>@item.Ip</span>
+										<span> / </span>
+										<span>@item.Mask</span>
+									</td>
+									<td>
+										<span>@item.GetSubnet()</span>
+									</td>
+								</tr>
+							}
+							</tbody>
+						</table>
+					</div>
 				</td>
 			</tr>
-			@if (endpoint.StaticIpList.Count > 0)
-			{
-				<tr>
-					<td>Статические адреса</td>
-					<td>
-						<div class="ipStaticList">
-							<table class="table table-bordered table-striped datatable no-footer tableFullWidth" role="grid">
-								<thead>
-									<tr role="row">
-										<th tabindex="0" aria-controls="table-2">IP адрес / маска</th>
-										<th tabindex="0" aria-controls="table-2">Маска</th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach (var item in endpoint.StaticIpList)
-									{
-										<tr>
-											<td>
-												<span>@item.Ip</span>
-												<span> / </span>
-												<span>@item.Mask</span>
-											</td>
-											<td>
-												<span>@item.GetSubnet()</span>
-											</td>
-										</tr>
-									}
-								</tbody>
-							</table>
-						</div>
-					</td>
-				</tr>
-			}
+		}
 		</tbody>
 	</table> 

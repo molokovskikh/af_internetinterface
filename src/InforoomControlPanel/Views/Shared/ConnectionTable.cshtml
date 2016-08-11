@@ -93,14 +93,14 @@
 											<br/>
 											<div class="contact">Коммутатор:
 												@{
-													var firstOrDefault = item.GetClient().Endpoints.FirstOrDefault();
+													var firstOrDefault = item.GetClient().Endpoints.FirstOrDefault(s => !s.Disabled);
 												}
 												@if (firstOrDefault != null) {
 													@firstOrDefault.Switch.Name
 												}</div>
 											<div class="contact">Порт:
 												@{
-													var clientEndpoint = item.GetClient().Endpoints.FirstOrDefault();
+													var clientEndpoint = item.GetClient().Endpoints.FirstOrDefault(s=> !s.Disabled);
 												}
 												@if (clientEndpoint != null) {
 													@clientEndpoint.Port

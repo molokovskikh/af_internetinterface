@@ -244,7 +244,7 @@ namespace InternetInterface.Models
 		{
 			get
 			{
-				if (Endpoints.Count > 0)
+				if (Endpoints.Count() > 0)
 					return Endpoints.First().WhoConnected;
 				return null;
 			}
@@ -267,7 +267,7 @@ namespace InternetInterface.Models
 
 		public virtual bool NoEndPoint()
 		{
-			return Endpoints.Count == 0;
+			return Endpoints.Count(s => !s.Disabled) == 0;
 		}
 
 		public virtual void CreateAutoEndPont(IPAddress ip, Lease lease, ISession session)
@@ -293,10 +293,10 @@ namespace InternetInterface.Models
 		public virtual string GetFreePorts()
 		{
 			var result = string.Empty;
-			if (Endpoints.Count == 0 || Endpoints[0].Switch == null)
+			if (Endpoints.Count(s => !s.Disabled) == 0 || Endpoints.FirstOrDefault(s => !s.Disabled).Switch == null)
 				return string.Empty;
-			var deniedPorts = Endpoints[0].Switch.Endpoints.Select(e => e.Port);
-			for (int i = 1; i <= Endpoints[0].Switch.TotalPorts; i++) {
+			var deniedPorts = Endpoints.FirstOrDefault(s => !s.Disabled).Switch.Endpoints.Where(s => !s.Disabled).Select(e => e.Port);
+			for (int i = 1; i <= Endpoints.FirstOrDefault(s => !s.Disabled).Switch.TotalPorts; i++) {
 				if (!deniedPorts.Contains(i))
 					result += string.Format("{0}, ", i);
 			}
@@ -312,7 +312,7 @@ namespace InternetInterface.Models
 
 		public virtual ClientEndpoint FirstPoint()
 		{
-			return Endpoints.FirstOrDefault();
+			return Endpoints.FirstOrDefault(s => !s.Disabled);
 		}
 
 		//клиент может редактировать свои услуги если
@@ -544,7 +544,7 @@ namespace InternetInterface.Models
 
 		public virtual List<Internetsessionslog> GetClientLeases()
 		{
-			return ActiveRecordLinqBase<Internetsessionslog>.Queryable.Where(l => l.EndpointId.Client == this).ToList();
+			return ActiveRecordLinqBase<Internetsessionslog>.Queryable.Where(l => !l.EndpointId.Disabled && l.EndpointId.Client == this).ToList();
 		}
 
 		public virtual Internetsessionslog GetFirstLease()
@@ -937,7 +937,7 @@ where CE.Client = {0}", Id))
 
 		private bool TryDeactivate(Service service, ClientEndpoint endpoint = null)
 		{
-			var clientService = ClientServices.FirstOrDefault(s => s.Endpoint == endpoint && s.Service == service);
+			var clientService = ClientServices.FirstOrDefault(s => s.Endpoint == endpoint && s.Service == service && !s.Endpoint.Disabled);
 			if (clientService == null)
 				return false;
 			clientService.ForceDeactivate();
@@ -1052,15 +1052,11 @@ where CE.Client = {0}", Id))
 
 		public virtual bool RemoveEndpoint(ClientEndpoint endpoint, ISession dbSession)
 		{
-			//TODO: важно! SQL запрос необходим для удаления элемента (прежний вариант с отчисткой списка удалял клиентов у endpoint(ов))
-			if (Endpoints.Count > 1 || LawyerPerson != null) {
-				ClientServices.RemoveEach(ClientServices.Where(s => s.Endpoint == endpoint));
-				dbSession.Save(endpoint);
-				dbSession.Flush();
-				dbSession.CreateSQLQuery("DELETE FROM internet.clientendpoints WHERE Id = " + endpoint.Id).UniqueResult();
-				return true;
-			}
-			return false;
+			//		if (Endpoints.Count > 1 || LawyerPerson != null) {
+			endpoint.Disabled = true;
+			dbSession.Save(endpoint);
+			dbSession.Flush();
+			return true;
 		}
 
 		public virtual void AddEndpoint(ClientEndpoint endpoint, Settings settings)
@@ -1080,7 +1076,7 @@ where CE.Client = {0}", Id))
 			if (service == null)
 				return;
 
-			foreach (var endpoint in Endpoints) {
+			foreach (var endpoint in Endpoints.Where(s => !s.Disabled).ToList()) {
 				if (endpoint.Ip != null) {
 					TryActivate(service, endpoint);
 				}

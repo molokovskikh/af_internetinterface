@@ -48,7 +48,7 @@
 						<span class="bold c-pointer entypo-right-open-mini" phantomFor=".phantomBlock">Кол-во занятых портов</span></label>
 					<div class="col-sm-6">
 						<label class="col-sm-3 control-label">
-							<span>@Switch.Endpoints.Count</span></label>
+							<span>@Switch.Endpoints.Count(s => !s.Disabled)</span></label>
 						<div class="form-group phantomBlock">
 							<div class="panel-body">
 							</div>
@@ -62,7 +62,7 @@
 								</tr>
 								</thead>
 								<tbody>
-								@foreach (var item in Switch.Endpoints.OrderBy(s => s.Port).ToList()) {
+								@foreach (var item in Switch.Endpoints.Where(s=> !s.Disabled ).OrderBy(s => s.Port).ToList()) {
 									<tr>
 										<td><a target="_blank" href="@Url.Action("ClientEndPointState",new {item.Id})">@(item.Id)</a></td>
 										<td>@(string.Join(",<br/>", @item.LeaseList.Select(s => s.Ip)))</td>

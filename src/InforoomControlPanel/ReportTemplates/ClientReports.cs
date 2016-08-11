@@ -129,7 +129,7 @@ namespace InforoomControlPanel.ReportTemplates
 					Баланс = s.Balance,
 					Статус = s.Status.Name,
 					Дата_блокировки = s.StatusChangedOn.HasValue ? s.StatusChangedOn.Value.ToString("dd.MM.yyyy") : "",
-					Коммутатор = string.Join(", ", s.Endpoints.Select(c => c.Switch.Name).ToList()),
+					Коммутатор = string.Join(", ", s.Endpoints.Where(d=>!d.Disabled).Select(c => c.Switch.Name).ToList()),
 					Оборудование = string.Join(", ", s.RentalHardwareList.Where(a => a.IsActive).Select(c => c.Hardware.Name).ToList())
 				}, complexLinq: true);
 				//выгрузка в файл

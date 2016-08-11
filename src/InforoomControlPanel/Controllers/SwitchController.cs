@@ -107,7 +107,7 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult SwitchRemove(int id)
 		{
 			var switchToRemove = DbSession.Get<Switch>(id);
-			if (switchToRemove!=null && switchToRemove.Endpoints.Count == 0) {
+			if (switchToRemove!=null && switchToRemove.Endpoints.Count(s => !s.Disabled) == 0) {
 				DbSession.Delete(switchToRemove);
 			}
 			SuccessMessage("Коммутатор успешно удален");

@@ -52,7 +52,7 @@ namespace InternetInterface.Controllers
 		public void Delete(uint id)
 		{
 			var commutator = DbSession.Load<NetworkSwitch>(id);
-			if (DbSession.Query<ClientEndpoint>().Any(e => e.Switch == commutator)) {
+			if (DbSession.Query<ClientEndpoint>().Any(e => e.Switch == commutator && !e.Disabled)) {
 				Error("Коммутатор не может быть удален т.к. с ним работают клиенты");
 				RedirectToReferrer();
 			}

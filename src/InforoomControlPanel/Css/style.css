@@ -3,6 +3,9 @@
 	.main-content .servicemen.panel, .PrintTimeTable{ display: block !important;}
 	.pageBreak {page-break-after: always;} 
 } 
+ .endpointStateChanged td{background: #ffffbf !important;}
+ .red-h { color: #ce2205 !important;}
+ .padding-bt-10{ padding-bottom: 10px;}
  .backIsRed td{ background: #ffebeb !important;}
  .backIsRed{ background: #ffdede !important;}
  a.c-pointer.blue span{ color: #A5A5A5!important;font-weight: normal;}
@@ -25,6 +28,7 @@
 .black{color: #333!important;}
 .red{color:#E60000!important;}
 .blue{color:#1091d4!important;}
+.inline{display: inline-block;}
  .listItem.gray:hover{background: #E2E2E2 !important;}
  .error{color:red; font-weight:600 !important;}
  .servicemen table { table-layout:fixed; overflow:hidden;}
@@ -70,6 +74,10 @@
  .ClientEndPointStateBaseInfo .time{float: left;display: block;margin-top: 16px;position: absolute;}
  .ClientEndPointStateBaseInfo td{ min-width: 128px !important;}
  .endpointTitle { font-weight: bold; color: #c1c1c1;}
+ .endpointSettings{display: inline-block;float: right;margin-right: 6px;}
+ .endpointSettings .deactivate{ width: 124px;display: inline-block;color: #c70000;}
+ .endpointSettings .deactivate span{border-bottom: 1px dashed #b3b3b3;}
+ .endpointSettings .deactivate span:hover{border-bottom: none;}
  .endpointTitle.enabled{ color: #009250;}
  .endpointTitle.disabled{ color: #C70E0E;}
  .connectedHouses{}
@@ -125,6 +133,9 @@
  .addServiceTable{margin-bottom: 8px;}
  .centeredCheckBox{text-align: center; width: 253px;}
  #ModelForOrderClose .modal-body,#ModelForOrderEdit .modal-body{padding-bottom: 10px;}
+ #ModelForOrderClose .modal-body,#ModelForOrderEdit #ClientEndpointDropDown{ color: #b90202;}
+ #ModelForOrderClose .modal-body,#ModelForOrderEdit #ClientEndpointDropDown option:first-child{ color: #d40404;}
+ #ModelForOrderClose .modal-body,#ModelForOrderEdit #ClientEndpointDropDown option{ color: #000;}
  #clientReciverMessage{padding-top: 8px;margin-bottom: 0px;color: #1C9407;}
  #ClientEditorForm .addressDetails.top-bottom{padding-top: 6px;padding-bottom: 5px;display: block;}
  #ModelForWriteOffsAdd table,  #ModelForPaymentsAdd table{margin-bottom: 0px;}

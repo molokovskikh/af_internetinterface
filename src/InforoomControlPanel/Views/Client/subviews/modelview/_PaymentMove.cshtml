@@ -9,7 +9,7 @@
 	Client client = Model;
 }
 <!-- Modal For Payments Move-->
-<div class="modal fade" id="ModelForPaymentsMove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="ModelForPaymentsMove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			@using (@Html.BeginForm("MovePayment", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))

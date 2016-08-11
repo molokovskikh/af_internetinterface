@@ -283,6 +283,7 @@ namespace Inforoom2.Helpers
 				client.SetStatus(StatusType.Worked, InforoomController.DbSession);
 				foreach (var item in client.Endpoints) {
 					item.PackageId = client.PhysicalClient.Plan.PackageSpeed.PackageId;
+					InforoomController.DbSession.Save(item);
 				}
 			}
 			//иначе, если клиент деактивирован 
@@ -426,7 +427,7 @@ namespace Inforoom2.Helpers
 
 			//юр.лицо редиректим с ip адресом, для того, чтобы его распознать на небезопасном контроллере (юр. лицо не входит на сайт)
 			if (InforoomClient.LegalClient != null) {
-				var endpoint = InforoomClient.Endpoints.FirstOrDefault();
+				var endpoint = InforoomClient.Endpoints.FirstOrDefault(s => !s.Disabled);
 				if (endpoint != null)
 					routValues = new { @ip = endpoint.Ip };
 			}
@@ -518,7 +519,7 @@ namespace Inforoom2.Helpers
 					int.TryParse(endpointIdString, out endpointId);
 				}
 				if (endpointId != 0) {
-					var endpoint = controller.DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == endpointId);
+					var endpoint = controller.DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == endpointId && !s.Disabled);
 					return endpoint != null && endpoint.Client != null && endpoint.Client.LegalClient != null ? endpoint.Client : null;
 				}
 			}

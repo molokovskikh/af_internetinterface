@@ -9,7 +9,7 @@
 	var DateTimeNow = SystemTime.Now();
 }
 <!-- Modal For Order Add-->
-<div class="modal fade" id="ModelForOrderRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="ModelForOrderRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			@using (@Html.BeginForm("CloseClientOrder", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))

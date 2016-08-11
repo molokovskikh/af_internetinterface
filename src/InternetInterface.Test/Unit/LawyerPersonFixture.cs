@@ -128,8 +128,9 @@ namespace InternetInterface.Test.Unit
 			order.Disabled = true;
 			Sum(new DateTime(2014, 2, 2));
 
-			Assert.IsNull(order.EndPoint);
-			Assert.AreEqual(0, client.client.Endpoints.Count);
+			Assert.AreEqual(order.EndPoint.Disabled, true);
+			Assert.AreEqual(0, client.client.Endpoints.Count(s => !s.Disabled));
+			Assert.AreEqual(1, client.client.Endpoints.Count(s => s.Disabled));
 		}
 
 		[Test]
@@ -137,6 +138,7 @@ namespace InternetInterface.Test.Unit
 		{
 			var endpoint = new ClientEndpoint(client.client, 1, new NetworkSwitch());
 			client.client.Endpoints.Add(endpoint);
+			order.Client = client.client;
 			order.EndPoint = endpoint;
 			order.OrderServices.Add(new OrderService(order, 600, isPeriodic: true));
 			var order1 = new Order {
@@ -144,13 +146,17 @@ namespace InternetInterface.Test.Unit
 				EndPoint = endpoint
 			};
 			client.client.Orders.Add(order1);
-
+			var listOfOrders = client.client.Orders.Where(o => !o.IsActivated && o.OrderStatus == OrderStatus.Enabled).ToArray();
+			foreach (var item in listOfOrders) {
+				item.Client = client.client;
+			}
 			Sum(new DateTime(2014, 2, 1));
 			order.Disabled = true;
 			Sum(new DateTime(2014, 2, 2));
 
-			Assert.IsNull(order.EndPoint);
-			Assert.AreEqual(1, client.client.Endpoints.Count);
+			Assert.AreEqual(order.EndPoint.Disabled, true);
+			Assert.AreEqual(0, client.client.Endpoints.Count(s => !s.Disabled));
+			Assert.AreEqual(1, client.client.Endpoints.Count(s => s.Disabled));
 		}
 
 		private decimal Sum(DateTime dateTime)

@@ -97,13 +97,13 @@ namespace InforoomInternet.Test.Functional
 			Click("Подтвердить");
 
 			client.Refresh();
-			Assert.AreEqual(client.Endpoints.Count, 1);
-			Assert.That(client.Endpoints.First().Switch, Is.EqualTo(lease.Switch));
-			Assert.That(client.Endpoints.First().Port, Is.EqualTo(1));
+			Assert.AreEqual(client.Endpoints.Count(s => !s.Disabled), 1);
+			Assert.That(client.Endpoints.First(s => !s.Disabled).Switch, Is.EqualTo(lease.Switch));
+			Assert.That(client.Endpoints.First(s => !s.Disabled).Port, Is.EqualTo(1));
 			session.Refresh(lease.Switch);
 			session.Refresh(lease);
 			Assert.That(lease.Switch.Name, Is.StringContaining("testStreet"));
-			Assert.That(lease.Endpoint, Is.EqualTo(client.Endpoints.First()));
+			Assert.That(lease.Endpoint, Is.EqualTo(client.Endpoints.First(s => !s.Disabled)));
 		}
 
 		private Lease CreateLease()
@@ -327,7 +327,7 @@ namespace InforoomInternet.Test.Functional
 			noIptvTariff.PackageId = 1;
 			noIptvTariff.Hidden = false;
 			noIptvTariff.CanUseForSelfConfigure = true;
-			
+
 			Open("PrivateOffice/IndexOffice");
 			AssertNoText("Каналы для IPTV");
 
@@ -395,8 +395,8 @@ namespace InforoomInternet.Test.Functional
 			// Обработать новый платеж клиента
 			newPay.BillingAccount = true;
 			newPay.Update();
-			Refresh();										// Обновить текущую страницу сайта
-				
+			Refresh(); // Обновить текущую страницу сайта
+
 			// Проверить содержание данных по новому платежу в 1-ой строке таблицы "Зачисления"
 			Assert.IsTrue(Css(".WriteOffSum").Text == newPay.Sum.ToString("F"));
 			Assert.IsTrue(Css(".WriteOffDate").Text == newPay.PaidOn.ToString("dd.MM.yyyy"));

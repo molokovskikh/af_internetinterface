@@ -100,9 +100,9 @@ namespace InternetInterface.Helpers
 
 		public static void UpdatePackageId(ISession session, ClientEndpoint endpoint)
 		{
-			var addresses = session.Query<Lease>().Where(l => l.Endpoint == endpoint).ToArray()
+			var addresses = session.Query<Lease>().Where(l => l.Endpoint == endpoint && !l.Endpoint.Disabled).ToArray()
 				.Select(l => l.Ip.ToString())
-				.Concat(session.Query<StaticIp>().Where(s => s.EndPoint == endpoint).ToArray()
+				.Concat(session.Query<StaticIp>().Where(s => s.EndPoint == endpoint && !s.EndPoint.Disabled ).ToArray()
 					.Select(s => s.Address()))
 				.ToArray();
 			if (addresses.Length == 0)
@@ -113,7 +113,7 @@ namespace InternetInterface.Helpers
 
 		public static void UpdatePackageId(ISession session, Client client)
 		{
-			foreach (var endpoint in client.Endpoints)
+			foreach (var endpoint in client.Endpoints.Where(s=>!s.Disabled))
 				UpdatePackageId(session, endpoint);
 		}
 	}

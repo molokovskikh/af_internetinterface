@@ -111,7 +111,7 @@
 					<td>@Html.DisplayFor(modelItem => item.Name)</td>
 					<td>@(item.Ip != null ? item.Ip.ToString() : "Нет")</td>
 					<td>@Html.DisplayFor(modelItem => item.Mac)</td>
-					<td>@item.Endpoints.Count / @item.PortCount</td>
+					<td>@item.Endpoints.Count(s => !s.Disabled) / @item.PortCount</td>
 					<td>@item.Type.GetDescription()</td>
 					<td>@(item.NetworkNode != null ? item.NetworkNode.Name : "Не прикреплен")</td>
 					<td>

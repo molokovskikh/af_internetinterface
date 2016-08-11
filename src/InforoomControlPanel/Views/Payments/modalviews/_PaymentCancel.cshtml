@@ -9,7 +9,7 @@
 	BankPayment payment = Model;
 }
 <!-- Modal For Payments Cancel-->
-<div class="modal fade" id="ModelForPaymentsCancel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="ModelForPaymentsCancel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			@using (@Html.BeginForm("PaymentRemove", "Payments", null, FormMethod.Post, new {@id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered"})) {

@@ -181,7 +181,7 @@ namespace Inforoom2.Models
 			};
 			LastTimePlanChanged = SystemTime.Now();
 			if (Client.Internet.ActivatedByUser)
-				Client.Endpoints.ForEach(e => e.PackageId = Plan.PackageSpeed.PackageId);
+				Client.Endpoints.Where(s=>!s.Disabled).ForEach(e => e.PackageId = Plan.PackageSpeed.PackageId);
 			return writeOff;
 		}
 
@@ -468,7 +468,7 @@ namespace Inforoom2.Models
 					dbSession.Save(client);
 
 					//обновляем статические адреса для клиентской точки подключения
-					dbSession.Query<StaticIp>().Where(s => s.EndPoint == clientEntPoint).ToList().Where(
+					dbSession.Query<StaticIp>().Where(s => s.EndPoint == clientEntPoint && !s.EndPoint.Disabled).ToList().Where(
 						s => !staticAddress.Select(f => f.Id).Contains(s.Id)).ToList()
 						.ForEach(s => dbSession.Delete(s));
 					foreach (var s in staticAddress) {
@@ -484,7 +484,7 @@ namespace Inforoom2.Models
 					//создаем платеж за подключение
 					if (!string.IsNullOrEmpty(connectSum) && _connectSum > 0) {
 						ConnectSum = _connectSum;
-						var payments = dbSession.Query<PaymentForConnect>().Where(p => p.EndPoint == clientEntPoint).ToList();
+						var payments = dbSession.Query<PaymentForConnect>().Where(p => p.EndPoint == clientEntPoint && !p.EndPoint.Disabled).ToList();
 						if (!payments.Any())
 							dbSession.Save(new PaymentForConnect(_connectSum, clientEntPoint, employee));
 						else {

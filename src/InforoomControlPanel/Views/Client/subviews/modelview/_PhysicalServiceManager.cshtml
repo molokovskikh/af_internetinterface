@@ -15,7 +15,7 @@
 	var cService = serviceToActivate as SpeedBoost != null? client.ClientServices.FirstOrDefault(s => s.Service.Id == serviceId):null;
 }
 <!-- Modal For Order Add-->
-<div class="modal fade" id="ModelForActivateService" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="ModelForActivateService" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			@using (@Html.BeginForm((cService == null ? "ActivateService" : "DiactivateService"), "Client", null, FormMethod.Post, new {  @class = "form-horizontal form-groups-bordered" }))

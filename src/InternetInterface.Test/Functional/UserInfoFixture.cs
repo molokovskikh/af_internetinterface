@@ -406,7 +406,7 @@ namespace InternetInterface.Test.Functional
 			client.AddEndpoint(clientEndpoint, new Settings(session));
 
 			// Проверка отсутствия IP-пула в точке подключения пользователя "client"
-			Assert.That(client.Endpoints[0].Pool, Is.EqualTo(null));
+			Assert.That(client.Endpoints.FirstOrDefault(s => !s.Disabled).Pool, Is.EqualTo(null));
 
 			Open("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", client.Id);
 			Css("#EditConn" + clientEndpoint.Id + "Btn").Click();
@@ -416,7 +416,7 @@ namespace InternetInterface.Test.Functional
 			// Проверка наличия IP-пула "pool" в точке подключения пользователя "client"
 			client.Refresh();
 			client = session.Get<Client>(client.Id);
-			Assert.That(client.Endpoints[0].Pool, Is.EqualTo(pool.Id));
+			Assert.That(client.Endpoints.FirstOrDefault(s => !s.Disabled).Pool, Is.EqualTo(pool.Id));
 		}
 
 		[Test(Description = "Проверяет корректность задания нулевого IP-пула для физического клиента")]
@@ -441,7 +441,7 @@ namespace InternetInterface.Test.Functional
 			client.AddEndpoint(clientEndpoint, new Settings(session));
 
 			// Проверка отсутствия IP-пула в точке подключения пользователя "client"
-			Assert.That(client.Endpoints[0].Pool, Is.EqualTo(null));
+			Assert.That(client.Endpoints.FirstOrDefault(s => !s.Disabled).Pool, Is.EqualTo(null));
 
 			Open("UserInfo/ShowPhysicalClient?filter.ClientCode={0}", client.Id);
 			Css("#EditConn" + clientEndpoint.Id + "Btn").Click();
@@ -451,7 +451,7 @@ namespace InternetInterface.Test.Functional
 			// Вновь проверка отсутствия IP-пула в точке подключения пользователя "client"
 			client.Refresh();
 			client = session.Get<Client>(client.Id);
-			Assert.That(client.Endpoints[0].Pool, Is.EqualTo(null));
+			Assert.That(client.Endpoints.FirstOrDefault(s => !s.Disabled).Pool, Is.EqualTo(null));
 		}
 
 		[Test(Description = "Проверяет возм-ть задания IP-пула для юридического лица")]

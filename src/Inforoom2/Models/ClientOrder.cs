@@ -13,11 +13,15 @@ using InternetInterface.Controllers.Filter;
 using NHibernate;
 using NHibernate.Mapping.Attributes;
 using NHibernate.Validator.Constraints;
+using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+using NHibernate.Linq;
+using Inforoom2.Models.Services;
 
 namespace Inforoom2.Models
 {
 	//перенесено из старой админки (нужен при проверке на необходимость показывать Варнинг)
-	[Class(0, Table = "Orders", Schema = "internet", NameType = typeof (ClientOrder)), Description("Заказ")]
+	[Class(0, Table = "Orders", Schema = "internet", NameType = typeof(ClientOrder)), Description("Заказ")]
 	public class ClientOrder : BaseModel, ILogAppeal
 	{
 		public ClientOrder()
@@ -48,7 +52,7 @@ namespace Inforoom2.Models
 
 		[Bag(0, Table = "OrderServices", Cascade = "all-delete-orphan")]
 		[NHibernate.Mapping.Attributes.Key(1, Column = "OrderId")]
-		[OneToMany(2, ClassType = typeof (OrderService)), Description("Услуги")]
+		[OneToMany(2, ClassType = typeof(OrderService)), Description("Услуги")]
 		public virtual IList<OrderService> OrderServices { get; set; }
 
 		[ManyToOne(Column = "EndPoint"), Description("Точка подключения")]
@@ -57,9 +61,137 @@ namespace Inforoom2.Models
 		[ManyToOne(Column = "ClientId")]
 		public virtual Client Client { get; set; }
 
+
 		//Это поле нужно заменить, в результате перехода на новые адреса
 		[Property, Description("Адрес подключения (текст)")]
 		public virtual string ConnectionAddress { get; set; }
+
+
+		public virtual bool HasEndPointDisabled => EndPoint != null && EndPoint.Disabled && EndPoint.IsEnabled != null;
+
+		public virtual bool HasEndPointNeverBeenEnabled => EndPoint != null && EndPoint.Disabled && EndPoint.IsEnabled == null;
+
+		public virtual void SetNewBornState(ClientEndpoint endpoint)
+		{
+			if (endpoint.Id == 0) {
+				endpoint.IsEnabled = null;
+			}
+			if (endpoint.IsEnabled == null) {
+				endpoint.Disabled = true;
+			}
+		}
+
+		[Property]
+		protected virtual string NewEndPointState { get; set; }
+
+		public virtual bool HasEndPointFutureState => !string.IsNullOrEmpty(NewEndPointState);
+
+		/// <summary>
+		/// Состояние точки подключения (для смены, при активации заказа)
+		/// </summary>
+		public virtual EndpointStateBox EndPointFutureState
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(NewEndPointState)) {
+					return null;
+				}
+				return (EndpointStateBox)JsonConvert.DeserializeObject(NewEndPointState, typeof(EndpointStateBox));
+			}
+			set
+			{
+				if (value == null) {
+					NewEndPointState = null;
+				}
+				else {
+					NewEndPointState = JsonConvert.SerializeObject(value);
+				}
+			}
+		}
+
+		public virtual void SetStaticIpAsOrderService(ISession dbSession, ClientOrder order, string staticIp)
+		{
+			decimal priceForIp = 0;
+			var priceItem = dbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof(FixedIp)));
+			if (priceItem != null) {
+				priceForIp = priceItem.Price;
+			}
+			var staticIpService = new OrderService {
+				Cost = priceForIp,
+				Order = order,
+				Description = string.Format("Плата за фиксированный Ip адрес ({0})", staticIp)
+			};
+			dbSession.Save(staticIpService);
+			order.OrderServices.Add(staticIpService);
+		}
+
+		/// <summary>
+		/// Обновление статических адресов по договору
+		/// </summary>
+		/// <param name="currentEndpoint">Точка подключения</param>
+		/// <param name="staticAddress">Список статических адресов</param>
+		/// <param name="employee">Пользователь</param>
+		public virtual void UpdateStaticAddressList(ref ClientEndpoint currentEndpoint, StaticIp[] staticAddress,
+			Employee employee)
+		{
+			var appealUpdate = "";
+			var appealRemove = "";
+			var appealInsert = "";
+			const string IPRegExp =
+				@"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b";
+
+			var recipientsToRemove = currentEndpoint.StaticIpList.Where(s => !staticAddress.Any(d => d.Ip == s.Ip)).ToList();
+			currentEndpoint.StaticIpList.RemoveEach(recipientsToRemove);
+			//Формирование оповещения--->
+			if (recipientsToRemove.Count > 0) {
+				appealRemove =
+					$" <br/><strong>удалены услуги:</strong> <br/>{string.Join("<br/>", recipientsToRemove.Select(s => $"<br/><i>было</i> {s.Ip} : {s.Mask} ").ToList())}";
+			} //<----Формирование оповещения
+
+			if (staticAddress != null) {
+				for (int i = 0; i < staticAddress.Length; i++) {
+					bool isToBeAdded = true;
+					for (int j = 0; j < currentEndpoint.StaticIpList.Count; j++) {
+						if (staticAddress[i].Id != 0 && currentEndpoint.StaticIpList[j].Id == staticAddress[i].Id) {
+							//Формирование оповещения--->
+							if (currentEndpoint.StaticIpList[j].Ip != staticAddress[i].Ip ||
+							    currentEndpoint.StaticIpList[j].Mask != staticAddress[i].Mask) {
+								appealUpdate += (appealUpdate == string.Empty ? " <br/><strong>обновлены ip:</strong>" : "");
+								appealUpdate +=
+									$"<br/><i>было</i> {currentEndpoint.StaticIpList[j].Ip} : {currentEndpoint.StaticIpList[j].Mask}";
+								appealUpdate += $"<br/><i>стало</i> {staticAddress[i].Ip} : {staticAddress[i].Mask}";
+							} //<---Формирование оповещения
+
+							currentEndpoint.StaticIpList[j].Ip = staticAddress[i].Ip;
+							currentEndpoint.StaticIpList[j].Mask = staticAddress[i].Mask;
+							currentEndpoint.StaticIpList[j].EndPoint = currentEndpoint;
+							isToBeAdded = false;
+							break;
+						}
+					}
+					if (isToBeAdded && Regex.IsMatch(staticAddress[i].Ip, IPRegExp)) {
+						var newItem = new StaticIp() {
+							EndPoint = currentEndpoint,
+							Ip = staticAddress[i].Ip,
+							Mask = staticAddress[i].Mask
+						};
+						currentEndpoint.StaticIpList.Add(newItem);
+						//Формирование оповещения--->
+						if (appealInsert == string.Empty)
+							appealInsert = "<br/><strong>добавлены ip:</strong>";
+						appealInsert +=
+							$"<br/> {newItem.Ip} : {staticAddress[i].Mask}";
+						//<---Формирование оповещения
+					}
+				}
+			}
+			appealInsert = appealInsert + appealUpdate + appealRemove;
+			if (appealInsert != string.Empty) {
+				currentEndpoint.Client.Appeals.Add(new Appeal($"По подключению №{currentEndpoint.Id} " + appealInsert,
+					currentEndpoint.Client, AppealType.System,
+					employee));
+			}
+		}
 
 		public virtual Client GetAppealClient(ISession session)
 		{
@@ -68,8 +200,7 @@ namespace Inforoom2.Models
 
 		public virtual List<string> GetAppealFields()
 		{
-			return new List<string>()
-			{
+			return new List<string>() {
 				"Number",
 				"BeginDate",
 				"EndDate",
@@ -88,11 +219,11 @@ namespace Inforoom2.Models
 
 		public virtual string GetAdditionalAppealInfo(string property, object oldPropertyValue, ISession session)
 		{
-			string message = ""; 
+			string message = "";
 			if (property == "IsActivated") {
 				// получаем псевдоним из описания 
 				property = this.GetDescription("IsActivated");
-				var oldPlan = oldPropertyValue == null ? null : ((bool?) oldPropertyValue);
+				var oldPlan = oldPropertyValue == null ? null : ((bool?)oldPropertyValue);
 				var currentPlan = IsDeactivated;
 				if (oldPlan != null) {
 					message += property + " было: " + (oldPlan.HasValue && oldPlan.Value ? "да" : "нет") + " <br/>";
@@ -107,26 +238,21 @@ namespace Inforoom2.Models
 					message += property + " стало: " + "значение отсуствует <br/> ";
 				}
 			}
-			if (property == "IsDeactivated")
-			{
+			if (property == "IsDeactivated") {
 				// получаем псевдоним из описания 
 				property = this.GetDescription("IsDeactivated");
 				var oldPlan = oldPropertyValue == null ? null : ((bool?)oldPropertyValue);
 				var currentPlan = IsDeactivated;
-				if (oldPlan != null)
-				{
+				if (oldPlan != null) {
 					message += property + " было: " + (oldPlan.HasValue && oldPlan.Value ? "да" : "нет") + " <br/>";
 				}
-				else
-				{
+				else {
 					message += property + " было: " + "значение отсуствует <br/> ";
 				}
-				if (currentPlan != null)
-				{
+				if (currentPlan != null) {
 					message += property + " стало: " + (currentPlan ? "да" : "нет") + " <br/>";
 				}
-				else
-				{
+				else {
 					message += property + " стало: " + "значение отсуствует <br/> ";
 				}
 			}
@@ -136,7 +262,7 @@ namespace Inforoom2.Models
 		public virtual void SendMailAboutCreate(ISession session, Employee employee)
 		{
 			var addressRaw = ConfigHelper.GetParam("OrderNotificationMail");
-			var addressList = addressRaw.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+			var addressList = addressRaw.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
 			var topic = "Уведомление о создании заказа";
 			var body = ClientOrder.MailPattern(this, "создание", employee) + OrderService.MailPattern(this, employee);
@@ -146,7 +272,7 @@ namespace Inforoom2.Models
 		public virtual void SendMailAboutUpdate(ISession session, Employee employee)
 		{
 			var addressRaw = ConfigHelper.GetParam("OrderNotificationMail");
-			var addressList = addressRaw.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+			var addressList = addressRaw.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
 			var topic = "Уведомление о внесение изменений в заказ";
 			var body = ClientOrder.MailPattern(this, "изменение", employee) + OrderService.MailPattern(this, employee);
@@ -156,7 +282,7 @@ namespace Inforoom2.Models
 		public virtual void SendMailAboutClose(ISession session, Employee employee)
 		{
 			var addressRaw = ConfigHelper.GetParam("OrderNotificationMail");
-			var addressList = addressRaw.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+			var addressList = addressRaw.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
 			var topic = "Уведомление о закрытии заказа";
 			var body = ClientOrder.MailPattern(this, "закрытие", employee) + OrderService.MailPattern(this, employee);
@@ -177,7 +303,7 @@ namespace Inforoom2.Models
 	}
 
 	//перенесено из старой админки (нужен при проверке на необходимость показывать Варнинг)
-	[Class(0, Table = "OrderServices", Schema = "internet", NameType = typeof (OrderService), Lazy = true),
+	[Class(0, Table = "OrderServices", Schema = "internet", NameType = typeof(OrderService), Lazy = true),
 	 Description("Услуга")]
 	public class OrderService : BaseModel
 	{

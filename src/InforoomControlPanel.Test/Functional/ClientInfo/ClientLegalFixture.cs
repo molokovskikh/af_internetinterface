@@ -23,7 +23,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 		//в начале 
 		public void Setup()
 		{
-			//получаем обычного (нормально) клиента
+			//получаем клиента юр.лицо
 			CurrentClient =
 				DbSession.Query<Client>()
 					.FirstOrDefault(s => s.Comment == ClientCreateHelper.ClientMark.legalClient.GetDescription());
@@ -93,6 +93,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				DbSession.Save(CurrentClient);
 				RunBillingProcessPayments();
 				RunBillingProcessWriteoffs();
+				RunBillingProcessClientEndpointSwitcher();
 				//Обновляем модель клиента
 				DbSession.Refresh(CurrentClient);
 				DbSession.Refresh(CurrentClient.LegalClient);
@@ -104,6 +105,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Assert.That(CurrentClient.DebtDays, Is.EqualTo(0), "Долговые дни не совпадают.");
 				Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false), "Отображение варнинга не совпадает.");
 				Assert.That(internetService.IsActivated, Is.EqualTo(true), "Сервис 'Интернет' не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => !s.Disabled), Is.GreaterThan(0), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => s.Disabled),
+					Is.EqualTo(CurrentClient.Endpoints.Count - CurrentClient.Endpoints.Count(s => !s.Disabled)), "Отмена блокировки не совпадает.");
 			}
 			//Статус - Отключен
 			if (status == StatusType.NoWorked) {
@@ -112,6 +116,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				DbSession.Save(CurrentClient);
 				RunBillingProcessPayments();
 				RunBillingProcessWriteoffs();
+				RunBillingProcessClientEndpointSwitcher();
 				DbSession.Flush();
 				//Обновляем модель клиента
 				DbSession.Refresh(CurrentClient);
@@ -124,7 +129,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Assert.That(CurrentClient.Discount, Is.EqualTo(0), "Скидка не совпадает.");
 				Assert.That(CurrentClient.StartNoBlock, Is.Null, "Отмена блокировки не совпадает.");
 				Assert.That(internetService.IsActivated, Is.EqualTo(false), "Сервис 'Интернет' не совпадает.");
-				Assert.That(CurrentClient.Endpoints.Count, Is.GreaterThan(0), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => !s.Disabled), Is.GreaterThan(0), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => s.Disabled),
+					Is.EqualTo(CurrentClient.Endpoints.Count - CurrentClient.Endpoints.Count(s => !s.Disabled)), "Отмена блокировки не совпадает.");
 			}
 			//Статус - Расторгнут
 			if (status == StatusType.Dissolved) {
@@ -133,6 +140,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				DbSession.Save(CurrentClient);
 				RunBillingProcessPayments();
 				RunBillingProcessWriteoffs();
+				RunBillingProcessClientEndpointSwitcher();
 				//Обновляем модель клиента
 				DbSession.Refresh(CurrentClient);
 				DbSession.Refresh(CurrentClient.LegalClient);
@@ -143,7 +151,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Assert.That(CurrentClient.AutoUnblocked, Is.EqualTo(false), "Состояние не совпадает.");
 				Assert.That(CurrentClient.Discount, Is.EqualTo(0), "Скидка не совпадает.");
 				Assert.That(internetService.IsActivated, Is.EqualTo(false), "Сервис 'Интернет' не совпадает.");
-				Assert.That(CurrentClient.Endpoints.Count, Is.EqualTo(0), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => !s.Disabled), Is.EqualTo(0), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => s.Disabled),
+					Is.EqualTo(CurrentClient.Endpoints.Count - CurrentClient.Endpoints.Count(s => !s.Disabled)), "Отмена блокировки не совпадает.");
 
 				//Добавляем платеж, статус измениться не должен
 				var payment = new Payment() {
@@ -160,6 +170,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				DbSession.Save(CurrentClient);
 				RunBillingProcessPayments();
 				RunBillingProcessWriteoffs();
+				RunBillingProcessClientEndpointSwitcher();
 				//Обновляем модель клиента
 				DbSession.Refresh(CurrentClient);
 				DbSession.Refresh(CurrentClient.LegalClient);
@@ -170,7 +181,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Assert.That(CurrentClient.AutoUnblocked, Is.EqualTo(false), "Состояние не совпадает.");
 				Assert.That(CurrentClient.Discount, Is.EqualTo(0), "Скидка не совпадает.");
 				Assert.That(internetService.IsActivated, Is.EqualTo(false), "Сервис 'Интернет' не совпадает.");
-				Assert.That(CurrentClient.Endpoints.Count, Is.EqualTo(0), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => !s.Disabled), Is.EqualTo(0), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => s.Disabled),
+					Is.EqualTo(CurrentClient.Endpoints.Count - CurrentClient.Endpoints.Count(s => !s.Disabled)), "Отмена блокировки не совпадает.");
 			}
 		}
 
@@ -274,6 +287,18 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			else {
 				Assert.That(inputObjList.Count, Is.Not.EqualTo(0), "Статус не совпадает.");
 			}
+
+			var oldEnpoint = CurrentClient.Endpoints.First(s => s.Disabled);
+			var endpoint = new ClientEndpoint {
+				PackageId = 100,
+				Client = CurrentClient,
+				Ip = oldEnpoint.Ip,
+				Port = 22,
+				Switch = oldEnpoint.Switch,
+				Pool = oldEnpoint.Pool
+			};
+			DbSession.Save(endpoint);
+
 			//Проверки последствий смены:
 			CheckStatusChangeEffect(StatusType.Worked);
 		}
@@ -666,386 +691,6 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Assert.That(CurrentClient.Balance, Is.GreaterThan(clientBalance - sum), "Баланс клиента не совпадает с должным.");
 		}
 
-		[Test, Description("Страница клиента. Юр. лицо. Добавление простого заказа")]
-		public void SimpleOrderAdding(int serviceCost = 333, int serviceCostCircle = 1000)
-		{
-			string blockName = "#emptyBlock_legalOrders ";
-			string blockModelName = "#ModelForOrderEdit ";
-			var orderNumber = "1";
-			var serviceDescription = "Услуга РАЗ";
-			var serviceDescriptionCircle = "Периодичная услуга";
-			var balanceBeforeOrder = CurrentClient.Balance;
 
-			//Проверяем открываем редактор заказа 
-			browser.FindElementByCssSelector(blockName + "[data-target='#ModelForOrderEdit']").Click();
-			//Порт
-			WaitAjax(10);
-			//Номер
-			WaitForVisibleCss(blockModelName + "input[name='order.Number']", 7);
-			var inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='order.Number']");
-			inputObj.Clear();
-			inputObj.SendKeys(orderNumber);
-			//Дата начала
-			WaitForVisibleCss(blockModelName + "input[name='order.BeginDate']", 7);
-			inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='order.BeginDate']");
-			inputObj.Clear();
-			browser.FindElementByCssSelector(".datepicker-days .day").Click();
-			browser.FindElementByCssSelector("#OrderServicesNumber").Click();
-
-			//Добавить разовую услугу
-			browser.FindElementByCssSelector(blockModelName + ".addNewElement.addOrderServiceElement").Click();
-			//Описание
-			WaitForVisibleCss(blockModelName + ".serviceDescription input[clone='0']", 7);
-			inputObj = browser.FindElementByCssSelector(blockModelName + ".serviceDescription input[clone='0']");
-			inputObj.Clear();
-			inputObj.SendKeys(serviceDescription);
-			//Стоимость
-			WaitForVisibleCss(blockModelName + "#OrderServicesList .serviceCost input[clone='0']", 7);
-			inputObj = browser.FindElementByCssSelector("#OrderServicesList .serviceCost input[clone='0']");
-			inputObj.Clear();
-			inputObj.SendKeys(serviceCost.ToString());
-			if (serviceCostCircle != 0) {
-				//Добавить периодическую услугу
-				browser.FindElementByCssSelector(blockModelName + ".addNewElement.addOrderServiceElement").Click();
-				//Описание
-				WaitForVisibleCss(blockModelName + ".serviceDescription input[clone='1']", 7);
-				inputObj = browser.FindElementByCssSelector(blockModelName + ".serviceDescription input[clone='1']");
-				inputObj.Clear();
-				inputObj.SendKeys(serviceDescriptionCircle);
-				//Стоимость
-				WaitForVisibleCss(blockModelName + "#OrderServicesList .serviceCost input[clone='1']", 7);
-				inputObj = browser.FindElementByCssSelector("#OrderServicesList .serviceCost input[clone='1']");
-				inputObj.Clear();
-				inputObj.SendKeys(serviceCostCircle.ToString());
-
-				inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='order.OrderServices[1].IsPeriodic']");
-				inputObj.Click();
-				Assert.That(inputObj.GetAttribute("checked"), Is.Not.Null, "Периодичность не указана.");
-			}
-			//сохраняем изменения
-			browser.FindElementByCssSelector(blockModelName + ".btn.btn-success").Click();
-
-			CurrentClient.PaidDay = false;
-			DbSession.Save(CurrentClient);
-			DbSession.Flush();
-			RunBillingProcessPayments(CurrentClient);
-			RunBillingProcessWriteoffs(CurrentClient, false);
-			DbSession.Refresh(CurrentClient.LegalClient);
-
-			Assert.That(CurrentClient.LegalClientOrders.Count, Is.EqualTo(1),
-				"Количество заказов не совпадает с должным.");
-			Assert.That(CurrentClient.LegalClientOrders[0].OrderServices.Count, Is.EqualTo(serviceCostCircle != 0 ? 2 : 1),
-				"Количество услуг не совпадает с должным.");
-
-			Assert.That(CurrentClient.Balance, Is.EqualTo(balanceBeforeOrder - serviceCost),
-				"Баланс клиента не совпадает с должным.");
-		}
-
-		public void OrderWithConnection(bool withStaticIp = true)
-		{
-			string blockName = "#emptyBlock_legalOrders ";
-			string blockModelName = "#ModelForOrderEdit ";
-			var orderNumber = "3377800";
-			var orderStart = SystemTime.Now();
-			var connectionAddress = "Услуга РАЗ";
-			var serviceCost = 333;
-			var ipAddress = "111.111.01.1";
-			var ipMaskResult = "255.192.0.0";
-			var ipMask = "10";
-			var currentSwitch =
-				DbSession.Query<Inforoom2.Models.Switch>().FirstOrDefault(s => s.Zone.Region == CurrentClient.GetRegion());
-			var currentSpeed =
-				DbSession.Query<Inforoom2.Models.PackageSpeed>().FirstOrDefault();
-
-			//Проверяем открываем редактор заказа 
-			browser.FindElementByCssSelector(blockName + "[data-target='#ModelForOrderEdit']").Click();
-			//Порт
-			WaitAjax(20);
-			//Номер
-			WaitForVisibleCss(blockModelName + "input[name='order.Number']", 7);
-			var inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='order.Number']");
-			inputObj.Clear();
-			inputObj.SendKeys(orderNumber);
-			//Дата начала
-			WaitForVisibleCss(blockModelName + "input[name='order.BeginDate']", 7);
-			inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='order.BeginDate']");
-			inputObj.Clear();
-			browser.FindElementByCssSelector(".datepicker-days .day").Click();
-			browser.FindElementByCssSelector("#OrderServicesNumber").Click();
-			//Точка подключения
-
-			//Не использовать точку подключения
-			browser.FindElementByCssSelector(blockModelName + "input[name='noEndpoint']").Click();
-
-			//Адрес подключения
-			WaitForVisibleCss(blockModelName + "input[name='order.ConnectionAddress']", 7);
-			inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='order.ConnectionAddress']");
-			inputObj.Clear();
-			inputObj.SendKeys(connectionAddress);
-			//Адрес подключения
-			WaitForVisibleCss(blockModelName + "input[name='order.ConnectionAddress']", 7);
-			inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='order.ConnectionAddress']");
-			inputObj.Clear();
-			inputObj.SendKeys(connectionAddress);
-			//Коммутатора
-			Css(blockModelName + "[name='connection.Switch']")
-				.SelectByText(currentSwitch.Name + " (портов: " + currentSwitch.PortCount + ")");
-			WaitAjax(30);
-			//Порт
-			WaitForVisibleCss(blockModelName + ".port.free");
-			browser.FindElementByCssSelector(blockModelName + ".port.free:first-child").Click();
-			//Скорость
-			Css(blockModelName + "[name='connection.PackageId']")
-				.SelectByText(currentSpeed.SpeedInMgBitFormated + " мб/с (pid: " + currentSpeed.PackageId + ") " +
-				              currentSpeed.Description);
-
-			if (withStaticIp) {
-				//Добавить статический ip
-				browser.FindElementByCssSelector(blockModelName + ".addNewElement.addStaticIpElement").Click();
-				//Описание
-				WaitForVisibleCss(blockModelName + ".staticIpElement .fixedIp.text", 7);
-				inputObj = browser.FindElementByCssSelector(blockModelName + ".staticIpElement .fixedIp.text");
-				inputObj.Clear();
-				inputObj.SendKeys(ipAddress);
-				browser.FindElementByCssSelector(blockModelName + "#ipStaticTable thead").Click();
-				WaitAjax(20);
-				//Стоимость
-				WaitForVisibleCss(blockModelName + ".staticIpElement .fixedIp.value", 7);
-				inputObj = browser.FindElementByCssSelector(blockModelName + ".staticIpElement .fixedIp.value");
-				inputObj.Clear();
-				inputObj.SendKeys(ipMask);
-				browser.FindElementByCssSelector(blockModelName + "#ipStaticTable thead").Click();
-				WaitAjax(20);
-				AssertText(ipMaskResult, blockModelName + "#staticIpList .staticIpElement", "Маска вычислена не верно");
-			}
-			//сохранение изменений
-			browser.FindElementByCssSelector(blockModelName + ".btn-success").Click();
-
-			WaitForText("Номер лицевого счета", 20);
-
-			//Открыть заказ
-			browser.FindElementByCssSelector(blockName + ".orderListBorder .orderTitle").Click();
-			AssertText(orderNumber, blockName, "Номер заказа сохранен неверно");
-			AssertText(connectionAddress, blockName, "Адрес подключения сохранен неверно");
-			AssertText(currentSwitch.Name, blockName, "Коммутатор сохранен неверно");
-			AssertText("Порт 1", blockName, "Порт сохранен неверно");
-			AssertText("Скорость " + currentSpeed.SpeedInMgBit + " мбит/с", blockName, "Скорость сохранена неверно");
-			if (withStaticIp) {
-				AssertText(ipAddress + " / " + ipMask, blockName, "IP адрес сохранен неверно");
-				AssertText(ipMaskResult, blockName, "Маска сохранена неверно");
-			}
-		}
-
-		[Test, Description("Страница клиента. Юр. лицо. Создание и удаление заказа с подключением")]
-		public void OrderWithConnectionCreate_Delete()
-		{
-			OrderWithConnection();
-			//Удаление заказа
-			browser.FindElementByCssSelector("#emptyBlock_legalOrders .orderListBorder .right .c-pointer.red").Click();
-			WaitForText("Закрытие заказа", 10);
-			//сохранение изменений
-			browser.FindElementByCssSelector("#ModelForOrderRemove .btn-success").Click();
-			CurrentClient.PaidDay = false;
-			DbSession.Save(CurrentClient);
-			DbSession.Flush();
-			RunBillingProcessPayments(CurrentClient);
-			RunBillingProcessWriteoffs(CurrentClient, false);
-			DbSession.Refresh(CurrentClient);
-			DbSession.Refresh(CurrentClient.LegalClient);
-			Open("Client/InfoLegal/" + CurrentClient.Id);
-			WaitForText("Номер лицевого счета", 10);
-			AssertNoText("3377800", "#emptyBlock_legalOrders", "Заказ не отменен!");
-		}
-
-		[Test, Description("Страница клиента. Юр. лицо. Создание и редактирование заказа с подключением")]
-		public void OrderWithConnectionCreate_Edit()
-		{
-			var blockName = "#emptyBlock_legalOrders ";
-			string blockModelName = "#ModelForOrderEdit ";
-
-			OrderWithConnection(false);
-
-			DbSession.Refresh(CurrentClient);
-
-			var currentEndPoint = CurrentClient.LegalClientOrders.First().EndPoint;
-			var newIp = new IPAddress(1771111111);
-
-			var newLease = new Inforoom2.Models.Lease();
-			newLease.Endpoint = currentEndPoint;
-			newLease.LeaseBegin = SystemTime.Now();
-			newLease.Pool = currentEndPoint.Pool;
-			newLease.Port = currentEndPoint.Port;
-			newLease.Ip = newIp;
-			newLease.LeaseEnd = SystemTime.Now().AddDays(10);
-			DbSession.Save(newLease);
-			DbSession.Flush();
-
-			//Удаление заказа
-			Open("Client/InfoLegal/" + CurrentClient.Id);
-			WaitForText("Номер лицевого счета", 10);
-			browser.FindElementByCssSelector(blockName + ".orderListBorder .right .c-pointer.blue").Click();
-			WaitForText("Редактирование заказа", 10);
-			WaitAjax(10);
-			//
-			browser.FindElementByCssSelector(blockModelName + ".createFixedIp").Click();
-			SafeWaitText("Фиксированный IP " + newLease.Ip, 10);
-			//сохранение изменений
-			browser.FindElementByCssSelector(blockModelName + ".btn-success").Click();
-
-			DbSession.Flush();
-			DbSession.Refresh(CurrentClient);
-			var endpointresult = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Ip == newLease.Ip);
-			Assert.That(endpointresult, Is.Not.Null, "Ip не совпадает.");
-		}
-
-		[Test, Description("Страница клиента. Юр. лицо. Добавление и удаление услуги 'Отмена блокировок'")]
-		public void LegalServiceWorkLawyerAddRemove()
-		{
-			decimal totalSum = 11000;
-			var tempDate = SystemTime.Now();
-			SystemTime.Now = () => tempDate.FirstDayOfMonth().AddDays(20).Date;
-			//выставление начальных параметров, клиент активен, варнинг не показывается
-			string blockModelName = "#ModelForActivateService ";
-			var serviceEnd = SystemTime.Now().AddDays(10);
-			Assert.That(CurrentClient.Disabled, Is.EqualTo(false));
-			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false));
-			//добавление заказа на большую сумму (до минуса)
-			var serviceSum = totalSum - 1000; //периодическая услуга
-			totalSum -= CurrentClient.Balance;
-			SimpleOrderAdding(Convert.ToInt32(serviceSum));
-			RunBillingProcessPayments(CurrentClient);
-			RunBillingProcessWriteoffs(CurrentClient, false);
-			DbSession.Refresh(CurrentClient);
-			DbSession.Refresh(CurrentClient.LegalClient);
-			//клиент не активен, показываем варнинг
-			Assert.That(CurrentClient.Disabled, Is.EqualTo(true));
-			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(true));
-			//проверка на отсутствие услуги "отключения блокировки"
-			Assert.That(CurrentClient.ClientServices.Where(s => s.Service.Id == Service.GetIdByType(typeof(WorkLawyer))).ToList().Count, Is.EqualTo(0));
-
-			//открытие редактора сервиса "отключения блокировки"  
-			browser.FindElementByCssSelector(".InfoLegal .list-group [data-target='#ModelForActivateService']").Click();
-			WaitAjax(10);
-			//выставление даты
-			WaitForVisibleCss(blockModelName + "input[name='endDate']", 10);
-			var inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='endDate']");
-			inputObj.Clear();
-			inputObj.SendKeys(serviceEnd.ToShortDateString());
-			//указание причины восстановления
-			browser.FindElementByCssSelector(blockModelName + ".message").Click();
-			//сохранение изменений
-			browser.FindElementByCssSelector(blockModelName + ".btn.btn-success").Click();
-
-			//проверка на наличие услуги "отключения блокировки", активности клиента, отсутствие варнинга
-			DbSession.Refresh(CurrentClient);
-			Assert.That(CurrentClient.Disabled, Is.EqualTo(false));
-			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false));
-			var serviceList = CurrentClient.ClientServices.Where(s => s.IsActivated && s.IsDeactivated == false && s.Service.Id == Service.GetIdByType(typeof(WorkLawyer))).ToList();
-			Assert.That(serviceList.Count, Is.EqualTo(1));
-			//внесение платежа, не полное восставление баланса
-			var payment = new Payment() {
-				Client = CurrentClient,
-				Employee = Employee,
-				PaidOn = SystemTime.Now(),
-				RecievedOn = SystemTime.Now(),
-				Sum = 5000
-			};
-			totalSum -= payment.Sum;
-			CurrentClient.Payments.Add(payment);
-			CurrentClient.PaidDay = false;
-			DbSession.Save(payment);
-			DbSession.Save(CurrentClient);
-			DbSession.Flush();
-			RunBillingProcessPayments(CurrentClient);
-			DbSession.Refresh(CurrentClient);
-			DbSession.Refresh(CurrentClient.LegalClient);
-			//платеж не должен отразиться на варнинге и состоянии клиента
-			Assert.That(CurrentClient.Disabled, Is.EqualTo(false));
-			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false));
-			//проверяем состояние клиента после отработки услуги "отключения блокировки"
-			SystemTime.Now = () => tempDate.FirstDayOfMonth().AddDays(31).Date;
-			RunBillingProcessPayments(CurrentClient);
-			RunBillingProcessWriteoffs(CurrentClient, false);
-			DbSession.Refresh(CurrentClient);
-			DbSession.Refresh(CurrentClient.LegalClient);
-			//клиент не должен быть активен и ему отображается варнинг
-			Assert.That(CurrentClient.Disabled, Is.EqualTo(true));
-			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(true));
-			//внесение платежа, не полное восставление баланса
-			payment = new Payment() {
-				Client = CurrentClient,
-				Employee = Employee,
-				PaidOn = SystemTime.Now(),
-				RecievedOn = SystemTime.Now(),
-				Sum = 2000
-			};
-			totalSum -= payment.Sum;
-			CurrentClient.PaidDay = false;
-			CurrentClient.Payments.Add(payment);
-			DbSession.Save(payment);
-			DbSession.Save(CurrentClient);
-			DbSession.Flush();
-			RunBillingProcessPayments(CurrentClient);
-			RunBillingProcessWriteoffs(CurrentClient, false);
-			DbSession.Refresh(CurrentClient);
-			DbSession.Refresh(CurrentClient.LegalClient);
-			//платеж не должен отразиться на варнинге и состоянии клиента
-			Assert.That(CurrentClient.Disabled, Is.EqualTo(true));
-			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(true));
-
-			//внесение платежа, полное восставление баланса
-			payment = new Payment() {
-				Client = CurrentClient,
-				Employee = Employee,
-				PaidOn = SystemTime.Now(),
-				RecievedOn = SystemTime.Now(),
-				Sum = 3000
-			};
-			totalSum -= payment.Sum;
-			CurrentClient.PaidDay = false;
-			CurrentClient.Payments.Add(payment);
-			DbSession.Save(payment);
-			DbSession.Save(CurrentClient);
-			DbSession.Flush();
-			RunBillingProcessPayments(CurrentClient);
-			RunBillingProcessWriteoffs(CurrentClient, false);
-			DbSession.Refresh(CurrentClient);
-			DbSession.Refresh(CurrentClient.LegalClient);
-			Open("Client/InfoLegal/" + CurrentClient.Id);
-			Assert.That(CurrentClient.LegalClient.Balance, Is.EqualTo(totalSum));
-			//платеж (баланс = 0) должен убрать варнинг, а состояние клиента должно стать активным
-			Assert.That(CurrentClient.Disabled, Is.EqualTo(false));
-			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false));
-			SystemTime.Now = () => tempDate;
-		}
-
-		[Test, Description("Страница клиента. Юр. лицо. Редактирование адреса подключения заказа")]
-		public void LegalOrderAddressChange()
-		{
-			string blockName = "#emptyBlock_legalOrders ";
-			string blockModelName = "#ModelForUpdateConnectionAddress ";
-			string newAddress = "Новый адрес";
-			OrderWithConnection();
-
-			DbSession.Refresh(CurrentClient);
-
-			var connectionAddress = CurrentClient.LegalClientOrders.First().ConnectionAddress;
-			Assert.That(connectionAddress, Is.Not.EqualTo(newAddress));
-
-			//Проверяем открываем редактор заказа 
-			browser.FindElementByCssSelector(blockName + "[data-target='#ModelForUpdateConnectionAddress']").Click();
-			//Порт
-			WaitAjax(10);
-			//Номер
-			WaitForVisibleCss(blockModelName + "input[name='newAddress']", 10);
-			var inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='newAddress']");
-			inputObj.Clear();
-			inputObj.SendKeys(newAddress);
-			//сохраняем изменения
-			browser.FindElementByCssSelector(blockModelName + ".btn.btn-success").Click();
-			WaitForText("Номер лицевого счета", 10);
-			DbSession.Refresh(CurrentClient);
-			Assert.That(CurrentClient.LegalClientOrders.Where(s => s.ConnectionAddress == newAddress).ToList().Count, Is.EqualTo(1));
-		}
 	}
 }

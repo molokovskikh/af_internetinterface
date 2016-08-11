@@ -69,7 +69,7 @@
 							<p class="content">
 								<strong>Коммутатор:</strong>
 								@{
-									var firstOrDefault = item.GetClient().Endpoints.FirstOrDefault();
+									var firstOrDefault = item.GetClient().Endpoints.FirstOrDefault(s => !s.Disabled);
 								}
 								@if (firstOrDefault != null) {
 									@firstOrDefault.Switch.Name
@@ -84,7 +84,7 @@
 							<p class="content">
 								<strong>Порт:</strong>
 								@{
-									var clientEndpoint = item.GetClient().Endpoints.FirstOrDefault();
+									var clientEndpoint = item.GetClient().Endpoints.FirstOrDefault(s => !s.Disabled);
 								}
 								@if (clientEndpoint != null) {
 									@clientEndpoint.Port

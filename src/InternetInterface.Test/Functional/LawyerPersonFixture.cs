@@ -79,7 +79,7 @@ namespace InternetInterface.Test.Functional
 			browser.FindElementById("EditButton" + tag[0].GetAttribute("value")).Click();
 			AddOrderService(3);
 			Click("Сохранить");
-
+			ClickLink("Подключенные услуги(3):");
 			AssertText("Тестовый заказ");
 			AssertText("Тестовый заказ2");
 			AssertText("Тестовый заказ3");
@@ -149,7 +149,7 @@ namespace InternetInterface.Test.Functional
 			browser.FindElementByName("order.Number").Clear();
 			browser.FindElementByName("order.Number").SendKeys("99");
 			var checkbox = browser.FindElementByName("withoutEndpoint");
-			if(!checkbox.Selected)
+			if (!checkbox.Selected)
 				checkbox.Click();
 
 			AddOrderService();
@@ -173,7 +173,7 @@ namespace InternetInterface.Test.Functional
 			browser.FindElementByName("order.Number").SendKeys("99");
 			browser.FindElementById("order_BeginDate").Clear();
 			var checkbox = browser.FindElementByName("withoutEndpoint");
-			if(!checkbox.Selected)
+			if (!checkbox.Selected)
 				checkbox.Click();
 
 			AddOrderService();
@@ -209,7 +209,7 @@ namespace InternetInterface.Test.Functional
 			browser.FindElementByName("order.Number").SendKeys("99");
 
 			var checkbox = browser.FindElementByName("order.OrderServices[0].IsPeriodic");
-			if(checkbox.Selected)
+			if (checkbox.Selected)
 				checkbox.Click();
 			Click("Сохранить");
 			session.Clear();
@@ -289,7 +289,7 @@ namespace InternetInterface.Test.Functional
 				EndDate = SystemTime.Now().AddDays(7)
 			};
 			session.Save(order);
-			for(int i = 1; i < 4; i++) {
+			for (int i = 1; i < 4; i++) {
 				var orderService = new OrderService {
 					Order = order,
 					Description = "Услуга" + i,

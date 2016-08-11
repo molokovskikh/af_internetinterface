@@ -78,8 +78,8 @@
 
 
 
-							Коммутатор: <i style="mso-bidi-font-style: normal"><u>@(client.Endpoints.Count>0? client.Endpoints.FirstOrDefault().Switch.Name + " ("+client.Endpoints.FirstOrDefault().Switch.Ip+")":"")<b style="mso-bidi-font-weight: normal"><o:p></o:p></b></u></i>
-							Порт: <i style="mso-bidi-font-style: normal"><u>@(client.Endpoints.Count>0? client.Endpoints.FirstOrDefault().Port.ToString():"")<b style="mso-bidi-font-weight: normal"><o:p></o:p></b></u></i>
+							Коммутатор: <i style="mso-bidi-font-style: normal"><u>@(client.Endpoints.Count(s => !s.Disabled) >0? client.Endpoints.FirstOrDefault(s=>!s.Disabled).Switch.Name + " ("+client.Endpoints.FirstOrDefault(s => !s.Disabled).Switch.Ip+")":"")<b style="mso-bidi-font-weight: normal"><o:p></o:p></b></u></i>
+							Порт: <i style="mso-bidi-font-style: normal"><u>@(client.Endpoints.Count(s => !s.Disabled) >0? client.Endpoints.FirstOrDefault(s => !s.Disabled).Port.ToString():"")<b style="mso-bidi-font-weight: normal"><o:p></o:p></b></u></i>
 
 
 

@@ -83,7 +83,7 @@ namespace InternetInterface.Helpers
 				if (item.client.Status.Type == StatusType.NoWorked)
 					textBlock = item.client.BlockDate.ToString();
 				ExcelHelper.Write(ws, row, colShift + 13, textBlock, true);
-				var endpoint = item.client.Endpoints.FirstOrDefault();
+				var endpoint = item.client.Endpoints.FirstOrDefault(s=> !s.Disabled);
 				var textEndpoint = "";
 				if (endpoint != null && endpoint.Switch != null && endpoint.Switch.IP != null)
 					textEndpoint = endpoint.Switch.Name + "(" + endpoint.Switch.IP + ")";

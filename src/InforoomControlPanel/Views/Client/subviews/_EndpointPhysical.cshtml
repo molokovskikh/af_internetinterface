@@ -4,18 +4,18 @@
 @using Inforoom2.Helpers
 @using Inforoom2.Models
 @{
-  Layout = "";
-  Client client = Model;
-  List<Switch> switchList = ViewBag.SwitchList;
-  ClientEndpoint endpoint = client.Endpoints.FirstOrDefault();
-  var leases = endpoint != null ? endpoint.LeaseList.OrderByDescending(s => s.LeaseBegin).ThenBy(s => s.LeaseEnd)
-  .GroupBy(s => s.Mac).Select(s => s.First()).ToList() : new List<Lease>();
-  IList<PackageSpeed> packageSpeedList = ViewBag.PackageSpeedList;
-  IList<IpPoolRegion> ipPoolRegionList = ViewBag.IpPoolRegionList;
-  StaticIp[] staticAddress = ViewBag.StaticAddressArray ?? new StaticIp[0];
-  Inforoom2.Helpers.ConnectionHelper connection = ViewBag.Connection ?? new Inforoom2.Helpers.ConnectionHelper();
-  List<SwitchAddress> networkNodeList = ViewBag.networkNodeList;
-  var newEndpoint = endpoint == null;
+	Layout = "";
+	Client client = Model;
+	List<Switch> switchList = ViewBag.SwitchList;
+	ClientEndpoint endpoint = client.Endpoints.FirstOrDefault(s => !s.Disabled);
+	var leases = endpoint != null ? endpoint.LeaseList.OrderByDescending(s => s.LeaseBegin).ThenBy(s => s.LeaseEnd)
+	.GroupBy(s => s.Mac).Select(s => s.First()).ToList() : new List<Lease>();
+	IList<PackageSpeed> packageSpeedList = ViewBag.PackageSpeedList;
+	IList<IpPoolRegion> ipPoolRegionList = ViewBag.IpPoolRegionList;
+	StaticIp[] staticAddress = ViewBag.StaticAddressArray ?? new StaticIp[0];
+	Inforoom2.Helpers.ConnectionHelper connection = ViewBag.Connection ?? new Inforoom2.Helpers.ConnectionHelper();
+	List<SwitchAddress> networkNodeList = ViewBag.networkNodeList;
+	var newEndpoint = endpoint == null;
 }
 <div class="panel panel-default blockJsLockControll">
 
@@ -74,7 +74,7 @@
 												<tr>
 													@for (int i = 0; i < columns; i++)
 													{
-														Inforoom2.Models.ClientEndpoint currentEndpoint = endpoint != null && endpoint.Switch != null ? endpoint.Switch.Endpoints.FirstOrDefault(s => s.Port == currentPort) : null;
+														Inforoom2.Models.ClientEndpoint currentEndpoint = endpoint != null && !endpoint.Disabled && endpoint.Switch != null ? endpoint.Switch.Endpoints.FirstOrDefault(s => s.Port == currentPort && !s.Disabled) : null;
 
 														if (currentEndpoint != null)
 														{
@@ -145,7 +145,7 @@
 				<a class="c-pointer" onclick="changeVisibility('emptyBlock_endpoint')">
 					Информация по подключению - точка №
 				</a>
-				<span class="endpointTitle@(endpoint.IsEnabled.HasValue? endpoint.IsEnabled.Value ?" enabled":" disabled":"")">@endpoint.Id</span>
+				<span class="endpointTitle@(endpoint.IsEnabled.HasValue? endpoint.IsEnabled.Value && !endpoint.Disabled ?" enabled":" disabled":"")">@endpoint.Id</span>
 			</h3>
 		</div>
 		<div class="panel-body">
@@ -271,7 +271,7 @@
 											@foreach (var iswitch in node.NetworkNode.Switches) {
 												<h5>@iswitch.Name</h5>
 												<p>
-													<span>Свободные порты: </span>@(iswitch.PortCount - @iswitch.Endpoints.Count)
+													<span>Свободные порты: </span>@(iswitch.PortCount - @iswitch.Endpoints.Count(s => !s.Disabled))
 												</p>
 												<p>
 													<span>Витые пары: </span>
@@ -379,7 +379,7 @@
 											@for (int j = 0; j < itemsInRow; j++) {
 												<tr>
 													@for (int i = 0; i < columns; i++) {
-														var currentEndpoint = endpoint.Switch.Endpoints.FirstOrDefault(s => s.Port == currentPort);
+														var currentEndpoint = endpoint.Switch.Endpoints.FirstOrDefault(s => s.Port == currentPort && !s.Disabled);
 
 														if (currentEndpoint != null) {
 															<td>
@@ -513,7 +513,7 @@
 </div>
 
 @*Modal For Payments Cancel
-<div class="modal fade" id="ModelForSwitchRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="ModelForSwitchRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			@using (@Html.BeginForm("RemoveEndpoint", "Client", null, FormMethod.Post, new { @id = "ClientEditorForm", @class = "form-horizontal form-groups-bordered" }))

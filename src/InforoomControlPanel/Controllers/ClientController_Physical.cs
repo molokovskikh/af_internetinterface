@@ -129,7 +129,7 @@ namespace InforoomControlPanel.Controllers
 					clientModel.WriteOffs.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
 				}
 				if (subViewName == "_Endpoint") {
-					clientModel.Endpoints.Each(s => errors.AddRange(ValidationRunner.Validate(s)));
+					clientModel.Endpoints.Where(s => !s.Disabled).Each(s => errors.AddRange(ValidationRunner.Validate(s)));
 				}
 				if (subViewName == "_PassportData") {
 					errors = ValidationRunner.Validate(clientModel.PhysicalClient);
@@ -188,7 +188,7 @@ namespace InforoomControlPanel.Controllers
 			}
 			//--------------------------------------------------------------------------------------| Получение списка оповещений
 			// список оповещений
-			var appeals = client.Appeals.Select(s => new Appeal() {
+			var appeals = client.Appeals == null || client.Appeals.Count == 0 ? new List<Appeal>() : client.Appeals.Select(s => new Appeal() {
 				Client = s.Client,
 				AppealType = s.AppealType,
 				Date = s.Date,
@@ -792,10 +792,10 @@ namespace InforoomControlPanel.Controllers
 				SuccessMessage("Адрес изменен успешно");
 
 				//для тестов просто редирект - TODO: поправить, когда перенесется админка.
-				//if (ConfigHelper.GetParam("PhysicalAddressEditingFlag", true) != null &&
-				//    ConfigHelper.GetParam("PhysicalAddressEditingFlag") == "true") {
-				//	return RedirectToAction("InfoPhysical", new { @Id = client.Id, @subViewName = subViewName });
-				//}
+#if DEBUG 
+				return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
+					new { @Id = client.Id, @subViewName = subViewName });
+#endif
 
 				return Redirect(ConfigHelper.GetParam("adminPanelOld") +
 				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
@@ -836,7 +836,7 @@ namespace InforoomControlPanel.Controllers
 			var oldPlan = client.PhysicalClient.Plan;
 			if (oldPlan != newPlan) {
 				client.PhysicalClient.Plan = newPlan;
-				client.Endpoints.ForEach(e => e.PackageId = newPlan.PackageSpeed.PackageId);
+				client.Endpoints.Where(s => !s.Disabled).ForEach(e => e.PackageId = newPlan.PackageSpeed.PackageId);
 				DbSession.Save(client);
 				Inforoom2.Helpers.SceHelper.UpdatePackageId(DbSession, client);
 

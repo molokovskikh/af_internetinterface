@@ -111,7 +111,7 @@ namespace Inforoom2.Helpers
 
 		public static void UpdatePackageId(ISession session, Client client)
 		{
-			foreach (var endpoint in client.Endpoints)
+			foreach (var endpoint in client.Endpoints.Where(s=>!s.Disabled).ToList())
 				UpdatePackageId(session, endpoint);
 		}
 	}

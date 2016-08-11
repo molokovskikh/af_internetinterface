@@ -55,7 +55,7 @@ namespace InternetInterface.Controllers
 				.CreateAlias("c.Message", "m", JoinType.InnerJoin)
 				.Add(Expression.Eq("Switch", @switch))
 				.GetExecutableCriteria(DbSession)
-				.List<ClientEndpoint>()
+				.List<ClientEndpoint>().Where(s => !s.Disabled)
 				.Select(e => e.Client.Message)
 				.ToList();
 			var message = new MessageForClient();
@@ -68,7 +68,7 @@ namespace InternetInterface.Controllers
 					.FirstOrDefault();
 			PropertyBag["PrivateMessage"] = message;
 			if (IsPost) {
-				var clients = DbSession.Query<ClientEndpoint>().Where(e => e.Switch == @switch).Select(e => e.Client).ToList();
+				var clients = DbSession.Query<ClientEndpoint>().Where(e => !e.Disabled && e.Switch == @switch).Select(e => e.Client).ToList();
 				if (Request.Form["simpleMessageButton"] != null) {
 					var applyCount = 0;
 					var errorClients = new List<uint>();

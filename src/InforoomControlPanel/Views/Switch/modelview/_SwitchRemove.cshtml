@@ -3,7 +3,7 @@
 	Layout = "";
 }
 <!-- Modal For Payments Cancel-->
-<div class="modal fade" id="ModelForSwitchRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="ModelForSwitchRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			@using (@Html.BeginForm("SwitchRemove", "Switch", null, FormMethod.Post, new {@class = "form-horizontal form-groups-bordered"})) {
@@ -13,7 +13,7 @@
 					<h4 class="modal-title" id="myModalLabel">Удаление коммутатора</h4>
 				</div>
 				<div class="modal-body">
-					@if (Model.Endpoints.Count == 0) {
+					@if (Model.Endpoints.Count(s => !s.Disabled) == 0) {
 						<p>
 							<span class="red bold" id="paymentDeleteMessage">Вы действительно хотите удалить коммутатор?</span></p>
 					}
@@ -24,7 +24,7 @@
 
 				</div>
 				<div class="modal-footer">
-					@if (Model.Endpoints.Count == 0)
+					@if (Model.Endpoints.Count(s => !s.Disabled) == 0)
 					{
 						<button type="submit" class="btn btn-red">Удалить коммутатор</button>
 					}

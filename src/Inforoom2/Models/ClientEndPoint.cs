@@ -93,7 +93,7 @@ namespace Inforoom2.Models
 							return true;
 					}
 					return false;
-				}).Select(s => s.EndPoint).FirstOrDefault();
+				}).Select(s => s.EndPoint).FirstOrDefault(s => !s.Disabled);
 			}
 			catch (Exception e) {
 				EmailSender.SendDebugInfo("Не удалось распарсить ip: " + ipstr, e.ToString());
@@ -140,6 +140,16 @@ namespace Inforoom2.Models
 				}
 				else {
 					message += property + " стало: " + "значение отсуствует <br/> ";
+				}
+			}
+			if (property == "Disabled") {
+				bool state = false;
+				bool.TryParse(oldPropertyValue.ToString(), out state);
+				if (state != Disabled && Disabled == true) {
+					message += "Применена деактивация точки подключения " + this.Id;
+				}
+				if (state != Disabled && Disabled == false) {
+					message += "Отменена деактивация точки подключения " + this.Id;
 				}
 			}
 			if (property == "Pool") {

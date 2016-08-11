@@ -110,7 +110,7 @@ namespace InforoomControlPanel.Helpers
 			propertyBag["message"] = null;
 			propertyBag["attempts"] = 1;
 			propertyBag["port"] = false;
-			var leases = session.Query<Lease>().Where(l => l.Endpoint == point).ToList();
+			var leases = session.Query<Lease>().Where(l => l.Endpoint == point && !l.Endpoint.Disabled ).ToList();
 			propertyBag["lease"] = leases.Count > 0 && leases.Any(s=> s.LeaseEnd >= SystemTime.Now() &&  !s.Pool.IsGray )  ? "true" : null; 
 		}
 

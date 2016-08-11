@@ -28,8 +28,9 @@ namespace InternetInterface.Background
 			foreach (var client in clientWhoDeleteStatic) {
 				Cancellation.ThrowIfCancellationRequested();
 
-				foreach (var clientEndpoint in client.Endpoints)
+				foreach (var clientEndpoint in client.Endpoints.ToList()) {
 					clientEndpoint.Ip = null;
+				}
 				client.BlockDate = null;
 				client.SyncServices(settings);
 				Session.Save(client);

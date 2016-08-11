@@ -59,6 +59,7 @@ function ClientPage() {
 			$(thisMain).find("." + emptyBlock).html("");
 			cloneItem = $(thisMain).find("." + editBlock).children().clone();
 			$(thisMain).find("." + emptyBlock).append(cloneItem);
+			current.TempNamesRemove(thisMain);
 			$(thisMain).removeClass(activeLock).addClass(activeLock);
 			current.addCalendar();
 
@@ -80,6 +81,7 @@ function ClientPage() {
 		cloneItem = $(thisMain).find("." + defaultBlock).children().clone(true);
 		$(thisMain).removeClass(activeLock);
 		$(thisMain).find("." + emptyBlock).append(cloneItem);
+		current.TempNamesRemove(thisMain);
 		clientPage.UpdateEvents(thisMain);
 		changeVisibilityUpdateEach();
 	}
@@ -110,6 +112,8 @@ function ClientPage() {
 			$(thisMain).find("." + emptyBlock).html("");
 			cloneItem = $(thisMain).find("." + editBlock).children().clone();
 			$(thisMain).find("." + emptyBlock).append(cloneItem);
+			current.TempNamesRemove(thisMain);
+
 			$(thisMain).removeClass(activeLock).addClass(activeLock);
 			current.addCalendar();
 
@@ -117,14 +121,30 @@ function ClientPage() {
 			$(thisMain).find("." + emptyBlock).html("");
 			cloneItem = $(thisMain).find("." + defaultBlock).children().clone(true);
 			$(thisMain).find("." + emptyBlock).append(cloneItem);
+			current.TempNamesRemove(thisMain);
 		}
 		current.UpdateEvents(thisMain);
 	}
 
 	//заполнить пустые блоки (после загрузки страницы)
 	this.ShowBlocks = function() {
+		current.TempNamesAdd(current.thisMain);
 		$("." + mainBlock).each(function() {
 			current.UpdateBlock(this);
+		});
+	}
+
+	this.TempNamesAdd = function() {
+		$("." + editBlock + " [name], ." + defaultBlock + " [name]").each(function() {
+			$(this).attr("tempName", $(this).attr("name"));
+			$(this).removeAttr("name");
+		});
+	}
+
+	this.TempNamesRemove = function(thisMain) {
+		$(thisMain).find("." + emptyBlock + " [tempName]").each(function() {
+			$(this).attr("name", $(this).attr("tempName"));
+			$(this).removeAttr("tempName");
 		});
 	}
 }
@@ -216,13 +236,13 @@ function clientContactValidation() {
 					$("#ContactValidationMessage").addClass("error");
 					$("#ContactValidationMessage").html(data);
 				} else {
-					$("#ClientContactsEditorForm [name *= '.ContactName']").each(function() {
+					$("#ClientContactsEditorForm [name*='.ContactName']").each(function() {
 						if ($(this).val() === "" && $("#editBlock_contacts [name = '" + $(this).attr("name") + "']").val() === "") {
 							$(this).attr("noName", $(this).attr("name"));
 							$(this).removeAttr("name");
 						}
 					});
-					$("#ClientContactsEditorForm [noName *= '.ContactName']").each(function () {
+					$("#ClientContactsEditorForm [noName*='.ContactName']").each(function() {
 						if ($(this).val() !== "") {
 							$(this).attr("name", $(this).attr("noName"));
 							$(this).removeAttr("noName");
@@ -251,7 +271,7 @@ function clientContactDelete(button) {
 	for (var i = 0; i < trList.length; i++) {
 		var delItem = $(trList[i]).find("#" + $(button).attr("id"));
 		if (delItem.length > 0) {
-			$(trList[i]).addClass("hid"); 
+			$(trList[i]).addClass("hid");
 			$(trList[i]).find('[name*=".ContactFormatString"]').val("");
 			$(trList[i]).find('[name*=".ContactFormatString"]').removeClass("enabled");
 			$(trList[i]).find('[name*=".Type"]').removeClass("enabled");
@@ -425,12 +445,12 @@ function removeFixedIp() {
 }
 
 function GetPortConnectionState(id) {
-	$(".endpointStateStatus" + id).html("<img src='" + $("[name='imagePathOfProcess']").val() + "' class='PortConnectionStateWait'/>"); 
+	$(".endpointStateStatus" + id).html("<img src='" + $("[name='imagePathOfProcess']").val() + "' class='PortConnectionStateWait'/>");
 	$.ajax({
 		url: cli.getParam("baseurl") + "AdminOpen/ClientEndpointGetInfoShort?id=" + id,
 		type: 'POST',
 		dataType: "json",
-		success: function (data) {
+		success: function(data) {
 			var ip = false;
 			var state = false;
 
@@ -443,11 +463,11 @@ function GetPortConnectionState(id) {
 			var html = "<div class='PortConnectionState'><div class='ip " + (ip ? "isGreen" : "isRed") + "'>IP</div><div class='state " + (state ? "isGreen" : "isRed") + "'>порт</div></div>";
 			$(".endpointStateStatus" + id).html(html);
 		},
-		error: function () {
+		error: function() {
 			$(".endpointStateStatus" + id).html("<div class='PortConnectionState'>Состояние порта не установлено</div>");
 		},
 		statusCode: {
-			404: function () {
+			404: function() {
 				$(".endpointStateStatus" + id).html("<div class='PortConnectionState'>Состояние порта не установлено</div>");
 			}
 		}
@@ -460,20 +480,20 @@ function GetCableConnectionState(id) {
 		url: cli.getParam("baseurl") + "AdminOpen/ClientEndpointGetCableState?id=" + id,
 		type: 'POST',
 		dataType: "json",
-		success: function (data) { 
+		success: function(data) {
 			var state = "Состояние порта не установлено";
 
 			if (data != undefined && data != null && data.state != undefined && data.state != null) {
 				state = data.state;
-			} 
-			var html = "<div class='PortConnectionState'><div class='state " + (state == '' ? "isGreen" : "isRed") + "'>" + (state == '' ? "Проблем не обнаружено" : state ) + "</div></div>";
+			}
+			var html = "<div class='PortConnectionState'><div class='state " + (state == '' ? "isGreen" : "isRed") + "'>" + (state == '' ? "Проблем не обнаружено" : state) + "</div></div>";
 			$(".endpointCableStatus" + id).html(html);
 		},
-		error: function () {
+		error: function() {
 			$(".endpointCableStatus" + id).html("<div class='PortConnectionState'>Состояние порта не установлено</div>");
 		},
 		statusCode: {
-			404: function () {
+			404: function() {
 				$(".endpointCableStatus" + id).html("<div class='PortConnectionState'>Состояние порта не установлено</div>");
 			}
 		}
@@ -711,7 +731,7 @@ $(function() {
 	$("div.Client.InfoPhysical").removeClass("hid");
 	$("div.Client.InfoLegal").removeClass("hid");
 	$("[name='newUserAppeal']").val("");
-	
+
 	updateStaticIpEvents();
 
 	$("#switchPorts .port.free").attr("title", "свободный порт");

@@ -90,7 +90,7 @@ namespace InternetInterface.Background
 				sb.Append("<br/>\n<a href='" + url + "'>");
 				sb.Append(client.Id);
 				sb.Append("</a>");
-				var ips = Session.Query<StaticIp>().Where(i => client.Endpoints.Contains(i.EndPoint)).ToList();
+				var ips = Session.Query<StaticIp>().Where(i => client.Endpoints.Where(s=>!s.Disabled).Contains(i.EndPoint)).ToList();
 				if (ips.Count > 0) {
 					client.RatedPeriodDate = SystemTime.Now();
 					Session.Save(client);
