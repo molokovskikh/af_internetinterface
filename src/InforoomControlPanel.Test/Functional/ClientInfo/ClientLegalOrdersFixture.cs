@@ -628,9 +628,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Assert.IsTrue(CurrentClient.LegalClientOrders.Count(s => s.IsActivated) == 3);
 			Assert.IsTrue(CurrentClient.Endpoints.Count(s => !s.Disabled && s.IsEnabled.Value) == 2);
 
-
+			var dateForBilling = orderCurrent.EndDate.Value.AddDays(1).Date;
 			//Просрочиваем заказ,точка подключения должна деактивироваться
-			SystemTime.Now = () => orderCurrent.EndDate.Value.AddDays(1).Date;
+			SystemTime.Now = () => dateForBilling;
 
 
 			//биллинг
@@ -688,6 +688,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			UpdateDBSession();
 			DbSession.Refresh(CurrentClient);
 			Assert.That(DbSession.Query<ClientEndpoint>().Any(s => s.Id == newEndpointId), Is.EqualTo(false));
+			SystemTime.Now = () => DateTime.Now;
 		}
 	}
 }
