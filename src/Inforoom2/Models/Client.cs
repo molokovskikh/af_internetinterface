@@ -787,6 +787,8 @@ namespace Inforoom2.Models
 							.Implode(e => String.Format("Удалено подключение: коммутатор {0} порт {1}", e.Switch.Name, e.Port), Environment.NewLine);
 					Appeals.Add(new Appeal(endpointLog, this, AppealType.System, employee));
 					Endpoints.Each(s => {
+						s.Switch = null;
+						s.Port = 0;
 						s.Disabled = true;
 						dbSession.Save(s);
 					});
