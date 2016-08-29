@@ -159,6 +159,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Assert.That(CurrentClient.Endpoints.Count(s => !s.Disabled), Is.EqualTo(0), "Отмена блокировки не совпадает.");
 				Assert.That(CurrentClient.Endpoints.Count(s => s.Disabled),
 					Is.EqualTo(CurrentClient.Endpoints.Count - CurrentClient.Endpoints.Count(s => !s.Disabled)), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.Endpoints.Count(s => s.Disabled && s.Switch == null && s.Port == 0), Is.EqualTo(CurrentClient.Endpoints.Count), "Отмена блокировки не совпадает.");
 				Assert.That(CurrentClient.WorkingStartDate, Is.Null, "Дата начала работы не совпадает.");
 			}
 		}
