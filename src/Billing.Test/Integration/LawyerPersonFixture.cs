@@ -89,6 +89,7 @@ namespace Billing.Test.Integration
 		{
 			for (var i = 1; i <= 30; i++) {
 				SystemTime.Now = () => new DateTime(2012, 4, i);
+				billing.SafeProcessClientEndpointSwitcher();
 				billing.ProcessWriteoffs();
 			}
 			using (new SessionScope()) {
@@ -109,6 +110,7 @@ namespace Billing.Test.Integration
 				ActiveRecordMediator.Save(order);
 				ActiveRecordMediator.Save(lawyerClient);
 			}
+			billing.SafeProcessClientEndpointSwitcher();
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				var writeOffs = ActiveRecordLinq.AsQueryable<WriteOff>().Where(w => w.Client == lawyerClient).ToList();

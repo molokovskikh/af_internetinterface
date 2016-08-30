@@ -76,11 +76,8 @@ namespace InforoomControlPanel.Controllers
 				//выставляем базовые значаения созданному клиенту
 				LegalClient.GetBaseDataForRegistration(DbSession, client, GetCurrentEmployee());
 				// сохраняем модель
-				DbSession.Save(client);
-				//переадресовываем в старую админку 
-				// TODO: убрать после переноса старой админки
-				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-				                "UserInfo/ShowLawyerPerson?filter.ClientCode=" + client.Id);
+				DbSession.Save(client); 
+				return RedirectToAction("InfoLegal", new { client.Id });
 			}
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			ViewBag.RegionList = regionList;

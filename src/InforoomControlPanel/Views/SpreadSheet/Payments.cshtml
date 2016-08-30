@@ -36,6 +36,12 @@
 			</div>
 		</div>
 		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Бонусные</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Virtual, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			</div>
+		</div>
+		<div class="panel-body">
 			<input type="hidden" id="firstYear" value="@firstYear"/>
 			<input type="hidden" id="lastYear" value="@lastYear"/>
 			<input type="hidden" id="firstMonth" value="@firstMonth"/>
@@ -106,12 +112,6 @@
 			<div class="row">
 				<div class="col-sm-2">Тип клиента</div>
 				<div class="col-sm-3">@pager.FormFilter(i => i.Client.PhysicalClient, HtmlType.Dropdown, ComparsionType.IsNotNull, new {@Id = "FilterCondition_ClientType", @class = "form-control", @style = "min-width:280px; max-width:280px;"})</div>
-			</div>
-		</div>
-		<div class="panel-body">
-			<div class="row">
-				<div class="col-sm-2">Бонусные</div>
-				<div class="col-sm-3">@pager.FormFilter(i => i.Virtual, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
 			</div>
 		</div>
 			<div class="panel-body">

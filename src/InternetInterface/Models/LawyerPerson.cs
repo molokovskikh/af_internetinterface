@@ -112,19 +112,15 @@ namespace InternetInterface.Models
 				.Where(s => s.IsPeriodic)
 				.Select(s => new WriteOff(client, s)));
 
-			//Деактивируем услуги, оставляем заметки, освобождаем порты, если необходимо
-			toDeactivate.Each(o => {
-				o.Deactivate(dbSession);
-			});
+			//Деактивируем заказ (полная деактивация)
+			toDeactivate.Each(o => { o.Deactivate(dbSession); });
 
-			//Создаем списания за включение услуги (для единоразовых услуг)
-			var toActivate = client.Orders.Where(o => !o.IsActivated && o.OrderStatus == OrderStatus.Enabled).ToArray();
+			//Создаем списания за включение услуги (для единоразовых услуг)				// заказ до списания должен быть уже активирован (активация в "платежах")
+			var toActivate = client.Orders.Where(o => o.IsActivated && !o.Disabled && !o.IsDeactivated && o.OrderStatus == OrderStatus.Enabled).ToArray();
 			results.AddRange(toActivate
 				.SelectMany(s => s.OrderServices)
-				.Where(s => !s.IsPeriodic)
-				.Select(s => new WriteOff(client, s)));
-			//Активируем услуги
-			toActivate.Each(o => { o.Activate(dbSession); });
+				.Where(s => !s.IsPeriodic && !client.WriteOffs.Any(w => w.Service != null && w.Service.Id == s.Id)) //если для непериодической услуги еще не создано списание
+				.Select(s => new WriteOff(client, s))); //формируем новое списание на ее основе
 
 			//Если сейчас не последний день месяца, то выходим
 			//То есть до этого момента обрабатываются единоразовые списания

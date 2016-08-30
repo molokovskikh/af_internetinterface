@@ -344,6 +344,9 @@ namespace Inforoom2.Models
 		/// </summary>
 		public virtual decimal GetTariffPrice(bool isBlocked = false)
 		{
+			if (PhysicalClient == null)
+				return 0;
+
 			if (PhysicalClient.Plan == null || (!isBlocked && (WorkingStartDate == null || Disabled)))
 				return 0;
 
