@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Common;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -181,7 +182,9 @@ namespace Billing.Test.Integration
 			if (session.Transaction.IsActive)
 				session.Transaction.Commit();
 			session.Clear();
+			billing.SafeProcessClientEndpointSwitcher();
 			billing.ProcessWriteoffs();
+			billing.SafeProcessClientEndpointSwitcher();
 		}
 
 		[Test]
@@ -228,7 +231,9 @@ namespace Billing.Test.Integration
 				.Where(ap => ap.Appeal.Contains("Деактивирован заказ"))
 				.ToList();
 			Assert.AreEqual(1, appealsList.Count);
-			Assert.AreEqual(0, lawyerClient.Endpoints.Count(s => !s.Disabled));
+			var endpointa = lawyerClient.Endpoints.FirstOrDefault();
+			session.Refresh(endpointa);
+      Assert.AreEqual(1, lawyerClient.Endpoints.Count(s => s.Disabled));
 		}
 
 		[Test(Description = "Проверяет, отображается ли пользователю страница с предупреждением, если баланс уходит в минус")]

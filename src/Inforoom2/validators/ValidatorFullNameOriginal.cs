@@ -20,7 +20,7 @@ namespace Inforoom2.validators
 				if (physic.Id == 0) {
 					// формируем шаблон и часть ссылки
 					string hrefItem = "<a href='{0}{1}' target= '_blank'>ЛС {1}</a>";
-					string urlToClientInfo = ConfigHelper.GetParam("adminPanelOld") + "UserInfo/ShowPhysicalClient?filter.ClientCode=";
+					string urlToClientInfo = ConfigHelper.GetParam("adminPanelNew") + "Client/InfoPhysical/";
 					// получаем текущую сессию
 					var dbSession = MvcApplication.SessionFactory.GetCurrentSession();
 					// поиск совпадений по ФИО, формирование списка ссылок по найденным совпадениям 

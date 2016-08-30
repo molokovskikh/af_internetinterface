@@ -1414,6 +1414,7 @@ namespace Inforoom2.Test.Infrastructure
 		/// <param name="client"></param>
 		public void RunBillingProcess(Client client = null)
 		{
+			RunBillingProcessClientEndpointSwitcher(client);
 			RunBillingProcessPayments();
 			RunBillingProcessWriteoffs(null, false);
 			RunBillingProcessClientEndpointSwitcher(client);

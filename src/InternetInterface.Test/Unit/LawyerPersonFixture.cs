@@ -54,7 +54,7 @@ namespace InternetInterface.Test.Unit
 			Assert.That(client.client.Appeals.Last().Appeal, Is.StringContaining("Деактивирован заказ"));
 		}
 
-		[Test]
+		[Test, Ignore("Часть функционала была вынесена в биллинг, нужна сессия, подобная проверка есть в новой админке")]
 		public void Write_off_non_periodic_services_on_activation()
 		{
 			order.BeginDate = new DateTime(2014, 2, 10);
@@ -96,7 +96,7 @@ namespace InternetInterface.Test.Unit
 			Assert.AreEqual(17.86, Sum(new DateTime(2014, 2, 28)));
 		}
 
-		[Test]
+		[Test, Ignore("Часть функционала была вынесена в биллинг, нужна сессия, подобная проверка есть в новой админке")]
 		public void Calculate_tariff_on_active_orders()
 		{
 			order.EndDate = new DateTime(2014, 2, 28);
@@ -116,7 +116,7 @@ namespace InternetInterface.Test.Unit
 			Assert.AreEqual(0, Sum(new DateTime(2014, 2, 28)));
 		}
 
-		[Test]
+		[Test, Ignore("Часть функционала была вынесена в биллинг, нужна сессия, подобная проверка есть в новой админке")]
 		public void Remove_unused_endpoint()
 		{
 			var endpoint = new ClientEndpoint(client.client, 1, new NetworkSwitch());
@@ -133,7 +133,7 @@ namespace InternetInterface.Test.Unit
 			Assert.AreEqual(1, client.client.Endpoints.Count(s => s.Disabled));
 		}
 
-		[Test]
+		[Test, Ignore("Часть функционала была вынесена в биллинг, нужна сессия, подобная проверка есть в новой админке")]
 		public void Do_not_remove_endpoint_in_use()
 		{
 			var endpoint = new ClientEndpoint(client.client, 1, new NetworkSwitch());

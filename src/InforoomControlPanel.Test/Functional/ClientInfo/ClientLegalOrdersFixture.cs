@@ -273,6 +273,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			RunBillingProcess(CurrentClient);
 			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.LegalClient);
+			//проверка совпадения тарифа
+			Assert.That(CurrentClient.GetPlan().Replace(" руб.", ""),
+				Is.EqualTo(CurrentClient.LegalClientOrders.Sum(s => s.OrderServices.Where(g => g.IsPeriodic).Sum(d => d.Cost)).ToString().Replace(".", ",")));
 			//клиент не активен, показываем варнинг
 			Assert.That(CurrentClient.Disabled, Is.EqualTo(true));
 			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(true));
@@ -371,6 +374,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.LegalClient);
 			Assert.That(CurrentClient.LegalClient.Balance, Is.EqualTo(totalSum));
+			//проверка совпадения тарифа
+			Assert.That(CurrentClient.GetPlan().Replace(" руб.", ""),
+				Is.EqualTo(CurrentClient.LegalClientOrders.Sum(s => s.OrderServices.Where(g => g.IsPeriodic).Sum(d => d.Cost)).ToString().Replace(".", ",")));
 			//платеж (баланс = 0) должен убрать варнинг, а состояние клиента должно стать активным
 			Assert.That(CurrentClient.Disabled, Is.EqualTo(false));
 			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false));

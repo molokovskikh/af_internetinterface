@@ -757,6 +757,7 @@ namespace Billing.Test.Integration
 				client.Orders.Add(order);
 				client.Save();
 			}
+			billing.SafeProcessClientEndpointSwitcher();
 			billing.ProcessPayments();
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
@@ -776,6 +777,7 @@ namespace Billing.Test.Integration
 				};
 				ActiveRecordMediator.Save(cService);
 			}
+			billing.SafeProcessClientEndpointSwitcher();
 			billing.ProcessPayments();
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
@@ -785,6 +787,7 @@ namespace Billing.Test.Integration
 				Assert.That(client.ClientServices.Count, Is.EqualTo(1));
 			}
 			SystemTime.Now = () => DateTime.Now.AddDays(1);
+			billing.SafeProcessClientEndpointSwitcher();
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client.Refresh();
@@ -792,7 +795,8 @@ namespace Billing.Test.Integration
 				Assert.That(client.ClientServices.Count, Is.EqualTo(1));
 			}
 			SystemTime.Now = () => DateTime.Now.AddDays(2);
-			billing.ProcessWriteoffs();
+			billing.SafeProcessClientEndpointSwitcher();
+      billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				Assert.That(client.ClientServices.Count, Is.EqualTo(0));
@@ -831,6 +835,7 @@ namespace Billing.Test.Integration
 				client.Orders.Add(order);
 				client.Save();
 			}
+			billing.SafeProcessClientEndpointSwitcher();
 			billing.ProcessPayments();
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {

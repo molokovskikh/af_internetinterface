@@ -82,6 +82,7 @@ namespace Billing.Test.Integration
 				client.Payments.Add(payment);
 			}
 			client.Save();
+			billing.SafeProcessClientEndpointSwitcher();
 			billing.ProcessPayments();
 			billing.ProcessWriteoffs();
 			billing.ProcessWriteoffs();

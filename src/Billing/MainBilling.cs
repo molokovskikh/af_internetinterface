@@ -59,6 +59,42 @@ namespace Billing
 
 		public void SafeProcessClientEndpointSwitcher()
 		{
+			//деактивация заказов юр.лиц. (НЕПОЛНАЯ, чистим только коммутаторы и порты)
+			try {
+				_mutex.WaitOne();
+				WithTransaction(session => {
+					var toDeactivate = session.Query<Order>().Where(o => !o.IsDeactivated).ToArray().Where(o => o.OrderStatus == OrderStatus.Disabled).ToArray();
+					toDeactivate.Each(o => {
+						o.Deactivate(session, true);
+						session.Save(o);
+					});
+				});
+			}
+			catch (Exception ex) {
+				_log.Error("При деактивация заказов юр. лиц. ", ex);
+			}
+			finally {
+				_mutex.ReleaseMutex();
+			}
+			//активация заказов юр.лиц.
+			try {
+				_mutex.WaitOne();
+				WithTransaction(session => {
+					var toActivate = session.Query<Order>().Where(o => !o.IsActivated).ToArray().Where(o => o.OrderStatus == OrderStatus.Enabled).ToArray();
+					toActivate.Each(o => {
+						o.Activate(session);
+						session.Save(o);
+					});
+				});
+			}
+			catch (Exception ex) {
+				_log.Error("При активации заказов юр. лиц. ", ex);
+			}
+			finally {
+				_mutex.ReleaseMutex();
+			}
+
+			//деактивация точек подключения
 			try {
 				_mutex.WaitOne();
 				WithTransaction(session => {
@@ -117,7 +153,7 @@ namespace Billing
 			WithTransaction(ActivateServices);
 
 			WithTransaction(session => {
-				var newEndPointForConnect = session.Query<ClientEndpoint>().Where(c =>c.Client.PhysicalClient != null && !c.PayForCon.Paid && !c.Disabled ).ToList();
+				var newEndPointForConnect = session.Query<ClientEndpoint>().Where(c => c.Client.PhysicalClient != null && !c.PayForCon.Paid && !c.Disabled).ToList();
 				foreach (var clientEndpoint in newEndPointForConnect) {
 					var writeOff = new UserWriteOff(clientEndpoint.Client, clientEndpoint.PayForCon.Sum, "Плата за подключение");
 					session.Save(writeOff);

@@ -236,6 +236,7 @@ namespace Billing.Test.Integration
 
 			//Тест
 			Assert.That(BadClient.Disabled, Is.False);
+			billing.SafeProcessClientEndpointSwitcher();
 			billing.ProcessWriteoffs();
 			var saved = session.Load<Client>(BadClient.Id);
 			Assert.That(saved.Disabled, Is.True);
@@ -243,6 +244,7 @@ namespace Billing.Test.Integration
 			var payment = new Payment(saved, 10000);
 			session.Save(payment);
 
+			billing.SafeProcessClientEndpointSwitcher();
 			billing.ProcessPayments();
 			saved = session.Load<Client>(BadClient.Id);
 			Assert.That(saved.Disabled, Is.False);
@@ -305,6 +307,7 @@ namespace Billing.Test.Integration
 			//Сам тест
 			Assert.That(BadClient.Disabled, Is.False);
 			Assert.That(GoodClient.Disabled, Is.False);
+			billing.SafeProcessClientEndpointSwitcher();
 			billing.ProcessWriteoffs();
 			var saved = session.Load<Client>(BadClient.Id);
 			var saved2 = session.Load<Client>(GoodClient.Id);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using Castle.ActiveRecord;
 using Castle.Components.Validator;
 using Common.Tools;
@@ -58,7 +59,7 @@ namespace InternetInterface.Models
 				if (Order.IsDeactivated)
 					return 0;
 				if (!IsPeriodic) {
-					if (Order.IsActivated)
+					if (Order.Client.WriteOffs.Any(s => s.Service != null && s.Service.Id == this.Id))
 						return 0;
 					else
 						return Cost;

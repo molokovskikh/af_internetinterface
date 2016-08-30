@@ -18,21 +18,21 @@ namespace Inforoom2.Test.Functional.Personal
 		public void SetBlockAccountToClient(bool isFree, bool fullCheck = true)
 		{
 			Assert.IsNotNull(Client.PhysicalClient, "Клиент должен быть подключен");
-			SystemTime.Now = () => DateTime.Now;            // Для независимого выполнения каждого тест-кейса
+			SystemTime.Now = () => DateTime.Now; // Для независимого выполнения каждого тест-кейса
 
 			// Обработать уже созданные платежи/списания клиента
 			_billing = GetBilling();
 			_billing.SafeProcessPayments();
 			_billing.ProcessWriteoffs();
 			DbSession.Refresh(Client.PhysicalClient);
-			var oldBalance = Client.Balance;                // Сохранить текущий баланс клиента
+			var oldBalance = Client.Balance; // Сохранить текущий баланс клиента
 
 			if (!isFree) {
-				var shift = DateTime.Now.Hour;                // Смещение времени во избежание подключения услуги после 22:00
+				var shift = DateTime.Now.Hour; // Смещение времени во избежание подключения услуги после 22:00
 				SystemTime.Now = () => DateTime.Now.Date.AddHours(-shift);
-				Client.PaidDay = false;                       // Для списания абонентской платы
+				Client.PaidDay = false; // Для списания абонентской платы
 				Client.FreeBlockDays = 0;
-				Client.YearCycleDate = SystemTime.Now();      // Чтобы не уставливалось FreeBlockDays = 28
+				Client.YearCycleDate = SystemTime.Now(); // Чтобы не уставливалось FreeBlockDays = 28
 				DbSession.Update(Client);
 				DbSession.Flush();
 			}
@@ -53,7 +53,7 @@ namespace Inforoom2.Test.Functional.Personal
 			Assert.IsTrue(Client.Status.Type == StatusType.VoluntaryBlocking, "\nКлиент не был заблокирован");
 
 			// Обработать новые списания клиента
-			_billing.SafeProcessPayments();                 // Для обработки UserWriteOffs
+			_billing.SafeProcessPayments(); // Для обработки UserWriteOffs
 			_billing.ProcessWriteoffs();
 			DbSession.Refresh(Client.PhysicalClient);
 			if (isFree)
@@ -70,30 +70,29 @@ namespace Inforoom2.Test.Functional.Personal
 				Assert.AreEqual(paySum, oldBalance - Client.Balance, "\nClient.Balance=" + Client.Balance);
 			}
 			if (fullCheck) {
-			Open("Personal/Service");
-			btnConnect = browser.FindElementByLinkText("Отключить");
-            btnConnect.Click();
-			var error = String.Format("Услуга может быть деактивирована не ранее {0}.",
-				blockAccountService.BeginDate.Value.Date.AddDays(3).ToString("dd.MM.yyyy HH:mm"));
-			AssertText(error);
-			blockAccountService.BeginDate = SystemTime.Now().Date.AddDays(-3).AddMinutes(-1);
-			DbSession.Save(blockAccountService);
-			DbSession.Flush();
-			Open("Personal/Service");
-			btnConnect = browser.FindElementByLinkText("Отключить");
-			btnConnect.Click();
-			AssertNoText(error);
-			btnConnect = browser.FindElementById("DisconnectBtn");
-			btnConnect.Click();
-			AssertText("Работа возобновлена");
+				Open("Personal/Service");
+				btnConnect = browser.FindElementByLinkText("Отключить");
+				btnConnect.Click();
+				var error = String.Format("Услуга может быть деактивирована не ранее {0}.",
+					blockAccountService.BeginDate.Value.Date.AddDays(3).ToString("dd.MM.yyyy HH:mm"));
+				AssertText(error);
+				blockAccountService.BeginDate = SystemTime.Now().Date.AddDays(-3).AddMinutes(-1);
+				DbSession.Save(blockAccountService);
+				DbSession.Flush();
+				Open("Personal/Service");
+				btnConnect = browser.FindElementByLinkText("Отключить");
+				btnConnect.Click();
+				AssertNoText(error);
+				btnConnect = browser.FindElementById("DisconnectBtn");
+				btnConnect.Click();
+				AssertText("Работа возобновлена");
 			}
-
 		}
 
 		[Test(Description = "Проверка списания с клиента платы за подключение услуги 'Добровольная блокировка'")]
 		public void WriteoffBlockingPayWithClient()
 		{
-			SetBlockAccountToClient(isFree: false, fullCheck:false);
+			SetBlockAccountToClient(isFree: false, fullCheck: false);
 		}
 
 		[Test(Description = "Проверка списаний с клиента за пользование услугой 'Добровольная блокировка' по истечении бесплатных дней")]
@@ -179,8 +178,7 @@ namespace Inforoom2.Test.Functional.Personal
 			thisElement.Click();
 			thisElement = browser.FindElementByCssSelector(".window .click.ok");
 			thisElement.Click();
-
-			AssertText("Недостаточно средств на счете для добровольной блокировки");
+			SafeWaitText("Недостаточно средств на счете для добровольной блокировки");
 			AssertText("Вы можете активировать услугу на бесплатные дни либо пополнить баланс и уже затем перейти к ее активации!");
 
 			// Чтобы возм-ть добровольной блокировки была только после пополнения баланса
