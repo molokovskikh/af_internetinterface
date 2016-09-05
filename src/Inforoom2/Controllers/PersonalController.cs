@@ -128,7 +128,7 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		[OutputCache(Duration = 300, Location = System.Web.UI.OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "User,Cookies")]
+		[OutputCache(Duration = 30, Location = System.Web.UI.OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "User,Cookies")]
 		public new ActionResult Profile()
 		{
 			if (CurrentClient != null
@@ -199,6 +199,18 @@ namespace Inforoom2.Controllers
 
 		public ActionResult Plans()
 		{
+			var stateOfClient = CurrentClient.GetWarningState();
+			if (stateOfClient != WarningState.NoWarning) {
+#if DEBUG
+				var endpoint = CurrentClient.Endpoints.FirstOrDefault();
+				var lease = DbSession.Query<Lease>().FirstOrDefault(i => i.Endpoint == endpoint);
+				var ipstr = lease?.Ip?.ToString();
+				return RedirectToAction(stateOfClient.ToString(), "Warning", new { ip = ipstr });
+#else
+				return RedirectToAction(stateOfClient.ToString(, "Warning");
+#endif
+			}
+
 			var client = CurrentClient;
 			InitPlans(client);
 			ViewBag.Title = "Тарифы";
@@ -287,6 +299,16 @@ namespace Inforoom2.Controllers
 
 		public ActionResult Service()
 		{
+			if (CurrentClient.GetWarningState() == WarningState.PhysPassportData) {
+#if DEBUG
+				var endpoint = CurrentClient.Endpoints.FirstOrDefault();
+				var lease = DbSession.Query<Lease>().FirstOrDefault(i => i.Endpoint == endpoint);
+				var ipstr = lease?.Ip?.ToString();
+				return RedirectToAction("PhysPassportData", "Warning", new { ip = ipstr });
+#else
+				return RedirectToAction("PhysPassportData", "Warning");
+#endif
+			}
 			ViewBag.Title = "Услуги";
 			InitServices();
 			return View();
@@ -294,6 +316,18 @@ namespace Inforoom2.Controllers
 
 		public ActionResult Notifications()
 		{
+			var stateOfClient = CurrentClient.GetWarningState();
+			if (stateOfClient == WarningState.PhysLowBalance
+			    || stateOfClient == WarningState.PhysPassportData) {
+#if DEBUG
+				var endpoint = CurrentClient.Endpoints.FirstOrDefault();
+				var lease = DbSession.Query<Lease>().FirstOrDefault(i => i.Endpoint == endpoint);
+				var ipstr = lease?.Ip?.ToString();
+				return RedirectToAction(stateOfClient.ToString(), "Warning", new { ip = ipstr });
+#else
+				return RedirectToAction(stateOfClient.ToString(, "Warning");
+#endif
+			}
 			var notificationContact = CurrentClient.Contacts.FirstOrDefault(c => c.Type == ContactType.NotificationEmailConfirmed || c.Type == ContactType.NotificationEmailRaw);
 			if (notificationContact == null) {
 				notificationContact = new Contact();
@@ -350,9 +384,20 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		[OutputCache(Duration = 500, Location = System.Web.UI.OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "User,Cookies")]
 		public ActionResult Bonus()
 		{
+			var stateOfClient = CurrentClient.GetWarningState();
+			if (stateOfClient == WarningState.PhysLowBalance
+			    || stateOfClient == WarningState.PhysPassportData) {
+#if DEBUG
+				var endpoint = CurrentClient.Endpoints.FirstOrDefault();
+				var lease = DbSession.Query<Lease>().FirstOrDefault(i => i.Endpoint == endpoint);
+				var ipstr = lease?.Ip?.ToString();
+				return RedirectToAction(stateOfClient.ToString(), "Warning", new { ip = ipstr });
+#else
+				return RedirectToAction(stateOfClient.ToString(, "Warning");
+#endif
+			}
 			ViewBag.Title = "Бонусы";
 			return View();
 		}

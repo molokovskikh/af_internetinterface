@@ -4,18 +4,26 @@
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	ViewBag.Title = "Предупреждение";
-	Client client = ViewBag.Client;
+	Client client = ViewBag.CurrentClient;
 	BlockAccountService service = ViewBag.BlockAccountService;
+	var currentService = client.ClientServices.FirstOrDefault(c => c.Service.Unproxy().GetType() == typeof(BlockAccountService));
+	string ip = ViewBag.IpForTests ?? "";
 }
 <div class="name-page">
 	<h1 class="header-page" >Внимание!</h1>
 </div>
 <div class="block-page">
-	<p class="info">Номер лицевого счета: @client.Id</p>
-	<p>Услуга "Добровольная блокировка" активирована до @client.ClientServices.FirstOrDefault(c => c.Service.Unproxy().GetType() == typeof(BlockAccountService)).EndDate</p>
-	@using (@Html.BeginForm("DeactivateAccountBlocking", "Service", null, FormMethod.Post))
+	@if (currentService != null) {
+		<p class="info">Номер лицевого счета: @client.Id</p>
+		<p>Услуга "Добровольная блокировка" активирована до @(currentService.EndDate.HasValue? currentService.EndDate.Value.ToShortDateString(): "")</p>
+		using (@Html.BeginForm("DeactivateAccountBlocking", "Service", null, FormMethod.Post)) {
+			 @Html.HiddenFor(modelItem => service.Id)
+			 <input class="button unfreeze" type="submit" value="Отключить"/>
+		 }
+	}
+	else
 	{
-	@Html.HiddenFor(modelItem => service.Id)
-	<input class="button unfreeze" type="submit" value="Отключить" />
+		<p class="info">Номер лицевого счета: @client.Id</p>
+		<p>Услуга "Добровольная блокировка" не активирована</p>
 	}
 </div>

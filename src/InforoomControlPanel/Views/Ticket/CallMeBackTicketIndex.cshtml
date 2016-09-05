@@ -24,30 +24,35 @@
 		</thead>
 
 		<tbody>
-			@foreach (var item in tickets) {
-				<tr role="row" class="odd">
-					<td>@Html.DisplayFor(modelItem => item.Id)</td>
-					<td>@Html.DisplayFor(modelItem => item.Text)</td>
-					<td>@Html.DisplayFor(modelItem => item.Name)</td>
-					<td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
-					<td>@Html.DisplayFor(modelItem => item.CreationDate)</td>
-					@if(item.AnswerDate != DateTime.MinValue)
-					{
-						<td>@Html.DisplayFor(modelItem => item.AnswerDate)</td>
-					}
-					else
-					{
-						<td></td>
-					}
-					<td>@Html.DisplayFor(modelItem => item.Employee.Name)</td>
+		@foreach (var item in tickets) {
+			<tr role="row" class="odd">
+				<td>@Html.DisplayFor(modelItem => item.Id)</td>
+				<td>@Html.DisplayFor(modelItem => item.Text)</td>
+				@if (item.Client != null) {
 					<td>
-						<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditCallMeBackTicket","Ticket",new {ticketId = item.Id})">
-							<i class="entypo-plus-circled"></i>
-							Ответить
-						</a>
+						<a target="_blank" href="@Url.Action(item.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal", "Client", new {item.Client.Id})">@Html.DisplayFor(modelItem => item.Name) (@item.Client.Id)</a>
 					</td>
-				</tr>
-			}
+				}
+				else {
+					<td>@Html.DisplayFor(modelItem => item.Name)</td>
+				}
+				<td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
+				<td>@Html.DisplayFor(modelItem => item.CreationDate)</td>
+				@if (item.AnswerDate != DateTime.MinValue) {
+					<td>@Html.DisplayFor(modelItem => item.AnswerDate)</td>
+				}
+				else {
+					<td></td>
+				}
+				<td>@Html.DisplayFor(modelItem => item.Employee.Name)</td>
+				<td>
+					<a class="btn btn-success btn-sm btn-icon icon-left" href="@Url.Action("EditCallMeBackTicket", "Ticket", new { ticketId = item.Id })">
+						<i class="entypo-plus-circled"></i>
+						Ответить
+					</a>
+				</td>
+			</tr>
+		}
 		</tbody>
 	</table>
 </div>

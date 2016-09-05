@@ -171,7 +171,7 @@ namespace Inforoom2.Controllers
 			return entities;
 		}
 
-		protected string GetCookie(string cookieName)
+		public string GetCookie(string cookieName)
 		{
 			try {
 				var cookie = Request.Cookies.Get(cookieName);
@@ -199,7 +199,7 @@ namespace Inforoom2.Controllers
 			Response.Cookies.Remove(name);
 		}
 
-		protected ActionResult Authenticate(string action, string controller, string username, bool shouldRemember,
+		public ActionResult Authenticate(string action, string controller, string username, bool shouldRemember,
 			string userData = "")
 		{
 			var ticket = new FormsAuthenticationTicket(

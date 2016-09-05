@@ -50,6 +50,12 @@ namespace Inforoom2
 			InitializeSessionFactory();
 			//Запускаем проверку списка разрешенных полей, получаемых с формы
 			EntityBinder.EnableBinderProtection = true;
+			SceHelper.StartRun();
+		}
+
+		protected void Application_End()
+		{
+			SceHelper.StopRun();
 		}
 
 		public override string GetVaryByCustomString(HttpContext context, string argList)
@@ -59,12 +65,12 @@ namespace Inforoom2
 			var args = argList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (var arg in args) {
 				if (arg == "User") {
-					result += string.Format(format, "User", context.User.Identity.Name); 
+					result += string.Format(format, "User", context.User.Identity.Name);
 				}
 				if (arg == "Cookies") {
 					var cookie = context.Request.Cookies.Get("userCity");
 					result += string.Format(format, "Cookies", (cookie != null ? cookie.Value : ""));
-        }
+				}
 			}
 			return string.IsNullOrEmpty(result) ? base.GetVaryByCustomString(context, argList) : result;
 		}

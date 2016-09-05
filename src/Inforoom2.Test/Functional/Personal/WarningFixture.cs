@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using Inforoom2.Test.Infrastructure;
@@ -10,6 +12,8 @@ using NUnit.Framework;
 using OpenQA.Selenium;
 using Billing;
 using Common.Tools;
+using Inforoom2.Helpers;
+using Inforoom2.Test.Infrastructure.Helpers;
 
 namespace Inforoom2.Test.Functional.Personal
 {
@@ -34,7 +38,7 @@ namespace Inforoom2.Test.Functional.Personal
 		{
 			Open("/");
 			AssertText("НОВОСТИ");
-			Open("Warning");
+			OpenWarningPage(Client, false);
 			AssertText(textToCheck);
 		}
 
@@ -50,14 +54,13 @@ namespace Inforoom2.Test.Functional.Personal
 		public void NegativeBalancePhysical()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
-			var payment = new Payment()
-			{
+			var payment = new Payment() {
 				Client = client,
 				Sum = 0,
 				PaidOn = SystemTime.Now().AddDays(-2),
 				RecievedOn = SystemTime.Now().AddDays(-1)
 			};
-            client.Payments.Add(payment);
+			client.Payments.Add(payment);
 			DbSession.Save(payment);
 			client.PhysicalClient.Balance = -5;
 			DbSession.Save(client);
@@ -70,22 +73,20 @@ namespace Inforoom2.Test.Functional.Personal
 		public void NegativeBalancePhysicalWithDebtWorkServiceActual()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
-			var payment = new Payment()
-			{
+			var payment = new Payment() {
 				Client = client,
 				Sum = 0,
 				PaidOn = SystemTime.Now().AddDays(-2),
 				RecievedOn = SystemTime.Now().AddDays(-1)
 			};
-            client.Payments.Add(payment);
+			client.Payments.Add(payment);
 			DbSession.Save(payment);
 			client.PhysicalClient.Balance = -10;
 			var services = DbSession.Query<Service>().Where(s => s.Name == "Обещанный платеж").ToList();
 			var csDebtWorkService =
 				services.Select(
 					service =>
-						new ClientService
-						{
+						new ClientService {
 							Service = service,
 							Client = client,
 							BeginDate = DateTime.Now,
@@ -104,20 +105,18 @@ namespace Inforoom2.Test.Functional.Personal
 		public void NegativeBalancePhysicalWithDebtWorkServiceOverdue()
 		{
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("с низким балансом"));
-			var payment = new Payment()
-			{
+			var payment = new Payment() {
 				Client = client,
 				Sum = 0,
 				PaidOn = SystemTime.Now().AddDays(-2),
 				RecievedOn = SystemTime.Now().AddDays(-1)
 			};
-            client.Payments.Add(payment);
+			client.Payments.Add(payment);
 			DbSession.Save(payment);
 			client.PhysicalClient.Balance = -10;
 			var services = DbSession.Query<Service>().Where(s => s.Name == "Обещанный платеж").ToList();
 			var csDebtWorkService =
-				services.Select(service => new ClientService
-				{
+				services.Select(service => new ClientService {
 					Service = service,
 					Client = client,
 					BeginDate = DateTime.Now.AddDays(-10),
@@ -141,7 +140,7 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession.Flush();
 			LoginForClient(client);
 			Open("/Personal/Profile");
-			AssertText("свои паспортные данные:"); 
+			AssertText("свои паспортные данные:");
 			var textbox = browser.FindElement(By.CssSelector("#physicalClient_PassportNumber"));
 			textbox.SendKeys("7121551");
 			var button = browser.FindElement(By.CssSelector("form input.button"));
@@ -156,7 +155,7 @@ namespace Inforoom2.Test.Functional.Personal
 			popup.Click();
 			button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
-			Open("warning");
+			OpenWarningPage(client, false);
 			AssertText("Для заполнения недостающих паспортных данных необходимо обратиться в офис компании");
 			Css(".warning").Click();
 			AssertText("НОВОСТИ");
@@ -168,9 +167,9 @@ namespace Inforoom2.Test.Functional.Personal
 			var client =
 				DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("заблокированный по сервисной заявке"));
 			Assert.That(client.Status.Type, Is.EqualTo(StatusType.BlockedForRepair), "Клиент не заблокирован");
-			OpenWarningPage(client);
+			OpenWarningPage(client, false);
 
-			CheckWarningPageText("проведения работ по сервисной заявке");
+			AssertText("проведения работ по сервисной заявке");
 			Css(".repairCompleted").Click();
 			AssertText("Работа возобновлена");
 			DbSession.Refresh(client);
@@ -182,7 +181,7 @@ namespace Inforoom2.Test.Functional.Personal
 		public void FrozenClient()
 		{
 			var blockAccountService = DbSession.Query<Service>().OfType<BlockAccountService>().FirstOrDefault();
-		 
+
 			var client = DbSession.Query<Client>()
 				.ToList()
 				.First(i => i.Patronymic.Contains("с услугой добровольной блокировки"));
@@ -193,8 +192,8 @@ namespace Inforoom2.Test.Functional.Personal
 			clientService.BeginDate = SystemTime.Now().AddDays(-4);
 			DbSession.Save(clientService);
 			DbSession.Flush();
-			OpenWarningPage(client);
-			CheckWarningPageText("Добровольная блокировка");
+			OpenWarningPage(client, false);
+			AssertText("Добровольная блокировка");
 			Css(".unfreeze").Click();
 			AssertText("Работа возобновлена");
 			DbSession.Clear(); //Сервис кинет исключения, потому что связи что-то плохо вычищаются @todo подумать
@@ -211,7 +210,7 @@ namespace Inforoom2.Test.Functional.Personal
 		{
 			//У неподключенного клиента нет точки подключения
 			Logout();
-				var lease = DbSession.Query<Lease>().First(i => i.Endpoint == null);
+			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == null);
 			var ipstr = lease.Ip.ToString();
 			Open("Warning?ip=" + ipstr);
 			AssertText("Протестировать скорость");
@@ -221,7 +220,7 @@ namespace Inforoom2.Test.Functional.Personal
 		public void NotAuthorisedClient()
 		{
 			Logout();
-			Open("Warning");
+			OpenWarningPage(Client, false);
 			AssertText("Протестировать скорость");
 		}
 
@@ -234,7 +233,7 @@ namespace Inforoom2.Test.Functional.Personal
 			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("без паспортных данных"));
 			const string textToCheck = "Внимание";
 			LoginForClient(client);
-			Open("Warning");
+			OpenWarningPage(client, false);
 			AssertText(textToCheck);
 			Open("Personal/Profile");
 			AssertNoText(textToCheck);
@@ -307,19 +306,146 @@ namespace Inforoom2.Test.Functional.Personal
 			AssertText("Протестировать скорость");
 		}
 
-		[Test(Description = "Редирект на целевую страницу, если клиент валидный"), Ignore("Временно отключен")]
-		public void JustToRedirectClient()
+		[Test(Description = "Редирект на целевую страницу, если клиент валидный")]
+		public void SceCheckCleanPhysicalClient()
 		{
-			var client = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("нормальный клиент"));
+			//настройки
+			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c =>
+				c.Comment == ClientCreateHelper.ClientMark.normalClient.GetDescription());
+			//биллинг
+			RunBillingProcessPayments();
+			RunBillingProcessWriteoffs(null, false);
+			RunBillingProcessClientEndpointSwitcher(client);
+			//проверки
 			LoginForClient(client);
-			Open("/");
-			var endpoint = client.Endpoints.First(s=> !s.Disabled);
-			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == endpoint);
-			var ipstr = lease.Ip.ToString();
-			string testUrl = BuildTestUrl("Personal/Profile");
-			string queryString = string.Format("Warning?ip={0}&host={1}", ipstr, testUrl);
-			Open(queryString);
-			AssertText("ЛИЧНЫЙ КАБИНЕТ: ПРОФИЛЬ");
+			DbSession.Refresh(client);
+			var endpoint = client.Endpoints.First();
+			var packageId = endpoint.PackageId;
+			Assert.That(endpoint.ActualPackageId, Is.Null);
+			Open("Warning?ip=" + endpoint.Ip);
+			Thread.Sleep(5000);
+			DbSession.Refresh(endpoint);
+			Assert.That(endpoint.ActualPackageId, Is.EqualTo(packageId));
+		}
+
+		[Test(Description = "Редирект на целевую страницу, если клиент валидный")]
+		public void SceCheckDirtyPhysicalClient()
+		{
+			//настройки
+			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c =>
+				c.Comment == ClientCreateHelper.ClientMark.disabledClient.GetDescription());
+			//биллинг
+			RunBillingProcessPayments();
+			RunBillingProcessWriteoffs(null, false);
+			RunBillingProcessClientEndpointSwitcher(client);
+			//проверки
+			LoginForClient(client);
+			DbSession.Refresh(client);
+			var endpoint = client.Endpoints.First();
+			Assert.That(endpoint.ActualPackageId, Is.Null);
+			Open("Warning?ip=" + endpoint.Ip);
+			Thread.Sleep(10000);
+			DbSession.Refresh(endpoint);
+			Assert.That(endpoint.ActualPackageId, Is.Null);
+			ClickButton("Продолжить");
+			Thread.Sleep(10000);
+			DbSession.Refresh(endpoint);
+			Assert.That(endpoint.ActualPackageId, Is.Null); //при блокировке, ничего не меняется
+		}
+
+		[Test(Description = "Редирект на целевую страницу, если клиент валидный")]
+		public void SceCheckCleanLegalClient()
+		{
+			//настройки
+			const int packageId = 23;
+			Logout();
+			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c =>
+				c.Comment == ClientCreateHelper.ClientMark.legalClient.GetDescription());
+			var endpoint = client.Endpoints.First();
+			endpoint.PackageId = packageId;
+			DbSession.Save(endpoint);
+			DbSession.Flush();
+			//биллинг
+			RunBillingProcessPayments();
+			RunBillingProcessWriteoffs(null, false);
+			RunBillingProcessClientEndpointSwitcher(client);
+			//проверки
+			DbSession.Refresh(client);
+			endpoint = client.Endpoints.First();
+			Assert.That(endpoint.ActualPackageId, Is.Null);
+			Open("Warning?ip=" + endpoint.Ip);
+			Thread.Sleep(10000);
+			DbSession.Refresh(endpoint);
+			Assert.That(endpoint.ActualPackageId, Is.EqualTo(packageId)); //если клиенту на варнинг не нужно было, обновляем ему скорость
+		}
+
+		[Test(Description = "Редирект на целевую страницу, если клиент валидный")]
+		public void SceCheckDirtyLegalClient()
+		{
+			//настройкиы
+			const int packageId = 23;
+			Logout();
+			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c =>
+				c.Comment == ClientCreateHelper.ClientMark.legalClient.GetDescription());
+			client.LegalClient.Balance = -10000;
+			client.PaidDay = false;
+			var endpoint = client.Endpoints.First();
+			endpoint.PackageId = packageId;
+			DbSession.Save(endpoint);
+			DbSession.Save(client);
+			DbSession.Flush();
+			//биллинг
+			RunBillingProcessPayments();
+			RunBillingProcessWriteoffs(null, false);
+			RunBillingProcessClientEndpointSwitcher(client);
+			//проверки
+			DbSession.Refresh(client);
+			endpoint = client.Endpoints.First();
+			Assert.That(endpoint.ActualPackageId, Is.Null);
+			Open("Warning?ip=" + endpoint.Ip);
+			Thread.Sleep(10000);
+			DbSession.Refresh(endpoint);
+			Assert.That(endpoint.ActualPackageId, Is.Null);
+			ClickButton("Продолжить");
+			Thread.Sleep(10000);
+			DbSession.Refresh(endpoint);
+			Assert.That(endpoint.ActualPackageId, Is.EqualTo(packageId)); //при варнинге, варнинг снимается, выставляется нужная скорость
+		}
+
+		[Test(Description = "Редирект на целевую страницу, если клиент валидный")]
+		public void SceCheckVeryDirtyLegalClient()
+		{
+			//настройки
+			const int packageId = 23;
+			Logout();
+			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c =>
+				c.Comment == ClientCreateHelper.ClientMark.legalClient.GetDescription());
+			client.LegalClient.Balance = -10000;
+			var endpoint = client.Endpoints.First();
+			endpoint.PackageId = packageId;
+			DbSession.Save(endpoint);
+			var order = new ClientOrder() { BeginDate = SystemTime.Now().AddDays(-32), Client = client, IsActivated = true, Number = 10 };
+			order.OrderServices.Add(new OrderService(order, 200, true) { Description = "Новая услуга" });
+			client.LegalClientOrders.Add(order);
+			client.PaidDay = false;
+			DbSession.Save(client);
+			DbSession.Flush();
+			//биллинг
+			RunBillingProcessPayments();
+			RunBillingProcessWriteoffs(null, false);
+			RunBillingProcessClientEndpointSwitcher(client);
+			//проверки
+			DbSession.Refresh(client);
+			endpoint = client.Endpoints.First();
+			Assert.That(endpoint.ActualPackageId, Is.Null);
+			Open("Warning?ip=" + endpoint.Ip);
+			Thread.Sleep(10000);
+			DbSession.Refresh(endpoint);
+			Assert.That(endpoint.ActualPackageId, Is.Null);
+			ClickButton("Продолжить");
+			Thread.Sleep(10000);
+			DbSession.Refresh(endpoint);
+			Assert.That(endpoint.ActualPackageId, Is.Null); //при блокировке, ничего не меняется 
 		}
 	}
 }

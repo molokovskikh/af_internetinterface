@@ -4,8 +4,8 @@
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	ViewBag.Title = "Предупреждение";
-	string ip = ViewBag.CurrentIp??"";
-	
+	string ip = ViewBag.IpForTests ?? "";
+
 }
 <div class="name-page">
 	<h1 class="header-page" >Внимание!</h1>
@@ -13,7 +13,14 @@
 <div class="block-page">
 	<p>Доступ в интернет заблокирован.</p>
 	<p>Для продолжения работы в интернете необходимо оплатить услуги.</p>
-	<form method="post" action="@Url.Action("TryToDisableWarning", "Warning", new { @ip = ip })">
-		<input type="submit" class="button warning" value="Продолжить">
-	</form>
+	@if (string.IsNullOrEmpty(ip)) {
+		<form method="post" action="@Url.Action("TryToDisableWarning", "Warning")">
+			<input type="submit" class="button warning" value="Продолжить">
+		</form>
+	}
+	else {
+		<form method="post" action="@Url.Action("TryToDisableWarning", "Warning", new { @ip = ip })">
+			<input type="submit" class="button warning" value="Продолжить">
+		</form>
+	}
 </div>

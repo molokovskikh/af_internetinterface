@@ -1463,8 +1463,9 @@ namespace Inforoom2.Test.Infrastructure
 			}
 		}
 
-		protected void OpenWarningPage(Client client)
+		protected void OpenWarningPage(Client client, bool login = true)
 		{
+			if(login)
 			LoginForClient(client);
 			var endpoint = client.Endpoints.First(s => !s.Disabled);
 			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == endpoint);
