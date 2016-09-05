@@ -43,7 +43,10 @@ namespace InternetInterface.Models
 		[Property, Description("Услуга периодичная"), Auditable("Периодичность")]
 		public virtual bool IsPeriodic { get; set; }
 
-		[BelongsTo(Column = "OrderId")]
+        [Property, Description("Не формировать списания")]
+        public virtual bool NoWriteOff { get; set; }
+
+        [BelongsTo(Column = "OrderId")]
 		public virtual Order Order { get; set; }
 
 		public virtual decimal SumToWriteOff
@@ -59,7 +62,7 @@ namespace InternetInterface.Models
 				if (Order.IsDeactivated)
 					return 0;
 				if (!IsPeriodic) {
-					if (Order.Client.WriteOffs.Any(s => s.Service != null && s.Service.Id == this.Id))
+					if (NoWriteOff || Order.Client.WriteOffs.Any(s => s.Service != null && s.Service.Id == this.Id))
 						return 0;
 					else
 						return Cost;

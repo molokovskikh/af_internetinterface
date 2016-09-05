@@ -109,7 +109,7 @@ namespace InternetInterface.Models
 			var toDeactivate = client.Orders.Where(o => !o.IsDeactivated && o.OrderStatus == OrderStatus.Disabled).ToArray();
 			results.AddRange(toDeactivate
 				.SelectMany(s => s.OrderServices)
-				.Where(s => s.IsPeriodic)
+				.Where(s => s.IsPeriodic  && !s.NoWriteOff)
 				.Select(s => new WriteOff(client, s)));
 
 			//Деактивируем заказ (полная деактивация)
@@ -119,7 +119,7 @@ namespace InternetInterface.Models
 			var toActivate = client.Orders.Where(o => o.IsActivated && !o.Disabled && !o.IsDeactivated && o.OrderStatus == OrderStatus.Enabled).ToArray();
 			results.AddRange(toActivate
 				.SelectMany(s => s.OrderServices)
-				.Where(s => !s.IsPeriodic && !client.WriteOffs.Any(w => w.Service != null && w.Service.Id == s.Id)) //если для непериодической услуги еще не создано списание
+				.Where(s => !s.IsPeriodic && !s.NoWriteOff && !client.WriteOffs.Any(w => w.Service != null && w.Service.Id == s.Id)) //если для непериодической услуги еще не создано списание
 				.Select(s => new WriteOff(client, s))); //формируем новое списание на ее основе
 
 			//Если сейчас не последний день месяца, то выходим
@@ -131,7 +131,7 @@ namespace InternetInterface.Models
 			//Обработка услуг с ежемесячной абонентской платой
 			results.AddRange(client.Orders.Where(o => o.OrderStatus == OrderStatus.Enabled)
 				.SelectMany(s => s.OrderServices)
-				.Where(s => s.IsPeriodic)
+				.Where(s => s.IsPeriodic && !s.NoWriteOff)
 				.Select(s => new WriteOff(client, s)));
 			//Выставляем дату следующей абонентской платы
 			PeriodEnd = PeriodEnd.AddMonths(1).LastDayOfMonth();
