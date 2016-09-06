@@ -207,7 +207,7 @@ namespace Inforoom2.Controllers
 				var ipstr = lease?.Ip?.ToString();
 				return RedirectToAction(stateOfClient.ToString(), "Warning", new { ip = ipstr });
 #else
-				return RedirectToAction(stateOfClient.ToString(, "Warning");
+				return RedirectToAction(stateOfClient.ToString(), "Warning");
 #endif
 			}
 
@@ -325,7 +325,7 @@ namespace Inforoom2.Controllers
 				var ipstr = lease?.Ip?.ToString();
 				return RedirectToAction(stateOfClient.ToString(), "Warning", new { ip = ipstr });
 #else
-				return RedirectToAction(stateOfClient.ToString(, "Warning");
+				return RedirectToAction(stateOfClient.ToString(), "Warning");
 #endif
 			}
 			var notificationContact = CurrentClient.Contacts.FirstOrDefault(c => c.Type == ContactType.NotificationEmailConfirmed || c.Type == ContactType.NotificationEmailRaw);
@@ -395,7 +395,7 @@ namespace Inforoom2.Controllers
 				var ipstr = lease?.Ip?.ToString();
 				return RedirectToAction(stateOfClient.ToString(), "Warning", new { ip = ipstr });
 #else
-				return RedirectToAction(stateOfClient.ToString(, "Warning");
+				return RedirectToAction(stateOfClient.ToString(), "Warning");
 #endif
 			}
 			ViewBag.Title = "Бонусы";
