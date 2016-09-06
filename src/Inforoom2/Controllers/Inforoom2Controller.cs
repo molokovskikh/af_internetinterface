@@ -19,6 +19,8 @@ using Region = Inforoom2.Models.Region;
 using System.Security.Principal;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Web;
+using NHibernate;
 
 namespace Inforoom2.Controllers
 {
@@ -78,7 +80,7 @@ namespace Inforoom2.Controllers
 				return;
 			}
 			base.OnActionExecuting(filterContext);
-			AuthenticationByCookies();
+			AuthenticationByCookies(Request);
 			var cookieCity = GetCookie("userCity");
 			if (!string.IsNullOrEmpty(cookieCity)) {
 				userCity = cookieCity;
@@ -97,9 +99,11 @@ namespace Inforoom2.Controllers
 			//указываем город по умолчанию для незарегистрированного пользователя (перед тем, как проверять его авторизацию через сеть, его может выкинуть и он останется без города)
 			ProcessRegionPanel();
 			ProcessPrivateMessage();
-
-			if (TryAuthorizeNetworkClient())
+			var currentClient = CurrentClient;
+			if (Inforoom2Controller.TryAuthorizeNetworkClient(Request, this, ref currentClient))
 				return;
+			CurrentClient = currentClient;
+
 			ViewBag.NetworkClientFlag = GetCookie("networkClient") != null;
 			if (CurrentClient != null) {
 				var sb = new StringBuilder();
@@ -111,13 +115,20 @@ namespace Inforoom2.Controllers
 
 			//вызов у сервисов OnWebsiteVisit(),
 			// PlanChanger возвращает значение в filterContext.Result 
-			var filterContextResultBeforeService = filterContext.Result;
-			TrigerServices(filterContext);
-			//это значение нужно обработать варнингом, т.к. оно менее приоритетно.
-			var warningHelper = new WarningHelper(filterContext, filterContextResultBeforeService);
-			warningHelper.TryWarningToRedirect();
-			if (filterContext.Result != null) {
-				return;
+			//var filterContextResultBeforeService = filterContext.Result;
+			if (ControllerContext.HttpContext.Request.HttpMethod == "GET"
+			    && ControllerContext.RouteData.Values["controller"].ToString().ToLower() != "warning"
+			    && !(ControllerContext.RouteData.Values["controller"].ToString().ToLower() == "personal"
+			         && (ControllerContext.RouteData.Values["action"].ToString().ToLower() == "profile"
+			             || ControllerContext.RouteData.Values["action"].ToString().ToLower() == "payment"
+			             || ControllerContext.RouteData.Values["action"].ToString().ToLower() == "service"
+			             || ControllerContext.RouteData.Values["action"].ToString().ToLower() == "FirstVisit"))
+			    && !(ControllerContext.RouteData.Values["controller"].ToString().ToLower() == "service"
+			         && ControllerContext.RouteData.Values["action"].ToString().ToLower() == "deferredpayment")) {
+				TrigerServices(filterContext);
+				if (filterContext.Result != null) {
+					return;
+				}
 			}
 
 			if (!CheckNetworkClient())
@@ -134,17 +145,17 @@ namespace Inforoom2.Controllers
 				if (currentClientRegion != null) {
 					userCity = CurrentRegion == null ? currentClientRegion.Name : CurrentRegion.Name;
 					SetCookie("userCity", userCity);
-					ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(userCity);
+					ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(DbSession, userCity);
 					ViewBag.UserCity = userCity;
 					ViewBag.CurrentRegion = CurrentRegion ?? currentClientRegion;
 				}
 			}
 		}
 
-		public void AuthenticationByCookies()
+		public static void AuthenticationByCookies(HttpRequestBase request)
 		{
 			if (FormsAuthentication.CookiesSupported) {
-				var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+				var cookie = request.Cookies[FormsAuthentication.FormsCookieName];
 				if (cookie != null) {
 					var ticket = FormsAuthentication.Decrypt(cookie.Value);
 					var clientId = 0;
@@ -193,41 +204,41 @@ namespace Inforoom2.Controllers
 		}
 
 		//Авторизация клиента из сети
-		public bool TryAuthorizeNetworkClient()
+		public static bool TryAuthorizeNetworkClient(HttpRequestBase request, BaseController controller, ref Client currentClient)
 		{
-			var ipstring = Request.UserHostAddress;
+			var ipstring = request.UserHostAddress;
 
 #if DEBUG
 			//Можем авторизоваться по лизе за клиента
-			ipstring = Request.QueryString["ip"] ?? null;
-			if (GetCookie("debugIp") == null && ipstring != null)
-				SetCookie("debugIp", ipstring);
+			ipstring = request.QueryString["ip"] ?? null;
+			if (controller.GetCookie("debugIp") == null && ipstring != null)
+				controller.SetCookie("debugIp", ipstring);
 #endif
-			if (CurrentClient != null || string.IsNullOrEmpty(ipstring))
+			if (currentClient != null || string.IsNullOrEmpty(ipstring))
 				return false;
-			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring, DbSession);
+			var endpoint = ClientEndpoint.GetEndpointForIp(ipstring, controller.DbSession);
 
-			var endpointIdString = Request.QueryString["n"];
+			var endpointIdString = request.QueryString["n"];
 			if (endpoint == null && string.IsNullOrEmpty(endpointIdString) == false) {
 				int endpointId = 0;
 				if (!string.IsNullOrEmpty(endpointIdString)) {
 					int.TryParse(endpointIdString, out endpointId);
 				}
 				if (endpointId != 0) {
-					endpoint = DbSession.Query<ClientEndpoint>().FirstOrDefault(s =>  s.Id == endpointId && !s.Disabled );
+					endpoint = controller.DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Id == endpointId && !s.Disabled);
 				}
 			}
 			//sce кидает опознанного пользователя на варнинг, с номером его эндпойнта 
 			if (endpoint != null && endpoint.Client.PhysicalClient != null) //Юриков авторизовывать не нужно
 			{
-				SetCookie("networkClient", "true");
+				controller.SetCookie("networkClient", "true");
 				// если у клиента есть адрес, связанный с эндпойнтом, по нему сохраняем город (userCity) в cookie 
 				if (endpoint.Client.PhysicalClient.Address != null) {
-					SetCookie("userCity", endpoint.Client.PhysicalClient.Address.House.Street.Region.Name);
+					controller.SetCookie("userCity", endpoint.Client.PhysicalClient.Address.House.Street.Region.Name);
 				}
 				//Это необходимо, чтобы авторизация срабатывала моментально. Так как метод authenticate требует перезагрузки страницы
-				CurrentClient = endpoint.Client;
-				this.Authenticate(ViewBag.ActionName, ViewBag.ControllerName, endpoint.Client.Id.ToString(), true);
+				currentClient = endpoint.Client;
+				controller.Authenticate(controller.ViewBag.ActionName, controller.ViewBag.ControllerName, endpoint.Client.Id.ToString(), true);
 				return true;
 			}
 			return false;
@@ -437,7 +448,7 @@ namespace Inforoom2.Controllers
 				}
 			}
 
-			ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(UserCity);
+			ViewBag.UserCityBelongsToUs = IsUserCityBelongsToUs(DbSession, UserCity);
 			ViewBag.UserCity = UserCity;
 			ViewBag.UserRegion = DbSession.Query<Region>().FirstOrDefault(i => i.Name == UserCity);
 			if (ViewBag.UserRegion == null)
@@ -454,10 +465,10 @@ namespace Inforoom2.Controllers
 			ViewBag.PrivateMsg = message;
 		}
 
-		private bool IsUserCityBelongsToUs(string city)
+		public static bool IsUserCityBelongsToUs(ISession dbSession, string city)
 		{
 			if (city != null) {
-				var region = DbSession.Query<Region>().FirstOrDefault(i => i.Name.Contains(city) && i.City != null);
+				var region = dbSession.Query<Region>().FirstOrDefault(i => i.Name.Contains(city) && i.City != null);
 				if (region != null)
 					return true;
 			}

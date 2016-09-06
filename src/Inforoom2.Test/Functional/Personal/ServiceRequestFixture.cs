@@ -41,7 +41,7 @@ namespace Inforoom2.Test.Functional.Personal
 			Open("/");
 			AssertText("НОВОСТИ");
 			//попытка перейти на варнинг
-			Open("Warning");
+			Open("Warning?ip=" + Client.Endpoints.First().Ip);
 			AssertText(textToCheck);
 		}
 

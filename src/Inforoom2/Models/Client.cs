@@ -810,6 +810,68 @@ namespace Inforoom2.Models
 			}
 			return message;
 		}
+
+
+		public virtual WarningState GetWarningState()
+		{
+			//Проверка юр.лица
+			if (LegalClient != null) {
+				if (Disabled) {
+					return WarningState.LawDisabled;
+				}
+				if (ShowBalanceWarningPage) {
+					return WarningState.LawLowBalance;
+				}
+			}
+			//Проверка физ.лица
+			else if (PhysicalClient != null) {
+				//елси заблокирован
+				if (Disabled) {
+					//и статус VoluntaryBlocking
+					if (Status.Type == StatusType.VoluntaryBlocking) {
+						return WarningState.PhysVoluntaryBlocking;
+					}
+					//и баланс меньше 0
+					else if (Balance < 0 && Payments.Count != 0) {
+						return WarningState.PhysLowBalance;
+					}
+					//клиенту со статусом "Зарегистрирован" необходимо заполнить паспортные данные 
+					if (Status.Type == StatusType.BlockedAndNoConnected && !HasPassportData()) {
+						return WarningState.PhysPassportData;
+					}
+					//и количество выплат (перечислений) = 0
+					else if (Payments.Count == 0) {
+						return WarningState.PhysFirstPayment;
+					}
+				}
+				//или отсутствуют паспортные данные
+				else {
+					if (!HasPassportData()) {
+						return WarningState.PhysPassportData;
+					}
+				}
+				//если статус BlockedForRepair
+				if (Status.Type == StatusType.BlockedForRepair) {
+					return WarningState.PhysBlockedForRepair;
+				}
+			}
+			return WarningState.NoWarning;
+		}
+	}
+
+	/// <summary>
+	/// Состояние клиента (элементы идентичны названиям экшенов варнинга)
+	/// </summary>
+	public enum WarningState
+	{
+		[Description("Отсутствие варнинга")] NoWarning,
+		[Description("Юр. лицо деактивированный")] LawDisabled,
+		[Description("Юр. лицо с низким балансом")] LawLowBalance,
+		[Description("Физ. лицо с ремонтными работами")] PhysBlockedForRepair,
+		[Description("Физ. лицо с добровольной блокировкой")] PhysVoluntaryBlocking,
+		[Description("Физ. лицо с низким балансом")] PhysLowBalance,
+		[Description("Физ. лицо без первого платежа")] PhysFirstPayment,
+		[Description("Физ. лицо без паспортных данных")] PhysPassportData
 	}
 
 	/// <summary>

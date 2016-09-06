@@ -24,8 +24,7 @@ namespace Inforoom2.Test.Functional.Home
 				var actions = methods.Where(i => i.ReturnType == typeof(ActionResult)).ToList();
 				foreach (var action in actions) {
 					if (!Attribute.IsDefined(action, typeof(HttpPostAttribute)) && action.GetParameters().Length == 0
-						&& action.Name != "TryToDisableWarning" && action.Name != "Logout" && controller.Name != "BussinessController" && controller.Name != "TestSpeedController" && action.Name != "Playlist")
-					{
+					    && action.Name != "TryToDisableWarning" && action.Name != "Logout" && controller.Name != "BussinessController" && controller.Name != "TestSpeedController" && action.Name != "Playlist") {
 						var name = controller.Name.Replace("Controller", "");
 						Open("Account/Login");
 						Assert.That(browser.PageSource, Is.StringContaining("Вход в личный кабинет"));
@@ -34,8 +33,12 @@ namespace Inforoom2.Test.Functional.Home
 						nameLogin.SendKeys(Client.Id.ToString());
 						password.SendKeys("password");
 						browser.FindElementByCssSelector(".Account.Login input[type=submit]").Click();
-
-						Open("{0}/{1}", name, action.Name);
+						if (name.ToLower().IndexOf("warning") != -1) {
+							Open("{0}/{1}?ip={2}", name, action.Name, Client.Endpoints.First().Ip.ToString());
+						}
+						else {
+							Open("{0}/{1}", name, action.Name);
+						}
 						browser.FindElementByCssSelector(".call").Click();
 						var nameClient = browser.FindElementByCssSelector("input[id=callMeBackTicket_Name]");
 						var phone = browser.FindElementByCssSelector("input[id=callMeBackTicket_PhoneNumber]");
@@ -44,7 +47,6 @@ namespace Inforoom2.Test.Functional.Home
 						phone.SendKeys("8556478970");
 						comment.SendKeys("my question");
 						browser.FindElementByCssSelector(".wrap .contacting").Click();
-						//browser.FindElementByCssSelector("input[class=.wrap contacting]").Click();
 						var callMeBackTicket = DbSession.Query<CallMeBackTicket>().FirstOrDefault(c => c.PhoneNumber == "8556478970");
 						Assert.NotNull(callMeBackTicket);
 						AssertText("Заявка отправлена. В течении дня вам перезвонят.");

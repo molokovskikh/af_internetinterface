@@ -15,7 +15,7 @@ namespace Inforoom2.Test.Functional.Personal
 	{
 		public void CheckWarningPageText(string textToCheck)
 		{
-			Open("Warning");
+			Open("Warning?ip=" + Client.Endpoints.First().Ip);
 			AssertText(textToCheck);
 		}
 
@@ -23,39 +23,39 @@ namespace Inforoom2.Test.Functional.Personal
 		public void ActivateDeferredPayment()
 		{
 			var clientMark = ClientCreateHelper.ClientMark.disabledClient.GetDescription();
+			Client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Comment == clientMark);
 
-			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Comment == clientMark);
-			client.Balance = -1;
-			var payment = new Payment()
-			{
-				Client = client,
+			Client.Balance = -1;
+			var payment = new Payment() {
+				Client = Client,
 				Sum = 0,
 				PaidOn = SystemTime.Now().AddDays(-2),
 				RecievedOn = SystemTime.Now().AddDays(-1)
 			};
-            client.Payments.Add(payment);
+			Client.Payments.Add(payment);
 			DbSession.Save(payment);
-			Assert.IsNotNull(client, "Искомый клиент не найден");
-			Assert.AreEqual(StatusType.NoWorked, client.Status.Type, "Клиент не имеет статус 'Заблокирован'");
-			Assert.IsTrue(client.WorkingStartDate.HasValue, "У клиента не выставлена дата подключения");
+			Assert.IsNotNull(Client, "Искомый клиент не найден");
+			Assert.AreEqual(StatusType.NoWorked, Client.Status.Type, "Клиент не имеет статус 'Заблокирован'");
+			Assert.IsTrue(Client.WorkingStartDate.HasValue, "У клиента не выставлена дата подключения");
 
-			DbSession.Update(client);
+			DbSession.Update(Client);
 			DbSession.Flush();
-
-			LoginForClient(client);
-			DbSession.Refresh(client);
+            ClickLink("Выход");
+			LoginForClient(Client);
+			DbSession.Refresh(Client);
 
 			CheckWarningPageText("Ваш лицевой счет заблокирован за неуплату, для разблокировки необходимо внести");
 			var button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
 			button = browser.FindElementByLinkText("Подключить");
 			button.Click();
+            WaitForVisibleCss("input[value=Подключить]", 60);
 			button = browser.FindElementByCssSelector("input[value=Подключить]");
 			button.Click();
 			AssertText("Услуга \"Обещанный платеж\" активирована на период");
 
-			DbSession.Refresh(client);
-			Assert.AreEqual(StatusType.Worked, client.Status.Type, "Клиент не имеет статус 'Подключен'");
+			DbSession.Refresh(Client);
+			Assert.AreEqual(StatusType.Worked, Client.Status.Type, "Клиент не имеет статус 'Подключен'");
 			CheckWarningPageText("НОВОСТИ");
 		}
 
@@ -69,12 +69,12 @@ namespace Inforoom2.Test.Functional.Personal
 		{
 			ActivateDeferredPayment();
 
-			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Patronymic.Contains("заблокированный клиент"));
-			Assert.IsNotNull(client, "Заблокированный клиент не найден");
-			client.SetStatus(StatusType.NoWorked, DbSession);
-			DbSession.Update(client);
+			Client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Patronymic.Contains("заблокированный клиент"));
+			Assert.IsNotNull(Client, "Заблокированный клиент не найден");
+			Client.SetStatus(StatusType.NoWorked, DbSession);
+			DbSession.Update(Client);
 
-			var lastService = client.ClientServices.OrderBy(cs => cs.BeginDate).LastOrDefault(s => s.Service.Name == "Обещанный платеж");
+			var lastService = Client.ClientServices.OrderBy(cs => cs.BeginDate).LastOrDefault(s => s.Service.Name == "Обещанный платеж");
 			Assert.IsNotNull(lastService, "У данного клиента не найдена услуга 'Обещанный платеж'");
 			Assert.IsTrue(lastService.BeginDate != null && lastService.BeginDate.Value != null, "lastService.BeginDate == null");
 			Assert.IsTrue(lastService.EndDate != null && lastService.EndDate.Value != null, "lastService.EndDate == null");
@@ -90,16 +90,16 @@ namespace Inforoom2.Test.Functional.Personal
 			AssertNoText("Подключить");
 
 			//проверка, что у клиента нет возможности подключить "Обещанный платеж",пока не оплачена вся задолженность
-			var tariffPrice = client.Plan.Price;
+			var tariffPrice = Client.Plan.Price;
 			var payment1 = new Payment {
 				Sum = 0.7m * tariffPrice,
 				PaidOn = DateTime.Now,
-				Client = client,
+				Client = Client,
 				Comment = "70% от цены тарифа"
 			};
 			DbSession.Save(payment1);
 			DbSession.Flush();
-			DbSession.Refresh(client);
+			DbSession.Refresh(Client);
 
 			// Перезагрузить страницу "Услуги" у клиента
 			Open("Personal/Service");
@@ -109,12 +109,12 @@ namespace Inforoom2.Test.Functional.Personal
 			var payment2 = new Payment {
 				Sum = 0.1m * tariffPrice,
 				PaidOn = DateTime.Now,
-				Client = client,
+				Client = Client,
 				Comment = "Еще 10% от цены тарифа"
 			};
 			DbSession.Save(payment2);
 			DbSession.Flush();
-			DbSession.Refresh(client);
+			DbSession.Refresh(Client);
 
 			// Перезагрузить страницу "Услуги" у клиента
 			Open("Personal/Service");

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 using Inforoom2.Models;
 using NHibernate.Linq;
@@ -13,6 +14,10 @@ namespace Inforoom2.Controllers
 		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server, VaryByCustom = "User,Cookies")]
 		public ActionResult Index()
 		{
+		    var newIp = IPAddress.Parse("91.235.89.149");
+		    var endp = DbSession.Query<ClientEndpoint>().FirstOrDefault();
+		    endp.Ip = newIp;
+		    DbSession.Save(endp);
 			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
 			if (pathFromConfigUrl == null)
 			{

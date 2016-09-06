@@ -4,7 +4,8 @@
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	ViewBag.Title = "Предупреждение";
-	Client client = ViewBag.Client;
+	Client client = ViewBag.CurrentClient;
+	string ip = ViewBag.IpForTests ?? "";
 }
 <div class="name-page">
 	<h1 class="header-page">Внимание!</h1>
@@ -15,22 +16,30 @@
 	@if (!client.AbsentPassportData(true)) {
 		<p>Для заполнения недостающих паспортных данных необходимо обратиться в офис компании:</p>
 		<p>
-			<a style="color:#7b0c10;" href="http://maps.yandex.ru/?text=г. Борисоглебск, ул. Третьяковская, д. 6б">г. Борисоглебск, ул. Третьяковская, д. 6б</a> (вход со двора) в будние дни с 9-00 до 18-00.
+			<a style="color: #7b0c10;" href="http://maps.yandex.ru/?text=г. Борисоглебск, ул. Третьяковская, д. 6б">г. Борисоглебск, ул. Третьяковская, д. 6б</a> (вход со двора) в будние дни с 9-00 до 18-00.
 		</p>
 		<p>
-			<a style="color:#7b0c10;" href="http://maps.yandex.ru/?text=г. Белгород, ул. Белгородского полка (Кирова), д. 50">г. Белгород, ул. Белгородского полка (Кирова), д. 50 п. 3</a>
+			<a style="color: #7b0c10;" href="http://maps.yandex.ru/?text=г. Белгород, ул. Белгородского полка (Кирова), д. 50">г. Белгород, ул. Белгородского полка (Кирова), д. 50 п. 3</a>
 		</p>
 		<p>
 			возле “Филармонии” вход со двора в будние дни с 9-00 до 18-00.
 		</p>
 
 		<p>Дополнительную информацию можно узнать по телефону технической поддержки клиентов:</p>
-		<p>@(client.GetRegion().RegionOfficePhoneNumber)</p> 
+		<p>@(client.GetRegion().RegionOfficePhoneNumber)</p>
 	}
-	<form method="post" action="@Url.Action("TryToDisableWarning", "Warning")">
-		<input name="referer" type="hidden" value="!{referer}">
-		<input type="submit" class="button warning" value="Продолжить">
-	</form>
+	@if (string.IsNullOrEmpty(ip)) {
+		<form method="post" action="@Url.Action("TryToDisableWarning", "Warning")">
+			<input name="referer" type="hidden" value="!{referer}">
+			<input type="submit" class="button warning" value="Продолжить">
+		</form>
+	}
+	else {
+		<form method="post" action="@Url.Action("TryToDisableWarning", "Warning", new { @ip = ip })">
+			<input name="referer" type="hidden" value="!{referer}">
+			<input type="submit" class="button warning" value="Продолжить">
+		</form>
+	}
 
 
 </div>

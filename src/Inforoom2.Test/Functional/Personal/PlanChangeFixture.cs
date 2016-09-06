@@ -122,7 +122,7 @@ namespace Inforoom2.Test.Functional.Personal
 			Open("/Personal/Plans");
 			AssertText("У вас не заполнены паспортные данные");
 			Open("/Personal/Payment");
-      AssertText("У вас не было платежей");
+			AssertText("У вас не было платежей");
 			Open("/Personal/Service");
 			AssertText("У вас не заполнены паспортные данные");
 			Open("/Personal/Bonus");
@@ -141,16 +141,20 @@ namespace Inforoom2.Test.Functional.Personal
 			browser.FindElementByCssSelector(".window .click.ok").Click();
 			// клиент должен перейти на дешелый тириф
 			AssertText("Тариф успешно изменен");
+			var endpoint = CurrentClient.Endpoints.FirstOrDefault();
+			var lease = DbSession.Query<Lease>().FirstOrDefault(i => i.Endpoint == endpoint);
+			var ip = lease?.Ip?.ToString();
+
 			Open("/");
 			AssertText("НОВОСТИ");
-			Open("Warning");
+			Open($"Warning?ip={ip}");
 			AssertText("У вас не заполнены паспортные данные");
 			Css(".warning").Click();
 			var textbox = browser.FindElement(By.CssSelector("#physicalClient_PassportNumber"));
 			textbox.SendKeys("7121551");
 			var button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
-			Open("Warning");
+			Open($"Warning?ip={ip}");
 			AssertText("У вас не заполнены паспортные данные");
 			Css(".warning").Click();
 			var date = browser.FindElementByCssSelector("input[name='physicalClient.BirthDate']");
@@ -159,7 +163,7 @@ namespace Inforoom2.Test.Functional.Personal
 			popup.Click();
 			button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
-			Open("Warning");
+			Open($"Warning?ip={ip}");
 			AssertText("Для заполнения недостающих паспортных данных необходимо обратиться в офис компании");
 			Css(".warning").Click();
 			AssertText("НОВОСТИ");
@@ -198,14 +202,13 @@ namespace Inforoom2.Test.Functional.Personal
 			PlanChangerFixtureOn(0, false);
 			CurrentClient.SetStatus(StatusType.NoWorked, DbSession);
 			CurrentClient.Balance = -1;
-			var payment = new Payment()
-			{
+			var payment = new Payment() {
 				Client = CurrentClient,
 				Sum = 0,
 				PaidOn = SystemTime.Now().AddDays(-2),
 				RecievedOn = SystemTime.Now().AddDays(-1)
 			};
-            CurrentClient.Payments.Add(payment);
+			CurrentClient.Payments.Add(payment);
 			DbSession.Save(payment);
 			Assert.IsNotNull(CurrentClient, "Искомый клиент не найден");
 			Assert.AreEqual(StatusType.NoWorked, CurrentClient.Status.Type, "Клиент не имеет статус 'Заблокирован'");
@@ -223,12 +226,13 @@ namespace Inforoom2.Test.Functional.Personal
 
 			var button = browser.FindElement(By.CssSelector("form input.button"));
 			button.Click();
+
 			button = browser.FindElementByLinkText("Подключить");
 			button.Click();
 			button = browser.FindElementByCssSelector("input[value=Подключить]");
 			button.Click();
-				AssertText("Услуга \"Обещанный платеж\" активирована на период");
-				Open("Personal/Profile");
+			AssertText("Услуга \"Обещанный платеж\" активирована на период");
+			Open("Personal/Profile");
 			Open("/");
 			AssertText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
 			browser.FindElementByCssSelector("#changeTariffButtonFast").Click();

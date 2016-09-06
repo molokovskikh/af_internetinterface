@@ -4,19 +4,28 @@
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	ViewBag.Title = "Предупреждение";
-	Client client = ViewBag.Client;
+	Client client = ViewBag.CurrentClient;
+	string ip = ViewBag.IpForTests ?? "";
 }
 <div class="name-page">
 	<h1 class="header-page" >Внимание!</h1>
 </div>
 <div class="block-page">
-<p class="info">Номер лицевого счета для оплаты: @client.Id</p>
+	<p class="info">Номер лицевого счета для оплаты: @client.Id</p>
 	<p class="error">
 		Ваш лицевой счет заблокирован за неуплату, для разблокировки необходимо внести @client.GetUnlockPrice().ToString("F2") руб.<br>
 		Для возобновления доступа в интернет Вам необходимо внести абонентскую плату за полный месяц.<br>
 	</p>
-	<form method="post" action="@Url.Action("TryToDisableWarning","Warning")">
-		<input name="referer" type="hidden" value="!{referer}">
-		<input type="submit" class="button warning" value="Продолжить">
-	</form>
+	@if (string.IsNullOrEmpty(ip)) {
+		<form method="post" action="@Url.Action("TryToDisableWarning", "Warning")">
+			<input name="referer" type="hidden" value="!{referer}">
+			<input type="submit" class="button warning" value="Продолжить">
+		</form>
+	}
+	else {
+		<form method="post" action="@Url.Action("TryToDisableWarning", "Warning", new { @ip = ip })">
+			<input name="referer" type="hidden" value="!{referer}">
+			<input type="submit" class="button warning" value="Продолжить">
+		</form>
+	}
 </div>

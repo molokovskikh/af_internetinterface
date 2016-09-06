@@ -1329,16 +1329,17 @@ namespace Inforoom2.Test.Infrastructure
 				.ToArray());
 		}
 
-		public void LoginForClient(Client Client)
-		{
-			Open("Account/Login");
-			Assert.That(browser.PageSource, Is.StringContaining("Вход в личный кабинет"));
-			var name = browser.FindElementByCssSelector(".Account.Login input[name=username]");
-			var password = browser.FindElementByCssSelector(".Account.Login input[name=password]");
-			name.SendKeys(Client.Id.ToString());
-			password.SendKeys("password");
-			browser.FindElementByCssSelector(".Account.Login input[type=submit]").Click();
-		}
+	    public void LoginForClient(Client Client)
+	    {
+	        Open("Account/Login");
+	        WaitForText("Вход в личный кабинет", 60);
+	        Assert.That(browser.PageSource, Is.StringContaining("Вход в личный кабинет"));
+	        var name = browser.FindElementByCssSelector(".Account.Login input[name=username]");
+	        var password = browser.FindElementByCssSelector(".Account.Login input[name=password]");
+	        name.SendKeys(Client.Id.ToString());
+	        password.SendKeys("password");
+	        browser.FindElementByCssSelector(".Account.Login input[type=submit]").Click();
+	    }
 
 		public void Logout()
 		{
@@ -1463,8 +1464,9 @@ namespace Inforoom2.Test.Infrastructure
 			}
 		}
 
-		protected void OpenWarningPage(Client client)
+		protected void OpenWarningPage(Client client, bool login = true)
 		{
+			if(login)
 			LoginForClient(client);
 			var endpoint = client.Endpoints.First(s => !s.Disabled);
 			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == endpoint);
