@@ -1329,16 +1329,17 @@ namespace Inforoom2.Test.Infrastructure
 				.ToArray());
 		}
 
-		public void LoginForClient(Client Client)
-		{
-			Open("Account/Login");
-			Assert.That(browser.PageSource, Is.StringContaining("Вход в личный кабинет"));
-			var name = browser.FindElementByCssSelector(".Account.Login input[name=username]");
-			var password = browser.FindElementByCssSelector(".Account.Login input[name=password]");
-			name.SendKeys(Client.Id.ToString());
-			password.SendKeys("password");
-			browser.FindElementByCssSelector(".Account.Login input[type=submit]").Click();
-		}
+	    public void LoginForClient(Client Client)
+	    {
+	        Open("Account/Login");
+	        WaitForText("Вход в личный кабинет", 60);
+	        Assert.That(browser.PageSource, Is.StringContaining("Вход в личный кабинет"));
+	        var name = browser.FindElementByCssSelector(".Account.Login input[name=username]");
+	        var password = browser.FindElementByCssSelector(".Account.Login input[name=password]");
+	        name.SendKeys(Client.Id.ToString());
+	        password.SendKeys("password");
+	        browser.FindElementByCssSelector(".Account.Login input[type=submit]").Click();
+	    }
 
 		public void Logout()
 		{

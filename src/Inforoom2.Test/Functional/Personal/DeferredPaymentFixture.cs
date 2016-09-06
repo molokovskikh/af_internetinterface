@@ -40,7 +40,7 @@ namespace Inforoom2.Test.Functional.Personal
 
 			DbSession.Update(Client);
 			DbSession.Flush();
-
+            ClickLink("Выход");
 			LoginForClient(Client);
 			DbSession.Refresh(Client);
 
@@ -49,6 +49,7 @@ namespace Inforoom2.Test.Functional.Personal
 			button.Click();
 			button = browser.FindElementByLinkText("Подключить");
 			button.Click();
+            WaitForVisibleCss("input[value=Подключить]", 60);
 			button = browser.FindElementByCssSelector("input[value=Подключить]");
 			button.Click();
 			AssertText("Услуга \"Обещанный платеж\" активирована на период");

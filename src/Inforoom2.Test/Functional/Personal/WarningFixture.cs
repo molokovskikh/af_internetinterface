@@ -192,6 +192,7 @@ namespace Inforoom2.Test.Functional.Personal
 			clientService.BeginDate = SystemTime.Now().AddDays(-4);
 			DbSession.Save(clientService);
 			DbSession.Flush();
+            ClickLink("Выход");
 			OpenWarningPage(client, false);
 			AssertText("Добровольная блокировка");
 			Css(".unfreeze").Click();

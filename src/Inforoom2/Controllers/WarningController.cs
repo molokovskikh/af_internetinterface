@@ -1,14 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
+﻿using System.Configuration;
 using System.Linq;
-using System.Net;
-using System.Security.Principal;
 using System.Text;
-using System.Threading;
 using System.Web.Mvc;
-using System.Web.Security;
-using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
@@ -26,7 +19,7 @@ namespace Inforoom2.Controllers
 	/// </summary>
 	public class WarningLawController : BaseController
 	{
-		protected override void OnActionExecuting(ActionExecutingContext filterContext)
+	    protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
 			base.OnActionExecuting(filterContext);
 
@@ -63,7 +56,7 @@ namespace Inforoom2.Controllers
 #endif
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// страница уведомления о блокировки
 		/// </summary>
 		/// <returns></returns>
@@ -72,7 +65,7 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// страница уведомления о низком балансе
 		/// </summary>
 		/// <returns></returns>
@@ -87,9 +80,9 @@ namespace Inforoom2.Controllers
 	/// </summary>
 	public class WarningController : BaseController
 	{
-		protected Client CurrentClient { get; set; }
+	    protected Client CurrentClient { get; set; }
 
-		protected override void OnActionExecuting(ActionExecutingContext filterContext)
+	    protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
 			if (filterContext.HttpContext.Request.Browser.Browser == "Unknown" &&
 			    filterContext.HttpContext.Request.Browser.Platform == "Unknown" &&
@@ -104,7 +97,7 @@ namespace Inforoom2.Controllers
 			CurrentClient = GetClientIfExists(this);
 
 			if (CurrentClient == null) {
-				filterContext.Result = this.RedirectToAction("Index", "Home");
+				filterContext.Result = RedirectToAction("Index", "Home");
 				return;
 			}
 
@@ -116,7 +109,8 @@ namespace Inforoom2.Controllers
 			ViewBag.IpForTests = lease?.Ip?.ToString();
 #endif
 
-			if (CurrentClient != null && CurrentClient.IsPhysicalClient) {
+            ViewBag.NetworkClientFlag = false;
+            if (CurrentClient != null && CurrentClient.IsPhysicalClient && (User?.Identity == null || string.IsNullOrEmpty(User?.Identity.Name))) {
 				//Это необходимо, чтобы авторизация срабатывала моментально. Так как метод authenticate требует перезагрузки страницы
 				SetCookie("networkClient", "true");
 				ViewBag.NetworkClientFlag = true;
@@ -124,10 +118,11 @@ namespace Inforoom2.Controllers
 				Authenticate(ViewBag.ActionName, ViewBag.ControllerName, CurrentClient.Id.ToString(), true);
 			}
 			else {
-				ViewBag.NetworkClientFlag = false;
+            ViewBag.NetworkClientFlag = false;
 			}
 
-			ViewBag.CallMeBackTicket = new CallMeBackTicket() {
+			ViewBag.CallMeBackTicket = new CallMeBackTicket
+			{
 				Name = CurrentClient.Name,
 				PhoneNumber = CurrentClient.PhoneNumber ?? ""
 			};
@@ -153,7 +148,7 @@ namespace Inforoom2.Controllers
 			ViewBag.CurrentClient = CurrentClient;
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// страница варнинга по умолчанию
 		/// </summary>
 		/// <param name="disable"></param>
@@ -172,21 +167,19 @@ namespace Inforoom2.Controllers
 			else {
 				if (CurrentClient.IsLegalClient) {
 #if DEBUG
-					return RedirectToAction(warningReason.ToString(), "WarningLaw", new { ip = ip });
+					return RedirectToAction(warningReason.ToString(), "WarningLaw", new {ip });
 #endif
 					return RedirectToAction(warningReason.ToString(), "WarningLaw");
 				}
-				else {
 #if DEBUG
-					return RedirectToAction(warningReason.ToString(), "Warning", new { ip = ip });
+			    return RedirectToAction(warningReason.ToString(), "Warning", new {ip });
 #endif
-					return RedirectToAction(warningReason.ToString(), "Warning");
-				}
+			    return RedirectToAction(warningReason.ToString(), "Warning");
 			}
 			return RedirectToAction("Index", "Home");
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Переход на страницу, подтверждающую возобновление работы, после ремонтных работ
 		/// </summary>
 		/// <returns></returns>
@@ -196,7 +189,7 @@ namespace Inforoom2.Controllers
 			return RedirectToAction("Index", "Home");
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Страница для клиента с ремонтными работами
 		/// </summary>
 		/// <returns></returns>
@@ -205,7 +198,7 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Страница для клиента с низким балансом 
 		/// </summary>
 		/// <returns></returns>
@@ -214,7 +207,7 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		/// <summary>
+	    /// <summary>
 		///  Страница для клиента с добровольной блокировкой
 		/// </summary>
 		/// <returns></returns>
@@ -227,7 +220,7 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		/// <summary>
+	    /// <summary>
 		///  Страница для клиента без единого платежа
 		/// </summary>
 		/// <returns></returns>
@@ -236,7 +229,7 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		/// <summary>
+	    /// <summary>
 		///  Страница для клиента без паспортных данных
 		/// </summary>
 		/// <returns></returns>
@@ -245,7 +238,7 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Попытка отключить блокирующие сообщения
 		/// </summary>
 		/// <returns></returns>
@@ -286,9 +279,9 @@ namespace Inforoom2.Controllers
 				SceHelper.UpdatePackageId(client.Id);
 				//переадресация на страницу с сообщением
 #if DEBUG
-				return RedirectToAction("RepairCompleted".ToString(), "Warning", new { ip = ViewBag.IpForTests });
+				return RedirectToAction("RepairCompleted", "Warning", new { ip = ViewBag.IpForTests });
 #endif
-				return RedirectToAction("RepairCompleted".ToString(), "Warning");
+				return RedirectToAction("RepairCompleted", "Warning");
 			}
 
 			//иначе, если клиент деактивирован 
@@ -329,7 +322,7 @@ namespace Inforoom2.Controllers
 			return RedirectToAction("Index", "Home");
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Попытка авторизовать юр. лицо
 		/// </summary>
 		/// <param name="controller"></param>
@@ -349,7 +342,7 @@ namespace Inforoom2.Controllers
 
 			var endpointIdString = controller.HttpContext.Request.QueryString["n"];
 			if (endpoint == null && string.IsNullOrEmpty(endpointIdString) == false) {
-				int endpointId = 0;
+				var endpointId = 0;
 				if (!string.IsNullOrEmpty(endpointIdString)) {
 					int.TryParse(endpointIdString, out endpointId);
 				}
