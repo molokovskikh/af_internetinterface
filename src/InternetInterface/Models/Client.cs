@@ -815,12 +815,13 @@ where CE.Client = {0}", Id))
 		/// <returns></returns>
 		public virtual decimal GetPrice()
 		{
-			var services = ClientServices.Where(c => c.IsActivated).ToArray();
-			var blockingService = services.FirstOrDefault(c => c.Service.BlockingAll);
-			if (blockingService != null)
-				return blockingService.GetPrice() + services.Where(c => c.Service.ProcessEvenInBlock).Sum(c => c.GetPrice());
+		    var services = ClientServices.Where(c => c.IsActivated).ToArray();
+            //по задаче redmine 50439 зависимость оплаты от флага "Disabled"
+            var blockingService = services.FirstOrDefault(c => c.Service.BlockingAll);
+            if (Disabled && blockingService != null)
+                return blockingService.GetPrice();
 
-			return services.Sum(c => c.GetPrice());
+            return services.Sum(c => c.GetPrice());
 		}
 
 		/// <summary>

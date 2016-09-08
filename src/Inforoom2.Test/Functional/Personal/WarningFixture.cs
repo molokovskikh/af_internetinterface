@@ -167,7 +167,7 @@ namespace Inforoom2.Test.Functional.Personal
 			var client =
 				DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("заблокированный по сервисной заявке"));
 			Assert.That(client.Status.Type, Is.EqualTo(StatusType.BlockedForRepair), "Клиент не заблокирован");
-			OpenWarningPage(client, false);
+			OpenWarningPage(client);
 
 			AssertText("проведения работ по сервисной заявке");
 			Css(".repairCompleted").Click();

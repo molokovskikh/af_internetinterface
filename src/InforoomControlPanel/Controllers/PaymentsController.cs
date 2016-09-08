@@ -377,7 +377,7 @@ namespace InforoomControlPanel.Controllers
 			if (tempList == null) {
 				return null;
 			}
-			return tempList.First(p => p.GetHashCode() == id);
+			return tempList.FirstOrDefault(p => p.GetHashCode() == id); //нужно вернуть null
 		}
 
 		private List<BankPayment> TempPayments()

@@ -129,7 +129,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>СМС рассылка</td>
+				<td>Почтовая рассылка</td>
 				<td>
 					<span>@(client.SendSmsNotification ? "да" : "нет")</span>
 				</td>
@@ -278,7 +278,7 @@
 			</tr>
 			<tr>
 				<td style="max-width: 60px;">
-					<label class="c-pointer" for="sendSmsNotification">СМС рассылка</label>
+					<label class="c-pointer" for="sendSmsNotification">Почтовая рассылка</label>
 				</td>
 				<td>
 					@Html.CheckBoxFor(o => client.SendSmsNotification, new {@class = "c-pointer", id = "sendSmsNotification"})

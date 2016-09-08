@@ -308,7 +308,8 @@ namespace Inforoom2.Controllers
 				var appeal = new Appeal("Отключена страница Warning, клиент отключил со страницы", client, AppealType.Statistic) {
 					Employee = controller.GetCurrentEmployee()
 				};
-				controller.DbSession.Save(appeal);
+                controller.DbSession.Save(client);
+                controller.DbSession.Save(appeal);
 				controller.DbSession.Flush();
 				/////////////////////////////////////////////////////////////////////////////ПРОТЕСТИРОВАТЬ
 				if (DbSession.Transaction.IsActive) {
@@ -328,8 +329,16 @@ namespace Inforoom2.Controllers
 		/// <param name="controller"></param>
 		/// <returns>авторизованный клиент</returns>
 		public static Client GetClientIfExists(BaseController controller)
-		{
-			var ipstring = controller.HttpContext.Request.UserHostAddress;
+		{ 
+	        int clientId = 0;
+	        if (int.TryParse(controller.User.Identity.Name, out clientId)) {
+	            var client = controller.DbSession.Query<Client>().FirstOrDefault(s => s.Id == clientId);
+	            if (client != null) {
+	                return client;
+	            }
+	        } 
+
+            var ipstring = controller.HttpContext.Request.UserHostAddress;
 
 #if DEBUG
 			//Можем авторизоваться по лизе за клиента

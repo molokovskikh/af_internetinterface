@@ -101,8 +101,9 @@ namespace Inforoom2.Models
 			if (Service.CanDelete(this)) {
 				if (Id == 0)
 					Client.ClientServices.Remove(this);
-				else
-					Client.ClientServices.Remove(Client.ClientServices.First(c => c.Id == Id));
+				else if (Client.ClientServices.Any(s => s.Id == Id)) {
+				    Client.ClientServices.Remove(Client.ClientServices.First(c => c.Id == Id));
+				}
 			}
 		}
 

@@ -60,15 +60,16 @@ namespace InternetInterface.Test.Unit
 
 		[Test]
 		public void While_voluntary_blocking_free_do_not_charge_for_rent()
-		{
-			Rent();
-			IpTv();
-
+		{ 
 			client.Activate(new ClientService(client, new VoluntaryBlockin { BlockingAll = true }) { BeginWorkDate = new DateTime(2012, 06, 01), IsActivated = true });
-			client.FreeBlockDays = 30;
+            //при активации использется ActiveRecord, которого в этих тестах нет.
+            //для коррекстной работы нужно сэмитировать действия активации, проставив нужный статус.
+            client.Status = new Status(StatusType.VoluntaryBlocking);
+		    client.Disabled = true;
+            client.FreeBlockDays = 30;
 			Assert.That(client.GetPrice(), Is.EqualTo(0));
 			client.FreeBlockDays = 0;
-			Assert.That(client.GetPrice(), Is.EqualTo(190));
+			Assert.That(client.GetPrice(), Is.EqualTo(90));
 		}
 
 		[Test]
