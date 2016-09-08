@@ -68,8 +68,8 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			AssertText("Бонусов " + CurrentClient.PhysicalClient.VirtualBalance.ToString("0.00"));
 			//Статус клиента
 			AssertText("Статус клиента " + CurrentClient.Status.Name);
-			//СМС рассылка
-			AssertText("СМС рассылка " + (CurrentClient.SendSmsNotification ? "да" : "нет"));
+            //Почтовая рассылка
+            AssertText("Почтовая рассылка " + (CurrentClient.SendSmsNotification ? "да" : "нет"));
 			//Скидка
 			AssertText("Скидка ( редактировать ) " + CurrentClient.Discount.ToString("0.00") + "%");
 			//Дата начала расчетного периода
@@ -312,7 +312,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Css(blockName + "[name='clientStatus']").SelectByText((status.Type + marker).GetDescription());
 			//СМС рассылка
 			inputObj = browser.FindElementByCssSelector(blockName + "input[name='client.SendSmsNotification']");
-			Assert.That(inputObj.GetAttribute("checked"), Is.Null, "СМС рассылка не совпадает.");
+			Assert.That(inputObj.GetAttribute("checked"), Is.Null, "Почтовая рассылка не совпадает.");
 			inputObj.Click();
 			//Задача в Redmine для клиента
 			inputObj = browser.FindElementByCssSelector(blockName + "input[name='client.RedmineTask']");
@@ -340,9 +340,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			else {
 				Assert.That(inputObjList.Count, Is.Not.EqualTo(0), "Статус не совпадает.");
 			}
-			//СМС рассылка
-			inputObj = browser.FindElementByCssSelector(blockName + "input[name='client.SendSmsNotification']");
-			Assert.That(inputObj.GetAttribute("checked"), Is.Not.Null, "СМС рассылка не совпадает.");
+            //Почтовая рассылка
+            inputObj = browser.FindElementByCssSelector(blockName + "input[name='client.SendSmsNotification']");
+			Assert.That(inputObj.GetAttribute("checked"), Is.Not.Null, "Почтовая рассылка не совпадает.");
 			//Задача в Redmine для клиента
 			inputObj = browser.FindElementByCssSelector(blockName + "input[name='client.RedmineTask']");
 			Assert.That(inputObj.GetAttribute("value"), Is.EqualTo(redmineTask + marker),

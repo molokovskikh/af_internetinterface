@@ -99,9 +99,10 @@ namespace InternetInterface.Models
 				//строка ниже не работает, в тесте ServiceFixture.ActiveDeactive хотя должна, какой то бред
 				if (Id == 0)
 					Client.ClientServices.Remove(this);
-				else
-					Client.ClientServices.Remove(Client.ClientServices.First(c => c.Id == Id));
-				Client.Save();
+				else if (Client.ClientServices.Any(s => s.Id == Id)) {
+				    Client.ClientServices.Remove(Client.ClientServices.First(c => c.Id == Id));
+				}
+                Client.Save();
 			}
 		}
 
