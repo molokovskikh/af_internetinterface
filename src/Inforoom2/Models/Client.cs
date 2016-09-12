@@ -21,7 +21,7 @@ namespace Inforoom2.Models
 	/// <summary>
 	/// Модель пользователя
 	/// </summary>
-	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof(Client)), Description("Клиент")]
+	[Class(0, Table = "Clients", Schema = "internet", NameType = typeof(Client),OptimisticLock = OptimisticLockMode.Version, DynamicUpdate = true), Description("Клиент")]
 	public class Client : BaseModel, ILogAppeal, IServicemenScheduleItem, IClientExpander
 	{
 		public Client()
@@ -112,6 +112,9 @@ namespace Inforoom2.Models
 
 		[Property(NotNull = true)]
 		public virtual bool PaidDay { get; set; }
+
+		[Version(Name = "Version", Column = "Version")]
+		public virtual int Version { get; set; }
 
 		[Property(NotNull = true), Description("Бесплатные дни добровольной блокировки")]
 		public virtual int FreeBlockDays { get; set; }

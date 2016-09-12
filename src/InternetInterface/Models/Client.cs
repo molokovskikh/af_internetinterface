@@ -27,7 +27,7 @@ namespace InternetInterface.Models
 		Legal = 2
 	}
 
-	[ActiveRecord("Clients", Schema = "Internet", Lazy = true), Auditable]
+	[ActiveRecord("Clients", Schema = "Internet", Lazy = true, Locking = OptimisticLocking.Version, DynamicUpdate = true), Auditable]
 	public class Client : ChildActiveRecordLinqBase<Client>
 	{
 		private bool _disabled;
@@ -239,6 +239,9 @@ namespace InternetInterface.Models
 
 		[HasMany(ColumnKey = "Client", OrderBy = "BeginDate", Lazy = true, Cascade = ManyRelationCascadeEnum.SaveUpdate)]
 		public virtual IList<ClientRentalHardware> RentalHardwareList { get; set; }
+
+		[Version(Column = "Version")]
+		public virtual int Version { get; set; }
 
 		public virtual Brigad WhoConnected
 		{

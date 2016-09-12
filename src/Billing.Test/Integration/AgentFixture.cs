@@ -47,8 +47,11 @@ namespace Billing.Test.Integration
 		public void Paid_bonus_for_agent()
 		{
 			Request request;
-			using (new SessionScope()) {
-				request = new Request {
+
+			using (new SessionScope())
+            {
+                ActiveRecordMediator.Refresh(this.client);
+                request = new Request {
 					Registrator = InitializeContent.Partner,
 					RegDate = DateTime.Now,
 					PaidBonus = false,
@@ -61,34 +64,40 @@ namespace Billing.Test.Integration
 				};
 				ActiveRecordMediator.Save(request);
 			}
-			using (new SessionScope()) {
-				client.BeginWork = DateTime.Now;
+			using (new SessionScope())
+            {
+                ActiveRecordMediator.Refresh(this.client);
+                client.BeginWork = DateTime.Now;
 				client.Request = request;
 				var clientEndPoint = new ClientEndpoint { Client = client };
 				clientEndPoint.Save();
-				client.Save();
-			}
+                ActiveRecordMediator.SaveAndFlush(client);
+
+            }
 			billing.SafeProcessClientEndpointSwitcher();
 			billing.ProcessWriteoffs();
 			billing.ProcessWriteoffs();
-			using (new SessionScope()) {
-				ActiveRecordMediator.Refresh(request);
-				Assert.IsFalse(request.PaidBonus);
+			using (new SessionScope())
+            {
+                ActiveRecordMediator.Refresh(this.client);
+                ActiveRecordMediator.Refresh(request);
+                Assert.IsFalse(request.PaidBonus);
 				var payment = new Payment {
 					Client = client,
 					Sum = client.GetPriceForTariff()
 				};
 				payment.Save();
 				client.Payments.Add(payment);
-			}
-			client.Save();
+                ActiveRecordMediator.Save(payment);
+                ActiveRecordMediator.SaveAndFlush(client);
+            }
 			billing.SafeProcessClientEndpointSwitcher();
 			billing.ProcessPayments();
 			billing.ProcessWriteoffs();
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
-				ActiveRecordMediator.Refresh(request);
-				Assert.IsTrue(request.PaidBonus);
+				ActiveRecordMediator.Refresh(request); 
+                Assert.IsTrue(request.PaidBonus);
 				var payments = PaymentsForAgent.Queryable.Where(p => p.Agent == InitializeContent.Partner).ToList();
 				Assert.That(payments.Count, Is.EqualTo(1));
 			}

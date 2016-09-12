@@ -421,7 +421,7 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Save(settings);
 			settings = new EmployeeTariff();
 			settings.ActionName = "AgentPayIndex";
-			settings.Sum = 102;
+			settings.Sum = 1.5m;
 			settings.Description = "";
 			DbSession.Save(settings);
 		}
