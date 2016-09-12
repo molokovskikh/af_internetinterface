@@ -331,7 +331,7 @@ namespace Inforoom2.Controllers
 		public static Client GetClientIfExists(BaseController controller)
 		{ 
 	        int clientId = 0;
-	        if (int.TryParse(controller.User.Identity.Name, out clientId)) {
+	        if (controller?.User?.Identity?.Name != null && int.TryParse(controller.User.Identity.Name, out clientId)) {
 	            var client = controller.DbSession.Query<Client>().FirstOrDefault(s => s.Id == clientId);
 	            if (client != null) {
 	                return client;
