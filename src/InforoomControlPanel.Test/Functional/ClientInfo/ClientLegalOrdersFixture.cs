@@ -686,7 +686,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 
 			WaitForVisibleCss(blockModelName + ".port.free[title='свободный порт']", 60);
 			Css(blockModelName + "[name='order.EndPoint.Id']").SelectByText(oldEndpoint.Id.ToString());
-			WaitAjax();
+			WaitAjax(60);
 			WaitForVisibleCss(blockModelName + ".port.free[title='свободный порт']", 60);
 
 			//сохранение изменений

@@ -294,10 +294,13 @@ namespace InternetInterface.Models
 						EndPoint.Switch = null;
 						EndPoint.Port = null;
 						EndPoint.Disabled = true;
-					}
+                        EndPoint.Ip = null;
+                        EndPoint.StaticIps.RemoveEach(EndPoint.StaticIps);
+                    }
 					else {
-						dbSession.CreateSQLQuery("UPDATE internet.clientendpoints SET Disabled = 1 , Switch = null , Port = null WHERE Id = " + EndPoint.Id).UniqueResult();
-						dbSession.CreateSQLQuery($"UPDATE internet.orders SET ConnectionAddress = ' (коммутатор: {EndPoint.Switch?.Id} - {EndPoint.Switch?.Name}, порт: {EndPoint.Port}) ' WHERE Id = {Id}").UniqueResult();
+						dbSession.CreateSQLQuery("UPDATE internet.clientendpoints SET Disabled = 1 , Switch = null , Port = null, Ip = null WHERE Id = " + EndPoint.Id).UniqueResult();
+                        dbSession.CreateSQLQuery("DELETE FROM internet.StaticIps WHERE EndPoint = " + EndPoint.Id).UniqueResult();
+                        dbSession.CreateSQLQuery($"UPDATE internet.orders SET ConnectionAddress = ' (коммутатор: {EndPoint.Switch?.Id} - {EndPoint.Switch?.Name}, порт: {EndPoint.Port}) ' WHERE Id = {Id}").UniqueResult();
 					}
 				}
 			}

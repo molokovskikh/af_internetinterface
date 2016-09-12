@@ -1053,10 +1053,11 @@ where CE.Client = {0}", Id))
 
 		public virtual bool RemoveEndpoint(ClientEndpoint endpoint, ISession dbSession)
 		{
-			//		if (Endpoints.Count > 1 || LawyerPerson != null) {
 			endpoint.Disabled = true;
-			dbSession.Save(endpoint);
-			dbSession.Flush();
+            endpoint.Ip = null;
+            endpoint.StaticIps.RemoveEach(endpoint.StaticIps);
+            dbSession.Save(endpoint);
+            dbSession.Flush();
 			return true;
 		}
 

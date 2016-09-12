@@ -721,8 +721,10 @@ namespace Inforoom2.Models
 			endpoint.Port = 0;
 
 			endpoint.Disabled = true;
-			dbSession.Save(endpoint);
-			dbSession.Flush();
+            endpoint.Ip = null;
+            endpoint.StaticIpList.RemoveEach(endpoint.StaticIpList);
+            dbSession.Save(endpoint); 
+            dbSession.Flush();
 			return connectionAddress;
 		}
 
@@ -793,7 +795,9 @@ namespace Inforoom2.Models
 						s.Switch = null;
 						s.Port = 0;
 						s.Disabled = true;
-						dbSession.Save(s);
+                        s.Ip = null;
+                        s.StaticIpList.RemoveEach(s.StaticIpList);
+                        dbSession.Save(s); 
 					});
 					Discount = 0;
 					Disabled = true;
