@@ -14,17 +14,32 @@ namespace Inforoom2.Test.Functional.Personal
 	{
 		private MainBilling _billing;
 
-		[TestCase(arg: true, Description = "Проверка подключения клиенту услуги 'Добровольная блокировка'")]
+        /// <summary>
+        /// При обычном Flush возникала ошибка, заменил на закрытие сесии - помогло.
+        /// </summary>
+        private void UpdateDBSession()
+        {
+            DbSession.Flush();
+            DbSession.Close();
+            DbSession = DbSession.SessionFactory.OpenSession();
+            Client = DbSession.Query<Client>().First(s => s.Id == Client.Id);
+        }
+
+        [TestCase(arg: true, Description = "Проверка подключения клиенту услуги 'Добровольная блокировка'")]
 		public void SetBlockAccountToClient(bool isFree, bool fullCheck = true)
-		{
-			Assert.IsNotNull(Client.PhysicalClient, "Клиент должен быть подключен");
+        {
+
+            Assert.IsNotNull(Client.PhysicalClient, "Клиент должен быть подключен");
 			SystemTime.Now = () => DateTime.Now; // Для независимого выполнения каждого тест-кейса
 
 			// Обработать уже созданные платежи/списания клиента
 			_billing = GetBilling();
 			_billing.SafeProcessPayments();
 			_billing.ProcessWriteoffs();
-			DbSession.Refresh(Client.PhysicalClient);
+
+            UpdateDBSession();
+
+            DbSession.Refresh(Client.PhysicalClient);
 			var oldBalance = Client.Balance; // Сохранить текущий баланс клиента
 
 			if (!isFree) {
@@ -79,7 +94,9 @@ namespace Inforoom2.Test.Functional.Personal
 				blockAccountService.BeginDate = SystemTime.Now().Date.AddDays(-3).AddMinutes(-1);
 				DbSession.Save(blockAccountService);
 				DbSession.Flush();
-				Open("Personal/Service");
+
+                UpdateDBSession();
+                Open("Personal/Service");
 				btnConnect = browser.FindElementByLinkText("Отключить");
 				btnConnect.Click();
 				AssertNoText(error);
@@ -100,7 +117,8 @@ namespace Inforoom2.Test.Functional.Personal
 		{
 			SetBlockAccountToClient(isFree: true, fullCheck: false);
 
-			Client.FreeBlockDays = 0;
+            UpdateDBSession();
+            Client.FreeBlockDays = 0;
 			// Чтобы формировались списания: 50 р.(разово) + 3 р.(ежедневно)
 			Client.PaidDay = false;
 			// Чтобы не уставливалось FreeBlockDays = 28
@@ -110,7 +128,9 @@ namespace Inforoom2.Test.Functional.Personal
 
 			var oldBalance = Client.Balance;
 			_billing.ProcessWriteoffs();
-			DbSession.Refresh(Client.PhysicalClient);
+
+            UpdateDBSession();
+            DbSession.Refresh(Client.PhysicalClient);
 			Assert.AreEqual(53m, oldBalance - Client.Balance, "\nClient.Balance=" + Client.Balance);
 
 			SystemTime.Now = () => DateTime.Now.AddDays(1);
@@ -123,7 +143,9 @@ namespace Inforoom2.Test.Functional.Personal
 
 			oldBalance = Client.Balance;
 			_billing.ProcessWriteoffs();
-			DbSession.Refresh(Client.PhysicalClient);
+
+            UpdateDBSession();
+            DbSession.Refresh(Client.PhysicalClient);
 			Assert.AreEqual(3m, oldBalance - Client.Balance, "\nWriteOff!=3");
 		}
 

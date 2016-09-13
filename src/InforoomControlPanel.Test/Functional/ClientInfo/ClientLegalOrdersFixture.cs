@@ -41,8 +41,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			DbSession.Flush();
 			//обновляем страницу клиента
 			Open("Client/InfoLegal/" + CurrentClient.Id);
-			//получаем обновленную модель клиента
-			DbSession.Refresh(CurrentClient);
+            UpdateDBSession();
+            //получаем обновленную модель клиента
+            DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.LegalClient);
 			WaitForText("Номер лицевого счета", 10);
 		}
@@ -390,8 +391,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			string blockModelName = "#ModelForUpdateConnectionAddress ";
 			string newAddress = "Новый адрес";
 			OrderWithConnection();
-
-			DbSession.Refresh(CurrentClient);
+		    UpdateDBSession(); 
 
 			var connectionAddress = CurrentClient.LegalClientOrders.First().ConnectionAddress;
 			Assert.That(connectionAddress, Is.Not.EqualTo(newAddress));
@@ -432,11 +432,13 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			WaitForText("Закрытие заказа", 10);
 			//сохранение изменений
 			browser.FindElementByCssSelector("#ModelForOrderRemove .btn-success").Click();
-			CurrentClient.PaidDay = false;
+		    UpdateDBSession();
+            CurrentClient.PaidDay = false;
 			DbSession.Save(CurrentClient);
 			DbSession.Flush();
 			RunBillingProcess(CurrentClient);
-			DbSession.Refresh(CurrentClient);
+            UpdateDBSession();
+            DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.LegalClient);
 			orderCurrent = CurrentClient.LegalClientOrders.First();
 			DbSession.Refresh(orderCurrent);
@@ -598,7 +600,8 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 
 			//Порт
 			WaitForVisibleCss(blockModelName + ".port.free[title='свободный порт']", 60);
-			browser.FindElementByCssSelector(blockModelName + ".port.free[title='свободный порт']:first-child").Click();
+            WaitForVisibleCss(blockModelName + ".port.free[title='свободный порт']:first-child", 60);
+            browser.FindElementByCssSelector(blockModelName + ".port.free[title='свободный порт']:first-child").Click();
 			//Скорость
 			Css(blockModelName + "[name='connection.PackageId']")
 				.SelectByText(currentSpeed.SpeedInMgBitFormated + " мб/с (pid: " + currentSpeed.PackageId + ") " +
@@ -609,9 +612,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 
 			WaitForText("Номер лицевого счета", 60);
 
-			DbSession.Refresh(CurrentClient);
-			DbSession.Refresh(orderCurrent);
-			DbSession.Refresh(currentEndpoint);
+            UpdateDBSession();
+            orderCurrent = CurrentClient.LegalClientOrders.First(s=>s.Id == orderCurrent.Id);
+            currentEndpoint = CurrentClient.Endpoints.First(s => s.Id == currentEndpoint.Id);  
 
 			//-------------------------------------------------------------|ИЗМЕНИТЬ УСЛОВИЯ ПРОВЕРОК|----------------------------------------------------------------
 			orderCurrent = CurrentClient.LegalClientOrders.OrderByDescending(s => s.Id).First();
@@ -655,11 +658,11 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			Assert.IsTrue(CurrentClient.LegalClientOrders.Count(s => s.IsActivated && s.IsDeactivated) == 1);
 			Assert.IsTrue(CurrentClient.Endpoints.Count == 2);
 			Assert.IsTrue(CurrentClient.Endpoints.Any(s => s.Id == orderCurrent.EndPoint.Id && s.Disabled));
-
-			UpdateDBSession();
+             
 			Open("Client/InfoLegal/" + CurrentClient.Id);
-			//создаем новый заказ без статических адресов
-			OrderWithConnection(false);
+            UpdateDBSession();
+            //создаем новый заказ без статических адресов
+            OrderWithConnection(false);
 			UpdateDBSession();
 
 			orderCurrent = CurrentClient.LegalClientOrders.OrderByDescending(s => s.Id).First();
@@ -686,7 +689,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 
 			WaitForVisibleCss(blockModelName + ".port.free[title='свободный порт']", 60);
 			Css(blockModelName + "[name='order.EndPoint.Id']").SelectByText(oldEndpoint.Id.ToString());
-			WaitAjax();
+			WaitAjax(60);
 			WaitForVisibleCss(blockModelName + ".port.free[title='свободный порт']", 60);
 
 			//сохранение изменений

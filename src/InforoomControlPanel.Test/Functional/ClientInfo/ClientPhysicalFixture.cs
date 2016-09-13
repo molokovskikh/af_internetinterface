@@ -16,7 +16,18 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 	{
 		private Client CurrentClient;
 
-		[SetUp]
+        /// <summary>
+        /// При обычном Flush возникала ошибка, заменил на закрытие сесии - помогло.
+        /// </summary>
+        private void UpdateDBSession()
+        {
+            DbSession.Flush();
+            DbSession.Close();
+            DbSession = DbSession.SessionFactory.OpenSession();
+            CurrentClient = DbSession.Query<Client>().First(s => s.Id == CurrentClient.Id);
+        }
+
+        [SetUp]
 		//в начале 
 		public void Setup()
 		{
@@ -263,12 +274,14 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			}
 			else {
 				Assert.That(inputObjList.Count, Is.Not.EqualTo(0), "Статус не совпадает.");
-			}
-			CurrentClient.Endpoints.Add(new ClientEndpoint() { Client = CurrentClient, Switch = DbSession.Query<Inforoom2.Models.Switch>().FirstOrDefault() });
+            }
+            UpdateDBSession();
+            CurrentClient.Endpoints.Add(new ClientEndpoint() { Client = CurrentClient, Switch = DbSession.Query<Inforoom2.Models.Switch>().FirstOrDefault() });
 			DbSession.Save(CurrentClient);
 			DbSession.Flush();
-			//Проверки последствий смены:
-			CheckStatusChangeEffect(StatusType.Worked);
+            //Проверки последствий смены:
+            UpdateDBSession();
+            CheckStatusChangeEffect(StatusType.Worked);
 		}
 
 		[Test, Description("Страница клиента. Физ. лицо. Редактирование личной информации")]
@@ -999,7 +1012,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			DbSession.Flush();
 			RunBillingProcessPayments(CurrentClient);
 			RunBillingProcessWriteoffs(CurrentClient, false);
-			DbSession.Refresh(CurrentClient.PhysicalClient);
+		    UpdateDBSession();
+
+            DbSession.Refresh(CurrentClient.PhysicalClient);
 
 
 			string blockName = "#emptyBlock_writeoffs ";
@@ -1021,28 +1036,32 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			inputObj.Clear();
 			inputObj.SendKeys(sum.ToString());
 			//Комментарий
-			WaitForVisibleCss(blockNameWriteOffAdd + "input[name='comment']", 7);
+			WaitForVisibleCss(blockNameWriteOffAdd + "input[name='comment']", 30);
 			inputObj = browser.FindElementByCssSelector(blockNameWriteOffAdd + "input[name='comment']");
 			inputObj.Clear();
 			inputObj.SendKeys(comment);
 
 			browser.FindElementByCssSelector(blockNameWriteOffAdd + ".btn.btn-success").Click();
+            UpdateDBSession();
 
-			Assert.That(CurrentClient.Balance, Is.GreaterThan(clientBalance - sum), "Баланс клиента не совпадает с должным.");
+            Assert.That(CurrentClient.Balance, Is.GreaterThan(clientBalance - sum), "Баланс клиента не совпадает с должным.");
 
 			CurrentClient.PaidDay = false;
 			DbSession.Save(CurrentClient);
 			DbSession.Flush();
-			RunBillingProcessPayments(CurrentClient);
+            UpdateDBSession();
+            RunBillingProcessPayments(CurrentClient);
 			RunBillingProcessWriteoffs(CurrentClient, false);
-			DbSession.Refresh(CurrentClient.PhysicalClient);
+            UpdateDBSession();
+            DbSession.Refresh(CurrentClient.PhysicalClient);
 
 			Assert.That(CurrentClient.Balance, Is.LessThan(clientBalance - sum), "Баланс клиента не совпадает с должным.");
 
 
 			Open("Client/InfoPhysical/" + CurrentClient.Id);
+            UpdateDBSession();
 
-			WaitForVisibleCss(blockName + ".entypo-right-open-mini:first-child", 7);
+            WaitForVisibleCss(blockName + ".entypo-right-open-mini:first-child", 7);
 			browser.FindElementByCssSelector(blockName + ".entypo-right-open-mini:first-child").Click();
 			WaitForVisibleCss(blockName + ".c-pointer:first-child");
 			var lastWriteOff =
@@ -1061,8 +1080,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 
 			AssertText("сумму: " + lastWriteOff.Sum.ToString(), blockNameWriteOffDelete);
 			browser.FindElementByCssSelector(blockNameWriteOffDelete + ".btn.btn-red").Click();
+            UpdateDBSession();
 
-			DbSession.Refresh(CurrentClient.PhysicalClient);
+            DbSession.Refresh(CurrentClient.PhysicalClient);
 
 			Assert.That(CurrentClient.Balance, Is.GreaterThan(clientBalance - sum), "Баланс клиента не совпадает с должным.");
 		}
