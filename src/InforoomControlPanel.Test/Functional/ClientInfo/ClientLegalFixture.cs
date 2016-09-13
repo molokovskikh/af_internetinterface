@@ -19,7 +19,18 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 	{
 		private Client CurrentClient;
 
-		[SetUp]
+        /// <summary>
+        /// При обычном Flush возникала ошибка, заменил на закрытие сесии - помогло.
+        /// </summary>
+        private void UpdateDBSession()
+        {
+            DbSession.Flush();
+            DbSession.Close();
+            DbSession = DbSession.SessionFactory.OpenSession();
+            CurrentClient = DbSession.Query<Client>().First(s => s.Id == CurrentClient.Id);
+        }
+
+        [SetUp]
 		//в начале 
 		public void Setup()
 		{
@@ -620,10 +631,11 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 		{
 			CurrentClient.PaidDay = false;
 			DbSession.Save(CurrentClient);
-			DbSession.Flush();
-			RunBillingProcessPayments(CurrentClient);
+		    UpdateDBSession();
+            RunBillingProcessPayments(CurrentClient);
 			RunBillingProcessWriteoffs(CurrentClient, false);
-			DbSession.Refresh(CurrentClient.LegalClient);
+            UpdateDBSession();
+            DbSession.Refresh(CurrentClient.LegalClient);
 
 
 			string blockName = "#emptyBlock_writeoffs ";
@@ -652,14 +664,17 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 
 			browser.FindElementByCssSelector(blockNameWriteOffAdd + ".btn.btn-success").Click();
 
-			Assert.That(CurrentClient.Balance, Is.GreaterThan(clientBalance - sum), "Баланс клиента не совпадает с должным.");
+            UpdateDBSession();
+
+            Assert.That(CurrentClient.Balance, Is.GreaterThan(clientBalance - sum), "Баланс клиента не совпадает с должным.");
 
 			CurrentClient.PaidDay = false;
 			DbSession.Save(CurrentClient);
-			DbSession.Flush();
-			RunBillingProcessPayments(CurrentClient);
+            UpdateDBSession();
+            RunBillingProcessPayments(CurrentClient);
 			RunBillingProcessWriteoffs(CurrentClient, false);
-			DbSession.Refresh(CurrentClient.LegalClient);
+            UpdateDBSession();
+            DbSession.Refresh(CurrentClient.LegalClient);
 
 			Assert.That(CurrentClient.Balance, Is.EqualTo(clientBalance - sum), "Баланс клиента не совпадает с должным.");
 
@@ -685,8 +700,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 
 			AssertText("сумму: " + lastWriteOff.Sum.ToString(), blockNameWriteOffDelete);
 			browser.FindElementByCssSelector(blockNameWriteOffDelete + ".btn.btn-red").Click();
+            UpdateDBSession();
 
-			DbSession.Refresh(CurrentClient.LegalClient);
+            DbSession.Refresh(CurrentClient.LegalClient);
 
 			Assert.That(CurrentClient.Balance, Is.GreaterThan(clientBalance - sum), "Баланс клиента не совпадает с должным.");
 		}

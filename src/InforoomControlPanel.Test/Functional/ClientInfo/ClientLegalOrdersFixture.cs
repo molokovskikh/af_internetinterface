@@ -600,7 +600,8 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 
 			//Порт
 			WaitForVisibleCss(blockModelName + ".port.free[title='свободный порт']", 60);
-			browser.FindElementByCssSelector(blockModelName + ".port.free[title='свободный порт']:first-child").Click();
+            WaitForVisibleCss(blockModelName + ".port.free[title='свободный порт']:first-child", 60);
+            browser.FindElementByCssSelector(blockModelName + ".port.free[title='свободный порт']:first-child").Click();
 			//Скорость
 			Css(blockModelName + "[name='connection.PackageId']")
 				.SelectByText(currentSpeed.SpeedInMgBitFormated + " мб/с (pid: " + currentSpeed.PackageId + ") " +
@@ -611,9 +612,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 
 			WaitForText("Номер лицевого счета", 60);
 
-			DbSession.Refresh(CurrentClient);
-			DbSession.Refresh(orderCurrent);
-			DbSession.Refresh(currentEndpoint);
+            UpdateDBSession();
+            orderCurrent = CurrentClient.LegalClientOrders.First(s=>s.Id == orderCurrent.Id);
+            currentEndpoint = CurrentClient.Endpoints.First(s => s.Id == currentEndpoint.Id);  
 
 			//-------------------------------------------------------------|ИЗМЕНИТЬ УСЛОВИЯ ПРОВЕРОК|----------------------------------------------------------------
 			orderCurrent = CurrentClient.LegalClientOrders.OrderByDescending(s => s.Id).First();
