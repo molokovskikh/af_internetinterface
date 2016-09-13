@@ -1,7 +1,10 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Web.Mvc;
+using System.Web.Security;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
@@ -160,7 +163,10 @@ namespace Inforoom2.Controllers
 			if (warningReason == WarningState.NoWarning) {
 				/////////////////////////////////////////////////////////////////////////////ПРОТЕСТИРОВАТЬ
 				if (DbSession.Transaction.IsActive) {
-					DbSession.Transaction.Commit();
+				    CurrentClient.ShowBalanceWarningPage = false;
+				    DbSession.Save(CurrentClient);
+                    DbSession.Flush();
+                    DbSession.Transaction.Commit();
 				}
 				SceHelper.UpdatePackageId(CurrentClient.Id);
 			}
@@ -331,6 +337,24 @@ namespace Inforoom2.Controllers
 		public static Client GetClientIfExists(BaseController controller)
 		{ 
 	        int clientId = 0;
+
+	        if (FormsAuthentication.CookiesSupported) {
+	            var cookie = controller.Request.Cookies[FormsAuthentication.FormsCookieName];
+	            if (cookie != null) {
+	                var ticket = FormsAuthentication.Decrypt(cookie.Value);
+	                if (ticket != null && !string.IsNullOrEmpty(ticket.UserData)) {
+	                    var impersonatedClientId = ticket.UserData;
+	                    int.TryParse(impersonatedClientId, out clientId);
+	                }
+	                var userName = ticket.Name;
+	                if (clientId != 0) {
+	                    userName = clientId.ToString();
+	                }
+	                var identity = new GenericIdentity(userName, "Forms");
+	                System.Web.HttpContext.Current.User = new CustomPrincipal(identity, new List<Permission>(),
+	                    new List<Role>());
+	            }
+	        }
 	        if (controller?.User?.Identity?.Name != null && int.TryParse(controller.User.Identity.Name, out clientId)) {
 	            var client = controller.DbSession.Query<Client>().FirstOrDefault(s => s.Id == clientId);
 	            if (client != null) {
