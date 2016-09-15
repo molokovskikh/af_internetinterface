@@ -186,6 +186,11 @@ namespace InforoomControlPanel.Controllers
 			else {
 				client = DbSession.Query<Client>().FirstOrDefault(i => i.PhysicalClient != null && i.Id == id);
 			}
+		    if (ViewBag.SessionToRefresh == null && client.ConnectionRequest != null && !client.ConnectionRequest.Status
+		        && client.Endpoints.Count > 0 && client.Endpoints.First().LeaseList.Count > 0) {
+		        client.ConnectionRequest.Status = true;
+		        DbSession.Update(client);
+		    }
 			//--------------------------------------------------------------------------------------| Получение списка оповещений
 			// список оповещений
 			var appeals = client.Appeals == null || client.Appeals.Count == 0 ? new List<Appeal>() : client.Appeals.Select(s => new Appeal() {

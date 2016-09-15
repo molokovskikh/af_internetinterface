@@ -436,15 +436,34 @@ namespace Inforoom2.Models
 
 					//если подключение новое, добавляем точку подключения клиенту и активируем необходимые сервисы по "базовым значениям"
 					if (newFlag) {
-						AddEndpoint(dbSession, clientEntPoint, settings);
+					    if (client.Endpoints.Count == 0) {
+					        clientEntPoint.IsEnabled = true;
+					        clientEntPoint.Disabled = false;
+                            clientEntPoint.PackageId = Plan?.PackageSpeed?.PackageId;
+
+					        client.SetStatus(StatusType.Worked, dbSession);
+
+					        if (client.RatedPeriodDate == null && !client.Disabled) {
+					            client.RatedPeriodDate = SystemTime.Now();
+                            }
+					        if (client.WorkingStartDate == null && !client.Disabled) {
+					            client.WorkingStartDate = SystemTime.Now();
+					        }
+                            var internet = client.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Internet);
+                            internet.ActivateFor(client, dbSession);
+                            var iptv = client.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Iptv);
+                            iptv.ActivateFor(client, dbSession);
+
+                        }
+                        AddEndpoint(dbSession, clientEntPoint, settings);
 						if (client.Status.Additional.Count > 0 && client.Status.Additional.Any(s => s.ShortName == "Refused")) {
 							client.Status.Additional.Clear();
 						}
 					}
 
 					//обновляем значение даты подключения клиента
-					client.ConnectedDate = DateTime.Now;
-					if (client.Status.Id == (uint)StatusType.BlockedAndNoConnected)
+					client.ConnectedDate = SystemTime.Now();
+                    if (client.Status.Id == (uint)StatusType.BlockedAndNoConnected)
 						client.Status = dbSession.Load<Status>((int)StatusType.BlockedAndConnected);
 
 					//синхронизируем сервисы клиента на основе settings(ов)
@@ -454,10 +473,10 @@ namespace Inforoom2.Models
 					//То данные, которые проставляются DHCP сервисом, необходимо проставлять вручную, если их нет
 					if (staticAddress.Length > 0) {
 						if (client.WorkingStartDate == null)
-							client.WorkingStartDate = DateTime.Now;
-						if (client.RatedPeriodDate == null)
-							client.RatedPeriodDate = DateTime.Now;
-					}
+							client.WorkingStartDate = SystemTime.Now();
+                        if (client.RatedPeriodDate == null)
+							client.RatedPeriodDate = SystemTime.Now();
+                    }
 
 					dbSession.Save(
 						new Appeal(
