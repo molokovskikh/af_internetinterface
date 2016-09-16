@@ -108,7 +108,7 @@ namespace Billing
 							client.UpdateAndFlush();
 						}
 						if (client.BeginWork == null && !client.Disabled) {
-							client.Status = Status.Find((uint)StatusType.Worked);
+							client.Status =  Status.Find((uint)StatusType.Worked);
 							client.BeginWork = DateTime.Now;
 							client.UpdateAndFlush();
 						}

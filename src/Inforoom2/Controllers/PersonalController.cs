@@ -97,15 +97,27 @@ namespace Inforoom2.Controllers
 					endpoint.Client = CurrentClient;
 					endpoint.Switch = lease.Switch;
 					endpoint.Port = lease.Port;
-					endpoint.PackageId = CurrentClient.PhysicalClient.Plan.PackageSpeed.PackageId;
+				    endpoint.Disabled = false;
+                    endpoint.IsEnabled = true;
+
+                    CurrentClient.SetStatus(Status.Get(StatusType.Worked, DbSession));
+                    if (CurrentClient.RatedPeriodDate == null && !CurrentClient.Disabled) {
+                        CurrentClient.RatedPeriodDate = SystemTime.Now();
+				    }
+				    if (CurrentClient.WorkingStartDate == null && !CurrentClient.Disabled) {
+                        CurrentClient.WorkingStartDate = SystemTime.Now();
+                    }
+                    //обновляем значение даты подключения клиента
+                    CurrentClient.ConnectedDate = SystemTime.Now();
+
+                    endpoint.PackageId = CurrentClient.PhysicalClient.Plan.PackageSpeed.PackageId;
 					DbSession.Save(endpoint);
-					lease.Endpoint = endpoint;
+                    lease.Endpoint = endpoint;
 
 					var paymentForConnect = new PaymentForConnect(physicalClient.ConnectSum, endpoint);
 					//Пытаемся найти сотрудника
 					paymentForConnect.Employee = GetCurrentEmployee();
 
-					CurrentClient.SetStatus(Status.Get(StatusType.Worked, DbSession));
 
 					var internet = CurrentClient.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Internet);
 					internet.ActivateFor(CurrentClient, DbSession);
