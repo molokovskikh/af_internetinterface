@@ -1,11 +1,12 @@
 ﻿@using Inforoom2.Helpers
 @using Inforoom2.Models
 @{
-	ViewBag.Title = "Редактирование сотрудника";
-	Layout = "~/Views/Shared/_Layout.cshtml";
-	Employee employee = ViewBag.Employee;
-	List<Role> roles = ViewBag.Roles;
-	List<Permission> permissions = ViewBag.Permissions;
+    ViewBag.Title = "Редактирование сотрудника";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Employee employee = ViewBag.Employee;
+    List<Role> roles = ViewBag.Roles;
+    List<Permission> permissions = ViewBag.Permissions;
+    bool passwordUpdate = (bool) (ViewBag.PasswordUpdate??false);
 }
 @section JavaScript{
 	<script type="text/javascript" src="@Url.Content("~/Scripts/Employee.js")"></script>
@@ -36,13 +37,19 @@
 						@ViewBag.Validation.GetError(employee, "Address")
 					</div>
 				</div>
-				<div class="form-group">
-					<label class="col-sm-4 control-label">EMail</label>
-					<div class="col-sm-6">
-						@Html.TextBoxFor(I => employee.Email, new { @class = "form-control" })
-						@ViewBag.Validation.GetError(employee, "Email")
-					</div>
-				</div>
+			    <div class="form-group">
+			        <label class="col-sm-4 control-label">EMail</label>
+			        <div class="col-sm-6">
+			            @Html.TextBoxFor(I => employee.Email, new {@class = "form-control"})
+			            @ViewBag.Validation.GetError(employee, "Email")
+			        </div>
+			    </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label c-pointer" for="passwordUpdate">Обновить пароль</label>
+                    <div class="col-sm-6">
+                        @Html.CheckBoxFor(I => passwordUpdate, new { @Id = "passwordUpdate", @Name = "passwordUpdate" })
+                    </div>
+                </div>
 				<div class="form-group">
 					<label class="col-sm-4 control-label">Номер телефона</label>
 					<div class="col-sm-6">
