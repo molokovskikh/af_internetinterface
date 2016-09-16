@@ -33,7 +33,7 @@ namespace Inforoom2.Models
 		[Property, Description("Имя сотрудника"), NotNullNotEmpty(Message = "Необходимо ввести имя сотрудника")]
 		public virtual string Name { get; set; }
 
-		[Property, Description("Имя сотрудника")]
+		[Property, Description("Почта сотрудника")]
 		public virtual string Email { get; set; }
 
 		[Property(Column = "TelNum")]

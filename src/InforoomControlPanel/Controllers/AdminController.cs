@@ -141,9 +141,17 @@ namespace InforoomControlPanel.Controllers
 				.Any(s => s.Login.ToLower().Replace(" ", "") == employee.Login.ToLower().Replace(" ", ""));
 			if (!(existedAgentName || existedAgentLogin)) {
 				var errors = ValidationRunner.ValidateDeep(employee);
-				if (errors.Length == 0) {
-					DbSession.Save(employee);
-					SuccessMessage("Работник успешно добавлен");
+				if (errors.Length == 0)
+                {
+				    var password = "";
+#if !DEBUG
+				    if (ActiveDirectoryHelper.FindDirectoryEntry(employee.Login) == null) {
+				        password = CryptoPass.GeneratePassword();
+				        ActiveDirectoryHelper.CreateUserInAD(employee.Login, password, true);
+				    }
+#endif
+                    DbSession.Save(employee); 
+					SuccessMessage($"Работник успешно добавлен! Пароль: {password}");
 					return RedirectToAction("EmployeeList");
 				}
 				else {
@@ -189,8 +197,8 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		/// <returns></returns>
 		[HttpPost]
-		public ActionResult EditEmployee([EntityBinder] Employee employee, string workBegin, string workEnd, string workStep,
-			bool? isDisabled)
+		public ActionResult EditEmployee([EntityBinder] Employee employee, string workBegin, string workEnd,
+            string workStep, bool? passwordUpdate, bool? isDisabled)
 		{
 			if (!string.IsNullOrEmpty(workBegin)) {
 				employee.WorkBegin = TimeSpan.Parse(workBegin, new DateTimeFormatInfo());
@@ -217,14 +225,28 @@ namespace InforoomControlPanel.Controllers
 				}
 			}
 			employee.IsDisabled = GetCurrentEmployee() != employee && (isDisabled ?? false);
-			var errors = ValidationRunner.ValidateDeep(employee);
-			if (errors.Length == 0) {
-				DbSession.Save(employee);
+		    var errors = ValidationRunner.ValidateDeep(employee);
+		    string errorMessage = "";
+		    if (passwordUpdate.HasValue && passwordUpdate.Value && string.IsNullOrEmpty(employee.Email)) {
+		        errorMessage = "Для обновления пароля необходимо ввести email сотрудника.";
+		    }
+			if (errors.Length == 0 && errorMessage == string.Empty) {
+			    if (passwordUpdate.HasValue && passwordUpdate.Value) {
+			        var random = Guid.NewGuid().ToString().Substring(0, 8);
+#if !DEBUG
+			        ActiveDirectoryHelper.ChangePassword(employee.Login, random);
+#endif
+                    var body = "Ваш пароль был изменен, новый пароль: " + random;
+			        EmailSender.SendEmail(employee.Email, "Уведомление об изменении пароля", body);
+			    }
+                DbSession.Save(employee);
 				SuccessMessage("Объект успешно изменен");
 			}
 			else {
 				ViewBag.SessionToRefresh = DbSession;
-			}
+			    ViewBag.PasswordUpdate = passwordUpdate.HasValue && passwordUpdate.Value;
+                ErrorMessage(errorMessage);
+            }
 
 			return EditEmployee(employee.Id);
 		}
