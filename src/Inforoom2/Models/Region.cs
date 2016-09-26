@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using NHibernate.Mapping.Attributes;
+using NHibernate.Validator.Constraints;
 
 namespace Inforoom2.Models
 {
@@ -18,7 +19,7 @@ namespace Inforoom2.Models
 		}
 
 		[Description("Наименование региона")]
-		[Property(Column = "Region")]
+		[Property(Column = "Region"),NotEmpty(Message = "поле должно быть заполнено")]
 		public virtual string Name { get; set; }
 
 		[Description("Город, к которому привязан регион")]
@@ -33,11 +34,11 @@ namespace Inforoom2.Models
 		public virtual IList<Plan> Plans { get; set; }
 
 		[Description("Телефон офиса")]
-		[Property(Column = "_RegionOfficePhoneNumber")]
+		[Property(Column = "_RegionOfficePhoneNumber"), NotEmpty(Message = "поле должно быть заполнено")]
 		public virtual string RegionOfficePhoneNumber { get; set; }
 
 		[Description("Адрес офиса")]
-		[Property(Column = "_OfficeAddress")]
+		[Property(Column = "_OfficeAddress"), NotEmpty(Message = "поле должно быть заполнено")]
 		public virtual string OfficeAddress { get; set; }
 
 		[Description("Геометка офиса")]
