@@ -13,7 +13,7 @@ namespace InforoomControlPanel.ReportTemplates
 {
 	public class ClientReports
 	{
-		public static InforoomModelFilter<Client> GetGeneralReport(Controller controller, InforoomModelFilter<Client> pager,
+		public static byte[] GetGeneralReport(Controller controller, ref InforoomModelFilter<Client> pager,
 			bool dateNecessary = true)
 		{
 			if (!string.IsNullOrEmpty(pager.GetParam("filter.Equal.RentalHardwareList.First().Hardware.Name")) &&
@@ -132,13 +132,11 @@ namespace InforoomControlPanel.ReportTemplates
 					Коммутатор = string.Join(", ", s.Endpoints.Where(d=>!d.Disabled).Select(c => c.Switch.Name).ToList()),
 					Оборудование = string.Join(", ", s.RentalHardwareList.Where(a => a.IsActive).Select(c => c.Hardware.Name).ToList())
 				}, complexLinq: true);
-				//выгрузка в файл
-				pager.ExportToExcelFile(controller.ControllerContext.HttpContext,
-					"Отчет по клиентам - " + SystemTime.Now().ToString("dd.MM.yyyy HH_mm"));
-				return null;
-			}
+                //выгрузка в файл
+                return pager.ExportToExcelFile();
+            }
 			controller.ViewBag.Pager = pager;
-			return pager;
+			return null;
 		}
 	}
 }

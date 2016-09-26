@@ -115,7 +115,12 @@ namespace InforoomControlPanel.Controllers
 							Сумма = s.Sum,
 							Назначена = s.ServicemenScheduleItem.ServiceMan.Employee.Name
 						});
-				pager.ExportToExcelFile(ControllerContext.HttpContext);
+
+			    var fileRes = pager.ExportToExcelFile();
+			    if (fileRes != null) {
+			        return File(fileRes, "application/ms-excel",
+			            $"Отчет по сервисным заявкам - {SystemTime.Now().ToString("dd.MM.yyyy HH_mm")}.xls");
+			    }
 				return null;
 			}
 			// Сбор во ViewBag необходимых объектов
