@@ -13,8 +13,8 @@ namespace InforoomControlPanel.ReportTemplates
 {
 	public class WriteOffsReport
 	{
-		public static InforoomModelFilter<WriteOff> GetGeneralReport(Controller controller,
-			InforoomModelFilter<WriteOff> pager,
+		public static byte[] GetGeneralReport(Controller controller,
+			ref InforoomModelFilter<WriteOff> pager,
 			bool dateNecessary = true)
 		{
 			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
@@ -67,12 +67,10 @@ namespace InforoomControlPanel.ReportTemplates
 						Комментарий = s.Comment != null ? s.Comment : ""
 					}, complexLinq: true);
 				//выгрузка в файл
-				pager.ExportToExcelFile(controller.ControllerContext.HttpContext,
-					"Отчет по списаниям - " + SystemTime.Now().ToString("dd.MM.yyyy HH_mm"));
-				return null;
-			}
-			controller.ViewBag.Pager = pager;
-			return pager;
-		}
+                return pager.ExportToExcelFile();
+            }
+            controller.ViewBag.Pager = pager;
+            return null;
+        }
 	}
 }

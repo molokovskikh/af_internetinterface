@@ -41,17 +41,19 @@ namespace InforoomControlPanel.Controllers
 {
 	public partial class ClientController : ControlPanelController
 	{
-
-
-		/// <summary>
-		/// Страница списка клиентов
-		/// </summary>
-		public ActionResult List(bool openInANewTab = true, bool error = false)
+        /// <summary>
+        /// Страница списка клиентов
+        /// </summary>
+        public ActionResult List(bool openInANewTab = true, bool error = false)
 		{
 			InforoomModelFilter<Client> pager = null;
 			try {
-				pager = new InforoomModelFilter<Client>(this);
-				pager = ClientReports.GetGeneralReport(this, pager, false);
+			    pager = new InforoomModelFilter<Client>(this);
+			    var fileRes = ClientReports.GetGeneralReport(this, ref pager, false);
+			    if (fileRes != null) {
+			        return File(fileRes, "application/ms-excel",
+			            $"Отчет по клиентам - {SystemTime.Now().ToString("dd.MM.yyyy HH_mm")}.xls");
+			    } 
 			}
 			catch (Exception ex) {
 				if (!(ex is FormatException)) {

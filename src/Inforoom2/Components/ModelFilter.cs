@@ -1319,10 +1319,10 @@ namespace Inforoom2.Components
 		/// Формирование Excel документа 
 		/// </summary>
 		/// <returns>Excel документ</returns>
-		public void ExportToExcelFile(System.Web.HttpContextBase context, string excelDocumentName = "excel_document")
+		public byte[] ExportToExcelFile()
 		{
 			if (Models == null || Models.Count == 0) {
-				return;
+				return null;
 			}
 			const int pixelsFont = 11;
 			const int pixelsForColumnWidth = pixelsFont * 34;
@@ -1398,12 +1398,9 @@ namespace Inforoom2.Components
 			}
 			else {
 				new Exception("Не заданы поля выборки! *(для этого используеться метод 'SetExportFields')");
-			}
-			context.Response.ContentType = "MS-Excel/xls";
-			context.Response.AppendHeader("Content-Disposition", "attachment; filename=" + excelDocumentName + ".xls");
-			context.Response.BinaryWrite(fileToreturn);
-			context.Response.Flush();
-			context.Response.Close();
+			} 
+		    return fileToreturn;
+
 		}
 
 

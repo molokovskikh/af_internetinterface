@@ -153,10 +153,12 @@ namespace InforoomControlPanel.Controllers
 							: "Не назначена"),
 					Тариф = s.PhysicalClient != null && s.PhysicalClient.Plan != null ? s.PhysicalClient.Plan.NameWithPrice : "Нет"
 				}, true);
-				//выгрузка в файл
-				pager.ExportToExcelFile(ControllerContext.HttpContext,
-					"Отчет по подключениям - " + SystemTime.Now().ToString("dd.MM.yyyy HH_mm"));
-				return null;
+			    //выгрузка в файл
+			    var fileRes = pager.ExportToExcelFile();
+			    if (fileRes != null) {
+			        return File(fileRes, "application/ms-excel",
+			            $"Отчет по подключениям - {SystemTime.Now().ToString("dd.MM.yyyy HH_mm")}.xls");
+			    }
 			}
 			ViewBag.Pager = pager;
 			return View();

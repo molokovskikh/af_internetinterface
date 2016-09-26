@@ -41,11 +41,12 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult Client()
 		{
 			var pager = new InforoomModelFilter<Client>(this);
-			pager = ClientReports.GetGeneralReport(this, pager);
-			if (pager == null) {
-				return null;
-			}
-			return View();
+		    var fileRes = ClientReports.GetGeneralReport(this, ref pager, false);
+		    if (fileRes != null) {
+		        return File(fileRes, "application/ms-excel",
+		            $"Отчет по клиентам - {SystemTime.Now().ToString("dd.MM.yyyy HH_mm")}.xls");
+		    }
+            return View();
 		}
 
 		/// <summary>
@@ -53,12 +54,13 @@ namespace InforoomControlPanel.Controllers
 		/// </summary>
 		public ActionResult WriteOffs()
 		{
-			var pager = new InforoomModelFilter<WriteOff>(this);
-			pager = WriteOffsReport.GetGeneralReport(this, pager);
-			if (pager == null) {
-				return null;
-			}
-			return View();
+		    var pager = new InforoomModelFilter<WriteOff>(this);
+		    var fileRes = WriteOffsReport.GetGeneralReport(this, ref pager, false);
+		    if (fileRes != null) {
+		        return File(fileRes, "application/ms-excel",
+		            $"Отчет по списаниям - {SystemTime.Now().ToString("dd.MM.yyyy HH_mm")}.xls");
+		    }
+            return View();
 		}
 
 		/// <summary>
@@ -79,13 +81,14 @@ namespace InforoomControlPanel.Controllers
 				pager.ParamSet("filter.Equal.Employee.Name", currentEmployee.Name);
 			}
 
-			pager = PaymentsReport.GetGeneralReport(this, pager);
-			if (pager == null) {
-				return null;
-			}
+		    var fileRes = PaymentsReport.GetGeneralReport(this, ref pager, false);
+		    if (fileRes != null) {
+		        return File(fileRes, "application/ms-excel",
+		            $"Отчет по платежам - {SystemTime.Now().ToString("dd.MM.yyyy HH_mm")}.xls");
+		    }
 
-			//var dateA = DateTime.Parse(pager.GetParam("filter.GreaterOrEqueal.PaidOn"));
-			var dateB = DateTime.Parse(pager.GetParam("filter.LowerOrEqual.PaidOn")).AddDays(1).AddSeconds(-1);
+            //var dateA = DateTime.Parse(pager.GetParam("filter.GreaterOrEqueal.PaidOn"));
+            var dateB = DateTime.Parse(pager.GetParam("filter.LowerOrEqual.PaidOn")).AddDays(1).AddSeconds(-1);
 
 			ViewBag.TotalSum = pager.TotalSumByFieldName("Sum");
 

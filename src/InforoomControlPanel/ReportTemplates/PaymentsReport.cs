@@ -13,8 +13,8 @@ namespace InforoomControlPanel.ReportTemplates
 {
 	public class PaymentsReport
 	{
-		public static InforoomModelFilter<Payment> GetGeneralReport(Controller controller,
-			InforoomModelFilter<Payment> pager,
+		public static byte[] GetGeneralReport(Controller controller,
+			ref InforoomModelFilter<Payment> pager,
 			bool dateNecessary = true)
 		{
 			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
@@ -83,13 +83,11 @@ namespace InforoomControlPanel.ReportTemplates
 						Бонусный = s.Virtual == true ? "Да" : "Нет",
 						Комментарий = s.Comment != null ? s.Comment : ""
 					}, complexLinq: true);
-				//выгрузка в файл
-				pager.ExportToExcelFile(controller.ControllerContext.HttpContext,
-					"Отчет по платежам - " + SystemTime.Now().ToString("dd.MM.yyyy HH_mm"));
-				return null;
+                //выгрузка в файл
+                return pager.ExportToExcelFile();
 			}
 			controller.ViewBag.Pager = pager;
-			return pager;
+			return null;
 		}
 	}
 }
