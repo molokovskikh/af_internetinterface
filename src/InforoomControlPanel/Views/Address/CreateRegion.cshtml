@@ -26,7 +26,7 @@
 					<label class="col-sm-4 control-label">Наименование региона</label>
 					<div class="col-sm-6">
 						@Html.TextBoxFor(I => Region.Name, new { @class = "form-control" })
-						@ViewBag.Validation.GetError(Region, "Region")
+						@ViewBag.Validation.GetError(Region, "Name")
 					</div>
 				</div>	
 				<div class="form-group">
@@ -40,21 +40,21 @@
 					<label class="col-sm-4 control-label">Адрес офиса</label>
 					<div class="col-sm-6">
 						@Html.TextBoxFor(I => Region.OfficeAddress, new { @class = "form-control" })
-						@ViewBag.Validation.GetError(Region, "_OfficeAddress")
+						@ViewBag.Validation.GetError(Region, "OfficeAddress")
 					</div>
 				</div>	
 				<div class="form-group">
 					<label class="col-sm-4 control-label">Телефон офиса</label>
 					<div class="col-sm-6">
 						@Html.TextBoxFor(I => Region.RegionOfficePhoneNumber, new { @class = "form-control" })
-						@ViewBag.Validation.GetError(Region, "_RegionOfficePhoneNumber")
+						@ViewBag.Validation.GetError(Region, "RegionOfficePhoneNumber")
 					</div>
 				</div>	
 				<div class="form-group">
 					<label class="col-sm-4 control-label">Геометка офиса</label>
 					<div class="col-sm-6">
 						@Html.TextBoxFor(I => Region.OfficeGeomark, new { @class = "form-control" })
-						@ViewBag.Validation.GetError(Region, "_OfficeGeomark")
+						@ViewBag.Validation.GetError(Region, "OfficeGeomark")
 					</div>
 				</div>	
 				<div class="form-group">
