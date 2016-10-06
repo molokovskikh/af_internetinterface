@@ -290,19 +290,33 @@ namespace InforoomControlPanel.Helpers
 			string s = Read();
 			Thread.Sleep(500);
 			bool loggined = false, passwored = false;
+			var attemptsWithWrongPass = 3;
 			while (!string.IsNullOrEmpty(s) && !(loggined && passwored)) {
-				var line = s.Replace(" ", string.Empty).Trim();
-				if (line.ToLower().Contains("username")) {
+				var line = s.Replace(" ", string.Empty).Trim().ToLower();
+
+				var wasFailed = line.IndexOf("fail!") != -1;
+
+				if ((!wasFailed && line.Contains("username")) ||
+					(wasFailed && line.Substring(line.Length - "username:".Length) == "username:")) {
+					Thread.Sleep(500);
 					WriteLine(Username);
 					loggined = true;
 				}
-
-
-				if (line.ToLower().Contains("password")) {
+				if ((!wasFailed && line.Contains("password")) || (wasFailed && line.Substring(line.Length - "password:".Length) == "password:")) {
+					Thread.Sleep(500);
 					WriteLine(Password);
 					passwored = true;
 				}
+				Thread.Sleep(1000);
 				s = Read();
+				if (s.ToLower().IndexOf("fail!")!=-1) {
+					loggined = false;
+					passwored = false;
+					--attemptsWithWrongPass;
+					if (attemptsWithWrongPass == 0) {
+						break;
+					}
+				}
 			}
 			if (!loggined || !passwored) {
 				throw new Exception("Не могу авторизоваться");
