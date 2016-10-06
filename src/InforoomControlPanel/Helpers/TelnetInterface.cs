@@ -309,7 +309,8 @@ namespace InforoomControlPanel.Helpers
 				}
 				Thread.Sleep(1000);
 				s = Read();
-				if (s.ToLower().IndexOf("fail!")!=-1) {
+				wasFailed = s.ToLower().IndexOf("fail") != -1 || (loggined && passwored && s.Replace(" ", string.Empty).Trim().ToLower().IndexOf("username:") != -1);
+				if (wasFailed) {
 					loggined = false;
 					passwored = false;
 					--attemptsWithWrongPass;
