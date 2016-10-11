@@ -74,15 +74,15 @@ namespace InforoomControlPanel.Controllers
 			string NewFileName = System.Guid.NewGuid() + ext;
 			if (uploadedFile != null && uploadedFile.ContentLength < 600000 && (ext == ".png" || ext == ".jpg" || ext == ".jpeg")) {
 				try {
-                    pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
-                    imagePath = pathFromConfig + "Images/" + NewFileName;
+					pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
+					imagePath = pathFromConfig + "Images/" + NewFileName;
 					uploadedFile.SaveAs(imagePath);
-				}
-				catch (Exception) {
+				} catch (Exception) {
 					imagePath = "";
 				}
-			}else {
-				ErrorMessage("Ошибка при загрузке файла. Возможна загрузка файлов следующих форматов: .png, .jpg, .jpeg. Весом до 500 кбайт.");
+			} else {
+				ErrorMessage(
+					"Ошибка при загрузке файла. Возможна загрузка файлов следующих форматов: .png, .jpg, .jpeg. Весом до 500 кбайт.");
 				ViewBag.Banner = banner;
 				return View("EditBanner");
 			}
@@ -153,7 +153,8 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			var ext = uploadedFile == null ? "" : new FileInfo(uploadedFile.FileName).Extension;
 			string NewFileName = System.Guid.NewGuid() + ext;
-			if (uploadedFile != null && uploadedFile.ContentLength < 600000 && (ext == ".png" || ext == ".jpg" || ext == ".jpeg")) {
+			if (uploadedFile != null)
+				if (uploadedFile.ContentLength < 600000 && (ext == ".png" || ext == ".jpg" || ext == ".jpeg")) {
 				try {
                     //если путь = корню
                     pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
