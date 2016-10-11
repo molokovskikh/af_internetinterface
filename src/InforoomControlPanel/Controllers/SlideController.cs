@@ -70,7 +70,7 @@ namespace InforoomControlPanel.Controllers
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			ViewBag.RegionList = regionList;
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
-			if (uploadedFile != null && uploadedFile.ContentLength < 600000 && (ext == ".png" || ext == ".jpg" || ext == ".jpeg" )) {
+			if (uploadedFile != null && uploadedFile.ContentLength < 600000 && (ext == ".png" || ext == ".jpg" || ext == ".jpeg")) {
 				try {
 					//если путь = корню
 					pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
@@ -80,7 +80,8 @@ namespace InforoomControlPanel.Controllers
 					imagePath = "";
 				}
 			} else {
-				ErrorMessage("Ошибка при загрузке файла. Возможна загрузка файлов следующих форматов: .png, .jpg, .jpeg. Весом до 500 кбайт.");
+				ErrorMessage(
+					"Ошибка при загрузке файла. Возможна загрузка файлов следующих форматов: .png, .jpg, .jpeg. Весом до 500 кбайт.");
 				ViewBag.Slide = slide;
 				return View("EditSlide");
 			}
@@ -139,20 +140,22 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			var ext = uploadedFile == null ? "" : new FileInfo(uploadedFile.FileName).Extension;
 			string NewFileName = System.Guid.NewGuid() + ext;
-			if (uploadedFile != null && uploadedFile.ContentLength < 600000 && (ext == ".png" || ext == ".jpg" || ext == ".jpeg")) {
-				try {
+			if (uploadedFile != null)
+				if (uploadedFile.ContentLength < 600000 && (ext == ".png" || ext == ".jpg" || ext == ".jpeg")) {
+					try {
 //если путь = корню
-					pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
-					imagePath = pathFromConfig + "Images/" + NewFileName;
-					uploadedFile.SaveAs(imagePath);
-				} catch (Exception) {
-					imagePath = "";
+						pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
+						imagePath = pathFromConfig + "Images/" + NewFileName;
+						uploadedFile.SaveAs(imagePath);
+					} catch (Exception) {
+						imagePath = "";
+					}
+				} else {
+					ErrorMessage(
+						"Ошибка при загрузке файла. Возможна загрузка файлов следующих форматов: .png, .jpg, .jpeg. Весом до 500 кбайт.");
+					ViewBag.Slide = slide;
+					return View("EditSlide");
 				}
-			} else {
-				ErrorMessage("Ошибка при загрузке файла. Возможна загрузка файлов следующих форматов: .png, .jpg, .jpeg. Весом до 500 кбайт.");
-				ViewBag.Slide = slide;
-				return View("EditSlide");
-			}
 			slide.Partner = DbSession.Query<Employee>().FirstOrDefault(s => s.Login == User.Identity.Name);
 			var errors = ValidationRunner.Validate(slide);
 			if (errors.Length == 0 && imagePath != "") {
