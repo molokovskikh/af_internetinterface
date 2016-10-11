@@ -89,8 +89,12 @@
 		</div> 
 	</div>
 </form>
-<div class="panel-body"></div>
 	<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+        <div class="panel-body">
+            <div class="row">
+                @{ Html.RenderPartial("Pagination"); }
+            </div>
+        </div>
 		<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 			<thead>
 				<tr role="row">
@@ -124,4 +128,9 @@
 			}
 			<tbody></tbody>
 		</table>
+        <div class="panel-body">
+            <div class="row">
+                @{ Html.RenderPartial("Pagination"); }
+            </div>
+        </div>
 	</div>

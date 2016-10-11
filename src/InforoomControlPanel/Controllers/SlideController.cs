@@ -67,18 +67,22 @@ namespace InforoomControlPanel.Controllers
 			if (pathFromConfigUrl == null) {
 				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
+			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
+			ViewBag.RegionList = regionList;
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
-			if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
-				try
-				{
-                    //если путь = корню
-				    pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
+			if (uploadedFile != null && uploadedFile.ContentLength < 600000 && (ext == ".png" || ext == ".jpg" || ext == ".jpeg" )) {
+				try {
+					//если путь = корню
+					pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
 					imagePath = pathFromConfig + "Images/" + NewFileName;
 					uploadedFile.SaveAs(imagePath);
-				}
-				catch (Exception уч) {
+				} catch (Exception уч) {
 					imagePath = "";
 				}
+			} else {
+				ErrorMessage("Ошибка при загрузке файла. Возможна загрузка файлов следующих форматов: .png, .jpg, .jpeg. Весом до 500 кбайт.");
+				ViewBag.Slide = slide;
+				return View("EditSlide");
 			}
 			slide.ImagePath = "";
 			slide.LastEdit = DateTime.Now;
@@ -90,8 +94,6 @@ namespace InforoomControlPanel.Controllers
 				SuccessMessage("Слайд успешно добавлен");
 				return RedirectToAction("SlideIndex");
 			}
-			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
-			ViewBag.RegionList = regionList;
 			ViewBag.Slide = slide;
 			return View("CreateSlide");
 		}
@@ -132,19 +134,24 @@ namespace InforoomControlPanel.Controllers
 			if (pathFromConfigUrl == null) {
 				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
+			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
+			ViewBag.RegionList = regionList;
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			var ext = uploadedFile == null ? "" : new FileInfo(uploadedFile.FileName).Extension;
 			string NewFileName = System.Guid.NewGuid() + ext;
-			if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
-				try
-                {//если путь = корню
-                    pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
-                    imagePath = pathFromConfig + "Images/" + NewFileName;
+			if (uploadedFile != null && uploadedFile.ContentLength < 600000 && (ext == ".png" || ext == ".jpg" || ext == ".jpeg")) {
+				try {
+//если путь = корню
+					pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
+					imagePath = pathFromConfig + "Images/" + NewFileName;
 					uploadedFile.SaveAs(imagePath);
-				}
-				catch (Exception) {
+				} catch (Exception) {
 					imagePath = "";
 				}
+			} else {
+				ErrorMessage("Ошибка при загрузке файла. Возможна загрузка файлов следующих форматов: .png, .jpg, .jpeg. Весом до 500 кбайт.");
+				ViewBag.Slide = slide;
+				return View("EditSlide");
 			}
 			slide.Partner = DbSession.Query<Employee>().FirstOrDefault(s => s.Login == User.Identity.Name);
 			var errors = ValidationRunner.Validate(slide);
@@ -162,8 +169,6 @@ namespace InforoomControlPanel.Controllers
 				return RedirectToAction("SlideIndex");
 			}
 
-			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
-			ViewBag.RegionList = regionList;
 			ViewBag.Slide = slide;
 			return View("EditSlide");
 		}

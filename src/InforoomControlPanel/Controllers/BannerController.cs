@@ -66,10 +66,13 @@ namespace InforoomControlPanel.Controllers
 			{
 				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
+
+			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
+			ViewBag.RegionList = regionList;
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			var ext = uploadedFile == null ? "" : new FileInfo(uploadedFile.FileName).Extension;
 			string NewFileName = System.Guid.NewGuid() + ext;
-			if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
+			if (uploadedFile != null && uploadedFile.ContentLength < 600000 && (ext == ".png" || ext == ".jpg" || ext == ".jpeg")) {
 				try {
                     pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
                     imagePath = pathFromConfig + "Images/" + NewFileName;
@@ -78,6 +81,10 @@ namespace InforoomControlPanel.Controllers
 				catch (Exception) {
 					imagePath = "";
 				}
+			}else {
+				ErrorMessage("Ошибка при загрузке файла. Возможна загрузка файлов следующих форматов: .png, .jpg, .jpeg. Весом до 500 кбайт.");
+				ViewBag.Banner = banner;
+				return View("EditBanner");
 			}
 			banner.ImagePath = "";
 			banner.LastEdit = DateTime.Now;
@@ -98,9 +105,6 @@ namespace InforoomControlPanel.Controllers
 				SuccessMessage("Баннер успешно добавлен");
 				return RedirectToAction("BannerIndex");
 			}
-
-			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
-			ViewBag.RegionList = regionList;
 			ViewBag.banner = banner;
 			return View("CreateBanner");
 		}
@@ -144,10 +148,12 @@ namespace InforoomControlPanel.Controllers
 			{
 				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config либо невозможно найти сам Global.config !");
 			}
+			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
+			ViewBag.RegionList = regionList;
 			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			var ext = uploadedFile == null ? "" : new FileInfo(uploadedFile.FileName).Extension;
 			string NewFileName = System.Guid.NewGuid() + ext;
-			if (ext == ".png" || ext == ".jpg" || ext == ".jpeg") {
+			if (uploadedFile != null && uploadedFile.ContentLength < 600000 && (ext == ".png" || ext == ".jpg" || ext == ".jpeg")) {
 				try {
                     //если путь = корню
                     pathFromConfig = pathFromConfig == "/" ? Server.MapPath("~") + pathFromConfig : pathFromConfig;
@@ -157,6 +163,10 @@ namespace InforoomControlPanel.Controllers
 				catch (Exception) {
 					imagePath = "";
 				}
+			}else {
+				ErrorMessage("Ошибка при загрузке файла. Возможна загрузка файлов следующих форматов: .png, .jpg, .jpeg. Весом до 500 кбайт.");
+				ViewBag.Banner = banner;
+				return View("EditBanner");
 			}
 			banner.Partner = DbSession.Query<Employee>().FirstOrDefault(s => s.Login == User.Identity.Name);
 			var errors = ValidationRunner.Validate(banner);
@@ -182,8 +192,6 @@ namespace InforoomControlPanel.Controllers
 				SuccessMessage("Баннер успешно сохранен");
 				return RedirectToAction("BannerIndex");
 			}
-			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
-			ViewBag.RegionList = regionList;
 			ViewBag.Banner = banner;
 			return View("EditBanner");
 		}
