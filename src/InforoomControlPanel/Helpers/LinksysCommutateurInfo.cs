@@ -20,7 +20,7 @@ namespace InforoomControlPanel.Helpers
 		{
 			CurrentSwitchModel = "";
 			foreach (string t in _switchModel) {
-				if (switchName.IndexOf(t) != -1) {
+				if (switchName.Replace("-", "").Replace(" ", "").ToUpper().IndexOf(t) != -1) {
 					CurrentSwitchModel = t;
 					break;
 				}
@@ -49,7 +49,7 @@ namespace InforoomControlPanel.Helpers
 					Thread.Sleep(3000);
 					telnet.WriteLine("N");
 					Thread.Sleep(1000);
-					var command = point.Switch.Name.ToUpper().IndexOf("SF300") != -1 ?
+					var command = point.Switch.Name.Replace("-","").Replace(" ", "").ToUpper().IndexOf("SF300") != -1 ?
 						string.Format("clear counters FastEthernet {0}", port)
 						: string.Format("clear counters GigabitEthernet {0}", port);
 					telnet.WriteLine(command);
@@ -77,7 +77,7 @@ namespace InforoomControlPanel.Helpers
 			int attemptsToGetData = 5;
 			var login = ConfigurationManager.AppSettings["linksysLogin"];
 			var password = ConfigurationManager.AppSettings["linksysPassword"];
-			if (point.Switch.Name.ToUpper().IndexOf("SF300") == -1)
+			if (point.Switch.Name.Replace("-", "").Replace(" ", "").ToUpper().IndexOf("SF300") == -1)
 				return;
 
 			while (attemptsToGetData > 0) {
