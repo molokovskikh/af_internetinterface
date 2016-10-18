@@ -30,7 +30,7 @@
 	<link rel="stylesheet" href="~/assets/css/neon-theme.css?v=1">
 	<link rel="stylesheet" href="~/assets/css/neon-forms.css?v=2">
 	<link rel="stylesheet" href="~/assets/css/custom.css?v=5">
-	<link rel="stylesheet" href="~/Css/style.css?v=14"></link>
+	<link rel="stylesheet" href="~/Css/style.css?v=15"></link>
 
 	<script src="~/assets/js/jquery-1.11.0.min.js?v=1"></script>
 
@@ -247,7 +247,15 @@
 						<span class="title">Баннеры</span>
 					</a>
 				</li>
-			}
+            }
+            @if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_002005.ToString()) != null
+                 || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_002005.ToString())))
+            {
+            <li>
+                <a href="@Url.Action("PriceListIndex", "PriceList")">
+                    <span class="title">Прайс-листы</span>
+                </a>
+            </li>}
 		</ul>
 	</li>
 }
@@ -661,11 +669,12 @@
 		}
 	}
 </div>
+    
+@Html.Partial("Partial/modalConfirmation")
 
 <!-- Bottom scripts (common) -->
 <script src="~/assets/js/gsap/main-gsap.js"></script>
 <script src="~/assets/js/jquery-ui/js/jquery-ui-1.10.3.minimal.min.js"></script>
-<script src="~/assets/js/bootstrap.js"></script>
 <script src="~/assets/js/joinable.js"></script>
 <script src="~/assets/js/resizeable.js"></script>
 <script src="~/assets/js/neon-api.js"></script>
@@ -682,10 +691,13 @@
 <script type="text/javascript" src="~/Scripts/Helpers.js"></script>
 <script type="text/javascript" src="~/Scripts/EventEmitter.js"></script>
 <script type="text/javascript" src="~/Scripts/Window.js"></script>
+    <script src="~/assets/js/bootstrap.js"></script>
 <script src="~/assets/js/bootstrap-datepicker.js"></script>
 <script src="~/assets/js/bootstrap-timepicker.min.js"></script>
 <script src="~/assets/js/bootstrap-datepicker.ru.min.js"></script>
 <script type="text/javascript" src="~/Scripts/ControlPanel.js?v=5"></script>
+<script type="text/javascript" src="~/Scripts/modalConfirmation.js"></script>
+<script type="text/javascript" src="~/Scripts/ListItemPositionChange.js"></script>
 
 @RenderSection("JavaScript", required: false)
 @{

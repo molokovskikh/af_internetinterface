@@ -330,9 +330,12 @@
     <Compile Include="Intefaces\IClientExpander.cs" />
     <Compile Include="Intefaces\IModelWithPriority.cs" />
     <Compile Include="Intefaces\ILogAppeal.cs" />
+    <Compile Include="Intefaces\IPositionIndex.cs" />
     <Compile Include="Intefaces\IServicemenScheduleItem.cs" />
     <Compile Include="Models\ConnectedHouse.cs" />
     <Compile Include="Models\IgnoredInn.cs" />
+    <Compile Include="Models\PublicData.cs" />
+    <Compile Include="Models\PublicDataItem.cs" />
     <Compile Include="Models\SiteVersionChange.cs" />
     <Compile Include="Models\ConnectionRequestMarker.cs" />
     <Compile Include="Models\EmployeeTariffs.cs" />

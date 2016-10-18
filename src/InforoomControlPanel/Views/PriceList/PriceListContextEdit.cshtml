@@ -1,0 +1,48 @@
+﻿@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using NPOI.SS.Formula.Functions
+@model ViewModelPublicDataPriceList
+
+@{
+  ViewBag.Title = "Редактировать прайс-лист";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  var id = ViewBag.PublicDataId;
+  var PublicDataContext = Model;
+}
+<div class="panel panel-primary">
+    <div class="panel-body">
+        <div class="col-md-6">
+            @using (@Html.BeginForm("PriceListContextEdit", "PriceList", FormMethod.Post, new {@class = "form-horizontal form-groups-bordered"})) {
+                @Html.HiddenFor(model => id)
+                @Html.HiddenFor(model => PublicDataContext.Id)
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Наименование</label>
+                    <div class="col-sm-5">
+                        @Html.TextBoxFor(model => PublicDataContext.Name, new {@class = "form-control"})
+                        @ViewBag.Validation.GetError(PublicDataContext, "Name")
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Стоимость услуги, руб.</label>
+                    <div class="col-sm-5">
+                        @Html.TextBoxFor(model => PublicDataContext.Price, new {@class = "form-control"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Комментарий</label>
+                    <div class="col-sm-5">
+                        @Html.TextAreaFor(model => PublicDataContext.Comment, new {@class = "form-control", @rows="6"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button id="savePriceInfo" class="btn btn-green" type="submit">Сохранить</button>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+
+<div class="form-group">
+	<button class="btn btn-blue" onclick=" location.href='@Url.Action("PriceListEdit", "PriceList",new {id})' ">Назад</button>
+</div>
