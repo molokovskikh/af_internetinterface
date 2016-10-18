@@ -1551,6 +1551,8 @@
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-ui-1.11.1.js" />
     <Content Include="assets\js\jquery.cookie.js" />
+    <Content Include="Scripts\ListItemPositionChange.js" />
+    <Content Include="Scripts\modalConfirmation.js" />
     <Content Include="Scripts\PaymentsCalendarFilter.js" />
     <Content Include="assets\html_templates\switchtInfoTemplate_BaseInfo.html" />
     <Content Include="Scripts\Window.js" />
@@ -1562,6 +1564,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ConnectedHousesController.cs" />
+    <Compile Include="Controllers\PriceListController.cs" />
     <Compile Include="Models\ViewModelConnectedHouse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -2066,6 +2069,10 @@
     <Content Include="Views\ConnectedHouses\modelviews\_ConnectedHouseAdd.cshtml" />
     <Content Include="Views\ConnectedHouses\modelviews\_SynchronizeConnectedHouse.cshtml" />
     <Content Include="Views\ConnectedHouses\modelviews\_ConnectedHouseEdit.cshtml" />
+    <Content Include="Views\PriceList\PriceListContextEdit.cshtml" />
+    <Content Include="Views\PriceList\PriceListEdit.cshtml" />
+    <Content Include="Views\PriceList\PriceListIndex.cshtml" />
+    <Content Include="Views\Shared\Partial\modalConfirmation.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <Content Include="Views\Switch\SwitchCreate.cshtml" />

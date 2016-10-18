@@ -63,10 +63,17 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "User,Cookies")]
+		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server, VaryByParam = "*",
+			VaryByCustom = "User,Cookies")]
 		public ActionResult PricesList()
 		{
-			return View("ExtraServicesPriceList");
+			var model =
+				DbSession.Query<PublicData>()
+					.Where(
+						s => s.ItemType == PublicDataType.PriceList && s.Display && (s.Region == null || s.Region.Id == CurrentRegion.Id))
+					.OrderBy(s => s.PositionIndex)
+					.ToList();
+			return View("ExtraServicesPriceList", model);
 		}
 
 		[OutputCache(Duration = 600, Location = System.Web.UI.OutputCacheLocation.Server, VaryByParam = "*")]

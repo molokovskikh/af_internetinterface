@@ -3,6 +3,7 @@
 	.main-content .servicemen.panel, .PrintTimeTable{ display: block !important;}
 	.pageBreak {page-break-after: always;} 
 } 
+ .ListItemResIndex,.ListItem [name='IndexButtonUp'], .ListItem [name='IndexButtonDown']{ color: #00549e !important;}
  .endpointStateChanged td{background: #ffffbf !important;}
  .red-h { color: #ce2205 !important;}
  .padding-bt-10{ padding-bottom: 10px;}

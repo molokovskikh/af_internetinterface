@@ -46,6 +46,7 @@ namespace InforoomControlPanel.Helpers
 			[Description("Ссылка - Контент - Новости")] Block_002002,
 			[Description("Ссылка - Контент - Слайды")] Block_002003,
 			[Description("Ссылка - Контент - Баннеры")] Block_002004,
+			[Description("Ссылка - Контент - Прайс-листы")] Block_002005,
 			[Description("Ссылка - Сотрудники")] Block_003000,
 			[Description("Ссылка - Сотрудники - Сотрудники")] Block_003001,
 			[Description("Ссылка - Сотрудники - Роли")] Block_003002,

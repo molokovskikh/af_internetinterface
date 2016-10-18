@@ -256,6 +256,7 @@
     <Compile Include="Functional\Plans\EditTVChannelFixture.cs" />
     <Compile Include="Functional\Plans\CreateTVChannelFixture.cs" />
     <Compile Include="Functional\Plans\PlanFixture.cs" />
+    <Compile Include="Functional\PriceList\PriceListFixture.cs" />
     <Compile Include="Functional\Question\CreateQuestionFixture.cs" />
     <Compile Include="Functional\Question\DeleteQuestionFixture.cs" />
     <Compile Include="Functional\Question\EditQuestionFixture.cs" />

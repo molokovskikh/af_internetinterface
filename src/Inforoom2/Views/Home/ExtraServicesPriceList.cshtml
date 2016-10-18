@@ -1,142 +1,44 @@
-﻿
+﻿@using Inforoom2.Models
+@model List<Inforoom2.Models.PublicData>
+    @{
+        var modelLastId = Model.Count == 0 ? -1 : Model[Model.Count - 1].Id;
+    }
 <div class="pricesBox">
-	<table class="pricestable" style="margin-top: 30px;">
-		<thead>
-			<tr class="pricesmenu">
-				<th colspan="4" class="pricetitle">
-					Прайс-лист на дополнительные услуги ООО «Инфорум» для Физ. Лиц
-				</th>
-			</tr>
-			<tr class="pricesmenu">
-				<td class="pricetitle">№ п/п</td>
-				<td class="pricetitle">Наименование услуги</td>
-				<td class="pricetitle">Стоимость, руб.</td>
-				<td class="pricetitle">Комментарий</td>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="pricerecord">
-				<td class="pricecell">1</td>
-				<td class="pricecell">Подключение к сети Интернет</td>
-				<td class="pricecell">0</td>
-				<td class="pricecell">При наличии присутствия сети в здании клиента</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">2</td>
-				<td class="pricecell">Выезд специалиста</td>
-				<td class="pricecell">0</td>
-				<td class="pricecell">В случае выявления проблемы на стороне Оператора</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">3</td>
-				<td class="pricecell">Выезд специалиста/консультация с выездом к Абоненту/ложный вызов</td>
-				<td class="pricecell">350</td>
-				<td class="pricecell">Консультации по использованию роутеров, антивирусных программ, настройкам сетевых подключений. Диагностика проблем с подключением к сети.</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">4</td>
-				<td class="pricecell">Настройка сетевой карты / сетевого подключения  -  замена / установка сетевой карты</td>
-				<td class="pricecell">350-500</td>
-				<td class="pricecell">Только ОС  Windows, при наличии оборудования Абонента</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">5</td>
-				<td class="pricecell">Настройка роутера/рабочих мест Абонента</td>
-				<td class="pricecell">От 350</td>
-				<td class="pricecell">В стоимость входит настройка роутера и одного раб. места, настройка дополнительных мест + 150 руб./место. Не предоставляется, если стоит прошивка "open source" типа "openWrt" и пр.</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">6</td>
-				<td class="pricecell">Обжим коннектора RJ-45 в квартире Абонента</td>
-				<td class="pricecell">350</td>
-				<td class="pricecell">Включена стоимость материалов</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">7</td>
-				<td class="pricecell">Подключение розетки RJ-45</td>
-				<td class="pricecell">450</td>
-				<td class="pricecell">При наличии материалов Абонента</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">8</td>
-				<td class="pricecell">Замена поврежденного кабеля</td>
-				<td class="pricecell">0</td>
-				<td class="pricecell">За исключением ремонта кабеля в квартире Абонента</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">9</td>
-				<td class="pricecell">Ремонт/замена/удлинение кабеля в квартире Абонента</td>
-				<td class="pricecell">От 350</td>
-				<td class="pricecell">350 руб. + 10 руб./метр (стоимость кабеля)</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">10</td>
-				<td class="pricecell">Сверление буром проходных отверстий диаметром < 20 мм. в бетонных и кирпичных стенах квартиры Абонента</td>
-				<td class="pricecell">От 350</td>
-				<td class="pricecell">350 руб. + 150 руб. за каждые 10 см. толщины стены</td>
-			</tr>
-		</tbody>
-	</table>
-	<table class="pricestable" style="margin-top: 30px; margin-bottom: 20px;">
-		<thead>
-			<tr class="pricesmenu">
-				<th colspan="3" class="pricetitle">
-					Прайс-лист на дополнительные услуги ООО «Инфорум» для абонентов в частном секторе:
-				</th>
-			</tr>
-			<tr class="pricesmenu" style="background:#e3dfdf;">
-				<td style="width: 38px;"><span style="padding-left: 8px;">№ п/п</span></td>
-				<td style="padding-left: 10px; width: 704px;"><span>Наименование услуги</span></td>
-				<td style="padding-left: 7px;"><span style="padding-right: 8px;">Стоимость, руб.</span></td>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="pricerecord">
-				<td class="pricecell">1</td>
-				<td class="pricecell">Восстановление  абонентской линии вне зоны ответственности абонента</td>
-				<td class="pricecell">б/п</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">2</td>
-				<td class="pricecell">Замена абонентской линии (поврежденного не по вине абонента)</td>
-				<td class="pricecell">б/п</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">3</td>
-				<td class="pricecell">Обжим коннектора в квартире абонента</td>
-				<td class="pricecell">350</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">4</td>
-				<td class="pricecell">Настройка роутера</td>
-				<td class="pricecell">350</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">5</td>
-				<td class="pricecell">Восстановление абонентской линии в зоне ответственности абонента (на территории домовладения)</td>
-				<td class="pricecell">500</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">6</td>
-				<td class="pricecell">Перенос оборудования ONU (при наличии достаточного запаса оптического кабеля в точке подключения)</td>
-				<td class="pricecell">500</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">7</td>
-				<td class="pricecell">Замена абонентской линии (поврежденного по вине абонента)</td>
-				<td class="pricecell">2000</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">8</td>
-				<td class="pricecell">Замена сгоревшего блока питания модема ONU</td>
-				<td class="pricecell">450</td>
-			</tr>
-			<tr class="pricerecord">
-				<td class="pricecell">9</td>
-				<td class="pricecell">Замена  модема ONU</td>
-				<td class="pricecell">10 000</td>
-			</tr>
-		</tbody>
-	</table>
-
+    @foreach (var item in Model) {
+        var list = item.Items.OrderBy(s => s.PositionIndex).Select(s => s.ContextGet<ViewModelPublicDataPriceList>()).ToList();
+        var listHasComment = list.Any(s => !string.IsNullOrEmpty(s.Comment));
+        var index = 0;
+        <table class="pricestable" style="margin-top: 30px; width: 100%;@(modelLastId != item.Id ? "" : "margin-bottom:20px;")">
+            <thead>
+            <tr class="pricesmenu">
+                <th colspan="4" class="pricetitle">
+                    @item.Name
+                </th>
+            </tr>
+            <tr class="pricesmenu">
+                <td class="pricetitle" style="width: 38px;">№ п/п</td>
+                <td class="pricetitle" @(modelLastId != item.Id ? "" : "style=width:680px")>Наименование услуги</td>
+                <td class="pricetitle" style="width: 99px;">Стоимость, руб.</td>
+                @if (listHasComment) {
+                    <td class="pricetitle">Комментарий</td>
+                }
+            </tr>
+            </thead>
+            <tbody>
+            @{
+                foreach (var contextItem in list) {
+                    <tr class="pricerecord">
+                        <td class="pricecell">@(++index)</td>
+                        <td class="pricecell">@contextItem.Name</td>
+                        <td class="pricecell">@contextItem.Price</td>
+                        @if (listHasComment) {
+                            <td class="pricecell">@contextItem.Comment</td>
+                        }
+                    </tr>
+                }
+                index = 0;
+            }
+            </tbody>
+        </table>
+    }
 </div>
