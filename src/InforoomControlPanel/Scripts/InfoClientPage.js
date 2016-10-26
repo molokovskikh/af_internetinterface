@@ -565,13 +565,8 @@ var timeoutIteration = 0;
 
 //Функция, которая пингует эндпоинт и отображает ответ
 function updateEndpointStatus(id, htmlElement, timeout) {
-    if (id == undefined || id == null) {
-        setTimeout(updateEndpointStatus.bind(this, id, htmlElement, timeout), timeout);
-        return;
-    }
     if ($(htmlElement).hasClass("ajaxRun") == false) {
         $(htmlElement).addClass("ajaxRun");
-
         if (!timeout)
             timeout = 5000;
         try {
@@ -582,19 +577,15 @@ function updateEndpointStatus(id, htmlElement, timeout) {
                 success: function(data) {
                     $(htmlElement).removeClass("ajaxRun");
                     $(htmlElement).html(data);
-                    setTimeout(updateEndpointStatus.bind(this, id, htmlElement, timeout), timeout);
                 },
                 error: function(data) {
                     $(htmlElement).removeClass("ajaxRun");
                     $(htmlElement).html("<b class='undefined'>Не запустить проверку коммутатора. Пробую снова.</b>");
-                    setTimeout(updateEndpointStatus.bind(this, id, htmlElement, timeout), timeout);
                 }
             });
         } catch (e) {
-            setTimeout(updateEndpointStatus.bind(this, id, htmlElement, timeout), timeout);
+        	$(htmlElement).removeClass("ajaxRun");
         }
-    } else {
-        setTimeout(updateEndpointStatus.bind(this, id, htmlElement, timeout), timeout);
     }
 }
 
@@ -748,8 +739,13 @@ $(function() {
         } else {
             id = $("[name='endpointId']").val();
         }
-        //	$(this).insertAfter("<div class='switchStatusUpdater'></div>");
-        updateEndpointStatus(id, this);
+        if (id !== 0) {
+        	$(this).css("cursor", "pointer");
+        	$(this).css("font-weight", "bold");
+	        $(this).click(function() {
+		        updateEndpointStatus(id, this);
+	        });
+	    }
     });
     phantomFor();
 });
