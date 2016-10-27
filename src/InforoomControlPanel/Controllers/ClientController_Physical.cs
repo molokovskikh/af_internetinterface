@@ -241,7 +241,7 @@ namespace InforoomControlPanel.Controllers
 				MoneySum = s.MoneySum
 			}).ToList());
 			//дополнение списка пользовательскими списаниями
-			writeoffsAndUserWriteOff.AddRange(client.UserWriteOffs.Select(s => new UserWriteOff() {
+			writeoffsAndUserWriteOff.AddRange(client.UserWriteOffs.Where(s => !s.Ignore).Select(s => new UserWriteOff() {
 				Comment = s.Comment,
 				Date = s.Date,
 				Sum = s.Sum,

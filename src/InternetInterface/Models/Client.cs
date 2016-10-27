@@ -109,6 +109,7 @@ namespace InternetInterface.Models
 		public virtual PhysicalClient PhysicalClient { get; set; }
 
 		/// <summary>
+		/// !!! Влияет на активацию списаний
 		/// Устанавливатся в dhcp в текущую дату если client.RatedPeriodDate == null && !client.Disabled
 		/// </summary>
 		[Property]
@@ -562,7 +563,7 @@ namespace InternetInterface.Models
 
 		public virtual IList<UserWriteOff> GetUserWriteOffs()
 		{
-			return UserWriteOffs.OrderByDescending(u => u.Date).ToList();
+			return UserWriteOffs.Where(s=>!s.Ignore).OrderByDescending(u => u.Date).ToList();
 		}
 
 		public virtual bool StartWork()
@@ -832,7 +833,7 @@ where CE.Client = {0}", Id))
 		/// </summary>
 		public virtual void Enable(bool showBalanceWarningPage = false)
 		{
-			if (Status.Type != StatusType.Dissolved) {
+			if (RatedPeriodDate.HasValue && Status.Type != StatusType.Dissolved) {
 				SetStatus(Status.Find((uint)StatusType.Worked), showBalanceWarningPage: showBalanceWarningPage);
 			}
 		}

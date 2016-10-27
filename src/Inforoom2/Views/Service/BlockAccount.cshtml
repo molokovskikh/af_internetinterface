@@ -22,7 +22,8 @@
 
 	@if (client.CanUseService(service)) {
 		<p class="font">
-			В течении года Вам предоставляется 28 дней бесплатного использования данной услуги.<br/>
+		    В течении года Вам предоставляется 28 дней бесплатного использования данной услуги.<br/>
+            В день активации абонентская плата списывается за последние сутки.<br />
 			По истечении этого времени абонентская плата составляет 3 руб/день, а стоимость активации равна 50 руб.<br/>
 			Блокировка выставляется в неделях.
 		</p>
@@ -51,21 +52,12 @@
 				</p>
 			}
 		}
-	}
-	else if (client.HasActiveService(service)) {
-		<p>Услуга активирована до @blockService.EndDate</p>
-		if (blockService.Service as BlockAccountService != null && blockService.BeginDate.HasValue &&
-		    SystemTime.Now() < blockService.BeginDate.Value.Date.AddDays(3)) {
-			var error = String.Format("Услуга может быть деактивирована не ранее {0}.",
-				blockService.BeginDate.Value.Date.AddDays(3).ToString("dd.MM.yyyy HH:mm"));
-			<h4>@error</h4>
-		}
-		else {
-			using (@Html.BeginForm("DeactivateAccountBlocking", "Service", null, FormMethod.Post)) {
-				@Html.HiddenFor(modelItem => service.Id)
-				<input id="DisconnectBtn" class="button" type="submit" value="Отключить"/>
-			}
-		}
+	} else if (client.HasActiveService(service)) {
+	    <p>Услуга активирована до @blockService.EndDate</p>
+	    using (@Html.BeginForm("DeactivateAccountBlocking", "Service", null, FormMethod.Post)) {
+	        @Html.HiddenFor(modelItem => service.Id)
+	        <input id="DisconnectBtn" class="button" type="submit" value="Отключить"/>
+	    }
 
 
 		<p>Доступно @client.FreeBlockDays бесплатных дней.</p>

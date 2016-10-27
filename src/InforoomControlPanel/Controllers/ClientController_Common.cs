@@ -554,7 +554,7 @@ namespace InforoomControlPanel.Controllers
 				return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});
 			}
 			if (user == 1) {
-				var writeOff = client.UserWriteOffs.FirstOrDefault(s => s.Id == writeOffId);
+				var writeOff = client.UserWriteOffs.FirstOrDefault(s => s.Id == writeOffId && !s.Ignore);
 				if (!writeOff.IsProcessedByBilling) {
 					ErrorMessage($"Списание {writeOffId} не было удалено: списание ожидает обработки");
 					return RedirectToAction("InfoPhysical", new {@Id = client.Id, @subViewName = subViewName});

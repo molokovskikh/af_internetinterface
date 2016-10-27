@@ -21,7 +21,7 @@ namespace Inforoom2.Controllers
         protected void InitServices()
         {
             var client = CurrentClient;
-            var services = DbSession.Query<Service>().Where(s => s.IsActivableFromWeb);
+            var services = DbSession.Query<Service>().Where(s => s.IsActivableFromWeb).ToList();
             var blockAccountService = services.FirstOrDefault(i => i is BlockAccountService);
             blockAccountService = BaseModel.UnproxyOrDefault(blockAccountService) as BlockAccountService;
 
@@ -128,14 +128,6 @@ namespace Inforoom2.Controllers
                 ErrorMessage("Услуга уже была деактивирована.");
                 return RedirectToAction("Service", "Personal");
             }
-            if (clientService.Service as BlockAccountService != null &&
-                SystemTime.Now() < clientService.BeginDate.Value.Date.AddDays(3))
-            {
-                var error = string.Format("Услуга может быть деактивирована не ранее {0}.",
-                    clientService.BeginDate.Value.Date.AddDays(3).ToString("dd.MM.yyyy HH:mm"));
-                ErrorMessage(error);
-                return RedirectToAction("Service", "Personal");
-            }
             SuccessMessage(clientService.DeActivateFor(CurrentClient, DbSession));
             if (client.IsNeedRecofiguration)
                 SceHelper.UpdatePackageId(DbSession, client);
@@ -186,11 +178,6 @@ namespace Inforoom2.Controllers
         private void ActivateService(ClientService clientService, Client client)
         {
             var postMessage = "";
-            if (clientService.Service as BlockAccountService != null)
-            {
-                postMessage = string.Format(" Может быть деактивирована не ранее {0}.",
-                    clientService.BeginDate.Value.Date.AddDays(3).ToString("dd.MM.yyyy"));
-            }
             var msg = clientService.ActivateFor(client, DbSession, postMessage);
             if (clientService.IsActivated)
             {

@@ -77,7 +77,7 @@ namespace InternetInterface.Test.Integration
 			client.BeginWork = DateTime.Now.AddYears(-2);
 			client.StartNoBlock = DateTime.Now.AddYears(-2);
 			client.Sale = settings.MaxSale;
-			client.PhysicalClient.Balance = 0;
+			client.PhysicalClient.Balance = client.GetSumForRegularWriteOff() + 50;
 			client.PhysicalClient.MoneyBalance = 0;
 			client.FreeBlockDays = 0;
 			session.Save(client);
@@ -86,12 +86,13 @@ namespace InternetInterface.Test.Integration
 				EndWorkDate = DateTime.Today.AddDays(1)
 			};
 			client.Activate(clientService);
+			session.Refresh(client);
 			client.WriteOff(client.GetSumForRegularWriteOff(), false);
-			Assert.That(client.Balance, Is.LessThan(0));
+			client.UserWriteOffs.Where(s=>s.Date.Date == DateTime.Today.Date).Each(s => { client.WriteOff(s.Sum, false);});
+			Assert.That(client.Balance, Is.EqualTo(0));
 			SystemTime.Now = () => DateTime.Now.AddDays(1);
 			client.ClientServices.ToArray().Each(c => c.TryDeactivate());
 			Assert.IsFalse(clientService.IsActivated);
-
 			Assert.IsTrue(client.Disabled);
 			Assert.AreEqual(0, client.Sale);
 			Assert.IsNull(client.StartNoBlock);

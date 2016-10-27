@@ -10,6 +10,23 @@ namespace Inforoom2.Models.Services
 	[Subclass(0, ExtendsType = typeof(Service), DiscriminatorValue = "VoluntaryBlockin")]
 	public class BlockAccountService : Service
 	{
+		public override decimal GetPrice(ClientService assignedService)
+		{
+			if (assignedService.BeginDate == null || assignedService.BeginDate.Value.Date == SystemTime.Now().Date)
+				return 0;
+
+			if (assignedService.Client.RatedPeriodDate == null)
+				return 0;
+
+			if (assignedService.Client.FreeBlockDays > 0)
+				return 0;
+
+			if (assignedService.Client.PhysicalClient.Balance < 0)
+				return 0;
+
+			return assignedService.Client.GetInterval()*3m;
+		}
+
 		public override bool CanActivate(ClientService assignedService)
 		{
 			var blockingTime = assignedService.EndDate - assignedService.BeginDate;
@@ -20,8 +37,18 @@ namespace Inforoom2.Models.Services
 
 			var client = assignedService.Client;
 			var paidDays = (int)Math.Ceiling(blockingTime.Value.TotalDays) - client.FreeBlockDays;
+			bool serviceBeginsToday = false;
+
+			//если активация с сегодняшнего дня (это по умолчанию), отнимаем сегодняшний день, т.к. он будет оплачен обычной абон.платой
+			if (assignedService.BeginDate.HasValue && assignedService.BeginDate.Value.Date == SystemTime.Now().Date) {
+				serviceBeginsToday = true;
+				paidDays = paidDays - 1;
+			}
+			
+
+			//при активации сумма на счету должна быть больше необходимой для запуска услуги, т.к. при нуле услуга деактивируется.
 			if (paidDays > 0) {
-				var servicePay = 50m + (paidDays * 3m);
+				var servicePay = 50m + (paidDays*3m) + (serviceBeginsToday ? client.GetSumForRegularWriteOff() : 0);
 				if (servicePay > client.Balance) {
 					assignedService.CannotActivateMsg = string.Format(
 						"Недостаточно средств на счете для добровольной блокировки до {0}.</br>",
@@ -46,16 +73,22 @@ namespace Inforoom2.Models.Services
 			client.RatedPeriodDate = SystemTime.Now();
 
 			var now = SystemTime.Now();
-			if (!client.PaidDay && now.Hour < 22 && assignedService.BeginDate.Value.Date == now.Date) {
-				client.PaidDay = true;
-				var comment = string.Format("Абонентская плата за {0} из-за добровольной блокировки клиента", now.ToShortDateString());
-				var writeOff = new UserWriteOff {
-					Client = client,
-					Date = now,
-					Sum = client.GetSumForRegularWriteOff(),
-					Comment = comment
-				};
-				session.Save(writeOff);
+			//если сегодня у пользователя нет списаний с соответствующего типа
+			if (assignedService.BeginDate.Value.Date == now.Date) {
+				if (!client.UserWriteOffs.Any(s => s.Date.Date == now.Date && s.Type == UserWriteOffType.ClientVoluntaryBlock)) {
+					//производится списание абон платы
+					var comment = string.Format("Абонентская плата за {0} из-за добровольной блокировки клиента",
+						now.ToShortDateString());
+					var writeOff = new UserWriteOff {
+						Client = client,
+						Type = UserWriteOffType.ClientVoluntaryBlock,
+						Date = now,
+						Sum = client.GetSumForRegularWriteOff(),
+						Comment = comment,
+						Ignore = true
+					};
+					session.Save(writeOff);
+				}
 			}
 
 			client.SetStatus(Status.Get(StatusType.VoluntaryBlocking, session));
