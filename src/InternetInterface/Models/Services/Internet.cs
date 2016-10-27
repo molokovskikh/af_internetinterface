@@ -44,6 +44,8 @@ namespace InternetInterface.Models.Services
 					client.UserWriteOffs.Add(new UserWriteOff(client, sum, comment));
 				}
 			}
+			//обновление даты "последней" деактивации 
+			assignedService.EndWorkDate = SystemTime.Now();
 			base.ForceDeactivate(assignedService);
 			assignedService.Client.CreareAppeal(String.Format("Отключена услуга \"{0}\"", HumanName));
 		}
@@ -57,7 +59,11 @@ namespace InternetInterface.Models.Services
 			if (statusIsProxy) statusIsTrue = statusIsProxy? (StatusType)number != StatusType.BlockedForRepair:
 				assignedService.Client.Status.Type != StatusType.BlockedForRepair;
 
-			if (assignedService.ActivatedByUser && !assignedService.Client.Disabled && statusIsTrue) {
+			if (assignedService.ActivatedByUser && !assignedService.Client.Disabled && statusIsTrue)
+			{
+				//обновление даты "последней" активации
+				// (нет необходимости затирать значение последней деактивации, услуга не деактивирутся по графику)
+				assignedService.BeginWorkDate = SystemTime.Now();
 				base.Activate(assignedService);
 				assignedService.Client.CreareAppeal(String.Format("Включена услуга \"{0}\"", HumanName));
 			}

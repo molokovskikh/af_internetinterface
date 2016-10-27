@@ -46,7 +46,7 @@ namespace Inforoom2.Test
 			};
 			chromeOptions.BinaryLocation = "../../../../lib/GoogleChromePortable/GoogleChromePortable.exe";
 			GlobalDriver = new ChromeDriver(String.Format("{0}/content/", version), chromeOptions);
-			GlobalDriver.Manage().Window.Size = new Size(1200, 1000);
+			GlobalDriver.Manage().Window.Size = new Size(1920, 1080);
 		}
 
 		public static void GlobalTearDown()

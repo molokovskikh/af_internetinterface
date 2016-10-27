@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.ServiceProcess;
 using System.Text;
 using System.Threading;
 using Castle.ActiveRecord;
@@ -14,6 +15,7 @@ using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
 using InternetInterface.Models;
 using InternetInterface.Models.Services;
+using InternetInterface.Services;
 using NHibernate;
 using NHibernate.Linq;
 using log4net;
@@ -224,7 +226,7 @@ namespace Billing
 				}
 			});
 			WithTransaction(session => {
-				var writeoffs = session.Query<UserWriteOff>().Where(w => !w.BillingAccount && w.Client != null);
+				var writeoffs = session.Query<UserWriteOff>().Where(w => !w.BillingAccount && w.Client != null && !w.Ignore);
 				foreach (var userWriteOff in writeoffs) {
 					var client = userWriteOff.Client;
 					if (client.PhysicalClient != null) {
@@ -496,6 +498,9 @@ namespace Billing
 			//Обновление (назначение заново) скидки клиента
 			UpdateDiscount(client);
 
+			//Cписание абонентской платы, за день подключения добровольной блокировки (если услуга подключена)
+			PhysicalClientPaymentWithBlock(client, session);
+
 			//Обработка списаний с клиента, при отсутствии блокировки из-за восстановления
 			if (!client.PaidDay && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue
 			    && client.GetSumForRegularWriteOff() > 0) {
@@ -528,6 +533,40 @@ namespace Billing
 
 			//назначаем или переназначаем бесплатные блокировочные дни
 			UpdateYearCycleDate(client);
+		}
+
+		/// <summary>
+		// Cписание абонентской платы, за день подключения добровольной блокировки, 
+		// если клиент не использует услугу - удаляем лишние списания
+		/// </summary>
+		/// <param name="client"></param>
+		/// <param name="session"></param>
+		private void PhysicalClientPaymentWithBlock(Client client, ISession session)
+		{
+			var currentDate = SystemTime.Now().Date;
+			var writeoffs = client.UserWriteOffs.Where(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
+				&& w.Date >= currentDate && w.Date < currentDate.AddDays(1) && !w.BillingAccount && w.Ignore);
+
+			foreach (var userWriteOff in writeoffs) {
+				var internetServiceId = Service.GetByType(typeof (Internet));
+				var voluntaryBlockinServiceId = Service.GetByType(typeof (VoluntaryBlockin));
+
+				var clientStillHasBlock = client.ClientServices.Any(s => s.Service.Id == voluntaryBlockinServiceId.Id
+					&& s.IsActivated && s.BeginWorkDate.HasValue && s.BeginWorkDate.Value.Date == currentDate);
+
+				var clientHadInternetToday = client.ClientServices.Any(s => s.Service.Id == internetServiceId.Id
+					&& s.EndWorkDate.HasValue && s.EndWorkDate.Value.Date == currentDate);
+
+				if (clientStillHasBlock && clientHadInternetToday) {
+					client.PhysicalClient.WriteOff(userWriteOff.Sum);
+					userWriteOff.BillingAccount = true;
+					userWriteOff.Ignore = false;
+					session.Save(userWriteOff);
+					var comment = string.Format("Абонентская плата за {0} из-за добровольной разблокировки клиента",
+						DateTime.Now.ToShortDateString());
+					session.Save(client.PhysicalClient);
+				} else session.Delete(userWriteOff);
+			}
 		}
 
 		/// <summary>

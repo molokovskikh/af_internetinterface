@@ -24,11 +24,15 @@ namespace InternetInterface.Services
 
 		private static bool InternalCanActivate(Client client)
 		{
-			return client.PhysicalClient != null
+			var result = client.PhysicalClient != null
 				&& client.PhysicalClient.Balance >= 0
 				&& !client.Disabled
 				&& !client.HaveActiveService<DebtWork>()
 				&& client.StartWork();
+			if (client.FreeBlockDays <= 0) {
+				result = result && client.Balance >= 50 + client.GetSumForRegularWriteOff();
+			}
+			return result;
 		}
 
 		public override bool CanActivate(Client client)
@@ -42,11 +46,17 @@ namespace InternetInterface.Services
 		//разница в проверке дублей когда услуга активируется она уже будет в списке ClientService
 		public override bool CanActivate(ClientService assignedService)
 		{
-			return SystemTime.Now() >= assignedService.BeginWorkDate.Value
+			var result = SystemTime.Now() >= assignedService.BeginWorkDate.Value
 				&& InternalCanActivate(assignedService.Client)
 				&& !assignedService.Client.ClientServices
-					.Except(new[] { assignedService })
+					.Except(new[] {assignedService})
 					.Any(s => s.IsService(assignedService.Service));
+			if (assignedService.Client.FreeBlockDays <= 0) {
+				result = result && assignedService.Client.Balance >= 50 + assignedService.Client.GetSumForRegularWriteOff();
+			} else {
+				result = result && assignedService.Client.Balance >= assignedService.Client.GetSumForRegularWriteOff();
+			}
+			return result;
 		}
 
 		public override void Activate(ClientService assignedService)
@@ -56,18 +66,23 @@ namespace InternetInterface.Services
 
 				client.RatedPeriodDate = DateTime.Now;
 
-				//Это должно быть на этом месте, иначе возможно списывать неправильную сумму
 				var now = SystemTime.Now();
-				if (!client.PaidDay && now.Hour < 22 && assignedService.BeginWorkDate.Value.Date == now.Date) {
-					client.PaidDay = true;
-					var comment = string.Format("Абонентская плата за {0} из-за добровольной блокировки клиента", DateTime.Now.ToShortDateString());
-					var writeOff = new UserWriteOff {
-						Client = client,
-						Date = DateTime.Now,
-						Sum = client.GetSumForRegularWriteOff(),
-						Comment = comment
-					};
-					ActiveRecordMediator.Save(writeOff);
+				//если сегодня у пользователя нет списаний с соответствующего типа
+				if (assignedService.BeginWorkDate.Value.Date == now.Date) {
+					if (!client.UserWriteOffs.Any(s => s.Date.Date == now.Date && s.Type == UserWriteOffType.ClientVoluntaryBlock)) {
+						//производится списание абон платы
+						var comment = string.Format("Абонентская плата за {0} из-за добровольной блокировки клиента",
+							now.ToShortDateString());
+						var writeOff = new UserWriteOff {
+							Client = client,
+							Type = UserWriteOffType.ClientVoluntaryBlock,
+							Date = now,
+							Sum = client.GetSumForRegularWriteOff(),
+							Comment = comment,
+							Ignore = true
+						};
+						ActiveRecordMediator.Save(writeOff);
+					}
 				}
 
 				client.SetStatus(Status.Find((uint)StatusType.VoluntaryBlocking));
@@ -100,25 +115,7 @@ namespace InternetInterface.Services
 				? Status.Find((uint)StatusType.Worked)
 				: Status.Find((uint)StatusType.NoWorked));
 			client.RatedPeriodDate = DateTime.Now;
-
-			if (!client.PaidDay && assignedService.IsActivated) {
-				assignedService.IsActivated = false;
-
-				//что бы правильно вычислить стоимость нам нужно активировать
-				//услуги которые могут быть активированы после
-				//отключения добровольной блокировки
-				var forActivationCheck = client.ClientServices.Where(s => s.Service.Id != Id);
-				foreach (var clientService in forActivationCheck) {
-					clientService.TryActivate();
-				}
-				var sum = client.GetSumForRegularWriteOff();
-				if (sum > 0) {
-					client.PaidDay = true;
-					var comment = string.Format("Абонентская плата за {0} из-за добровольной разблокировки клиента", DateTime.Now.ToShortDateString());
-					ActiveRecordMediator.Save(new UserWriteOff(client, sum, comment));
-				}
-			}
-
+			client.CreareAppeal("Услуга 'Добровольная блокировка' отключена.");
 			assignedService.IsActivated = false;
 			ActiveRecordMediator.Update(assignedService);
 			ActiveRecordMediator.Update(client);
@@ -132,7 +129,7 @@ namespace InternetInterface.Services
 
 		public override decimal GetPrice(ClientService assignedService)
 		{
-			if (assignedService.BeginWorkDate == null)
+			if (assignedService.BeginWorkDate == null || assignedService.BeginWorkDate.Value.Date == SystemTime.Now().Date)
 				return 0;
 
 			if (assignedService.Client.RatedPeriodDate == null)
@@ -158,7 +155,7 @@ namespace InternetInterface.Services
 				client.Update();
 			}
 			if (assignedService.IsActivated && client.FreeBlockDays == 0) {
-				var userWriteOffs = client.UserWriteOffs.ToList()
+				var userWriteOffs = client.UserWriteOffs.Where(s=>!s.Ignore).ToList()
 					.Where(uw => uw.Comment.Contains("Платеж за активацию услуги добровольная блокировка")).ToList();
 				var lastUserWriteOff = userWriteOffs.OrderByDescending(uw => uw.Date).ToList().FirstOrDefault();
 				if (lastUserWriteOff == null || lastUserWriteOff.Date < assignedService.BeginWorkDate) {

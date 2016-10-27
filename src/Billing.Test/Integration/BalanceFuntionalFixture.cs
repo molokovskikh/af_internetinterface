@@ -333,12 +333,14 @@ namespace Billing.Test.Integration
 					Disabled = true,
 					Type = ClientType.Phisical,
 					Name = "Александр Барабановский",
+					RatedPeriodDate = SystemTime.Now()
 				};
 				domolinkClient.Save();
 				new Payment {
 					Client = domolinkClient,
 					Sum = 5m
 				}.Save();
+				new ClientEndpoint() {Client = client}.Save();
 			}
 			billing.ProcessPayments();
 			billing.ProcessPayments();

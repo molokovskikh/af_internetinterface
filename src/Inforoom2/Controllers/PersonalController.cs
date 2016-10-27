@@ -241,7 +241,7 @@ namespace Inforoom2.Controllers
 			var client = CurrentClient;
 			var userWriteOffs =
 				DbSession.Query<UserWriteOff>()
-					.Where(uwo => uwo.Client.Id == client.Id && uwo.Date > SystemTime.Now().AddMonths(-3));
+					.Where(uwo => uwo.Client.Id == client.Id && uwo.Date > SystemTime.Now().AddMonths(-3) && !uwo.Ignore);
 			var writeOffs =
 				DbSession.Query<WriteOff>()
 					.Where(wo => wo.Client.Id == client.Id && wo.WriteOffDate > SystemTime.Now().AddMonths(-3));

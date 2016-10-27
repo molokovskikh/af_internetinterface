@@ -127,7 +127,10 @@ namespace Inforoom2.Models
 
 		[Property]
 		public virtual DateTime? StartNoBlock { get; set; }
-
+		
+		/// <summary>
+		/// !!! Влияет на активацию списаний
+		/// </summary>
 		[Property]
 		public virtual DateTime? RatedPeriodDate { get; set; }
 

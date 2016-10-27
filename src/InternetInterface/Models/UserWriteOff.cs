@@ -10,7 +10,13 @@ using InternetInterface.Mails;
 
 namespace InternetInterface.Models
 {
-	[ActiveRecord("UserWriteOffs", Schema = "internet", Lazy = true), LogInsert(typeof(LawyerUserWriteOffNotice))]
+	public enum UserWriteOffType
+	{
+		Default = 0,
+		ClientVoluntaryBlock = 1
+	}
+
+	[ActiveRecord("UserWriteOffs", Schema = "internet", Lazy = true), LogInsert(typeof (LawyerUserWriteOffNotice))]
 	public class UserWriteOff : ActiveRecordLinqBase<UserWriteOff>, IWriteOff
 	{
 		public UserWriteOff()
@@ -51,6 +57,12 @@ namespace InternetInterface.Models
 
 		[BelongsTo]
 		public virtual Partner Registrator { get; set; }
+		
+		[Property(Column = "ItemIgnore")]
+		public virtual bool Ignore { get; set; }
+
+		[Property(Column = "ItemType")]
+		public virtual UserWriteOffType Type { get; set; }
 
 		public override string ToString()
 		{
@@ -64,8 +76,7 @@ namespace InternetInterface.Models
 			if (Client.PhysicalClient != null) {
 				Client.PhysicalClient.MoneyBalance += Sum;
 				Client.PhysicalClient.Balance += Sum;
-			}
-			else
+			} else
 				Client.LawyerPerson.Balance += Sum;
 			return Client.CreareAppeal(String.Format("Удалено списание на сумму {0:C}", Sum));
 		}
