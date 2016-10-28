@@ -37,12 +37,13 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 				settings = Settings();
 			}
-
+			Status newClientStatus = Status.Queryable.AsQueryable().First(s=>s.Id == (int) StatusType.BlockedAndNoConnected);
 			var phisicalClient = CreatePhisicalClient(statusBlocked, balance);
 			phisicalClient.Save();
 
 			var client = new Client(phisicalClient, settings) {
 				Disabled = false,
+				Status = newClientStatus,
 				Sale = 0,
 				DebtDays = 0,
 				FreeBlockDays = 0,

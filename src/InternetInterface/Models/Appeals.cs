@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Web;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Framework;
+using Common.Tools;
 using Common.Web.Ui.Helpers;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models.Universal;
@@ -66,7 +67,7 @@ namespace InternetInterface.Models
 
 		public Appeals()
 		{
-			Date = DateTime.Now;
+			Date = SystemTime.Now();
 		}
 
 		public Appeals(string appeal, Client client, AppealType appealType) : this()

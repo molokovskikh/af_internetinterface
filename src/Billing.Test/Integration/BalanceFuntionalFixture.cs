@@ -340,8 +340,9 @@ namespace Billing.Test.Integration
 					Client = domolinkClient,
 					Sum = 5m
 				}.Save();
-				new ClientEndpoint() {Client = client}.Save();
+				 new ClientEndpoint { IsEnabled = true, Client = domolinkClient }.Save();
 			}
+
 			billing.ProcessPayments();
 			billing.ProcessPayments();
 			using (new SessionScope()) {

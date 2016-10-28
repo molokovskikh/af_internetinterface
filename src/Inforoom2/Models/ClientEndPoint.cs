@@ -22,6 +22,7 @@ namespace Inforoom2.Models
 		{
 			StaticIpList = new List<StaticIp>();
 			LeaseList = new List<Lease>();
+			WarningShow = true;
 		}
 
 		[Property]
@@ -69,6 +70,12 @@ namespace Inforoom2.Models
 		{
 			ActualPackageId = packageId;
 		}
+
+		[Property]
+		public virtual int? StableTariffPackageId { get; set; }
+
+		[Property]
+		public virtual bool WarningShow { get; set; }
 
 		[ManyToOne(Column = "Pool", Cascade = "save-update"), Description("Ip-пул")]
 		public virtual IpPool Pool { get; set; }
@@ -179,6 +186,11 @@ namespace Inforoom2.Models
 				}
 			}
 			return message;
+		}
+		public virtual void SetStablePackgeId(int? packageId)
+		{
+			PackageId = packageId;
+			StableTariffPackageId = packageId;
 		}
 	}
 }

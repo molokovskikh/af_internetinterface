@@ -20,7 +20,10 @@ namespace Billing.Test.Integration
 			client.Update();
 			var contact = new Contact(client, ContactType.SmsSending, "9505611241");
 			ActiveRecordMediator.Save(contact);
+			var endpoint = new ClientEndpoint() { IsEnabled = true, Client = client };
+			ActiveRecordMediator.Save(endpoint);
 			client.Contacts.Add(contact);
+			client.Endpoints.Add(endpoint);
 		}
 
 		[Test]

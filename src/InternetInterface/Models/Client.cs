@@ -118,8 +118,14 @@ namespace InternetInterface.Models
 		[Property]
 		public virtual int DebtDays { get; set; }
 
-		[Property]
-		public virtual bool ShowBalanceWarningPage { get; set; }
+		[Property(Column = "ShowBalanceWarningPage")]
+		public virtual bool _showBalanceWarningPage { get; set; }
+
+		public virtual bool ShowBalanceWarningPage
+		{
+			get { return WarningPackageIdGet(); }
+			set { WarningPackageIdUpdate(value); }
+		}
 
 		/// <summary>
 		/// Начал ли клиент работать
@@ -252,6 +258,26 @@ namespace InternetInterface.Models
 					return Endpoints.First().WhoConnected;
 				return null;
 			}
+		}
+
+		protected virtual bool WarningPackageIdGet()
+		{
+			if (this.Endpoints.Any(s => s.Disabled == false && s.IsEnabled.HasValue && s.IsEnabled.Value && s.WarningShow && s.PackageId == 10)) {
+				return true;
+			}
+			return false;
+		}
+
+		protected virtual void WarningPackageIdUpdate(bool warninig)
+		{
+			if (Disabled == false)
+				foreach (var item in this.Endpoints.Where(s => s.Disabled == false && s.IsEnabled.HasValue && s.IsEnabled.Value).ToList()) {
+					if (item.WarningShow && warninig) {
+						item.PackageId = 10;
+					} else {
+						item.PackageId = item.StableTariffPackageId;
+					}
+				}
 		}
 
 		public virtual bool NeedShowFirstLaunchPage(IPAddress ip, ISession session)
@@ -1133,8 +1159,7 @@ where CE.Client = {0}", Id))
 				Sale = sale;
 				StartNoBlock = null;
 				AutoUnblocked = true;
-			}
-			else if (status.Type == StatusType.Worked) {
+			} else if (status.Type == StatusType.Worked) {
 				Disabled = false;
 				//если мы возобновили работу после поломки то дата начала периода тарификации не должна изменяться
 				//если ее сбросить списания начнутся только когда клиент получит аренду

@@ -841,7 +841,13 @@ namespace InforoomControlPanel.Controllers
 			var oldPlan = client.PhysicalClient.Plan;
 			if (oldPlan != newPlan) {
 				client.PhysicalClient.Plan = newPlan;
-				client.Endpoints.Where(s => !s.Disabled).ForEach(e => e.PackageId = newPlan.PackageSpeed.PackageId);
+				var oldWarningState = client.ShowBalanceWarningPage;
+				client.Endpoints.Where(s => !s.Disabled).ForEach(e => { e.SetStablePackgeId(newPlan.PackageSpeed.PackageId); });
+
+				if (oldWarningState != client.ShowBalanceWarningPage) {
+					client.ShowBalanceWarningPage = oldWarningState;
+					DbSession.Save(client);
+				}
 				DbSession.Save(client);
 				Inforoom2.Helpers.SceHelper.UpdatePackageId(DbSession, client);
 
@@ -903,6 +909,19 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			return RedirectToAction("InfoPhysical", new { @Id = client.Id, @subViewName = subViewName });
+		}
+
+		public ActionResult EndpointPhysicalWarningAdd(int endpointId)
+		{
+			var endpoint = DbSession.Load<ClientEndpoint>(endpointId);
+			EndpointWarningAdd(endpoint);
+			return RedirectToAction("InfoPhysical", new { endpoint.Client.Id });
+		}
+		public ActionResult EndpointPhysicalWarningRemove(int endpointId)
+		{
+			var endpoint = DbSession.Load<ClientEndpoint>(endpointId);
+			EndpointWarningRemove(endpoint);
+			return RedirectToAction("InfoPhysical", new { endpoint.Client.Id });
 		}
 	}
 }

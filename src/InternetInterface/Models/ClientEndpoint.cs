@@ -17,6 +17,7 @@ namespace InternetInterface.Models
 		public ClientEndpoint()
 		{
 			StaticIps = new List<StaticIp>();
+			WarningShow = true;
 		}
 
 		public ClientEndpoint(Client client, int? port, NetworkSwitch @switch)
@@ -57,6 +58,12 @@ namespace InternetInterface.Models
 
 		[Property, Auditable("PackageId")]
 		public virtual int? PackageId { get; set; }
+		
+		[Property, Auditable("WarningShow")]
+		public virtual bool WarningShow { get; set; }
+
+		[Property]
+		public virtual int? StableTariffPackageId { get; set; }
 
 		[Property]
 		public virtual int? MaxLeaseCount { get; set; }
@@ -106,6 +113,12 @@ namespace InternetInterface.Models
 		public static bool HavePoint(ISession session, IPAddress ip)
 		{
 			return GetForIp(ip, session) != null;
+		}
+
+		public virtual void SetStablePackgeId(int? packageId)
+		{
+			PackageId = packageId;
+			StableTariffPackageId = packageId;
 		}
 	}
 }

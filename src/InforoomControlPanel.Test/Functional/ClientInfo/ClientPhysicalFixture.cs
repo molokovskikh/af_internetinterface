@@ -154,6 +154,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				//запускаем биллинг
 				CurrentClient.PaidDay = false;
 				DbSession.Save(CurrentClient);
+				RunBillingProcessClientEndpointSwitcher();
 				RunBillingProcessPayments();
 				RunBillingProcessWriteoffs();
 				RunBillingProcessClientEndpointSwitcher();
@@ -1254,6 +1255,80 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			DbSession.Refresh(endpointresult);
 
 			Assert.That(endpointresult.Ip, Is.EqualTo(newLease.Ip), "Статус не совпадает.");
+			//Проверка редактирования статуса варнинга для комутатора
+			var oldWarningShow = endpointresult.WarningShow;
+			browser.FindElementByCssSelector(blockName + $".warningEndpointState").Click();
+			WaitForVisibleCss($"#messageConfirmationLink");
+			browser.FindElementByCssSelector($"#messageConfirmationLink").Click();
+			WaitForText("Информация по клиенту");
+			AssertText($"Блокирующие сообщения запрещены для точки подключения № {endpointresult.Id}");
+			DbSession.Refresh(endpointresult);
+			Assert.That(endpointresult.WarningShow, Is.Not.EqualTo(oldWarningShow), "Значение 'Блокирующие сообщения' для точки подключения не совпадает.");
+
+			oldWarningShow = endpointresult.WarningShow;
+			browser.FindElementByCssSelector(blockName + $".warningEndpointState").Click();
+			WaitForVisibleCss($"#messageConfirmationLink");
+			browser.FindElementByCssSelector($"#messageConfirmationLink").Click();
+			WaitForText("Информация по клиенту");
+			AssertText($"Блокирующие сообщения разрешены для точки подключения № {endpointresult.Id}");
+			DbSession.Refresh(endpointresult);
+			Assert.That(endpointresult.WarningShow, Is.Not.EqualTo(oldWarningShow), "Значение 'Блокирующие сообщения' для точки подключения не совпадает.");
+
+			//Включение и выключение флага должно сказываться на состоянии Варнинга клиента
+
+			//Проверка влияние статуса варнинга для не активированного комутатора на состояние варнинга клиента 
+			endpointresult.Client.ShowBalanceWarningPage = true;
+			DbSession.Save(endpointresult.Client);
+			DbSession.Flush();
+
+			Open("Client/InfoPhysical/" + CurrentClient.Id);
+			AssertText("Блокирующие сообщения Выкл.");
+
+			//Проверка влияние статуса варнинга для активированного комутатора на состояние варнинга клиента 
+			endpointresult.IsEnabled = true;
+			DbSession.Save(endpointresult);
+			endpointresult.Client.ShowBalanceWarningPage = true;
+			DbSession.Save(endpointresult.Client);
+			DbSession.Flush();
+
+			Open("Client/InfoPhysical/" + CurrentClient.Id);
+			AssertText("Блокирующие сообщения Вкл.");
+
+			oldWarningShow = endpointresult.WarningShow;
+			browser.FindElementByCssSelector(blockName + $".warningEndpointState").Click();
+			WaitForVisibleCss($"#messageConfirmationLink");
+			browser.FindElementByCssSelector($"#messageConfirmationLink").Click();
+			WaitForText("Информация по клиенту");
+			AssertText($"Блокирующие сообщения запрещены для точки подключения № {endpointresult.Id}");
+			DbSession.Refresh(endpointresult);
+			Assert.That(endpointresult.WarningShow, Is.Not.EqualTo(oldWarningShow), "Значение 'Блокирующие сообщения' для точки подключения не совпадает.");
+			DbSession.Refresh(endpointresult.Client);
+			Assert.IsTrue(endpointresult.Client.ShowBalanceWarningPage == false);
+
+			endpointresult.Client.ShowBalanceWarningPage = true;
+			DbSession.Save(endpointresult.Client);
+			DbSession.Flush();
+			
+			Open("Client/InfoPhysical/" + CurrentClient.Id);
+			AssertText("Блокирующие сообщения Выкл.");
+
+			oldWarningShow = endpointresult.WarningShow;
+			browser.FindElementByCssSelector(blockName + $".warningEndpointState").Click();
+			WaitForVisibleCss($"#messageConfirmationLink");
+			browser.FindElementByCssSelector($"#messageConfirmationLink").Click();
+			WaitForText("Информация по клиенту");
+			AssertText($"Блокирующие сообщения разрешены для точки подключения № {endpointresult.Id}");
+			DbSession.Refresh(endpointresult);
+			Assert.That(endpointresult.WarningShow, Is.Not.EqualTo(oldWarningShow), "Значение 'Блокирующие сообщения' для точки подключения не совпадает.");
+
+
+			endpointresult.Client.ShowBalanceWarningPage = true;
+			DbSession.Save(endpointresult.Client);
+			DbSession.Flush();
+
+			Open("Client/InfoPhysical/" + CurrentClient.Id);
+			AssertText("Блокирующие сообщения Вкл.");
+
 		}
 	}
 }

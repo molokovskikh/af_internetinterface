@@ -29,6 +29,10 @@ namespace Billing
 
 		private Mutex _mutex = new Mutex();
 		private SaleSettings _saleSettings;
+		/// <summary>
+		/// Id статуса "расторгнут" (чтобы не вытаскивать из базы сам статус)
+		/// </summary>
+		private int BillingIgnoreStatusId;
 
 		public List<SmsMessage> Messages;
 
@@ -45,6 +49,7 @@ namespace Billing
 			try {
 				XmlConfigurator.Configure();
 				InitActiveRecord();
+				BillingIgnoreStatusId = (int) StatusType.Dissolved;
 			}
 			catch (Exception ex) {
 				_log.Error("Ошибка к конструкторе", ex);
@@ -96,15 +101,22 @@ namespace Billing
 				_mutex.ReleaseMutex();
 			}
 
-			//деактивация точек подключения
+			//активация точек подключения
 			try {
 				_mutex.WaitOne();
 				WithTransaction(session => {
 					var newEndPoints = session.Query<ClientEndpoint>().Where(c => c.IsEnabled == null && c.Client.Disabled == false && !c.Disabled).ToList();
 					foreach (var endpoint in newEndPoints) {
-						endpoint.IsEnabled = true;
 						var client = endpoint.Client;
+						var shoWarning = client.ShowBalanceWarningPage;
 
+						endpoint.IsEnabled = true;
+
+						//попытка восстановить варнинг если он был изменен активацией точки подключения
+						if (shoWarning != client.ShowBalanceWarningPage) {
+							client.ShowBalanceWarningPage = shoWarning;
+							client.UpdateAndFlush();
+						}
 						if (client.RatedPeriodDate == null && !client.Disabled) {
 							client.RatedPeriodDate = DateTime.Now;
 							client.UpdateAndFlush();
@@ -193,11 +205,11 @@ namespace Billing
 						if (updateClient.RatedPeriodDate != null) {
 							if (updateClient.PhysicalClient.Balance >= updateClient.GetPriceIgnoreDisabled() * updateClient.PercentBalance
 							    && PlanChanger.CheckPlanChangerWarningPage(session, updateClient) == false) {
+								var oldVal = updateClient.ShowBalanceWarningPage;
 								updateClient.ShowBalanceWarningPage = false;
-								if (updateClient.IsChanged(c => c.ShowBalanceWarningPage))
+								if (oldVal != updateClient.ShowBalanceWarningPage)
 									updateClient.CreareAppeal("Отключена страница Warning, клиент внес платеж", AppealType.Statistic);
 							}
-
 							//Возможность сервисам отреагировать на платеж
 							foreach (var clientService in updateClient.ClientServices.ToList()) {
 								clientService.PaymentProcessed();
@@ -248,36 +260,40 @@ namespace Billing
 					.ToList();
 				foreach (var client in clients) {
 					bool showBalanceWarningPage = PlanChanger.CheckPlanChangerWarningPage(session, client);
+					var oldVal = showBalanceWarningPage;
 					client.Enable(showBalanceWarningPage);
-					if (client.IsChanged(c => c.ShowBalanceWarningPage))
+					if (oldVal != client.ShowBalanceWarningPage)
 						client.CreareAppeal("Отключена страница Warning, клиент разблокирован", AppealType.Statistic);
 					if (client.IsChanged(c => c.Disabled))
 						client.CreareAppeal("Клиент разблокирован", AppealType.Statistic);
 					SmsHelper.DeleteNoSendingMessages(client);
 				}
-				var lawyerPersons = session.Query<Client>().Where(c => c.LawyerPerson != null);
+				var lawyerPersons = session.Query<Client>().Where(c => c.LawyerPerson != null && c.Status.Id != BillingIgnoreStatusId);
 				foreach (var client in lawyerPersons) {
 					if (client.NeedShowWarningForLawyer()) {
 						if (client.WhenShowWarning == null ||
 						    (SystemTime.Now() - client.WhenShowWarning.Value).TotalHours >= 3) {
+							var oldVal = client.ShowBalanceWarningPage;
 							client.ShowBalanceWarningPage = true;
 							client.WhenShowWarning = SystemTime.Now();
 							if (!client.SendEmailNotification)
 								client.SendEmailNotification = EmailNotificationSender.SendLawyerPersonNotification(client);
-							if (client.IsChanged(c => c.ShowBalanceWarningPage))
+							if (oldVal != client.ShowBalanceWarningPage)
 								client.CreareAppeal("Включена страница Warning, клиент имеет низкий баланс", AppealType.Statistic);
 						}
 					}
-					else {
+					else
+					{
+						var oldVal = client.ShowBalanceWarningPage;
 						client.ShowBalanceWarningPage = false;
 						client.SendEmailNotification = false;
 						client.WhenShowWarning = null;
-						if (client.IsChanged(c => c.ShowBalanceWarningPage))
+						if (oldVal != client.ShowBalanceWarningPage)
 							client.CreareAppeal("Отключена страница Warning", AppealType.Statistic);
 					}
 				}
 				//Пытаемся удалить сервисы, которые отработали свое
-				var services = session.Query<ClientService>().ToList();
+				var services = session.Query<ClientService>();
 				foreach (var assignedservice in services) {
 					if (assignedservice.IsActivated) {
 						// вызов события у сервиса по таймеру
@@ -290,7 +306,7 @@ namespace Billing
 
 		private void ActivateServices(ISession session)
 		{
-			var services = session.Query<ClientService>().Where(s => !s.IsActivated);
+			var services = session.Query<ClientService>().Where(s => s.Client.Status.Id != BillingIgnoreStatusId && !s.IsActivated);
 			foreach (var service in services) {
 				service.TryActivate();
 				session.Save(service);
@@ -351,10 +367,10 @@ namespace Billing
 					if (normalFlag) {
 						// Reset
 						ArHelper.WithSession(
-							s => s.CreateSQLQuery(@"update internet.Clients c
-												set c.PaidDay = false;
+							s => s.CreateSQLQuery(string.Format(@"update internet.Clients c
+												set c.PaidDay = false where c.Status <> {0};
 												update internet.InternetSettings s
-												set s.LastStartFail = true;")
+												set s.LastStartFail = true;", BillingIgnoreStatusId))
 								.ExecuteUpdate());
 
 						var billingTime = InternetSettings.FindFirst();
@@ -771,14 +787,14 @@ namespace Billing
 		/// </summary>
 		private void UpdateWarnings(Client client)
 		{
+			var oldVal = client.ShowBalanceWarningPage;
 			if (client.NeedShowWarningCheck()) {
 				client.ShowBalanceWarningPage = true;
-				if (client.IsChanged(c => c.ShowBalanceWarningPage))
+				if (oldVal != client.ShowBalanceWarningPage)
 					client.CreareAppeal("Включена страница Warning, клиент не имеет паспортных данных", AppealType.Statistic);
-			}
-			else {
+			} else {
 				client.ShowBalanceWarningPage = false;
-				if (client.IsChanged(c => c.ShowBalanceWarningPage))
+				if (oldVal != client.ShowBalanceWarningPage)
 					client.CreareAppeal("Отключена страница Warning", AppealType.Statistic);
 			}
 		}

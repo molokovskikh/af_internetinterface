@@ -97,31 +97,32 @@ namespace Inforoom2.Controllers
 					endpoint.Client = CurrentClient;
 					endpoint.Switch = lease.Switch;
 					endpoint.Port = lease.Port;
-				    endpoint.Disabled = false;
-                    endpoint.IsEnabled = true;
+					endpoint.Disabled = false;
+					endpoint.IsEnabled = true;
 
-                    CurrentClient.SetStatus(Status.Get(StatusType.Worked, DbSession));
-                    if (CurrentClient.RatedPeriodDate == null && !CurrentClient.Disabled) {
-                        CurrentClient.RatedPeriodDate = SystemTime.Now();
-				    }
-				    if (CurrentClient.WorkingStartDate == null && !CurrentClient.Disabled) {
-                        CurrentClient.WorkingStartDate = SystemTime.Now();
-                    }
-                    //обновляем значение даты подключения клиента
-                    CurrentClient.ConnectedDate = SystemTime.Now();
+					CurrentClient.SetStatus(Status.Get(StatusType.Worked, DbSession));
+					if (CurrentClient.RatedPeriodDate == null && !CurrentClient.Disabled) {
+						CurrentClient.RatedPeriodDate = SystemTime.Now();
+					}
+					if (CurrentClient.WorkingStartDate == null && !CurrentClient.Disabled) {
+						CurrentClient.WorkingStartDate = SystemTime.Now();
+					}
+					//обновляем значение даты подключения клиента
+					CurrentClient.ConnectedDate = SystemTime.Now();
+					
+					endpoint.SetStablePackgeId(CurrentClient.PhysicalClient.Plan.PackageSpeed.PackageId);
 
-                    endpoint.PackageId = CurrentClient.PhysicalClient.Plan.PackageSpeed.PackageId;
 					DbSession.Save(endpoint);
-                    lease.Endpoint = endpoint;
+					lease.Endpoint = endpoint;
 
 					var paymentForConnect = new PaymentForConnect(physicalClient.ConnectSum, endpoint);
 					//Пытаемся найти сотрудника
 					paymentForConnect.Employee = GetCurrentEmployee();
 
 
-					var internet = CurrentClient.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Internet);
+					var internet = CurrentClient.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Internet);
 					internet.ActivateFor(CurrentClient, DbSession);
-					var iptv = CurrentClient.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Iptv);
+					var iptv = CurrentClient.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Iptv);
 					iptv.ActivateFor(CurrentClient, DbSession);
 
 					if (CurrentClient.IsNeedRecofiguration)
@@ -466,14 +467,16 @@ namespace Inforoom2.Controllers
 				ErrorMessage($"Нельзя менять тариф, в первые {stoppage} месяца после подключения");
 				return RedirectToAction("Plans");
 			}
-
+			var oldWarningState = client.ShowBalanceWarningPage;
 			var oldPlan = client.PhysicalClient.Plan;
 			var result = client.PhysicalClient.RequestChangePlan(plan);
 			if (result == null) {
 				ErrorMessage("Не достаточно средств для смены тарифного плана");
 				return RedirectToAction("Plans");
 			}
-
+			if (oldWarningState != client.ShowBalanceWarningPage) {
+				client.ShowBalanceWarningPage = oldWarningState;
+			}
 			DbSession.Save(client);
 			DbSession.Save(result);
 			var warning = (client.GetWorkDays() <= 3) ? " Обратите внимание, что у вас низкий баланс!" : "";

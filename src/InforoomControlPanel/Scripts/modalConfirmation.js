@@ -1,36 +1,36 @@
-﻿//переписал 'confirm', из-за того, что писать тесты неудобно
-//html в 'modalConfirmation.cshtml'
-var confirm = function (message, buttonConfirm, buttonDecline, href) {
-	confirm._cssModalDialog = "#messageConfirmDialog";
-	confirm._cssHref = "#messageConfirmationLink";
-	confirm._cssDecline = "#messageConfirmationExit";
-	confirm._cssText = "#messageConfirmationText";
-	confirm.Message = message;
-	confirm.ButtonConfirm = buttonConfirm;
-	confirm.ButtonDecline = buttonDecline;
+﻿//переписал 'submit', из-за того, что писать тесты неудобно
+//html в 'modalsubmitation.cshtml'
+var submit = function (message, buttonsubmit, buttonDecline, href) {
+	submit._cssModalDialog = "#messageConfirmDialog";
+	submit._cssHref = "#messageConfirmationLink";
+	submit._cssDecline = "#messageConfirmationExit";
+	submit._cssText = "#messageConfirmationText";
+	submit.Message = message;
+	submit.Buttonsubmit = buttonsubmit;
+	submit.ButtonDecline = buttonDecline;
 
-	confirm.Href = function (href) {
+	submit.Href = function (href) {
 		//ссылка
-		$(confirm._cssHref).attr("href", href);
+		$(submit._cssHref).attr("href", href);
 		//сообщение
-		$(confirm._cssText).html(confirm.Message);
+		$(submit._cssText).html(submit.Message);
 		//кнопки
-		$(confirm._cssHref).html(confirm.ButtonConfirm == undefined
-			? $(confirm._cssHref).attr("default-text") : confirm.ButtonConfirm);
-		$(confirm._cssDecline).html(confirm.ButtonDecline == undefined
-			? $(confirm._cssDecline).attr("default-text") : confirm.ButtonDecline);
+		$(submit._cssHref).html(submit.Buttonsubmit == undefined
+			? $(submit._cssHref).attr("default-text") : submit.Buttonsubmit);
+		$(submit._cssDecline).html(submit.ButtonDecline == undefined
+			? $(submit._cssDecline).attr("default-text") : submit.ButtonDecline);
 		//вывод окна
-		$(confirm._cssModalDialog).modal("show");
+		$(submit._cssModalDialog).modal("show");
 	};
 	if (href != undefined) {
-		confirm.Href(href);
+		submit.Href(href);
 	}
-}
-window.confirm = confirm;
-//для всех ссылок, в которых есть 'confirm', предотвращаем переход по ссылке.
-$(function() {
-	$("a[onclick*='confirm(']").on('click', function(e) {
+} 
+window.submit = submit;
+//для всех ссылок, в которых есть 'submit', предотвращаем переход по ссылке.
+$(function () {
+	$("a[onclick*='submit(']").on('click', function (e) {
 		e.preventDefault();
-		confirm.Href($(this).attr("href"));
+		submit.Href($(this).attr("href"));
 	});
 });

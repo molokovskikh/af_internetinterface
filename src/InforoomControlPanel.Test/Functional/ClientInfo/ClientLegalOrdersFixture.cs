@@ -279,7 +279,8 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Is.EqualTo(CurrentClient.LegalClientOrders.Sum(s => s.OrderServices.Where(g => g.IsPeriodic).Sum(d => d.Cost)).ToString().Replace(".", ",")));
 			//клиент не активен, показываем варнинг
 			Assert.That(CurrentClient.Disabled, Is.EqualTo(true));
-			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(true));
+			///у пользователя выставлен PackageId == 100 - варнинга нет, но есть блокировка
+			Assert.That(CurrentClient.ShowBalanceWarningPage, Is.EqualTo(false));
 			//проверка на отсутствие услуги "отключения блокировки"
 			Assert.That(CurrentClient.ClientServices.Where(s => s.Service.Id == Service.GetIdByType(typeof(WorkLawyer))).ToList().Count, Is.EqualTo(0));
 
@@ -372,6 +373,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			DbSession.Save(CurrentClient);
 			DbSession.Flush();
 			RunBillingProcess(CurrentClient);
+			UpdateDBSession();
 			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.LegalClient);
 			Assert.That(CurrentClient.LegalClient.Balance, Is.EqualTo(totalSum));
@@ -410,6 +412,119 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			WaitForText("Номер лицевого счета", 10);
 			DbSession.Refresh(CurrentClient);
 			Assert.That(CurrentClient.LegalClientOrders.Where(s => s.ConnectionAddress == newAddress).ToList().Count, Is.EqualTo(1));
+
+			var endpointresult = CurrentClient.Endpoints.OrderByDescending(s=>s.Id).First();
+
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+
+			var oldWarningShow = endpointresult.WarningShow;
+			browser.FindElementByCssSelector(blockName + $".warningEndpointState").Click();
+			WaitForVisibleCss($"#messageConfirmationLink");
+			browser.FindElementByCssSelector($"#messageConfirmationLink").Click();
+			WaitForText("Информация по клиенту");
+			AssertText($"Блокирующие сообщения запрещены для точки подключения № {endpointresult.Id}");
+			DbSession.Refresh(endpointresult);
+			Assert.That(endpointresult.WarningShow, Is.Not.EqualTo(oldWarningShow), "Значение 'Блокирующие сообщения' для точки подключения не совпадает.");
+
+
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+			oldWarningShow = endpointresult.WarningShow;
+			browser.FindElementByCssSelector(blockName + $".warningEndpointState").Click();
+			WaitForVisibleCss($"#messageConfirmationLink");
+			browser.FindElementByCssSelector($"#messageConfirmationLink").Click();
+			WaitForText("Информация по клиенту");
+			AssertText($"Блокирующие сообщения разрешены для точки подключения № {endpointresult.Id}");
+			DbSession.Refresh(endpointresult);
+			Assert.That(endpointresult.WarningShow, Is.Not.EqualTo(oldWarningShow), "Значение 'Блокирующие сообщения' для точки подключения не совпадает.");
+
+			//Включение и выключение флага должно сказываться на состоянии Варнинга клиента
+			//проверяем отсутствие влияние не активированных точек на состояние варнинга
+			var endpointsToUpdate = CurrentClient.Endpoints.Where(s => s.Id != endpointresult.Id).ToList();
+			endpointsToUpdate.Each(s => s.IsEnabled = false);
+			DbSession.Save(CurrentClient);
+
+			endpointresult.Client.ShowBalanceWarningPage = true;
+			DbSession.Save(endpointresult.Client);
+			DbSession.Flush();
+			//т.к. точки подключения не активированны, они не должны влиять на состояние клиента
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			AssertText("Блокирующие сообщения Выкл.");
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+
+			oldWarningShow = endpointresult.WarningShow;
+			browser.FindElementByCssSelector(blockName + $".warningEndpointState").Click();
+			WaitForVisibleCss($"#messageConfirmationLink");
+			browser.FindElementByCssSelector($"#messageConfirmationLink").Click();
+			WaitForText("Информация по клиенту");
+			AssertText($"Блокирующие сообщения запрещены для точки подключения № {endpointresult.Id}");
+			DbSession.Refresh(endpointresult);
+			Assert.That(endpointresult.WarningShow, Is.Not.EqualTo(oldWarningShow), "Значение 'Блокирующие сообщения' для точки подключения не совпадает.");
+			DbSession.Refresh(endpointresult.Client);
+			Assert.IsTrue(endpointresult.Client.ShowBalanceWarningPage == false);
+
+			CurrentClient.Endpoints.Each(s => {
+				s.Disabled = false;
+				s.IsEnabled = true;
+				s.WarningShow = true;
+			}); 
+			endpointresult.Client.ShowBalanceWarningPage = true;
+			DbSession.Save(CurrentClient);
+			DbSession.Save(endpointresult.Client);
+			DbSession.Flush();
+
+			Assert.IsTrue(endpointresult.Client.ShowBalanceWarningPage);
+
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			AssertText("Блокирующие сообщения Вкл.");
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+
+			oldWarningShow = endpointresult.WarningShow;
+			browser.FindElementByCssSelector(blockName + $".warningEndpointState").Click();
+			WaitForVisibleCss($"#messageConfirmationLink");
+			browser.FindElementByCssSelector($"#messageConfirmationLink").Click();
+			WaitForText("Информация по клиенту");
+			AssertText($"Блокирующие сообщения запрещены для точки подключения № {endpointresult.Id}");
+			DbSession.Refresh(endpointresult);
+			Assert.That(endpointresult.WarningShow, Is.Not.EqualTo(oldWarningShow), "Значение 'Блокирующие сообщения' для точки подключения не совпадает.");
+			DbSession.Refresh(endpointresult.Client);
+			Assert.IsTrue(endpointresult.Client.ShowBalanceWarningPage == true);
+
+			var endpointsToDelete = CurrentClient.Endpoints.Where(s => s.Id != endpointresult.Id).ToList();
+			endpointsToDelete.Each(s=> CurrentClient.Endpoints.Remove(s));
+			DbSession.Save(CurrentClient); 
+
+			Assert.IsTrue(endpointresult.Client.ShowBalanceWarningPage == false);
+
+			endpointresult.Client.ShowBalanceWarningPage = true;
+			DbSession.Save(endpointresult.Client);
+			DbSession.Flush();
+
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			AssertText("Блокирующие сообщения Выкл.");
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+
+			oldWarningShow = endpointresult.WarningShow;
+			browser.FindElementByCssSelector(blockName + $".warningEndpointState").Click();
+			WaitForVisibleCss($"#messageConfirmationLink");
+			browser.FindElementByCssSelector($"#messageConfirmationLink").Click();
+			WaitForText("Информация по клиенту");
+			AssertText($"Блокирующие сообщения разрешены для точки подключения № {endpointresult.Id}");
+			DbSession.Refresh(endpointresult);
+			Assert.That(endpointresult.WarningShow, Is.Not.EqualTo(oldWarningShow), "Значение 'Блокирующие сообщения' для точки подключения не совпадает.");
+
+
+			endpointresult.Client.ShowBalanceWarningPage = true;
+			DbSession.Save(endpointresult.Client);
+			DbSession.Flush();
+
+			//активированные точки подключения должны влиять на состояние клиента
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			AssertText("Блокирующие сообщения Вкл.");
 		}
 
 		[Test, Description("Страница клиента. Юр. лицо. Создание и удаление заказа с подключением")]
@@ -478,7 +593,8 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 
 			currentEndpoint.Port = currentEndpoint.Switch.PortCount;
 			currentEndpoint.Ip = null;
-			currentEndpoint.PackageId = DbSession.Query<PackageSpeed>().First(s => s.PackageId != 10 && s.PackageId != 100).PackageId;
+			currentEndpoint.SetStablePackgeId(
+				DbSession.Query<PackageSpeed>().First(s => s.PackageId != 10 && s.PackageId != 100).PackageId);
 
 			//биллиинг
 			CurrentClient.PaidDay = false;

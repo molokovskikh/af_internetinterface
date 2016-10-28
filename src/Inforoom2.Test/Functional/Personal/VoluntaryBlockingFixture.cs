@@ -206,6 +206,7 @@ namespace Inforoom2.Test.Functional.Personal
 			thisElement.Click();
 			thisElement = browser.FindElementByCssSelector(".window .click.ok");
 			thisElement.Click();
+			WaitForVisibleCss("div");
 			WaitForText("Недостаточно средств на счете для добровольной блокировки", 20);
 			AssertText(
 				"Вы можете активировать услугу на бесплатные дни либо пополнить баланс и уже затем перейти к ее активации!");

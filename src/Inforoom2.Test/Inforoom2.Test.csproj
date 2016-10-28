@@ -206,6 +206,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BillingCustomCheck\Run.cs" />
     <Compile Include="Functional\Account\AccountFixture.cs" />
     <Compile Include="Functional\Account\LogoutFixture.cs" />
     <Compile Include="Functional\BinderTest\BinderFixture.cs" />

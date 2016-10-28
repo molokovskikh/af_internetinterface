@@ -252,12 +252,19 @@ namespace Inforoom2.Controllers
 #endif
             }
             ViewBag.Client = client;
-            var oldPlan = client.PhysicalClient.Plan;
+						var oldWarningState = client.ShowBalanceWarningPage;
+						var oldPlan = client.PhysicalClient.Plan;
             client.PhysicalClient.LastTimePlanChanged = SystemTime.Now();
             client.PhysicalClient.Plan = plan;
             client.SetStatus(StatusType.Worked, DbSession);
             if (client.Internet.ActivatedByUser)
-                client.Endpoints.Where(s => !s.Disabled).ForEach(e => e.PackageId = plan.PackageSpeed.PackageId);
+                client.Endpoints.Where(s => !s.Disabled).ForEach(e => {
+									e.SetStablePackgeId(plan.PackageSpeed.PackageId);
+								});
+						
+						if (oldWarningState != client.ShowBalanceWarningPage) {
+							client.ShowBalanceWarningPage = oldWarningState;
+						}
             DbSession.Save(client);
             SuccessMessage("Тариф успешно изменен.");
             // добавление записи в историю тарифов пользователя

@@ -28,8 +28,13 @@ namespace Billing.Test.Integration
 				if (region == null || region.City == null || region.City.Name != cityName) {
 					var thisRegion = ActiveRecordMediator<RegionHouse>.FindAllByProperty("Name", cityName).FirstOrDefault();
 					client.PhysicalClient.HouseObj = new House("улица", 1, thisRegion);
+
+					var endpoint = new ClientEndpoint() { IsEnabled = true, Client = client };
+					client.Endpoints.Add(endpoint);
+					ActiveRecordMediator.Save(endpoint);
 					ActiveRecordMediator.Save(client.PhysicalClient.HouseObj);
 					ActiveRecordMediator.Update(client.PhysicalClient);
+					ActiveRecordMediator.Update(client);
 				}
 
 				// Создать в БД новую сервисную заявку
@@ -38,7 +43,7 @@ namespace Billing.Test.Integration
 					Description = "Тестовая заявка",
 					RegDate = SystemTime.Now(),
 					Status = ServiceRequestStatus.New,
-					ModificationDate = DateTime.Now,
+					ModificationDate = SystemTime.Now(),
 					Sum = 100m
 				};
 				ActiveRecordMediator.SaveAndFlush(serviceRequest);

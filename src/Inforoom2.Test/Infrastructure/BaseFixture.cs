@@ -243,89 +243,6 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Flush();
 		}
 
-		//private void GenerateServices()
-		//{
-		//    var deferredPayment = new DeferredPayment();
-		//       deferredPayment.Name = "Обещанный платеж";
-		//       deferredPayment.BlockingAll = false;
-		//       deferredPayment.IsActivableFromWeb = true;
-		//       deferredPayment.Price = 0;
-		//       deferredPayment.Description = "DebtWork";
-		//       DbSession.Save(deferredPayment);
-
-		//       var blockAccountService = new BlockAccountService();
-		//       blockAccountService.Name = "Добровольная блокировка";
-		//       blockAccountService.BlockingAll = true;
-		//       blockAccountService.IsActivableFromWeb = true;
-		//       blockAccountService.Price = 0;
-		//       blockAccountService.Description = "VoluntaryBlockin";
-		//       DbSession.Save(blockAccountService);
-
-		//       var workLawyer = new WorkLawyer();
-		//       workLawyer.Name = "Отключить блокировки";
-		//       workLawyer.BlockingAll = false;
-		//       workLawyer.IsActivableFromWeb = false;
-		//       workLawyer.Price = 0;
-		//       workLawyer.Description = "WorkLawyer";
-		//       DbSession.Save(workLawyer);
-
-		//       var internet = new Internet();
-		//       internet.Name = "Internet";
-		//       internet.BlockingAll = false;
-		//       internet.IsActivableFromWeb = false;
-		//       internet.Price = 0;
-		//       internet.Description = "Internet";
-		//       DbSession.Save(internet);
-
-		//       var ipTv = new IpTv();
-		//       ipTv.Name = "IpTv";
-		//       ipTv.BlockingAll = false;
-		//       ipTv.IsActivableFromWeb = false;
-		//       ipTv.Price = 0;
-		//       ipTv.Description = "IpTv";
-		//       DbSession.Save(ipTv);
-
-		//       var ipTvBoxRent = new IpTvBoxRent();
-		//       ipTvBoxRent.Name = "Аренда приставки";
-		//       ipTvBoxRent.BlockingAll = false;
-		//       ipTvBoxRent.IsActivableFromWeb = false;
-		//       ipTvBoxRent.Price = 0;
-		//       ipTvBoxRent.Description = "IpTvBoxRent";
-		//       DbSession.Save(ipTvBoxRent);
-
-		//       var fixedIp = new FixedIp();
-		//       fixedIp.Name = "Фиксированный ip-адрес";
-		//       fixedIp.BlockingAll = false;
-		//       fixedIp.IsActivableFromWeb = false;
-		//       fixedIp.Price = 200;
-		//       fixedIp.Description = "PinnedIp";
-		//       DbSession.Save(fixedIp);
-
-		//       var hardwareRent = new HardwareRent();
-		//       hardwareRent.Name = "Аренда оборудования";
-		//       hardwareRent.BlockingAll = false;
-		//       hardwareRent.IsActivableFromWeb = false;
-		//       hardwareRent.Price = 0;
-		//       hardwareRent.Description = "HardwareRent";
-		//       DbSession.Save(hardwareRent);
-
-		//       var speedBoost = new SpeedBoost();
-		//       speedBoost.Name = "Увеличить скорость";
-		//       speedBoost.BlockingAll = false;
-		//       speedBoost.IsActivableFromWeb = false;
-		//       speedBoost.Price = 0;
-		//       speedBoost.Description = "SpeedBoost";
-		//       DbSession.Save(speedBoost);
-
-		//       var planChanger = new PlanChanger();
-		//       planChanger.Name = "PlanChanger";
-		//       planChanger.BlockingAll = false;
-		//       planChanger.IsActivableFromWeb = false;
-		//       planChanger.Price = 0;
-		//       planChanger.Description = "PlanChanger";
-		//       DbSession.Save(planChanger);
-		//   }
-
 		private void GenerateTvProtocols()
 		{
 			var names = "udp,rtp,test".Split(',');
@@ -681,6 +598,7 @@ namespace Inforoom2.Test.Infrastructure
 			//ClientEndpoint adding based on client address
 			var endpoint = new ClientEndpoint {
 				PackageId = 100,
+				IsEnabled = true,
 				Client = legalClient,
 				Ip = addr,
 				Port = 22,
@@ -1020,13 +938,13 @@ namespace Inforoom2.Test.Infrastructure
 			}
 			//ClientEndpoint adding based on client address
 			var endpoint = new ClientEndpoint {
-				PackageId = client.Plan.PackageSpeed.PackageId,
 				Client = client,
 				Ip = addr,
 				Port = 22,
 				Switch = switchItem,
 				Pool = ipPool
 			};
+			endpoint.SetStablePackgeId(client.Plan.PackageSpeed.PackageId);
 			client.Endpoints.Add(endpoint);
 			return endpoint;
 		}
@@ -1241,72 +1159,7 @@ namespace Inforoom2.Test.Infrastructure
 				DbSession.Save(question);
 			}
 		}
-
-		public void ImportSwitchesAddresses()
-		{
-			//var pasrser = new YandexParser(DbSession);
-			//string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"switch.xlsx");
-			//ISheet sheet;
-			//XSSFWorkbook hssfwb;
-			//using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
-			//{
-			//	hssfwb = new XSSFWorkbook(file);
-			//}
-
-			//var city = new City { Name = "Белгород" };
-			//var region = new Region { City = city, Name = "Белгород", RegionOfficePhoneNumber = "8-200-100-200" };
-			//DbSession.Save(city);
-			//DbSession.Save(region);
-
-			//sheet = hssfwb.GetSheet("Дома");
-			//for (int row = 1; row <= sheet.LastRowNum; row++)
-			//{
-			//	var yad = pasrser.GetYandexAddress(region.Name, sheet.GetRow(row).GetCell(1).ToString(), sheet.GetRow(row).GetCell(2).ToString());
-			//	if (yad != null)
-			//	{
-			//		CreateSwitchAddresses(yad);
-			//	}
-			//}
-
-			//city = new City { Name = "Борисоглебск" };
-			//region = new Region { City = city, Name = "Борисоглебск", RegionOfficePhoneNumber = "8-200-100-201" };
-			//DbSession.Save(city);
-			//DbSession.Save(region);
-
-			//string textFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"switches.txt");
-			//var sb = new StringBuilder();
-			//using (var sr = new StreamReader(textFile, Encoding.GetEncoding("windows-1251")))
-			//{
-			//	String line;
-			//	while ((line = sr.ReadLine()) != null)
-			//	{
-			//		sb.AppendLine(line);
-			//	}
-			//}
-			//string borisoglebsk = sb.ToString();
-			//borisoglebsk = RemoveSpaces(borisoglebsk);
-
-			//var streetRows = borisoglebsk.Split(new[] { ';' }).ToList();
-			//foreach (var row in streetRows)
-			//{
-			//	var str = row.Split(':');
-			//	if (str.Length > 1)
-			//	{
-			//		var houseString = str[1];
-
-			//		foreach (var houseNumber in houseString.Split(','))
-			//		{
-			//			var yandexAddress = pasrser.GetYandexAddress(region.Name, str[0], houseNumber);
-			//			if (yandexAddress != null)
-			//			{
-			//				CreateSwitchAddresses(yandexAddress);
-			//			}
-			//		}
-			//	}
-			//}
-			//DbSession.Flush();
-		}
-
+		
 		private void CreateSwitchAddresses(YandexAddress yandexAddress)
 		{
 			SwitchAddress switchAddress = null;

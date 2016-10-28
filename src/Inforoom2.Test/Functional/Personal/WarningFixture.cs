@@ -363,7 +363,7 @@ namespace Inforoom2.Test.Functional.Personal
 			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c =>
 				c.Comment == ClientCreateHelper.ClientMark.legalClient.GetDescription());
 			var endpoint = client.Endpoints.First();
-			endpoint.PackageId = packageId;
+			endpoint.SetStablePackgeId(packageId);
 			DbSession.Save(endpoint);
 			DbSession.Flush();
 			//биллинг
@@ -391,7 +391,7 @@ namespace Inforoom2.Test.Functional.Personal
 			client.LegalClient.Balance = -10000;
 			client.PaidDay = false;
 			var endpoint = client.Endpoints.First();
-			endpoint.PackageId = packageId;
+			endpoint.SetStablePackgeId(packageId);
 			DbSession.Save(endpoint);
 			DbSession.Save(client);
 			DbSession.Flush();
@@ -423,7 +423,7 @@ namespace Inforoom2.Test.Functional.Personal
 				c.Comment == ClientCreateHelper.ClientMark.legalClient.GetDescription());
 			client.LegalClient.Balance = -10000;
 			var endpoint = client.Endpoints.First();
-			endpoint.PackageId = packageId;
+			endpoint.SetStablePackgeId(packageId);
 			DbSession.Save(endpoint);
 			var order = new ClientOrder() { BeginDate = SystemTime.Now().AddDays(-32), Client = client, IsActivated = true, Number = 10 };
 			order.OrderServices.Add(new OrderService(order, 200, true) { Description = "Новая услуга" });

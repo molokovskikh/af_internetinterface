@@ -26,7 +26,7 @@ namespace InternetInterface.Models
 
 		public ServiceRequest()
 		{
-			RegDate = DateTime.Now;
+			RegDate = SystemTime.Now();
 			ModificationDate = RegDate;
 			Status = ServiceRequestStatus.New;
 			Iterations = new List<ServiceIteration>();
