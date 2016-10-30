@@ -272,7 +272,7 @@ namespace Inforoom2.Controllers
 				client.SetStatus(StatusType.Worked, controller.DbSession);
 				//обновляем скорость на кго коммутаторе
 				foreach (var item in client.Endpoints) {
-					item.PackageId = client.PhysicalClient.Plan.PackageSpeed.PackageId;
+					item.SetStablePackgeId(client.PhysicalClient.Plan.PackageSpeed.PackageId);
 					controller.DbSession.Save(item);
 				}
 				controller.DbSession.Save(client);

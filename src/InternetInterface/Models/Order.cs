@@ -232,7 +232,9 @@ namespace InternetInterface.Models
 					var connection = newEndPointState.ConnectionHelper;
 					//обновляем значения Endpoint
 					if (connection != null) {
-						currentEndpoint.PackageId = connection.PackageId;
+						var oldWarningState = currentEndpoint.Client.ShowBalanceWarningPage;
+
+						currentEndpoint.SetStablePackgeId(connection.PackageId);
 						currentEndpoint.Monitoring = connection.Monitoring;
 						currentEndpoint.Pool = (connection.Pool.HasValue ? (uint?)Convert.ToUInt32(connection.Pool.Value) : null);
 
@@ -246,6 +248,11 @@ namespace InternetInterface.Models
 						}
 						else
 							currentEndpoint.Ip = null;
+
+						if (oldWarningState != currentEndpoint.Client.ShowBalanceWarningPage) {
+							currentEndpoint.Client.ShowBalanceWarningPage = oldWarningState;
+							dbSession.Save(currentEndpoint.Client);
+						}
 					}
 					Partner currentPartner = null;
 #if DEBUG

@@ -799,6 +799,9 @@ namespace Billing.Test.Integration
 						Region = ArHelper.WithSession(s => s.Query<RegionHouse>().FirstOrDefault())
 					}
 				};
+				var endpoint = new ClientEndpoint() { IsEnabled = true, Client = client }; 
+				client.Endpoints.Add(endpoint);
+				endpoint.Save();
 				client.Save();
 				var order = new Order(client.LawyerPerson) { BeginDate = DateTime.Now.AddDays(-4) };
 
@@ -877,6 +880,10 @@ namespace Billing.Test.Integration
 						Region = ArHelper.WithSession(s => s.Query<RegionHouse>().FirstOrDefault())
 					}
 				};
+				var endpoint = new ClientEndpoint() { IsEnabled = true, Client = client };
+				client.Endpoints.Add(endpoint);
+				endpoint.Save();
+				client.Save();
 				client.Save();
 				var order = new Order(client.LawyerPerson) { BeginDate = DateTime.Now.AddDays(-4) };
 

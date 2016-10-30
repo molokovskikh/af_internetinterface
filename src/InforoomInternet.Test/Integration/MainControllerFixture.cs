@@ -70,7 +70,7 @@ namespace InforoomInternet.Test.Integration
 		[Test]
 		public void Watning_actual_package_id()
 		{
-			lease.Endpoint.PackageId = 15;
+			lease.Endpoint.SetStablePackgeId(15);
 
 			Request.UserHostAddress = "192.168.1.2";
 			Request.HttpMethod = "POST";

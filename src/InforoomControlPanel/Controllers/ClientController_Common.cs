@@ -604,19 +604,45 @@ namespace InforoomControlPanel.Controllers
 		}
 
 
-		//[HttpPost]
-		//public ActionResult RemoveEndpoint([EntityBinder] Client client, int endpointId,
-		//	string subViewName = "")
-		//{
-		//	var endPoint = client.Endpoints.FirstOrDefault(s => s.Id == endpointId && !s.Disabled);
-		//	if (endPoint != null) {
-		//		if (!client.RemoveEndpoint(endPoint, DbSession))
-		//			ErrorMessage("Последняя точка подключения не может быть удалена!");
-		//	}
-		//	return RedirectToAction(client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal",
-		//		new {@Id = client.Id, @subViewName = subViewName});
-		//}
+		private void EndpointWarningAdd(ClientEndpoint endpoint)
+		{
+			var warning = endpoint.Client.ShowBalanceWarningPage;
+			endpoint.WarningShow = true;
+			DbSession.Save(endpoint);
+			if (warning != endpoint.Client.ShowBalanceWarningPage) {
+				endpoint.Client.Appeals.Add(new Appeal(
+					$"{(warning == false ? "Включена" : "Отключена")} страница Warning",
+					endpoint.Client, AppealType.Statistic, GetCurrentEmployee()));
+			}
+			endpoint.Client.Appeals.Add(
+				new Appeal(
+					$"Блокирующие сообщения <strong>разрешены</strong> для точки подключения <strong>№ {endpoint.Id}</strong> ",
+					endpoint.Client, AppealType.Statistic, GetCurrentEmployee()));
 
+
+			DbSession.Save(endpoint.Client);
+			SuccessMessage($"Разрешение 'Блокирующего сообщения' для точки подключения № {endpoint.Id} обновлено.");
+		}
+
+		private void EndpointWarningRemove(ClientEndpoint endpoint)
+		{
+			var warning = endpoint.Client.ShowBalanceWarningPage;
+			endpoint.WarningShow = false;
+			DbSession.Save(endpoint);
+			endpoint.Client.Appeals.Add(
+				new Appeal(
+					$"Блокирующие сообщения <strong>запрещены</strong> для точки подключения <strong>№ {endpoint.Id}</strong> ",
+					endpoint.Client, AppealType.Statistic, GetCurrentEmployee()));
+			if (warning != endpoint.Client.ShowBalanceWarningPage)
+			{
+				endpoint.Client.Appeals.Add(new Appeal(
+					$"{(warning == false ? "Включена" : "Отключена")} страница Warning",
+					endpoint.Client, AppealType.Statistic, GetCurrentEmployee()));
+			}
+
+			DbSession.Save(endpoint.Client);
+			SuccessMessage($"Разрешение 'Блокирующего сообщения' для точки подключения № {endpoint.Id} обновлено.");
+		}
 
 		///| -----------------------------------------------|Агенты (не ясно нужны или нет)|------------------------------------------------->>
 		public ActionResult AgentList()

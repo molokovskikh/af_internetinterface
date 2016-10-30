@@ -201,7 +201,7 @@ namespace Billing.Test.Integration
 
 		private void ActivateDiactivate(DateTime begin)
 		{
-			var endpoint = new ClientEndpoint { Client = lawyerClient };
+			var endpoint = new ClientEndpoint { IsEnabled = true, Client = lawyerClient };
 			lawyerClient.Endpoints.Add(endpoint);
 			session.Save(endpoint);
 
@@ -247,11 +247,17 @@ namespace Billing.Test.Integration
 			session.Save(lPerson);
 			lawyerClient = new Client() {
 				Name = "TestLawyer",
-				LawyerPerson = lPerson
-			};
-
+				LawyerPerson = lPerson,
+				Status = session.Query<Status>().First(i => i.Id == (int)StatusType.BlockedAndNoConnected)
+		};
 			lawyerClient.LawyerPerson.Balance += 5000;
+			var endPoint = new ClientEndpoint();
+			endPoint.IsEnabled = true; 
+			endPoint.Client = lawyerClient;
+			lawyerClient.Endpoints.Add(endPoint);
 			session.Save(lawyerClient);
+			session.Save(endPoint);
+
 			SystemTime.Now = () => new DateTime(2013, 4, 1);
 			var order = new Order {
 				Client = lawyerClient,
@@ -284,7 +290,7 @@ namespace Billing.Test.Integration
 			session.Clear();
 			lawyerClient = session.Get<Client>(lawyerClient.Id);
 			Assert.IsTrue(lawyerClient.ShowBalanceWarningPage);
-			Assert.IsTrue(lawyerClient.Status == null); //смотрим, а вдруг его вырубило уже по отрицательному балансу. Изначально у клиента(тестового) статуса нет, но он появится при блокировке
+			Assert.IsTrue(lawyerClient.Status.Id == (int)StatusType.BlockedAndNoConnected);
 			billing.ProcessPayments();
 
 			session.Clear();

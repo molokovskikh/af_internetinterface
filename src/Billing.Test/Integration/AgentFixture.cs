@@ -69,7 +69,7 @@ namespace Billing.Test.Integration
                 ActiveRecordMediator.Refresh(this.client);
                 client.BeginWork = DateTime.Now;
 				client.Request = request;
-				var clientEndPoint = new ClientEndpoint { Client = client };
+				var clientEndPoint = new ClientEndpoint { IsEnabled = true, Client = client };
 				clientEndPoint.Save();
                 ActiveRecordMediator.SaveAndFlush(client);
 

@@ -374,6 +374,20 @@ namespace InforoomControlPanel.Controllers
 			return InfoLegal(client.Id, clientModelItem: client, subViewName: subViewName);
 		}
 
+		
+		public ActionResult EndpointLegalWarningAdd(int endpointId)
+		{
+			var endpoint = DbSession.Load<ClientEndpoint>(endpointId);
+			EndpointWarningAdd(endpoint);
+			return RedirectToAction("InfoLegal", new { endpoint.Client.Id });
+		}
+		public ActionResult EndpointLegalWarningRemove(int endpointId)
+		{
+			var endpoint = DbSession.Load<ClientEndpoint>(endpointId);
+			EndpointWarningRemove(endpoint);
+			return RedirectToAction("InfoLegal", new { endpoint.Client.Id });
+		}
+
 		[HttpPost]
 		public ActionResult DeleteClientEndpoint(int endpointId)
 		{

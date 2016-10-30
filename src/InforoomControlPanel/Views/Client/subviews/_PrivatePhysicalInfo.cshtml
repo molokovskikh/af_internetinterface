@@ -145,7 +145,7 @@
 
 			@if (client.ConnectionRequest != null && client.ConnectionRequest.Status && client.ConnectionRequest.EndTime.HasValue) {
 				<tr>
-					<td>Дата начала расчетного периода</td>
+					<td>Заявка на подключение выполнена </td>
 					<td>
 						<span>@client.ConnectionRequest.EndTime.Value.ToShortDateString()</span>
 					</td>

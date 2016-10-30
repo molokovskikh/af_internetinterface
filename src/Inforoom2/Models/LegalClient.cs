@@ -277,7 +277,7 @@ namespace Inforoom2.Models
 			    || changesState == LegalOrderEndpointHelper.ChangesState.FutureEndpointUpdate) {
 				currentEndpoint = currentEndpoint ?? new ClientEndpoint();
 				currentEndpoint.Client = currentOrder.Client;
-				currentEndpoint.PackageId = connection.PackageId;
+				currentEndpoint.SetStablePackgeId(connection.PackageId);
 				currentEndpoint.Monitoring = connection.Monitoring;
 				currentEndpoint.Pool = connection.GetPool(dbSession);
 				currentEndpoint.Switch = connection.GetSwitch(dbSession);
@@ -295,7 +295,7 @@ namespace Inforoom2.Models
 				var currentSwitch = connection.GetSwitch(dbSession);
 				var newEndpoint = new ClientEndpoint();
 				newEndpoint.Client = currentOrder.Client;
-				newEndpoint.PackageId = connection.PackageId;
+				newEndpoint.SetStablePackgeId(connection.PackageId);
 				newEndpoint.Monitoring = connection.Monitoring;
 				newEndpoint.Pool = connection.GetPool(dbSession);
 				newEndpoint.Switch = currentSwitch;

@@ -90,7 +90,7 @@ namespace Billing.Test.Integration
 			client.PhysicalClient = null;
 			client.LawyerPerson = lawPerson;
 			session.SaveOrUpdate(client);
-			var clientEndPoint = new ClientEndpoint { Client = client };
+			var clientEndPoint = new ClientEndpoint { IsEnabled = true, Client = client };
 			var paymentForConnect = new PaymentForConnect(500, clientEndPoint);
 			session.Save(clientEndPoint);
 			session.Save(paymentForConnect);

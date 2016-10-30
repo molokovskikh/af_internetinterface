@@ -318,9 +318,9 @@ namespace InternetInterface.Models
 		public virtual void UpdatePackageId(ClientEndpoint clientEndpoint)
 		{
 			if (Tariff != null && Client.Internet.ActivatedByUser)
-				clientEndpoint.PackageId = Tariff.PackageId;
+				clientEndpoint.SetStablePackgeId(Tariff.PackageId);
 			else
-				clientEndpoint.PackageId = null;
+				clientEndpoint.SetStablePackgeId(null);
 		}
 
 		public virtual void WriteOffIfTariffChanged(List<TariffChangeRule> rules)

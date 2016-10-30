@@ -198,10 +198,18 @@
 						<div class="endpointStateStatus@(endpoint.Id)">не установлен</div>
 					</td>
 				</tr>
+				<tr>
+				    <td><a class="blue c-pointer" onclick="GetCableConnectionState(@endpoint.Id)">Целостность кабеля<span> ( опросить )</span></a></td>
+				    <td>
+				        <div class="endpointCableStatus@(endpoint.Id)">не установлена</div>
+				    </td>
+				</tr>
 					<tr>
-						<td><a class="blue c-pointer" onclick="GetCableConnectionState(@endpoint.Id)">Целостность кабеля<span> ( опросить )</span></a></td>
+					<td><a class="blue c-pointer warningEndpointState" onclick="submit('Вы действительно хотите <strong> @(endpoint.WarningShow ? "запретить" : "разрешить") </strong> вывод блокирующих сообщений для точки подключения <strong> №@endpoint.Id </strong>',undefined,undefined,'@Url.Action(endpoint.WarningShow ? "EndpointPhysicalWarningRemove" : "EndpointPhysicalWarningAdd", new {endpointId = endpoint.Id})')">
+					        Блокирующие сообщения<span> ( редактировать )</span>
+					    </a></td>
 						<td>
-							<div class="endpointCableStatus@(endpoint.Id)">не установлена</div>
+							<div class="@(endpoint.WarningShow?"":"red")">@(endpoint.WarningShow ? "разрешены" : "запрещены")</div>
 						</td>
 					</tr>
 					<tr>

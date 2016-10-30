@@ -458,7 +458,7 @@ namespace InternetInterface.Controllers
 						else {
 							var packageSpeed =
 								DbSession.Query<PackageSpeed>().Where(p => p.PackageId == ConnectInfo.PackageId).ToList().FirstOrDefault();
-							clientEntPoint.PackageId = packageSpeed.PackageId;
+							clientEntPoint.SetStablePackgeId(packageSpeed.PackageId);
 						}
 						if (clientEntPoint.Ip == null && !string.IsNullOrEmpty(ConnectInfo.static_IP))
 							if (client.IsPhysical()) {
@@ -787,10 +787,11 @@ namespace InternetInterface.Controllers
 					else if (client.Status.Type != StatusType.Dissolved) {
 						client.AutoUnblocked = true;
 						client.Disabled = false;
+						var oldVal = client.ShowBalanceWarningPage;
 						client.ShowBalanceWarningPage = false;
 						if (client.IsChanged(c => c.Disabled))
 							client.CreareAppeal("Оператором клиент был разблокирован", AppealType.Statistic);
-						if (client.IsChanged(c => c.ShowBalanceWarningPage))
+						if (oldVal != client.ShowBalanceWarningPage)
 							client.CreareAppeal("Оператором отключена страница Warning", AppealType.Statistic);
 					}
 					if (client.Status.Type == StatusType.Dissolved) {

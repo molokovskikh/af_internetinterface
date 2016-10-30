@@ -160,6 +160,12 @@ namespace Billing.Test.Integration
 		public static Client CreateClient()
 		{
 			var client = BaseBillingFixture.CreateAndSaveClient("testClient1", false, 590);
+
+			var endpoint = new ClientEndpoint();
+			endpoint.IsEnabled = true;
+			endpoint.Client = client;
+			client.Endpoints.Add(endpoint);
+			endpoint.Save();
 			client.Save();
 			return client;
 		}

@@ -32,17 +32,23 @@ namespace Billing.Test.Integration
 					s.Save(region);
 				}
 				return region;
-			})
-				};
+			})};
 				lPerson.Save();
+				
+				Status newClientStatus = new Status();
+				ArHelper.WithSession(f => { newClientStatus = f.Query<Status>().First(i => i.Id == (int)StatusType.Worked); });
+
 				lawyerClient = new Client() {
 					Disabled = false,
+					Status = newClientStatus,
 					Name = "TestLawyer",
 					ShowBalanceWarningPage = false,
 					LawyerPerson = lPerson
 				};
 				lawyerClient.Orders = new List<Order>();
 				lawyerClient.Save();
+				var clientEndPoint = new ClientEndpoint { IsEnabled = true, Client = lawyerClient };
+				clientEndPoint.Save();
 			}
 		}
 

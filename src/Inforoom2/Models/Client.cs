@@ -94,9 +94,15 @@ namespace Inforoom2.Models
 		///TODO: не использовать !!!!!!!
 		[Property(NotNull = true)]
 		public virtual ClientType Type { get; set; }
+		
+		[Property(Column = "ShowBalanceWarningPage")]
+		public virtual bool _showBalanceWarningPage { get; set; }
 
-		[Property(NotNull = true)]
-		public virtual bool ShowBalanceWarningPage { get; set; }
+		public virtual bool ShowBalanceWarningPage
+		{
+			get { return WarningPackageIdGet(); }
+			set { WarningPackageIdUpdate(value); }
+		}
 
 		[Property(Column = "Sale", NotNull = true)]
 		public virtual int Discount { get; set; }
@@ -234,6 +240,26 @@ namespace Inforoom2.Models
 				var idString = Id.ToString();
 				return mask.Length - idString.Length > 0 ? mask.Substring(idString.Length) + idString : idString;
 			}
+		}
+
+		protected virtual bool WarningPackageIdGet()
+		{
+			if (this.Endpoints.Any(s => s.Disabled == false && s.IsEnabled.HasValue && s.IsEnabled.Value && s.WarningShow && s.PackageId == 10)) {
+				return true;
+			}
+			return false;
+		}
+
+		protected virtual void WarningPackageIdUpdate(bool warninig)
+		{
+			if (Disabled == false)
+				foreach (var item in this.Endpoints.Where(s=> s.Disabled == false && s.IsEnabled.HasValue && s.IsEnabled.Value).ToList()) {
+					if (item.WarningShow && warninig) {
+						item.PackageId = 10;
+					} else {
+						item.PackageId = item.StableTariffPackageId;
+					}
+				}
 		}
 
 		public virtual bool HasRentalHardWare
