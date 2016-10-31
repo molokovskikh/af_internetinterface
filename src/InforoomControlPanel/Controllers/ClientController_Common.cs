@@ -608,6 +608,9 @@ namespace InforoomControlPanel.Controllers
 		{
 			var warning = endpoint.Client.ShowBalanceWarningPage;
 			endpoint.WarningShow = true;
+			if (!endpoint.Client.Disabled && warning) {
+				endpoint.PackageId = 10;
+			}
 			DbSession.Save(endpoint);
 			if (warning != endpoint.Client.ShowBalanceWarningPage) {
 				endpoint.Client.Appeals.Add(new Appeal(
@@ -628,6 +631,9 @@ namespace InforoomControlPanel.Controllers
 		{
 			var warning = endpoint.Client.ShowBalanceWarningPage;
 			endpoint.WarningShow = false;
+			if (!endpoint.Client.Disabled) {
+				endpoint.PackageId = endpoint.StableTariffPackageId;
+			}
 			DbSession.Save(endpoint);
 			endpoint.Client.Appeals.Add(
 				new Appeal(
