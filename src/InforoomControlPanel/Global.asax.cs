@@ -12,6 +12,8 @@ using System.Web.Security;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
+using log4net;
+using log4net.Config;
 using NHibernate;
 using NHibernate.Event;
 using NHibernate.Linq;
@@ -21,6 +23,8 @@ namespace InforoomControlPanel
 {
 	public class MvcApplication : System.Web.HttpApplication
 	{
+		static ILog Log = LogManager.GetLogger(typeof(MvcApplication));
+
 		private static ISessionFactory _sessionFactory;
 
 		public static ISessionFactory SessionFactory
@@ -40,6 +44,7 @@ namespace InforoomControlPanel
 
 		protected void Application_Start()
 		{
+			XmlConfigurator.Configure();
 			AreaRegistration.RegisterAllAreas();
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			InitializeSessionFactory();
@@ -48,24 +53,17 @@ namespace InforoomControlPanel
 		protected void Application_Error(object sender, EventArgs e)
 		{
 			try {
-				Exception exception = Server.GetLastError();
+				//ThreadContext.Properties["version"] = "Current Version";
+				ThreadContext.Properties["url"] = Request.Url;
+			} catch {
+			}
+			var exception = Server.GetLastError();
 #if DEBUG
-				throw exception;
+			throw exception;
 #endif
-				var notifierMail = ConfigHelper.GetParam("ErrorNotifierMail");
-				var errorMessae = $" Source: {exception.Source}<br/> TargetSite: {exception.TargetSite}<br/> Message: {exception.Message}<br/> InnerException: {exception.InnerException}<br/> StackTrace: {exception.StackTrace}";
-        EmailSender.SendEmail(notifierMail, "[internet] Ошибка на сайте административной панели", errorMessae);
-				Response.Redirect(new UrlHelper(Request.RequestContext).Action("Error", "AdminOpen"));
-			}
-			catch (Exception) {
-				//empty
-			}
+			Log.Error("[internet] Ошибка на сайте административной панели", exception);
+			Response.Redirect(new UrlHelper(Request.RequestContext).Action("Error", "AdminOpen"));
 		}
-
-		//protected void Application_PostAuthenticateRequest(Object sender, EventArgs e)
-		//{
-	
-		//}
 
 		public static void InitializeSessionFactory()
 		{
