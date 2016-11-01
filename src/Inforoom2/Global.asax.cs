@@ -48,8 +48,6 @@ namespace Inforoom2
 			RegisterRoutes(RouteTable.Routes);
 			log4net.Config.XmlConfigurator.Configure();
 			InitializeSessionFactory();
-			//Запускаем проверку списка разрешенных полей, получаемых с формы
-			EntityBinder.EnableBinderProtection = true;
 			SceHelper.StartRun();
 		}
 

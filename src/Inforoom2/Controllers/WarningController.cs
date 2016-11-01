@@ -161,8 +161,15 @@ namespace Inforoom2.Controllers
 		{
 			var warningReason = CurrentClient.GetWarningState();
 			if (warningReason == WarningState.NoWarning) {
-				/////////////////////////////////////////////////////////////////////////////ПРОТЕСТИРОВАТЬ
 				if (DbSession.Transaction.IsActive) {
+					if (CurrentClient.IsPhysicalClient) {
+						if (PlanChanger.IsPlanchangerTimeOff(DbSession, CurrentClient)) {
+#if DEBUG
+							return RedirectToAction("InternetPlanChanger", "Service", new {ip});
+#endif
+							return RedirectToAction("InternetPlanChanger", "Service");
+						}
+					}
 				    CurrentClient.ShowBalanceWarningPage = false;
 				    DbSession.Save(CurrentClient);
                     DbSession.Flush();
@@ -178,7 +185,7 @@ namespace Inforoom2.Controllers
 					return RedirectToAction(warningReason.ToString(), "WarningLaw");
 				}
 #if DEBUG
-			    return RedirectToAction(warningReason.ToString(), "Warning", new {ip });
+				return RedirectToAction(warningReason.ToString(), "Warning", new {ip });
 #endif
 			    return RedirectToAction(warningReason.ToString(), "Warning");
 			}

@@ -15,6 +15,7 @@
 	else {
 		regPhone[0] = regionPhones;
 	}
+    var urlBack = Url.Action(ViewBag.ActionName, ViewBag.ControllerName) ?? "";
 }
 
 <html>
@@ -231,8 +232,8 @@
 				String controller = ViewBag.ControllerName.ToString();
 			}
 			<div class="cityWindow@(ViewBag.CurrentClient == null ? " captcha" : "")" id="CallMeBackWindow">
-
 				@using (@Html.BeginForm("SubmitCallMeBackTicket", "Home", new { actionString = action, controllerString = controller }, FormMethod.Post)) {
+                  <input name="urlBack" type="hidden" value="@urlBack">
 					<div class="whiteblocktext">
 						<p>
 							Наш оператор свяжется с вами в течении дня.

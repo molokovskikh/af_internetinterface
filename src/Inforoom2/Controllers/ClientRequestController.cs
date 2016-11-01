@@ -21,14 +21,17 @@ namespace Inforoom2.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Index([EntityBinder] ClientRequest clientRequest)
+		public ActionResult Index(ClientRequest clientRequest, int cityId)
 		{
-			if (clientRequest.Plan == null) {
+			var newPlan = DbSession.Query<Plan>().FirstOrDefault(s => s.Id == clientRequest.Plan.Id);
+			var region = DbSession.Query<Region>().FirstOrDefault(s => s.Id == cityId);
+			if (clientRequest.Plan.Id == null || region == null) {
 				return RedirectToAction("Index");
 			}
 
 			var tariff = InitRequestPlans().FirstOrDefault(k => k.Id == clientRequest.Plan.Id);
 			clientRequest.Plan = tariff;
+			clientRequest.City = region.Name;
 			clientRequest.ActionDate = clientRequest.RegDate = SystemTime.Now();
 			var errors = ValidationRunner.ValidateDeep(clientRequest);
 
@@ -36,8 +39,6 @@ namespace Inforoom2.Controllers
 				ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
 			}
 			if (errors.Length == 0 && clientRequest.IsContractAccepted) {
-				clientRequest.City =
-					(DbSession.Query<Region>().FirstOrDefault(s => s.Id == Convert.ToInt32(clientRequest.City)) ?? new Region()).Name;
 				clientRequest.Address = GetAddressByYandexData(clientRequest);
 				DbSession.Save(clientRequest);
 				SuccessMessage(string.Format("Спасибо, Ваша заявка принята. Номер заявки {0}", clientRequest.Id));

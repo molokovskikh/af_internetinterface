@@ -35,10 +35,10 @@
 		<div>
 			<div class="personals">Город:</div>
 			@if (currentRegion != null) {
-				@Html.DropDownListExtendedFor(k => clientRequest.City, regions, k => k.Name, i => i.HasChildren() ? new { @title = "есть частный сектор" } : new object { }, new { @Id = "clientRequest_City", @class = "rounded", onclick = "typeWatcher(1000);updatePlanList();" }, currentRegion.Id)
+				@Html.DropDownListExtendedFor(k => clientRequest.City, regions, k => k.Name, i => i.HasChildren() ? new { @title = "есть частный сектор" } : new object { }, new { @Name= "cityId", @Id = "clientRequest_City", @class = "rounded", onclick = "typeWatcher(1000);updatePlanList();" }, currentRegion.Id)
 			}
 			else {
-				@Html.DropDownListExtendedFor(k => clientRequest.City, regions, k => k.Name, i => i.HasChildren() ? new { @title = "есть частный сектор" } : new object { }, new { @Id = "clientRequest_City", @class = "rounded", onclick = "typeWatcher(1000);updatePlanList();" })
+				@Html.DropDownListExtendedFor(k => clientRequest.City, regions, k => k.Name, i => i.HasChildren() ? new { @title = "есть частный сектор" } : new object { }, new { @Name = "cityId", @Id = "clientRequest_City", @class = "rounded", onclick = "typeWatcher(1000);updatePlanList();" })
 			}
 		</div>
 		<div>

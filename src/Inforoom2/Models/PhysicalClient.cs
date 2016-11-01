@@ -127,13 +127,13 @@ namespace Inforoom2.Models
 			}
 		}
 
-		[Property(NotNull = true), NotEmpty(Message = "Введите имя"), Description("Имя")]
+		[Property(NotNull = true), NotNullNotEmpty(Message = "Введите имя"), Description("Имя")]
 		public virtual string Name { get; set; }
 
-		[Property(NotNull = true), NotEmpty(Message = "Введите фамилию"), Description("Фамилия")]
+		[Property(NotNull = true), NotNullNotEmpty(Message = "Введите фамилию"), Description("Фамилия")]
 		public virtual string Surname { get; set; }
 
-		[Property(NotNull = true), NotEmpty(Message = "Введите отчество"), Description("Отчество")]
+		[Property(NotNull = true), NotNullNotEmpty(Message = "Введите отчество"), Description("Отчество")]
 		public virtual string Patronymic { get; set; }
 
 		[DataType(DataType.Date)]
@@ -525,7 +525,27 @@ namespace Inforoom2.Models
 					}
 				}
 			}
-		} 
+		}
+
+		public virtual void UpdateFirstVisitData(PhysicalClient newPhysicalClient)
+		{
+			var oldphysicalClient = this;
+			if (!oldphysicalClient.Client.Lunched || oldphysicalClient.Client.AbsentPassportData()) {
+				oldphysicalClient.Surname = newPhysicalClient.Surname;
+				oldphysicalClient.Name = newPhysicalClient.Name;
+				oldphysicalClient.Patronymic = newPhysicalClient.Patronymic;
+				oldphysicalClient.BirthDate = newPhysicalClient.BirthDate;
+				oldphysicalClient.CertificateType = newPhysicalClient.CertificateType;
+				oldphysicalClient.PassportSeries = newPhysicalClient.PassportSeries;
+				oldphysicalClient.PassportNumber = newPhysicalClient.PassportNumber;
+				oldphysicalClient.CertificateName = newPhysicalClient.CertificateName;
+				oldphysicalClient.PassportResidention = newPhysicalClient.PassportResidention;
+				oldphysicalClient.PassportDate = newPhysicalClient.PassportDate;
+				oldphysicalClient.RegistrationAddress = newPhysicalClient.RegistrationAddress;
+			} else {
+				oldphysicalClient.BirthDate = newPhysicalClient.BirthDate;
+			}
+		}
 
 		public virtual Contact GetClientNotificationEmail(bool confirmed = true)
 		{

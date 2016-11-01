@@ -83,9 +83,10 @@ namespace Inforoom2.Controllers
         }
 
         [HttpPost]
-        public ActionResult ActivateAccountBlocking([EntityBinder] Service service, DateTime? blockingEndDate)
+        public ActionResult ActivateAccountBlocking(Service service, DateTime? blockingEndDate)
         {
-            var client = CurrentClient;
+	        service = DbSession.Query<Service>().First(s => s.Id == service.Id);
+						var client = CurrentClient;
             if (client.CanUseService(service) && blockingEndDate != null)
             {
                 blockingEndDate = blockingEndDate.Value.Date.AddDays(1);
@@ -144,9 +145,10 @@ namespace Inforoom2.Controllers
         }
 
         [HttpPost]
-        public ActionResult ActivateDefferedPayment([EntityBinder] Service service)
-        {
-            var client = CurrentClient;
+        public ActionResult ActivateDefferedPayment(Service service)
+		{
+			service = DbSession.Query<Service>().First(s => s.Id == service.Id);
+			var client = CurrentClient;
             if (client.CanUseService(service))
             {
                 var clientService = new ClientService
@@ -232,9 +234,10 @@ namespace Inforoom2.Controllers
         /// <param name="plan">Тарифный план</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult InternetPlanChanger([EntityBinder] Plan plan)
-        {
-            var client = CurrentClient;
+        public ActionResult InternetPlanChanger(Plan plan)
+		{
+			plan = DbSession.Query<Plan>().First(s => s.Id == plan.Id);
+			var client = CurrentClient;
             if (client == null || client.PhysicalClient == null || client.PhysicalClient.Plan == null)
             {
                 return RedirectToAction("InternetPlanChanger");

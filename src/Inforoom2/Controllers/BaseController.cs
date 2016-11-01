@@ -29,6 +29,7 @@ namespace Inforoom2.Controllers
 		public ISession DbSession;
 		protected static readonly ILog log = LogManager.GetLogger(typeof(BaseController));
 		protected ValidationRunner ValidationRunner;
+		protected bool PreventTransactionCommit { get; set; }
 
 		public BaseController()
 		{
@@ -102,6 +103,11 @@ namespace Inforoom2.Controllers
 		{
 			SetCookie("WarningMessage", message);
 		}
+		
+		protected void DbPreventTransactionCommit()
+		{
+			PreventTransactionCommit = true;
+		}
 
 		public bool HeadersWritten()
 		{
@@ -153,9 +159,14 @@ namespace Inforoom2.Controllers
 			if (session == null)
 				return;
 
-
-			session.SafeTransactionCommit(filterContext.Exception);
-
+			if (PreventTransactionCommit) {
+				if (session.Transaction.IsActive) {
+					session.Transaction.Rollback();
+				}
+			} else {
+				session.SafeTransactionCommit(filterContext.Exception);
+			}
+			
 			//Я не понимаю зачем нужна следующая команда
 			session = CurrentSessionContext.Unbind(MvcApplication.SessionFactory);
 			if (session != null && session.IsOpen)

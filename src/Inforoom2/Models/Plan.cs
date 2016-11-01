@@ -32,7 +32,7 @@ namespace Inforoom2.Models
 
 		public virtual float Speed
 		{
-			get { return PackageSpeed.GetSpeed(); }
+			get { return PackageSpeed?.GetSpeed() ?? 0; }
 			protected set { }
 		}
 
