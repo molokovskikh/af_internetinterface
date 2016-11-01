@@ -44,10 +44,15 @@ namespace InforoomControlPanel
 
 		protected void Application_Start()
 		{
+			try { 
 			XmlConfigurator.Configure();
 			AreaRegistration.RegisterAllAreas();
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			InitializeSessionFactory();
+				} catch(Exception e) {
+					Log.Error("Ошибка при инициализации приложения", e);
+					throw;
+				}
 		}
 
 		protected void Application_Error(object sender, EventArgs e)
