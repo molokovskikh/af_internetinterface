@@ -565,6 +565,9 @@ var timeoutIteration = 0;
 
 //Функция, которая пингует эндпоинт и отображает ответ
 function updateEndpointStatus(id, htmlElement, timeout) {
+	if (id == undefined) {
+		return;
+	}
     if ($(htmlElement).hasClass("ajaxRun") == false) {
         $(htmlElement).addClass("ajaxRun");
         if (!timeout)
