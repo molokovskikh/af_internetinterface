@@ -1455,9 +1455,9 @@ namespace Inforoom2.Components
 		/// <summary>
 		/// Добавление параметра в список параметров фильтрации
 		/// </summary>
-		public void ParamSet(string parametreName, string parametreValue)
+		public void ParamSet(string parametreName, string parametreValue, bool changesAfterResult = false)
 		{
-			if (ParamsProcessed) {
+			if (ParamsProcessed && !changesAfterResult) {
 				throw new Exception(
 					"Невозможно добавить параметр: параметры уже были обработаны фильтром! *Добавление возможно только до метода GetCriteria().");
 			}
@@ -1475,9 +1475,9 @@ namespace Inforoom2.Components
 		/// <summary>
 		/// Удаление параметра из списка параметров фильтрации
 		/// </summary>
-		public void ParamDelete(string parametreName)
+		public void ParamDelete(string parametreName, bool changesAfterResult = false)
 		{
-			if (ParamsProcessed) {
+			if (ParamsProcessed && !changesAfterResult) {
 				throw new Exception(
 					"Невозможно удалить параметр: параметры уже были обработаны фильтром! *Удаление возможно только до метода GetCriteria().");
 			}

@@ -45,7 +45,7 @@ namespace Billing.Test.Integration
 			var startBalance = 0m;
 			using (new SessionScope()) {
 				client.FreeBlockDays = 28;
-				startBalance = client.GetPrice() / client.GetInterval() - 5;
+				startBalance = Math.Round(client.GetPrice()/client.GetInterval() - 5, 2);
 				client.PhysicalClient.Balance = startBalance;
 				client.Save();
 				Assert.That(client.PhysicalClient.Balance, Is.GreaterThan(0));
@@ -55,7 +55,7 @@ namespace Billing.Test.Integration
 				} catch (ServiceActivationException e) {
 				 Assert.IsTrue(e.Message == "Невозможно активировать услугу \"Добровольная блокировка\"");
 				}
-				startBalance = client.GetPrice() / client.GetInterval();
+				startBalance = Math.Round(client.GetPrice() / client.GetInterval());
 				client.PhysicalClient.Balance = startBalance;
 				client.Save();
 
@@ -71,7 +71,7 @@ namespace Billing.Test.Integration
 			using (new SessionScope()) {
 
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
-				Assert.IsTrue(client.Balance == 0);
+				Assert.IsTrue(client.Balance == startBalance - client.UserWriteOffs.First(s=>s.Type == UserWriteOffType.ClientVoluntaryBlock).Sum);
 			}
 
 

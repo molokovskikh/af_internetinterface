@@ -187,7 +187,7 @@
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-sm-2">Выводятся блокирующие сообщения</div>
-			<div class="col-sm-3">@pager.FormFilter(i => i.ShowBalanceWarningPage, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			<div class="col-sm-3">@pager.FormFilter(i => i.Endpoints.First().PackageId, HtmlType.Dropdown, ComparsionType.IsNull, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
 		</div>
 	</div>
 	<div class="panel-body">

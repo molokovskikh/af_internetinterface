@@ -53,10 +53,10 @@
 		</tr>
 		@if (endpoint != null) {
 			<tr>
-				<td>Статус коммутатора</td>
+                <td><a class="blue c-pointer" title="Опросить коммутатор" onclick="return $('.switchstatus.n@(endpoint.Id)').click();">Статус коммутатора<span> ( опросить )</span></a></td>
 				<td style="width: 60%;">
 					@Html.Hidden("endpointId", endpoint.Id)
-					<span class="switchstatus">нет ответа</span>
+					<span class="switchstatus n@(endpoint.Id)">нет ответа</span>
 				</td>
 			</tr>
 		}

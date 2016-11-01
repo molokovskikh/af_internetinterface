@@ -29,6 +29,17 @@ namespace InforoomControlPanel.ReportTemplates
 					pager.ParamDelete("filter.Equal.RentalHardwareList.First().IsActive");
 				}
 			}
+			//Варнинг рассчитывается не стандартно, поэтому нужно вернуть прошлое значение почле выборуи, для коректного отображения
+			var warninig = pager.GetParam("filter.IsNull.Endpoints.First().PackageId");
+			if (warninig != null) {
+				if (warninig == "1") {
+					pager.ParamDelete("filter.IsNull.Endpoints.First().PackageId");
+					pager.ParamSet("filter.Equal.Endpoints.First().PackageId", "10");
+				} else {
+					pager.ParamDelete("filter.IsNull.Endpoints.First().PackageId");
+					pager.ParamSet("filter.NotEqual.Endpoints.First().PackageId", "10");
+				}
+			}
 			if (string.IsNullOrEmpty(pager.GetParam("orderBy")))
 				pager.SetOrderBy("Id", OrderingDirection.Desc);
 			if (dateNecessary && string.IsNullOrEmpty(pager.GetParam("filter.GreaterOrEqueal.CreationDate")) &&
@@ -135,6 +146,16 @@ namespace InforoomControlPanel.ReportTemplates
                 //выгрузка в файл
                 return pager.ExportToExcelFile();
             }
+			//возвращаем исходное значение для варнинга
+			if (warninig != null) {
+				if (warninig == "1") {
+					pager.ParamDelete("filter.Equal.Endpoints.First().PackageId", true);
+					pager.ParamSet("filter.IsNull.Endpoints.First().PackageId", warninig, true);
+				} else {
+					pager.ParamDelete("filter.NotEqual.Endpoints.First().PackageId", true);
+					pager.ParamSet("filter.IsNull.Endpoints.First().PackageId", warninig, true);
+				}
+			}
 			controller.ViewBag.Pager = pager;
 			return null;
 		}
