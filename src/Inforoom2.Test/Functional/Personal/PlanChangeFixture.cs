@@ -87,7 +87,8 @@ namespace Inforoom2.Test.Functional.Personal
 		{
 			PlanChangerFixtureOn(0);
 			LoginForClient(CurrentClient);
-			Open("/");
+			Open("Warning?ip=" + CurrentClient.Endpoints.First(s => !s.Disabled).Ip);
+			WaitForText("НЕОБХОДИМО СМЕНИТЬ ТАРИФ");
 			browser.FindElementByCssSelector("#changeTariffButtonCheap").Click();
 			browser.FindElementByCssSelector(".window .click.ok").Click();
 			// клиент должен перейти на дешелый тириф

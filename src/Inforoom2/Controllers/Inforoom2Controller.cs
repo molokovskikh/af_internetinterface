@@ -172,19 +172,7 @@ namespace Inforoom2.Controllers
 				}
 			}
 		}
-
-		protected override void OnResultExecuted(ResultExecutedContext filterContext)
-		{
-			base.OnResultExecuted(filterContext);
-
-			//по возможности (при совпадении условий), запускаем проверку выходного html кода 
-			var snifferForBinder = new HtmlSniffer(this);
-			//создание списка методов, вызываемых при возможности радактирования html-документа
-			HtmlSniffer.GetChangedHtml snifferMethodsList = EntityBinder.HtmlProcessing;
-			//попытка редактирования html-документа 
-			snifferForBinder.TryActivate(filterContext.HttpContext, snifferMethodsList);
-		}
-
+		
 		public void TrigerServices(ActionExecutingContext filterContext)
 		{
 			if (CurrentClient != null) {
@@ -321,101 +309,6 @@ namespace Inforoom2.Controllers
 			}
 		}
 
-		/// <summary>
-		/// формирование капчи 
-		/// </summary> 
-		/// <param name="Id">для мены капчи</param>
-		public void ProcessCallMeBackTicketCaptcha(int Id)
-		{
-			// формирование значения капчи, сохранение его в сессии
-			var sub = new Random().Next(1000, 9999).ToString();
-			HttpContext.Session.Add("captcha", sub);
-			// создание коллекции шрифтов
-			var pfc = new PrivateFontCollection();
-			// формирвоание изображения капчи
-			var captchImage = DrawCaptchaText(sub,
-				new Font(LoadFontFamily(System.IO.File.ReadAllBytes(Server.MapPath("~") + "/Fonts/captcha.ttf"),
-					out pfc), 24, FontStyle.Bold), Color.Tomato, Color.White);
-			//передача пользователю изображения капчи
-			var ms = new MemoryStream();
-			captchImage.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
-			HttpContext.Response.ContentType = "image/Jpeg";
-			HttpContext.Response.BinaryWrite(ms.ToArray());
-		}
-
-		/// <summary>
-		/// Изображение для капчи
-		/// </summary> 
-		private Image DrawCaptchaText(String text, Font font, Color textColor, Color backColor)
-		{
-			//first, create a dummy bitmap just to get a graphics object
-			Image img = new Bitmap(1, 1);
-			Graphics drawing = Graphics.FromImage(img);
-
-			//measure the string to see how big the image needs to be
-			SizeF textSize = drawing.MeasureString(text, font);
-
-			//free up the dummy image and old graphics object
-			img.Dispose();
-			drawing.Dispose();
-
-			//create a new image of the right size
-			img = new Bitmap((int)textSize.Width, (int)textSize.Height);
-
-			drawing = Graphics.FromImage(img);
-
-			//paint the background
-			drawing.Clear(backColor);
-
-			//create a brush for the text
-			Brush textBrush = new SolidBrush(textColor);
-
-			drawing.DrawString(text, font, textBrush, 0, 0);
-
-			drawing.Save();
-
-			textBrush.Dispose();
-			drawing.Dispose();
-
-			return img;
-		}
-
-		private void ProcessCallMeBackTicket()
-		{
-			var binder = new EntityBinder(new string[] { }, new string[] { });
-			CallMeBackTicket callMeBackTicket;
-			try {
-				callMeBackTicket = (CallMeBackTicket)binder.MapModel(Request, typeof(CallMeBackTicket));
-			}
-			catch (Exception e) {
-				return;
-			}
-			ViewBag.CallMeBackTicket = callMeBackTicket;
-			var filledCapcha = HttpContext.Session["captcha"] as string;
-			callMeBackTicket.SetConfirmCaptcha(filledCapcha);
-			callMeBackTicket.Client = CurrentClient;
-
-			var errors = ValidationRunner.Validate(callMeBackTicket);
-			if (CurrentClient != null) {
-				errors.RemoveErrors("CallMeBackTicket", "Captcha");
-			}
-			if (errors.Length == 0) {
-				DbSession.Save(callMeBackTicket);
-				if (callMeBackTicket.Client != null) {
-					var appeal = new Appeal("Клиент создал запрос на обратный звонок № " + callMeBackTicket.Id,
-						callMeBackTicket.Client, AppealType.FeedBack) {
-							Employee = GetCurrentEmployee()
-						};
-					DbSession.Save(appeal);
-				}
-				ViewBag.CallMeBackTicket = new CallMeBackTicket();
-				SuccessMessage("Заявка отправлена. В течении дня вам перезвонят.");
-				return;
-			}
-			if (GetJavascriptParam("CallMeBack") == null)
-				AddJavascriptParam("CallMeBack", "1");
-		}
-
 		private void ProcessRegionPanel()
 		{
 			var cookieCity = GetCookie("userCity");
@@ -490,13 +383,7 @@ namespace Inforoom2.Controllers
 				return null;
 			return geoAnswer.City;
 		}
-
-		public void SubmitCallMeBackTicket(string actionString, string controllerString)
-		{
-			ProcessCallMeBackTicket();
-			ForwardToAction(controllerString, actionString, new object[0]);
-		}
-
+		
 		public Client GetCurrentClient()
 		{
 			return CurrentClient;

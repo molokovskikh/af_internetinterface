@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Text;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using Inforoom2.Components;
 using Inforoom2.Models;
 using NHibernate.Linq;
 
@@ -88,5 +92,97 @@ namespace Inforoom2.Controllers
 		{
 			return RedirectToActionPermanent("Index");
 		}
+
+
+
+		/// <summary>
+		/// формирование капчи 
+		/// </summary> 
+		/// <param name="Id">для мены капчи</param>
+		public void ProcessCallMeBackTicketCaptcha(int Id)
+		{
+			// формирование значения капчи, сохранение его в сессии
+			var sub = new Random().Next(1000, 9999).ToString();
+			HttpContext.Session.Add("captcha", sub);
+			// создание коллекции шрифтов
+			var pfc = new PrivateFontCollection();
+			// формирвоание изображения капчи
+			var captchImage = DrawCaptchaText(sub,
+				new Font(LoadFontFamily(System.IO.File.ReadAllBytes(Server.MapPath("~") + "/Fonts/captcha.ttf"),
+					out pfc), 24, FontStyle.Bold), Color.Tomato, Color.White);
+			//передача пользователю изображения капчи
+			var ms = new MemoryStream();
+			captchImage.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+			HttpContext.Response.ContentType = "image/Jpeg";
+			HttpContext.Response.BinaryWrite(ms.ToArray());
+		}
+
+		/// <summary>
+		/// Изображение для капчи
+		/// </summary> 
+		private Image DrawCaptchaText(String text, Font font, Color textColor, Color backColor)
+		{
+			//first, create a dummy bitmap just to get a graphics object
+			Image img = new Bitmap(1, 1);
+			Graphics drawing = Graphics.FromImage(img);
+
+			//measure the string to see how big the image needs to be
+			SizeF textSize = drawing.MeasureString(text, font);
+
+			//free up the dummy image and old graphics object
+			img.Dispose();
+			drawing.Dispose();
+
+			//create a new image of the right size
+			img = new Bitmap((int)textSize.Width, (int)textSize.Height);
+
+			drawing = Graphics.FromImage(img);
+
+			//paint the background
+			drawing.Clear(backColor);
+
+			//create a brush for the text
+			Brush textBrush = new SolidBrush(textColor);
+
+			drawing.DrawString(text, font, textBrush, 0, 0);
+
+			drawing.Save();
+
+			textBrush.Dispose();
+			drawing.Dispose();
+
+			return img;
+		}
+
+		public ActionResult SubmitCallMeBackTicket(CallMeBackTicket callMeBackTicket, string urlBack)
+		{
+			ViewBag.CallMeBackTicket = callMeBackTicket;
+			var filledCapcha = HttpContext.Session["captcha"] as string;
+			callMeBackTicket.SetConfirmCaptcha(filledCapcha);
+			callMeBackTicket.Client = CurrentClient;
+
+			var errors = ValidationRunner.Validate(callMeBackTicket);
+			if (CurrentClient != null) {
+				errors.RemoveErrors("CallMeBackTicket", "Captcha");
+			}
+			if (errors.Length == 0) {
+				DbSession.Save(callMeBackTicket);
+				if (callMeBackTicket.Client != null) {
+					var appeal = new Appeal("Клиент создал запрос на обратный звонок № " + callMeBackTicket.Id,
+						callMeBackTicket.Client, AppealType.FeedBack) {
+							Employee = GetCurrentEmployee()
+						};
+					DbSession.Save(appeal);
+				}
+				ViewBag.CallMeBackTicket = new CallMeBackTicket();
+				SuccessMessage("Заявка отправлена. В течении дня вам перезвонят.");
+				return Redirect(urlBack);
+			}
+			ErrorMessage($"Заявка не была отправлена: {errors.First().Message} ");
+			if (GetJavascriptParam("CallMeBack") == null)
+				AddJavascriptParam("CallMeBack", "1");
+			return Redirect(urlBack);
+		}
+
 	}
 }

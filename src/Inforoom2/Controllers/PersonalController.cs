@@ -27,6 +27,7 @@ using StatusType = Inforoom2.Models.StatusType;
 using UserWriteOff = Inforoom2.Models.UserWriteOff;
 using WriteOff = Inforoom2.Models.WriteOff;
 using System.Configuration;
+using NHibernate.Properties;
 
 namespace Inforoom2.Controllers
 {
@@ -59,11 +60,20 @@ namespace Inforoom2.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult FirstVisit([EntityBinder] PhysicalClient physicalClient)
+		public ActionResult FirstVisit(PhysicalClient physicalClient)
 		{
-			var errors = ValidationRunner.Validate(physicalClient);
+			var oldphysicalClient = DbSession.Query<PhysicalClient>().First(s => s.Id == physicalClient.Id);
+
+			if (oldphysicalClient.Client.Id != CurrentClient.Id) {
+				ErrorMessage("Попытка изменить чужие данные.");
+				return RedirectToAction("Index", "Home");
+			}
+
+			oldphysicalClient.UpdateFirstVisitData(physicalClient);
+
+		var errors = ValidationRunner.Validate(oldphysicalClient);
 			if (errors.Length == 0) {
-				DbSession.Save(physicalClient);
+				DbSession.Save(oldphysicalClient);
 				var ip = Request.UserHostAddress;
 				var address = IPAddress.Parse(ip);
 #if DEBUG
@@ -77,10 +87,10 @@ namespace Inforoom2.Controllers
 					if (currentEnpoint != null) {
 						ErrorMessage("Ошибка: точка подключения не задана!");
 						var email = ConfigurationManager.AppSettings["ErrorNotifierMail"];
-						var href = $"<a href='http://stat.ivrn.net/cp/Client/{(physicalClient.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal")}/" + physicalClient.Client.Id + $"'>{physicalClient.Client.Id}</a>";
+						var href = $"<a href='http://stat.ivrn.net/cp/Client/{(oldphysicalClient.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal")}/" + oldphysicalClient.Client.Id + $"'>{oldphysicalClient.Client.Id}</a>";
 						//отправка сообщения об ошибки
 						EmailSender.SendEmail(new string[] { email },
-							"Ошибка в  Inforoom2 при автоматическом создании точки подключения по ЛС " + physicalClient.Client.Id,
+							"Ошибка в  Inforoom2 при автоматическом создании точки подключения по ЛС " + oldphysicalClient.Client.Id,
 							$"При создании точки подключения для клиента {href} выяснилось, <br/>что на порту коммутатора уже находится точка подключения {currentEnpoint.Id}");
 					}
 				}
@@ -137,7 +147,8 @@ namespace Inforoom2.Controllers
 				DbSession.Save(CurrentClient);
 				return RedirectToAction("Profile");
 			}
-			ViewBag.PhysicalClient = physicalClient;
+			ViewBag.PhysicalClient = oldphysicalClient;
+			DbPreventTransactionCommit();
 			return View();
 		}
 
@@ -445,6 +456,7 @@ namespace Inforoom2.Controllers
 		[HttpPost]
 		public ActionResult ChangePlan([EntityBinder] Plan plan)
 		{
+			plan = DbSession.Query<Plan>().First(s => s.Id == plan.Id);
 			var client = CurrentClient;
 			InitPlans(client);
 			ViewBag.Client = client;

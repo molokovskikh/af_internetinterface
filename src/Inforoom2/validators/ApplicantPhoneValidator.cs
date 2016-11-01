@@ -9,6 +9,9 @@ namespace Inforoom2.validators
 	{  
 		protected override void Run(object value)
 		{
+			if (value == null) {
+				AddError("Введите номер телефона");
+			}
 			if (value is string) {
 				var telephone = value as string; 
 				// проверка NotEmpty
