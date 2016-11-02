@@ -25,7 +25,9 @@ namespace InternetInterface.Models.Services
 
 			foreach (var changer in planChangerList) {
 				//поиск целевого тарифа
-				if (changer.TargetPlan == clientService.Client.PhysicalClient.Tariff.Id) {
+				if (changer.TargetPlan == clientService.Client.PhysicalClient.Tariff.Id
+					&& clientService.Client.Disabled == false
+					&& clientService.Client.Endpoints.Count > 0) {
 					// добавление услуги
 					if (!clientService.Client.ClientServices.Any(s => s.Service.HumanName == "PlanChanger")) {
 						var planChanger = session.Query<Service>().FirstOrDefault(s => s.HumanName == "PlanChanger");
