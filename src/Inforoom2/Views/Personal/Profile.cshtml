@@ -5,6 +5,7 @@
 	ViewBag.Title = "Личный кабинет: Профиль";
 	PhysicalClient client = ViewBag.CurrentClient.PhysicalClient;
     var banner = (Banner) ViewBag.BannerForPage;
+	var urlPath = (string)ViewBag.pathFromConfigURL;
 }
 <h2 class="heading">@ViewBag.Title</h2>
 @{ Html.RenderPartial("Menu"); }
@@ -60,7 +61,7 @@
 <div class="actions">
     @if (banner != null) {
     <a href="@banner.Url">
-        <div class="action"><img src="@banner.ImagePath">
+        <div class="action"><img src="@urlPath@banner.ImagePath">
         </div></a>
      <div class="actiontext">
         <a href="@banner.Url">
