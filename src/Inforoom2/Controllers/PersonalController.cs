@@ -193,7 +193,11 @@ namespace Inforoom2.Controllers
 
 			var bannerList = DbSession.Query<Banner>().Where(s => s.Enabled
 				&& s.Type == BannerType.ForClientPage).OrderBy(s => s.Region).ToList();
-
+			var pathFromConfigUrl = System.Web.Configuration.WebConfigurationManager.AppSettings["inforoom2UploadUrl"];
+			if (pathFromConfigUrl == null) {
+				throw new Exception("Значение 'inforoom2UploadUrl' отсуствует в Global.config!");
+			}
+			ViewBag.pathFromConfigURL = pathFromConfigUrl;
 			ViewBag.BannerForPage = bannerList.FirstOrDefault(s => s.Region != null && s.Region.Id == CurrentClient.GetRegion().Id)
 				?? bannerList.FirstOrDefault(s => s.Region == null);
 

@@ -31,7 +31,7 @@ namespace InforoomControlPanel.ReportTemplates
 			}
 			//Варнинг рассчитывается не стандартно, поэтому нужно вернуть прошлое значение почле выборуи, для коректного отображения
 			var warninig = pager.GetParam("filter.IsNull.Endpoints.First().PackageId");
-			if (warninig != null) {
+			if (!string.IsNullOrEmpty(warninig)) {
 				if (warninig == "1") {
 					pager.ParamDelete("filter.IsNull.Endpoints.First().PackageId");
 					pager.ParamSet("filter.Equal.Endpoints.First().PackageId", "10");
@@ -147,7 +147,7 @@ namespace InforoomControlPanel.ReportTemplates
                 return pager.ExportToExcelFile();
             }
 			//возвращаем исходное значение для варнинга
-			if (warninig != null) {
+			if (!string.IsNullOrEmpty(warninig)) {
 				if (warninig == "1") {
 					pager.ParamDelete("filter.Equal.Endpoints.First().PackageId", true);
 					pager.ParamSet("filter.IsNull.Endpoints.First().PackageId", warninig, true);
