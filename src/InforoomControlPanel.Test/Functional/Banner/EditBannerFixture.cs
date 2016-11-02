@@ -33,6 +33,12 @@ namespace InforoomControlPanel.Test.Functional.Banner
             button.Click();
             browser.FindElementByCssSelector("input[id=banner_Url]").Clear();
             browser.FindElementByCssSelector("input[id=banner_Url]").SendKeys("Url-баннера");
+						var name = "NewName";
+            browser.FindElementByCssSelector("input[id=banner_Name]").Clear();
+            browser.FindElementByCssSelector("input[id=banner_Name]").SendKeys(name);
+			
+            Css("#banner_Type").SelectByText("Страница клиента");
+
             Css("#RegionDropDown").SelectByText("Белгород");
             browser.FindElementByCssSelector("input[id=isEnabled]").Click();
             browser.FindElementByCssSelector(".btn-green").Click();
@@ -44,6 +50,8 @@ namespace InforoomControlPanel.Test.Functional.Banner
             Assert.That(bannerEdit.Url, Is.EqualTo("Url-баннера"), "Url-баннера должно измениться и в базе данных");
             Assert.That(bannerEdit.Enabled, Is.False, "Метка о показе баннера должна измениться и в базе данных");
             Assert.That(bannerEdit.Region.Name, Is.EqualTo("Белгород"), "Регион у баннера должен измениться и в базе данных");
+            Assert.That(bannerEdit.Name, Is.EqualTo(name), "Наименование баннера не соответствует должному");
+            Assert.That(bannerEdit.Type, Is.EqualTo(BannerType.ForClientPage), "Тип баннера не соответствует должному");
         }
     }
 }

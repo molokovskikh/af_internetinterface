@@ -4,6 +4,7 @@
 @{
 	ViewBag.Title = "Личный кабинет: Профиль";
 	PhysicalClient client = ViewBag.CurrentClient.PhysicalClient;
+    var banner = (Banner) ViewBag.BannerForPage;
 }
 <h2 class="heading">@ViewBag.Title</h2>
 @{ Html.RenderPartial("Menu"); }
@@ -57,15 +58,18 @@
 	</div>
 </div>
 <div class="actions">
-	<a href="/Personal/Plans"><div class="action"><img src="/images/actionfolk.png?v2"></div></a>
-	<div class="actiontext">
-		<a href="/Personal/Plans">
-			<h3>Тарифный план "Народный" </h3>
-		</a>
-		<p>
-		</p>
-
-	</div>
+    @if (banner != null) {
+    <a href="@banner.Url">
+        <div class="action"><img src="@banner.ImagePath">
+        </div></a>
+     <div class="actiontext">
+        <a href="@banner.Url">
+            <h3>@banner.Name</h3>
+        </a>
+        <p>
+        </p>
+    </div>
+    }
 </div>
 
 
