@@ -35,7 +35,7 @@
 					<a target="_blank" href="@Url.Action("EditSwitch", "Switch", new { endpoint.Switch.Id })"> Коммутатор</a>
 				</td>
 				<td>
-					<a target="_blank" href="@Url.Action("ClientEndPointState", "Switch", new { id = endpoint.Id })">@(endpoint.Switch.Name + " (" + endpoint.Switch.Ip.ToString() + ")")</a>
+					<a target="_blank" sw="@(endpoint.Switch.Id)" href="@Url.Action("ClientEndPointState", "Switch", new { id = endpoint.Id })">@(endpoint.Switch.Name + " (" + endpoint.Switch.Ip.ToString() + ")")</a>
 				</td>
 			</tr>
 		}
@@ -56,7 +56,7 @@
                 <td><a class="blue c-pointer" title="Опросить коммутатор" onclick="return $('.switchstatus.n@(endpoint.Id)').click();">Статус коммутатора<span> ( опросить )</span></a></td>
 				<td style="width: 60%;">
 					@Html.Hidden("endpointId", endpoint.Id)
-					<span class="switchstatus n@(endpoint.Id)">нет ответа</span>
+					<span class="switchstatus n@(endpoint.Id)" swId="@(endpoint.Switch != null ? endpoint.Switch.Id : 0)">нет ответа</span>
 				</td>
 			</tr>
 		}

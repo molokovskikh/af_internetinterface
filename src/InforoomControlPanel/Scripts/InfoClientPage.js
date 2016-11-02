@@ -580,14 +580,21 @@ function updateEndpointStatus(id, htmlElement, timeout) {
                 success: function(data) {
                     $(htmlElement).removeClass("ajaxRun");
                     $(htmlElement).html(data);
+	                if (data.indexOf("ничего не ответил") != -1) {
+	                	$("[sw='" + $(htmlElement).attr("swId") + "']").removeClass("red").addClass("red");
+	                } else {
+	                	$("[sw='" + $(htmlElement).attr("swId") + "']").removeClass("red");
+	                }
                 },
                 error: function(data) {
                     $(htmlElement).removeClass("ajaxRun");
                     $(htmlElement).html("<b class='undefined'>Не запустить проверку коммутатора. Пробую снова.</b>");
+                    $("[sw='" + $(htmlElement).attr("swId") + "']").removeClass("red").addClass("red");
                 }
             });
         } catch (e) {
         	$(htmlElement).removeClass("ajaxRun");
+        	$("[sw='" + $(htmlElement).attr("swId") + "']").removeClass("red").addClass("red");
         }
     }
 }
