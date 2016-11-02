@@ -93,7 +93,7 @@ namespace InforoomControlPanel.Controllers
 			if (errors.Length == 0 && imagePath != "") {
 				banner.ImagePath = "Images/" + NewFileName;
 				if (banner.Enabled) {
-					var changeEnabled = DbSession.Query<Banner>().Where(s => s.Region == banner.Region).ToList();
+					var changeEnabled = DbSession.Query<Banner>().Where(s => s.Region == banner.Region && s.Type == banner.Type).ToList();
 					foreach (var item in changeEnabled) {
 						if (item != banner) {
 							item.Enabled = false;
@@ -181,7 +181,7 @@ namespace InforoomControlPanel.Controllers
 					banner.ImagePath = "Images/" + NewFileName;
 				}
 				if (banner.Enabled) {
-					var changeEnabled = DbSession.Query<Banner>().Where(s => s.Region == banner.Region).ToList();
+					var changeEnabled = DbSession.Query<Banner>().Where(s => s.Region == banner.Region && s.Type == banner.Type).ToList();
 					foreach (var item in changeEnabled) {
 						if (item != banner) {
 							item.Enabled = false;
