@@ -21,8 +21,10 @@
 		<table id="table-2" class="table table-bordered table-striped datatable dataTable no-footer" role="grid" aria-describedby="table-2_info">
 			<thead>
 				<tr role="row">
+                    <th class="sorting" tabindex="0" aria-controls="table-2">Регион</th>
 					<th class="sorting" tabindex="0" aria-controls="table-2">Изображение</th>
-					<th class="sorting" tabindex="0" aria-controls="table-2">Регион</th>
+                    <th class="sorting" tabindex="0" aria-controls="table-2">Наименование</th>
+                    <th class="sorting" tabindex="0" aria-controls="table-2">Расположение</th>
 					<th class="sorting" tabindex="0" aria-controls="table-2">Ссылка</th>
 					<th class="sorting" tabindex="0" aria-controls="table-2">Опубликован</th>
 					<th class="sorting col-sm-3" style="min-width: 220px;" tabindex="0" aria-controls="table-2">Действие</th>
@@ -32,8 +34,10 @@
 			<tbody>
 				@foreach (var item in banners) {
 					<tr role="row" class="odd">
+                        <td>@(item.Region!=null? item.Region.Name:"Все")</td>
 						<td class ="col-sm-3 col-md-3"> <img src="@urlPath@item.ImagePath" style="max-height: 90px;" /> </td>
-						<td>@item.Region.Name</td>
+						<td>@item.Name</td>
+                        <td>@item.Type.GetDescription()</td>
 						<td><a href="@item.Url">@item.Url</a></td>
 						<td>@Html.CheckBoxFor(modelItem => item.Enabled, new { @disabled = "disabled", @checked = "checked" })</td>
 						<td>

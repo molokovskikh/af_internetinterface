@@ -46,8 +46,10 @@ namespace Inforoom2.Controllers
 
 			ViewBag.SlideList = DbSession.Query<Slide>().Where(k => k.Enabled && (k.Region == CurrentRegion
 				|| k.Region == null)).OrderByDescending(n => n.Priority).ToList();
-			ViewBag.Banner = DbSession.Query<Banner>().FirstOrDefault(k => k.Enabled 
-				&& (k.Region == CurrentRegion || k.Region == null))??new Banner();  
+			var bannerList = DbSession.Query<Banner>().Where(k => k.Enabled && k.Type == BannerType.ForMainPage).ToList();
+
+			ViewBag.Banner = bannerList.FirstOrDefault(s => s.Region != null && CurrentRegion != null &&
+				s.Region.Id == CurrentRegion.Id)?? bannerList.FirstOrDefault(s => s.Region == null) ?? new Banner();  
 			 
 			return View();
 		}

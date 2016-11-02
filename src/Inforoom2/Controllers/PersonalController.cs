@@ -190,6 +190,13 @@ namespace Inforoom2.Controllers
 			InitServices();
 			ViewBag.Title = "Личный кабинет";
 			ViewBag.CurrentClient = CurrentClient;
+
+			var bannerList = DbSession.Query<Banner>().Where(s => s.Enabled
+				&& s.Type == BannerType.ForClientPage).OrderBy(s => s.Region).ToList();
+
+			ViewBag.BannerForPage = bannerList.FirstOrDefault(s => s.Region != null && s.Region.Id == CurrentClient.GetRegion().Id)
+				?? bannerList.FirstOrDefault(s => s.Region == null);
+
 			return View();
 		}
 

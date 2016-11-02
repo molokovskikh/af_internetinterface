@@ -25,13 +25,27 @@ namespace Inforoom2.Models
 		[Property, Description("Путь к изображению слайда")]
 		public virtual string ImagePath { get; set; }
 
+		[Property]
+		public virtual string Name { get; set; }
+
 		[Property, Description("Время последнего изменения слайда")]
 		public virtual DateTime LastEdit { get; set; }
+
+		[Property(Column = "Target")]
+		public virtual BannerType Type { get; set; }
 
 		[ManyToOne(Column = "Partner", Cascade = "save-update"), Description("Пользователь, вносивший изменения")]
 		public virtual Employee Partner { get; set; }
 
 		[Property, Description("Маркер, отражающий, показывается ли слайд пользователям")]
 		public virtual bool Enabled { get; set; }
+	}
+
+	public enum BannerType
+	{
+		[Description("Главная страница")]
+		ForMainPage = 0,
+		[Description("Страница клиента")]
+		ForClientPage = 1
 	}
 }

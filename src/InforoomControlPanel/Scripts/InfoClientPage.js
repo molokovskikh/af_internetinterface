@@ -748,6 +748,7 @@ $(function() {
 	        $(this).click(function() {
 		        updateEndpointStatus(id, this);
 	        });
+	        updateEndpointStatus(id, this);
 	    }
     });
     phantomFor();

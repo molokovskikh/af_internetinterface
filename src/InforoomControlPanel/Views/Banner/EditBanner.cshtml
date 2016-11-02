@@ -16,8 +16,14 @@
 		<div class="col-md-6">
 			@using (@Html.BeginForm("UpdateBanner", "Banner", FormMethod.Post, new { @class = "form-horizontal form-groups-bordered", EncType = "multipart/form-data" }))
    {
+            <div class="form-group">
+                @Html.HiddenFor(model => banner.Id)
+                <label class="col-sm-3 control-label">Наименование</label>
+                <div class="col-sm-5">
+                    @Html.TextBoxFor(model => banner.Name, new { @class = "form-control" })
+                </div>
+            </div>
 				<div class="form-group">
-					@Html.HiddenFor(model => banner.Id)
 					<label class="col-sm-3 control-label">Ссылка</label>
 					<div class="col-sm-5">
 						@Html.TextBoxFor(model => banner.Url, new { @class = "form-control" }) 
@@ -47,10 +53,16 @@
 						<input type="file" name="uploadedFile" class="file" />
 					</div>
 				</div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Размещение</label>
+                    <div class="col-sm-5">
+                        @Html.DropDownEnumListFor(i => banner.Type, new { @class = "form-control" })
+                    </div>
+                </div>
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Регион</label>
 					<div class="col-sm-5">
-						@Html.DropDownListExtendedFor(i => banner.Region, regionList, obj => obj.Name, null, new { @class = "form-control" }, currentRegion) 
+						@Html.DropDownListExtendedFor(i => banner.Region, regionList, obj => obj.Name, null, new { @class = "form-control" }, currentRegion, true) 
 					</div>
 				</div>
 				<div class="form-group">
