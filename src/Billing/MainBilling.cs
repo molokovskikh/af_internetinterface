@@ -559,29 +559,16 @@ namespace Billing
 		/// <param name="session"></param>
 		private void PhysicalClientPaymentWithBlock(Client client, ISession session)
 		{
-			var currentDate = SystemTime.Now().Date;
 			var writeoffs = client.UserWriteOffs.Where(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
-				&& w.Date >= currentDate && w.Date < currentDate.AddDays(1) && !w.BillingAccount && w.Ignore);
+				&& !w.BillingAccount && w.Ignore);
 
 			foreach (var userWriteOff in writeoffs) {
-				var internetServiceId = Service.GetByType(typeof (Internet));
-				var voluntaryBlockinServiceId = Service.GetByType(typeof (VoluntaryBlockin));
-
-				var clientStillHasBlock = client.ClientServices.Any(s => s.Service.Id == voluntaryBlockinServiceId.Id
-					&& s.IsActivated && s.BeginWorkDate.HasValue && s.BeginWorkDate.Value.Date == currentDate);
-
-				var clientHadInternetToday = client.ClientServices.Any(s => s.Service.Id == internetServiceId.Id
-					&& s.EndWorkDate.HasValue && s.EndWorkDate.Value.Date == currentDate);
-
-				if (clientStillHasBlock && clientHadInternetToday) {
-					client.PhysicalClient.WriteOff(userWriteOff.Sum);
-					userWriteOff.BillingAccount = true;
-					userWriteOff.Ignore = false;
-					session.Save(userWriteOff);
-					var comment = string.Format("Абонентская плата за {0} из-за добровольной разблокировки клиента",
-						DateTime.Now.ToShortDateString());
-					session.Save(client.PhysicalClient);
-				} else session.Delete(userWriteOff);
+				client.PhysicalClient.WriteOff(userWriteOff.Sum);
+				userWriteOff.Ignore = false;
+				userWriteOff.BillingAccount = true;
+				session.Save(userWriteOff);
+				session.Save(client.PhysicalClient);
+				session.Save(client);
 			}
 		}
 

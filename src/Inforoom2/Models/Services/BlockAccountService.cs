@@ -4,6 +4,7 @@ using System.Linq;
 using Common.Tools;
 using NHibernate;
 using NHibernate.Mapping.Attributes;
+using NPOI.SS.Formula.Functions;
 
 namespace Inforoom2.Models.Services
 {
@@ -75,7 +76,7 @@ namespace Inforoom2.Models.Services
 			var now = SystemTime.Now();
 			//если сегодня у пользователя нет списаний с соответствующего типа
 			if (assignedService.BeginDate.Value.Date == now.Date) {
-				if (!client.UserWriteOffs.Any(s => s.Date.Date == now.Date && s.Type == UserWriteOffType.ClientVoluntaryBlock)) {
+				if (!client.UserWriteOffs.Any(s => s.Date.Date == now.Date && s.Type == UserWriteOffType.ClientVoluntaryBlock && !s.IsProcessedByBilling)) {
 					//производится списание абон платы
 					var comment = string.Format("Абонентская плата за {0} из-за добровольной блокировки клиента",
 						now.ToShortDateString());
@@ -113,30 +114,27 @@ namespace Inforoom2.Models.Services
 
 		public override void Deactivate(ClientService assignedService, ISession session)
 		{
+			var now = SystemTime.Now();
 			var client = assignedService.Client;
 			client.DebtDays = 0;
 			client.ShowBalanceWarningPage = client.PhysicalClient.Balance < 0;
 			client.SetStatus(client.Balance > 0
 				? Status.Get(StatusType.Worked, session)
 				: Status.Get(StatusType.NoWorked, session));
-			client.RatedPeriodDate = SystemTime.Now();
+			client.RatedPeriodDate = now;
 
-			if (!client.PaidDay && assignedService.IsActivated) {
-				assignedService.IsActivated = false;
+			var internetServiceId = Service.GetIdByType(typeof(Internet));
+			
+			var clientHadInternetToday = client.ClientServices.Any(s => s.Service.Id == internetServiceId
+				&& s.EndDate.HasValue && s.EndDate.Value.Date == now.Date) 
+				|| client.ClientServices.Any(s => s.Service.Id == internetServiceId && s.IsActivated);
+			
+			var writeoff = client.UserWriteOffs.FirstOrDefault(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
+				&& !w.IsProcessedByBilling && w.Ignore && w.Date.Date == now.Date);
 
-				var clientServicesToReActivate = client.ClientServices.Where(s => s.Service.Id != Id);
-				foreach (
-					var clientService in
-						clientServicesToReActivate.Where(clientService => clientService.Service.IsActivableFor(client))) clientService.Service.Activate(clientService, session);
-
-				var sum = client.GetSumForRegularWriteOff();
-				if (sum > 0) {
-					client.PaidDay = true;
-					var comment = string.Format("Абонентская плата за {0} из-за добровольной разблокировки клиента",
-						SystemTime.Now().ToShortDateString());
-
-					session.Save(new UserWriteOff(client, sum, comment));
-				}
+			if (!clientHadInternetToday && writeoff != null) {
+				writeoff.IsProcessedByBilling = true;
+				session.Save(writeoff);
 			}
 
 			client.ClientServices.Remove(assignedService);
