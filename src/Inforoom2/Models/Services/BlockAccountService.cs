@@ -132,7 +132,7 @@ namespace Inforoom2.Models.Services
 			var writeoff = client.UserWriteOffs.FirstOrDefault(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
 				&& !w.IsProcessedByBilling && w.Ignore && w.Date.Date == now.Date);
 
-			if (!clientHadInternetToday && writeoff != null) {
+			if (clientHadInternetToday && writeoff != null) {
 				writeoff.IsProcessedByBilling = true;
 				session.Save(writeoff);
 			}
