@@ -156,7 +156,7 @@ namespace Inforoom2.Controllers
 		{
 			if (FormsAuthentication.CookiesSupported) {
 				var cookie = request.Cookies[FormsAuthentication.FormsCookieName];
-				if (cookie != null) {
+				if (cookie != null && !string.IsNullOrEmpty(cookie.Value)) {
 					var ticket = FormsAuthentication.Decrypt(cookie.Value);
 					var clientId = 0;
 					if (ticket != null && !string.IsNullOrEmpty(ticket.UserData)) {

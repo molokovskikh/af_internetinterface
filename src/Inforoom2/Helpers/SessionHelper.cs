@@ -94,7 +94,11 @@ namespace Inforoom2.Helpers
 				// 25.05.2015 Код все же выполняется. Но не могу точно объяснить когда он доходит до этого места,
 				// а когда попадает в обработчик onException в BaseController
 				if (exception != null)
-					session.Transaction.Rollback();
+					try {
+						session.Transaction.Rollback();
+					} catch (Exception) {
+						//игнорируем ошибку при попытке откатить транзакцию, т.к. скорее всего это упавшая БД 
+					}
 				else {
 					CommitAndAvoidDeadLocks(session);
 				}
