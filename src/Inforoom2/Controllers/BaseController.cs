@@ -141,10 +141,14 @@ namespace Inforoom2.Controllers
 
 			// Иногда транзакции надо закрывать отдельно, так как метод OnResultExecuted не будет вызван
 			// Это случается, когда ошибка не в SQL запросе хибернейта, а в самом проекте
-			if (DbSession.Transaction.IsActive)
-				DbSession.Transaction.Rollback();
-			if (DbSession.IsOpen)
-				DbSession.Close();
+			try {
+				if (DbSession.Transaction.IsActive)
+					DbSession.Transaction.Rollback();
+				if (DbSession.IsOpen)
+					DbSession.Close();
+			} catch (Exception) {
+				//не реагируем на ошибку при закрытии
+			}
 		}
 
 		protected virtual StringBuilder CollectDebugInfo()

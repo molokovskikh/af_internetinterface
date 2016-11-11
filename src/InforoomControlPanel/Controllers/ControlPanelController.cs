@@ -89,6 +89,20 @@ namespace InforoomControlPanel.Controllers
 			return RedirectToAction(actionName, controllerName);
 		}
 
+		protected override void OnException(ExceptionContext filterContext)
+		{
+			if (DbSession == null)
+				return;
+			try {
+				if (DbSession.Transaction.IsActive)
+					DbSession.Transaction.Rollback();
+				if (DbSession.IsOpen)
+					DbSession.Close();
+			} catch (Exception) {
+				//не реагируем на ошибку при закрытии сессии
+			}
+		}
+
 		/// <summary>
 		/// Откат транзакции
 		/// </summary>
