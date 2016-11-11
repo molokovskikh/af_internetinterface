@@ -306,7 +306,7 @@ namespace InforoomControlPanel.Controllers
 		/// <returns></returns>
 		public ActionResult AccessDenined()
 		{
-			ErrorMessage("Вы попытались получить доступ к части системы для которой у вас нет прав!");
+			ErrorMessage("Вы попытались получить доступ к части системы, для которой у вас нет прав!");
 			return View();
 		}
 

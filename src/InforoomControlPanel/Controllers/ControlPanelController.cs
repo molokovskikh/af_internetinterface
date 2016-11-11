@@ -22,20 +22,24 @@ namespace InforoomControlPanel.Controllers
 			if (filterContext == null)
 				throw new ArgumentNullException("filterContext");
 
+			var employee = GetCurrentEmployee();
+
 			//если клиент был залогинен по сети, то HTTPСontext не будет изменен
 			//в этом случае можно оттолкнуть от переменной CurrentClient
-			if (!filterContext.HttpContext.User.Identity.IsAuthenticated) {
-				string loginUrl = Url.Action("Index","AdminAccount"); // Default Login Url 
+			if (!filterContext.HttpContext.User.Identity.IsAuthenticated || employee == null) {
+				string loginUrl = Url.Action("Index", "AdminAccount"); // Default Login Url 
 				filterContext.Result = new RedirectResult(loginUrl);
 				return;
 			}
-
-			var employee = GetCurrentEmployee();
+			
 			string name = ViewBag.ControllerName + "Controller_" + ViewBag.ActionName;
 			var permission = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
 			//@todo убрать проверку, на accessDenined, а вместо этого просто не генерировать его. В целом подумать
-			if (permission != null && permission.Name != "AdminController_AccessDenined" && (employee == null || !employee.HasAccess(permission.Name)|| employee.IsDisabled))
-				filterContext.Result = new RedirectResult("/Admin/AccessDenined");
+			if (permission != null && permission.Name != "AdminController_AccessDenined" &&
+				(!employee.HasAccess(permission.Name) || employee.IsDisabled)) {
+				log.Error($"Пользователь '{employee.Name}' ({employee.Id}) попытался получить доступ к '{permission.Description}' ({permission.Id}, {permission.Name}), не имея на это прав.");
+			filterContext.Result = new RedirectResult(Url.Action("AccessDenined","Admin"));
+			}
 		}
 
 		public override Employee GetCurrentEmployee()
