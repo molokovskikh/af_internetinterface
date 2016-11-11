@@ -30,7 +30,8 @@ namespace InforoomControlPanel.ReportTemplates
 				}
 			}
 			//Варнинг рассчитывается не стандартно, поэтому нужно вернуть прошлое значение почле выборуи, для коректного отображения
-			var warninig = pager.GetParam("filter.IsNull.Endpoints.First().PackageId").Replace(",", "");
+			var warninig = pager.GetParam("filter.IsNull.Endpoints.First().PackageId") ?? "";
+			warninig = warninig.Replace(",", "");
 			if (!string.IsNullOrEmpty(warninig)) {
 				if (warninig == "1") {
 					pager.ParamDelete("filter.IsNull.Endpoints.First().PackageId");
@@ -67,7 +68,7 @@ namespace InforoomControlPanel.ReportTemplates
 					header.Add($"Тип клиента: все");
 				}
 				//Проверен
-				if (!string.IsNullOrEmpty(pager.GetParam("filter.Equal.PhysicalClient.Checked"))) {
+				if (!string.IsNullOrEmpty(warninig)) {
 					var headerText = pager.GetParam("filter.Equal.PhysicalClient.Checked") == "1" ? "Да" : "Нет";
 					header.Add($"Проверен: {headerText}");
 				}
