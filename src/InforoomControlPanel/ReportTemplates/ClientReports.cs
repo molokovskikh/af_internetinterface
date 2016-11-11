@@ -68,7 +68,7 @@ namespace InforoomControlPanel.ReportTemplates
 					header.Add($"Тип клиента: все");
 				}
 				//Проверен
-				if (!string.IsNullOrEmpty(warninig)) {
+				if (!string.IsNullOrEmpty(pager.GetParam("filter.Equal.PhysicalClient.Checked"))) {
 					var headerText = pager.GetParam("filter.Equal.PhysicalClient.Checked") == "1" ? "Да" : "Нет";
 					header.Add($"Проверен: {headerText}");
 				}
