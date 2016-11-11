@@ -36,7 +36,7 @@ namespace InforoomControlPanel.Test.Functional.Admin
 			LoginForAdmin();   
 			//заходим на страницу, которую удалили из прав доступа у роли
 			Open("Address/CityList");
-			AssertText("Вы попытались получить доступ к части системы для которой у вас нет прав!");
+			AssertText("Вы попытались получить доступ к части системы, для которой у вас нет прав!");
 			AssertText("Доступ запрещен");
 		}
 	}

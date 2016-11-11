@@ -208,7 +208,8 @@ namespace Inforoom2.Test.Functional.Personal
 			thisElement.SendKeys("1");
 			thisElement = browser.FindElementById("ConnectBtn");
 			thisElement.Click();
-			WaitForText("Услуга \"Добровольная блокировка\" активирована на период", 20);
+			WaitForVisibleCss(".notification", 20);
+			WaitForText("активирована на период", 10);
 			UpdateDBSession();
 			client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Id == client.Id);
 			//списание абон.платы при услуге 'Добровольная блокировка', если клиент продолжит пользоваться услугой, биллинг спишет сумму по нему
@@ -285,7 +286,8 @@ namespace Inforoom2.Test.Functional.Personal
 			thisElement.SendKeys("1");
 			thisElement = browser.FindElementById("ConnectBtn");
 			thisElement.Click();
-			WaitForText("Услуга \"Добровольная блокировка\" активирована на период", 20);
+			WaitForVisibleCss(".notification",20);
+			WaitForText("активирована на период", 10);
 			UpdateDBSession();
 			client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Id == client.Id);
 			//списание абон.платы при услуге 'Добровольная блокировка', если клиент продолжит пользоваться услугой, биллинг спишет сумму по нему
