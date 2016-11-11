@@ -129,6 +129,7 @@ namespace Billing.Test.Integration
 		[Test]
 		public void Free_days_test_vol_block()
 		{
+			var sum = 0m;
 			ClientService service;
 			using (new SessionScope()) {
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
@@ -137,23 +138,40 @@ namespace Billing.Test.Integration
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
+				sum = client.Balance;
 				Assert.That(client.FreeBlockDays, Is.EqualTo(28));
 				ArHelper.WithSession(s => { s.CreateSQLQuery("delete from Internet.WriteOff").ExecuteUpdate(); });
 				Activate(typeof(VoluntaryBlockin), DateTime.Now.AddDays(100));
 			}
 			using (new SessionScope()) {
+				//деактивация в тот же день
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				service = client.FindActiveService<VoluntaryBlockin>();
+				var serviceInternet = client.FindActiveService<Internet>();
+				var serviceIpTv = client.FindActiveService<IpTv>();
 				Assert.That(client.FreeBlockDays, Is.EqualTo(28));
+				//деактивация биллингом услуги не отменяет платежа за абон.плату при "добровольной блокировке",
+				// т.к. она никогда не отработает раньше, проведения данного платежа (минимальное кол-во дней добровольной блокировки более суток)
 				service.ForceDeactivate();
-				Assert.That(UserWriteOff.Queryable.Count(), Is.EqualTo(1));
+				serviceInternet.TryActivate();
+				serviceIpTv.TryActivate();
+				var writeOffForService = ActiveRecordMediator.FindAll(typeof(UserWriteOff)).Cast<UserWriteOff>().FirstOrDefault();
+				writeOffForService.BillingAccount = true;
+				writeOffForService.Save();;
+				//только клиент может отключить услугу, с отменой данного платежа
+				// поэтому в тесте вручную выставляем обработку платежа (как это делается клиентом при отключении услуги)
+				Assert.That(UserWriteOff.Queryable.Count(s=>s.BillingAccount), Is.EqualTo(1));
+				Assert.That(client.Balance , Is.EqualTo(sum));
 			}
 			billing.ProcessWriteoffs();
 			using (new SessionScope()) {
+				// после отключения услуги клиентом у него активируется Интернет, абон плата будет списана обычным платежем
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				var writeOffs = ActiveRecordMediator.FindAll(typeof(WriteOff)).Cast<WriteOff>().ToList();
-				Assert.That(writeOffs.Count, Is.EqualTo(0), writeOffs.Implode());
+				Assert.That(writeOffs.Count, Is.EqualTo(1), writeOffs.Implode());
 				Assert.That(client.FreeBlockDays, Is.EqualTo(28));
+
+				Assert.That(client.Balance, Is.EqualTo(sum - client.GetSumForRegularWriteOff()));
 			}
 		}
 

@@ -130,7 +130,15 @@ namespace Inforoom2.Controllers
                 return RedirectToAction("Service", "Personal");
             }
             SuccessMessage(clientService.DeActivateFor(CurrentClient, DbSession));
-            if (client.IsNeedRecofiguration)
+
+			//пытаемся включить услугу Интернет (это необходимо сделать сейчас, не ждать биллинга т.к. становится возможным упустить платеж до подключения интернета) 
+	        var internet = CurrentClient.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Internet);
+	        internet.ActivateFor(CurrentClient, DbSession);
+	        var iptv = CurrentClient.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Iptv);
+	        iptv.ActivateFor(CurrentClient, DbSession);
+
+
+			if (client.IsNeedRecofiguration)
                 SceHelper.UpdatePackageId(DbSession, client);
             DbSession.Update(client);
             InitServices();

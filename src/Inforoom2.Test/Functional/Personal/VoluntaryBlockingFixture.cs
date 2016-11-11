@@ -112,9 +112,7 @@ namespace Inforoom2.Test.Functional.Personal
 			SetBlockAccountToClient(isFree: false, fullCheck: false);
 		}
 
-		[Test(
-			Description =
-				"Проверка списаний с клиента за пользование услугой 'Добровольная блокировка' по истечении бесплатных дней")]
+		[Test(Description ="Проверка списаний с клиента за пользование услугой 'Добровольная блокировка' по истечении бесплатных дней")]
 		public void CheckWriteoffsWithClientAfterFreeBlockDays()
 		{
 			SetBlockAccountToClient(isFree: true, fullCheck: false);
@@ -175,6 +173,154 @@ namespace Inforoom2.Test.Functional.Personal
 				var balanceDiff = oldBalance - myClient.Balance;
 				Assert.AreEqual(3m, balanceDiff, "\noldBalance-newBalance=" + balanceDiff);
 			}
+		}
+
+		[Test(Description = "Проверка отказа в блокировке клиенту с недостаточным балансом; для задачи №33323")]
+		public void ExitBlockAccountBillingAfter()
+		{
+			// Получить клиента с низким балансом
+			var clientMark = ClientCreateHelper.ClientMark.lowBalanceClient.GetDescription();
+			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Comment == clientMark);
+			Assert.IsNotNull(client, "Искомый клиент не найден");
+			Assert.AreEqual(StatusType.Worked, client.Status.Type, "Клиент должен быть подключен");
+
+			var balance = client.Balance;
+			var sumForRegularWriteOff = client.GetSumForRegularWriteOff();
+
+			Assert.True(balance - sumForRegularWriteOff > 0);
+			Assert.True(!client.Disabled);
+
+			var internetServiceId = Service.GetIdByType(typeof(Internet));
+			var dateToday = DateTime.Now;
+			SystemTime.Now = () => dateToday;
+
+			// Чтобы имелась возм-ть для добровольной блокировки на бесплатные дни
+			client.FreeBlockDays = 28;
+			DbSession.Update(client);
+			DbSession.Flush();
+			LoginForClient(client);
+			var thisElement = browser.FindElementByLinkText("Услуги");
+			thisElement.Click();
+			thisElement = browser.FindElementByLinkText("Подключить");
+			thisElement.Click();
+			thisElement = browser.FindElementById("weeksCount");
+			thisElement.Clear();
+			thisElement.SendKeys("1");
+			thisElement = browser.FindElementById("ConnectBtn");
+			thisElement.Click();
+			WaitForText("Услуга \"Добровольная блокировка\" активирована на период", 20);
+			UpdateDBSession();
+			client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Id == client.Id);
+			//списание абон.платы при услуге 'Добровольная блокировка', если клиент продолжит пользоваться услугой, биллинг спишет сумму по нему
+			var writeoff = client.UserWriteOffs.FirstOrDefault(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
+				&& !w.IsProcessedByBilling && w.Ignore && w.Date.Date == dateToday.Date);
+			Assert.True(writeoff != null);
+			Assert.True(balance == client.Balance);
+			Assert.True(client.Disabled);
+			Assert.True(client.ClientServices.Any(s => s.Service.Id == internetServiceId && s.IsActivated));
+			//отказываемся от услуги после списаний биллингом абон.платы, проверяем, что абон. плата по услуге списана, а обычная нет 
+
+			RunBillingProcess();
+			
+			UpdateDBSession();
+			client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Id == client.Id);
+
+			writeoff = client.UserWriteOffs.FirstOrDefault(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
+				&& w.IsProcessedByBilling && !w.Ignore && w.Date.Date == dateToday.Date);
+			Assert.True(writeoff != null);
+			Assert.True(balance - sumForRegularWriteOff == client.Balance);
+			Assert.True(client.Disabled);
+			Assert.True(!client.ClientServices.Any(s => s.Service.Id == internetServiceId && s.IsActivated));
+
+
+			thisElement = browser.FindElementByCssSelector(".disposalbg");
+			thisElement.Click();
+			WaitForVisibleCss(".button.unfreeze", 15);
+			thisElement = browser.FindElementByCssSelector(".button.unfreeze");
+			thisElement.Click();
+
+			UpdateDBSession();
+			client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Id == client.Id);
+
+			writeoff = client.UserWriteOffs.FirstOrDefault(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
+				&& w.IsProcessedByBilling && !w.Ignore && w.Date.Date == dateToday.Date);
+			Assert.True(writeoff != null);
+			Assert.True(balance - sumForRegularWriteOff == client.Balance);
+			Assert.True(!client.Disabled);
+			Assert.True(client.ClientServices.Any(s => s.Service.Id == internetServiceId && s.IsActivated));
+			 
+
+		}
+
+		[Test(Description = "Проверка отказа в блокировке клиенту с недостаточным балансом; для задачи №33323")]
+		public void ExitBlockAccountBillingBefore()
+		{
+			// Получить клиента с низким балансом
+			var clientMark = ClientCreateHelper.ClientMark.lowBalanceClient.GetDescription();
+			var client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Comment == clientMark);
+			Assert.IsNotNull(client, "Искомый клиент не найден");
+			Assert.AreEqual(StatusType.Worked, client.Status.Type, "Клиент должен быть подключен");
+
+			var balance = client.Balance;
+			var sumForRegularWriteOff = client.GetSumForRegularWriteOff();
+
+			Assert.True(balance - sumForRegularWriteOff > 0);
+			Assert.True(!client.Disabled);
+
+			var internetServiceId = Service.GetIdByType(typeof(Internet));
+			var dateToday = DateTime.Now;
+			SystemTime.Now = () => dateToday;
+
+			// Чтобы имелась возм-ть для добровольной блокировки на бесплатные дни
+			client.FreeBlockDays = 28;
+			DbSession.Update(client);
+			DbSession.Flush();
+			LoginForClient(client);
+			var thisElement = browser.FindElementByLinkText("Услуги");
+			thisElement.Click();
+			thisElement = browser.FindElementByLinkText("Подключить");
+			thisElement.Click();
+			thisElement = browser.FindElementById("weeksCount");
+			thisElement.Clear();
+			thisElement.SendKeys("1");
+			thisElement = browser.FindElementById("ConnectBtn");
+			thisElement.Click();
+			WaitForText("Услуга \"Добровольная блокировка\" активирована на период", 20);
+			UpdateDBSession();
+			client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Id == client.Id);
+			//списание абон.платы при услуге 'Добровольная блокировка', если клиент продолжит пользоваться услугой, биллинг спишет сумму по нему
+			var writeoff = client.UserWriteOffs.FirstOrDefault(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
+				&& !w.IsProcessedByBilling && w.Ignore && w.Date.Date == dateToday.Date);
+			Assert.True(writeoff != null);
+			Assert.True(balance == client.Balance);
+			Assert.True(client.Disabled);
+			Assert.True(client.ClientServices.Any(s => s.Service.Id == internetServiceId && s.IsActivated));
+			//отказываемся от услуги до списаний биллингом абон.платы, проверяем, что абон. плата будет списана как обычно (на основании подключенного интернета), 
+			// а созданное списание абон.платы при услуге 'Добровольная блокировка' отмечено как обработанное биллингом и Игнорируемое.
+
+			thisElement = browser.FindElementByCssSelector(".disposalbg");
+			thisElement.Click();
+			WaitForVisibleCss(".button.unfreeze",15);
+			thisElement = browser.FindElementByCssSelector(".button.unfreeze");
+			thisElement.Click();
+
+			UpdateDBSession();
+			client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Id == client.Id);
+
+			writeoff = client.UserWriteOffs.FirstOrDefault(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
+				&& w.IsProcessedByBilling && w.Ignore && w.Date.Date == dateToday.Date);
+			Assert.True(writeoff != null);
+			Assert.True(balance == client.Balance);
+			Assert.True(!client.Disabled);
+			Assert.True(client.ClientServices.Any(s => s.Service.Id == internetServiceId && s.IsActivated));
+
+			RunBillingProcess();
+			UpdateDBSession();
+			client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Id == client.Id);
+
+			Assert.True(balance - sumForRegularWriteOff == client.Balance);
+			Assert.True(!client.Disabled);
+
 		}
 
 		[Test(Description = "Проверка отказа в блокировке клиенту с недостаточным балансом; для задачи №33323")]
