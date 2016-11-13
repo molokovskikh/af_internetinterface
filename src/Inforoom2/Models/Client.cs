@@ -242,6 +242,22 @@ namespace Inforoom2.Models
 			}
 		}
 
+		public virtual List<Appeal> ClientAppeals()
+		{
+			return Appeals.Where(s => s.AppealType == AppealType.ClientToRead || s.AppealType == AppealType.ClientToReadDone)
+				.OrderBy(s => s.Date).ToList();
+		}
+
+		public virtual List<Appeal> ClientAppealsNotShown()
+		{
+			return Appeals.Where(s => s.AppealType == AppealType.ClientToRead).OrderBy(s => s.Date).ToList();
+		}
+
+		public virtual List<Appeal> ClientAppealsShown()
+		{
+			return Appeals.Where(s => s.AppealType == AppealType.ClientToReadDone).OrderBy(s => s.Date).ToList();
+		}
+
 		protected virtual bool WarningPackageIdGet()
 		{
 			if (this.Endpoints.Any(s => s.Disabled == false && s.IsEnabled.HasValue && s.IsEnabled.Value && s.WarningShow && s.PackageId == 10)) {
@@ -860,7 +876,12 @@ namespace Inforoom2.Models
 				}
 			}
 			//Проверка физ.лица
-			else if (PhysicalClient != null) {
+			else if (PhysicalClient != null)
+			{
+				//если у клиента есть непрочитанные сообщения на сегодняшний день
+				if (PhysicalClient.HasNotShownClientAppeals()) {
+					return WarningState.AppealsForToday;
+				}
 				//елси заблокирован
 				if (Disabled) {
 					//и статус VoluntaryBlocking
@@ -907,7 +928,8 @@ namespace Inforoom2.Models
 		[Description("Физ. лицо с добровольной блокировкой")] PhysVoluntaryBlocking,
 		[Description("Физ. лицо с низким балансом")] PhysLowBalance,
 		[Description("Физ. лицо без первого платежа")] PhysFirstPayment,
-		[Description("Физ. лицо без паспортных данных")] PhysPassportData
+		[Description("Физ. лицо без паспортных данных")] PhysPassportData,
+		[Description("Физ. лицо. не просмотренное сообщение")] AppealsForToday
 	}
 
 	/// <summary>

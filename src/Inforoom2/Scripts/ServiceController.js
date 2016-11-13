@@ -1,5 +1,4 @@
-﻿console.log("ServiceController.js");
-
+﻿
 $(document).ready(function () {
 	var monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
 	var weekDays = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
@@ -92,6 +91,10 @@ $("#ConnectBtn").on("click", function () {
 
 function getMonth(_this) {
 	var weeks = $(_this).val();
+	if (weeks === undefined || weeks === "") {
+		$("#dateInWeeks").html("кол-во указано неверно");
+		return;
+	}
 	$.ajax({
 		url: cli.getParam("baseurl") + "Service/BlockAccountWeek?weeks=" + weeks,
 		type: 'POST',

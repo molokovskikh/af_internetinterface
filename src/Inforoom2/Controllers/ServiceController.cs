@@ -201,40 +201,37 @@ namespace Inforoom2.Controllers
             InitServices();
         }
 
-        public ActionResult InternetPlanChanger()
-        {
-            if (CurrentClient == null)
-            {
-                return RedirectToAction("index", "home");
-            }
-            var stateOfClient = CurrentClient.GetWarningState();
-            if (stateOfClient == WarningState.PhysLowBalance)
-            {
+	    public ActionResult InternetPlanChanger()
+	    {
+		    if (CurrentClient == null) {
+			    return RedirectToAction("index", "home");
+		    }
+		    ViewBag.Client = CurrentClient;
+		    var stateOfClient = CurrentClient.GetWarningState();
+		    if (stateOfClient == WarningState.PhysLowBalance) {
 #if DEBUG
-                var endpoint = CurrentClient.Endpoints.FirstOrDefault();
-                var lease = DbSession.Query<Lease>().FirstOrDefault(i => i.Endpoint == endpoint);
-                var ipstr = lease?.Ip?.ToString();
-                return RedirectToAction(stateOfClient.ToString(), "Warning", new {ip = ipstr});
+			    var endpoint = CurrentClient.Endpoints.FirstOrDefault();
+			    var lease = DbSession.Query<Lease>().FirstOrDefault(i => i.Endpoint == endpoint);
+			    var ipstr = lease?.Ip?.ToString();
+			    return RedirectToAction(stateOfClient.ToString(), "Warning", new {ip = ipstr});
 #else
 				return RedirectToAction(stateOfClient.ToString(), "Warning");
 #endif
-            }
+		    }
 
-            // получение сведения об изменении тарифов
-            var planChangerList = DbSession.Query<PlanChangerData>().ToList();
-            foreach (var changer in planChangerList)
-            {
-                //поиск целевого тариф
-                if (changer.TargetPlan == CurrentClient.PhysicalClient.Plan)
-                {
-                    ViewBag.CheapPlan = DbSession.Query<Plan>().FirstOrDefault(s => s == changer.CheapPlan);
-                    ViewBag.FastPlan = DbSession.Query<Plan>().FirstOrDefault(s => s == changer.FastPlan);
-                    ViewBag.InnerHtml = changer.Text;
-                    return View();
-                }
-            }
-            return RedirectToAction("index", "home");
-        }
+		    // получение сведения об изменении тарифов
+		    var planChangerList = DbSession.Query<PlanChangerData>().ToList();
+		    foreach (var changer in planChangerList) {
+			    //поиск целевого тариф
+			    if (changer.TargetPlan == CurrentClient.PhysicalClient.Plan) {
+				    ViewBag.CheapPlan = DbSession.Query<Plan>().FirstOrDefault(s => s == changer.CheapPlan);
+				    ViewBag.FastPlan = DbSession.Query<Plan>().FirstOrDefault(s => s == changer.FastPlan);
+				    ViewBag.InnerHtml = changer.Text;
+				    return View();
+			    }
+		    }
+		    return RedirectToAction("index", "home");
+	    }
 
         /// <summary>
         ///     Смена тарифного плана
@@ -243,61 +240,55 @@ namespace Inforoom2.Controllers
         /// <returns></returns>
         [HttpPost]
         public ActionResult InternetPlanChanger(Plan plan)
-		{
-			plan = DbSession.Query<Plan>().First(s => s.Id == plan.Id);
-			var client = CurrentClient;
-            if (client == null || client.PhysicalClient == null || client.PhysicalClient.Plan == null)
-            {
-                return RedirectToAction("InternetPlanChanger");
-            }
-            var stateOfClient = CurrentClient.GetWarningState();
-            if (stateOfClient == WarningState.PhysLowBalance)
-            {
+        {
+	        plan = DbSession.Query<Plan>().First(s => s.Id == plan.Id);
+	        var client = CurrentClient;
+	        if (client == null || client.PhysicalClient == null || client.PhysicalClient.Plan == null) {
+		        return RedirectToAction("InternetPlanChanger");
+	        }
+	        var stateOfClient = CurrentClient.GetWarningState();
+	        if (stateOfClient == WarningState.PhysLowBalance) {
 #if DEBUG
-                var endpoint = CurrentClient.Endpoints.FirstOrDefault();
-                var lease = DbSession.Query<Lease>().FirstOrDefault(i => i.Endpoint == endpoint);
-                var ipstr = lease?.Ip?.ToString();
-                return RedirectToAction(stateOfClient.ToString(), "Warning", new {ip = ipstr});
+		        var endpoint = CurrentClient.Endpoints.FirstOrDefault();
+		        var lease = DbSession.Query<Lease>().FirstOrDefault(i => i.Endpoint == endpoint);
+		        var ipstr = lease?.Ip?.ToString();
+		        return RedirectToAction(stateOfClient.ToString(), "Warning", new {ip = ipstr});
 #else
 				return RedirectToAction(stateOfClient.ToString(), "Warning");
 #endif
-            }
-            ViewBag.Client = client;
-						var oldWarningState = client.ShowBalanceWarningPage;
-						var oldPlan = client.PhysicalClient.Plan;
-            client.PhysicalClient.LastTimePlanChanged = SystemTime.Now();
-            client.PhysicalClient.Plan = plan;
-            client.SetStatus(StatusType.Worked, DbSession);
-            if (client.Internet.ActivatedByUser)
-                client.Endpoints.Where(s => !s.Disabled).ForEach(e => {
-									e.SetStablePackgeId(plan.PackageSpeed.PackageId);
-								});
-						
-						if (oldWarningState != client.ShowBalanceWarningPage) {
-							client.ShowBalanceWarningPage = oldWarningState;
-						}
-            DbSession.Save(client);
-            SuccessMessage("Тариф успешно изменен.");
-            // добавление записи в историю тарифов пользователя
-            var planHistory = new PlanHistoryEntry
-            {
-                Client = CurrentClient,
-                DateOfChange = SystemTime.Now(),
-                PlanAfter = plan,
-                PlanBefore = oldPlan,
-                Price = oldPlan.GetTransferPrice(plan)
-            };
-            DbSession.Save(planHistory);
-            var msg =
-                string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.",
-                    oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, 0);
-            var appeal = new Appeal(msg, client, AppealType.User)
-            {
-                Employee = GetCurrentEmployee()
-            };
-            DbSession.Save(appeal);
-            SceHelper.UpdatePackageId(DbSession, client);
-            return RedirectToAction("Profile", "Personal");
+	        }
+	        ViewBag.Client = client;
+	        var oldWarningState = client.ShowBalanceWarningPage;
+	        var oldPlan = client.PhysicalClient.Plan;
+	        client.PhysicalClient.LastTimePlanChanged = SystemTime.Now();
+	        client.PhysicalClient.Plan = plan;
+	        client.SetStatus(StatusType.Worked, DbSession);
+	        if (client.Internet.ActivatedByUser)
+		        client.Endpoints.Where(s => !s.Disabled).ForEach(e => { e.SetStablePackgeId(plan.PackageSpeed.PackageId); });
+
+	        if (oldWarningState != client.ShowBalanceWarningPage) {
+		        client.ShowBalanceWarningPage = oldWarningState;
+	        }
+	        DbSession.Save(client);
+	        SuccessMessage("Тариф успешно изменен.");
+	        // добавление записи в историю тарифов пользователя
+	        var planHistory = new PlanHistoryEntry {
+		        Client = CurrentClient,
+		        DateOfChange = SystemTime.Now(),
+		        PlanAfter = plan,
+		        PlanBefore = oldPlan,
+		        Price = oldPlan.GetTransferPrice(plan)
+	        };
+	        DbSession.Save(planHistory);
+	        var msg =
+		        string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.",
+			        oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, 0);
+	        var appeal = new Appeal(msg, client, AppealType.User) {
+		        Employee = GetCurrentEmployee()
+	        };
+	        DbSession.Save(appeal);
+	        SceHelper.UpdatePackageId(DbSession, client);
+	        return RedirectToAction("Profile", "Personal");
         }
     }
 }

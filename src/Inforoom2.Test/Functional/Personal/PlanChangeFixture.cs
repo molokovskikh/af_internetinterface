@@ -15,13 +15,26 @@ namespace Inforoom2.Test.Functional.Personal
 {
 	internal class PlanChangeFixture : BaseFixture
 	{
+		protected void UpdateDriverSideSystemTime()
+		{
+			Open($"Home/SetDebugTime?time={SystemTime.Now()}");
+			WaitForText($"Время установлено {SystemTime.Now()}");
+		}
 		public Client CurrentClient;
 		public PlanChangerData PlanChangerDataItem;
 
-		public void PlanChangerFixtureOn(int Timeout, bool updateClient = true)
+		/// <summary>
+		/// Выставление PlanChanger(а)
+		/// </summary>
+		/// <param name="timeout">дни до оканчания акции</param>
+		/// <param name="updateClient">клиент</param>
+		/// <param name="lastTimePlanChangedDays">дни смены тарифа (по умолчанию равны 'дни до оканчания акции')</param>
+		public void PlanChangerFixtureOn(int timeout, bool updateClient = true, int lastTimePlanChangedDays = -1)
 		{
-			CurrentClient = updateClient ? DbSession.Query<Client>().First(i => i.Comment == ClientCreateHelper.ClientMark.normalClient.GetDescription()) : CurrentClient;
-
+			CurrentClient = updateClient
+				? DbSession.Query<Client>().First(i => i.Comment == ClientCreateHelper.ClientMark.normalClient.GetDescription())
+				: CurrentClient;
+			lastTimePlanChangedDays = lastTimePlanChangedDays == -1 ? timeout : lastTimePlanChangedDays;
 			var tariffTarget = DbSession.Query<Plan>().FirstOrDefault(s => s.Name == "Народный" && s.Price == 300);
 			var tariffSpeed = DbSession.Query<Plan>().FirstOrDefault(s => s.Name == "Народный" && s.Price == 600);
 			var tariffCheap = DbSession.Query<Plan>().FirstOrDefault(s => s.Name == "Популярный");
@@ -29,7 +42,7 @@ namespace Inforoom2.Test.Functional.Personal
 				Client = CurrentClient,
 				Service = DbSession.Query<Service>().FirstOrDefault(s => s.Name == "PlanChanger"),
 				IsActivated = true,
-				BeginDate = SystemTime.Now().AddDays(Timeout)
+				BeginDate = SystemTime.Now().AddDays(timeout)
 			};
 			CurrentClient.ClientServices.Add(clientService);
 
@@ -37,12 +50,19 @@ namespace Inforoom2.Test.Functional.Personal
 			PlanChangerDataItem.FastPlan = tariffSpeed;
 			PlanChangerDataItem.CheapPlan = tariffCheap;
 			PlanChangerDataItem.TargetPlan = tariffTarget;
-			PlanChangerDataItem.Timeout = Timeout;
+			PlanChangerDataItem.Timeout = timeout;
+			PlanChangerDataItem.NotifyDays = 3;
 			DbSession.Save(PlanChangerDataItem);
-			CurrentClient.PhysicalClient.LastTimePlanChanged = DateTime.Now.AddMonths(-3);
+			//tariffTarget.PlanChangerData = PlanChangerDataItem;
+			//DbSession.Save(tariffTarget);
+			CurrentClient.PhysicalClient.LastTimePlanChanged = DateTime.Now.AddMonths(lastTimePlanChangedDays);
 			CurrentClient.PhysicalClient.Plan = tariffTarget;
 			DbSession.SaveOrUpdate(CurrentClient);
+
 			DbSession.Flush();
+			DbSession.Close();
+			DbSession = DbSession.SessionFactory.OpenSession();
+			CurrentClient = DbSession.Query<Client>().First(s => s.Id == CurrentClient.Id);
 		}
 
 		[Test(Description = "Проверка отработки просроченного PlanChanger сервиса у клиента - незарегистрированного")]
@@ -79,6 +99,55 @@ namespace Inforoom2.Test.Functional.Personal
 			LoginForClient(CurrentClient);
 			Open("/");
 			AssertNoText("НОВОСТИ");
+		}
+
+
+		[Test(Description = "Проверка отработки просроченного PlanChanger сервиса у клиента - с целевым планом")]
+		public void PlanChangerFixtureUserWithTargetPlanMessage()
+		{
+			var now = DateTime.Now;
+			var days = 10;
+			SystemTime.Now = () => now;
+			PlanChangerFixtureOn(days, lastTimePlanChangedDays:0);
+			LoginForClient(CurrentClient);
+			var currentPlan = CurrentClient.Plan;
+			var targetPlan = CurrentClient.Plan.PlanChangerData.FastPlan;
+			for (int i = 1; i <= days; i++)
+			{
+				SystemTime.Now = () => now.AddDays(i);
+				RunBillingProcess();
+				DbSession.Refresh(CurrentClient);
+				UpdateDriverSideSystemTime();
+				Open("warning");
+				if (days - i > 3) {
+					AssertText("НОВОСТИ");
+				} else
+				{
+					AssertText($"Акционный период на тарифе");
+					if (days - i == 0) {
+						Assert.IsTrue(CurrentClient.ClientAppeals().Count(s => s.Message.IndexOf("Акционный период на тарифе") != -1) == 1);
+						browser.FindElementByCssSelector(".button.unfreeze").Click();
+						WaitForText("НЕОБХОДИМО ОПРЕДЕЛИТЬСЯ С ТАРИФОМ");
+					}
+				}
+				Open("/");
+				if (i == days) {
+					AssertText("НЕОБХОДИМО ОПРЕДЕЛИТЬСЯ С ТАРИФОМ");
+				} else {
+					AssertText("НОВОСТИ");
+				}
+			}
+
+			DbSession.Refresh(CurrentClient);
+			Assert.That(CurrentClient.Plan == currentPlan);
+			SystemTime.Now = () => now.AddDays(11);
+			RunBillingProcess();
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.PhysicalClient);
+			DbSession.Refresh(CurrentClient.PhysicalClient.Plan);
+			Assert.That(CurrentClient.Plan != currentPlan && CurrentClient.Plan == targetPlan);
+
+			SystemTime.Now = () => now;
 		}
 
 

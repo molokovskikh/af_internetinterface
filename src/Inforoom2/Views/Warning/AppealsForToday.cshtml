@@ -1,0 +1,20 @@
+﻿@using Inforoom2.Models
+@using Inforoom2.Models.Services
+@model dynamic
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Сообщение";
+	Client client = ViewBag.CurrentClient;
+    Appeal appealToShow = ViewBag.AppealToShow;
+}
+<div class="name-page">
+	<h1 class="header-page" >Внимание!</h1>
+</div>
+<div class="block-page">
+    @using (@Html.BeginForm("MessageIsRead", "Warning", null, FormMethod.Post)) {
+        @Html.Hidden("id",appealToShow.Id)
+        @Html.Raw(appealToShow.Message)
+      <p>Нажимая далее, Вы подтверждаете прочтение данного сообщения.</p>
+        <input class="button unfreeze" type="submit" value="Далее"/>
+    }
+</div>

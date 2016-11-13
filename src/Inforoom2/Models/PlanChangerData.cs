@@ -22,6 +22,8 @@ namespace Inforoom2.Models
 		public virtual Plan FastPlan { get; set; }
 		[Property, IntegerValidator, Description("Время действия целевого ТП")]
 		public virtual int Timeout { get; set; }
+		[Property, IntegerValidator, Description("Кол-во дней до события, за которое нужно напомнить пользователю о событии")]
+		public virtual int? NotifyDays { get; set; }
 		[Property, Description("Текст, который выводится клиенту по истечению времени действия целевого ТП")]
 		public virtual string Text { get; set; } 
 	}

@@ -688,6 +688,9 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult EditInternetPlanChanger([EntityBinder] PlanChangerData planChanger)
 		{
 			var errors = ValidationRunner.Validate(planChanger);
+			planChanger.NotifyDays = planChanger.NotifyDays.HasValue && planChanger.NotifyDays.Value != 0
+				? planChanger.NotifyDays.Value
+				: (int?) null;
 			if (errors.Length == 0) {
 				DbSession.Save(planChanger);
 				SuccessMessage("Объект успешно изменен!");

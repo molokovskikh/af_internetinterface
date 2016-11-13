@@ -22,6 +22,8 @@ namespace InternetInterface.Models
 		[Description("Системные")] System = 3,
 		[Description("Внешние")] FeedBack = 5,
 		[Description("Статистические")] Statistic = 7,
+		[Description("Клиентские")] ClientToRead = 9,
+		[Description("Клиентские (прочтенные)")] ClientToReadDone = 11
 	}
 
 	public enum UniversalAppealType

@@ -12,25 +12,31 @@
 }
 @section JavaScript{
 	<script type="text/javascript" src="@Url.Content("~/Scripts/Personal.Plans.js")"></script>}
-<h2 class="heading"> @ViewBag.Title </h2> 
+<h2 class="heading"> @ViewBag.Title </h2>
 <div style="margin: auto; width: 92%; text-align: center;">
-	<h3 style="margin: auto; font-size: 30px; font-weight: 400; color: #AA181E;">Оставить</h3>
-	<div style="margin: auto;">
-		<div style="display: inline-block; padding: 20px;">
-			@using (@Html.BeginForm("InternetPlanChanger", "Service", FormMethod.Post, new { id = "changeplan" })) {
-				@Html.HiddenFor(modelItem => fastPlan.Id, new { @Name = "plan.Id" })
-				<input class="connectfee" id="changeTariffButtonFast" style="padding: 10px 26px 34px 30px; width: 150px; font-size: 20px;" type="submit" value="Скорость" />
-			}
-		</div>
-		<span style="font-size: 20px;display: inline-block; position: relative;"> или </span>
-		<div style="display: inline-block; padding: 20px;">
-			@using (@Html.BeginForm("InternetPlanChanger", "Service", FormMethod.Post, new { id = "changeplan" })) {
-				@Html.HiddenFor(modelItem => cheapPlan.Id, new { @Name = "plan.Id" })
-				<input class="connectfee" id="changeTariffButtonCheap" type="submit" style="padding: 10px 26px 34px 30px; width: 150px; font-size: 20px;" value="Деньги" />
-			}
-		</div>
-	</div>
-	<div>
-		@Html.Raw(html)
-	</div>
+    <p style="font-size:20px">
+        Уважаемый Абонент!
+        Срок действия акционного периода на тарифе '@client.Plan.NameWithPrice' истекает @(client.PhysicalClient.PlanChangerOnDate().HasValue
+                                                                                   ? client.PhysicalClient.PlanChangerOnDate().Value.ToShortDateString() : "").
+    </p>
+    <p style="font-size:20px"> НЕОБХОДИМО ОПРЕДЕЛИТЬСЯ С ТАРИФОМ</p>
+    <h3 style="margin: auto; font-size: 30px; font-weight: 400; color: #AA181E;">Оставить</h3>
+    <div style="margin: auto;">
+        <div style="display: inline-block; padding: 20px;">
+            @using (@Html.BeginForm("InternetPlanChanger", "Service", FormMethod.Post, new {id = "changeplan"})) {
+                @Html.HiddenFor(modelItem => fastPlan.Id, new {@Name = "plan.Id"})
+                <input class="connectfee" id="changeTariffButtonFast" style="padding: 10px 26px 34px 30px; width: 150px; font-size: 20px;" type="submit" value="Скорость"/>
+            }
+        </div>
+        <span style="font-size: 20px; display: inline-block; position: relative;"> или </span>
+        <div style="display: inline-block; padding: 20px;">
+            @using (@Html.BeginForm("InternetPlanChanger", "Service", FormMethod.Post, new {id = "changeplan"})) {
+                @Html.HiddenFor(modelItem => cheapPlan.Id, new {@Name = "plan.Id"})
+                <input class="connectfee" id="changeTariffButtonCheap" type="submit" style="padding: 10px 26px 34px 30px; width: 150px; font-size: 20px;" value="Деньги"/>
+            }
+        </div>
+    </div>
+    <div>
+        @Html.Raw(html)
+    </div>
 </div>

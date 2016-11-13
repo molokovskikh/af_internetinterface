@@ -9,6 +9,7 @@ using Common.Tools.Calendar;
 using Common.Web.Ui.Models.Audit;
 using Common.Web.Ui.NHibernateExtentions;
 using InternetInterface.Helpers;
+using InternetInterface.Models.Services;
 using InternetInterface.Models.Universal;
 
 namespace InternetInterface.Models
@@ -231,7 +232,7 @@ namespace InternetInterface.Models
 				errors.RegisterErrorMessage("IdDocName", "Заполнение поля обязательно");
 			}
 		}
-
+		
 		public virtual string GetFullAddress()
 		{
 			return String.Format("улица {0} дом {1}{2} квартира {3} подъезд {4} этаж {5} {6}",
