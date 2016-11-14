@@ -46,12 +46,12 @@ namespace InternetInterface.Models.Services
 							}
 						}
 					}
-					ChangeClientTarrifIfNeeds(session, clientService.Client, changer);
 					// сохранение изменений
 					session.Update(clientService.Client);
 				}
 				if (changer.TargetPlan == clientService.Client.PhysicalClient.Tariff.Id &&
 					clientService.Client.Endpoints.Count > 0) {
+					ChangeClientTarrifIfNeeds(session, clientService.Client, changer);
 					AddClientAppealIfNeeds(clientService.Client, changer);
 					session.Update(clientService.Client);
 				}
@@ -96,14 +96,21 @@ namespace InternetInterface.Models.Services
 			if (!date.HasValue)
 				return;
 			if (date.Value.Date >= SystemTime.Now().Date ||
-				(client.Status.Type != StatusType.Worked && client.Status.Type != StatusType.VoluntaryBlocking)) return;
+				(client.Status.Type != StatusType.Worked && client.Status.Type != StatusType.VoluntaryBlocking) || date.Value.Date<=client.StatusChangedOn) return;
 
 			var plan = dbSession.Query<Tariff>().First(s => s.Id == changer.FastPlan);
 			var oldPlan = client.PhysicalClient.Tariff;
 			client.PhysicalClient.LastTimePlanChanged = SystemTime.Now();
 			client.PhysicalClient.Tariff = plan;
 			if (client.Internet.ActivatedByUser)
-				client.Endpoints.Where(s => !s.Disabled).Each(e => { e.SetStablePackgeId(plan.PackageId); });
+				client.Endpoints.Where(s => !s.Disabled).Each(e => {
+					//если включен варнинг или клиент неактивен, задается только резервный PackageId, по которому в момент активации будет задан рабочий PackageId 
+					if (client.ShowBalanceWarningPage) {
+						e.StableTariffPackageId = plan.PackageId;
+					} else {
+						e.SetStablePackgeId(plan.PackageId);
+					}
+				});
 			dbSession.Save(client);
 			// добавление записи в историю тарифов пользователя
 			var planHistory = new PlanHistoryEntry {

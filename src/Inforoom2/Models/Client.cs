@@ -471,7 +471,7 @@ namespace Inforoom2.Models
 			}
 
 			if (Status.Type != status.Type) {
-				StatusChangedOn = DateTime.Now;
+				StatusChangedOn = SystemTime.Now();
 			}
 			Status = status;
 		}

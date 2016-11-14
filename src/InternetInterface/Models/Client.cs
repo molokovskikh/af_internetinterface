@@ -1185,7 +1185,7 @@ where CE.Client = {0}", Id))
 			}
 
 			if (Status.Type != status.Type) {
-				StatusChangedOn = DateTime.Now;
+				StatusChangedOn = SystemTime.Now();
 			}
 			Status = status;
 		}

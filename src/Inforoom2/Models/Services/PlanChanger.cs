@@ -25,8 +25,10 @@ namespace Inforoom2.Models.Services
 				var currentController = spletedUrl[1].ToLower();
 				var currentAction = spletedUrl.Length > 2 ? spletedUrl[2].ToLower() : "";
 				currentRedirectFromCurrentController =
-					!((currentController == "account" && currentAction == "login")
-						|| (currentController == "account" && currentAction == "logout"));
+					!(currentController == "home" || currentController == "faq" || currentController == "about" ||
+						currentController == "bussiness")
+						&& !((currentController == "account" && currentAction == "login")
+							|| (currentController == "account" && currentAction == "logout"));
 			}
 			var urlToCheck = mediator.UrlCurrent == null ? "" : mediator.UrlCurrent.ToLower().Replace("/", "");
 			var urlToDrope = ("service/internetplanchanger").Replace("/", "");

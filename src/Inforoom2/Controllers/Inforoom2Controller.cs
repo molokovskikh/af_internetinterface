@@ -443,7 +443,7 @@ namespace Inforoom2.Controllers
 		public ActionResult SetDebugTime(string time)
 		{
 			SystemTime.Now = () => DateTime.Parse(time);
-			SuccessMessage($"Время установлено {SystemTime.Now()}");
+			SuccessMessage($"Время установлено {time}");
 			return RedirectToAction("Index", "Home");
 		}
 #endif

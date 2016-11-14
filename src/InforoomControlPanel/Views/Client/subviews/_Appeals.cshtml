@@ -37,6 +37,8 @@
 			<a class="btn btn-@(appealType == (int) AppealType.Statistic ? "gold" : "white")" href="@Url.Action(formClientType, new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.Statistic})">@(AppealType.Statistic.GetDescription())</a>
 			<a class="btn btn-@(appealType == (int) AppealType.System ? "gold" : "white")" href="@Url.Action(formClientType, new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.System})">@(AppealType.System.GetDescription())</a>
 			<a class="btn btn-@(appealType == (int) AppealType.FeedBack ? "gold" : "white")" href="@Url.Action(formClientType, new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.FeedBack})">@(AppealType.FeedBack.GetDescription())</a>
+            <a class="btn btn-@(appealType == (int) AppealType.FeedBack ? "gold" : "white")" href="@Url.Action(formClientType, new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.ClientToRead})">@(AppealType.ClientToRead.GetDescription())</a>
+            <a class="btn btn-@(appealType == (int) AppealType.FeedBack ? "gold" : "white")" href="@Url.Action(formClientType, new {@id = client.Id,@subViewName="_Appeals", @appealType = (int) AppealType.ClientToReadDone})">@(AppealType.ClientToReadDone.GetDescription())</a>
 		</div>
 		<div class="panel-body">
 			<textarea class="form-control" type="text" name="newUserAppeal" value="" rows="6" placeholder="Сообщение"></textarea>
@@ -141,6 +143,16 @@
 							</td>
 							<td>Отключение</td>
 						</tr>
+					<tr>
+					    <td>
+					        <div class="legend-mark" style="background-color: #ffe29b;"></div>
+					    </td>
+					    <td>Клиентские</td>
+					    <td>
+					        <div class="legend-mark" style="background-color: #f7d072;"></div>
+					    </td>
+					    <td>Клиентские (прочтенные)</td>
+					</tr>
 					</tbody>
 				</table>
 			</div>

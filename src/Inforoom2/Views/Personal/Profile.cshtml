@@ -74,7 +74,7 @@
     }
 </div>
 
-@foreach (var appeal in client.Client.ClientAppealsShown().Take(5)) {
+@foreach (var appeal in client.Client.ClientAppealsShown().Where(s=>s.Date.AddDays(7).Date <= SystemTime.Now().Date).Take(5)) {
     <p>@appeal.Date.ToShortDateString() - @appeal.Message</p>
 }
 

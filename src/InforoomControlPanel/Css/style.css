@@ -167,6 +167,8 @@
  .appeal.User td{background: #FDEFDB !important;}
  .appeal.Statistic td{background: #DEF4F5 !important;}
  .appeal.System td{background: #e3e7f7 !important;}
+ .appeal.ClientToRead td{background: #ffe29b !important;}
+ .appeal.ClientToReadDone td{background: #f7d072 !important;}
  .appeal.FeedBack td{background: #FCD9D9 !important;}
  .appeal.Service td{background: #E1EFDD !important;}
  .clientMainTable .panel-body {padding-top: 7px;padding-bottom: 7px;}
