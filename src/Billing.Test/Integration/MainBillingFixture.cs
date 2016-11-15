@@ -191,7 +191,7 @@ namespace Billing.Test.Integration
 		public static void CleanDbAfterTest()
 		{
 			ArHelper.WithSession(s => {
-				s.CreateSQLQuery("delete from Internet.Tariffs").ExecuteUpdate();
+				s.CreateSQLQuery("delete from Internet.inforoom2_planchangerdata; delete from Internet.Tariffs").ExecuteUpdate();
 			});
 		}
 

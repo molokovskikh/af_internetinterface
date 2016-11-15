@@ -260,6 +260,18 @@ namespace InternetInterface.Models
 			}
 		}
 
+		public virtual List<Appeals> ClientAppeals()
+		{
+			return Appeals.Where(s => s.AppealType == AppealType.ClientToRead || s.AppealType == AppealType.ClientToReadDone)
+				.OrderBy(s => s.Date).ToList();
+		}
+
+		public virtual List<Appeals> ClientAppeals(DateTime beginDateTime, DateTime endDateTime)
+		{
+			return Appeals.Where(s => (s.AppealType == AppealType.ClientToRead || s.AppealType == AppealType.ClientToReadDone)
+				&& s.Date.Date >= beginDateTime.Date && s.Date.Date <= endDateTime.Date).OrderBy(s => s.Date).ToList();
+		}
+
 		protected virtual bool WarningPackageIdGet()
 		{
 			if (this.Endpoints.Any(s => s.Disabled == false && s.IsEnabled.HasValue && s.IsEnabled.Value && s.WarningShow && s.PackageId == 10)) {
@@ -1173,7 +1185,7 @@ where CE.Client = {0}", Id))
 			}
 
 			if (Status.Type != status.Type) {
-				StatusChangedOn = DateTime.Now;
+				StatusChangedOn = SystemTime.Now();
 			}
 			Status = status;
 		}

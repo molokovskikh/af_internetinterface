@@ -79,6 +79,9 @@ namespace Inforoom2.Models
 		[Key(1, Column = "Plan", NotNull = false)]
 		[ManyToMany(2, Column = "TvChannelGroup", ClassType = typeof(TvChannelGroup))]
 		public virtual IList<TvChannelGroup> TvChannelGroups { get; set; }
+		
+		[OneToOne(PropertyRef = "TargetPlan")]
+		public virtual PlanChangerData PlanChangerData { get; set; }
 
 		[Property]
 		public virtual bool IgnoreDiscount { get; set; }

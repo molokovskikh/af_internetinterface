@@ -169,10 +169,10 @@ namespace Billing.Test.Integration
 			billing.ProcessPayments();
 			session.Refresh(client);
 			// у текущего клиента действие не просрочено, он не должен быть заблокирован и у него должно появиться сообщение о том, что он разблокирован.
-			Assert.AreEqual(client.ShowBalanceWarningPage, false, "ShowBalanceWarningPage клиента ожидался 'true'.");
+			Assert.AreEqual(client.ShowBalanceWarningPage, false, "ShowBalanceWarningPage клиента ожидался 'false'.");
 
 			hasMessage = client.Appeals.Where(s => s.Appeal.IndexOf("Клиент был заблокирован в связи с прекращением действия тарифа") != -1).ToList();
-			Assert.AreEqual(hasMessage.Count == 1, true, "Кол-во сообщениео блокировке клиента больше, чем ожидалось!");
+			Assert.AreEqual(hasMessage.Count == 1, true, "Кол-во сообщений о блокировке клиента больше, чем ожидалось!");
 
 			InternetPlanChangerFixtureAfter();
 		}

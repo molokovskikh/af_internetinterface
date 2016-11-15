@@ -536,6 +536,7 @@
     <Content Include="Views\Faq\web.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Views\Warning\AppealsForToday.cshtml" />
     <None Include="Web.test2.config" />
     <None Include="Web.release.config">
       <SubType>Designer</SubType>

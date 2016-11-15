@@ -23,31 +23,21 @@ namespace Inforoom2.Test.BillingCustomCheck
 	class Run : MySeleniumFixture
 	{
 		protected ISession DbSession;
-		protected int DaysToRun = 60;
+		protected int DaysToRun = 8;
 		protected List<int> ClientsToRun = new List<int>() {
-				22781,
-				22717,
-				22765,
-				21085,
-				16325,
-				9193,
-				21407,
-				21999,
+				22547,
+				22581,
+				22589,
+				22693,
+				1093,
+				22721,
+				22655,
+				22723,
+				22831,
+				22837,
+				22863,
 				22775,
-				22701,
-				22561,
-				21691,
-				21527,
-				20511,
-				22577,
-				22065,
-				21643,
-				21315,
-				20733,
-				20421,
-				15505,
-				6891,
-				8673
+				22729
 			};
 
 		[SetUp]
@@ -72,7 +62,7 @@ namespace Inforoom2.Test.BillingCustomCheck
 			for (int i = 0; i < DaysToRun; i++) {
 				var date = SystemTime.Now().AddDays(1);
 				SystemTime.Now = () => date;
-				PrepareData();
+				PrepareData(i);
 				DbSession.Transaction.Commit();
 				RunBillingProcess();
 				DbSession.Flush();
@@ -80,13 +70,18 @@ namespace Inforoom2.Test.BillingCustomCheck
 			}
 		}
 
-		public void PrepareData()
+		public void PrepareData(int iteration)
 		{
 			UpdateDBSession();
 			var statusDissolved = Status.Get(StatusType.Dissolved, DbSession);
 			foreach (var item in DbSession.Query<Client>().Where(s=>s.Status.Id != statusDissolved.Id)) {
 				if (ClientsToRun.Any(s => s == item.Id)) {
 					item.PaidDay = false;
+					//if (iteration == 0 && item.PhysicalClient?.Plan?.PlanChangerData != null) {
+					//	item.PhysicalClient.LastTimePlanChanged =
+					//		SystemTime.Now()
+					//			.AddDays(-item.PhysicalClient.Plan.PlanChangerData.Timeout+ item.PhysicalClient.Plan.PlanChangerData.NotifyDays.Value);
+					//}
 					DbSession.Save(item);
 					DbSession.Flush();
 					continue;

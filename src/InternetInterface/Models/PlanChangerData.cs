@@ -12,12 +12,19 @@ namespace InternetInterface.Models
 	{ 
 		[PrimaryKey]
 		public virtual int Id { get; set; }
+
 		[Property]
 		public virtual int TargetPlan { get; set; }
+
 		[Property]
 		public virtual int CheapPlan { get; set; }
+
 		[Property]
-		public virtual int FastPlan { get; set; } 
+		public virtual int FastPlan { get; set; }
+
+		[Property]
+		public virtual int? NotifyDays { get; set; }
+
 		[Property]
 		public virtual int Timeout { get; set; } 
 	}

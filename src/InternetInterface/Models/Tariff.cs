@@ -65,7 +65,7 @@ namespace InternetInterface.Models
 
 		[Property, Obsolete("Подготовка к удалению")]
 		public virtual bool CanUseForSelfRegistration { get; set; }
-
+		
 		[Property]
 		public virtual bool IgnoreDiscount { get; set; }
 

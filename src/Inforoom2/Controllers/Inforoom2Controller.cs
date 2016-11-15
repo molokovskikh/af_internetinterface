@@ -438,5 +438,14 @@ namespace Inforoom2.Controllers
 			builder.Append("]");
 			return builder;
 		}
+
+#if DEBUG
+		public ActionResult SetDebugTime(string time)
+		{
+			SystemTime.Now = () => DateTime.Parse(time);
+			SuccessMessage($"Время установлено {time}");
+			return RedirectToAction("Index", "Home");
+		}
+#endif
 	}
 }

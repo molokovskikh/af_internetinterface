@@ -209,6 +209,42 @@ namespace Inforoom2.Models
 			return writeoff;
 		}
 
+
+		public virtual DateTime? PlanChangerOnDate()
+		{
+			return PlanChanger.PlanchangerTimeOffDate(Client);
+		}
+
+		public virtual int? PlanChangeOnInDays()
+		{
+			var onDate = PlanChangerOnDate();
+			if (!onDate.HasValue) {
+				return null;
+			}
+			return (onDate.Value - SystemTime.Now()).Days;
+		}
+
+		public virtual bool IsPlanChangerOn()
+		{
+			return PlanChanger.IsPlanchangerTimeOff(Client);
+		}
+
+		public virtual bool HasClientAppeals(string message = "")
+		{
+			if (message != string.Empty) {
+				return Client.ClientAppeals().Count(s => s.Message == message) > 0;
+			}
+			return Client.ClientAppeals().Count > 0;
+		}
+
+		public virtual bool HasNotShownClientAppeals(string message = "")
+		{
+			if (message != string.Empty) {
+				return Client.ClientAppeals().Count(s => s.Message == message) > 0;
+			}
+			return Client.ClientAppealsNotShown().Count > 0;
+		}
+
 		public virtual WriteOff CalculateWriteoff(decimal sum, bool writeoffVirtualFirst = false)
 		{
 			if (sum <= 0)

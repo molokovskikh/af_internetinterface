@@ -52,6 +52,15 @@
 						@ViewBag.Validation.GetError(planChanger, "Timeout")
 					</div>
 				</div>
+                <div class="form-group">
+                    <div class="col-sm-2">
+                        <label class="control-label">Уведомление (в днях)</label>
+                    </div>
+                    <div class="col-sm-8">
+                        @Html.EditorFor(o => planChanger.NotifyDays, new { @class = "form-control", @max = "9999", @min = 0 })
+                        @ViewBag.Validation.GetError(planChanger, "NotifyDays")
+                    </div>
+                </div>
 				<div class="form-group">
 					<div class="col-sm-2">
 						<label class="control-label">HTML-разметка</label>

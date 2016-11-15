@@ -5,6 +5,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Security;
+using Common.Tools;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
@@ -95,8 +96,7 @@ namespace Inforoom2.Controllers
 				return;
 			}
 			base.OnActionExecuting(filterContext);
-
-
+			
 			CurrentClient = GetClientIfExists(this);
 
 			if (CurrentClient == null) {
@@ -163,7 +163,7 @@ namespace Inforoom2.Controllers
 			if (warningReason == WarningState.NoWarning) {
 				if (DbSession.Transaction.IsActive) {
 					if (CurrentClient.IsPhysicalClient) {
-						if (PlanChanger.IsPlanchangerTimeOff(DbSession, CurrentClient)) {
+						if (PlanChanger.IsPlanchangerTimeOff(CurrentClient)) {
 #if DEBUG
 							return RedirectToAction("InternetPlanChanger", "Service", new {ip});
 #endif
@@ -251,10 +251,31 @@ namespace Inforoom2.Controllers
 			return View();
 		}
 
-	    /// <summary>
-		/// Попытка отключить блокирующие сообщения
-		/// </summary>
-		/// <returns></returns>
+		public ActionResult AppealsForToday()
+		{
+			var appeal = CurrentClient.ClientAppealsNotShown().FirstOrDefault();
+			if (appeal == null) {
+				return RedirectToAction("Index", "Home");
+			}
+			ViewBag.AppealToShow = appeal;
+			return View();
+		}
+
+		[HttpPost]
+		public ActionResult MessageIsRead(int id)
+		{
+			var appeal = CurrentClient.ClientAppealsNotShown().FirstOrDefault(s => s.Id == id);
+			if (appeal != null) {
+				appeal.AppealType = AppealType.ClientToReadDone;
+				DbSession.Save(appeal);
+			}
+			return RedirectToAction("Index");
+		}
+
+		/// <summary>
+			/// Попытка отключить блокирующие сообщения
+			/// </summary>
+			/// <returns></returns>
 		[HttpPost]
 		public ActionResult TryToDisableWarning()
 		{
