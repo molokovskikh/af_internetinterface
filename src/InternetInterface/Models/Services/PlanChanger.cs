@@ -65,7 +65,7 @@ namespace InternetInterface.Models.Services
 			var date = PlanchangerTimeOffDate(client, changer);
 			if (!date.HasValue)
 				return;
-			if (date.Value.Date != SystemTime.Now().Date &&
+			if (date.Value.Date > SystemTime.Now().Date &&
 				date.Value.Date <= SystemTime.Now().AddDays(changer.NotifyDays.Value).Date) {
 
 				var message = string.Format(MessagePatternDaysRemained, date.Value.ToShortDateString());
