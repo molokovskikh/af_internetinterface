@@ -21,6 +21,7 @@ namespace Inforoom2.Test.Functional.Personal
 			Open($"Home/SetDebugTime?time={time}");
 			WaitForText($"Время установлено {time}", 20);
 		}
+
 		public Client CurrentClient;
 		public PlanChangerData PlanChangerDataItem;
 
@@ -78,7 +79,9 @@ namespace Inforoom2.Test.Functional.Personal
 		public void PlanChangerFixtureUserWithAnotherPlan()
 		{
 			PlanChangerFixtureOn(0);
-			var anotherClient = DbSession.Query<Client>().First(i => i.Comment == ClientCreateHelper.ClientMark.clientWithRegionalPlan.GetDescription());
+			var anotherClient =
+				DbSession.Query<Client>()
+					.First(i => i.Comment == ClientCreateHelper.ClientMark.clientWithRegionalPlan.GetDescription());
 			LoginForClient(anotherClient);
 			Open("/");
 			AssertText("НОВОСТИ");
@@ -127,13 +130,12 @@ namespace Inforoom2.Test.Functional.Personal
 				RunBillingProcessPayments();
 				RunBillingProcess();
 			}
-			
+
 			DbSession.Refresh(CurrentClient);
 			Assert.That(CurrentClient.Appeals.Count == countOfAppeals + 1);
 
 			SystemTime.Now = () => DateTime.Now;
 		}
-
 
 
 		[Test(Description = "Проверка отработки просроченного PlanChanger сервиса у клиента - с целевым планом")]
@@ -166,7 +168,7 @@ namespace Inforoom2.Test.Functional.Personal
 				DbSession.Refresh(CurrentClient.PhysicalClient);
 				Assert.IsTrue(regWriteOff == CurrentClient.GetSumForRegularWriteOff());
 				Assert.IsTrue(currentBalance == CurrentClient.Balance + i*CurrentClient.GetSumForRegularWriteOff());
-				 
+
 				UpdateDriverSideSystemTime();
 				Open("warning");
 				if (days - i > 3) {
@@ -207,7 +209,7 @@ namespace Inforoom2.Test.Functional.Personal
 
 			regWriteOff = CurrentClient.GetSumForRegularWriteOff();
 			currentBalance = CurrentClient.Balance;
-			
+
 			Open("warning");
 			WaitForText("НОВОСТИ");
 
@@ -222,8 +224,50 @@ namespace Inforoom2.Test.Functional.Personal
 				DbSession.Refresh(CurrentClient);
 				DbSession.Refresh(CurrentClient.PhysicalClient);
 				Assert.IsTrue(regWriteOff == CurrentClient.GetSumForRegularWriteOff());
-				Assert.IsTrue(currentBalance == CurrentClient.Balance + i * CurrentClient.GetSumForRegularWriteOff());
+				Assert.IsTrue(currentBalance == CurrentClient.Balance + i*CurrentClient.GetSumForRegularWriteOff());
 			}
+
+			SystemTime.Now = () => DateTime.Now;
+		}
+
+
+		[Test(Description = "Проверка отработки просроченного PlanChanger сервиса у клиента - с целевым планом")]
+		public void PlanChangerFixtureUserWithTargetPlanMessageJustInTime()
+		{
+			var now = DateTime.Now;
+			var days = 10;
+			SystemTime.Now = () => now;
+			PlanChangerFixtureOn(days, lastTimePlanChangedDays: 0);
+			CurrentClient.Balance = -50;
+			CurrentClient.PaidDay = false;
+			DbSession.Save(CurrentClient);
+			DbSession.Flush();
+			RunBillingProcess();
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.PhysicalClient);
+			LoginForClient(CurrentClient);
+			AssertNoText("Уведомления");
+
+			SystemTime.Now = () => now.AddDays(11);
+			CurrentClient.PaidDay = false;
+			DbSession.Save(CurrentClient);
+			DbSession.Flush();
+			RunBillingProcess();
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.PhysicalClient);
+
+			CurrentClient.Balance = 950;
+			CurrentClient.PaidDay = false;
+			DbSession.Save(CurrentClient);
+			DbSession.Flush();
+
+			UpdateDriverSideSystemTime();
+			Open("warning");
+			AssertText("НЕОБХОДИМО ОПРЕДЕЛИТЬСЯ С ТАРИФОМ");
+			Open("personal/profile");
+			AssertNoText("Уведомления");
+			Assert.IsTrue(!CurrentClient.Appeals.Any(s => s.Message
+				== string.Format(PlanChanger.MessagePatternDaysRemained, PlanChanger.PlanchangerTimeOffDate(CurrentClient))));
 
 			SystemTime.Now = () => DateTime.Now;
 		}
@@ -329,7 +373,7 @@ namespace Inforoom2.Test.Functional.Personal
 			}
 			currentDate = now;
 		}
-		
+
 
 		[Test(Description = "Проверка отработки просроченного PlanChanger сервиса у клиента - с целевым планом")]
 		public void PlanChangerFixtureUserWithTargetPlanMessageVoluntaryBlockNoDisconnect()
@@ -437,8 +481,7 @@ namespace Inforoom2.Test.Functional.Personal
 			var regWriteOff = CurrentClient.GetSumForRegularWriteOff();
 			var currentBalance = CurrentClient.Balance;
 
-			for (int i = 1; i <= days; i++)
-			{
+			for (int i = 1; i <= days; i++) {
 				SystemTime.Now = () => now.AddDays(i);
 				CurrentClient.PaidDay = false;
 				DbSession.Save(CurrentClient);
@@ -447,7 +490,7 @@ namespace Inforoom2.Test.Functional.Personal
 				DbSession.Refresh(CurrentClient);
 				DbSession.Refresh(CurrentClient.PhysicalClient);
 				Assert.IsTrue(regWriteOff == CurrentClient.GetSumForRegularWriteOff());
-				Assert.IsTrue(currentBalance == CurrentClient.Balance + i * CurrentClient.GetSumForRegularWriteOff());
+				Assert.IsTrue(currentBalance == CurrentClient.Balance + i*CurrentClient.GetSumForRegularWriteOff());
 			}
 			SystemTime.Now = () => DateTime.Now;
 			UpdateDriverSideSystemTime();
@@ -508,13 +551,13 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession.Refresh(CurrentClient.PhysicalClient);
 			DbSession.Refresh(CurrentClient.PhysicalClient.Plan);
 			Assert.That(CurrentClient.Plan == currentPlan && CurrentClient.Plan != targetPlan);
-			
+
 			CurrentClient.Balance = 500;
 			DbSession.Save(CurrentClient);
 			DbSession.Flush();
 			RunBillingProcess();
 			DbSession.Refresh(CurrentClient);
-			
+
 			SystemTime.Now = () => DateTime.Now;
 
 			Open("warning");
@@ -558,7 +601,10 @@ namespace Inforoom2.Test.Functional.Personal
 			AssertText(DbSession.Query<Plan>().First(s => s == PlanChangerDataItem.FastPlan).Name);
 		}
 
-		[Test(Description = "Проверка возврата переадресации Warning(ом) с главной станицы на выбор тарифа, если отработал PlanChanger (проверка паспортных данных)")]
+		[Test(
+			Description =
+				"Проверка возврата переадресации Warning(ом) с главной станицы на выбор тарифа, если отработал PlanChanger (проверка паспортных данных)"
+			)]
 		public void PlanChangerWithWarningFixtureFromMainToPlanChange()
 		{
 			CurrentClient = DbSession.Query<Client>().ToList().First(i => i.Patronymic.Contains("без паспортных данных"));
