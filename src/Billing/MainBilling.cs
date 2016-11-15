@@ -533,7 +533,7 @@ namespace Billing
 
 				if (PlanChanger.CheckPlanChangerWarningPage(session, client) == false)
 					//Обработка отображения предупреждения о балансе
-					UpdateWarnings(client);
+					UpdateWarningsForPhysicalClient(client, session);
 			}
 
 			//Обработка аренды оборудования 
@@ -772,7 +772,7 @@ namespace Billing
 		/// <summary>
 		/// Предупреждение клиента о низком балансе (для физика)
 		/// </summary>
-		private void UpdateWarnings(Client client)
+		private void UpdateWarningsForPhysicalClient(Client client, ISession session)
 		{
 			var oldVal = client.ShowBalanceWarningPage;
 			if (client.NeedShowWarningCheck()) {
@@ -780,9 +780,16 @@ namespace Billing
 				if (oldVal != client.ShowBalanceWarningPage)
 					client.CreareAppeal("Включена страница Warning, клиент не имеет паспортных данных", AppealType.Statistic);
 			} else {
-				client.ShowBalanceWarningPage = false;
-				if (oldVal != client.ShowBalanceWarningPage)
-					client.CreareAppeal("Отключена страница Warning", AppealType.Statistic);
+				if (oldVal) {
+					//при наличии PlanChanger сбратывать варнинг не нужно 
+					var planChangerItem =
+						session.Query<PlanChangerData>().FirstOrDefault(s => s.TargetPlan == client.PhysicalClient.Tariff.Id);
+					if (PlanChanger.PlanchangerTimeOffDate(client, planChangerItem) == null) {
+						client.ShowBalanceWarningPage = false;
+						if (oldVal != client.ShowBalanceWarningPage)
+							client.CreareAppeal("Отключена страница Warning", AppealType.Statistic);
+					}
+				}
 			}
 		}
 

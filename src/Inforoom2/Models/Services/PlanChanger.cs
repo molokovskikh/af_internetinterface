@@ -12,6 +12,7 @@ namespace Inforoom2.Models.Services
 	[Subclass(0, ExtendsType = typeof (Service), DiscriminatorValue = "PlanChanger")]
 	public class PlanChanger : Service
 	{
+		public const string MessagePatternDaysRemained = "Акционный период на тарифе 'Народный (300)' заканчивается {0}";
 		/// <summary>
 		/// при входе на сайт вызывается процедура
 		/// </summary> 

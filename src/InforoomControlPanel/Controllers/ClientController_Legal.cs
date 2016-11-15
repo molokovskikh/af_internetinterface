@@ -229,7 +229,11 @@ namespace InforoomControlPanel.Controllers
 			}).ToList();
 			//если задан тип сообщений, фильтруем по типу
 			if (appealType != 0) {
-				appeals = appeals.Where(s => (int)s.AppealType == appealType).ToList();
+				if (appealType == (int)AppealType.ClientToRead) {
+					appeals = appeals.Where(s => (int) s.AppealType == (int)AppealType.ClientToRead || (int)s.AppealType == (int)AppealType.ClientToReadDone).ToList();
+				} else {
+					appeals = appeals.Where(s => (int) s.AppealType == appealType).ToList();
+				}
 			}
 			else {
 				//при выводе всех сообщений, нужно учесть комментарии к сервисным заявкам

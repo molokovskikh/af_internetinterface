@@ -929,7 +929,7 @@ namespace Inforoom2.Models
 		[Description("Физ. лицо с низким балансом")] PhysLowBalance,
 		[Description("Физ. лицо без первого платежа")] PhysFirstPayment,
 		[Description("Физ. лицо без паспортных данных")] PhysPassportData,
-		[Description("Физ. лицо. не просмотренное сообщение")] AppealsForToday
+		[Description("Физ. лицо с непросмотренным сообщением")] AppealsForToday
 	}
 
 	/// <summary>

@@ -6,15 +6,22 @@
 	ViewBag.Title = "Сообщение";
 	Client client = ViewBag.CurrentClient;
     Appeal appealToShow = ViewBag.AppealToShow;
+
+    var planChangerDate = PlanChanger.PlanchangerTimeOffDate(client);
 }
 <div class="name-page">
 	<h1 class="header-page" >Внимание!</h1>
 </div>
 <div class="block-page">
     @using (@Html.BeginForm("MessageIsRead", "Warning", null, FormMethod.Post)) {
-        @Html.Hidden("id",appealToShow.Id)
+        @Html.Hidden("id", appealToShow.Id)
         @Html.Raw(appealToShow.Message)
-      <p>Нажимая далее, Вы подтверждаете прочтение данного сообщения.</p>
+        if(planChangerDate != null && appealToShow.Message == string.Format(PlanChanger.MessagePatternDaysRemained, planChangerDate.Value.ToShortDateString())) {
+             @Html.Raw(client.Plan.PlanChangerData.Text)
+             <p>Переход между тарифами бесплатный.</p>
+             <p>В случае отсутствия выбора по окончании акционного периода остается "Скорость".</p>
+         }
+        <p>Нажимая далее, Вы подтверждаете прочтение данного сообщения.</p>
         <input class="button unfreeze" type="submit" value="Далее"/>
     }
 </div>

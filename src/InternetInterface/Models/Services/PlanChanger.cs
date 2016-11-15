@@ -50,7 +50,7 @@ namespace InternetInterface.Models.Services
 					session.Update(clientService.Client);
 				}
 				if (changer.TargetPlan == clientService.Client.PhysicalClient.Tariff.Id &&
-					clientService.Client.Endpoints.Count > 0) {
+					clientService.Client.Endpoints.Count(s=>s.Disabled == false) > 0) {
 					ChangeClientTarrifIfNeeds(session, clientService.Client, changer);
 					AddClientAppealIfNeeds(clientService.Client, changer);
 					session.Update(clientService.Client);

@@ -101,7 +101,41 @@ namespace Inforoom2.Test.Functional.Personal
 			Open("/");
 			AssertNoText("НОВОСТИ");
 		}
-		
+
+		[Test(Description = "Проверка отработки просроченного PlanChanger сервиса у клиента - с целевым планом")]
+		public void PlanChangerFixtureUserWithTargetPlanMessageOnlyOne()
+		{
+			var now = DateTime.Now;
+			var days = 10;
+			SystemTime.Now = () => now;
+			PlanChangerFixtureOn(days, lastTimePlanChangedDays: 0);
+			CurrentClient.PaidDay = false;
+			DbSession.Save(CurrentClient);
+			DbSession.Flush();
+			RunBillingProcess();
+			DbSession.Refresh(CurrentClient);
+
+			var countOfAppeals = CurrentClient.Appeals.Count;
+
+			for (int i = 1; i <= days; i++) {
+				SystemTime.Now = () => now.AddDays(i);
+				CurrentClient.PaidDay = false;
+				DbSession.Save(CurrentClient);
+				DbSession.Flush();
+				RunBillingProcessPayments();
+				RunBillingProcessPayments();
+				RunBillingProcessPayments();
+				RunBillingProcess();
+			}
+			
+			DbSession.Refresh(CurrentClient);
+			Assert.That(CurrentClient.Appeals.Count == countOfAppeals + 1);
+
+			SystemTime.Now = () => DateTime.Now;
+		}
+
+
+
 		[Test(Description = "Проверка отработки просроченного PlanChanger сервиса у клиента - с целевым планом")]
 		public void PlanChangerFixtureUserWithTargetPlanMessage()
 		{
@@ -116,7 +150,7 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.PhysicalClient);
 			LoginForClient(CurrentClient);
-
+			AssertNoText("Уведомления");
 			var currentPlan = CurrentClient.Plan;
 			var targetPlan = CurrentClient.Plan.PlanChangerData.FastPlan;
 			var regWriteOff = CurrentClient.GetSumForRegularWriteOff();
@@ -143,6 +177,8 @@ namespace Inforoom2.Test.Functional.Personal
 						Assert.IsTrue(CurrentClient.ClientAppeals().Count(s => s.Message.IndexOf("Акционный период на тарифе") != -1) == 1);
 						browser.FindElementByCssSelector(".button.unfreeze").Click();
 						WaitForText("НЕОБХОДИМО ОПРЕДЕЛИТЬСЯ С ТАРИФОМ");
+						Open("personal/profile");
+						AssertText("Уведомления");
 					}
 				}
 				Open("/");
@@ -293,7 +329,7 @@ namespace Inforoom2.Test.Functional.Personal
 			}
 			currentDate = now;
 		}
-
+		
 
 		[Test(Description = "Проверка отработки просроченного PlanChanger сервиса у клиента - с целевым планом")]
 		public void PlanChangerFixtureUserWithTargetPlanMessageVoluntaryBlockNoDisconnect()
@@ -492,6 +528,7 @@ namespace Inforoom2.Test.Functional.Personal
 			Assert.That(CurrentClient.Plan != currentPlan && CurrentClient.Plan == cheapPlan);
 
 
+			SystemTime.Now = () => DateTime.Now;
 			UpdateDriverSideSystemTime();
 		}
 

@@ -95,7 +95,9 @@
 				<tr class="@(client.Status.Type == StatusType.NoWorked || client.Status.Type == StatusType.Dissolved ? "appeal Block" : "") @(client.Status.Type == StatusType.Dissolved ? "statusDissolved" : "")">
 					<td>Статус клиента</td>
 					<td>
-						<span>@client.Status.Type.GetDescription()</span>
+					    <span>@client.Status.Type.GetDescription()</span>
+                        @if (client.StatusChangedOn.HasValue)
+                        {<span class="gray"> (с @(client.StatusChangedOn.Value))</span>}
 					</td>
 				</tr>
 			<tr>
@@ -116,12 +118,9 @@
 					<span title="Warning">Блокирующие сообщения</span>
 				</td>
 				<td>
-					@if (client.ShowBalanceWarningPage) {
-						<span class="red bold">Вкл.</span>
-					}
-					else {
-						<span>Выкл.</span>
-					}
+				    @if (client.ShowBalanceWarningPage) {
+				        <span class="red bold">Вкл.</span><span class="gray"> ( @client.GetWarningState().GetDescription().ToLower() )</span>} else {
+				        <span>Выкл.</span>}
 				</td>
 			</tr>
 			</tbody>

@@ -7,6 +7,7 @@
 	PhysicalClient client = ViewBag.CurrentClient.PhysicalClient;
     var banner = (Banner) ViewBag.BannerForPage;
 	var urlPath = (string)ViewBag.pathFromConfigURL;
+    var appeals = client.Client.ClientAppealsShown().Where(s => s.Date.AddDays(-7).Date <= SystemTime.Now().Date).Take(5);
 }
 <h2 class="heading">@ViewBag.Title</h2>
 @{ Html.RenderPartial("Menu"); }
@@ -73,9 +74,21 @@
     </div>
     }
 </div>
+@if (appeals.Count() > 0)
+{
+    <div class="right-block">
+        <div class="name-table">Уведомления</div>
 
-@foreach (var appeal in client.Client.ClientAppealsShown().Where(s=>s.Date.AddDays(7).Date <= SystemTime.Now().Date).Take(5)) {
-    <p>@appeal.Date.ToShortDateString() - @appeal.Message</p>
+        <table class="cost">
+            <tbody>
+            @foreach (var appeal in appeals) {
+                <tr class="menucost">
+                    <td class="description" style="width: 74px; color: #a71a23;">@appeal.Date.ToShortDateString()</td>
+                    <td class="description" style="width: 545px;">@appeal.Message</td>
+                </tr>
+            }</tbody>
+        </table>
+    </div>
 }
 
 @if (client.Client.Status.Type == StatusType.NoWorked) {
