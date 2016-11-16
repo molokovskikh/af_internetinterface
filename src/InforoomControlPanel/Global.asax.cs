@@ -58,8 +58,8 @@ namespace InforoomControlPanel
 		protected void Application_Error(object sender, EventArgs e)
 		{
 			try {
-				//ThreadContext.Properties["version"] = "Current Version";
 				ThreadContext.Properties["url"] = Request.Url;
+				ThreadContext.Properties["employee"] = HttpContext.Current.User?.Identity.Name;
 			} catch {
 			}
 			var exception = Server.GetLastError();
