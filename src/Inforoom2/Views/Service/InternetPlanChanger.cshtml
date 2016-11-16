@@ -15,7 +15,7 @@
 <h2 class="heading"> @ViewBag.Title </h2>
 <div style="margin: auto; width: 92%; text-align: center;">
     <p style="font-size:20px">
-        Уважаемый Абонент!
+        Уважаемый Абонент!<br/>
         Срок действия акционного периода на тарифе '@client.Plan.NameWithPrice' истекает @(client.PhysicalClient.PlanChangerOnDate().HasValue
                                                                                    ? client.PhysicalClient.PlanChangerOnDate().Value.ToShortDateString() : "").
     </p>
