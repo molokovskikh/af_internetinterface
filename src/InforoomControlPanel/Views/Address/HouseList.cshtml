@@ -14,7 +14,7 @@
 	var streetList = new NameValueCollection();
 	var regionList = new NameValueCollection();
 	streetList["0"] = " ";
-	streets.Each(i => streetList[i.Id.ToString()] = i.Name.ToString());
+	streets.Each(i => streetList[i.Id.ToString()] = i.PublicName().ToString());
 	regionList["0"] = " ";
 	regions.Each(i => regionList[i.Id.ToString()] = i.Name.ToString());
 }
@@ -65,7 +65,7 @@
 		@foreach (var item in houses) {
 			<tr>
 				<td>@(item.Region != null ? item.Region.Name + " (" + item.Street.Region.Name + ")" : item.Street.Region.Name)</td>
-				<td>@item.Street.Name</td>
+				<td>@item.Street.PublicName()</td>
 				<td>@item.Number</td>
 				<td>@Html.DisplayFor(i => item.Confirmed)</td>
 				<td>

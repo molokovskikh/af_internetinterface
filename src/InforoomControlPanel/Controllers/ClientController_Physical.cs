@@ -486,7 +486,8 @@ namespace InforoomControlPanel.Controllers
 				? new List<Street>()
 				: DbSession.Query<Street>()
 					.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id))
-					.OrderBy(s => s.Name)
+					.ToList()
+					.OrderBy(s => s.PublicName())
 					.ToList();
 			var currentHouseList = currentStreet == null || currentRegion == null
 				? new List<House>()
@@ -550,7 +551,8 @@ namespace InforoomControlPanel.Controllers
 				? new List<Street>()
 				: DbSession.Query<Street>()
 					.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id))
-					.OrderBy(s => s.Name)
+					.ToList()
+					.OrderBy(s => s.PublicName())
 					.ToList();
 			var currentHouseList = currentStreet == null || currentRegion == null
 				? new List<House>()
@@ -641,7 +643,8 @@ namespace InforoomControlPanel.Controllers
 				? new List<Street>()
 				: DbSession.Query<Street>()
 					.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id))
-					.OrderBy(s => s.Name)
+					.ToList()
+					.OrderBy(s => s.PublicName())
 					.ToList();
 			var currentHouseList = currentStreet == null || currentRegion == null
 				? new List<House>()

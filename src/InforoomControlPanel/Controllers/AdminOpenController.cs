@@ -212,10 +212,10 @@ namespace InforoomControlPanel.Controllers
 		public JsonResult GetStreetList(int regionId)
 		{
 			var streets = DbSession.Query<Street>().
-				Where(s => s.Region.Id == regionId || s.Houses.Any(a => a.Region.Id == regionId)).
-				Select(s => new {
+				Where(s => s.Region.Id == regionId || s.Houses.Any(a => a.Region.Id == regionId)).ToList()
+				.Select(s => new {
 					Id = s.Id,
-					Name = s.Name,
+					Name = s.PublicName(),
 					Geomark = s.Geomark,
 					Confirmed = s.Confirmed,
 					Region = s.Region.Id,

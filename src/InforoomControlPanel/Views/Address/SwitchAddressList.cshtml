@@ -28,7 +28,7 @@
 			{
 			<tr>
 				<td>@Html.DisplayFor(modelItem => item.House.Street.Region.Name)</td>
-				<td>@Html.DisplayFor(modelItem => item.House.Street.Name)</td>
+				<td>@item.House.Street.PublicName()</td>
 				<td>@Html.DisplayFor(modelItem => item.House.Number)</td>
 				<td>@(item.Entrance != 0 ? item.Entrance.ToString() : "Не указан")</td>
 				<td>@(item.NetworkNode != null ? item.NetworkNode.Name : "Не прикреплен")</td>

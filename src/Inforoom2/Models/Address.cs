@@ -44,7 +44,7 @@ namespace Inforoom2.Models
 			get
 			{
 				return (House.Region == null ? House.Street.Region.City.Name : House.Region.City.Name) + ". "
-				       + House.Street.Name + ". "
+				       + House.Street.PublicName() + ". "
 				       + House.Number;
 			}
 		}
@@ -84,7 +84,7 @@ namespace Inforoom2.Models
 					// получаем недостающие значения моделей (без них ошибка у NHibernate во Flush)
 					oldHouse.Street = session.Query<Street>().FirstOrDefault(s => s == oldHouse.Street);
 					oldHouse.Street.Houses = session.Query<Street>().FirstOrDefault(s => s == oldHouse.Street).Houses;
-					message += property + " было: " + oldHouse.Street.Name + ", д." + oldHouse.Number + "<br/>";
+					message += property + " было: " + oldHouse.Street.PublicName() + ", д." + oldHouse.Number + "<br/>";
 				}
 				if (currentHouse == null) {
 					message += property + " стало: " + "значение отсуствует <br/> ";
@@ -94,7 +94,7 @@ namespace Inforoom2.Models
 					this.House = session.Query<House>().FirstOrDefault(s => s == this.House);
 					this.House.Street = session.Query<Street>().FirstOrDefault(s => s == this.House.Street);
 					this.House.Street.Houses = session.Query<Street>().FirstOrDefault(s => s == this.House.Street).Houses;
-					message += property + " стало: " + currentHouse.Street.Name + ", д." + currentHouse.Number + "<br/>";
+					message += property + " стало: " + currentHouse.Street.PublicName() + ", д." + currentHouse.Number + "<br/>";
 				}
 			}
 			return message;
@@ -115,7 +115,7 @@ namespace Inforoom2.Models
 		{
 			var cityReg = (House.Region == null ? House.Street.Region.City.Name : House.Region.City.Name);
 
-			return GetAddressString(street ? House.Street.Name : "", house ? House.Number : "",
+			return GetAddressString(street ? House.Street.PublicName() : "", house ? House.Number : "",
 				city ? cityReg : "", apartment ? Apartment ?? "" : "", entrance ? Entrance ?? "" : "",
 				floor ? Floor == 0 ? "" : Floor.ToString() : "");
 		}

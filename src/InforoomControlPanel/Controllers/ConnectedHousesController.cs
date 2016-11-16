@@ -39,8 +39,8 @@ namespace InforoomControlPanel.Controllers
 			if (regionId != 0) {
 				streetList = DbSession.Query<House>().Where(s => (s.Region != null && s.Region.Id == regionId)
 				                                                 || (s.Region == null && s.Street.Region.Id == regionId)).Select(s => s.Street)
-					.OrderBy(s => s.Name).ToList();
-				streetList = streetList.GroupBy(s => s.Id).Select(grp => grp.First()).OrderBy(s => s.Name).ToList();
+					.ToList();
+				streetList = streetList.GroupBy(s => s.Id).Select(grp => grp.First()).OrderBy(s => s.PublicName()).ToList();
 				var result = DbSession.Query<ConnectedHouse>()
 					.Where(s => (s.Street.Region.Id == regionId && s.Region == null) || (s.Region != null && s.Region.Id == regionId)).ToList();
 				var streets = result.Select(s => s.Street).GroupBy(s => s.Id).Select(grp => grp.First()).ToList();
@@ -63,7 +63,7 @@ namespace InforoomControlPanel.Controllers
 						).OrderBy(s => s.Number).Select(s => s.House).ToList();
 					connectedHouses.Add(new ViewModelConnectedHouses() { Street = item, Houses = orderedHouses });
 				}
-				connectedHouses = connectedHouses.OrderBy(s => s.Street.Name).ToList();
+				connectedHouses = connectedHouses.OrderBy(s => s.Street.PublicName()).ToList();
 			}
 			ViewBag.StreetList = streetList;
 			ViewBag.ConnectedHouses = connectedHouses;
@@ -81,7 +81,7 @@ namespace InforoomControlPanel.Controllers
 			var existed = DbSession.Query<ConnectedHouse>().FirstOrDefault(s => s.Street.Id == model.Street
 			                                                                    && s.Number.Replace(" ", "").ToLower() == model.House.Replace(" ", "").ToLower());
 			if (existed != null) {
-				ErrorMessage($"Дом '{existed.Number}' на улице '{existed.Street.Name}' в городе '{existed.Street.Region.Name}' уже был добавлен");
+				ErrorMessage($"Дом '{existed.Number}' на улице '{existed.Street.PublicName()}' в городе '{existed.Street.Region.Name}' уже был добавлен");
 				return RedirectToAction("Index", new { @regionId = regionId });
 			}
 			var sHouse = model.Id == 0 ? new ConnectedHouse() : DbSession.Query<ConnectedHouse>().FirstOrDefault(s => s.Id == model.Id);
@@ -150,7 +150,7 @@ namespace InforoomControlPanel.Controllers
 			sHouse.Street = DbSession.Query<Street>().FirstOrDefault(s => s.Id == model.Street);
 			if (delete) {
 				DbSession.Delete(sHouse);
-				SuccessMessage($"Дом '{sHouse.Number}' по улице '{sHouse.Street.Name}' в городе {sHouse.Region.Name} был удален");
+				SuccessMessage($"Дом '{sHouse.Number}' по улице '{sHouse.Street.PublicName()}' в городе {sHouse.Region.Name} был удален");
 			}
 			else {
 				sHouse.Number = model.House;
@@ -160,7 +160,7 @@ namespace InforoomControlPanel.Controllers
 				var errors = ValidationRunner.Validate(sHouse);
 				if (errors.Length == 0) {
 					DbSession.Save(sHouse);
-					SuccessMessage($"Дом '{sHouse.Number}' по улице '{sHouse.Street.Name}' в городе {sHouse.Region.Name} был изменен");
+					SuccessMessage($"Дом '{sHouse.Number}' по улице '{sHouse.Street.PublicName()}' в городе {sHouse.Region.Name} был изменен");
 				}
 				else {
 					DbSession.Refresh(sHouse);

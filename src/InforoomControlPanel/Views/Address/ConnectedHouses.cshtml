@@ -57,7 +57,7 @@
 			@foreach (var item in addresses)
 	{
 	<tr>
-		<td>@(item.House.Street.Name:"")</td>
+		<td>@(item.House.Street.PublicName():"")</td>
 		<td>@item.House.Number</td>
 	</tr>
 	}

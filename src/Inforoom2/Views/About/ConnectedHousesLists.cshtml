@@ -8,7 +8,7 @@
 	ViewBag.Title = "Список подключенных домов";
 	string currentRegionName = ViewBag.CurrentRegion;
 	List<ConnectedHouse> connectedHouses = ViewBag.ConnectedHouses;
-	List<Street> connectedStreets = connectedHouses.Select(s => s.Street).GroupBy(s => s.Id).Select(grp => grp.First()).OrderBy(s => s.Name).ToList();
+	List<Street> connectedStreets = connectedHouses.Select(s => s.Street).GroupBy(s => s.Id).Select(grp => grp.First()).OrderBy(s => s.PublicName()).ToList();
 }
 
 <h2 class="heading">@ViewBag.Title</h2>
@@ -20,7 +20,7 @@
 	</h3>
 	@{
 		foreach (var street in connectedStreets) {
-			@(street.Name + " : ")
+			@(street.PublicName() + " : ")
 
 			var currentHouses = connectedHouses.Where(s => s.Street.Id == street.Id && !s.Disabled).ToList().GroupBy(s => s.Number).Select(group => group.First()).ToList();
 
