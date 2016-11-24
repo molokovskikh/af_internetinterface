@@ -69,10 +69,11 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.Switch = Switch;
 			return View();
 		}
-		
+
 		/// <summary>
 		/// Изменение коммутаторов
 		/// </summary>
+		[HttpGet]
 		public ActionResult EditSwitch(int id)
 		{
 			ViewBag.Switch = DbSession.Get<Switch>(id);
