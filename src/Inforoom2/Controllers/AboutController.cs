@@ -55,7 +55,7 @@ namespace Inforoom2.Controllers
 		{ 
 			var curentRegion = CurrentRegion;
 			ViewBag.CurrentRegion = curentRegion.City.Name; 
-			ViewBag.ConnectedHouses = DbSession.Query<ConnectedHouse>().Where(s=>s.Region.Id == curentRegion.Id).OrderBy(s=>s.Street.Name).ToList(); 
+			ViewBag.ConnectedHouses = DbSession.Query<ConnectedHouse>().Where(s=>s.Region.Id == curentRegion.Id).ToList().OrderBy(s=>s.Street.PublicName()).ToList(); 
 
 			return View();
 		}

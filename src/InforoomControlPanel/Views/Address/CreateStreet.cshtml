@@ -26,13 +26,21 @@
 							@Html.DropDownListExtendedFor(i=>Street.Region,Regions,i=>i.Name,null,new { @class = "form-control" },region.Id)
 							@ViewBag.Validation.GetError(Street, "Region")
 						</div>
-					</div><div class="form-group">
-						<label class="col-sm-4 control-label">Название</label>
-						<div class="col-sm-6">
-							@Html.TextBoxFor(I=>Street.Name,new { @class = "form-control" })
-							@ViewBag.Validation.GetError(Street, "Name")
-						</div>
-					</div>
+				    </div>
+				    <div class="form-group">
+				        <label class="col-sm-4 control-label">Название</label>
+				        <div class="col-sm-6">
+				            @Html.TextBoxFor(I => Street.Name, new {@class = "form-control"})
+				            @ViewBag.Validation.GetError(Street, "Name")
+				        </div>
+				    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Псевдоним</label>
+                        <div class="col-sm-6">
+                            @Html.TextBoxFor(I => Street.Alias, new { @class = "form-control" })
+                            @ViewBag.Validation.GetError(Street, "Alias")
+                        </div>
+                    </div>
 					<div class="form-group">
 						<label class="col-sm-4 control-label">Использовать яндекс (иногда яндекс не может найти адрес - тогда можно вписать название самостоятельно и создать метку кликнув по карте)</label>
 						<div class="col-sm-6">

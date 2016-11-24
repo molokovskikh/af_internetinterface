@@ -149,11 +149,11 @@
 										<label class="col-sm-4 control-label@(currentStreet == null ? " bold msg" : "")">Улица:</label>
 										<div class="col-sm-4">
 											@if (currentStreet != null) {
-												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
+												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.PublicName(), null,
 													new { @class = "form-control", @Id = "StreetDropDown", @Name = "" }, currentStreet.Id, true)
 											}
 											else {
-												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
+												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.PublicName(), null,
 													new { @class = "form-control", @Id = "StreetDropDown", @Name = "" }, true)
 											}
 										</div>

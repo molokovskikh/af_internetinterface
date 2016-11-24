@@ -86,7 +86,7 @@
 								<label class="col-sm-3@(currentStreet == null ? " bold msg" : "")">Улица:</label>
 								<div class="col-sm-6">
 									@if (currentStreet != null) {
-										@Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.Name, s => new { @value = s.Name, @modelId = s.Id },
+										@Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.PublicName(), s => new { @value = s.Name, @modelId = s.Id },
 											new {
 												@class = "form-control", @Id = "StreetDropDown",
 												@Name = "ClientRequest.Street",
@@ -94,7 +94,7 @@
 											}, currentStreet.Id, true)
 									}
 									else {
-										@Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.Name, s => new { @value = s.Name, @modelId = s.Id },
+										@Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.PublicName(), s => new { @value = s.Name, @modelId = s.Id },
 											new {
 												@class = "form-control", @Id = "StreetDropDown",
 												@Name = "ClientRequest.Street",

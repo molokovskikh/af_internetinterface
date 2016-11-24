@@ -122,7 +122,7 @@ namespace InforoomControlPanel.Controllers
 				ViewBag.Switch = DbSession.Get<NetworkNode>(id);
 
 			var regions = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
-			var streets = DbSession.Query<Street>().OrderBy(s => s.Name).ToList();
+			var streets = DbSession.Query<Street>().ToList().OrderBy(s => s.PublicName()).ToList();
 			var houses = DbSession.Query<House>().OrderBy(s => s.Number).ToList();
 			var NetworkNodes = DbSession.Query<NetworkNode>().OrderBy(i => i.Name).ToList();
 			ViewBag.Streets = streets;
@@ -373,7 +373,7 @@ namespace InforoomControlPanel.Controllers
 					reasonNotToRemove += $" <p>- Дочернии регионы ({itemToDelete.Children.Count}): {string.Join(", ", itemToDelete.Children.Select(s => s.Name).ToList()).CutAfter(500)}.</p> ";
 				}
 				if (itemToDelete.Streets.Count > 0) {
-					reasonNotToRemove += $" <p>- Улицы ({itemToDelete.Streets.Count}): {string.Join(", ", itemToDelete.Streets.Select(s => s.Name).ToList()).CutAfter(500)}.</p> ";
+					reasonNotToRemove += $" <p>- Улицы ({itemToDelete.Streets.Count}): {string.Join(", ", itemToDelete.Streets.Select(s => s.PublicName()).ToList()).CutAfter(500)}.</p> ";
 				}
 				if (reasonNotToRemove == string.Empty) {
 					SafeDelete<Region>(id);
@@ -574,7 +574,7 @@ namespace InforoomControlPanel.Controllers
 					Restrictions.And(Restrictions.IsNull("Region.Id"), Restrictions.Eq("StreetAl.Region.Id", Int32.Parse(pager.GetParam("Region.Id"))))));
 			}
 			ViewBag.Streets = DbSession.Query<House>().Select(s => s.Street)
-				.OrderBy(s => s.Name).Distinct().ToList();
+				.OrderBy(s => s.Name).Distinct().ToList().OrderBy(s=>s.PublicName()).ToList();
 			ViewBag.Regions = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			ViewBag.Pager = pager;
 			return View();

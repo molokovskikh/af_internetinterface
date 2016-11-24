@@ -37,7 +37,7 @@
 				@Html.Hidden("switchId", NetworkNode.Id)
                 @Html.HiddenFor(i => SwitchAddress.Id)
 				<div class="col-sm-3">
-					@Html.DropDownListExtendedFor(i=>house.Street,Streets, i=>i.Name,i=>new {@class= i.Region.Id.ToString() }, new { @class = "form-control" },street.Id)
+					@Html.DropDownListExtendedFor(i=>house.Street,Streets, i=>i.PublicName(), i=>new {@class= i.Region.Id.ToString() }, new { @class = "form-control" },street.Id)
 				</div>
 	</div>
 

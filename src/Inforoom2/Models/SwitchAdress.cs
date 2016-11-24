@@ -48,7 +48,7 @@ namespace Inforoom2.Models
 
 		public virtual string GetFullAddress(bool showEntrance = false)
 		{
-			var str = House.Street.Region.Name + ", " + House.Street.Name + ", " + House.Number;
+			var str = House.Street.Region.Name + ", " + House.Street.PublicName() + ", " + House.Number;
 			if (showEntrance && Entrance != 0)
 				str += ", " + Entrance;
 			return str;

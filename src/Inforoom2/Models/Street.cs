@@ -30,8 +30,11 @@ namespace Inforoom2.Models
 			Region = region;
 		}
 
-		[Property, NotEmpty(Message = "Введите номер улицы"), Description("Наименование улицы")]
+		[Property(Column = "Name"), NotEmpty(Message = "Введите номер улицы"), Description("Наименование улицы")]
 		public virtual string Name { get; set; }
+		
+		[Property, Description("Псевдоним улицы")]
+		public virtual string Alias { get; set; }
 
 		[Property, NotNullNotEmpty(Message = "Геопозиция должна быть задана"), Description("Геометка улицы на карте")]
 		public virtual string Geomark { get; set; }
@@ -46,5 +49,10 @@ namespace Inforoom2.Models
 		[Key(1, Column = "Street")]
 		[OneToMany(2, ClassType = typeof(House))]
 		public virtual IList<House> Houses { get; set; }
+
+		public virtual string PublicName()
+		{
+			return string.IsNullOrEmpty(Alias) ? Name : Alias;
+		}
 	}
 }

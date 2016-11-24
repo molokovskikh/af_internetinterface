@@ -486,7 +486,8 @@ namespace InforoomControlPanel.Controllers
 				? new List<Street>()
 				: DbSession.Query<Street>()
 					.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id))
-					.OrderBy(s => s.Name)
+					.ToList()
+					.OrderBy(s => s.PublicName())
 					.ToList();
 			var currentHouseList = currentStreet == null || currentRegion == null
 				? new List<House>()
@@ -550,7 +551,8 @@ namespace InforoomControlPanel.Controllers
 				? new List<Street>()
 				: DbSession.Query<Street>()
 					.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id))
-					.OrderBy(s => s.Name)
+					.ToList()
+					.OrderBy(s => s.PublicName())
 					.ToList();
 			var currentHouseList = currentStreet == null || currentRegion == null
 				? new List<House>()
@@ -641,7 +643,8 @@ namespace InforoomControlPanel.Controllers
 				? new List<Street>()
 				: DbSession.Query<Street>()
 					.Where(s => s.Region.Id == currentRegion.Id || s.Houses.Any(a => a.Region.Id == currentRegion.Id))
-					.OrderBy(s => s.Name)
+					.ToList()
+					.OrderBy(s => s.PublicName())
 					.ToList();
 			var currentHouseList = currentStreet == null || currentRegion == null
 				? new List<House>()
@@ -845,14 +848,16 @@ namespace InforoomControlPanel.Controllers
 			var oldPlan = client.PhysicalClient.Plan;
 			if (oldPlan != newPlan) {
 				client.PhysicalClient.Plan = newPlan;
-				var oldWarningState = client.ShowBalanceWarningPage;
+                //если оператор вручную задает акционный тариф нужно учесть дату смены (для PlanChanger)
+                client.PhysicalClient.LastTimePlanChanged = SystemTime.Now();
+                var oldWarningState = client.ShowBalanceWarningPage;
 				client.Endpoints.Where(s => !s.Disabled).ForEach(e => { e.SetStablePackgeId(newPlan.PackageSpeed.PackageId); });
 
 				if (oldWarningState != client.ShowBalanceWarningPage) {
 					client.ShowBalanceWarningPage = oldWarningState;
 					DbSession.Save(client);
-				}
-				DbSession.Save(client);
+                }
+                DbSession.Save(client);
 				Inforoom2.Helpers.SceHelper.UpdatePackageId(DbSession, client);
 
 				SuccessMessage("Тариф клиента успешно изменен");

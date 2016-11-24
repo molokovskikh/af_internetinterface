@@ -159,11 +159,11 @@
 												<span @(currentHouse == null ? Html.Raw(" style=\"color: #FF8D8D;\" ") : Html.Raw(""))><strong>В заявке: </strong>  @userRequestStreet</span>
 											</div>
 											@if (currentStreet != null) {
-												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
+												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.PublicName(), null,
 													new { @class = "form-control", @Id = "StreetDropDown", @Name = "" }, currentStreet.Id, true)
 											}
 											else {
-												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.Name, null,
+												@Html.DropDownListExtendedFor(i => client.PhysicalClient.Address.House.Street, currentStreetList, obj => obj.PublicName(), null,
 													new { @class = "form-control", @Id = "StreetDropDown", @Name = "" }, true)
 											}
 

@@ -41,7 +41,7 @@
 							<td>
 								<select name="model.Street" class="form-control" style="display: inline; width: 240px">
 									@foreach (var item in streetList) {
-										<option value="@item.Id">@item.Name</option>
+										<option value="@item.Id">@item.PublicName()</option>
 									}
 								</select>
 							</td>
@@ -105,7 +105,7 @@
 							<td>
 								<select name="streetId" class="form-control" style="display: inline; width: 240px">
 									@foreach (var item in streetList) {
-										<option value="@item.Id">@item.Name</option>
+										<option value="@item.Id">@item.PublicName()</option>
 									}
 								</select>
 							</td>

@@ -98,7 +98,7 @@ namespace Inforoom2.Controllers
 					if (string.IsNullOrEmpty(lease.Switch.Name)) {
 						var addr = CurrentClient.PhysicalClient.Address;
 						if (addr != null)
-							lease.Switch.Name = addr.House.Street.Region.City.Name + ", " + addr.House.Street.Name + ", " + addr.House.Number;
+							lease.Switch.Name = addr.House.Street.Region.City.Name + ", " + addr.House.Street.PublicName() + ", " + addr.House.Number;
 						else
 							lease.Switch.Name = CurrentClient.Id + ": адрес неопределен";
 					}
