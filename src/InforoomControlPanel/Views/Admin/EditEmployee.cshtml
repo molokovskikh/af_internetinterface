@@ -45,6 +45,13 @@
 			        </div>
 			    </div>
                 <div class="form-group">
+                    <label class="col-sm-4 control-label">Длительность сессии (0 - знач. по умолчанию)</label>
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(I => employee.SessionDurationMinutes, new { @type = "numeric", @max = "4320", @min = "0", @class = "form-control" })
+                        @ViewBag.Validation.GetError(employee, "SessionDurationMinutes")
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-sm-4 control-label c-pointer" for="passwordUpdate">Обновить пароль</label>
                     <div class="col-sm-6">
                         @Html.CheckBoxFor(I => passwordUpdate, new { @Id = "passwordUpdate", @Name = "passwordUpdate" })

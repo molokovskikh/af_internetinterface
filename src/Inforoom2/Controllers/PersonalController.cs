@@ -66,7 +66,7 @@ namespace Inforoom2.Controllers
 
 			if (oldphysicalClient.Client.Id != CurrentClient.Id) {
 				ErrorMessage("Попытка изменить чужие данные.");
-				return RedirectToAction("Index", "Home");
+                throw new Exception("Попытка изменить чужие данные.");
 			}
 
 			oldphysicalClient.UpdateFirstVisitData(physicalClient);
@@ -74,75 +74,17 @@ namespace Inforoom2.Controllers
 		var errors = ValidationRunner.Validate(oldphysicalClient);
 			if (errors.Length == 0) {
 				DbSession.Save(oldphysicalClient);
-				var ip = Request.UserHostAddress;
-				var address = IPAddress.Parse(ip);
-#if DEBUG
-				var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Endpoint == null);
-#else
-				var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == address && l.Endpoint == null);
-#endif
-				ClientEndpoint currentEnpoint = null;
-				if (lease != null) {
-					currentEnpoint = DbSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Switch.Id == lease.Switch.Id && s.Port == lease.Port);
-					if (currentEnpoint != null) {
-						ErrorMessage("Ошибка: точка подключения не задана!");
-						var email = ConfigurationManager.AppSettings["ErrorNotifierMail"];
-						var href = $"<a href='http://stat.ivrn.net/cp/Client/{(oldphysicalClient.Client.PhysicalClient != null ? "InfoPhysical" : "InfoLegal")}/" + oldphysicalClient.Client.Id + $"'>{oldphysicalClient.Client.Id}</a>";
-						//отправка сообщения об ошибки
-						EmailSender.SendEmail(new string[] { email },
-							"Ошибка в  Inforoom2 при автоматическом создании точки подключения по ЛС " + oldphysicalClient.Client.Id,
-							$"При создании точки подключения для клиента {href} выяснилось, <br/>что на порту коммутатора уже находится точка подключения {currentEnpoint.Id}");
-					}
-				}
-				if (CurrentClient.Endpoints.Count == 0 && lease != null && currentEnpoint == null) {
-					if (string.IsNullOrEmpty(lease.Switch.Name)) {
-						var addr = CurrentClient.PhysicalClient.Address;
-						if (addr != null)
-							lease.Switch.Name = addr.House.Street.Region.City.Name + ", " + addr.House.Street.PublicName() + ", " + addr.House.Number;
-						else
-							lease.Switch.Name = CurrentClient.Id + ": адрес неопределен";
-					}
 
-					var endpoint = new ClientEndpoint();
-					endpoint.Client = CurrentClient;
-					endpoint.Switch = lease.Switch;
-					endpoint.Port = lease.Port;
-					endpoint.Disabled = false;
-					endpoint.IsEnabled = true;
-
-					CurrentClient.SetStatus(Status.Get(StatusType.Worked, DbSession));
-					if (CurrentClient.RatedPeriodDate == null && !CurrentClient.Disabled) {
-						CurrentClient.RatedPeriodDate = SystemTime.Now();
-					}
-					if (CurrentClient.WorkingStartDate == null && !CurrentClient.Disabled) {
-						CurrentClient.WorkingStartDate = SystemTime.Now();
-					}
-					//обновляем значение даты подключения клиента
-					CurrentClient.ConnectedDate = SystemTime.Now();
-					
-					endpoint.SetStablePackgeId(CurrentClient.PhysicalClient.Plan.PackageSpeed.PackageId);
-
-					DbSession.Save(endpoint);
-					lease.Endpoint = endpoint;
-
-					var paymentForConnect = new PaymentForConnect(physicalClient.ConnectSum, endpoint);
-					//Пытаемся найти сотрудника
-					paymentForConnect.Employee = GetCurrentEmployee();
-
-
-					var internet = CurrentClient.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Internet);
-					internet.ActivateFor(CurrentClient, DbSession);
-					var iptv = CurrentClient.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Iptv);
-					iptv.ActivateFor(CurrentClient, DbSession);
-
-					if (CurrentClient.IsNeedRecofiguration)
-						SceHelper.UpdatePackageId(DbSession, CurrentClient);
-
-					DbSession.Save(lease.Switch);
-					DbSession.Save(paymentForConnect);
-					DbSession.Save(lease);
+				var errorMessage = "";
+				//пытаемся добавить точку подклбючения, если ее нет
+				PhysicalClient.EndpointCreateIfNeeds(DbSession, oldphysicalClient.Client, this.Request.UserHostAddress,
+					GetCurrentEmployee(),
+					ref errorMessage);
+				if (!string.IsNullOrEmpty(errorMessage)) {
+					ErrorMessage(errorMessage);
 				}
 				SuccessMessage("Данные успешно заполнены");
+
 				CurrentClient.Lunched = true;
 				DbSession.Save(CurrentClient);
 				return RedirectToAction("Profile");

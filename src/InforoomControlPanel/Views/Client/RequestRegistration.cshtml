@@ -6,25 +6,28 @@
 @using Street = Inforoom2.Models.Street
 
 @{
-	Client client = ViewBag.Client;
-	ViewBag.Title = "Регистрация нового клиента " + client.PhysicalClient.FullName + " по заявке";
-	Layout = "~/Views/Shared/_Layout.cshtml";
-	string action = ViewBag.ActionName;
-	string controller = ViewBag.ControllerName;
-	List<Region> regionList = ViewBag.RegionList;
-	List<Plan> planList = ViewBag.PlanList;
-	Dictionary<int, CertificateType> certificateTypeDic = ViewBag.CertificateTypeDic;
-	Region currentRegion = ViewBag.CurrentRegion;
-	Street currentStreet = ViewBag.CurrentStreet;
-	House currentHouse = ViewBag.CurrentHouse;
-	string userRequestStreet = ViewBag.UserRequestStreet;
-	string userRequestHouse = ViewBag.UserRequestHouse.ToString();
-	string userRequestHousing = ViewBag.UserRequestHousing;
-	bool redirectToCard = ViewBag.RedirectToCard;
-	List<Street> currentStreetList = ViewBag.CurrentStreetList;
-	List<House> currentHouseList = ViewBag.CurrentHouseList;
-	int requestId = ViewBag.requestId;
-	var validatorFullNameOriginal = ViewBag.ValidatorFullNameOriginal;
+    Client client = ViewBag.Client;
+    ViewBag.Title = "Регистрация нового клиента " + client.PhysicalClient.FullName + " по заявке";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string action = ViewBag.ActionName;
+    string controller = ViewBag.ControllerName;
+    List<Region> regionList = ViewBag.RegionList;
+    List<Plan> planList = ViewBag.PlanList;
+    Dictionary<int, CertificateType> certificateTypeDic = ViewBag.CertificateTypeDic;
+    Region currentRegion = ViewBag.CurrentRegion;
+    Street currentStreet = ViewBag.CurrentStreet;
+    House currentHouse = ViewBag.CurrentHouse;
+    string userRequestStreet = ViewBag.UserRequestStreet;
+    string userRequestHouse = ViewBag.UserRequestHouse.ToString();
+    string userRequestHousing = ViewBag.UserRequestHousing;
+    bool redirectToCard = ViewBag.RedirectToCard;
+    List<Street> currentStreetList = ViewBag.CurrentStreetList;
+    List<House> currentHouseList = ViewBag.CurrentHouseList;
+    int requestId = ViewBag.requestId;
+    var validatorFullNameOriginal = ViewBag.ValidatorFullNameOriginal;
+    var currentIp = ViewBag.CurrentIp??"";
+    var currentLease = (Lease) ViewBag.CurrentLease;
+    var requestGybrid = (bool)ViewBag.RequestGybrid;
 }
 
 <div class="panel panel-primary col-md-12">
@@ -32,7 +35,7 @@
 		@using (@Html.BeginForm(action, controller, null, FormMethod.Post, new { @class = "form-horizontal form-groups-bordered" })) {
 			<div class="panel-body">
 				<div class="row"> 
-					@Html.HiddenFor(s => requestId);
+					@Html.HiddenFor(s => requestId)
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h3 class="panel-title">Личная информация</h3>
@@ -118,12 +121,35 @@
 											@ViewBag.Validation.GetError(client.PhysicalClient, "ExternalClientId")
 										</div>
 									</div>
-									<div class="form-group">
-										<label class="col-sm-4 control-label c-pointer" for="clientToBeChecked">Проверен:</label>
-										<div class="col-sm-4">
-											@Html.CheckBoxFor(o => client.PhysicalClient.Checked, new { @Id = "clientToBeChecked", @class = "c-pointer" })
-										</div>
-									</div>
+								    <div class="form-group">
+								        <label class="col-sm-4 control-label c-pointer" for="clientToBeChecked">Проверен:</label>
+								        <div class="col-sm-4">
+								            @Html.CheckBoxFor(o => client.PhysicalClient.Checked, new {@Id = "clientToBeChecked", @class = "c-pointer"})
+								        </div>
+								    </div>
+								    @if (requestGybrid) {
+								        <div class="form-group">
+								            <label class="col-sm-4 control-label">IP:</label>
+								            <div class="col-sm-4">
+								                @currentIp
+								            </div>
+								        </div>
+								        if (currentLease != null) {
+								            <div class="form-group">
+								                <label class="col-sm-4 control-label">MAC:</label>
+								                <div class="col-sm-4">
+								                    <strong class="@(currentLease.Pool != null && currentLease.Pool.Relay.HasValue ? "" : "wlease red")" title="@(currentLease.Pool != null && currentLease.Pool.Relay.HasValue ? "" : "Пул не соответствует, нет значения 'Relay'")"> @currentLease.Mac</strong>
+								                </div>
+								            </div>
+								        } else {
+								            <div class="form-group">
+								                <label class="col-sm-4 control-label">MAC:</label>
+								                <div class="col-sm-4">
+								                    <strong> сессия не найденна для текущего Ip-адреса</strong>
+								                </div>
+								            </div>
+								        }
+								    }
 								</div><!-- /.col-lg-6 -->
 							</div><!-- /.row -->
 						</div>

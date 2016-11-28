@@ -158,7 +158,10 @@ namespace Inforoom2.Controllers
 			var filledCapcha = HttpContext.Session["captcha"] as string;
 			callMeBackTicket.SetConfirmCaptcha(filledCapcha);
 			callMeBackTicket.Client = CurrentClient;
+		    if (string.IsNullOrEmpty(urlBack)) {
+		        urlBack = Url.Action("Index");
 
+		    }
 			var errors = ValidationRunner.Validate(callMeBackTicket);
 			if (CurrentClient != null) {
 				errors.RemoveErrors("CallMeBackTicket", "Captcha");

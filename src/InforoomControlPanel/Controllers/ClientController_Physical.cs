@@ -437,14 +437,12 @@ namespace InforoomControlPanel.Controllers
 					client.Contacts.Add(mobilePhone);
 				}
 				// сохраняем модель
-				DbSession.Save(client);
-				//@Todo раскомментировать когда закончится интеграция со старой админкой
+				DbSession.Save(client); 
+                SuccessMessage("Клиент успешно зарегистрирован!");
 
-				//SuccessMessage("Клиент успешно зарегистрирован!"); 
-
-				// предварительно вызывая процедуру (старой админки) которая делает необходимые поправки в записях клиента и физ.клиента
-				// переходим к карте клиента *в старой админке, если выбран пункт "Показывать наряд на подключение"
-				if (redirectToCard) {
+                // предварительно вызывая процедуру (старой админки) которая делает необходимые поправки в записях клиента и физ.клиента
+                // переходим к карте клиента *в старой админке, если выбран пункт "Показывать наряд на подключение"
+                if (redirectToCard) {
 					return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
 					                "Clients/UpdateAddressByClient?clientId=" + client.Id +
 					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]

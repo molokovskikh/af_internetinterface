@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Common.Tools;
@@ -17,8 +18,8 @@ using Remotion.Linq.Clauses;
 
 namespace InforoomControlPanel.Controllers
 {
-	public partial class ClientController
-	{
+	public partial class ClientController : ControlPanelController
+    {
 		/// <summary>
 		/// Список заявок на подключение
 		/// </summary>
@@ -26,7 +27,7 @@ namespace InforoomControlPanel.Controllers
 		/// <param name="archived"></param>
 		/// <param name="requestText"></param>
 		/// <returns></returns>
-		public ActionResult RequestsList(string requestMarkers = null, string requestText = "", bool justNull = true)
+		public ActionResult RequestsList(string requestMarkers = null, string requestText = "", bool justNull = true, bool justHybrid = false)
 		{
 			var pager = new InforoomModelFilter<ClientRequest>(this);
 			var markers = !string.IsNullOrEmpty(requestMarkers)
@@ -37,8 +38,8 @@ namespace InforoomControlPanel.Controllers
 					requestMarkers = pager.GetParam("requestMarkers");
 					markers = requestMarkers.Split(',').Select(s => int.Parse(s)).ToArray();
 				}
-			}
-			if (markers != null && markers.Length > 0) {
+            }
+            if (markers != null && markers.Length > 0) {
 				ViewBag.CurrentMarkers = requestMarkers;
 				pager.ParamSet("requestMarkers", requestMarkers);
 			}
@@ -54,9 +55,14 @@ namespace InforoomControlPanel.Controllers
 			if (string.IsNullOrEmpty(pager.GetParam("filter.Equal.Archived"))) {
 				pager.ParamDelete("filter.Equal.Archived");
 				pager.ParamSet("filter.Equal.Archived", "false");
-			}
+            }
+            if (justHybrid)
+            {
+                pager.ParamDelete("filter.Equal.Hybrid");
+                pager.ParamSet("filter.Equal.Hybrid", "True");
+            }
 
-			if (markers != null && markers.Length > 0) {
+            if (markers != null && markers.Length > 0) {
 				if (requestText != "") {
 					int isId = 0;
 					int.TryParse(requestText, out isId);
@@ -141,14 +147,14 @@ namespace InforoomControlPanel.Controllers
 		/// Отображает форму новой заявки
 		/// </summary>
 		[HttpGet]
-		public ActionResult Request()
+		public ActionResult ClientRequest()
 		{
 			InitClientRequest();
 			return View();
 		}
 
 		[HttpPost]
-		public ActionResult Request([EntityBinder] ClientRequest clientRequest)
+		public ActionResult ClientRequest([EntityBinder] ClientRequest clientRequest)
 		{
 			clientRequest.ActionDate = clientRequest.RegDate = DateTime.Now;
 			// Заявка от оператора по умочанию  
@@ -182,7 +188,7 @@ namespace InforoomControlPanel.Controllers
 				// сохранение
 				DbSession.Save(clientRequest);
 				SuccessMessage(string.Format("Спасибо, Ваша заявка создана. Номер заявки {0}", clientRequest.Id));
-				return RedirectToAction("Request");
+				return RedirectToAction("ClientRequest");
 			}
 			// Пока используется IsContractAccepted=true, закомментированные строки кода не нужны
 			//if (!clientRequest.IsContractAccepted) {
@@ -399,8 +405,18 @@ namespace InforoomControlPanel.Controllers
 				planList = planList.Where(s => s.Disabled == false && s.AvailableForNewClients
 				                               && s.RegionPlans.Any(d => d.Region == currentRegion)).OrderBy(s => s.Name).ToList();
 			}
-			//
-			ViewBag.CurrentRegion = currentRegion;
+            //
+		    var addressIp = HttpContext.Request?.UserHostAddress;
+#if DEBUG
+		    addressIp = DbSession.Query<Lease>().OrderByDescending(s => s.Id).FirstOrDefault()?.Ip?.ToString();
+#endif
+            ViewBag.CurrentIp = addressIp;
+		    ViewBag.RequestGybrid = clientRequest.Hybrid;
+		    if (clientRequest.Hybrid && addressIp != null) {
+		        var currentIp = IPAddress.Parse(addressIp);
+                ViewBag.CurrentLease = DbSession.Query<Lease>().FirstOrDefault(s => s.Ip == currentIp && s.Endpoint == null);
+            }
+            ViewBag.CurrentRegion = currentRegion;
 			ViewBag.CurrentStreet = currentStreet;
 			ViewBag.CurrentHouse = houseToFind;
 			ViewBag.UserRequestStreet = clientRequest.Street;
@@ -477,10 +493,23 @@ namespace InforoomControlPanel.Controllers
 					mobilePhone.Type = ContactType.SmsSending;
 					client.Contacts.Add(mobilePhone);
 				}
-				// сохраняем модель
-				DbSession.Save(client);
-				// Обновление заявки
-				if (clientRequest != null) {
+                // сохраняем модель
+                DbSession.Save(client);
+
+                //проверяем, если заявка "Гибрид", назначаем точку подключения по Ip
+                if (clientRequest.Hybrid) {
+			        var errorMessage = "";
+			        //пытаемся добавить точку подклбючения, если ее нет
+			        PhysicalClient.EndpointCreateIfNeeds(DbSession, client, this.Request.UserHostAddress, GetCurrentEmployee(),
+			            ref errorMessage, clientRequest.Hybrid);
+			        if (!string.IsNullOrEmpty(errorMessage)) {
+			            ErrorMessage(errorMessage);
+			        }
+			        DbSession.Save(client);
+			    }
+
+                // Обновление заявки
+                if (clientRequest != null) {
 					//получаем маркер по умолчанию для зарегистрированных заявок 
 					var markerRegistered = ConfigHelper.GetParam("connectionRequestDefaultMarker_registered");
 					var markerRegisteredId = int.Parse(markerRegistered);
@@ -566,8 +595,14 @@ namespace InforoomControlPanel.Controllers
 					.OrderBy(s => s.Name)
 					.ToList();
 			}
-			//
-			ViewBag.CurrentRegion = currentRegion;
+            //
+		    ViewBag.CurrentIp = HttpContext.Request.UserHostAddress;
+		    ViewBag.RequestGybrid = clientRequest.Hybrid;
+		    if (clientRequest.Hybrid && HttpContext?.Request?.UserHostAddress != null) {
+		        var currentIp = IPAddress.Parse(HttpContext.Request.UserHostAddress);
+		        ViewBag.CurrentLease = DbSession.Query<Lease>().FirstOrDefault(s => s.Ip == currentIp && s.Endpoint == null);
+		    }
+            ViewBag.CurrentRegion = currentRegion;
 			ViewBag.CurrentStreet = currentStreet;
 			ViewBag.CurrentHouse = currentHouse;
 			ViewBag.UserRequestStreet = clientRequest.Street;

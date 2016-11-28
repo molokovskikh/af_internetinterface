@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -15,6 +16,8 @@ using NHibernate.Mapping.Attributes;
 using NHibernate.Util;
 using NHibernate.Validator.Constraints;
 using System.Net;
+using System.Web;
+using Inforoom2.Components;
 using Inforoom2.Models.Services;
 
 namespace Inforoom2.Models
@@ -598,6 +601,89 @@ namespace Inforoom2.Models
 			Client.Endpoints.Add(endpoint);
 			Client.SyncServices(dbSession, settings);
 		}
+
+	    public static void EndpointCreateIfNeeds(ISession dSession, Client currentClient, string currentIp, Employee currentEmployee, ref string errorMessage, bool isGybrid = false)
+	    {
+            var address = IPAddress.Parse(currentIp);
+#if DEBUG
+            var lease = dSession.Query<Lease>().FirstOrDefault(l => l.Endpoint == null);
+#else
+				var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == address && l.Endpoint == null);
+#endif
+            ClientEndpoint currentEnpoint = null;
+            if (lease != null)
+            {
+                currentEnpoint = dSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Switch.Id == lease.Switch.Id && s.Port == lease.Port && s.Client.Id != currentClient.Id);
+                if (currentEnpoint != null)
+                {
+                    errorMessage = "Ошибка: точка подключения не задана!";
+                    var email = ConfigurationManager.AppSettings["ErrorNotifierMail"];
+                    var adminPanelNewClientPage = ConfigurationManager.AppSettings["adminPanelNewPhysicalClientPage"];
+                    var href = $"<a href='"+ adminPanelNewClientPage + currentClient.Id + $"'>{currentClient.Id}</a>";
+                    //отправка сообщения об ошибки
+                    EmailSender.SendEmail(new string[] { email },
+                        "Ошибка в  Inforoom2 при автоматическом создании точки подключения по ЛС " + currentClient.Id,
+                        $"При создании точки подключения для клиента {href} выяснилось, <br/>что на порту коммутатора уже находится точка подключения {currentEnpoint.Id}");
+                }
+            }
+            if (currentClient.Endpoints.Count == 0 && lease != null && currentEnpoint == null)
+            {
+                if (string.IsNullOrEmpty(lease.Switch.Name))
+                {
+                    var addr = currentClient.PhysicalClient.Address;
+                    if (addr != null)
+                        lease.Switch.Name = addr.House.Street.Region.City.Name + ", " + addr.House.Street.PublicName() + ", " + addr.House.Number;
+                    else
+                        lease.Switch.Name = currentClient.Id + ": адрес неопределен";
+                }
+
+                var endpoint = new ClientEndpoint();
+                endpoint.Client = currentClient;
+                endpoint.Switch = lease.Switch;
+                endpoint.Port = lease.Port;
+                endpoint.Disabled = false;
+                endpoint.IsEnabled = true;
+
+                //учет гибрида
+                if (isGybrid && lease.Pool?.Relay != null) {
+                    endpoint.Mac = lease.Mac;
+                }
+                
+                currentClient.SetStatus(Status.Get(StatusType.Worked, dSession));
+                if (currentClient.RatedPeriodDate == null && !currentClient.Disabled)
+                {
+                    currentClient.RatedPeriodDate = SystemTime.Now();
+                }
+                if (currentClient.WorkingStartDate == null && !currentClient.Disabled)
+                {
+                    currentClient.WorkingStartDate = SystemTime.Now();
+                }
+                //обновляем значение даты подключения клиента
+                currentClient.ConnectedDate = SystemTime.Now();
+
+                endpoint.SetStablePackgeId(currentClient.PhysicalClient.Plan.PackageSpeed.PackageId);
+
+                dSession.Save(endpoint);
+                lease.Endpoint = endpoint;
+
+                var paymentForConnect = new PaymentForConnect(currentClient.PhysicalClient.ConnectSum, endpoint);
+                //Пытаемся найти сотрудника
+                paymentForConnect.Employee = currentEmployee;
+
+
+                var internet = currentClient.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Internet);
+                internet.ActivateFor(currentClient, dSession);
+                var iptv = currentClient.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Iptv);
+                iptv.ActivateFor(currentClient, dSession);
+
+                if (currentClient.IsNeedRecofiguration)
+                    SceHelper.UpdatePackageId(dSession, currentClient);
+
+                dSession.Save(lease.Switch);
+                dSession.Save(paymentForConnect);
+                dSession.Save(lease);
+            }
+        }
 	}
 
 	public enum CertificateType
