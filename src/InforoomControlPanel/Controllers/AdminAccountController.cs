@@ -40,12 +40,12 @@ namespace InforoomControlPanel.Controllers
 			var defaultPassword = ConfigurationManager.AppSettings["DefaultEmployeePassword"];
 			if (employee != null && password == defaultPassword) {
 				Session.Add("employee", employee.Id);
-				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient);
+				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient, employee.SessionDurationMinutes);
 			}
 #endif
 			if (ActiveDirectoryHelper.IsAuthenticated(username, password) && employee != null) {
 				Session.Add("employee", employee.Id);
-				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient);
+				return Authenticate("Statistic", "Admin", username, shouldRemember, impersonateClient, employee.SessionDurationMinutes);
 			}
 			ErrorMessage("Неправильный логин или пароль");
 			return Redirect(returnUrl);

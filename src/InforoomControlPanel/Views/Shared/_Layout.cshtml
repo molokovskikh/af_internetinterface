@@ -140,19 +140,24 @@
 			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_000006.ToString()) != null
 			     || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000006.ToString()))) {
 				<li>
-					<a href="@Url.Action("Request", "Client")">
+					<a href="@Url.Action("ClientRequest", "Client")">
 						<span class="title">Создать заявку на регистрацию</span>
 					</a>
 				</li>
 			}
 			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_000007.ToString()) != null
-			     || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000007.ToString()))) {
+                       || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000007.ToString()))) {
 				<li>
 					<a href="@Url.Action("RequestsList", "Client")">
 						<span class="title">Заявки на регистрацию</span>
 					</a>
 				</li>
-			}
+			    <li>
+			        <a href="@Url.Action("RequestsList", "Client", new {justHybrid = true})">
+			            <span class="title">Заявки на регистрацию (гибрид)</span>
+			        </a>
+			    </li>
+            }
 			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_000008.ToString()) != null
 			     || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_000008.ToString()))) {
 				<li>

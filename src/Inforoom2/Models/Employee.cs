@@ -63,7 +63,10 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual TimeSpan? WorkStep { get; set; }
 
-		[Property]
+        [Property]
+        public virtual int SessionDurationMinutes { get; set; }
+
+        [Property]
 		public virtual bool ShowContractOfAgency { get; set; }
 
 		[Bag(0, Table = "roletouser", Lazy = CollectionLazy.False)]

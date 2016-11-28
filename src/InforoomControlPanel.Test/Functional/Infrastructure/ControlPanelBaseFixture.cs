@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using Common.Tools;
 using Inforoom2.Models;
 using Inforoom2.Test.Infrastructure;
 using InternetInterface.Models;
@@ -53,6 +54,12 @@ namespace InforoomControlPanel.Test.Functional.infrastructure
 			Css("#password").SendKeys("1234");
 			Css(".btn-login").Click();
 			AssertText(Employee.Name);
-		}
-	}
+        }
+        protected void UpdateDriverSideSystemTime()
+        {
+            var time = SystemTime.Now();
+            Open($"AdminOpen/SetDebugTime?time={time}");
+            WaitForText($"Время установлено {time}", 20);
+        }
+    }
 }

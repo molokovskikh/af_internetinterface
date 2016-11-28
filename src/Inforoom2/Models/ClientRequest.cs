@@ -113,7 +113,10 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual string YandexHouse { get; set; }
 
-		public virtual string AddressAsString { get; set; }
+        [Property]
+        public virtual bool Hybrid { get; set; }
+
+        public virtual string AddressAsString { get; set; }
 
 
 		[Bag(0, Table = "RequestMessages", Cascade = "all-delete-orphan")]

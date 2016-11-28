@@ -60,10 +60,10 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual int? ActualPackageId { get; set; }
 
-		//[ManyToOne(Column = "PackageId", PropertyRef = "PackageId")]
-		//public virtual PackageSpeed PackageSpeed { get; set; }
+        [Property]
+        public virtual string Mac { get; set; }
 
-		[Property(Column = "Ip", TypeType = typeof (IPUserType)), Description("Фиксированный Ip")]
+        [Property(Column = "Ip", TypeType = typeof (IPUserType)), Description("Фиксированный Ip")]
 		public virtual IPAddress Ip { get; set; }
 
 		public virtual void UpdateActualPackageId(int? packageId)

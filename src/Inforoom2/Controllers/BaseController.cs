@@ -215,19 +215,19 @@ namespace Inforoom2.Controllers
 		}
 
 		public ActionResult Authenticate(string action, string controller, string username, bool shouldRemember,
-			string userData = "")
+			string userData = "", int sessionDurationMinutes = 0)
 		{
 			var ticket = new FormsAuthenticationTicket(
 				1,
 				username,
 				SystemTime.Now(),
-				SystemTime.Now().AddMinutes(FormsAuthentication.Timeout.TotalMinutes),
+				SystemTime.Now().AddMinutes(sessionDurationMinutes != 0 ? sessionDurationMinutes: FormsAuthentication.Timeout.TotalMinutes),
 				shouldRemember,
 				userData,
 				FormsAuthentication.FormsCookiePath);
 			var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket));
 			if (shouldRemember)
-				cookie.Expires = SystemTime.Now().AddMinutes(FormsAuthentication.Timeout.TotalMinutes);
+				cookie.Expires = SystemTime.Now().AddMinutes(sessionDurationMinutes != 0 ? sessionDurationMinutes : FormsAuthentication.Timeout.TotalMinutes);
 			Response.Cookies.Set(cookie);
 			return RedirectToAction(action, controller, RouteData);
 		}

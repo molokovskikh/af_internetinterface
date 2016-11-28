@@ -1530,6 +1530,7 @@
     <Content Include="Images\tick.png" />
     <Content Include="Images\toplink.png" />
     <Content Include="Scripts\ClientEndpointCheckState.js" />
+    <Content Include="Scripts\ClientRequest.js" />
     <Content Include="Scripts\ConnectedHouses.js" />
     <Content Include="Scripts\ConnectionRequestMarker.js" />
     <Content Include="Scripts\ClientController.ClientRegistration.js" />
@@ -1893,7 +1894,7 @@
     <Content Include="Views\Client\RequestsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Client\Request.cshtml" />
+    <Content Include="Views\Client\ClientRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Admin\EmployeeList.cshtml" />

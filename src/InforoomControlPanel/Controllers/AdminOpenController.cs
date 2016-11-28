@@ -13,6 +13,7 @@ using Inforoom2.Models;
 using NHibernate.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Common.Tools;
 using InforoomControlPanel.Helpers;
 
 namespace InforoomControlPanel.Controllers
@@ -271,6 +272,15 @@ namespace InforoomControlPanel.Controllers
 					Price = d.Price
 				}).OrderBy(s => s.Name).ToList();
 			return Json(planList, JsonRequestBehavior.AllowGet);
-		}
-	}
+        }
+
+#if DEBUG
+        public ActionResult SetDebugTime(string time)
+        {
+            SystemTime.Now = () => DateTime.Parse(time);
+            SuccessMessage($"Время установлено {time}");
+            return RedirectToAction("Index", "AdminAccount");
+        }
+#endif
+    }
 }

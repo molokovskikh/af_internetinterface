@@ -57,6 +57,11 @@
 				<div class="personals">Электронная почта:</div>
 				@Html.ValidationEditor(validationRunner, clientRequest, "Email", new { @class = "personal" }, htmlTag: HtmlTag.input, htmlType: HtmlType.text) 
 			</div>
+            <div>
+                <div class="personals"><label class = "c-pointer" for="HybridCheck">Гибрид:</label></div>
+                @Html.CheckBoxFor(o => clientRequest.Hybrid, new {@id = "HybridCheck", @class = "c-pointer" })
+                @ViewBag.Validation.GetError(clientRequest, "Hybrid")
+            </div>
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<div class="row">
@@ -86,7 +91,7 @@
 								<label class="col-sm-3@(currentStreet == null ? " bold msg" : "")">Улица:</label>
 								<div class="col-sm-6">
 									@if (currentStreet != null) {
-										@Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.PublicName(), s => new { @value = s.Name, @modelId = s.Id },
+										@Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.Name, s => new { @value = s.PublicName(), @modelId = s.Id },
 											new {
 												@class = "form-control", @Id = "StreetDropDown",
 												@Name = "ClientRequest.Street",
@@ -94,7 +99,7 @@
 											}, currentStreet.Id, true)
 									}
 									else {
-										@Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.PublicName(), s => new { @value = s.Name, @modelId = s.Id },
+										@Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.Name, s => new { @value = s.PublicName(), @modelId = s.Id },
 											new {
 												@class = "form-control", @Id = "StreetDropDown",
 												@Name = "ClientRequest.Street",
@@ -143,27 +148,26 @@
 				<div class="addon">Этаж:</div>
 				@Html.ValidationEditor(validationRunner, clientRequest, "Floor", new { @class = "addons" }, HtmlTag.input, HtmlType.text)
 			</div>
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<div class="row">
-						<div class="col-lg-4">
-							<div class="row error">
-								<label class="col-sm-3 control-label @(clientRequest.Plan == null ? " bold msg" : "")">Тариф:</label>
-								<div class="col-sm-6">
-									@if (clientRequest.Plan != null) {
-										@Html.DropDownListExtendedFor(i => clientRequest.Plan, plans, obj => obj.Name, null, new { @class = "form-control", @Id = "PlanDropDown" }, clientRequest.Plan.Id, true)
-										@ViewBag.Validation.GetError(clientRequest, "Plan")
-									}
-									else {
-										@Html.DropDownListExtendedFor(i => clientRequest.Plan, plans, obj => obj.Name, null, new { @class = "form-control", @Id = "PlanDropDown" }, true)
-										@ViewBag.Validation.GetError(clientRequest, "Plan")
-									}
-								</div>
-							</div> 
-						</div>
-					</div>
-				</div> 
-			</div>
+		    <div class="panel panel-default">
+		        <div class="panel-body">
+		            <div class="row">
+		                <div class="col-lg-4">
+		                    <div class="row error">
+		                        <label class="col-sm-3 control-label @(clientRequest.Plan == null ? " bold msg" : "")">Тариф:</label>
+		                        <div class="col-sm-6">
+		                            @if (clientRequest.Plan != null) {
+		                                @Html.DropDownListExtendedFor(i => clientRequest.Plan, plans, obj => obj.Name, null, new {@class = "form-control", @Id = "PlanDropDown"}, clientRequest.Plan.Id, true)
+		                                @ViewBag.Validation.GetError(clientRequest, "Plan")
+		                            } else {
+		                                @Html.DropDownListExtendedFor(i => clientRequest.Plan, plans, obj => obj.Name, null, new {@class = "form-control", @Id = "PlanDropDown"}, true)
+		                                @ViewBag.Validation.GetError(clientRequest, "Plan")
+		                            }
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
 			<div>
 				<div id="yandexMap" class="map"></div>
 				<div class="contract">

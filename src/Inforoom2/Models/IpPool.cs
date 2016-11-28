@@ -25,12 +25,15 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual bool IsGray { get; set; }
 
-		/// <summary>
-		/// Возвращает IP-адрес в стандартном формате
-		/// </summary>
-		/// <param name="addrNum">Числовое значение IP-адреса</param>
-		/// <returns>Строка в формате "NNN.NNN.NNN.NNN"</returns>
-		public static string GetIpAddressFromNumber(uint addrNum)
+        [Property]
+        public virtual uint? Relay { get; set; }
+
+        /// <summary>
+        /// Возвращает IP-адрес в стандартном формате
+        /// </summary>
+        /// <param name="addrNum">Числовое значение IP-адреса</param>
+        /// <returns>Строка в формате "NNN.NNN.NNN.NNN"</returns>
+        public static string GetIpAddressFromNumber(uint addrNum)
 		{
 			var fstBase = Math.Pow(2, 24); // 16777216
 			var sndBase = Math.Pow(2, 16); // 65536

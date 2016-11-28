@@ -36,12 +36,18 @@
 					<span>@(connectionRequest.Email)</span>
 				</td>
 			</tr>
-				<tr>
-					<td>Адрес</td>
-					<td>
-						<span>@(connectionRequest.GetAddress())</span>
-					</td>
-				</tr>
+			<tr>
+			    <td>Гибрид</td>
+			    <td>
+			        <span>@(connectionRequest.Hybrid?"да":"нет")</span>
+			    </td>
+			</tr>
+			<tr>
+			    <td>Адрес</td>
+			    <td>
+			        <span>@(connectionRequest.GetAddress())</span>
+			    </td>
+			</tr>
 			<tr>
 				<td>Тариф</td>
 				<td>
