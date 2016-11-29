@@ -271,6 +271,7 @@ namespace Inforoom2.Test.Functional.Personal
 			var legalClient = DbSession.Query<Client>().ToList().First(i => i.LegalClient != null);
 			legalClient.ShowBalanceWarningPage = true;
 			legalClient.Disabled = false;
+			legalClient.LegalClient.Balance = -10;
 			DbSession.Save(legalClient);
 			DbSession.Flush();
 			Assert.That(legalClient, Is.Not.EqualTo(null), "В БД отсутствует юр.лицо");
@@ -285,6 +286,24 @@ namespace Inforoom2.Test.Functional.Personal
 				legalClient.Appeals.Any(s => s.Message.IndexOf("Отключена страница Warning, клиент отключил со страницы") != -1);
 			Assert.That(hasAppealMessage, Is.EqualTo(true),
 				"На странице клиента (в админке) должно появиться сообщение, о том, что клиент отключил варнинг (он осведомлен).");
+			Assert.That(legalClient.ShowBalanceWarningPage, Is.EqualTo(false),
+				"Варнинг не должен показываться после того, как пользователь сообщил, что он осведоллен (нажав на кнопку).");
+		}
+
+		[Test(Description = "Проверка работы варнинга у юр. лица с флагом ShowBalanceWarningPage")]
+		public void LawClientAfterLowBalanceFixture()
+		{
+			Logout();
+			var legalClient = DbSession.Query<Client>().ToList().First(i => i.LegalClient != null);
+			legalClient.ShowBalanceWarningPage = true;
+			legalClient.Disabled = false;
+			DbSession.Save(legalClient);
+			DbSession.Flush();
+			Assert.That(legalClient, Is.Not.EqualTo(null), "В БД отсутствует юр.лицо");
+			Assert.That(legalClient.Endpoints.Count(s => !s.Disabled) > 0, Is.EqualTo(true), "У юр. лица отсутствует точка подключения");
+			Open("Warning?ip=" + legalClient.Endpoints.First(s => !s.Disabled).Ip);
+			AssertText("Протестировать скорость");
+			DbSession.Refresh(legalClient);
 			Assert.That(legalClient.ShowBalanceWarningPage, Is.EqualTo(false),
 				"Варнинг не должен показываться после того, как пользователь сообщил, что он осведоллен (нажав на кнопку).");
 		}

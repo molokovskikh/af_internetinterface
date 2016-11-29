@@ -864,6 +864,20 @@ namespace Inforoom2.Models
 		}
 
 
+		private bool NeedShowLegalWarning()
+		{
+			if (LegalClient == null)
+				return false;
+			var haveService = ClientServices.FirstOrDefault(cs => cs.Service.Id == Service.GetIdByType(typeof (WorkLawyer)));
+			var needShowWarning = LegalClient.NeedShowWarning();
+			if (haveService != null && haveService.IsActivated)
+				return false;
+			if ((haveService != null && !haveService.IsActivated && needShowWarning) ||
+				(haveService == null && needShowWarning))
+				return true;
+			return needShowWarning;
+		}
+
 		public virtual WarningState GetWarningState()
 		{
 			//Проверка юр.лица
@@ -871,7 +885,7 @@ namespace Inforoom2.Models
 				if (Disabled) {
 					return WarningState.LawDisabled;
 				}
-				if (ShowBalanceWarningPage) {
+				if (NeedShowLegalWarning()) {
 					return WarningState.LawLowBalance;
 				}
 			}
