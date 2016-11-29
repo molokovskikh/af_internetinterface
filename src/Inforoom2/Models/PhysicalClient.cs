@@ -608,7 +608,7 @@ namespace Inforoom2.Models
 #if DEBUG
             var lease = dSession.Query<Lease>().FirstOrDefault(l => l.Endpoint == null);
 #else
-				var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == address && l.Endpoint == null);
+				var lease = dSession.Query<Lease>().FirstOrDefault(l => l.Ip == address && l.Endpoint == null);
 #endif
             ClientEndpoint currentEnpoint = null;
             if (lease != null)
