@@ -159,7 +159,9 @@ namespace Inforoom2.Models
 		/// <returns>Форматированное название улицы</returns>
 		protected static string GetPrintStreet(string street)
 		{
-			
+			if (string.IsNullOrEmpty(street)) {
+				return "";
+			}
 			var shortCut = new Dictionary<string, string>()
 			{
 				{"улица", "ул."},
