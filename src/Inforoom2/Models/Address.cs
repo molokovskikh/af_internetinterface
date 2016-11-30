@@ -115,9 +115,9 @@ namespace Inforoom2.Models
 		{
 			var cityReg = (House.Region == null ? House.Street.Region.City.Name : House.Region.City.Name);
 
-			return GetAddressString(street ? House.Street.PublicName() : "", house ? House.Number : "",
+			return GetAddressString(street ? House.Street.Name : "", house ? House.Number : "",
 				city ? cityReg : "", apartment ? Apartment ?? "" : "", entrance ? Entrance ?? "" : "",
-				floor ? Floor == 0 ? "" : Floor.ToString() : "");
+				floor ? Floor == 0 ? "" : Floor.ToString() : "", streetps: House.Street.Alias ?? "");
 		}
 
 		/// <summary>
@@ -132,15 +132,16 @@ namespace Inforoom2.Models
 		/// <param name="mask">форматирующая маска</param>
 		/// <returns></returns>
 		protected static string GetAddressString(string street, string house, string city = "", string apartment = "",
-			string entrance = "", string floor = "", string mask = "")
+			string entrance = "", string floor = "", string mask = "", string streetps = "")
 		{
+			var streetCurrentName = string.IsNullOrEmpty(streetps) ? GetPrintStreet(street) : streetps;
 			string address;
 			if (mask != String.Empty) {
-				address = string.Format(mask, GetPrintStreet(street), house, city, apartment, entrance, floor);
+				address = string.Format(mask, streetCurrentName, house, city, apartment, entrance, floor);
 			}
 			else {
 				address = (city != "" ? "г. " + city : "")
-				          + (street != "" ? ", " + GetPrintStreet(street) : "")
+				          + (streetCurrentName != "" ? ", " + streetCurrentName : "")
 				          + (house != "" ? ", д. " + house : "")
 				          + (apartment != "" ? ", кв. " + apartment : "")
 				          + (entrance != "" ? ", подъезд " + entrance : "")
@@ -158,7 +159,7 @@ namespace Inforoom2.Models
 		/// <returns>Форматированное название улицы</returns>
 		protected static string GetPrintStreet(string street)
 		{
-			return street;
+			
 			var shortCut = new Dictionary<string, string>()
 			{
 				{"улица", "ул."},
