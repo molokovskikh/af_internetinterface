@@ -1187,6 +1187,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			var pool = currentEndPoint.Pool;
 			var speed = PackageSpeed.GetSpeedForPackageId(packageSpeedList, packageId);
 			var currentSwitch = currentEndPoint.Switch;
+			var dateOfBirthForWarningReason = CurrentClient.PhysicalClient.BirthDate;
 			var newSwitch =
 				DbSession.Query<Inforoom2.Models.Switch>()
 					.FirstOrDefault(s => s.Zone.Region == CurrentClient.GetRegion() && s.Id != currentSwitch.Id);
@@ -1287,6 +1288,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			//Проверка влияние статуса варнинга для активированного комутатора на состояние варнинга клиента 
 			endpointresult.IsEnabled = true;
 			DbSession.Save(endpointresult);
+			endpointresult.Client.PhysicalClient.BirthDate = DateTime.MinValue;
 			endpointresult.Client.ShowBalanceWarningPage = true;
 			DbSession.Save(endpointresult.Client);
 			DbSession.Flush();

@@ -471,6 +471,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				s.WarningShow = true;
 			}); 
 			endpointresult.Client.ShowBalanceWarningPage = true;
+			endpointresult.Client.LegalClient.Balance = -1;
 			DbSession.Save(CurrentClient);
 			DbSession.Save(endpointresult.Client);
 			DbSession.Flush();

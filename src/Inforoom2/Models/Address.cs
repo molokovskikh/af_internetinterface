@@ -158,6 +158,7 @@ namespace Inforoom2.Models
 		/// <returns>Форматированное название улицы</returns>
 		protected static string GetPrintStreet(string street)
 		{
+			return street;
 			var shortCut = new Dictionary<string, string>()
 			{
 				{"улица", "ул."},
