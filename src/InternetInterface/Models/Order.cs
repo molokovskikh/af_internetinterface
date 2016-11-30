@@ -294,7 +294,7 @@ namespace InternetInterface.Models
 				Client.Appeals.Add(new Appeals() { Appeal = String.Format("Деактивирован заказ {0}", Description), AppealType = AppealType.System, Date = SystemTime.Now(), Client = Client });
 			}
 			if (EndPoint != null && !EndPoint.Disabled) {
-				if (!Client.Orders.Where(s => s.IsDeactivated == false && s.Id != this.Id).Select(x => x.EndPoint.Id).Contains(EndPoint.Id)) {
+				if (!Client.Orders.Where(s => s.IsDeactivated == false && s.Id != this.Id && s.EndPoint != null).Select(x => x.EndPoint.Id).Contains(EndPoint.Id)) {
 					Client.Appeals.Add(new Appeals() { Appeal = $"Точка подключения №{EndPoint.Id} (коммутатор: {EndPoint.Switch?.Id} - {EndPoint.Switch?.Name}, порт: {EndPoint.Port}) была деактивирована.", AppealType = AppealType.System, Date = SystemTime.Now(), Client = Client });
 					if (dbSession == null) {
 						ConnectionAddress = ConnectionAddress + $" (коммутатор: {EndPoint.Switch?.Id} - {EndPoint.Switch?.Name}, порт: {EndPoint.Port})";
