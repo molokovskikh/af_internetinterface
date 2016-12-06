@@ -23,11 +23,11 @@ namespace Billing.Test.Integration
 			client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 
 			if (endDate == null)
-				endDate = DateTime.Now.AddDays(1);
+				endDate = SystemTime.Now().AddDays(1);
 
 			var service = new ClientService {
 				Client = client,
-				BeginWorkDate = DateTime.Now,
+				BeginWorkDate = SystemTime.Now(),
 				EndWorkDate = endDate.Value,
 				Service = Service.GetByType(type)
 			};
@@ -49,17 +49,16 @@ namespace Billing.Test.Integration
 				client.PhysicalClient.Balance = startBalance;
 				client.Save();
 				Assert.That(client.PhysicalClient.Balance, Is.GreaterThan(0));
-				try
-				{
-					Activate(typeof(VoluntaryBlockin));
+				try {
+					Activate(typeof (VoluntaryBlockin));
 				} catch (ServiceActivationException e) {
-				 Assert.IsTrue(e.Message == "Невозможно активировать услугу \"Добровольная блокировка\"");
+					Assert.IsTrue(e.Message == "Невозможно активировать услугу \"Добровольная блокировка\"");
 				}
-				startBalance = Math.Round(client.GetPrice() / client.GetInterval());
+				startBalance = Math.Round(client.GetPrice()/client.GetInterval(), 2);
 				client.PhysicalClient.Balance = startBalance;
 				client.Save();
 
-				Activate(typeof(VoluntaryBlockin));
+				Activate(typeof (VoluntaryBlockin));
 
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
 				Assert.IsTrue(client.Balance == startBalance);
@@ -69,9 +68,9 @@ namespace Billing.Test.Integration
 			billing.ProcessWriteoffs();
 
 			using (new SessionScope()) {
-
 				client = ActiveRecordMediator<Client>.FindByPrimaryKey(client.Id);
-				Assert.IsTrue(client.Balance == startBalance - client.UserWriteOffs.First(s=>s.Type == UserWriteOffType.ClientVoluntaryBlock).Sum);
+				Assert.IsTrue(client.Balance ==
+					startBalance - client.UserWriteOffs.First(s => s.Type == UserWriteOffType.ClientVoluntaryBlock).Sum);
 			}
 
 

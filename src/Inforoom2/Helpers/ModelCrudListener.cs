@@ -19,9 +19,6 @@ namespace Inforoom2.Helpers
 {
 	public class ModelCrudListener : IPreUpdateEventListener, IPostInsertEventListener, IPreDeleteEventListener
 	{
-		[Description("Текущий пользователь")]
-		private Employee CurrentEmployee { get; set; }
- 
 		/// <summary>
 		/// Формирование дополнительного сообщения об ошибке (подсказки)
 		/// </summary>
@@ -144,7 +141,7 @@ namespace Inforoom2.Helpers
 				var session = postInsert.Session;
 				// запрещаем Flush модели на время обработки
 				(postInsert.Session as ISession).FlushMode = FlushMode.Never;
-				CurrentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName);
+				var currentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName);
 				try {
 					var currentState = postInsert.State;
 					// объявляем нужные переменные
@@ -181,7 +178,7 @@ namespace Inforoom2.Helpers
 								Message = messageBuilder.ToString(),
 								Client = appealBase,
 								AppealType = AppealType.System,
-								Employee = CurrentEmployee
+								Employee = currentEmployee
 							};
 						}
 					}
@@ -218,7 +215,7 @@ namespace Inforoom2.Helpers
 				var session = postUpdate.Session;
 				// запрещаем Flush модели на время обработки
 				(postUpdate.Session as ISession).FlushMode = FlushMode.Never;
-				CurrentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName);
+				var currentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName);
 				try {
 					var oldState = postUpdate.OldState;
 					var currentState = postUpdate.State;
@@ -307,7 +304,7 @@ namespace Inforoom2.Helpers
 								Message = messageBuilder.ToString(),
 								Client = appealBase,
 								AppealType = AppealType.System,
-								Employee = CurrentEmployee
+								Employee = currentEmployee
 							};
 						}
 					}
@@ -336,7 +333,7 @@ namespace Inforoom2.Helpers
 			var session = postUpdate.Session;
 			// запрещаем Flush модели на время обработки
 			(postUpdate.Session as ISession).FlushMode = FlushMode.Never;
-			CurrentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName);
+			var currentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName);
 			var oldState = postUpdate.OldState;
 			var currentState = postUpdate.State;
 			// сообщение
@@ -413,7 +410,7 @@ namespace Inforoom2.Helpers
 				log = new Log() {
 					Message = messageBuilder.ToString(),
 					Type = LogEventType.Update,
-					Employee = CurrentEmployee,
+					Employee = currentEmployee,
 					ModelId = modelId,
 					ModelClass = postUpdate.Entity.GetType().Name
 				};
@@ -440,7 +437,7 @@ namespace Inforoom2.Helpers
 			var session = postInsert.Session;
 			// запрещаем Flush модели на время обработки
 			(postInsert.Session as ISession).FlushMode = FlushMode.Never;
-			CurrentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName); 
+			var currentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName); 
 			// объявляем нужные переменные
 			Log log = null;
 			// сообщение
@@ -479,7 +476,7 @@ namespace Inforoom2.Helpers
 				log = new Log() {
 					Message = messageBuilder.ToString(),
 					Type = LogEventType.Insert,
-					Employee = CurrentEmployee,
+					Employee = currentEmployee,
 					ModelId = modelId,
 					ModelClass = postInsert.Entity.GetType().Name
 				};
@@ -506,7 +503,7 @@ namespace Inforoom2.Helpers
 			var session = preDelete.Session;
 			// запрещаем Flush модели на время обработки
 			(preDelete.Session as ISession).FlushMode = FlushMode.Never;
-			CurrentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName);
+			var currentEmployee = session.Query<Employee>().FirstOrDefault(e => e.Login == SecurityContext.CurrentEmployeeName);
 			// сообщение
 			var messageBuilder = new StringBuilder();
 			// оформление логируемого поля модели
@@ -545,7 +542,7 @@ namespace Inforoom2.Helpers
 				log = new Log() {
 					Message = messageBuilder.ToString(),
 					Type = LogEventType.Delete,
-					Employee = CurrentEmployee,
+					Employee = currentEmployee,
 					ModelId = modelId,
 					ModelClass = preDelete.Entity.GetType().Name
 				};
