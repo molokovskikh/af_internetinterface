@@ -79,6 +79,7 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.Switch = DbSession.Get<Switch>(id);
 			ViewBag.Zones = DbSession.Query<Zone>().OrderBy(i => i.Name).ToList();
 			ViewBag.NetworkNodes = DbSession.Query<NetworkNode>().OrderBy(i => i.Name).ToList();
+			ViewBag.SwitchLeaseCount = DbSession.Query<Lease>().Count(s => s.Switch != null && s.Switch.Id == id);
 			return View();
 		}
 
@@ -95,10 +96,11 @@ namespace InforoomControlPanel.Controllers
 			if (errors.Length == 0) {
 				DbSession.Save(Switch);
 				SuccessMessage("Коммутатор успешно изменнен");
-				return RedirectToAction("EditSwitch", new { id = Switch.Id });
+				return RedirectToAction("EditSwitch", new {id = Switch.Id});
 			}
 			EditSwitch(Switch.Id);
 			ViewBag.Switch = Switch;
+			ViewBag.SwitchLeaseCount = DbSession.Query<Lease>().Count(s => s.Switch != null && s.Switch.Id == Switch.Id);
 			return View();
 		}
 		/// <summary>
@@ -108,10 +110,14 @@ namespace InforoomControlPanel.Controllers
 		public ActionResult SwitchRemove(int id)
 		{
 			var switchToRemove = DbSession.Get<Switch>(id);
-			if (switchToRemove!=null && switchToRemove.Endpoints.Count(s => !s.Disabled) == 0) {
+			if (switchToRemove != null
+				&& switchToRemove.Endpoints.Count(s => !s.Disabled) == 0
+				&& DbSession.Query<Lease>().Count(s => s.Switch != null && s.Switch.Id == id) == 0) {
 				DbSession.Delete(switchToRemove);
+				SuccessMessage("Коммутатор успешно удален");
+			} else {
+				ErrorMessage("Коммутатор не может быть удален, т.к. имеются активные точки подключения/лизы.");
 			}
-			SuccessMessage("Коммутатор успешно удален");
 			return RedirectToAction("SwitchList");
 		}
 		

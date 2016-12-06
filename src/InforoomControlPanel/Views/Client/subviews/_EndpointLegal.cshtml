@@ -146,8 +146,8 @@
 					<span>@PackageSpeed.GetSpeedForPackageId(packageSpeedList, futureState.ConnectionHelper.PackageId).ToString() мбит/с</span>
 				}
 				else {
-					<span>@(endpoint.PackageId.HasValue
-						        ? PackageSpeed.GetSpeedForPackageId(packageSpeedList, endpoint.PackageId.Value).ToString() : "0 ") мбит/с</span>
+				    <span  title="Текущая скорость @(endpoint.PackageId.HasValue ? PackageSpeed.GetSpeedForPackageId(packageSpeedList, endpoint.PackageId.Value).ToString() : "0 ") мбит/с">
+                    @(endpoint.StableTariffPackageId.HasValue ? PackageSpeed.GetSpeedForPackageId(packageSpeedList, endpoint.StableTariffPackageId.Value).ToString() : "0 ") мбит/с</span>
 				}
 			</td>
 		</tr>

@@ -1,6 +1,7 @@
 ﻿@model Inforoom2.Models.Switch
 @{
 	Layout = "";
+    var switchLeaseCount = (int) (ViewBag.SwitchLeaseCount ?? 0);
 }
 <!-- Modal For Payments Cancel-->
 <div class="modal" id="ModelForSwitchRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -13,18 +14,16 @@
 					<h4 class="modal-title" id="myModalLabel">Удаление коммутатора</h4>
 				</div>
 				<div class="modal-body">
-					@if (Model.Endpoints.Count(s => !s.Disabled) == 0) {
-						<p>
-							<span class="red bold" id="paymentDeleteMessage">Вы действительно хотите удалить коммутатор?</span></p>
+					@if (Model.Endpoints.Count(s => !s.Disabled) == 0 || switchLeaseCount == 0) {
+						<p><span class="red bold" id="paymentDeleteMessage">Вы действительно хотите удалить коммутатор?</span></p>
 					}
 					else {
-						<p>
-							<span class="red bold" id="paymentDeleteMessage">Нельзя удалить коммутатор: у него все еще имеются подключения.</span></p>
+						<p><span class="red bold" id="paymentDeleteMessage">Нельзя удалить коммутатор: у него все еще имеются активные подключения @(switchLeaseCount > 0? "/ лизы" : "").</span></p>
 					}
 
 				</div>
 				<div class="modal-footer">
-					@if (Model.Endpoints.Count(s => !s.Disabled) == 0)
+					@if (Model.Endpoints.Count(s => !s.Disabled) == 0 || switchLeaseCount == 0)
 					{
 						<button type="submit" class="btn btn-red">Удалить коммутатор</button>
 					}

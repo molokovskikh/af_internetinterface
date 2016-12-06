@@ -5,51 +5,50 @@
 @model dynamic
 
 @{
-	ViewBag.Title = "Список подключенных домов";
-	string currentRegionName = ViewBag.CurrentRegion;
-	List<ConnectedHouse> connectedHouses = ViewBag.ConnectedHouses;
-	List<Street> connectedStreets = connectedHouses.Select(s => s.Street).GroupBy(s => s.Id).Select(grp => grp.First()).OrderBy(s => s.PublicName()).ToList();
+  ViewBag.Title = "Список подключенных домов";
+  string currentRegionName = ViewBag.CurrentRegion;
+  List<ConnectedHouse> connectedHouses = ViewBag.ConnectedHouses;
+  List<Street> connectedStreets = connectedHouses.Select(s => s.Street).GroupBy(s => s.Id).Select(grp => grp.First()).OrderBy(s => s.PublicName()).ToList();
 }
 
 <h2 class="heading">@ViewBag.Title</h2>
 <div class="paddedBlock paragraph">
 
-	<h3 class="font-header">
-		Подключенные дома по городу @ViewBag.CurrentRegion<br/>
-		<i>(для просмотра списка подключенных домов других городов, необходимо изменить город на сайте в левом верхнем углу)</i>
-	</h3>
-	@{
-		foreach (var street in connectedStreets) {
-			@(street.PublicName() + " : ")
+    <h3 class="font-header">
+        Подключенные дома по городу @ViewBag.CurrentRegion<br />
+        <i>(для просмотра списка подключенных домов других городов, необходимо изменить город на сайте в левом верхнем углу)</i>
+    </h3>
+    @{
+        foreach (var street in connectedStreets) {
+            var currentHouses = connectedHouses.Where(s => s.Street.Id == street.Id && !s.Disabled).ToList().GroupBy(s => s.Number).Select(group => group.First()).ToList();
+            if (currentHouses.Count > 0) {
+                @(street.PublicName() + " : ")
+                //конвертируем дома для сортировки
+                //на доме с буквой,доходим до буквы и останавливаемся,возвращая только цифру
+                var houseList = currentHouses.Select(s => {
+                    string cutNumber = "";
+                    for (int i = 0; i < s.Number.Length; i++) {
+                        try {
+                            cutNumber += Convert.ToInt32(s.Number[i].ToString()).ToString();
+                        } catch (Exception) {
+                            break;
+                        }
+                    }
+                    if (string.IsNullOrEmpty(cutNumber)) {
+                        return new {Number = 0, Key = "0", House = s};
+                    }
+                    return new {Number = Convert.ToInt32(cutNumber), Key = s.Number.Substring(s.Number.IndexOf(cutNumber)), House = s};
+                }
+                    ).ToList();
 
-			var currentHouses = connectedHouses.Where(s => s.Street.Id == street.Id && !s.Disabled).ToList().GroupBy(s => s.Number).Select(group => group.First()).ToList();
+                //сортируем дома по возрастанию
+                houseList = houseList.OrderBy(s => s.Number).ThenBy(s => s.Key).ToList();
 
-			//конвертируем дома для сортировки
-			//на доме с буквой,доходим до буквы и останавливаемся,возвращая только цифру
-			var houseList = currentHouses.Select(s => {
-				string cutNumber = "";
-				for (int i = 0; i < s.Number.Length; i++) {
-					try {
-						cutNumber += Convert.ToInt32(s.Number[i].ToString()).ToString();
-					}
-					catch (Exception) {
-						break;
-					}
-				}
-				if (string.IsNullOrEmpty(cutNumber)) {
-					return new { Number = 0, Key = "0", House = s };
-				}
-				return new { Number = Convert.ToInt32(cutNumber), Key = s.Number.Substring(s.Number.IndexOf(cutNumber)), House = s };
-			}
-				).ToList();
-
-			//сортируем дома по возрастанию
-			houseList = houseList.OrderBy(s => s.Number).ThenBy(s => s.Key).ToList();
-
-			//соединяем все дома в строку,разделяя запятой
-			var house = string.Join(", ", houseList.Select(s => s.House.Number.ToUpper()));
-			@house
-			<br/>
-		}
-	}
+                //соединяем все дома в строку,разделяя запятой
+                var house = string.Join(", ", houseList.Select(s => s.House.Number.ToUpper()));
+                @house
+                <br/>
+            }
+        }
+    }
 </div>
