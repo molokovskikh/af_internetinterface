@@ -59,6 +59,7 @@ namespace InforoomControlPanel
 		{
 			try {
 				ThreadContext.Properties["url"] = Request.Url;
+				ThreadContext.Properties["urlReferrer"] = Request.UrlReferrer;
 				ThreadContext.Properties["employee"] = HttpContext.Current.User?.Identity.Name;
 			} catch {
 			}
