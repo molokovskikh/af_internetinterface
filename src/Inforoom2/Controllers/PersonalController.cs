@@ -445,7 +445,9 @@ namespace Inforoom2.Controllers
 			DbSession.Save(client);
 			DbSession.Save(result);
 			var warning = (client.GetWorkDays() <= 3) ? " Обратите внимание, что у вас низкий баланс!" : "";
+			warning += $"<br/>С Вашего лицевого счета списана стоимость смены тарифа {result.Sum.ToString("F2")} руб.";
 			SuccessMessage("Тариф успешно изменен." + warning);
+			 
 			// добавление записи в историю тарифов пользователя
 			var planHistory = new PlanHistoryEntry {
 				Client = CurrentClient,
@@ -457,7 +459,7 @@ namespace Inforoom2.Controllers
 			DbSession.Save(planHistory);
 
 			var msg = string.Format("Изменение тарифа был изменен с '{0}'({1}) на '{2}'({3}). Стоимость перехода: {4} руб.",
-				oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, result.Sum);
+				oldPlan.Name, oldPlan.Price, plan.Name, plan.Price, result.Sum.ToString("F2"));
 			var appeal = new Appeal(msg, client, AppealType.User) {
 				Employee = GetCurrentEmployee()
 			};
