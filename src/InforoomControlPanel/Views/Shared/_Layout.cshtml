@@ -511,7 +511,15 @@
 						<span class="title">Дома</span>
 					</a>
 				</li>
-			}
+            }
+            @if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_007007.ToString()) != null
+                 || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_007007.ToString())))
+            {
+            <li>
+                <a href="@Url.Action("Index", "ConnectedStreets")">
+                    <span class="title">Подключенные Улицы</span>
+                </a>
+            </li>}
 			@if (currentEmployee.Permissions.FirstOrDefault(s => s.Name == EmployeePermissionViewHelper.FormPermissions.Block_007006.ToString()) != null
 						 || currentEmployee.Roles.Any(s => s.Permissions.Any(d => d.Name == EmployeePermissionViewHelper.FormPermissions.Block_007006.ToString()))){
 				<li>

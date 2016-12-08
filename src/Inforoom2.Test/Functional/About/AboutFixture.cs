@@ -24,7 +24,7 @@ namespace Inforoom2.Test.Functional.Faq
 			var ConnectedHousesUpdate = DbSession.Query<ConnectedHouse>().First(s => s.Region.Name == userCity);
 			Open("About/ConnectedHousesLists");
 
-			AssertText(ConnectedHousesUpdate.Street.PublicName());
+			AssertText(ConnectedHousesUpdate.ConnectedStreet.Name);
 			AssertText(ConnectedHousesUpdate.Number);
 		}
 	}

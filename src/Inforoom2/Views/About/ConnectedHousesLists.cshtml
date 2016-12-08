@@ -7,8 +7,7 @@
 @{
   ViewBag.Title = "Список подключенных домов";
   string currentRegionName = ViewBag.CurrentRegion;
-  List<ConnectedHouse> connectedHouses = ViewBag.ConnectedHouses;
-  List<Street> connectedStreets = connectedHouses.Select(s => s.Street).GroupBy(s => s.Id).Select(grp => grp.First()).OrderBy(s => s.PublicName()).ToList();
+  List<ConnectedStreet> connectedStreets = ViewBag.ConnectedStreet;
 }
 
 <h2 class="heading">@ViewBag.Title</h2>
@@ -20,9 +19,9 @@
     </h3>
     @{
         foreach (var street in connectedStreets) {
-            var currentHouses = connectedHouses.Where(s => s.Street.Id == street.Id && !s.Disabled).ToList().GroupBy(s => s.Number).Select(group => group.First()).ToList();
+            var currentHouses = street.HouseList.Where(s=>!s.Disabled).ToList();
             if (currentHouses.Count > 0) {
-                @(street.PublicName() + " : ")
+                @(street.Name + " : ")
                 //конвертируем дома для сортировки
                 //на доме с буквой,доходим до буквы и останавливаемся,возвращая только цифру
                 var houseList = currentHouses.Select(s => {
