@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LegalClientDebtMail.cs" />
     <Compile Include="DataAudit.cs" />
     <Compile Include="DeleteFixIpIfClientLongDisable.cs" />
     <Compile Include="Program.cs" />
@@ -106,7 +107,9 @@
     <None Include="..\InternetInterface\Views\Mail\Act.brail">
       <Link>Views\Mail\Act.brail</Link>
     </None>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="App.release.config">
       <SubType>Designer</SubType>
     </None>
