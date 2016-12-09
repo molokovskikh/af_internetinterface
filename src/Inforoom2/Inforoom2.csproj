@@ -332,6 +332,7 @@
     <Compile Include="Intefaces\ILogAppeal.cs" />
     <Compile Include="Intefaces\IPositionIndex.cs" />
     <Compile Include="Intefaces\IServicemenScheduleItem.cs" />
+    <Compile Include="Models\ConnectedStreet.cs" />
     <Compile Include="Models\ConnectedHouse.cs" />
     <Compile Include="Models\IgnoredInn.cs" />
     <Compile Include="Models\PublicData.cs" />

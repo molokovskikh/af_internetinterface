@@ -52,11 +52,14 @@ namespace Inforoom2.Controllers
 		/// </summary>
 		[OutputCache(Duration = 600, Location = OutputCacheLocation.Server, VaryByCustom = "Cookies")]
 		public ActionResult ConnectedHousesLists()
-		{ 
+		{
 			var curentRegion = CurrentRegion;
-			ViewBag.CurrentRegion = curentRegion.City.Name; 
-			ViewBag.ConnectedHouses = DbSession.Query<ConnectedHouse>().Where(s=>s.Region.Id == curentRegion.Id).ToList().OrderBy(s=>s.Street.PublicName()).ToList(); 
-
+			ViewBag.CurrentRegion = curentRegion.City.Name;
+			ViewBag.ConnectedStreet =
+				DbSession.Query<ConnectedStreet>()
+					.Where(s => !s.Disabled && s.Region.Id == curentRegion.Id)
+					.OrderBy(s => s.Name.Trim())
+					.ToList();
 			return View();
 		}
 	}

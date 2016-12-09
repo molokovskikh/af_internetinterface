@@ -127,13 +127,15 @@ namespace InternetInterface.Models
 				}
 				var currentAddresses = new List<Tuple<int, int?, int, string>>();
 				var currentAddressesRaw = dbSession.CreateSQLQuery(string.Format(@"
-SELECT targetR2.Id as Region2, targetR.Id as Region1, targetS.Id as Street, targetH.Number as Number
+SELECT targetR2.Id as Region2, targetR.Id as Region1, targetA.Id as Street, targetH.Number as Number
 FROM internet.inforoom2_house as targetH
 LEFT JOIN internet.inforoom2_street as targetS on targetH.Street = targetS.Id
+INNER JOIN internet.inforoom2_connectedstreets as targetA on targetA.AddressStreet = targetS.Id
 LEFT JOIN internet.regions as targetR on targetH.Region = targetR.Id
 LEFT JOIN internet.regions as targetR2 on targetS.Region = targetR2.Id
-WHERE 
- targetH.Id IN 
+WHERE
+ targetA.Disabled = false
+ AND targetH.Id IN 
 (SELECT h.Id 
 FROM internet.inforoom2_house as h
 INNER JOIN internet.inforoom2_street as s on h.Street = s.Id
@@ -184,7 +186,7 @@ SELECT c.Id, c.Region, c.Street, c.Number, c.IsCustom, c.Disabled  FROM internet
 					else {
 						if (!existedConnectedHouse.Item5) {
 							dbSession.CreateSQLQuery(string.Format(@"
-					UPDATE  internet.inforoom2_connectedhouses as c SET c.Disabled = 0 WHERE c.Id = {0};   
+					UPDATE  internet.inforoom2_connectedhouses as c SET c.Disabled = 0 WHERE c.Id = {0} AND c.IsCustom = false;   
 						", existedConnectedHouse.Item1)).UniqueResult();
 						}
 					}
@@ -197,7 +199,7 @@ SELECT c.Id, c.Region, c.Street, c.Number, c.IsCustom, c.Disabled  FROM internet
 						Convert.ToInt32(s.Item2 ?? s.Item1) == regionId && s.Item3 == streetId && s.Item4 == houseNumber);
 					if (existedConnectedHouse == null && !item.Item5 && !item.Item6) {
 						dbSession.CreateSQLQuery(string.Format(@"
-					UPDATE  internet.inforoom2_connectedhouses as c SET c.Disabled = 1 WHERE c.Id = {0};   
+					UPDATE  internet.inforoom2_connectedhouses as c SET c.Disabled = 1 WHERE c.Id = {0} AND c.IsCustom = false;   
 						", item.Item1)).UniqueResult();
 					}
 				}

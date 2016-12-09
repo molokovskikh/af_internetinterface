@@ -7,13 +7,13 @@
 	ViewBag.Title = "Подключенные дома";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	List<Region> regions = ViewBag.Regions;
-	List<Street> streetList = ViewBag.StreetList;
+	List<ConnectedStreet> streetList = ViewBag.StreetList;
 	int currentRegion = ViewBag.CurrentRegion;
 	List<ViewModelConnectedHouses>  connectedHouses = ViewBag.ConnectedHouses;
 }
 
 @section JavaScript{
-	<script type="text/javascript" src="@Url.Content("~/Scripts/ConnectedHouses.js?v=1")"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ConnectedHouses.js?v=2")"></script>
 }
  
 	@using (@Html.BeginForm("Index", "ConnectedHouses", null, FormMethod.Get, new { @class = "form-horizontal form-groups-bordered" })) {
@@ -71,9 +71,13 @@
 								</td>
 								<td>Добавлено при синхронизации</td>
 								<td>
-									<div class="legend-mark" style="background-color: #eeeff3;border: 1px solid #333;"></div>
+									<div class="legend-mark" style="background-color: #ffe8e8;border: 1px solid #333;"></div>
 								</td>
-								<td>Не отображаемые</td>
+                                <td>Скрыто при синхронизации</td>
+                                <td>
+                                    <div class="legend-mark" style="background-color: #eeeff3;border: 1px solid #333;"></div>
+                                </td>
+                                <td>Не отображаемые</td>
 							</tr>
 						</tbody>
 					</table>
@@ -96,7 +100,7 @@
 										<div class="row">
 											<div class="col-md-6">
 												<a class="c-pointer" data-toggle="modal" onclick="updateStreetValueOnPackageForm(@item.Id)" data-target="#ModelForConnectionHouseBatchProcessing">
-													<strong class="c-pointer">@item.PublicName().ToLower()</strong>
+													<strong class="c-pointer">@item.Name</strong>
 												</a>
 											</div>
 											<div class="col-md-6">
@@ -107,7 +111,7 @@
 								</tr>
 								<tr class="street" skey="@item.Id">
 									<td>
-										@foreach (var house in connectedHouses.Where(s => s.Street.Id == item.Id).SelectMany(s => s.Houses).ToList())
+										@foreach (var house in item.HouseList.ToList())
 										{
 											<a title="@house.Comment.CutForBrowser(50)" class="house c-pointer@(house.Disabled ? " disabled" : "")@(house.IsCustom ? " custom" : "")" idKey="@item.Id" data-toggle="modal" data-target="#ModelForConnectionHouseEdit" onclick="ConnectedHouse.UiEvents.LoadModel(@house.Id);"><span>@house.Number</span></a>
 										}

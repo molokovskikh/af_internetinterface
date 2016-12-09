@@ -8,7 +8,7 @@
 		Layout = "";
 		ConnectedHouse connectedHouse = new ConnectedHouse();
 		int currentRegion = ViewBag.CurrentRegion;
-		List<Street> streetList = ViewBag.StreetList;
+		List<ConnectedStreet> streetList = ViewBag.StreetList;
 	}
 	<!-- Modal For WriteOffs Add-->
 <div class="modal" id="ModelForConnectionHouseAdd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -28,7 +28,7 @@
 							<td>
 								<select name="model.Street" class="form-control" style="display: inline; width: 240px">
 									@foreach (var item in streetList) {
-										<option value="@item.Id">@item.PublicName()</option>
+										<option value="@item.Id">@item.Name</option>
 									}
 								</select>
 							</td>

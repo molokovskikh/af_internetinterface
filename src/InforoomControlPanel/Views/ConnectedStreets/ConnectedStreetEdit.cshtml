@@ -1,0 +1,68 @@
+﻿
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using InforoomControlPanel.Models
+@model ConnectedStreet
+@{
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  ViewBag.Title = "Редактировать подключенную улицу";
+  List<Region> regionList = ViewBag.RegionList;
+  List<Street> addressStreetList = new List<Street>();
+  int oldRegionId = ViewBag.OldRegionId;
+}
+@section JavaScript{
+    <script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js?v=001")"></script>
+}
+<div class="panel panel-primary">
+    <div class="panel-body">
+        <div class="col-md-6">
+            @using (@Html.BeginForm("ConnectedStreetEdit", "ConnectedStreets", FormMethod.Post, new {@class = "form-horizontal form-groups-bordered", EncType = "multipart/form-data"})) {
+                @Html.HiddenFor(model => Model.Id)
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Регион:</label>
+                    <div class="col-sm-5">
+                        @if (Model.Region != null) {
+                            @Html.DropDownListExtendedFor(i => Model.Region, regionList, obj => obj.Name, null,
+                                new { @Id = "RegionDropDown", @Name = "Region.Id", @class = "form-control"}, Model.Region.Id)
+                        } else {
+                            @Html.DropDownListExtendedFor(i => Model.Region, regionList, obj => obj.Name, null,
+                                new { @Id = "RegionDropDown", @Name = "Region.Id", @class = "form-control"})
+                        }
+                        @ViewBag.Validation.GetError(Model, "Region")
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Улица: <br /> <small>привязка к почтовому адресу</small></label>
+                    <div class="col-sm-5">
+                        @if (Model.AddressStreet != null) {
+                            @Html.DropDownListExtendedFor(i => Model.AddressStreet, addressStreetList, obj => obj.Name, null,
+                                new {@Id = "StreetDropDown", @Name = "AddressStreet.Id", @value= Model.AddressStreet.Id.ToString(), @class = "form-control"}, Model.AddressStreet.Id, true)
+                        } else {
+                            @Html.DropDownListExtendedFor(i => Model.AddressStreet, addressStreetList, obj => obj.Name, null,
+                                new {@Id = "StreetDropDown", @Name = "AddressStreet.Id", @class = "form-control"}, firstEmptyElementAdd: true)
+                        }
+                        @ViewBag.Validation.GetError(Model, "AddressStreet")
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Наименование:</label>
+                    <div class="col-sm-5">
+                        @Html.TextBoxFor(model => Model.Name, new {@class = "form-control"})
+                        @ViewBag.Validation.GetError(Model, "Name")
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label c-pointer" for="StreetDisabled">Скрыта:</label>
+                    <div class="col-sm-5">
+                        @Html.CheckBoxFor(o => Model.Disabled, new {@id = "StreetDisabled", @class = "c-pointer"})
+                        @ViewBag.Validation.GetError(Model, "Disabled")
+                    </div>
+                </div>
+                <div class="form-group">
+                    <a class="btn btn-default" href="@Url.Action("Index", new {regionId = oldRegionId})" type="submit">Отмена</a>
+                    <button class="btn btn-green" type="submit">Редактировать</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

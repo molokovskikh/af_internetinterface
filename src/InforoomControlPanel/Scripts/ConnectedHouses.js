@@ -232,16 +232,26 @@ $(function() {
 	$(".connectedHouses input").keyup(function() {
 		$(".connectedHouses a").removeClass("selected");
 		if ($(this).val() != "") {
-			$(".connectedHouses a[idkey='" + $(this).attr("idkey") + "']:contains('" + $(this).val() + "')").each(function() {
-				$(this).addClass("selected");
+			var curThis = this;
+			$(".connectedHouses a[idkey='" + $(this).attr("idkey") + "']").each(function () {
+				if ($(this).html() !== "") {
+					if ($(this).html().toLowerCase().indexOf($(curThis).val().toLowerCase()) !== -1) {
+						$(this).addClass("selected");
+					}
+				}
 			});
 		}
 	});
 	$("input#streetKeySearch").keyup(function() {
 		$("tr.street").addClass("hid");
 		if ($(this).val() != "") {
-			$(".connectedHouses tr.street strong.c-pointer:contains('" + $(this).val() + "')").each(function() {
-				$($(".connectedHouses tr.street[skey='" + $(this).parents("tr.street").attr("skey") + "']")).removeClass("hid");
+			var curThis = this;
+			$(".connectedHouses tr.street strong.c-pointer").each(function () {
+				if ($(this).html() !== "") {
+					if ($(this).html().toLowerCase().indexOf($(curThis).val().toLowerCase()) !== -1) {
+						$($(".connectedHouses tr.street[skey='" + $(this).parents("tr.street").attr("skey") + "']")).removeClass("hid");
+					}
+				}
 			});
 		} else {
 			$(".connectedHouses tr.street strong.c-pointer").each(function() {

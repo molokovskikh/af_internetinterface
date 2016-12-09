@@ -19,8 +19,8 @@ namespace Inforoom2.Models
 	[Class(0, Table = "connectedhouses", NameType = typeof(ConnectedHouse))]
 	public class ConnectedHouse : BaseModel
 	{
-		[ManyToOne(Cascade = "save-update"), NotNull, Description("Улица")]
-		public virtual Street Street { get; set; }
+		[ManyToOne(Column = "Street", Cascade = "save-update"), NotNull, Description("Подключенная улица")]
+		public virtual ConnectedStreet ConnectedStreet { get; set; }
 
 		[ManyToOne(Cascade = "save-update"), NotNull, Description("Регион")]
 		public virtual Region Region { get; set; }
@@ -62,13 +62,15 @@ namespace Inforoom2.Models
 				}
 				var currentAddresses = new List<Tuple<int, int?, int, string>>();
 				var currentAddressesRaw = dbSession.CreateSQLQuery(string.Format(@"
-SELECT targetR2.Id as Region2, targetR.Id as Region1, targetS.Id as Street, targetH.Number as Number
+SELECT targetR2.Id as Region2, targetR.Id as Region1, targetA.Id as Street, targetH.Number as Number
 FROM internet.inforoom2_house as targetH
 LEFT JOIN internet.inforoom2_street as targetS on targetH.Street = targetS.Id
+INNER JOIN internet.inforoom2_connectedstreets as targetA on targetA.AddressStreet = targetS.Id
 LEFT JOIN internet.regions as targetR on targetH.Region = targetR.Id
 LEFT JOIN internet.regions as targetR2 on targetS.Region = targetR2.Id
-WHERE 
- targetH.Id IN 
+WHERE
+ targetA.Disabled = false
+ AND targetH.Id IN 
 (SELECT h.Id 
 FROM internet.inforoom2_house as h
 INNER JOIN internet.inforoom2_street as s on h.Street = s.Id
@@ -119,7 +121,7 @@ SELECT c.Id, c.Region, c.Street, c.Number, c.IsCustom, c.Disabled  FROM internet
 					else {
 						if (!existedConnectedHouse.Item5) {
 							dbSession.CreateSQLQuery(string.Format(@"
-					UPDATE  internet.inforoom2_connectedhouses as c SET c.Disabled = 0 WHERE c.Id = {0};   
+					UPDATE  internet.inforoom2_connectedhouses as c SET c.Disabled = 0 WHERE c.Id = {0} AND c.IsCustom = false;   
 						", existedConnectedHouse.Item1)).UniqueResult();
 						}
 					}
@@ -132,7 +134,7 @@ SELECT c.Id, c.Region, c.Street, c.Number, c.IsCustom, c.Disabled  FROM internet
 						Convert.ToInt32(s.Item2 ?? s.Item1) == regionId && s.Item3 == streetId && s.Item4 == houseNumber);
 					if (existedConnectedHouse == null && !item.Item5 && !item.Item6) {
 						dbSession.CreateSQLQuery(string.Format(@"
-					UPDATE  internet.inforoom2_connectedhouses as c SET c.Disabled = 1 WHERE c.Id = {0};   
+					UPDATE  internet.inforoom2_connectedhouses as c SET c.Disabled = 1 WHERE c.Id = {0} AND c.IsCustom = false;   
 						", item.Item1)).UniqueResult();
 					}
 				}
@@ -141,7 +143,7 @@ SELECT c.Id, c.Region, c.Street, c.Number, c.IsCustom, c.Disabled  FROM internet
 
 		public static List<ConnectedHouse> ConnectionsGet(ISession dbSession, int regionId, int streetId, int numberFirst, int numberLast, HouseStreetSide side, bool disabled = false, bool save = false, HouseGenerationState state = HouseGenerationState.AddOrUpdate)
 		{
-			var street = dbSession.Query<Street>().FirstOrDefault(s => s.Id == streetId);
+			var street = dbSession.Query<ConnectedStreet>().FirstOrDefault(s => s.Id == streetId);
 			var region = dbSession.Query<Region>().FirstOrDefault(s => s.Id == regionId);
 			var listOfNewHouses = new List<ConnectedHouse>();
 			for (int i = numberFirst; i <= numberLast; i++) {
@@ -154,7 +156,7 @@ SELECT c.Id, c.Region, c.Street, c.Number, c.IsCustom, c.Disabled  FROM internet
 					if (side == HouseStreetSide.Both
 					    || (side == HouseStreetSide.Left && (i == 1 && i % 2 != 0 || i != 1 && i % 2 != 0))
 					    || (side == HouseStreetSide.Right && i != 1 && i % 2 == 0)) {
-						var houseExists = dbSession.Query<ConnectedHouse>().FirstOrDefault(s => s.Region.Id == regionId && s.Street.Id == streetId && s.Number == i.ToString());
+						var houseExists = dbSession.Query<ConnectedHouse>().FirstOrDefault(s => s.Region.Id == regionId && s.ConnectedStreet.Id == streetId && s.Number == i.ToString());
 						if (houseExists != null) {
 							dbSession.Delete(houseExists);
 						}
@@ -162,14 +164,14 @@ SELECT c.Id, c.Region, c.Street, c.Number, c.IsCustom, c.Disabled  FROM internet
 				}
 				else {
 					//обновление / добавление
-					var houseExists = dbSession.Query<ConnectedHouse>().FirstOrDefault(s => s.Region.Id == regionId && s.Street.Id == streetId && s.Number == i.ToString());
+					var houseExists = dbSession.Query<ConnectedHouse>().FirstOrDefault(s => s.Region.Id == regionId && s.ConnectedStreet.Id == streetId && s.Number == i.ToString());
 					if (houseExists == null && (state == HouseGenerationState.AddOrUpdate || state == HouseGenerationState.Add)) {
 						if (side == HouseStreetSide.Both
 						    || (side == HouseStreetSide.Left && (i == 1 && i % 2 != 0 || i != 1 && i % 2 != 0))
 						    || (side == HouseStreetSide.Right && i != 1 && i % 2 == 0)) {
 							var item = new ConnectedHouse() {
 								Disabled = disabled,
-								Street = street,
+								ConnectedStreet = street,
 								Region = region,
 								IsCustom = true,
 								Number = i.ToString()

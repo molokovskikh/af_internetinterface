@@ -1,0 +1,110 @@
+﻿@using System.Activities.Expressions
+@using System.Activities.Statements
+@using Inforoom2.Components
+@using Inforoom2.Helpers
+@using Inforoom2.Models
+@using InforoomControlPanel.Models
+@{
+  ViewBag.Title = "Подключенные улицы";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  InforoomModelFilter<ConnectedStreet> modelFilter = ViewBag.pager;
+  IList<ConnectedStreet> streetList = modelFilter.GetItems();
+}
+<form>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-1">
+                <label class="c-pointer" style="margin-bottom: 12px;">Регион</label>
+            </div>
+            <div class="col-sm-2">@modelFilter.FormFilter(i => i.Region.Name, HtmlType.Dropdown, ComparsionType.Equal)</div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-1">
+                <label class="c-pointer" style="margin-bottom: 12px;">Id</label>
+            </div>
+            <div class="col-sm-2">@modelFilter.FormFilter(i => i.Id, HtmlType.text, ComparsionType.Equal)</div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-1">
+                <label class="c-pointer" style="margin-bottom: 12px;">Скрыты</label>
+            </div>
+            <div class="col-sm-2">@modelFilter.FormFilter(i => i.Disabled, HtmlType.Dropdown, ComparsionType.Equal)</div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-1">
+                @modelFilter.SubmitButton(new {@class = "btn btn-success btn-sm"})
+            </div>
+            <div class="col-sm-1">
+                @modelFilter.CleanButton(new {@class = "btn btn-success btn-sm"})
+            </div>
+        </div>
+    </div>
+</form>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <a class="btn btn-success btn-icon icon-left" href="@Url.Action("ConnectedStreetAdd", "ConnectedStreets")">
+                            <i class="entypo-plus"></i>
+                            Добавить
+                        </a>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <table class="table table-bordered table-striped datatable">
+                            <thead>
+                            <tr>
+
+                                <th class="sorting" tabindex="0" aria-controls="table-2"><a href="@modelFilter.OrderBy(s => s.Id)">Номер</a></th>
+                                <th class="sorting" tabindex="0" aria-controls="table-2"><a href="@modelFilter.OrderBy(s => s.Region.Name)">Регион</a></th>
+                                <th class="sorting" tabindex="0" aria-controls="table-2"><a href="@modelFilter.OrderBy(s => s.Name)">Название</a></th>
+                                <th class="sorting" tabindex="0" aria-controls="table-2">Почтовое название</th>
+                                <th class="sorting" tabindex="0" aria-controls="table-2"><a href="@modelFilter.OrderBy(s => s.Disabled)">Скрыта</a></th>
+                                <th colspan="2">Действие</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in streetList)
+                                {
+                                <tr class="street">
+                                    <td>
+                                        @item.Id
+                                    </td>
+                                    <td>
+                                        @item.Region.Name
+                                    </td>
+                                    <td>
+                                        @item.Name
+                                    </td>
+                                    <td>
+                                        @(item.AddressStreet!=null?item.AddressStreet.PublicName():"")
+                                    </td>
+                                    <td>
+                                        @(item.Disabled ? "да" : "нет")
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-red btn-sm" onclick="submit('Вы действительно хотите удалить улицу №@(item.Id)')" href="@Url.Action("ConnectedStreetDelete", "ConnectedStreets", new {id = item.Id})">
+                                            удалить
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-success btn-sm" href="@Url.Action("ConnectedStreetEdit", "ConnectedStreets", new { id = item.Id })">
+                                            Редактировать
+                                        </a>
+                                    </td>
+                                </tr>}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>

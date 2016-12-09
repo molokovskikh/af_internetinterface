@@ -1564,6 +1564,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ConnectedStreetsController.cs" />
     <Compile Include="Controllers\ConnectedHousesController.cs" />
     <Compile Include="Controllers\PriceListController.cs" />
     <Compile Include="Models\ViewModelConnectedHouse.cs" />
@@ -2074,6 +2075,9 @@
     <Content Include="Views\PriceList\PriceListEdit.cshtml" />
     <Content Include="Views\PriceList\PriceListIndex.cshtml" />
     <Content Include="Views\Shared\Partial\modalConfirmation.cshtml" />
+    <Content Include="Views\ConnectedStreets\Index.cshtml" />
+    <Content Include="Views\ConnectedStreets\ConnectedStreetEdit.cshtml" />
+    <Content Include="Views\ConnectedStreets\ConnectedStreetAdd.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <Content Include="Views\Switch\SwitchCreate.cshtml" />

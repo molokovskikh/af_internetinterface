@@ -216,12 +216,12 @@ namespace InforoomControlPanel.Controllers
 				Where(s => s.Region.Id == regionId || s.Houses.Any(a => a.Region.Id == regionId)).ToList()
 				.Select(s => new {
 					Id = s.Id,
-					Name = s.PublicName(),
+					Name = s.PublicName().Trim(),
 					Geomark = s.Geomark,
 					Confirmed = s.Confirmed,
 					Region = s.Region.Id,
 					Houses = s.Houses.Count
-				}).OrderBy(s => s.Name).ToList();
+				}).ToList().OrderBy(s=>s.Name).ToList();
 			return Json(streets, JsonRequestBehavior.AllowGet);
 		}
 

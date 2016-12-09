@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Inforoom2.Models;
+using Inforoom2.Test.Infrastructure.Helpers;
 using InforoomControlPanel.Test.Functional.infrastructure;
 using NHibernate.Linq;
 using NUnit.Framework;
@@ -12,9 +13,119 @@ namespace InforoomControlPanel.Test.Functional.ConnectedHouses
 {
 	class ConnectedHousesFixture : ControlPanelBaseFixture
 	{
+		/// <summary>
+		/// Добавление улиц
+		/// </summary>
+		/// <param name="streetName"></param>
+		/// <param name="anyExists"></param>
+		/// <param name="errorDuble"></param>
+		private void AddConnectedStreet(string streetName, bool anyExists= false, bool errorDuble = false)
+		{
+			var client =
+				DbSession.Query<Client>()
+					.FirstOrDefault(s => s.Comment == ClientCreateHelper.ClientMark.normalClient.GetDescription());
+			var region = client.GetRegion();
+			var street = client.Address.House.Street;
+			//переход на страницу "Подключенных домов"
+			Open("ConnectedStreets/");
+			Assert.That(DbSession.Query<ConnectedStreet>().Any(), Is.EqualTo(anyExists), "Подключенных улиц быть не должно");
+			Click("Добавить");
+			//Регион
+			Css("[id='RegionDropDown']").SelectByText(region.Name);
+			//ожидание
+			WaitForVisibleCss("#StreetDropDown option[value='" + street.Id + "']", 20);
+			////Улица
+			Css("[id='StreetDropDown']").SelectByText(street.Name);
+			var inputObj = browser.FindElementByCssSelector("input[name='Name']");
+			Assert.That(inputObj.GetAttribute("value"), Is.EqualTo(""), "Name не совпадает.");
+			inputObj.Clear();
+			inputObj.SendKeys(streetName);
+			Click("Добавить");
+			if (errorDuble) {
+				AssertText($"Подключенная улица '{streetName}' не может быть добавлена");
+			}
+		}
+
+		[Test, Description("Подключенные дома")]
+		public void ConnectedStreetsFixture()
+		{
+			//Добавление улиц
+			var countOfNewStreets = 2;
+			Assert.That(DbSession.Query<ConnectedStreet>().Count(), Is.EqualTo(0), "Подключенных улиц быть не должно");
+			var streetNameFormat = "Новая улица №{0}";
+			for (int i = 0; i < countOfNewStreets; i++) {
+			AddConnectedStreet(String.Format(streetNameFormat,i), i != 0);
+			}
+			Assert.That(DbSession.Query<ConnectedStreet>().Count(), Is.EqualTo(countOfNewStreets),
+				"Подключенных улиц меньше, чем должно быть");
+
+			//Изменение первой добавленной улицы
+			var newName = "NewStreet";
+			var firstStreet = DbSession.Query<ConnectedStreet>().First();
+			var newStreetId = DbSession.Query<Street>().First(s => s.Region.Id == firstStreet.Region.Id  && s.Id != firstStreet.AddressStreet.Id);
+			Click("Редактировать");
+			//ожидание
+			WaitForVisibleCss("#StreetDropDown option[value='" + firstStreet.AddressStreet.Id + "']", 20);
+			//Регион
+			Css("[id='RegionDropDown']").SelectByText(newStreetId.Region.Name);
+			//ожидание
+			WaitForVisibleCss("#StreetDropDown option[value='" + newStreetId.Id + "']", 20);
+			////Улица
+			Css("[id='StreetDropDown']").SelectByText(newStreetId.Name);
+			var inputObj = browser.FindElementByCssSelector("input[name='Name']");
+			Assert.That(inputObj.GetAttribute("value"), Is.EqualTo(firstStreet.Name), "Name не совпадает.");
+			inputObj.Clear();
+			inputObj.SendKeys(newName);
+			Click("Редактировать");
+
+			//Изменение видимости
+			Click("Редактировать");
+			//ожидание
+			WaitForVisibleCss("#StreetDropDown option[value='" + newStreetId.Id + "']", 20);
+			inputObj = browser.FindElementByCssSelector("input[name='Name']");
+			Assert.That(inputObj.GetAttribute("value"), Is.EqualTo(newName), "Name не совпадает.");
+			inputObj = browser.FindElementByCssSelector("input[name='Disabled']");
+			Assert.That(inputObj.GetAttribute("checked"), Is.Null, "Поле 'Скрыта' не совпадает.");
+			inputObj.Click();
+			Click("Редактировать");
+			Assert.IsTrue(firstStreet.AddressStreet.Id != newStreetId.Id);
+			Assert.IsTrue(firstStreet.Name != newName);
+			DbSession.Refresh(firstStreet);
+			Assert.IsTrue(firstStreet.AddressStreet.Id == newStreetId.Id);
+			Assert.IsTrue(firstStreet.Name == newName);
+			
+			//Фильтрация
+			var anotherStreet = DbSession.Query<ConnectedStreet>().First(s => s.Id != firstStreet.Id);
+			var anotherRegion = DbSession.Query<Region>().First(s => s.Id != newStreetId.Region.Id);
+
+			AssertText(firstStreet.Name);
+			AssertText(anotherStreet.Name);
+			//Регион
+			Css("[name='mfilter.filter.Equal.Region.Name']").SelectByText(anotherRegion.Name);
+			Click("Поиск");
+			AssertNoText(firstStreet.Name);
+			AssertNoText(anotherStreet.Name);
+			//Регион
+			Css("[name='mfilter.filter.Equal.Region.Name']").SelectByText(firstStreet.Region.Name);
+			Click("Поиск");
+			AssertText(firstStreet.Name);
+			AssertText(anotherStreet.Name);
+			//Улица скрыта
+			Css("[name='mfilter.filter.Equal.Disabled']").SelectByText("Да");
+			Click("Поиск");
+			AssertText(firstStreet.Name);
+			AssertNoText(anotherStreet.Name);
+			Css("[name='mfilter.filter.Equal.Disabled']").SelectByText("Нет");
+			Click("Поиск");
+			AssertNoText(firstStreet.Name);
+			AssertText(anotherStreet.Name);
+		}
+
 		[Test, Description("Подключенные дома")]
 		public void ConnectedHouseFixture()
 		{
+			AddConnectedStreet("Новая улица");
+			AddConnectedStreet("Новая улица", true, true);
 			//тестовые значения
 			var newHouseNumber = "111";
 			var newHouseNumberFirst = "1";
@@ -32,10 +143,10 @@ namespace InforoomControlPanel.Test.Functional.ConnectedHouses
 			WaitForVisibleCss("#ModelForSynchronization .btn.btn-success");
 			browser.FindElementByCssSelector("#ModelForSynchronization .btn.btn-success").Click();
 			WaitForVisibleCss("[data-target='#ModelForSynchronization']");
-			Assert.That(DbSession.Query<ConnectedHouse>().Any(), Is.EqualTo(true), "Подключенных дома должны быть сгенерированы.");
 			var region = DbSession.Query<Region>().FirstOrDefault(s => s.Streets.Count > 0);
-			var streets = DbSession.Query<Street>().Where(s => s.Region.Id == region.Id && s.Houses.Count > 0).ToList();
-			var houses = DbSession.Query<House>().Where(s => s.Street.Id == streets.First().Id).ToList();
+			Assert.That(DbSession.Query<ConnectedHouse>().Any(), Is.EqualTo(true), "Подключенных дома должны быть сгенерированы.");
+			var streets = DbSession.Query<ConnectedStreet>().Where(s => s.Region.Id == region.Id).ToList();
+			var houses = DbSession.Query<House>().Where(s => s.Street.Id == streets.First().AddressStreet.Id).ToList();
 			//Выбор тестового региона
 			Css(".ConnectedHouses [name='regionId']").SelectByText(region.Name);
 			browser.FindElementByCssSelector(".ConnectedHouses form .btn.btn-success").Click();
