@@ -74,6 +74,8 @@ namespace InforoomControlPanel.Controllers
 			}
 			if (model.AddressStreet != null && model.AddressStreet.Id != 0) {
 				model.AddressStreet = DbSession.Query<Street>().FirstOrDefault(s => s.Id == model.AddressStreet.Id);
+			} else {
+				model.AddressStreet = null;
 			}
 			var errors = ValidationRunner.Validate(model);
 			if (errors.Length == 0 && !string.IsNullOrEmpty(model.Name) && model.Region != null
@@ -119,6 +121,8 @@ namespace InforoomControlPanel.Controllers
 			}
 			if (model.AddressStreet != null && model.AddressStreet.Id != 0) {
 				oldModel.AddressStreet = DbSession.Query<Street>().FirstOrDefault(s => s.Id == model.AddressStreet.Id);
+			} else {
+				model.AddressStreet = null;
 			}
 			var errors = ValidationRunner.Validate(model);
 			if (errors.Length == 0 && !string.IsNullOrEmpty(model.Name) && model.Region != null
