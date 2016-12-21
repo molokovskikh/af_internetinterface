@@ -92,6 +92,12 @@
 					<span>@client.PhysicalClient.VirtualBalance.ToString("0.00")</span>
 				</td>
 			</tr>
+			<tr>
+			    <td>Остаток задолжности по расчетному периоду</td>
+			    <td>
+			        <span>@((client.GetSumWriteOffRemained()??0).ToString("0.00"))</span>
+			    </td>
+			</tr>
 			<tr class="@(client.Status.Type == StatusType.NoWorked || client.Status.Type == StatusType.Dissolved ? "appeal Block" : "") @(client.Status.Type == StatusType.Dissolved ? "statusDissolved" : "")">
 				<td>Статус клиента</td>
 				<td>

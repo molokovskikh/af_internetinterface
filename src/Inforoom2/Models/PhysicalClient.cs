@@ -606,14 +606,14 @@ namespace Inforoom2.Models
 	    {
             var address = IPAddress.Parse(currentIp);
 #if DEBUG
-            var lease = dSession.Query<Lease>().FirstOrDefault(l => l.Endpoint == null);
+		    var lease = dSession.Query<Lease>().FirstOrDefault(l => l.Endpoint == null);
 #else
 				var lease = dSession.Query<Lease>().FirstOrDefault(l => l.Ip == address && l.Endpoint == null);
 #endif
             ClientEndpoint currentEnpoint = null;
-            if (lease != null)
+            if (lease?.Switch != null)
             {
-                currentEnpoint = dSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Switch.Id == lease.Switch.Id && s.Port == lease.Port && s.Client.Id != currentClient.Id);
+                currentEnpoint = dSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Switch !=null && s.Switch.Id == lease.Switch.Id && s.Port == lease.Port && s.Client.Id != currentClient.Id);
                 if (currentEnpoint != null)
                 {
                     errorMessage = "Ошибка: точка подключения не задана!";

@@ -15,12 +15,12 @@
 	var emptyAddressString = "";
 }
 @section JavaScript{
-	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=3")"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=4")"></script>
 	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js?v=001")"></script>
 }
 
 <div id="table-2_wrapper" class="clientMainTable dataTables_wrapper form-inline no-footer  clientTableFilter">
-<form method="post">
+<form method="post" id="ClientSearchForm">
 <h5 class="filterBlockHeader">Основное</h5>
 <div class="panel-body">
 	<div class="row">
@@ -283,9 +283,10 @@
 		<div class="col-sm-1">
 			@pager.CleanButton(new {@class = "btn btn-success btn-sm"})
 		</div>
-		<div class="col-sm-1">
-			@pager.ExportButton(new {@class = "btn btn-sm btn-blue margin"})
-		</div>
+	    <div class="col-sm-1">
+            <input id="ShortRequestToREmoveDiable" type="hidden" disabled="" name="mfilter.export" value="Выгрузить в Excel">
+	        @pager.ExportButton(new {@class = "btn btn-sm btn-blue margin"})
+	    </div>
 	</div>
 </div>
 </form>

@@ -5,7 +5,7 @@ using Test.Support.Selenium;
 
 namespace InternetInterface.Test.Functional
 {
-	[TestFixture]
+	[TestFixture, Ignore("Тесты не актуальны. Функционал перенесен.")]
 	public class BookmarksFixture : SeleniumFixture
 	{
 		[SetUp]
