@@ -317,6 +317,29 @@ $(function() {
 
 	$('select[name="mfilter.filter.Equal.AppealType"] option[value="All"]').remove();
 
+	$("#ClientSearchForm [type='submit']").click(function() {
+		event.preventDefault();
+		$("#ShortRequestToREmoveDiable").attr('disabled', true);
+		$("#ClientSearchForm input, #ClientSearchForm select").each(function() {
+			if (this.nodeName.toLowerCase() === 'input' && $(this).attr('type') === 'submit') return;
+			if (this.nodeName.toLowerCase() == 'input' != 'submit' && $(this).val() === '') {
+				$(this).attr('disabled', true);
+			}
+			if (this.nodeName.toLowerCase() == 'select' != 'submit' && $(this).val() === '') {
+				$(this).attr('disabled', true);
+			}
+		});
+		if ($(this).attr('name') === 'mfilter.export') 
+			$("#ShortRequestToREmoveDiable").removeAttr('disabled');
+
+		$("#ClientSearchForm").submit();
+
+		if ($(this).attr('name') === 'mfilter.export') {
+			$("#ClientSearchForm input, #ClientSearchForm select").each(function() {
+				$(this).removeAttr('disabled');
+			});
+		}
+	});
 });
 
 //Добавление в куки сведений о необходимости открывать единственную запись в новой вкладке 

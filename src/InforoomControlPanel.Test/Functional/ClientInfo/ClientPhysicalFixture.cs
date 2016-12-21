@@ -225,6 +225,18 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			//Проверки последствий смены:
 			CheckStatusChangeEffect(StatusType.Worked);
 
+			//обновляем страницу клиента
+			Open("Client/InfoPhysical/" + CurrentClient.Id);
+			//получаем обновленную модель клиента
+			DbSession.Refresh(CurrentClient);
+			WaitForText("Номер лицевого счета");
+
+			var writeOffDisolvedSum = CurrentClient.GetSumWriteOffRemained().Value;
+			AssertText(writeOffDisolvedSum.ToString("0.00"));
+
+			//редактируем блок
+			browser.FindElementByCssSelector(blockName + ".btn.btn-blue.lockButton").Click();
+
 			//Статус - Расторгнут
 			Css(blockName + "[name='clientStatus']")
 				.SelectByText((StatusType.Dissolved).GetDescription());
@@ -240,8 +252,14 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			var inputObj = browser.FindElementByCssSelector(blockName + "textarea[name='clientStatusChangeComment']");
 			inputObj.Clear();
 			inputObj.SendKeys("причина изменения статуса");
+			DbSession.Refresh(CurrentClient);
+			Assert.IsTrue(CurrentClient.WriteOffs.Count(s => s.WriteOffSum == writeOffDisolvedSum) == 0);
+			
 			//сохранение изменений
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
+			
+			UpdateDBSession();
+			Assert.IsTrue(CurrentClient.WriteOffs.Count(s=>s.WriteOffSum == writeOffDisolvedSum)>0);
 
 			//редактируем блок
 			browser.FindElementByCssSelector(blockName + ".btn.btn-blue.lockButton").Click();

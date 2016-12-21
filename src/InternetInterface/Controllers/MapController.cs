@@ -15,7 +15,8 @@ namespace InternetInterface.Controllers
 	{
 		public void SiteMap()
 		{
-			PropertyBag["Bookmarks"] = DbSession.Query<Bookmark>().Where(b => b.Date.Date == DateTime.Now.Date && !b.Deleted).ToList();
+			RedirectToUrl(InternetInterface.Helpers.GlobalNames.AdminPanelNew);
+		//	PropertyBag["Bookmarks"] = DbSession.Query<Bookmark>().Where(b => b.Date.Date == DateTime.Now.Date && !b.Deleted).ToList();
 		}
 
 		public void ShowBookmarks([DataBind("period")] DatePeriod period)

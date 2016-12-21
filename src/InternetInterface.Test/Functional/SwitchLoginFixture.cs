@@ -15,7 +15,7 @@ namespace InternetInterface.Test.Functional
 			return 1;
 		}
 		
-		[Test(Description = "Тестируется поведение базового класса и функции SwitchUser.")]
+		[Test(Description = "Тестируется поведение базового класса и функции SwitchUser."), Ignore("Тесты не актуальны. Функционал перенесен.")]
 		public void SwitchUserTest()
 		{
 			Open();

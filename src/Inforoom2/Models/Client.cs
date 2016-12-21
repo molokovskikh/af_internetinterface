@@ -369,6 +369,22 @@ namespace Inforoom2.Models
 			return (int)Math.Floor(Balance / priceInDay);
 		}
 
+		public virtual decimal? GetSumWriteOffRemained()
+		{
+			if (!IsPhysicalClient)
+				return null;
+			var lastWriteOff = WriteOffs.OrderByDescending(s => s.Id).FirstOrDefault()?.WriteOffDate ?? WorkingStartDate;
+			if (!RatedPeriodDate.HasValue || lastWriteOff == null)
+				return null;
+
+			var daysInIntervalA = (((DateTime) RatedPeriodDate).AddMonths(1) - (DateTime) RatedPeriodDate).Days + DebtDays;
+			var daysInIntervalB = (((DateTime) RatedPeriodDate).AddMonths(1) - lastWriteOff.Value).Days + DebtDays;
+			var price = GetPrice();
+			var CurrentPrice = price/daysInIntervalA;
+			var sum = daysInIntervalB*CurrentPrice;
+			return Math.Round(sum, 2);
+		}
+
 		public virtual decimal GetSumForRegularWriteOff()
 		{
 			var daysInInterval = GetInterval();
@@ -823,12 +839,13 @@ namespace Inforoom2.Models
 					Disabled = false;
 					ShowBalanceWarningPage = false;
 				}
+					decimal? lastTotalSum = 0m;
 				if (NewStatus.Type == StatusType.Dissolved) {
+					lastTotalSum = GetSumWriteOffRemained();
 					if (HaveService<BlockAccountService>()) {
 						var thisService = ClientServices
-							.Where(cs => NHibernateUtil.GetClass(cs.Service) == typeof(BlockAccountService) && cs.IsActivated)
+							.Where(cs => NHibernateUtil.GetClass(cs.Service) == typeof (BlockAccountService) && cs.IsActivated)
 							.ToList().FirstOrDefault();
-
 						if (thisService != null) {
 							thisService.Deactivate(dbSession);
 							SetStatus(StatusType.Dissolved, dbSession);
@@ -854,6 +871,12 @@ namespace Inforoom2.Models
 					WorkingStartDate = null;
 				}
 				SetStatus(NewStatus.Type, dbSession);
+
+				if (lastTotalSum.HasValue && lastTotalSum.Value > 0) {
+					var dissolvedTotalSumWriteOff = PhysicalClient.WriteOff(lastTotalSum.Value, false);
+					dissolvedTotalSumWriteOff.Comment = "Расторжение договора.";
+					dbSession.Save(dissolvedTotalSumWriteOff);
+				}
 
 				if (Status.Type == StatusType.NoWorked) {
 					AutoUnblocked = false;
