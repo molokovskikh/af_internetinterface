@@ -24,7 +24,7 @@ namespace InforoomControlPanel.Test.Functional.Payments
 			//добавляем ему контакт
 			CurrentClient.Contacts.Add(new Contact() {
 				ContactString = "9102868651",
-				Type = ContactType.SmsSending,
+				Type = ContactType.MobilePhone,
 				Client = CurrentClient
 			});
 			CurrentClient.Recipient = DbSession.Query<Recipient>().FirstOrDefault();

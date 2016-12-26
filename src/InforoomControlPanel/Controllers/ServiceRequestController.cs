@@ -141,10 +141,7 @@ namespace InforoomControlPanel.Controllers
 			var client = DbSession.Query<Client>().FirstOrDefault(s => s.Id == id);
 			if (client != null) {
 				//получение телефона-'по умолчанию'
-				var phone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.SmsSending);
-				if (phone == null) {
-					phone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
-				}
+				var phone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
 				if (phone == null) {
 					phone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.HousePhone);
 				}
