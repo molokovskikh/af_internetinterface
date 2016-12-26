@@ -33,7 +33,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			//добавляем ему контакт
 			CurrentClient.Contacts.Add(new Contact() {
 				ContactString = "9102868651",
-				Type = ContactType.SmsSending,
+				Type = ContactType.MobilePhone,
 				Client = CurrentClient
 			});
 			//сохраняем

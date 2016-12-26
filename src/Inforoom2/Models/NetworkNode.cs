@@ -24,7 +24,7 @@ namespace Inforoom2.Models
 		[Property, Description("Наименование узла связи")]
 		public virtual string Name { get; set; }
 
-		[Property, Description("Маркер обозначающий существует ли узел связи физически или отмечен как виртуальный для связи коммутаторов")]
+		[Property(Column = "IsVirtual"), Description("Маркер обозначающий существует ли узел связи физически или отмечен как виртуальный для связи коммутаторов")]
 		public virtual bool Virtual { get; set; }
 
 		[Property, Description("Комментарии к узлу связи")]

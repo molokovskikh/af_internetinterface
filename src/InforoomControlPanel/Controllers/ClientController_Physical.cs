@@ -430,12 +430,6 @@ namespace InforoomControlPanel.Controllers
 					ActivatedByUser = (service.Name == "Internet")
 				}).ToList();
 				client.ClientServices = csList;
-				// дублируем моб.номер клиента в смс рассылку
-				var mobilePhone = client.Contacts.FirstOrDefault(s => s.Type == ContactType.MobilePhone);
-				if (mobilePhone != null) {
-					mobilePhone.Type = ContactType.SmsSending;
-					client.Contacts.Add(mobilePhone);
-				}
 				// сохраняем модель
 				DbSession.Save(client); 
                 SuccessMessage("Клиент успешно зарегистрирован!");
