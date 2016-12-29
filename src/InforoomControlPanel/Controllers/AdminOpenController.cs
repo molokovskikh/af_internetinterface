@@ -272,10 +272,28 @@ namespace InforoomControlPanel.Controllers
 					Price = d.Price
 				}).OrderBy(s => s.Name).ToList();
 			return Json(planList, JsonRequestBehavior.AllowGet);
-        }
+		}
+
+		/// <summary>
+		/// Получение тарифов по региону
+		/// </summary>
+		/// <param name="regionId">Id региона</param>
+		/// <returns>Json* Список в форме: Id, Name, Price</returns>
+		[HttpPost]
+		public JsonResult GetSwitchListForRegion(int regionId)
+		{
+			var planList = DbSession.Query<Switch>()
+				.Where(s => s.Zone.Region.Id == regionId).ToList()
+				.Select(d => new {
+					Id = d.Id,
+					PortsCount = d.PortCount,
+					Name = d.Name + (!string.IsNullOrEmpty(d.Description) ? $" - ({d.Description} )" : "")
+				}).OrderBy(s => s.Name).ToList();
+			return Json(planList, JsonRequestBehavior.AllowGet);
+		}
 
 #if DEBUG
-        public ActionResult SetDebugTime(string time)
+		public ActionResult SetDebugTime(string time)
         {
             SystemTime.Now = () => DateTime.Parse(time);
             SuccessMessage($"Время установлено {time}");

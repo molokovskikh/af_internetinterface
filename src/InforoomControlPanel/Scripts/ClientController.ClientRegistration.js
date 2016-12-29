@@ -131,6 +131,7 @@ getStreetList = function (regionId, funcAfter, countStreet) {
 				if (pastValElement.length != 0) {
 					$("#StreetDropDown option").removeAttr("selected");
 					$(pastValElement).attr("selected", "selected");
+					$("#StreetDropDown").val(pastVal);
 				}
 			}
 		},
@@ -163,6 +164,7 @@ getHouseList = function (streetId, regionId, funcAfter, countHouse) {
 				if (pastValElement.length != 0) {
 					$("#HouseDropDown option").removeAttr("selected");
 					$(pastValElement).attr("selected", "selected");
+					$("#HouseDropDown").val(pastVal);
 				}
 			}
 		},
@@ -198,7 +200,12 @@ getStreetFuncAfter = function(data) {
 		el.html(this.Name);
 		$("#StreetDropDown").append(el);
 	});
-	$("#StreetDropDown").val($("#StreetDropDown option:first"));
+	var planVal = $("#StreetDropDown").attr("value");
+	if (planVal == undefined || planVal == "" || planVal == 0) {
+		$("#StreetDropDown").val($("#StreetDropDown option:first"));
+	} else {
+		$("#StreetDropDown").val(planVal);
+	}
 	$("#HouseDropDown").html("<option selected='selected'></option>");
 }
 getHouseFuncAfter = function(data) {
@@ -212,7 +219,12 @@ getHouseFuncAfter = function(data) {
 		el.html(this.Number);
 		$("#HouseDropDown").append(el);
 	});
-	$("#HouseDropDown").val($("#HouseDropDown option:first"));
+	var planVal = $("#HouseDropDown").attr("value");
+	if (planVal == undefined || planVal == "" || planVal == 0) {
+		$("#HouseDropDown").val($("#HouseDropDown option:first"));
+	} else {
+		$("#HouseDropDown").val(planVal);
+	}
 }
 getPlansFuncAfter = function(data) {
 	var tmp = $("#PlanDropDown option:last").removeAttr("selected").clone();
@@ -225,7 +237,12 @@ getPlansFuncAfter = function(data) {
 		el.html(this.Name);
 		$("#PlanDropDown").append(el);
 	});
-	$("#PlanDropDown").val($("#PlanDropDown option:first"));
+	var planVal = $("#PlanDropDown").attr("value");
+	if (planVal == undefined || planVal == "" || planVal == 0) {
+		$("#PlanDropDown").val($("#PlanDropDown option:first"));
+	} else {
+		$("#PlanDropDown").val(planVal); 
+	}
 }
 
 

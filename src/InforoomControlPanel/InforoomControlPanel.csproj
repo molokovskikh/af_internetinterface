@@ -2078,6 +2078,7 @@
     <Content Include="Views\ConnectedStreets\Index.cshtml" />
     <Content Include="Views\ConnectedStreets\ConnectedStreetEdit.cshtml" />
     <Content Include="Views\ConnectedStreets\ConnectedStreetAdd.cshtml" />
+    <Content Include="Scripts\Registration.EndpointAdd.js" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <Content Include="Views\Switch\SwitchCreate.cshtml" />

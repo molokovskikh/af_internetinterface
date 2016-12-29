@@ -342,9 +342,9 @@ namespace InforoomControlPanel.Controllers
 				DbSession.Query<Street>().FirstOrDefault(s => s.Name.ToLower().Trim() == clientRequest.Street.ToLower().Trim());
 			var tempHouseNumber = (clientRequest.HouseNumber != null ? clientRequest.HouseNumber + clientRequest.Housing : "");
 			var houseToFind = DbSession.Query<House>().FirstOrDefault(s => s.Number == tempHouseNumber
-			                                                               &&
-			                                                               (s.Region == currentRegion ||
-			                                                                s.Street == currentStreet && s.Region == null));
+				&&
+				(s.Region == currentRegion ||
+					s.Street == currentStreet && s.Region == null));
 
 			if (houseToFind == null) {
 				houseToFind = new House();
@@ -360,8 +360,7 @@ namespace InforoomControlPanel.Controllers
 					currentRegion = client.PhysicalClient.Address.Region;
 					houseToFind = client.PhysicalClient.Address.House;
 					currentStreet = client.PhysicalClient.Address.House.Street;
-				}
-				else {
+				} else {
 					client.PhysicalClient.Address = new Address() {
 						House = null,
 						Floor = clientRequest.Floor,
@@ -369,8 +368,7 @@ namespace InforoomControlPanel.Controllers
 						Apartment = clientRequest.Apartment.ToString()
 					};
 				}
-			}
-			else {
+			} else {
 				// формирование адреса
 				client.PhysicalClient.Address = new Address() {
 					House = houseToFind,
@@ -390,10 +388,10 @@ namespace InforoomControlPanel.Controllers
 			var currentHouseList = currentStreet == null || currentRegion == null
 				? new List<House>()
 				: DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
-				                                      ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) ||
-				                                       (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
-				                                      (s.Street.Region.Id == currentRegion.Id && s.Region == null ||
-				                                       (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)))
+					((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) ||
+						(s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
+					(s.Street.Region.Id == currentRegion.Id && s.Region == null ||
+						(s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)))
 					.OrderBy(s => s.Number)
 					.ToList();
 			// тариф по запросу
@@ -403,20 +401,22 @@ namespace InforoomControlPanel.Controllers
 			var planList = DbSession.Query<Plan>().OrderBy(s => s.Name).ToList();
 			if (regionList.Count > 0) {
 				planList = planList.Where(s => s.Disabled == false && s.AvailableForNewClients
-				                               && s.RegionPlans.Any(d => d.Region == currentRegion)).OrderBy(s => s.Name).ToList();
+					&& s.RegionPlans.Any(d => d.Region == currentRegion)).OrderBy(s => s.Name).ToList();
 			}
-            //
-		    var addressIp = HttpContext.Request?.UserHostAddress;
+			//
+			var addressIp = IPAddress.Parse(HttpContext.Request?.UserHostAddress);
 #if DEBUG
-		    addressIp = DbSession.Query<Lease>().OrderByDescending(s => s.Id).FirstOrDefault()?.Ip?.ToString();
+			addressIp = DbSession.Query<Lease>().OrderByDescending(s => s.Id).FirstOrDefault()?.Ip ?? addressIp;
 #endif
-            ViewBag.CurrentIp = addressIp;
-		    ViewBag.RequestGybrid = clientRequest.Hybrid;
-		    if (clientRequest.Hybrid && addressIp != null) {
-		        var currentIp = IPAddress.Parse(addressIp);
-                ViewBag.CurrentLease = DbSession.Query<Lease>().FirstOrDefault(s => s.Ip == currentIp && s.Endpoint == null);
-            }
-            ViewBag.CurrentRegion = currentRegion;
+			Lease lease = null;
+			if (clientRequest.Hybrid && addressIp != null) {
+				lease = DbSession.Query<Lease>().FirstOrDefault(s => s.Ip == addressIp && s.Endpoint == null);
+				ViewBag.CurrentLease = lease;
+			}
+
+			ViewBag.CurrentIp = addressIp.ToString();
+			ViewBag.RequestGybrid = clientRequest.Hybrid;
+			ViewBag.CurrentRegion = currentRegion;
 			ViewBag.CurrentStreet = currentStreet;
 			ViewBag.CurrentHouse = houseToFind;
 			ViewBag.UserRequestStreet = clientRequest.Street;
@@ -431,6 +431,9 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.ScapeUserNameDoubling = true;
 			ViewBag.requestId = id;
 			ViewBag.Client = client;
+			ViewBag.CurrentSwitchId = lease?.Switch?.Id ?? 0;
+			ViewBag.CurrentPort = lease?.Port ?? 0;
+			ViewBag.CurrentMac = lease?.Mac ?? "";
 
 			return View();
 		}
@@ -440,7 +443,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary> 
 		[HttpPost]
 		public ActionResult RequestRegistration([EntityBinder] Client client, int requestId, bool redirectToCard,
-			bool scapeUserNameDoubling = false)
+			bool scapeUserNameDoubling = false, int switchId = 0, int port = 0, string mac = "")
 		{
 			// удаление неиспользованного контакта *иначе в БД лишняя запись
 			client.Contacts = client.Contacts.Where(s => s.ContactString != string.Empty).ToList();
@@ -468,8 +471,34 @@ namespace InforoomControlPanel.Controllers
 			certificateTypeDic.Add(0, CertificateType.Passport);
 			certificateTypeDic.Add(1, CertificateType.Other);
 
-			// если ошибок нет
-			if (errors.Length == 0) {
+			var errorMessageForEndpointPreRegistration = string.Empty;
+			Lease lease = null;
+			Switch baseSwitch = null;
+			int? basePort = null;
+			string baseMac = null;
+			//проверяем до регистрации клиента
+			// если заявка "Гибрид", назначаем точку подключения по Лизе
+			var addressIp = IPAddress.Parse(this.Request.UserHostAddress);
+#if DEBUG
+			addressIp = DbSession.Query<Lease>().OrderByDescending(s => s.Id).FirstOrDefault()?.Ip ?? addressIp;
+#endif
+			lease = DbSession.Query<Lease>().FirstOrDefault(s => s.Ip == addressIp && s.Endpoint == null);
+
+			if (clientRequest.Hybrid) {
+				switchId = switchId == 0 ? (lease?.Switch?.Id ?? 0) : switchId;
+				baseSwitch = DbSession.Query<Switch>().FirstOrDefault(s => s.Id == switchId);
+				basePort = port == 0 ? (lease?.Port ?? 0) : port;
+				baseMac = string.IsNullOrEmpty(mac) ? (lease?.Mac ?? "") : mac;
+
+				if (baseSwitch == null || baseSwitch.Id == 0 || basePort == null || basePort == 0 || string.IsNullOrEmpty(baseMac)) {
+					errorMessageForEndpointPreRegistration =
+						"Ошибка: настройки точки подключения заданы неверно для подключения типа гибрид.";
+					ErrorMessage(errorMessageForEndpointPreRegistration);
+				}
+			}
+
+				// если ошибок нет
+				if (errors.Length == 0 && errorMessageForEndpointPreRegistration == String.Empty) {
 				// указываем имя лица, которое проводит регистрирацию
 				client.WhoRegisteredName = client.WhoRegistered.Name;
 				// генерируем пароль и его хыш сохраняем в модель физ.клиента
@@ -487,23 +516,24 @@ namespace InforoomControlPanel.Controllers
 					ActivatedByUser = (service.Name == "Internet")
 				}).ToList();
 				client.ClientServices = csList;
-                // сохраняем модель
-                DbSession.Save(client);
+				// сохраняем модель
+				DbSession.Save(client);
 
-                //проверяем, если заявка "Гибрид", назначаем точку подключения по Ip
-                if (clientRequest.Hybrid) {
-			        var errorMessage = "";
-			        //пытаемся добавить точку подклбючения, если ее нет
-			        PhysicalClient.EndpointCreateIfNeeds(DbSession, client, this.Request.UserHostAddress, GetCurrentEmployee(),
-			            ref errorMessage, clientRequest.Hybrid);
-			        if (!string.IsNullOrEmpty(errorMessage)) {
-			            ErrorMessage(errorMessage);
-			        }
-			        DbSession.Save(client);
-			    }
+				//проверяем после регистрации клиента
+					//если есть необходимость создать для него точку подключения
+					if (clientRequest.Hybrid) {
+						var errorMessage = "";
+						//пытаемся добавить точку подклбючения, если ее нет
+						PhysicalClient.EndpointCreateIfNeeds(DbSession, client, lease, GetCurrentEmployee(),
+							ref errorMessage, clientRequest.Hybrid, baseSwitch, basePort,baseMac);
+						if (!string.IsNullOrEmpty(errorMessage)) {
+							ErrorMessage(errorMessage);
+						}
+						DbSession.Save(client);
+					}
 
-                // Обновление заявки
-                if (clientRequest != null) {
+				// Обновление заявки
+				if (clientRequest != null) {
 					//получаем маркер по умолчанию для зарегистрированных заявок 
 					var markerRegistered = ConfigHelper.GetParam("connectionRequestDefaultMarker_registered");
 					var markerRegisteredId = int.Parse(markerRegistered);
@@ -519,15 +549,15 @@ namespace InforoomControlPanel.Controllers
 				// переходим к карте клиента *в старой админке, если выбран пункт "Показывать наряд на подключение"
 				if (redirectToCard) {
 					return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-					                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]
-					                + $"Client/ConnectionCard/{client.Id}");
+						"Clients/UpdateAddressByClient?clientId=" + client.Id +
+						"&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]
+						+ $"Client/ConnectionCard/{client.Id}");
 				}
 				// переходим к информации о клиенте *в старой админке
 				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]
-				                + $"Client/InfoPhysical/{client.Id}");
+					"Clients/UpdateAddressByClient?clientId=" + client.Id +
+					"&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]
+					+ $"Client/InfoPhysical/{client.Id}");
 			}
 			// адресные данные по запросу 
 			Street currentStreet = null;
@@ -562,17 +592,16 @@ namespace InforoomControlPanel.Controllers
 						.OrderBy(s => s.PublicName())
 						.ToList();
 				currentHouseList = DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
-				                                                       ((s.Street.Region.Id == currentRegion.Id &&
-				                                                         s.Street.Id == currentStreet.Id) ||
-				                                                        (s.Street.Id == currentStreet.Id &&
-				                                                         s.Region.Id == currentRegion.Id)) &&
-				                                                       (s.Street.Region.Id == currentRegion.Id && s.Region == null ||
-				                                                        (s.Street.Id == currentStreet.Id &&
-				                                                         s.Region.Id == currentRegion.Id)))
+					((s.Street.Region.Id == currentRegion.Id &&
+						s.Street.Id == currentStreet.Id) ||
+						(s.Street.Id == currentStreet.Id &&
+							s.Region.Id == currentRegion.Id)) &&
+					(s.Street.Region.Id == currentRegion.Id && s.Region == null ||
+						(s.Street.Id == currentStreet.Id &&
+							s.Region.Id == currentRegion.Id)))
 					.OrderBy(s => s.Number)
 					.ToList();
-			}
-			else {
+			} else {
 				//если адрес пустой создаем новый дом ( not null )
 				client.PhysicalClient.Address = new Address() {
 					House = new House(),
@@ -585,18 +614,16 @@ namespace InforoomControlPanel.Controllers
 			var regionList = DbSession.Query<Region>().ToList();
 			if (currentRegion != null) {
 				planList = DbSession.Query<Plan>().Where(s => s.Disabled == false && s.AvailableForNewClients
-				                                              && s.RegionPlans.Any(d => d.Region == (currentRegion)))
+					&& s.RegionPlans.Any(d => d.Region == (currentRegion)))
 					.OrderBy(s => s.Name)
 					.ToList();
 			}
-            //
-		    ViewBag.CurrentIp = HttpContext.Request.UserHostAddress;
-		    ViewBag.RequestGybrid = clientRequest.Hybrid;
-		    if (clientRequest.Hybrid && HttpContext?.Request?.UserHostAddress != null) {
-		        var currentIp = IPAddress.Parse(HttpContext.Request.UserHostAddress);
-		        ViewBag.CurrentLease = DbSession.Query<Lease>().FirstOrDefault(s => s.Ip == currentIp && s.Endpoint == null);
-		    }
-            ViewBag.CurrentRegion = currentRegion;
+
+			ViewBag.CurrentLease = lease;
+			ViewBag.CurrentIp = HttpContext.Request.UserHostAddress;
+			ViewBag.RequestGybrid = clientRequest.Hybrid;
+
+			ViewBag.CurrentRegion = currentRegion;
 			ViewBag.CurrentStreet = currentStreet;
 			ViewBag.CurrentHouse = currentHouse;
 			ViewBag.UserRequestStreet = clientRequest.Street;
@@ -611,6 +638,9 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.ScapeUserNameDoubling = scapeUserNameDoubling;
 			ViewBag.requestId = requestId;
 			ViewBag.Client = client;
+			ViewBag.CurrentSwitchId = baseSwitch?.Id ?? 0;
+			ViewBag.CurrentPort = basePort ?? 0;
+			ViewBag.CurrentMac = baseMac ?? "";
 
 			return View();
 		}

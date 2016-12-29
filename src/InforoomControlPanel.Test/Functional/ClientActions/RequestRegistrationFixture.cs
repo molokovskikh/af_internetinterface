@@ -6,6 +6,7 @@ using Common.Tools.Calendar;
 using Common.Web.Ui.NHibernateExtentions;
 using Inforoom2.Helpers;
 using Inforoom2.Models;
+using InforoomControlPanel.Helpers;
 using NHibernate.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -40,7 +41,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			request.YandexStreet = "улица гагарина";
 			request.YandexHouse = "1А";
 			request.RegDate = SystemTime.Now();
-            DbSession.Save(request);
+			DbSession.Save(request);
 		}
 
 		/// <summary>
@@ -63,6 +64,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			//проверяем,что поле Отчество заполнилось данными из заявки
 			var clientPatronymic = browser.FindElementByCssSelector("input[id=client_PhysicalClient_Patronymic]").GetAttribute("value");
 			Assert.That(clientPatronymic, Is.StringContaining(clientNameRequest[2]), "Поле отчества должно заполниться данными из заявки");
+			WaitForMap();
 		}
 
 
@@ -98,8 +100,8 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			Assert.That(clientHouse, Is.StringContaining(clientRequest.YandexHouse), "Поле Дом должно заполниться данными из заявки");
 
 			//проверяем,что поле Тариф заполнилось данными из заявки
-			var tariff = browser.FindElementsByCssSelector("select[id=PlanDropDown] option[selected]");
-			var clientPlan = tariff.Last().Text;
+			var tariff = browser.FindElementsByCssSelector("select[id=PlanDropDown] option");
+			var clientPlan = tariff.First(s=>s.Selected).Text;
 			Assert.That(clientPlan, Is.StringContaining(clientRequest.Plan.Name), "Поле Тарифный план должно заполниться данными из заявки");
 
 			//проверяем,что в поле Привел клиента в компанию по умолчанию указан клиент
@@ -117,7 +119,9 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			Open("Client/RequestsList");
 			//проверяем, что клиент зарегестрирован
 			var clientRegistration = DbSession.Query<PhysicalClient>().FirstOrDefault(p => p.Client._Name == "Сидоров Иван Андреевич");
-			Assert.That(clientRegistration, Is.Not.Null, "В базе данных должен сохраниться зарегестрированный клиент");		
+			Assert.That(clientRegistration, Is.Not.Null, "В базе данных должен сохраниться зарегестрированный клиент");
+			Assert.IsTrue(clientRegistration.GetStatus()==StatusType.BlockedAndNoConnected);
+			Assert.IsTrue(clientRegistration.Client.Endpoints.Count == 0);
 		}
 
 		/// <summary>
@@ -141,15 +145,15 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			var button = row.FindElement(By.CssSelector("a.btn-green"));
 			button.Click();
 			AssertRequestData();
+			WaitForMap();
 
 			//проверяем,что поле Страница не заполнилось
-			var city = browser.FindElementsByCssSelector("select[id=StreetDropDown] option[selected]");
-			var clientCity = city.Last().Text;
-			Assert.That(clientCity, Is.StringContaining(""), "Поле Улица в форме регетсрации  должно быть не заполненным");
+			var city = browser.FindElementsByCssSelector("select[id=StreetDropDown] option");
+			Assert.That(city.Count(s => s.Selected) == 0, "Поле Улица в форме регетсрации  должно быть не заполненным");
 
 			//проверяем,что поле Дом не заполнилось
-			var house = browser.FindElementsByCssSelector("select[id=HouseDropDown] option[selected]");
-			var clientHouse = house.Last().Text;
+			var house = browser.FindElementsByCssSelector("select[id=HouseDropDown] option");
+			var clientHouse = house.First(s => s.Selected).Text;
 			Assert.That(clientHouse, Is.StringContaining(""), "Поле Дом в форме регетсрации  должно быть не заполненным");
 		}
 
@@ -182,7 +186,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 
 			//проверяем,что поле Страница заполнилось улицей вводимой клиентом
 			var city = browser.FindElementsByCssSelector("select[id=StreetDropDown] option[selected]");
-			var clientCity = city.Last().Text;
+			var clientCity = city.First(s => s.Selected).Text;
 			Assert.That(clientCity, Is.StringContaining(request.Street), "Поле Улица в форме регетсрации должно быть заполнено улицей вводимой клиентом");
 
 			//проверяем,что поле Страница заполнилось улицей вводимой клиентом
@@ -247,56 +251,73 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
         /// <summary>
         /// Создаем клиентскую заявку гибрид, когда лиза с пулом с ретранслятором
         /// </summary>
-        [Test, Description("Регистрация клиента по заявке с полями адреса заполненные Яндекс и клиентом, но отличающимися друг от друга")]
+        [Test,
+         Description(
+	         "Регистрация клиента по заявке с полями адреса заполненные Яндекс и клиентом, но отличающимися друг от друга")
+        ]
         public void ClientRequestRegistrationGybrid()
         {
-            Open("Client/RequestsList?justHybrid=true");
-            AssertText("Всего: 0 строк");
-            Setup();
-            //данные адреса, которые ввел клиент
-            request.Hybrid = true; 
-            DbSession.Save(request);
+	        Open("Client/RequestsList?justHybrid=true");
+	        AssertText("Всего: 0 строк");
+	        Setup();
+	        //данные адреса, которые ввел клиент
+	        request.Hybrid = true;
+	        DbSession.Save(request);
 
-            var addressIp = "127.22.22.22";
-            var leasesToDelete = DbSession.Query<Lease>().ToList();
-            var lool = new IpPool() {Relay = 232342};
-            var switchCurrent = DbSession.Query<Inforoom2.Models.Switch>().FirstOrDefault();
-            DbSession.DeleteEach(leasesToDelete);
-            var leaseNew = new Lease() {
-                Ip = IPAddress.Parse(addressIp),
-                Pool = lool,
-                LeasedTo = "33-33-33-33-33-33-33-33-33-33-33",
-                Switch = switchCurrent,
-                Port = 1
-            };
-            DbSession.Save(leaseNew);
-            DbSession.Flush();
+	        var addressIp = "127.22.22.22";
+	        var leasesToDelete = DbSession.Query<Lease>().ToList();
+	        var lool = new IpPool() {Relay = 232342};
+	        //регион свича должен соответствовать клиенту в заявке, чтобы коммутатор прописался по лизе
+	        var switchCurrent =
+		        DbSession.Query<Inforoom2.Models.Switch>().FirstOrDefault(s => s.Zone.Region.Name == request.City);
+	        DbSession.DeleteEach(leasesToDelete);
+	        var leaseNew = new Lease() {
+		        Ip = IPAddress.Parse(addressIp),
+		        Pool = lool,
+		        LeasedTo = "33-33-33-33-33-33-33-33-33-33-33",
+		        Switch = switchCurrent,
+		        Port = 1
+	        };
+	        DbSession.Save(leaseNew);
+	        DbSession.Flush();
 
-            Open("Client/RequestsList?justHybrid=true");
-            AssertText("Всего: 1 строк");
-            var requestRegistration = browser.FindElementByXPath("//td[contains(.,'" + "Сидоров" + "')]");
-            var row = requestRegistration.FindElement(By.XPath(".."));
-            var button = row.FindElement(By.CssSelector("a.btn-green"));
-            button.Click();
-            AssertRequestData();
-            AssertText(leaseNew.Ip.ToString());
-            //мак отображается
-            AssertText(leaseNew.Mac);
-            // и не горит красным
-            Assert.IsTrue(browser.FindElementsByCssSelector(".wlease.red").Count == 0);
-            Click("Зарегистрировать");
+	        Open("Client/RequestsList?justHybrid=true");
+	        AssertText("Всего: 1 строк");
+	        var requestRegistration = browser.FindElementByXPath("//td[contains(.,'" + "Сидоров" + "')]");
+	        var row = requestRegistration.FindElement(By.XPath(".."));
+	        var button = row.FindElement(By.CssSelector("a.btn-green"));
+	        button.Click();
+	        AssertRequestData();
+	        AssertText(leaseNew.Ip.ToString());
+	        //мак отображается
+	        AssertText(leaseNew.Mac);
+	        // и не горит красным
+	        Assert.IsTrue(browser.FindElementsByCssSelector(".wlease.red").Count == 0);
 
-            Open("Client/RequestsList?justHybrid=true");
-            var newClientFromRequest = DbSession.Query<Client>().OrderByDescending(s => s.Id).FirstOrDefault();
-            Assert.IsTrue(newClientFromRequest.Fullname.IndexOf("Сидоров")!=-1);
-            Assert.IsTrue(newClientFromRequest.Status.Type == StatusType.Worked);
-            Assert.IsTrue(newClientFromRequest.Internet.IsActivated);
-            var endpoint = newClientFromRequest.Endpoints.FirstOrDefault();
-            Assert.IsTrue(endpoint != null );
-            Assert.IsTrue(endpoint.Disabled == false);
-            //мак назначается точке подключения
-            Assert.IsTrue(endpoint.Mac == leaseNew.Mac);
-            Assert.IsTrue(endpoint.LeaseList.FirstOrDefault(s=>s.Id == leaseNew.Id).Ip == leaseNew.Ip);
+	        //настройки точки подключения
+	        var input = browser.FindElement(By.CssSelector("[name='mac']"));
+	        Assert.IsTrue(input.GetAttribute("value") == leaseNew.Mac);
+	        input = browser.FindElement(By.CssSelector("#SwitchDropDown"));
+	        Assert.IsTrue(input.GetAttribute("value") == leaseNew.Switch.Id.ToString());
+	        input = browser.FindElement(By.CssSelector("[name='port']"));
+	        Assert.IsTrue(input.GetAttribute("value") == leaseNew.Port.ToString());
+
+	        Click("Зарегистрировать");
+
+	        Open("Client/RequestsList?justHybrid=true");
+	        var newClientFromRequest = DbSession.Query<Client>().OrderByDescending(s => s.Id).FirstOrDefault();
+	        Assert.IsTrue(newClientFromRequest.Fullname.IndexOf("Сидоров") != -1);
+	        Assert.IsTrue(newClientFromRequest.Status.Type == StatusType.Worked);
+	        Assert.IsTrue(newClientFromRequest.Internet.IsActivated);
+	        var endpoint = newClientFromRequest.Endpoints.FirstOrDefault();
+	        Assert.IsTrue(endpoint != null);
+	        Assert.IsTrue(endpoint.Disabled == false);
+	        //мак назначается точке подключения
+	        Assert.IsTrue(endpoint.Mac == leaseNew.Mac);
+	        Assert.IsTrue(endpoint.LeaseList.FirstOrDefault(s => s.Id == leaseNew.Id).Ip == leaseNew.Ip);
+	        var newPaymentForConnection =
+		        DbSession.Query<PaymentForConnect>().FirstOrDefault(s => s.EndPoint.Id == endpoint.Id);
+	        Assert.IsTrue(newPaymentForConnection.Sum == newClientFromRequest.PhysicalClient.ConnectSum);
         }
 
         /// <summary>
@@ -305,88 +326,186 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
         [Test, Description("Регистрация клиента по заявке с полями адреса заполненные Яндекс и клиентом, но отличающимися друг от друга")]
         public void ClientRequestRegistrationGybridNoNecessaryLeasePool()
         {
-            Open("Client/RequestsList?justHybrid=true");
-            AssertText("Всего: 0 строк");
-            Setup();
-            //данные адреса, которые ввел клиент
-            request.Hybrid = true;
-            DbSession.Save(request);
+	        Open("Client/RequestsList?justHybrid=true");
+	        AssertText("Всего: 0 строк");
+	        Setup();
+	        //данные адреса, которые ввел клиент
+	        request.Hybrid = true;
+	        DbSession.Save(request);
 
-            var addressIp = "127.22.22.22";
-            var leasesToDelete = DbSession.Query<Lease>().ToList();
-            var switchCurrent = DbSession.Query<Inforoom2.Models.Switch>().FirstOrDefault();
-            DbSession.DeleteEach(leasesToDelete);
-            var leaseNew = new Lease()
-            {
-                Ip = IPAddress.Parse(addressIp),
-                LeasedTo = "33-33-33-33-33-33-33-33-33-33-33",
-                Switch = switchCurrent,
-                Port = 1
-            };
-            DbSession.Save(leaseNew);
-            DbSession.Flush();
+	        var addressIp = "127.22.22.22";
+	        var leasesToDelete = DbSession.Query<Lease>().ToList();
+	        //регион свича должен соответствовать клиенту в заявке, чтобы коммутатор прописался по лизе
+	        var switchCurrent =
+		        DbSession.Query<Inforoom2.Models.Switch>().FirstOrDefault(s => s.Zone.Region.Name == request.City);
+	        DbSession.DeleteEach(leasesToDelete);
+	        var leaseNew = new Lease() {
+		        Ip = IPAddress.Parse(addressIp),
+		        LeasedTo = "33-33-33-33-33-33-33-33-33-33-33",
+		        Switch = switchCurrent,
+		        Port = 1
+	        };
+	        DbSession.Save(leaseNew);
+	        DbSession.Flush();
 
-            Open("Client/RequestsList?justHybrid=true");
-            AssertText("Всего: 1 строк");
-            var requestRegistration = browser.FindElementByXPath("//td[contains(.,'" + "Сидоров" + "')]");
-            var row = requestRegistration.FindElement(By.XPath(".."));
-            var button = row.FindElement(By.CssSelector("a.btn-green"));
-            button.Click();
-            AssertRequestData();
-            AssertText(leaseNew.Ip.ToString());
-            //мак отображается,
-            AssertText(leaseNew.Mac);
-            //но горит красным
-            Assert.IsTrue(browser.FindElementsByCssSelector(".wlease.red").Count > 0);
-            Click("Зарегистрировать");
+	        Open("Client/RequestsList?justHybrid=true");
+	        AssertText("Всего: 1 строк");
+	        var requestRegistration = browser.FindElementByXPath("//td[contains(.,'" + "Сидоров" + "')]");
+	        var row = requestRegistration.FindElement(By.XPath(".."));
+	        var button = row.FindElement(By.CssSelector("a.btn-green"));
+	        button.Click();
+	        AssertRequestData();
+	        AssertText(leaseNew.Ip.ToString());
+	        //мак отображается,
+	        AssertText(leaseNew.Mac);
+	        //но горит красным
+	        Assert.IsTrue(browser.FindElementsByCssSelector(".wlease.red").Count > 0);
 
-            Open("Client/RequestsList?justHybrid=true");
-            var newClientFromRequest = DbSession.Query<Client>().OrderByDescending(s => s.Id).FirstOrDefault();
-            Assert.IsTrue(newClientFromRequest.Fullname.IndexOf("Сидоров") != -1);
-            Assert.IsTrue(newClientFromRequest.Status.Type == StatusType.Worked);
-            Assert.IsTrue(newClientFromRequest.Internet.IsActivated);
-            var endpoint = newClientFromRequest.Endpoints.FirstOrDefault();
-            Assert.IsTrue(endpoint != null);
-            Assert.IsTrue(endpoint.Disabled == false);
-            //мак не назначается точке подключения
-            Assert.IsTrue(endpoint.Mac != leaseNew.Mac);
-            Assert.IsTrue(endpoint.LeaseList.FirstOrDefault(s => s.Id == leaseNew.Id).Ip == leaseNew.Ip);
+					Click("Зарегистрировать");
+
+	        Open("Client/RequestsList?justHybrid=true");
+	        var newClientFromRequest = DbSession.Query<Client>().OrderByDescending(s => s.Id).FirstOrDefault();
+	        Assert.IsTrue(newClientFromRequest.Fullname.IndexOf("Сидоров") != -1);
+	        Assert.IsTrue(newClientFromRequest.Status.Type == StatusType.Worked);
+	        Assert.IsTrue(newClientFromRequest.Internet.IsActivated);
+	        var endpoint = newClientFromRequest.Endpoints.FirstOrDefault();
+	        Assert.IsTrue(endpoint != null);
+	        Assert.IsTrue(endpoint.Disabled == false);
+	        //мак не назначается точке подключения
+	        Assert.IsTrue(endpoint.Mac == leaseNew.Mac);
+	        Assert.IsTrue(endpoint.LeaseList.FirstOrDefault(s => s.Id == leaseNew.Id).Ip == leaseNew.Ip);
         }
 
         /// <summary>
         /// Создаем клиентскую заявку гибрид, когда лизы нет
         /// </summary>
-        [Test, Description("Регистрация клиента по заявке с полями адреса заполненные Яндекс и клиентом, но отличающимися друг от друга")]
-        public void ClientRequestRegistrationGybridNoLeaseAtAll()
+        [Test,
+         Description(
+	         "Регистрация клиента по заявке с полями адреса заполненные Яндекс и клиентом, но отличающимися друг от друга")
+        ]
+        public void ClientRequestRegistrationGybridNoLeaseNoCustomSettingsAtAll()
         {
-            Open("Client/RequestsList?justHybrid=true");
-            AssertText("Всего: 0 строк");
-            Setup();
-            //данные адреса, которые ввел клиент
-            request.Hybrid = true;
-            DbSession.Save(request);
-            var leasesToDelete = DbSession.Query<Lease>().ToList();
-            DbSession.DeleteEach(leasesToDelete);
-            DbSession.Flush();
+	        Open("Client/RequestsList?justHybrid=true");
+	        AssertText("Всего: 0 строк");
+	        Setup();
+	        //данные адреса, которые ввел клиент
+	        request.Hybrid = true;
+	        DbSession.Save(request);
+	        var leasesToDelete = DbSession.Query<Lease>().ToList();
+	        DbSession.DeleteEach(leasesToDelete);
+	        DbSession.Flush();
 
-            Open("Client/RequestsList?justHybrid=true");
-            AssertText("Всего: 1 строк");
-            var requestRegistration = browser.FindElementByXPath("//td[contains(.,'" + "Сидоров" + "')]");
-            var row = requestRegistration.FindElement(By.XPath(".."));
-            var button = row.FindElement(By.CssSelector("a.btn-green"));
-            button.Click();
-            AssertRequestData();
-            AssertText("сессия не найденна для текущего Ip-адреса");
-            Click("Зарегистрировать");
+	        Open("Client/RequestsList?justHybrid=true");
+	        AssertText("Всего: 1 строк");
+	        var requestRegistration = browser.FindElementByXPath("//td[contains(.,'" + "Сидоров" + "')]");
+	        var row = requestRegistration.FindElement(By.XPath(".."));
+	        var button = row.FindElement(By.CssSelector("a.btn-green"));
+	        button.Click();
+	        AssertRequestData();
+	        AssertText("сессия не найденна для текущего Ip-адреса");
+	        Click("Зарегистрировать");
 
-            Open("Client/RequestsList?justHybrid=true");
-            var newClientFromRequest = DbSession.Query<Client>().OrderByDescending(s => s.Id).FirstOrDefault();
-            Assert.IsTrue(newClientFromRequest.Fullname.IndexOf("Сидоров") != -1);
-            Assert.IsTrue(newClientFromRequest.Status.Type == StatusType.BlockedAndNoConnected);
-            Assert.IsTrue(newClientFromRequest.Internet.IsActivated == false);
-            var endpoint = newClientFromRequest.Endpoints.FirstOrDefault();
-            Assert.IsTrue(endpoint == null); 
+	        AssertText("Ошибка: настройки точки подключения заданы неверно для подключения типа гибрид.");
+	        WaitForMap();
+	        Open("Client/RequestsList?justHybrid=true");
+	        AssertText("Всего: 1 строк");
+	        var newClientFromRequest = DbSession.Query<Client>().OrderByDescending(s => s.Id).FirstOrDefault();
+	        Assert.IsTrue(newClientFromRequest.Fullname.IndexOf("Сидоров") == -1);
+
+	        requestRegistration = browser.FindElementByXPath("//td[contains(.,'" + "Сидоров" + "')]");
+	        row = requestRegistration.FindElement(By.XPath(".."));
+	        button = row.FindElement(By.CssSelector("a.btn-green"));
+	        button.Click();
+	        AssertRequestData();
+	        AssertText("сессия не найденна для текущего Ip-адреса");
+
+	        var macText = "22-22-22-33-33-33-33-33-33-33-33";
+	        var switchItem =
+		        DbSession.Query<Inforoom2.Models.Switch>().FirstOrDefault(s => s.Zone.Region.Name == clientRequest.City);
+	        Css("#SwitchDropDown").SelectByText(switchItem.Name);
+	        WaitAjax();
+	        var macItem = browser.FindElementByCssSelector("input[name=mac]");
+	        macItem.Clear();
+	        macItem.SendKeys(macText);
+	        browser.FindElementByCssSelector("a[data-target='#ModelForPortSelectionEdit'").Click();
+	        WaitForVisibleCss("#ModelForPortSelectionEdit");
+	        browser.FindElementByCssSelector("a[class='port free'").Click();
+	        Click("Закрыть");
+
+	        Click("Зарегистрировать");
+	        Open("Client/RequestsList?justHybrid=true");
+	        AssertText("Всего: 0 строк");
+			
+	        newClientFromRequest = DbSession.Query<Client>().OrderByDescending(s => s.Id).FirstOrDefault();
+	        Assert.IsTrue(newClientFromRequest.Fullname.IndexOf("Сидоров") != -1);
+	        Assert.IsTrue(newClientFromRequest.Status.Type == StatusType.Worked);
+	        Assert.IsTrue(newClientFromRequest.Internet.IsActivated == true);
+	        var endpoint = newClientFromRequest.Endpoints.FirstOrDefault();
+	        Assert.IsTrue(endpoint != null);
+	        Assert.IsTrue(endpoint.Mac == macText);
+	        Assert.IsTrue(endpoint.Port == 1);
+	        var newPaymentForConnection = DbSession.Query<PaymentForConnect>().FirstOrDefault(s => s.EndPoint.Id == endpoint.Id);
+	        Assert.IsTrue(newPaymentForConnection.Sum == newClientFromRequest.PhysicalClient.ConnectSum);
         }
 
-    }
+		/// <summary>
+		/// Создаем клиентскую заявку гибрид, когда лизы нет
+		/// </summary>
+		[Test, Description("Регистрация клиента по заявке с полями адреса заполненные Яндекс и клиентом, но отличающимися друг от друга")]
+		public void ClientRequestRegistrationGybridNoLeaseCustomEndpointSettings()
+		{
+			Open("Client/RequestsList?justHybrid=true");
+			AssertText("Всего: 0 строк");
+			Setup();
+			//данные адреса, которые ввел клиент
+			request.Hybrid = true;
+			DbSession.Save(request);
+			var leasesToDelete = DbSession.Query<Lease>().ToList();
+			DbSession.DeleteEach(leasesToDelete);
+			DbSession.Flush();
+
+			Open("Client/RequestsList?justHybrid=true");
+			AssertText("Всего: 1 строк");
+			var requestRegistration = browser.FindElementByXPath("//td[contains(.,'" + "Сидоров" + "')]");
+			var row = requestRegistration.FindElement(By.XPath(".."));
+			var button = row.FindElement(By.CssSelector("a.btn-green"));
+			button.Click();
+			AssertRequestData();
+			AssertText("сессия не найденна для текущего Ip-адреса");
+			
+			var macText = "22-22-22-33-33-33-33-33-33-33-33";
+			var macItem = browser.FindElementByCssSelector("input[name=mac]");
+			macItem.Clear();
+			macItem.SendKeys(macText);
+			WaitForMap();
+			Click("Зарегистрировать");
+			AssertText("Ошибка: настройки точки подключения заданы неверно для подключения типа гибрид.");
+			WaitForMap();
+
+			macText = "22-22-22-33-33-33-33-33-33-33-33";
+			var switchItem =
+				DbSession.Query<Inforoom2.Models.Switch>().FirstOrDefault(s => s.Zone.Region.Name == clientRequest.City);
+			Css("#SwitchDropDown").SelectByText(switchItem.Name);
+			WaitAjax();
+			macItem = browser.FindElementByCssSelector("input[name=mac]");
+			macItem.Clear();
+			macItem.SendKeys(macText);
+			browser.FindElementByCssSelector("a[data-target='#ModelForPortSelectionEdit'").Click();
+			WaitForVisibleCss("#ModelForPortSelectionEdit");
+			browser.FindElementByCssSelector("a[class='port free'").Click();
+			Click("Закрыть");
+			WaitForMap();
+			Click("Зарегистрировать");
+
+			Open("Client/RequestsList?justHybrid=true");
+			var newClientFromRequest = DbSession.Query<Client>().OrderByDescending(s => s.Id).FirstOrDefault();
+			Assert.IsTrue(newClientFromRequest.Fullname.IndexOf("Сидоров") != -1);
+			Assert.IsTrue(newClientFromRequest.Status.Type == StatusType.Worked);
+			Assert.IsTrue(newClientFromRequest.Internet.IsActivated == true);
+			var endpoint = newClientFromRequest.Endpoints.FirstOrDefault();
+			Assert.IsTrue(endpoint != null);
+			Assert.IsTrue(endpoint.Mac == macText);
+			Assert.IsTrue(endpoint.Port == 1);
+		}
+	}
 }

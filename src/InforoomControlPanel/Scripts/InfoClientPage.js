@@ -495,9 +495,13 @@ function GetCableConnectionState(id) {
     });
 }
 
-function updatePortsState(data) {
+function updatePortsState(data, noPortUpdate) {
     var linkA = $("[name='clientUrlExampleA']");
     var linkB = $("[name='clientUrlExampleB']");
+	if (noPortUpdate == undefined) {
+		$("#endpoint_PortVal").val("0");
+		$("#endpoint_Port").val("0");
+	}
     if (linkA.length > 0 && linkB.length > 0) {
         var portCount = $("#SwitchDropDown [value='" + $("#SwitchDropDown").val() + "']").attr("maxports");
         updatePortGrid(portCount);
@@ -534,7 +538,7 @@ function updatePortsState(data) {
     }
 }
 
-function GetBusyPorts() {
+function GetBusyPorts(noPortUpdate) {
     if ($("#SwitchDropDown").length > 0) {
         $("#switchPorts .port").removeClass("free").removeClass("client");
         if ($("#SwitchDropDown").val() != null && $("#SwitchDropDown").val() != "") {
@@ -542,8 +546,12 @@ function GetBusyPorts() {
                 url: cli.getParam("baseurl") + "Client/getBusyPorts?id=" + $("#SwitchDropDown").val(),
                 type: "POST",
                 dataType: "json",
-                success: function(data) {
-                    updatePortsState(data);
+                success: function (data) {
+                	if (noPortUpdate == undefined || noPortUpdate == true) {
+                		updatePortsState(data);
+	                } else {
+                		updatePortsState(data, true);
+	                }
                 },
                 error: function(data) {
                     updatePortsState(null);

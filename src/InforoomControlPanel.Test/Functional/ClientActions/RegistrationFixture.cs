@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using Common.Tools;
 using Common.Tools.Calendar;
+using Common.Web.Ui.NHibernateExtentions;
 using Inforoom2.Models;
 using Inforoom2.Test.Infrastructure.Helpers;
 using NHibernate.Linq;
@@ -35,6 +37,12 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 		{
 			Setup();
 			SendRegistration();
+			Open("Client/RegistrationPhysical");
+			NormalClientRegisteredCheck();
+		}
+
+		private void NormalClientRegisteredCheck()
+		{
 			//проверяем что зарегестрированный клиент сохранился в базе данных с правильными данными
 			var clientRegistration = DbSession.Query<PhysicalClient>().FirstOrDefault(p => p.Surname == "Миронов");
 			Assert.That(clientRegistration, Is.Not.Null);
@@ -67,7 +75,6 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			var employeeName = Environment.UserName;
 			var employeeRegistration = DbSession.Query<Employee>().FirstOrDefault(p => p.Login == employeeName);
 			Assert.That(clientRegistration.Client.WhoRegisteredName, Is.StringContaining(employeeRegistration.Name), "В базе данных у зарегестированного клиента должен сохраниться правильно имя сотрудника,который регестрировал");
-			Open("Client/RegistrationPhysical");
 		}
 
 		[Test, Description("Не заполнено поле Фамилия")]
@@ -197,6 +204,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			Setup();
 			ClientCloneRegistration();
 			SendRegistration();
+			WaitForMap();
 			//проверяем,что вывелось сообщение об ошибке и указались Id подобных клиентов
 			AssertText("Клиент с подобным ФИО уже зарегистрирован!");
 			//нажимаем кнопку - разрешить дублирование
@@ -351,6 +359,254 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			//заполняем поле кто привел в компанию
 			clientAgent = DbSession.Query<Agent>().FirstOrDefault(p => p.Name == "Сарычев Алексей Валерьевич");
 			Css("#AgentDropDown").SelectByText(clientAgent.Name);
+		}
+
+		private Lease ClientWithEndpointLeaseCreate(bool badLease = false)
+		{
+			//Создание нужной лизы, которая задаст нужные настройки
+			var addressIp = "127.22.22.22";
+			var leasesToDelete = DbSession.Query<Lease>().ToList();
+			//регион свича должен соответствовать клиенту в заявке, чтобы коммутатор прописался по лизе
+			Inforoom2.Models.Switch switchCurrent = badLease ? null :
+				DbSession.Query<Inforoom2.Models.Switch>().FirstOrDefault(s => s.Zone.Region.Name == "Борисоглебск");
+
+			DbSession.DeleteEach(leasesToDelete);
+			var leaseNew = new Lease()
+			{
+				Ip = IPAddress.Parse(addressIp),
+				LeasedTo = "33-33-33-33-33-33-33-33-33-33-33",
+				Switch = switchCurrent,
+				Port = 3
+			};
+			DbSession.Save(leaseNew);
+			DbSession.Flush();
+			return leaseNew;
+		}
+
+		private void ClientWitchEndpointCheck(string mac, int switchId, int port = 1)
+		{
+			var newClientFromRequest = DbSession.Query<Client>().OrderByDescending(s => s.Id).FirstOrDefault();
+			Assert.IsTrue(newClientFromRequest.Surname == "Миронов");
+			Assert.IsTrue(newClientFromRequest.Status.Type == StatusType.Worked);
+			Assert.IsTrue(newClientFromRequest.Internet.IsActivated == true);
+			var endpoint = newClientFromRequest.Endpoints.FirstOrDefault();
+			Assert.IsTrue(endpoint != null);
+			Assert.IsTrue(endpoint.Mac == mac);
+			Assert.IsTrue(endpoint.Port == port);
+			Assert.IsTrue(endpoint.Switch.Id == switchId);
+			Assert.IsTrue(newClientFromRequest.WorkingStartDate.Value.Date == DateTime.Today);
+			var newPaymentForConnection = DbSession.Query<PaymentForConnect>().FirstOrDefault(s => s.EndPoint.Id == endpoint.Id);
+			Assert.IsTrue(newPaymentForConnection.Sum == newClientFromRequest.PhysicalClient.ConnectSum);
+		}
+
+		[Test, Description("Успешная регистрация нового клиента с точкой подключения по лизе")]
+		public void RegistrationClientWithNewEndpointByLeaseSuccess()
+		{
+			Setup();
+			//Добавление флага "создания точки подключения"
+			browser.FindElementByCssSelector("input[id=AddNewEndpointId]").Click();
+			//Попытка зарегистрировать клиента
+			SendRegistration();
+			//Ожидание пока проставится адрес
+			WaitForMap();
+			//Ошибка, т.к. не прописаны настройки
+			AssertText("настройки точки подключения заданы неверно для подключения типа гибрид.");
+
+			var macText = "123123123000";
+			var macItem = browser.FindElementByCssSelector("input[name=mac]");
+			macItem.Clear();
+			macItem.SendKeys(macText);
+
+			//Попытка зарегистрировать клиента
+			SendRegistration();
+			//Ожидание пока проставится адрес
+			WaitForMap();
+			//Ошибка, т.к. не прописаны настройки
+			AssertText("настройки точки подключения заданы неверно для подключения типа гибрид.");
+			//добавление лизы
+			var leaseNew = ClientWithEndpointLeaseCreate();
+			//очищаем форму, заполняем ее повторно
+			Open("Client/RegistrationPhysical");
+			Setup();
+			//данные о точке подключения должны подхватится по лизе
+			AssertText(leaseNew.Ip.ToString());
+			AssertText(leaseNew.Mac);
+			//настройки точки подключения
+			var input = browser.FindElement(By.CssSelector("[name='mac']"));
+			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Mac);
+			input = browser.FindElement(By.CssSelector("#SwitchDropDown"));
+			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Switch.Id.ToString());
+			input = browser.FindElement(By.CssSelector("[name='port']"));
+			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Port.ToString());
+
+			//Добавление флага "создания точки подключения"
+			browser.FindElementByCssSelector("input[id=AddNewEndpointId]").Click();
+
+			//Попытка зарегистрировать клиента
+			SendRegistration();
+			Open("Client/RegistrationPhysical");
+
+			//Проверка клиента с точкой подключения
+			ClientWitchEndpointCheck(leaseNew.Mac, leaseNew.Switch.Id, leaseNew.Port);
+		}
+
+		[Test, Description("Успешная регистрация нового клиента с точкой подключения по лизе без коммутатора и, как следствие, ручным вводом")]
+		public void RegistrationClientWithNewEndpointBadLeaseCustomSettingsSuccess()
+		{
+			//добавление лизы
+			var leaseNew = ClientWithEndpointLeaseCreate(true);
+			//очищаем форму, заполняем ее повторно
+			Open("Client/RegistrationPhysical");
+			Setup();
+			//данные о точке подключения должны подхватится по лизе
+			AssertText(leaseNew.Ip.ToString());
+			AssertText(leaseNew.Mac);
+			//настройки точки подключения
+			var input = browser.FindElement(By.CssSelector("[name='mac']"));
+			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Mac);
+			input = browser.FindElement(By.CssSelector("#SwitchDropDown"));
+			Assert.IsTrue(input.GetAttribute("value") == "");
+			input = browser.FindElement(By.CssSelector("[name='port']"));
+			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Port.ToString());
+
+			var switchItem =
+				DbSession.Query<Inforoom2.Models.Switch>()
+					.FirstOrDefault(s => s.Zone.Region.Name == "Борисоглебск");
+			Css("#SwitchDropDown").SelectByText(switchItem.Name);
+			WaitAjax();
+			var macItem = browser.FindElementByCssSelector("input[name=mac]");
+			macItem.Clear();
+			macItem.SendKeys(leaseNew.Mac);
+			browser.FindElementByCssSelector("a[data-target='#ModelForPortSelectionEdit'").Click();
+			WaitForVisibleCss("#ModelForPortSelectionEdit");
+			browser.FindElementByCssSelector("a[class='port free'").Click();
+			Click("Закрыть");
+			//Добавление флага "создания точки подключения"
+			browser.FindElementByCssSelector("input[id=AddNewEndpointId]").Click();
+
+			//Попытка зарегистрировать клиента
+			SendRegistration();
+			Open("Client/RegistrationPhysical");
+
+			//При регистрации не должно создаваться точки подклбючения (т.к. отменено создание точки подключени - обычная регистрация)
+			//проверяем что зарегестрированный клиент сохранился в базе данных с правильными данными
+			ClientWitchEndpointCheck(leaseNew.Mac, switchItem.Id);
+		}
+
+
+		[Test, Description("Успешная регистрация нового клиента с точкой подключения по лизе и ручным вводом мака")]
+		public void RegistrationClientWithNewEndpointCustomJustMacSettingsSuccess()
+		{
+			//добавление лизы
+			var leaseNew = ClientWithEndpointLeaseCreate();
+			//очищаем форму, заполняем ее повторно
+			Open("Client/RegistrationPhysical");
+			Setup();
+			//данные о точке подключения должны подхватится по лизе
+			AssertText(leaseNew.Ip.ToString());
+			AssertText(leaseNew.Mac);
+			//настройки точки подключения
+			var input = browser.FindElement(By.CssSelector("[name='mac']"));
+			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Mac);
+			input = browser.FindElement(By.CssSelector("#SwitchDropDown"));
+			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Switch.Id.ToString());
+			input = browser.FindElement(By.CssSelector("[name='port']"));
+			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Port.ToString());
+
+			var macText = "123123123000";
+			var macItem = browser.FindElementByCssSelector("input[name=mac]");
+			macItem.Clear();
+			macItem.SendKeys(macText);
+			//Добавление флага "создания точки подключения"
+			browser.FindElementByCssSelector("input[id=AddNewEndpointId]").Click();
+
+			//Попытка зарегистрировать клиента
+			SendRegistration();
+			Open("Client/RegistrationPhysical");
+
+			//Проверка клиента с точкой подключения
+			ClientWitchEndpointCheck(macText, leaseNew.Switch.Id, leaseNew.Port);
+		}
+
+		[Test, Description("Успешная регистрация нового клиента с точкой подключения по лизе и ручным вводом")]
+		public void RegistrationClientWithNewEndpointCustomSettingsSuccess()
+		{
+			//добавление лизы
+			var leaseNew = ClientWithEndpointLeaseCreate();
+			//очищаем форму, заполняем ее повторно
+			Open("Client/RegistrationPhysical");
+			Setup();
+			//данные о точке подключения должны подхватится по лизе
+			AssertText(leaseNew.Ip.ToString());
+			AssertText(leaseNew.Mac);
+			//настройки точки подключения
+			var input = browser.FindElement(By.CssSelector("[name='mac']"));
+			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Mac);
+			input = browser.FindElement(By.CssSelector("#SwitchDropDown"));
+			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Switch.Id.ToString());
+			input = browser.FindElement(By.CssSelector("[name='port']"));
+			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Port.ToString());
+			
+			var macText = "123123123000";
+			var switchItem =
+				DbSession.Query<Inforoom2.Models.Switch>()
+					.FirstOrDefault(s => s.Zone.Region.Name == "Борисоглебск"  && s.Id != leaseNew.Switch.Id);
+			Css("#SwitchDropDown").SelectByText(switchItem.Name);
+			WaitAjax();
+			var macItem = browser.FindElementByCssSelector("input[name=mac]");
+			macItem.Clear();
+			macItem.SendKeys(macText);
+			browser.FindElementByCssSelector("a[data-target='#ModelForPortSelectionEdit'").Click();
+			WaitForVisibleCss("#ModelForPortSelectionEdit");
+			browser.FindElementByCssSelector("a[class='port free'").Click();
+			Click("Закрыть");
+			//Добавление флага "создания точки подключения"
+			browser.FindElementByCssSelector("input[id=AddNewEndpointId]").Click();
+
+			//Попытка зарегистрировать клиента
+			SendRegistration();
+			Open("Client/RegistrationPhysical");
+
+			//Проверка клиента с точкой подключения
+			ClientWitchEndpointCheck(macText,switchItem.Id);
+		}
+
+
+		[Test, Description("Успешная регистрация нового клиента с точкой подключения")]
+		public void RegistrationClientWithLeaseButGeneralSuccess()
+		{
+			Setup();
+			//Добавление флага "создания точки подключения"
+			browser.FindElementByCssSelector("input[id=AddNewEndpointId]").Click();
+			//Попытка зарегистрировать клиента
+			SendRegistration();
+			//Ожидание пока проставится адрес
+			WaitForMap();
+			//Ошибка, т.к. не прописаны настройки
+			AssertText("настройки точки подключения заданы неверно для подключения типа гибрид.");
+			//добавление лизы
+			var leaseNew = ClientWithEndpointLeaseCreate();
+			//очищаем форму, заполняем ее повторно
+			Open("Client/RegistrationPhysical");
+			Setup();
+			//данные о точке подключения должны подхватится по лизе
+			AssertText(leaseNew.Ip.ToString());
+			AssertText(leaseNew.Mac);
+			//настройки точки подключения
+			var input = browser.FindElement(By.CssSelector("[name='mac']"));
+			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Mac);
+			input = browser.FindElement(By.CssSelector("#SwitchDropDown"));
+			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Switch.Id.ToString());
+			input = browser.FindElement(By.CssSelector("[name='port']"));
+			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Port.ToString());
+			
+			//Попытка зарегистрировать клиента
+			SendRegistration();
+			Open("Client/RegistrationPhysical");
+
+			//При регистрации не должно создаваться точки подклбючения (т.к. отменено создание точки подключени - обычная регистрация)
+			//проверяем что зарегестрированный клиент сохранился в базе данных с правильными данными
+			NormalClientRegisteredCheck();
 		}
 	}
 }
