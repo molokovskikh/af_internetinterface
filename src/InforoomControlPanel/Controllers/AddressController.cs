@@ -307,12 +307,14 @@ namespace InforoomControlPanel.Controllers
 		/// Создание нового региона
 		/// </summary>
 		[HttpPost]
-		public ActionResult CreateRegion([EntityBinder] Region Region)
+		public ActionResult CreateRegion([EntityBinder] Region Region, int regionParentId = 0)
 		{
-			var errors = ValidationRunner.ValidateDeep(Region);
-			if (Region.Parent != null && Region.Parent.Id == 0) {
-				Region.Parent = null;
+			Region parentRegion = null;
+			if (regionParentId != 0 && regionParentId != Region.Id) {
+				parentRegion = DbSession.Query<Region>().FirstOrDefault(s => s.Id == regionParentId);
 			}
+			Region.Parent = parentRegion;
+			var errors = ValidationRunner.Validate(Region);
 			if (errors.Length == 0) {
 				if (DbSession.Query<Region>().Any(s => s.Name == Region.Name)) {
 					ErrorMessage($"Регион с названием '{Region.Name}' уже существует!");
@@ -326,6 +328,8 @@ namespace InforoomControlPanel.Controllers
 			CreateRegion();
 			PreventSessionUpdate();
 			ViewBag.Region = Region;
+			ViewBag.City = Region.City;
+			ViewBag.Parent = Region?.Parent;
 			return View("CreateRegion");
 		}
 
@@ -672,6 +676,8 @@ namespace InforoomControlPanel.Controllers
 			var parents = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			ViewBag.Citys = citys;
 			ViewBag.Parents = parents;
+			ViewBag.City = Region?.City;
+			ViewBag.Parent = Region?.Parent;
 			return View();
 		}
 
@@ -679,25 +685,27 @@ namespace InforoomControlPanel.Controllers
 		/// Изменение региона
 		/// </summary>
 		[HttpPost]
-		public ActionResult EditRegion([EntityBinder] Region Region)
+		public ActionResult EditRegion([EntityBinder] Region Region, int regionParentId = 0)
 		{
-			var errors = ValidationRunner.Validate(Region);
-			if (Region.Parent != null && Region.Parent.Id == 0) {
-				Region.Parent = null;
+			Region parentRegion = null;
+			if (regionParentId != 0 && regionParentId != Region.Id) {
+				parentRegion = DbSession.Query<Region>().FirstOrDefault(s => s.Id == regionParentId);
 			}
+			Region.Parent = parentRegion;
+			var errors = ValidationRunner.Validate(Region);
 			if (errors.Length == 0) {
 				if (DbSession.Query<Region>().Any(s => s.Name == Region.Name && s.Id != Region.Id)) {
 					ErrorMessage($"Регион с названием '{Region.Name}' уже существует!");
-				}
-				else {
+				} else {
 					DbSession.Save(Region);
 					SuccessMessage("Регион успешно изменен");
 					return RedirectToAction("RegionList");
 				}
 			}
-			EditCity(Region.Id);
+			EditRegion(Region.Id);
 			PreventSessionUpdate();
 			ViewBag.Region = Region;
+			ViewBag.City = Region.City;
 			return View();
 		}
 

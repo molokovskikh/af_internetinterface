@@ -66,7 +66,7 @@
 				<div class="form-group">
 					<label class="col-sm-4 control-label">Родительский регион</label>
 					<div class="col-sm-6">
-						@Html.DropDownListExtendedFor(i => Region.Parent, parents, i => i.Name, null, new { @class = "form-control" }, parent.Id,true)
+						@Html.DropDownListExtendedFor(i => Region.Parent, parents, i => i.Name, null, new { @class = "form-control", @name = "regionParentId" }, parent.Id)
 						@ViewBag.Validation.GetError(Region, "Parent")
 					</div>
 				</div>	
