@@ -76,10 +76,20 @@ namespace Inforoom2.Controllers
 				DbSession.Save(oldphysicalClient);
 
 				var errorMessage = "";
-				//пытаемся добавить точку подклбючения, если ее нет
-				PhysicalClient.EndpointCreateIfNeeds(DbSession, oldphysicalClient.Client, this.Request.UserHostAddress,
-					GetCurrentEmployee(),
-					ref errorMessage);
+				var address = IPAddress.Parse(this.Request.UserHostAddress);
+#if DEBUG
+				var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Endpoint == null);
+#else
+				var lease = DbSession.Query<Lease>().FirstOrDefault(l => l.Ip == address && l.Endpoint == null);
+#endif
+				if (lease != null) {
+					//пытаемся добавить точку подклбючения, если ее нет
+					PhysicalClient.EndpointCreateIfNeeds(DbSession, oldphysicalClient.Client, lease, GetCurrentEmployee(),
+						ref errorMessage);
+				} else {
+					errorMessage = $"Ошибка: точка подключения не может быть создана, т.к. сессия отсутствует для IP {address}";
+				}
+
 				if (!string.IsNullOrEmpty(errorMessage)) {
 					ErrorMessage(errorMessage);
 				}

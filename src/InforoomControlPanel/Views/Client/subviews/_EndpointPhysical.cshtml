@@ -172,6 +172,14 @@
 						@Html.Raw(string.Join(", ", leases.Select(lease => "<span " + (lease != null && lease.LeaseEnd < SystemTime.Now() ? "style=color:#E60000;font-weight:bold;" : "") + ">" + lease.Ip.ToString() + "</span>").ToList()))
 					</td>
 				</tr>
+				@if (!string.IsNullOrEmpty(endpoint.Mac)) {
+				    <tr>
+				        <td>MAC</td>
+				        <td>
+				            <span>@endpoint.Mac</span>
+				        </td>
+				    </tr>
+				}
 				<tr>
 					<td>IP-пул</td>
 					<td>

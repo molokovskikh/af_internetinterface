@@ -45,9 +45,9 @@ function onModalOrderEditOpen(id) {
 function StartEvents(thisMain) {
     //события для коммутатора, при изменении значения
     $(thisMain).find("#SwitchDropDown").unbind("change").change(function() {
-        checkLastEndpointState();
-        //получить занятые порты
-        GetBusyPorts();
+        var isEndpointNew = checkLastEndpointState();
+    	//получить занятые порты
+		    GetBusyPorts(isEndpointNew);
     });
 }
 
@@ -480,20 +480,25 @@ function UpdateOrder(id, clientId) {
 
 //-------------------------------------------------------| вспомогательное |-------------------------------------------------------------------//
 function checkLastEndpointState() {
-    if ($(ModalEdit + "[name='order.EndPoint.Id']").attr("lastChangesDisable") == "true") {
-        return;
-    }
-    var lastPointVal = $(ModalEdit + "[name='order.EndPoint.Id']").attr("lastPoint");
-    var lastSwitchVal = $(ModalEdit + "[name='order.EndPoint.Id']").attr("lastSwitch");
-    var lastPortVal = $(ModalEdit + "[name='order.EndPoint.Id']").attr("lastPort");
+	if ($(ModalEdit + "[name='order.EndPoint.Id']").attr("lastChangesDisable") == "true") {
+		return false;
+	}
+	var lastPointVal = $(ModalEdit + "[name='order.EndPoint.Id']").attr("lastPoint");
+	var lastSwitchVal = $(ModalEdit + "[name='order.EndPoint.Id']").attr("lastSwitch");
+	var lastPortVal = $(ModalEdit + "[name='order.EndPoint.Id']").attr("lastPort");
 
-    var currentPointVal = $(ModalEdit + "[name='order.EndPoint.Id']").val();
-    var currentSwitchVal = $(ModalEdit + "[name='connection.Switch']").val();
-    var currentPortVal = $(ModalEdit + "[name='connection.Port']").val();
+	var currentPointVal = $(ModalEdit + "[name='order.EndPoint.Id']").val();
+	var currentSwitchVal = $(ModalEdit + "[name='connection.Switch']").val();
+	var currentPortVal = $(ModalEdit + "[name='connection.Port']").val();
 
-    if ((lastSwitchVal != currentSwitchVal || lastPortVal != currentPortVal) && (((lastPointVal == undefined || currentPointVal == undefined) && lastPointVal === currentPointVal) || lastPointVal == currentPointVal)) {
-        $(ModalEdit + "[name='order.EndPoint.Id']").val("Новая точка подключения");
-    }
+	if ((lastSwitchVal != currentSwitchVal || lastPortVal != currentPortVal) && (((lastPointVal == undefined || currentPointVal == undefined) && lastPointVal === currentPointVal) || lastPointVal == currentPointVal)) {
+		$(ModalEdit + "[name='order.EndPoint.Id']").val("Новая точка подключения");
+		return true;
+	}
+	if (lastSwitchVal != currentSwitchVal) {
+		return true;
+	}
+	return false;
 }
 
 //обновление формы закрытия заказа 

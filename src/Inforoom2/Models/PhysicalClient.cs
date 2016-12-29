@@ -602,88 +602,103 @@ namespace Inforoom2.Models
 			Client.SyncServices(dbSession, settings);
 		}
 
-	    public static void EndpointCreateIfNeeds(ISession dSession, Client currentClient, string currentIp, Employee currentEmployee, ref string errorMessage, bool isGybrid = false)
-	    {
-            var address = IPAddress.Parse(currentIp);
-#if DEBUG
-		    var lease = dSession.Query<Lease>().FirstOrDefault(l => l.Endpoint == null);
-#else
-				var lease = dSession.Query<Lease>().FirstOrDefault(l => l.Ip == address && l.Endpoint == null);
-#endif
-            ClientEndpoint currentEnpoint = null;
-            if (lease?.Switch != null)
-            {
-                currentEnpoint = dSession.Query<ClientEndpoint>().FirstOrDefault(s => s.Switch !=null && s.Switch.Id == lease.Switch.Id && s.Port == lease.Port && s.Client.Id != currentClient.Id);
-                if (currentEnpoint != null)
-                {
-                    errorMessage = "Ошибка: точка подключения не задана!";
-                    var email = ConfigurationManager.AppSettings["ErrorNotifierMail"];
-                    var adminPanelNewClientPage = ConfigurationManager.AppSettings["adminPanelNewPhysicalClientPage"];
-                    var href = $"<a href='"+ adminPanelNewClientPage + currentClient.Id + $"'>{currentClient.Id}</a>";
-                    //отправка сообщения об ошибки
-                    EmailSender.SendEmail(new string[] { email },
-                        "Ошибка в  Inforoom2 при автоматическом создании точки подключения по ЛС " + currentClient.Id,
-                        $"При создании точки подключения для клиента {href} выяснилось, <br/>что на порту коммутатора уже находится точка подключения {currentEnpoint.Id}");
-                }
-            }
-            if (currentClient.Endpoints.Count == 0 && lease != null && currentEnpoint == null)
-            {
-                if (string.IsNullOrEmpty(lease.Switch.Name))
-                {
-                    var addr = currentClient.PhysicalClient.Address;
-                    if (addr != null)
-                        lease.Switch.Name = addr.House.Street.Region.City.Name + ", " + addr.House.Street.PublicName() + ", " + addr.House.Number;
-                    else
-                        lease.Switch.Name = currentClient.Id + ": адрес неопределен";
-                }
+		public static void EndpointCreateIfNeeds(ISession dSession, Client currentClient, Lease lease,
+			Employee currentEmployee, ref string errorMessage, bool isGybrid = false)
+		{
+			EndpointCreateIfNeeds(dSession, currentClient, lease, currentEmployee, ref errorMessage, false, null, null, null);
+		}
 
-                var endpoint = new ClientEndpoint();
-                endpoint.Client = currentClient;
-                endpoint.Switch = lease.Switch;
-                endpoint.Port = lease.Port;
-                endpoint.Disabled = false;
-                endpoint.IsEnabled = true;
+		public static void EndpointCreateIfNeeds(ISession dSession, Client currentClient, Lease lease,
+			Employee currentEmployee, ref string errorMessage, bool isGybrid, Switch currentSwitch, int? port, string mac)
+		{
+			Switch baseSwitch = lease?.Switch;
+			int basePort = lease?.Port ?? 0;
 
-                //учет гибрида
-                if (isGybrid && lease.Pool?.Relay != null) {
-                    endpoint.Mac = lease.Mac;
-                }
-                
-                currentClient.SetStatus(Status.Get(StatusType.Worked, dSession));
-                if (currentClient.RatedPeriodDate == null && !currentClient.Disabled)
-                {
-                    currentClient.RatedPeriodDate = SystemTime.Now();
-                }
-                if (currentClient.WorkingStartDate == null && !currentClient.Disabled)
-                {
-                    currentClient.WorkingStartDate = SystemTime.Now();
-                }
-                //обновляем значение даты подключения клиента
-                currentClient.ConnectedDate = SystemTime.Now();
+			if (isGybrid && currentSwitch != null && port != null) {
+				baseSwitch = currentSwitch;
+				basePort = port.Value;
+			}
 
-                endpoint.SetStablePackgeId(currentClient.PhysicalClient.Plan.PackageSpeed.PackageId);
+			if (baseSwitch == null || baseSwitch.Id == 0 || port == 0) {
+				throw new Exception(
+					$"Ошибка: настройки для точки подключения заданы неверно при регистрации клиента '{currentClient.Id}': baseSwitch: {baseSwitch != null}, baseSwitchId: {baseSwitch?.Id != 0},port: {port != 0}");
+			}
 
-                dSession.Save(endpoint);
-                lease.Endpoint = endpoint;
+			//текущие настройки для точки подключения не должны использоваться
+			ClientEndpoint currentEnpoint = dSession.Query<ClientEndpoint>().FirstOrDefault(
+				s => s.Switch != null && s.Switch.Id == baseSwitch.Id && s.Port == basePort && s.Client.Id != currentClient.Id);
 
-                var paymentForConnect = new PaymentForConnect(currentClient.PhysicalClient.ConnectSum, endpoint);
-                //Пытаемся найти сотрудника
-                paymentForConnect.Employee = currentEmployee;
+			if (currentEnpoint != null) {
+				errorMessage = "Ошибка: точка подключения не задана!";
+				var email = ConfigurationManager.AppSettings["ErrorNotifierMail"];
+				var adminPanelNewClientPage = ConfigurationManager.AppSettings["adminPanelNewPhysicalClientPage"];
+				var href = $"<a href='" + adminPanelNewClientPage + currentClient.Id + $"'>{currentClient.Id}</a>";
+				//отправка сообщения об ошибки
+				EmailSender.SendEmail(new string[] {email},
+					"Ошибка в  Inforoom2 при автоматическом создании точки подключения по ЛС " + currentClient.Id,
+					$"При создании точки подключения для клиента {href} выяснилось, <br/>что на порту коммутатора уже находится точка подключения {currentEnpoint.Id}");
+				return;
+			}
+
+			//у пользователя не должно быть точки подключения
+			if (currentClient.Endpoints.Count == 0) {
+				if (string.IsNullOrEmpty(baseSwitch.Name)) {
+					var addr = currentClient.PhysicalClient.Address;
+					if (addr != null)
+						baseSwitch.Name = addr.House.Street.Region.City.Name + ", " + addr.House.Street.PublicName() + ", " +
+							addr.House.Number;
+					else
+						baseSwitch.Name = currentClient.Id + ": адрес неопределен";
+				}
+
+				var endpoint = new ClientEndpoint();
+				endpoint.Client = currentClient;
+				endpoint.Switch = baseSwitch;
+				endpoint.Port = basePort;
+				endpoint.Disabled = false;
+				endpoint.IsEnabled = true;
+				
+				//если мак адрес прописан, используем прописанный
+				if (!string.IsNullOrEmpty(mac)) {
+					endpoint.Mac = mac;
+				}
+
+				currentClient.SetStatus(Status.Get(StatusType.Worked, dSession));
+				if (currentClient.RatedPeriodDate == null && !currentClient.Disabled) {
+					currentClient.RatedPeriodDate = SystemTime.Now();
+				}
+				if (currentClient.WorkingStartDate == null && !currentClient.Disabled) {
+					currentClient.WorkingStartDate = SystemTime.Now();
+				}
+				//обновляем значение даты подключения клиента
+				currentClient.ConnectedDate = SystemTime.Now();
+
+				endpoint.SetStablePackgeId(currentClient.PhysicalClient.Plan.PackageSpeed.PackageId);
+
+				dSession.Save(endpoint);
+
+				if (lease != null) {
+					lease.Endpoint = endpoint;
+					dSession.Save(lease);
+				}
+
+				var paymentForConnect = new PaymentForConnect(currentClient.PhysicalClient.ConnectSum, endpoint);
+				//Пытаемся найти сотрудника
+				paymentForConnect.Employee = currentEmployee;
 
 
-                var internet = currentClient.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Internet);
-                internet.ActivateFor(currentClient, dSession);
-                var iptv = currentClient.ClientServices.First(i => (ServiceType)i.Service.Id == ServiceType.Iptv);
-                iptv.ActivateFor(currentClient, dSession);
+				var internet = currentClient.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Internet);
+				internet.ActivateFor(currentClient, dSession);
+				var iptv = currentClient.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Iptv);
+				iptv.ActivateFor(currentClient, dSession);
 
-                if (currentClient.IsNeedRecofiguration)
-                    SceHelper.UpdatePackageId(dSession, currentClient);
+				if (currentClient.IsNeedRecofiguration)
+					SceHelper.UpdatePackageId(dSession, currentClient);
 
-                dSession.Save(lease.Switch);
-                dSession.Save(paymentForConnect);
-                dSession.Save(lease);
-            }
-        }
+				dSession.Save(baseSwitch);
+				dSession.Save(paymentForConnect);
+			}
+		}
 	}
 
 	public enum CertificateType

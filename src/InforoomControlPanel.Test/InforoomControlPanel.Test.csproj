@@ -156,6 +156,10 @@
       <Project>{3BA4B44C-BEDF-44AA-9388-9778F8FA108F}</Project>
       <Name>Inforoom2</Name>
     </ProjectReference>
+    <ProjectReference Include="..\InforoomControlPanel\InforoomControlPanel.csproj">
+      <Project>{4436A72E-730B-497C-989C-42BBB4208024}</Project>
+      <Name>InforoomControlPanel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\InternetInterface\InternetInterface.csproj">
       <Project>{E2B03BC7-AACB-4A72-BBC7-DF4325912504}</Project>
       <Name>InternetInterface</Name>

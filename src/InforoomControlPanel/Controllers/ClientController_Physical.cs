@@ -369,6 +369,17 @@ namespace InforoomControlPanel.Controllers
 			// получаем списки регионов и тарифов по выбранному выбранному региону (городу)
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 
+			//получение лизы
+			var addressIp = IPAddress.Parse(HttpContext.Request?.UserHostAddress);
+#if DEBUG
+			addressIp = DbSession.Query<Lease>().OrderByDescending(s => s.Id).FirstOrDefault()?.Ip ?? addressIp;
+#endif
+			Lease lease = null;
+			lease = DbSession.Query<Lease>().FirstOrDefault(s => s.Ip == addressIp && s.Endpoint == null);
+
+			ViewBag.CurrentIp = addressIp.ToString();
+			ViewBag.CurrentLease = lease;
+
 			ViewBag.CurrentStreet = null;
 			ViewBag.CurrentHouse = null;
 			// получаем всех диллеров (работников) 
@@ -380,6 +391,9 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.RedirectToCard = true;
 			ViewBag.ScapeUserNameDoubling = true;
 			ViewBag.Client = client;
+			ViewBag.CurrentSwitchId = lease?.Switch?.Id ?? 0;
+			ViewBag.CurrentPort = lease?.Port ?? 0;
+			ViewBag.CurrentMac = lease?.Mac ?? "";
 			return View();
 		}
 
@@ -388,7 +402,7 @@ namespace InforoomControlPanel.Controllers
 		/// </summary> 
 		[HttpPost]
 		public ActionResult RegistrationPhysical([EntityBinder] Client client, bool redirectToCard,
-			bool scapeUserNameDoubling = false)
+			bool scapeUserNameDoubling = false, int switchId = 0, int port = 0, string mac = "", bool addNewEndpoint = false)
 		{
 			// удаление неиспользованного контакта *иначе в БД лишняя запись  
 			client.Contacts = client.Contacts.Where(s => s.ContactString != string.Empty).ToList();
@@ -411,8 +425,34 @@ namespace InforoomControlPanel.Controllers
 				"Inforoom2.Models.PhysicalClient.PassportDate",
 				"Inforoom2.Models.PhysicalClient.CertificateName"
 			});
+
+
+			var errorMessageForEndpointPreRegistration = string.Empty;
+			Lease lease = null;
+			Switch baseSwitch = null;
+			int? basePort = null;
+			string baseMac = null;
+			var addressIp = IPAddress.Parse(this.Request.UserHostAddress);
+#if DEBUG
+			addressIp = DbSession.Query<Lease>().OrderByDescending(s => s.Id).FirstOrDefault()?.Ip ?? addressIp;
+#endif
+			lease = DbSession.Query<Lease>().FirstOrDefault(s => s.Ip == addressIp && s.Endpoint == null);
+
+			switchId = switchId == 0 ? (lease?.Switch?.Id ?? 0) : switchId;
+			baseSwitch = DbSession.Query<Switch>().FirstOrDefault(s => s.Id == switchId);
+			basePort = port == 0 ? (lease?.Port ?? 0) : port;
+			baseMac = string.IsNullOrEmpty(mac) ? (lease?.Mac ?? "") : mac;
+			//проверяем до регистрации клиента
+			// если заявка "Гибрид"
+			if (addNewEndpoint && (baseSwitch == null || baseSwitch.Id == 0 || basePort == 0 || string.IsNullOrEmpty(baseMac))) {
+				errorMessageForEndpointPreRegistration =
+					"Ошибка: настройки точки подключения заданы неверно для подключения типа гибрид.";
+				ErrorMessage(errorMessageForEndpointPreRegistration);
+			}
+
 			// если нет ошибок и регистрирующее лицо указано
-			if (errors.Length == 0 && client.Agent != null) {
+			if (errors.Length == 0 && client.Agent != null && errorMessageForEndpointPreRegistration == String.Empty)
+			{
 				// указываем имя лица, которое проводит регистрирацию
 				client.WhoRegisteredName = client.WhoRegistered.Name;
 				// генерируем пароль и его хыш сохраняем в модель физ.клиента
@@ -431,23 +471,38 @@ namespace InforoomControlPanel.Controllers
 				}).ToList();
 				client.ClientServices = csList;
 				// сохраняем модель
-				DbSession.Save(client); 
-                SuccessMessage("Клиент успешно зарегистрирован!");
+				DbSession.Save(client);
+				SuccessMessage("Клиент успешно зарегистрирован!");
 
-                // предварительно вызывая процедуру (старой админки) которая делает необходимые поправки в записях клиента и физ.клиента
-                // переходим к карте клиента *в старой админке, если выбран пункт "Показывать наряд на подключение"
-                if (redirectToCard) {
+
+				//проверяем после регистрации клиента
+				//если есть необходимость создать для него точку подключения
+				if (addNewEndpoint && baseSwitch != null && basePort != 0 && !string.IsNullOrEmpty(baseMac)) {
+					var errorMessage = "";
+					//пытаемся добавить точку подклбючения, если ее нет
+					PhysicalClient.EndpointCreateIfNeeds(DbSession, client, lease, GetCurrentEmployee(),
+						ref errorMessage, true, baseSwitch, basePort, baseMac);
+					if (!string.IsNullOrEmpty(errorMessage)) {
+						ErrorMessage(errorMessage);
+					}
+					DbSession.Save(client);
+				}
+				 
+
+				// предварительно вызывая процедуру (старой админки) которая делает необходимые поправки в записях клиента и физ.клиента
+				// переходим к карте клиента *в старой админке, если выбран пункт "Показывать наряд на подключение"
+				if (redirectToCard) {
 					return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-					                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-					                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]
-					                + $"Client/ConnectionCard/{client.Id}");
+						"Clients/UpdateAddressByClient?clientId=" + client.Id +
+						"&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]
+						+ $"Client/ConnectionCard/{client.Id}");
 				}
 				// иначе переходим к информации о клиенте *в старой админке
 
 				return Redirect(System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelOld"] +
-				                "Clients/UpdateAddressByClient?clientId=" + client.Id +
-				                "&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]
-				                + $"Client/InfoPhysical/{client.Id}");
+					"Clients/UpdateAddressByClient?clientId=" + client.Id +
+					"&path=" + System.Web.Configuration.WebConfigurationManager.AppSettings["adminPanelNew"]
+					+ $"Client/InfoPhysical/{client.Id}");
 			}
 			// заполняем список типов документа
 			var CertificateTypeDic = new Dictionary<int, CertificateType>();
@@ -469,7 +524,7 @@ namespace InforoomControlPanel.Controllers
 			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
 			if (currentRegion != null) {
 				planList = DbSession.Query<Plan>().Where(s => s.Disabled == false && s.AvailableForNewClients
-				                                              && s.RegionPlans.Any(d => d.Region == (currentRegion)))
+					&& s.RegionPlans.Any(d => d.Region == (currentRegion)))
 					.OrderBy(s => s.Name)
 					.ToList();
 			}
@@ -484,16 +539,20 @@ namespace InforoomControlPanel.Controllers
 			var currentHouseList = currentStreet == null || currentRegion == null
 				? new List<House>()
 				: DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
-				                                      ((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) ||
-				                                       (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
-				                                      (s.Street.Region.Id == currentRegion.Id && s.Region == null ||
-				                                       (s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)))
+					((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) ||
+						(s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
+					(s.Street.Region.Id == currentRegion.Id && s.Region == null ||
+						(s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)))
 					.OrderBy(s => s.Number)
 					.ToList();
+
+			ViewBag.CurrentIp = addressIp.ToString();
+			ViewBag.CurrentLease = lease;
+			ViewBag.AddNewEndpoint = addNewEndpoint;
+
 			ViewBag.CurrentRegion = currentRegion;
 			ViewBag.CurrentStreet = currentStreet;
 			ViewBag.CurrentHouse = currentHouse;
-
 			ViewBag.RegionList = regionList;
 			ViewBag.CurrentStreetList = currentStreetList;
 			ViewBag.CurrentHouseList = currentHouseList;
@@ -505,6 +564,9 @@ namespace InforoomControlPanel.Controllers
 			ViewBag.CertificateTypeDic = CertificateTypeDic;
 			ViewBag.RedirectToCard = redirectToCard;
 			ViewBag.Client = client;
+			ViewBag.CurrentSwitchId = baseSwitch?.Id??0;
+			ViewBag.CurrentPort = basePort ?? 0;
+			ViewBag.CurrentMac = baseMac ?? "";
 
 			return View();
 		}
