@@ -62,6 +62,9 @@ namespace InternetInterface.Models
 		[Property, Auditable("WarningShow")]
 		public virtual bool WarningShow { get; set; }
 
+		[Property, Auditable("IpAutoSet")]
+		public virtual bool? IpAutoSet { get; set; }
+
 		[Property]
 		public virtual int? StableTariffPackageId { get; set; }
 

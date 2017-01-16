@@ -57,6 +57,9 @@ namespace Inforoom2.Models
 		[Property, Description("Мониторинг")]
 		public virtual bool Monitoring { get; set; }
 
+		[Property, Description("Автоприсвоение фиксированного Ip")]
+		public virtual bool? IpAutoSet { get; set; }
+
 		[Property]
 		public virtual int? ActualPackageId { get; set; }
 

@@ -26,9 +26,10 @@ namespace InforoomControlPanel.Models
 		}
 
 		public ViewModelClientEndpoint(EndpointStateBox reservedState)
-		{ 
+		{
 			this.Switch = reservedState.ConnectionHelper.Switch;
 			this.Ip = reservedState.ConnectionHelper.StaticIp;
+			this.IpAutoSet = reservedState.ConnectionHelper.StaticIpAutoSet;
 			this.Pool = reservedState.ConnectionHelper.Pool ?? 0;
 			this.Port = string.IsNullOrEmpty(reservedState.ConnectionHelper.Port) ? 0 : Convert.ToInt32(reservedState.ConnectionHelper.Port);
 			this.PackageId = reservedState.ConnectionHelper.PackageId;
@@ -39,6 +40,7 @@ namespace InforoomControlPanel.Models
 
 		public int Id { get; set; }
 		public string Ip { get; set; }
+		public bool IpAutoSet { get; set; }
 		public List<Tuple<string, bool>> LeaseList { get; set; }
 		public int Pool { get; set; }
 		public int Switch { get; set; }

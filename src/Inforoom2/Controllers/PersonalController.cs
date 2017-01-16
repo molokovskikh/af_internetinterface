@@ -87,7 +87,9 @@ namespace Inforoom2.Controllers
 					PhysicalClient.EndpointCreateIfNeeds(DbSession, oldphysicalClient.Client, lease, GetCurrentEmployee(),
 						ref errorMessage);
 				} else {
-					errorMessage = $"Ошибка: точка подключения не может быть создана, т.к. сессия отсутствует для IP {address}";
+					if (oldphysicalClient.Client.Endpoints.Count == 0) {
+						errorMessage = $"Ошибка: точка подключения не может быть создана, т.к. сессия отсутствует для IP {address}";
+					}
 				}
 
 				if (!string.IsNullOrEmpty(errorMessage)) {

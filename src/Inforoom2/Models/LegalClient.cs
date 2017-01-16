@@ -280,6 +280,7 @@ namespace Inforoom2.Models
 				currentEndpoint.SetStablePackgeId(connection.PackageId);
 				currentEndpoint.Monitoring = connection.Monitoring;
 				currentEndpoint.Pool = connection.GetPool(dbSession);
+				currentEndpoint.IpAutoSet = connection.StaticIpAutoSet;
 				currentEndpoint.Switch = connection.GetSwitch(dbSession);
 				currentEndpoint.Port = port;
 				currentEndpoint.IsEnabled = null;
@@ -298,6 +299,7 @@ namespace Inforoom2.Models
 				newEndpoint.SetStablePackgeId(connection.PackageId);
 				newEndpoint.Monitoring = connection.Monitoring;
 				newEndpoint.Pool = connection.GetPool(dbSession);
+				newEndpoint.IpAutoSet = connection.StaticIpAutoSet;
 				newEndpoint.Switch = currentSwitch;
 				newEndpoint.Port = port;
 				newEndpoint.Disabled = true;
@@ -421,12 +423,15 @@ namespace Inforoom2.Models
 						//подключение услуги "фиксированный ip"
 						if (currentEndpoint.Ip == null) {
 							order.SetStaticIpAsOrderService(dbSession, order, connection.StaticIp);
+							currentEndpoint.IpAutoSet = false;
 						}
 						currentEndpoint.Ip = address;
 					}
 					else
 						currentEndpoint.Ip = null;
-
+					if (currentEndpoint.IpAutoSet.HasValue && currentEndpoint.IpAutoSet.Value) {
+						order.SetStaticIpAsOrderService(dbSession, order, "авто-назначение",true);
+					}
 					currentOrder.EndPoint = currentEndpoint;
 					var newEndpointCreated = false;
 					if (currentEndpoint.Id == 0) {
@@ -454,6 +459,10 @@ namespace Inforoom2.Models
 					var epState = currentOrder.EndPointFutureState;
 					epState.StaticIpList = staticAddress;
 					currentOrder.EndPointFutureState = epState;
+
+					if (currentOrder.EndPointFutureState?.ConnectionHelper?.StaticIpAutoSet == true) {
+						order.SetStaticIpAsOrderService(dbSession, order, "авто-назначение", true);
+					}
 				}
 			}
 

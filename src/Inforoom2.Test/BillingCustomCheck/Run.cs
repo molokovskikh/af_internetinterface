@@ -23,21 +23,13 @@ namespace Inforoom2.Test.BillingCustomCheck
 	class Run : MySeleniumFixture
 	{
 		protected ISession DbSession;
-		protected int DaysToRun = 8;
+		protected int DaysToRun = 34;
 		protected List<int> ClientsToRun = new List<int>() {
-				22547,
-				22581,
-				22589,
-				22693,
-				1093,
-				22721,
-				22655,
-				22723,
-				22831,
-				22837,
-				22863,
-				22775,
-				22729
+				17317,
+				17315,
+				18393,
+				21303,
+				627
 			};
 
 		[SetUp]

@@ -101,6 +101,53 @@ namespace Billing
 				_mutex.ReleaseMutex();
 			}
 
+			//присвоение фиксированных ip юр.лицам.
+			try {
+				_mutex.WaitOne();
+				WithTransaction(session => {
+					//получение ip заказов с точками подключения, которым должен быть присвоен ip адрес
+					var toActivate =
+						session.Query<Order>()
+							.Where(o =>o.IsActivated && !o.IsDeactivated && o.EndPoint != null && o.EndPoint.IpAutoSet != null &&
+										o.EndPoint.IpAutoSet == true)
+							.ToArray().Where(o => o.OrderStatus == OrderStatus.Enabled).ToArray();
+					toActivate.Each(o => {
+						var endpoint = o.EndPoint;
+						//если у выбранной точки подключения отсутствует фиксированный ip
+						if (endpoint.Ip == null) {
+							//необходимо выбрать лизу, которую можно использовать для фиксированного ip
+							var leasesForIp = session.Query<Lease>()
+								.Where(e => e.Endpoint != null && e.Endpoint.Id == endpoint.Id
+									&& !e.Endpoint.Disabled && e.LeaseEnd >= SystemTime.Now()).ToList();
+							//с учетом пула адресов
+							var regionPools = o.EndPoint.GetAvailablePoolRegionList(session);
+							var leaseForIp = leasesForIp.FirstOrDefault(f => regionPools.Any(s => s.IpPool.Id == f.Pool.Id));
+							//если такая лиза есть, присвоение ее точке подключения и снятия флага "авто-установления фиксированного ip" (иначе ожидание появления нужной лизы)
+							if (leaseForIp != null) {
+								o.EndPoint.Ip = leaseForIp.Ip;
+								o.EndPoint.IpAutoSet = false;
+								var appeal =
+									o.Client.CreareAppeal(
+										$"По заказу №{o.Number} точке подключения №{o.EndPoint.Id} назначен фиксированный IP адрес: {leaseForIp.Ip}",
+										logBalance: false);
+								session.Save(o.EndPoint);
+								session.Save(o);
+								session.Save(appeal);
+							}
+						} else {
+							//если фиксированный ip задан, снятие флага "авто-установления фиксированного ip"
+							o.EndPoint.IpAutoSet = false;
+							session.Save(o.EndPoint);
+							session.Save(o);
+						}
+					});
+				});
+			} catch (Exception ex) {
+				_log.Error("При присвоении фиксированных ip юр. лицам. ", ex);
+			} finally {
+				_mutex.ReleaseMutex();
+			}
+
 			//активация точек подключения
 			try {
 				_mutex.WaitOne();

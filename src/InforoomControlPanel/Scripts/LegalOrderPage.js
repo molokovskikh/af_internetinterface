@@ -225,6 +225,12 @@ function updateEndpointForm(data) {
         } else {
             $(NewClientEndpointPanel_style + "[name='connection.Monitoring']").removeAttr("checked");
         }
+    	//заполнение чекбокса
+        if (data.IpAutoSet) {
+        	$(NewClientEndpointPanel_style + "[name='connection.StaticIpAutoSet']").attr("checked", "checked");
+        } else {
+        	$(NewClientEndpointPanel_style + "[name='connection.StaticIpAutoSet']").removeAttr("checked");
+        }
     } else {
         //очистка блока точки подключения
         CleanEndPoint();
