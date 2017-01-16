@@ -21,6 +21,7 @@ namespace Inforoom2.Helpers
 		public int Switch { get; set; }
 		public int Brigad { get; set; }
 		public string StaticIp { get; set; }
+		public bool StaticIpAutoSet { get; set; }
 		public bool Monitoring { get; set; }
 		public int PackageId { get; set; }
 	}

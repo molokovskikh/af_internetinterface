@@ -37,6 +37,8 @@ namespace Inforoom2.Helpers
 			if (currentEndpoint.Switch?.Id != connection.Switch || currentEndpoint.Port != port) {
 				return Difference.BigDIfference;
 			}
+			if ((connection.StaticIpAutoSet && currentEndpoint.IpAutoSet == null) || (connection.StaticIpAutoSet != currentEndpoint.IpAutoSet))
+				return Difference.SmallDiffecence;
 			if (connection.Monitoring != currentEndpoint.Monitoring)
 				return Difference.SmallDiffecence;
 			if ((connection.PackageId != 0 && currentEndpoint.PackageId == null) || (currentEndpoint.PackageId.HasValue && connection.PackageId != currentEndpoint.PackageId.Value))

@@ -69,12 +69,30 @@
 			</tr>
 		}
 		else if (endpoint.Ip != null) {
-			<tr>
+			<tr @(futureState != null && futureState.ConnectionHelper!= null
+                        && futureState.ConnectionHelper.StaticIp != (endpoint.Ip != null ? endpoint.Ip.MapToIPv4().ToString() : "") ? "class=endpointStateChanged" : "")>
 				<td>Фиксированный IP</td>
 				<td>
 					<span>@endpoint.Ip.MapToIPv4().ToString()</span>
 				</td>
 			</tr>
+        }
+		@if (futureState != null && futureState.ConnectionHelper != null && futureState.ConnectionHelper.StaticIpAutoSet) {
+		    <tr class="endpointStateChanged">
+		        <td>Фиксированный IP (авто-назначение)</td>
+		        <td>
+                    <strong class="red bold">включено</strong>
+		        </td>
+		    </tr>
+		} else {
+		    if (endpoint.IpAutoSet.HasValue && endpoint.IpAutoSet.Value) {
+		        <tr>
+		        <td>Фиксированный IP (авто-назначение)</td>
+		        <td>
+		            <strong class="red">включено</strong> (ожидание)
+		        </td>
+		    </tr>
+		    }
 		}
 		@if (endpoint != null) {
 			<tr>

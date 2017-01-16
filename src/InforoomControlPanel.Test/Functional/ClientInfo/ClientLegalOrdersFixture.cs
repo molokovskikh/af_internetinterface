@@ -135,7 +135,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				"Баланс клиента не совпадает с должным.");
 		}
 
-		public void OrderWithConnection(bool withStaticIp = true, string postfixOfBlock = ".orderListBorder ", ClientEndpoint endpoint = null, DateTime setFinishDate = new DateTime())
+		public void OrderWithConnection(bool withStaticIp = true, string postfixOfBlock = ".orderListBorder ", ClientEndpoint endpoint = null, DateTime setFinishDate = new DateTime(), bool withFixedIpAutoSet = false)
 		{
 			string blockName = "#emptyBlock_legalOrders ";
 			string blockModelName = "#ModelForOrderEdit ";
@@ -207,7 +207,17 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 					.SelectByText(currentSpeed.SpeedInMgBitFormated + " мб/с (pid: " + currentSpeed.PackageId + ") " +
 					              currentSpeed.Description);
 			}
-
+			if (withFixedIpAutoSet) {
+				WaitAjax(60);
+				inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='connection.StaticIpAutoSet']");
+				if (inputObj.GetAttribute("checked") == null) {
+					inputObj.Click();
+					Assert.That(inputObj.GetAttribute("checked"), Is.Not.Null, "должно быть выбрано авто-назначение фиксированного ip.");
+				} else {
+					inputObj.Click();
+					Assert.That(inputObj.GetAttribute("checked"), Is.Null, "должно быть выбрано авто-назначение фиксированного ip.");
+				}
+			}
 			browser.FindElementByCssSelector(blockModelName + ".modal-title").Click();
 			if (withStaticIp) {
 				WaitAjax(60);
@@ -815,6 +825,368 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			DbSession.Refresh(CurrentClient);
 			Assert.That(DbSession.Query<ClientEndpoint>().Any(s => s.Id == newEndpointId), Is.EqualTo(false));
 			SystemTime.Now = () => DateTime.Now;
+		}
+
+		[Test, Description("Страница клиента. Юр. лицо. Создание и редактирование заказа с подключением")]
+		public void OrderWithConnection_FixedIp()
+		{
+			var blockName = "#emptyBlock_legalOrders ";
+			string blockModelName = "#ModelForOrderEdit ";
+			Assert.IsTrue(CurrentClient.LegalClientOrders.Count == 0);
+			var endpointTODelete = CurrentClient.Endpoints.First();
+			CurrentClient.Endpoints.Remove(endpointTODelete);
+			DbSession.Save(CurrentClient);
+			UpdateDBSession();
+			//создаем новый заказ без статических адресов
+			OrderWithConnection(false,withFixedIpAutoSet:true);
+			UpdateDBSession();
+			var currentEndpoint = CurrentClient.Endpoints.First();
+
+			DbSession.Flush();
+			DbSession.Refresh(currentEndpoint);
+
+			AssertText("Фиксированный IP (авто-назначение)");
+			//проверяем состояние точки подключения, она не может быть активированной и должна быть заблокированной.
+			// биллинг активирует заказ, при этом разблокирует точку подключения.
+			//на стадии активации точки подключения выбераются точки не деактивированные и со значением активности (IsEnabled) = null
+			Assert.IsTrue(currentEndpoint.Disabled && !currentEndpoint.IsEnabled.HasValue);
+			Assert.IsTrue(CurrentClient.LegalClientOrders.Count(s => !s.HasEndPointFutureState) == 1);
+			Assert.IsTrue(CurrentClient.LegalClientOrders.FirstOrDefault().EndPointFutureState == null);
+			Assert.IsTrue(currentEndpoint.IpAutoSet == true);
+			Assert.IsTrue(currentEndpoint.Ip == null);
+			var oldIpPool = DbSession.Query<IpPool>().FirstOrDefault();
+			var ipPool = new IpPool();
+			ipPool.Begin = oldIpPool.Begin;
+			ipPool.End = oldIpPool.End;
+			ipPool.IsGray = oldIpPool.IsGray;
+			ipPool.LeaseTime = oldIpPool.LeaseTime;
+			ipPool.Relay = oldIpPool.Relay;
+			DbSession.Save(ipPool);
+			var ipPoolRegions = new IpPoolRegion(ipPool, CurrentClient.GetRegion());
+			DbSession.Save(ipPoolRegions);
+
+			//добавляем лизу, которую потом используем для фиксированного Ip-адреса 
+			var newIp = new IPAddress(1771111111);
+			var newLease = new Inforoom2.Models.Lease();
+			newLease.Endpoint = currentEndpoint;
+			newLease.LeaseBegin = SystemTime.Now();
+			newLease.Pool = ipPool;
+			newLease.Port = currentEndpoint.Port;
+			newLease.Ip = newIp;
+			newLease.LeaseEnd = SystemTime.Now().AddDays(10);
+			DbSession.Save(newLease);
+			
+			currentEndpoint.Port = currentEndpoint.Switch.PortCount;
+			currentEndpoint.Ip = null;
+			currentEndpoint.SetStablePackgeId(
+				DbSession.Query<PackageSpeed>().First(s => s.PackageId != 10 && s.PackageId != 100).PackageId);
+			//биллиинг
+			CurrentClient.PaidDay = false;
+			DbSession.Save(currentEndpoint);
+			DbSession.Save(CurrentClient);
+			UpdateDBSession();
+			RunBillingProcess();
+			UpdateDBSession();
+
+			currentEndpoint = CurrentClient.Endpoints.First();
+			Assert.IsTrue(CurrentClient.LegalClientOrders.Count(s => s.IsActivated) == 1);
+			Assert.IsTrue(CurrentClient.Endpoints.Count == 1);
+			Assert.IsTrue(CurrentClient.LegalClientOrders.Count(s => s.IsActivated
+				&& !s.HasEndPointFutureState) == 1);
+			Assert.IsTrue(CurrentClient.LegalClientOrders.Count(s => s.IsActivated
+				&& s.EndPoint.Ip.ToString() == newLease.Ip.ToString()) == 1);
+			Assert.IsTrue(currentEndpoint.IpAutoSet == false);
+
+			Assert.IsTrue(CurrentClient.WriteOffs.Count(s=>s.Comment.IndexOf("Плата за фиксированный Ip адрес (авто-назначение)")!=-1) == 1);
+
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			WaitForText("Номер лицевого счета", 10);
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+			AssertNoText("Фиксированный IP (авто-назначение)");
+			AssertText($"Фиксированный IP {currentEndpoint.Ip}");
+
+			//создаем новый заказ без статических адресов
+			OrderWithConnection(false, endpoint: currentEndpoint, withFixedIpAutoSet: true);
+
+
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			WaitForText("Номер лицевого счета", 10);
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+
+			AssertText("Фиксированный IP (авто-назначение) включено");
+			AssertText($"Фиксированный IP {currentEndpoint.Ip}");
+
+
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  a[title='Редактировать заказ']").Click();
+			WaitForText("Редактирование заказа", 10);
+
+			WaitAjax(30);
+
+			var inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='connection.StaticIpAutoSet']");
+			inputObj.Click();
+			Assert.That(inputObj.GetAttribute("checked"), Is.Null, "должно быть выбрано авто-назначение фиксированного ip.");
+
+			//сохранение изменений
+			browser.FindElementByCssSelector(blockModelName + ".btn-success").Click();
+
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			WaitForText("Номер лицевого счета", 10);
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+			AssertNoText("Фиксированный IP (авто-назначение)");
+			AssertText($"Фиксированный IP {currentEndpoint.Ip}");
+
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  a[title='Редактировать заказ']").Click();
+			WaitForText("Редактирование заказа", 10);
+
+			WaitAjax(30);
+
+			inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='connection.StaticIpAutoSet']");
+			inputObj.Click();
+			Assert.That(inputObj.GetAttribute("checked"), Is.Not.Null, "должно быть выбрано авто-назначение фиксированного ip.");
+			//сохранение изменений
+			browser.FindElementByCssSelector(blockModelName + ".btn-success").Click();
+
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			WaitForText("Номер лицевого счета", 10);
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+			AssertText("Фиксированный IP (авто-назначение) включено");
+			AssertText($"Фиксированный IP {currentEndpoint.Ip}");
+			
+			UpdateDBSession();
+
+			Assert.IsTrue(CurrentClient.LegalClientOrders.Count(s => s.IsActivated) == 1);
+			Assert.IsTrue(CurrentClient.LegalClientOrders.Count(s => !s.IsActivated) == 1);
+			var newOrder = CurrentClient.LegalClientOrders.FirstOrDefault(s => !s.IsActivated);
+			Assert.IsTrue(newOrder.EndPointFutureState?.ConnectionHelper?.StaticIpAutoSet == true);
+			Assert.IsTrue(newOrder.OrderServices.Count(s=>s.Description.IndexOf("Плата за фиксированный Ip адрес (авто-назначение)") != -1 ) ==1 );
+		
+			//биллиинг
+			CurrentClient.PaidDay = false;
+			DbSession.Save(CurrentClient);
+			UpdateDBSession();
+			RunBillingProcess();
+			UpdateDBSession();
+
+			Assert.IsTrue(CurrentClient.WriteOffs.Count(s => s.Comment.IndexOf("Плата за фиксированный Ip адрес (авто-назначение)") != -1) == 2);
+		}
+
+		private void connectionWithFixedIpAndBadLease(out IpPool ipPool, out IPAddress newIp,out Lease newLease, bool ipPoolIsNull = false)
+		{
+			var blockName = "#emptyBlock_legalOrders ";
+			string blockModelName = "#ModelForOrderEdit ";
+			var endpointTODelete = CurrentClient.Endpoints.First();
+			Assert.IsTrue(CurrentClient.LegalClientOrders.Count == 0);
+			CurrentClient.Endpoints.Remove(endpointTODelete);
+			DbSession.Save(CurrentClient);
+			UpdateDBSession();
+			//создаем новый заказ без статических адресов
+			OrderWithConnection(false, withFixedIpAutoSet: true);
+			UpdateDBSession();
+			var currentEndpoint = CurrentClient.Endpoints.First();
+
+			DbSession.Flush();
+			DbSession.Refresh(currentEndpoint);
+
+			AssertText("Фиксированный IP (авто-назначение)");
+			//проверяем состояние точки подключения, она не может быть активированной и должна быть заблокированной.
+			// биллинг активирует заказ, при этом разблокирует точку подключения.
+			//на стадии активации точки подключения выбераются точки не деактивированные и со значением активности (IsEnabled) = null
+			Assert.IsTrue(currentEndpoint.Disabled && !currentEndpoint.IsEnabled.HasValue);
+			Assert.IsTrue(CurrentClient.LegalClientOrders.Count(s => !s.HasEndPointFutureState) == 1);
+			Assert.IsTrue(CurrentClient.LegalClientOrders.FirstOrDefault().EndPointFutureState == null);
+			Assert.IsTrue(currentEndpoint.IpAutoSet == true);
+			Assert.IsTrue(currentEndpoint.Ip == null);
+
+			var oldIpPool = DbSession.Query<IpPool>().FirstOrDefault();
+			ipPool = new IpPool();
+			ipPool.Begin = oldIpPool.Begin;
+			ipPool.End = oldIpPool.End;
+			ipPool.IsGray = oldIpPool.IsGray;
+			ipPool.LeaseTime = oldIpPool.LeaseTime;
+			ipPool.Relay = oldIpPool.Relay;
+			DbSession.Save(ipPool);
+
+			currentEndpoint.Port = currentEndpoint.Switch.PortCount;
+			currentEndpoint.Ip = null;
+			currentEndpoint.SetStablePackgeId(
+				DbSession.Query<PackageSpeed>().First(s => s.PackageId != 10 && s.PackageId != 100).PackageId);
+			//биллиинг
+			CurrentClient.PaidDay = false;
+			DbSession.Save(currentEndpoint);
+			DbSession.Save(CurrentClient);
+			UpdateDBSession();
+			RunBillingProcess();
+			UpdateDBSession();
+
+			currentEndpoint = CurrentClient.Endpoints.First();
+			Assert.IsTrue(currentEndpoint.IpAutoSet == true);
+			Assert.IsTrue(CurrentClient.LegalClientOrders.Count(s => s.IsActivated) == 1);
+			Assert.IsTrue(CurrentClient.Endpoints.Count == 1);
+			Assert.IsTrue(CurrentClient.LegalClientOrders.Count(s => s.IsActivated
+				&& !s.HasEndPointFutureState) == 1);
+
+			//лизы нет и фиксированного ip нет
+			Assert.IsTrue(CurrentClient.LegalClientOrders.Count(s => s.IsActivated
+				&& s.EndPoint.Ip == null && s.EndPoint.LeaseList.Count == 0) == 1);
+
+			Assert.IsTrue(CurrentClient.WriteOffs.Count(s => s.Comment.IndexOf("Плата за фиксированный Ip адрес (авто-назначение)") != -1) == 1);
+
+
+			//добавляем лизу, которую потом используем для фиксированного Ip-адреса 
+			newIp = new IPAddress(1771111111);
+
+			//проверка состояния фиксированного и арендованного ip 
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			WaitForText("Номер лицевого счета", 10);
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+			AssertText("Фиксированный IP (авто-назначение) включено (ожидание)");
+			AssertNoText($"Арендованный IP {newIp}");
+
+			//добавление лизы
+			newLease = new Inforoom2.Models.Lease();
+			newLease.Endpoint = currentEndpoint;
+			newLease.LeaseBegin = SystemTime.Now();
+			newLease.Pool = ipPoolIsNull ? null : ipPool;
+			newLease.Port = currentEndpoint.Port;
+			newLease.Ip = newIp;
+			newLease.LeaseEnd = SystemTime.Now().AddDays(10);
+			DbSession.Save(newLease);
+
+			UpdateDBSession();
+		}
+
+		[Test, Description("Страница клиента. Юр. лицо. Создание и редактирование заказа с подключением. Фиксированный Адрес. Лиза без регионального пула.")]
+		public void OrderWithConnection_FixedIp_LeaseNoRegionPoolAdding()
+		{
+			var blockName = "#emptyBlock_legalOrders ";
+			string blockModelName = "#ModelForOrderEdit ";
+			IPAddress newIp;
+			IpPool ipPool;
+			Lease newLease;
+
+			connectionWithFixedIpAndBadLease(out ipPool, out newIp, out newLease);
+
+			//лиза есть, а фиксированного ip нет
+			var currentEndpoint = CurrentClient.Endpoints.First();
+			Assert.IsTrue(currentEndpoint.Ip == null && currentEndpoint.LeaseList.Count == 1);
+
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			WaitForText("Номер лицевого счета", 10);
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+			AssertText("Фиксированный IP (авто-назначение) включено (ожидание)");
+			AssertText($"Арендованный IP {newIp}");
+
+			//биллиинг
+			CurrentClient.PaidDay = false;
+			DbSession.Save(CurrentClient);
+			UpdateDBSession();
+			RunBillingProcess();
+			UpdateDBSession();
+
+			//лиза есть, а фиксированного ip все еще нет, т.к. нет регионального пула (нужный пул уже был добавлен лизе) 
+			currentEndpoint = CurrentClient.Endpoints.First();
+			Assert.IsTrue(currentEndpoint.Ip == null && currentEndpoint.LeaseList.Count == 1);
+
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			WaitForText("Номер лицевого счета", 10);
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+			AssertText("Фиксированный IP (авто-назначение) включено (ожидание)");
+			AssertText($"Арендованный IP {newIp}");
+			
+			var ipPoolRegions = new IpPoolRegion(ipPool, CurrentClient.GetRegion());
+			DbSession.Save(ipPoolRegions);
+
+			//биллиинг
+			CurrentClient.PaidDay = false;
+			DbSession.Save(CurrentClient);
+			UpdateDBSession();
+			RunBillingProcess();
+			UpdateDBSession();
+
+			currentEndpoint = CurrentClient.Endpoints.First();
+			Assert.IsTrue(currentEndpoint.Ip.ToString() == newIp.ToString() && currentEndpoint.LeaseList.Count == 1);
+
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			WaitForText("Номер лицевого счета", 10);
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+			AssertNoText("Фиксированный IP (авто-назначение)");
+			AssertText($"Фиксированный IP {currentEndpoint.Ip}");
+			AssertText($"Арендованный IP {newIp}");
+		}
+		[Test, Description("Страница клиента. Юр. лицо. Создание и редактирование заказа с подключением. Фиксированный Адрес. Лиза без пула.")]
+		public void OrderWithConnection_FixedIp_LeaseNoPoolAdding()
+		{
+			var blockName = "#emptyBlock_legalOrders ";
+			string blockModelName = "#ModelForOrderEdit ";
+			IPAddress newIp;
+			IpPool ipPool;
+			Lease newLease;
+
+			connectionWithFixedIpAndBadLease(out ipPool, out newIp, out newLease, true);
+
+			var ipPoolRegions = new IpPoolRegion(ipPool, CurrentClient.GetRegion());
+			DbSession.Save(ipPoolRegions);
+			UpdateDBSession();
+
+			//лиза есть, а фиксированного ip нет
+			var currentEndpoint = CurrentClient.Endpoints.First();
+			Assert.IsTrue(currentEndpoint.Ip == null && currentEndpoint.LeaseList.Count == 1);
+
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			WaitForText("Номер лицевого счета", 10);
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+			AssertText("Фиксированный IP (авто-назначение) включено (ожидание)");
+			AssertText($"Арендованный IP {newIp}");
+
+			//биллиинг
+			CurrentClient.PaidDay = false;
+			DbSession.Save(CurrentClient);
+			UpdateDBSession();
+			RunBillingProcess();
+			UpdateDBSession();
+
+			//лиза есть, а фиксированного ip все еще нет, т.к. нет регионального пула (нужный пул уже был добавлен лизе) 
+			currentEndpoint = CurrentClient.Endpoints.First();
+			Assert.IsTrue(currentEndpoint.Ip == null && currentEndpoint.LeaseList.Count == 1);
+
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			WaitForText("Номер лицевого счета", 10);
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+			AssertText("Фиксированный IP (авто-назначение) включено (ожидание)");
+			AssertText($"Арендованный IP {newIp}");
+
+			DbSession.Refresh(ipPool);
+			newLease = DbSession.Query<Lease>().FirstOrDefault(s => s.Id == newLease.Id);
+			newLease.Pool = ipPool;
+			DbSession.Save(newLease);
+
+			//биллиинг
+			CurrentClient.PaidDay = false;
+			DbSession.Save(CurrentClient);
+			UpdateDBSession();
+			RunBillingProcess();
+			UpdateDBSession();
+
+			currentEndpoint = CurrentClient.Endpoints.First();
+			Assert.IsTrue(currentEndpoint.Ip.ToString() == newIp.ToString() && currentEndpoint.LeaseList.Count == 1);
+
+			Open("Client/InfoLegal/" + CurrentClient.Id);
+			WaitForText("Номер лицевого счета", 10);
+			WaitForVisibleCss(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini");
+			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
+			AssertNoText("Фиксированный IP (авто-назначение)");
+			AssertText($"Фиксированный IP {currentEndpoint.Ip}");
+			AssertText($"Арендованный IP {newIp}");
 		}
 	}
 }

@@ -186,6 +186,13 @@
 					<a class="removeFixedIp c-pointer hid" onclick="removeFixedIp();">удалить</a>
 				</td>
 			</tr> 
+			<tr class="fixedIpAutoSet">
+			    <td><label class="c-pointer" for="staticIpAutoSet">Фиксированный IP <br/>(авто-назначение)</label></td>
+                <td>
+                    <input class="c-pointer" data-val-required="Требуется поле Boolean." id="staticIpAutoSet" name="connection.StaticIpAutoSet" type="checkbox" value="true">
+                    <input name="staticIpAutoSet" type="hidden" value="false">
+                </td>
+			</tr>
 			<tr>
 				<td>Арендованный IP</td>
 				<td>

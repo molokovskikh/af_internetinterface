@@ -109,20 +109,25 @@ namespace Inforoom2.Models
 			}
 		}
 
-		public virtual void SetStaticIpAsOrderService(ISession dbSession, ClientOrder order, string staticIp)
+		public virtual void SetStaticIpAsOrderService(ISession dbSession, ClientOrder order, string staticIp,
+			bool ifDescriptionNotExists = false)
 		{
 			decimal priceForIp = 0;
-			var priceItem = dbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof(FixedIp)));
+			var priceItem = dbSession.Query<Service>().FirstOrDefault(s => s.Id == Service.GetIdByType(typeof (FixedIp)));
 			if (priceItem != null) {
 				priceForIp = priceItem.Price;
 			}
-			var staticIpService = new OrderService {
-				Cost = priceForIp,
-				Order = order,
-				Description = string.Format("Плата за фиксированный Ip адрес ({0})", staticIp)
-			};
-			dbSession.Save(staticIpService);
-			order.OrderServices.Add(staticIpService);
+			var phrase = string.Format("Плата за фиксированный Ip адрес ({0})", staticIp);
+			if (ifDescriptionNotExists == false ||
+				order.OrderServices.All(s => s.Description != phrase)) {
+				var staticIpService = new OrderService {
+					Cost = priceForIp,
+					Order = order,
+					Description = phrase
+				};
+				dbSession.Save(staticIpService);
+				order.OrderServices.Add(staticIpService);
+			}
 		}
 
 		/// <summary>

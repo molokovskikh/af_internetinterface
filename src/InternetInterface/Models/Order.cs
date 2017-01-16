@@ -238,16 +238,27 @@ namespace InternetInterface.Models
 						currentEndpoint.Monitoring = connection.Monitoring;
 						currentEndpoint.Pool = (connection.Pool.HasValue ? (uint?)Convert.ToUInt32(connection.Pool.Value) : null);
 
+						//выставляем флаг автоприсвоения Ip адреса
+						if (connection.StaticIpAutoSet) {
+							currentEndpoint.IpAutoSet = true;
+						} else {
+							if (currentEndpoint.IpAutoSet.HasValue && currentEndpoint.IpAutoSet.Value)
+								currentEndpoint.IpAutoSet = false;
+						} 
+
 						//Обновляем фиксированный Ip
 						IPAddress address;
-						if (connection.StaticIp != null && IPAddress.TryParse(connection.StaticIp, out address)) {
+						if (connection.StaticIp != null && IPAddress.TryParse(connection.StaticIp ?? "", out address)) {
 							if (currentEndpoint.Ip == null) {
 								SetStaticIpAsOrderService(dbSession, this, connection.StaticIp);
 							}
 							currentEndpoint.Ip = address;
-						}
-						else
+						} else {
+							if (currentEndpoint.Ip != null && connection.StaticIp == null) {
+								currentEndpoint.Client.CreareAppeal($"По заказу №{this.Number} для точки подключения №{currentEndpoint.Id} отменена фиксация IP адреса - {currentEndpoint.Ip}",logBalance:false);
+							}
 							currentEndpoint.Ip = null;
+						}
 
 						if (oldWarningState != currentEndpoint.Client.ShowBalanceWarningPage) {
 							currentEndpoint.Client.ShowBalanceWarningPage = oldWarningState;
@@ -370,6 +381,7 @@ namespace InternetInterface.Models
 		public int Switch { get; set; }
 		public int Brigad { get; set; }
 		public string StaticIp { get; set; }
+		public bool StaticIpAutoSet { get; set; }
 		public bool Monitoring { get; set; }
 		public int PackageId { get; set; }
 	}

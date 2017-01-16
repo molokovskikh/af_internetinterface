@@ -488,6 +488,7 @@ namespace InforoomControlPanel.Controllers
 					Pool = tempState != null && tempState.ConnectionHelper != null ? tempState.ConnectionHelper.Pool.HasValue ? tempState.ConnectionHelper.Pool.Value : 0
 						: endpoint.Pool != null ? endpoint.Pool.Id : 0,
 					Port = endpoint.Port,
+					IpAutoSet = tempState != null && tempState.ConnectionHelper != null ? tempState.ConnectionHelper.StaticIpAutoSet : endpoint.IpAutoSet??false,
 					ConnectionAddress = address,
 					PackageId = tempState != null && tempState.ConnectionHelper != null ? tempState.ConnectionHelper.PackageId : endpoint.PackageId ?? 0,
 					Monitoring = tempState != null && tempState.ConnectionHelper != null ? tempState.ConnectionHelper.Monitoring : endpoint.Monitoring,
