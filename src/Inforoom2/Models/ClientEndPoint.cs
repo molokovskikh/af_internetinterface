@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using Common.Tools;
 using Inforoom2.Components;
 using Inforoom2.Helpers;
@@ -63,10 +64,29 @@ namespace Inforoom2.Models
 		[Property]
 		public virtual int? ActualPackageId { get; set; }
 
-        [Property]
-        public virtual string Mac { get; set; }
+		public virtual string Mac
+		{
+			get
+			{
+				if (MacFull != null && MacFull.Length == 47) {
+					return MacFull.Substring(0, 17);
+				}
+				return MacFull;
+			}
+			set
+			{
+				const string macRegExp = @"^([0-9a-fA-F][0-9a-fA-F]-){5}([0-9a-fA-F][0-9a-fA-F])$";
+				if (value != null && value.Length == 17 && Regex.IsMatch(value, macRegExp)) {
+					MacFull = value + "-00-00-00-00-00-00-00-00-00-00";
+				}
+				MacFull = value;
+			}
+		}
 
-        [Property(Column = "Ip", TypeType = typeof (IPUserType)), Description("Фиксированный Ip")]
+		[Property(Column = "Mac")]
+		public virtual string MacFull { get; set; }
+
+		[Property(Column = "Ip", TypeType = typeof (IPUserType)), Description("Фиксированный Ip")]
 		public virtual IPAddress Ip { get; set; }
 
 		public virtual void UpdateActualPackageId(int? packageId)

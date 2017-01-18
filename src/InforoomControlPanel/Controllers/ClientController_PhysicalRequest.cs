@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using Common.Tools;
@@ -490,15 +491,19 @@ namespace InforoomControlPanel.Controllers
 				basePort = port == 0 ? (lease?.Port ?? 0) : port;
 				baseMac = string.IsNullOrEmpty(mac) ? (lease?.Mac ?? "") : mac;
 
+				string macRegExp = @"^([0-9a-fA-F][0-9a-fA-F]-){5}([0-9a-fA-F][0-9a-fA-F])$";
+				if (string.IsNullOrEmpty(baseMac) || !Regex.IsMatch(baseMac, macRegExp)) {
+					errorMessageForEndpointPreRegistration = "Неверный формат MAC-адреса! Необходим: 00-00-00-00-00-00";
+					ErrorMessage(errorMessageForEndpointPreRegistration);
+				}
 				if (baseSwitch == null || baseSwitch.Id == 0 || basePort == null || basePort == 0 || string.IsNullOrEmpty(baseMac)) {
 					errorMessageForEndpointPreRegistration =
 						"Ошибка: настройки точки подключения заданы неверно для подключения типа гибрид.";
 					ErrorMessage(errorMessageForEndpointPreRegistration);
 				}
 			}
-
-				// если ошибок нет
-				if (errors.Length == 0 && errorMessageForEndpointPreRegistration == String.Empty) {
+			// если ошибок нет
+			if (errors.Length == 0 && errorMessageForEndpointPreRegistration == String.Empty) {
 				// указываем имя лица, которое проводит регистрирацию
 				client.WhoRegisteredName = client.WhoRegistered.Name;
 				// генерируем пароль и его хыш сохраняем в модель физ.клиента
