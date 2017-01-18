@@ -118,10 +118,8 @@ namespace Billing
 							//необходимо выбрать лизу, которую можно использовать для фиксированного ip
 							var leasesForIp = session.Query<Lease>()
 								.Where(e => e.Endpoint != null && e.Endpoint.Id == endpoint.Id
-									&& !e.Endpoint.Disabled && e.LeaseEnd >= SystemTime.Now()).ToList();
-							//с учетом пула адресов
-							var regionPools = o.EndPoint.GetAvailablePoolRegionList(session);
-							var leaseForIp = leasesForIp.FirstOrDefault(f => regionPools.Any(s => s.IpPool.Id == f.Pool.Id));
+									&& !e.Endpoint.Disabled && e.LeaseEnd > SystemTime.Now()).ToList();
+							var leaseForIp = leasesForIp.FirstOrDefault(f => f.Pool != null && f.Pool.IsGray == false);
 							//если такая лиза есть, присвоение ее точке подключения и снятия флага "авто-установления фиксированного ip" (иначе ожидание появления нужной лизы)
 							if (leaseForIp != null) {
 								o.EndPoint.Ip = leaseForIp.Ip;
