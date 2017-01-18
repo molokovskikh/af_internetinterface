@@ -16,6 +16,7 @@ using NHibernate.Mapping.Attributes;
 using NHibernate.Util;
 using NHibernate.Validator.Constraints;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Web;
 using Inforoom2.Components;
 using Inforoom2.Models.Services;
@@ -640,6 +641,12 @@ namespace Inforoom2.Models
 				return;
 			}
 
+			string macRegExp = @"^([0-9a-fA-F][0-9a-fA-F]-){5}([0-9a-fA-F][0-9a-fA-F])$";
+			if (!string.IsNullOrEmpty(mac) && !Regex.IsMatch(mac, macRegExp)) {
+				errorMessage = "Неверный формат MAC-адреса! Необходим: 00-00-00-00-00-00";
+				return;
+			}
+
 			//у пользователя не должно быть точки подключения
 			if (currentClient.Endpoints.Count == 0) {
 				if (string.IsNullOrEmpty(baseSwitch.Name)) {
@@ -660,6 +667,10 @@ namespace Inforoom2.Models
 				
 				//если мак адрес прописан, используем прописанный
 				if (!string.IsNullOrEmpty(mac)) {
+					//нормализация адреса
+					if (mac.Length==17) {
+						mac = mac + "-00-00-00-00-00-00-00-00-00-00";
+					}
 					endpoint.Mac = mac;
 				}
 

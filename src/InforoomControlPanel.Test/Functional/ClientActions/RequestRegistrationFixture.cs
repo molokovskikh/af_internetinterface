@@ -433,9 +433,19 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 	        Click("Закрыть");
 
 	        Click("Зарегистрировать");
+	        WaitForMap();
+	        AssertText("Неверный формат MAC-адреса! Необходим: 00-00-00-00-00-00");
+
+	        macText = "00-00-00-00-00-00";
+	        macItem = browser.FindElementByCssSelector("input[name=mac]");
+	        macItem.Clear();
+	        macItem.SendKeys(macText);
+
+	        Click("Зарегистрировать");
+
 	        Open("Client/RequestsList?justHybrid=true");
 	        AssertText("Всего: 0 строк");
-			
+
 	        newClientFromRequest = DbSession.Query<Client>().OrderByDescending(s => s.Id).FirstOrDefault();
 	        Assert.IsTrue(newClientFromRequest.Fullname.IndexOf("Сидоров") != -1);
 	        Assert.IsTrue(newClientFromRequest.Status.Type == StatusType.Worked);
@@ -444,7 +454,8 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 	        Assert.IsTrue(endpoint != null);
 	        Assert.IsTrue(endpoint.Mac == macText);
 	        Assert.IsTrue(endpoint.Port == 1);
-	        var newPaymentForConnection = DbSession.Query<PaymentForConnect>().FirstOrDefault(s => s.EndPoint.Id == endpoint.Id);
+	        var newPaymentForConnection =
+		        DbSession.Query<PaymentForConnect>().FirstOrDefault(s => s.EndPoint.Id == endpoint.Id);
 	        Assert.IsTrue(newPaymentForConnection.Sum == newClientFromRequest.PhysicalClient.ConnectSum);
         }
 
@@ -473,7 +484,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			AssertRequestData();
 			AssertText("сессия не найденна для текущего Ip-адреса");
 			
-			var macText = "22-22-22-33-33-33-33-33-33-33-33";
+			var macText = "00-00-00-00-00-00"; ;
 			var macItem = browser.FindElementByCssSelector("input[name=mac]");
 			macItem.Clear();
 			macItem.SendKeys(macText);
@@ -482,7 +493,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			AssertText("Ошибка: настройки точки подключения заданы неверно для подключения типа гибрид.");
 			WaitForMap();
 
-			macText = "22-22-22-33-33-33-33-33-33-33-33";
+			macText = "00-00-00-00-00-00"; ;
 			var switchItem =
 				DbSession.Query<Inforoom2.Models.Switch>().FirstOrDefault(s => s.Zone.Region.Name == clientRequest.City);
 			Css("#SwitchDropDown").SelectByText(switchItem.Name);

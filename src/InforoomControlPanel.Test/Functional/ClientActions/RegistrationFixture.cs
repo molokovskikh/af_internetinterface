@@ -412,7 +412,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			//Ошибка, т.к. не прописаны настройки
 			AssertText("настройки точки подключения заданы неверно для подключения типа гибрид.");
 
-			var macText = "123123123000";
+			var macText = "00-00-00-00-00-00";
 			var macItem = browser.FindElementByCssSelector("input[name=mac]");
 			macItem.Clear();
 			macItem.SendKeys(macText);
@@ -513,7 +513,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			input = browser.FindElement(By.CssSelector("[name='port']"));
 			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Port.ToString());
 
-			var macText = "123123123000";
+			var macText = "00-00-00-00-00-0";
 			var macItem = browser.FindElementByCssSelector("input[name=mac]");
 			macItem.Clear();
 			macItem.SendKeys(macText);
@@ -522,6 +522,15 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 
 			//Попытка зарегистрировать клиента
 			SendRegistration();
+			WaitForMap();
+			AssertText("Неверный формат MAC-адреса! Необходим: 00-00-00-00-00-00");
+
+			macText = "00-00-00-00-00-00";
+			macItem = browser.FindElementByCssSelector("input[name=mac]");
+			macItem.Clear();
+			macItem.SendKeys(macText);
+			SendRegistration();
+
 			Open("Client/RegistrationPhysical");
 
 			//Проверка клиента с точкой подключения
@@ -547,7 +556,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			input = browser.FindElement(By.CssSelector("[name='port']"));
 			Assert.IsTrue(input.GetAttribute("value") == leaseNew.Port.ToString());
 			
-			var macText = "123123123000";
+			var macText = "00-00-00-00-00-00";
 			var switchItem =
 				DbSession.Query<Inforoom2.Models.Switch>()
 					.FirstOrDefault(s => s.Zone.Region.Name == "Борисоглебск"  && s.Id != leaseNew.Switch.Id);

@@ -443,7 +443,13 @@ namespace InforoomControlPanel.Controllers
 			basePort = port == 0 ? (lease?.Port ?? 0) : port;
 			baseMac = string.IsNullOrEmpty(mac) ? (lease?.Mac ?? "") : mac;
 			//проверяем до регистрации клиента
+
 			// если заявка "Гибрид"
+			string macRegExp = @"^([0-9a-fA-F][0-9a-fA-F]-){5}([0-9a-fA-F][0-9a-fA-F])$";
+			if (addNewEndpoint && (string.IsNullOrEmpty(baseMac) || !Regex.IsMatch(baseMac, macRegExp))) {
+				errorMessageForEndpointPreRegistration = "Неверный формат MAC-адреса! Необходим: 00-00-00-00-00-00";
+				ErrorMessage(errorMessageForEndpointPreRegistration);
+			}
 			if (addNewEndpoint && (baseSwitch == null || baseSwitch.Id == 0 || basePort == 0 || string.IsNullOrEmpty(baseMac))) {
 				errorMessageForEndpointPreRegistration =
 					"Ошибка: настройки точки подключения заданы неверно для подключения типа гибрид.";
