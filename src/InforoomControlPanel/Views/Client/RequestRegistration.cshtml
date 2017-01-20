@@ -39,8 +39,8 @@
 
 @section JavaScript{
     <script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js?v=0001")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Scripts/InfoClientPage.js?v=0001")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Scripts/Registration.EndpointAdd.js?v=0001")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/InfoClientPage.js?v=0002")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/Registration.EndpointAdd.js?v=0002")"></script>
 }
 @Html.Hidden("clientUrlExampleA", Url.Action("InfoPhysical", new {@Id = ""}))
 @Html.Hidden("clientUrlExampleB", Url.Action("InfoLegal", new {@Id = ""}))
@@ -368,7 +368,7 @@
 
                         <div class="col-sm-4 date-picker-box">
                             <input type="hidden" value="@currentPortVal" id="endpoint_PortVal" name="port">
-                            <input class="form-control" min="0" type="number" value="@currentPortVal" step="1" id="endpoint_Port" name="port" disabled="disabled">
+                            <input class="form-control" min="0" type="number" value="@currentPortVal" oldswitch="@currentSwitchId" oldvalue="@currentPortVal" step="1" id="endpoint_Port" name="port" disabled="disabled">
                             <div id="SwitchComment" style="margin: 9px 0px 2px 10px; color: #E46100; font-weight: bold;"></div>
                         </div>
                     </div>

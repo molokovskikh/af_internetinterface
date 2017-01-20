@@ -502,8 +502,22 @@ function updatePortsState(data, noPortUpdate) {
 		$("#endpoint_PortVal").val("0");
 		$("#endpoint_Port").val("0");
 	}
+	var currentSwitchId = $("#SwitchDropDown").val();
+	if (currentSwitchId == null || currentSwitchId == undefined || parseInt(currentSwitchId) == 'NaN') {
+		currentSwitchId = $("#SwitchDropDown").attr("pastvalue");
+	}
+	var oldPortVal = $("#endpoint_Port").attr("oldvalue");
+	var oldSwitchVal = $("#endpoint_Port").attr("oldswitch");
+	console.log(oldPortVal);
+	console.log(oldSwitchVal);
+	console.log(currentSwitchId);
+	if (oldPortVal != undefined && oldPortVal !== '' && oldSwitchVal != undefined && oldSwitchVal !== '' && oldSwitchVal === currentSwitchId) {
+		$("#endpoint_PortVal").val(oldPortVal);
+		$("#endpoint_Port").val(oldPortVal);
+	}
+
     if (linkA.length > 0 && linkB.length > 0) {
-        var portCount = $("#SwitchDropDown [value='" + $("#SwitchDropDown").val() + "']").attr("maxports");
+    	var portCount = $("#SwitchDropDown [value='" + currentSwitchId + "']").attr("maxports");
         updatePortGrid(portCount);
         var portTags = $("#switchPorts .port");
         portTags.each(function() {
@@ -539,11 +553,13 @@ function updatePortsState(data, noPortUpdate) {
 }
 
 function GetBusyPorts(noPortUpdate) {
-    if ($("#SwitchDropDown").length > 0) {
+	if ($("#SwitchDropDown").length > 0) {
+		var switchId = $("#SwitchDropDown").val();
+		switchId = switchId == undefined || switchId === 0 || switchId === '' ? $("#SwitchDropDown").attr("pastvalue") : switchId;
         $("#switchPorts .port").removeClass("free").removeClass("client");
-        if ($("#SwitchDropDown").val() != null && $("#SwitchDropDown").val() != "") {
+        if (switchId != null && switchId !== "") {
             $.ajax({
-                url: cli.getParam("baseurl") + "Client/getBusyPorts?id=" + $("#SwitchDropDown").val(),
+            	url: cli.getParam("baseurl") + "Client/getBusyPorts?id=" + switchId,
                 type: "POST",
                 dataType: "json",
                 success: function (data) {
@@ -767,4 +783,5 @@ $(function() {
 	    }
     });
     phantomFor();
+    GetBusyPorts();
 });

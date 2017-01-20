@@ -279,6 +279,12 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 		        Port = 1
 	        };
 	        DbSession.Save(leaseNew);
+					// сохранения текущих настроек другой точке подключения, для проверки валидации
+	        var createdEndpoint = DbSession.Query<Inforoom2.Models.ClientEndpoint>().FirstOrDefault();
+	        createdEndpoint.Switch = switchCurrent;
+	        createdEndpoint.Port = leaseNew.Port;
+	        DbSession.Save(createdEndpoint);
+
 	        DbSession.Flush();
 
 	        Open("Client/RequestsList?justHybrid=true");
@@ -303,6 +309,29 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 	        Assert.IsTrue(input.GetAttribute("value") == leaseNew.Port.ToString());
 
 	        Click("Зарегистрировать");
+	        WaitForMap();
+	        DbSession.Refresh(createdEndpoint);
+	        AssertText(
+		        $"Ошибка: указанные настройки точки подключения уже используются для точки №{createdEndpoint.Id} подключения клиента {createdEndpoint.Client.Id}");
+	        createdEndpoint.Port = createdEndpoint.Port*2;
+	        DbSession.Save(createdEndpoint);
+					DbSession.Flush();
+	        AssertRequestData();
+	        AssertText(leaseNew.Ip.ToString());
+	        //мак отображается
+	        AssertText(leaseNew.Mac);
+	        // и не горит красным
+	        Assert.IsTrue(browser.FindElementsByCssSelector(".wlease.red").Count == 0);
+
+	        //настройки точки подключения
+	        input = browser.FindElement(By.CssSelector("[name='mac']"));
+	        Assert.IsTrue(input.GetAttribute("value") == leaseNew.Mac);
+	        input = browser.FindElement(By.CssSelector("#SwitchDropDown"));
+	        Assert.IsTrue(input.GetAttribute("value") == leaseNew.Switch.Id.ToString());
+	        input = browser.FindElement(By.CssSelector("[name='port']"));
+	        Assert.IsTrue(input.GetAttribute("value") == leaseNew.Port.ToString());
+	        Click("Зарегистрировать");
+
 
 	        Open("Client/RequestsList?justHybrid=true");
 	        var newClientFromRequest = DbSession.Query<Client>().OrderByDescending(s => s.Id).FirstOrDefault();

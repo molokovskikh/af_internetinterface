@@ -534,6 +534,7 @@ namespace Billing
 			}
 		}
 
+
 		/// <summary>
 		/// Списание абоненской платы с физического клиента
 		/// </summary>
@@ -559,12 +560,9 @@ namespace Billing
 			//Обновление (назначение заново) скидки клиента
 			UpdateDiscount(client);
 
-			//Cписание абонентской платы, за день подключения добровольной блокировки (если услуга подключена)
-			PhysicalClientPaymentWithBlock(client, session);
-
 			//Обработка списаний с клиента, при отсутствии блокировки из-за восстановления
 			if (!client.PaidDay && client.RatedPeriodDate.GetValueOrDefault() != DateTime.MinValue
-			    && client.GetSumForRegularWriteOff() > 0) {
+				&& client.GetSumForRegularWriteOff() > 0) {
 				if (client.StartNoBlock == null)
 					client.StartNoBlock = SystemTime.Now();
 
@@ -584,38 +582,33 @@ namespace Billing
 			//Обработка аренды оборудования 
 			try {
 				ProcessHardwareRent(session, client);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				_log.Error(string.Format("Не удалось обработать аренду оборудования для клиента {0}", client.Id), e);
 			}
 
 			//Обработка блокировок
 			ProcessBlock(session, client);
+			
+			//Пассивная активация сервисов
+			RunServicePassiveActivation(session, client);
 
 			//назначаем или переназначаем бесплатные блокировочные дни
 			UpdateYearCycleDate(client);
 		}
 
-		/// <summary>
-		// Cписание абонентской платы, за день подключения добровольной блокировки, 
-		// если клиент не использует услугу - удаляем лишние списания
-		/// </summary>
-		/// <param name="client"></param>
-		/// <param name="session"></param>
-		private void PhysicalClientPaymentWithBlock(Client client, ISession session)
+		//
+		private void RunServicePassiveActivation(ISession session, Client client)
 		{
-			var writeoffs = client.UserWriteOffs.Where(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
-				&& !w.BillingAccount && w.Ignore);
-
-			foreach (var userWriteOff in writeoffs) {
-				client.PhysicalClient.WriteOff(userWriteOff.Sum);
-				userWriteOff.Ignore = false;
-				userWriteOff.BillingAccount = true;
-				session.Save(userWriteOff);
-				session.Save(client.PhysicalClient);
-				session.Save(client);
+			//пока необходимость есть только для Добровольной блокировки
+			var service = Service.GetByType(typeof(VoluntaryBlockin));
+			var clientServiceList = session.Query<ClientService>().Where(s => s.Client.Id == client.Id && s.PassiveActivation == true && s.Service.Id == service.Id).ToList();
+			foreach (var clientService in clientServiceList)
+			{
+				VoluntaryBlockin.RunServicePassiveActivation(session, clientService);
+				session.Save(clientService);
 			}
 		}
+
 
 		/// <summary>
 		/// Создаем заметку в Redmine о просроченной заявке для техподдержки (для физика)

@@ -13,7 +13,17 @@ namespace Inforoom2.Test.Functional.Personal
 	internal class VoluntaryBlockingFixture : PersonalFixture
 	{
 		private MainBilling _billing;
+		[SetUp]
+		public void OnStart()
+		{
+			SystemTime.Now = () => DateTime.Now;
+		}
 
+		[TearDown]
+		public void OnFinish()
+		{
+			SystemTime.Now = () => DateTime.Now;
+		}
 		/// <summary>
 		/// При обычном Flush возникала ошибка, заменил на закрытие сесии - помогло.
 		/// </summary>
@@ -25,8 +35,13 @@ namespace Inforoom2.Test.Functional.Personal
 			Client = DbSession.Query<Client>().First(s => s.Id == Client.Id);
 		}
 
+		/// <summary>
+		/// Проверка подключения клиенту услуги 'Добровольная блокировка'
+		/// </summary>
+		/// <param name="isFree">Бесплатное подключение услуги</param>
+		/// <param name="fullCheck">Включить проверку после отключения услуги</param>
 		[TestCase(arg: true, Description = "Проверка подключения клиенту услуги 'Добровольная блокировка'")]
-		public void SetBlockAccountToClient(bool isFree, bool fullCheck = true)
+		public void SetBlockAccountToClient(bool isFree, bool fullCheck = true, bool activationFallInMinuse = false)
 		{
 			Assert.IsNotNull(Client.PhysicalClient, "Клиент должен быть подключен");
 			SystemTime.Now = () => DateTime.Now; // Для независимого выполнения каждого тест-кейса
@@ -39,18 +54,19 @@ namespace Inforoom2.Test.Functional.Personal
 			UpdateDBSession();
 
 			DbSession.Refresh(Client.PhysicalClient);
+
 			var oldBalance = Client.Balance; // Сохранить текущий баланс клиента
-
+			var oldBonnaWriteOff = Client.GetSumForRegularWriteOff(); //текущая абон плата
+			//отмечаем текущий день, как неоплаченный
+			Client.PaidDay = false;
 			if (!isFree) {
-				//var shift = DateTime.Now.Hour; // Смещение времени во избежание подключения услуги после 22:00
-				//SystemTime.Now = () => DateTime.Now.Date.AddHours(-shift);
-				Client.PaidDay = false; // Для списания абонентской платы
-				Client.FreeBlockDays = 0;
+				Client.FreeBlockDays = 0; // Для списания абонентской платы
 				Client.YearCycleDate = SystemTime.Now(); // Чтобы не уставливалось FreeBlockDays = 28
-				DbSession.Update(Client);
-				DbSession.Flush();
 			}
+			DbSession.Update(Client);
+			DbSession.Flush();
 
+			// подключение услугу Добровольной блокировки
 			Open("Personal/Service");
 			var btnConnect = browser.FindElementByLinkText("Подключить");
 			btnConnect.Click();
@@ -61,27 +77,48 @@ namespace Inforoom2.Test.Functional.Personal
 				btnConnect.Click();
 			}
 
-			DbSession.Refresh(Client);
+			if (activationFallInMinuse) {
+
+				var saleSettings = DbSession.Query<SaleSettings>().FirstOrDefault();
+				Assert.IsTrue(Client.Discount == saleSettings.MaxSale);
+				UpdateDBSession();
+				Client.Balance = 0;
+				DbSession.Save(Client);
+			}
+			UpdateDBSession();
+
 			var blockAccountService = Client.ClientServices.FirstOrDefault(cs => (cs.Service as BlockAccountService) != null);
-			Assert.IsNotNull(blockAccountService, "\nУ клиента все ещё нет услуги добровольной блокировки");
-			Assert.IsTrue(Client.Status.Type == StatusType.VoluntaryBlocking, "\nКлиент не был заблокирован");
+			Assert.IsNotNull(blockAccountService);
+			Assert.IsTrue(Client.Status.Type == StatusType.Worked);
 
 			// Обработать новые списания клиента
-			_billing.SafeProcessPayments(); // Для обработки UserWriteOffs
-			_billing.ProcessWriteoffs();
+			RunBillingProcess();
+			UpdateDBSession();
 			DbSession.Refresh(Client.PhysicalClient);
 			DbSession.Refresh(Client);
-			if (isFree)
-				Assert.AreEqual(0m, oldBalance - Client.Balance, "\nClient.Balance=" + Client.Balance);
-			else {
-				var userWriteoffs = Client.UserWriteOffs.OrderByDescending(uwo => uwo.Date).ToList();
-				var abonentPay = userWriteoffs.FirstOrDefault(uwo => uwo.Comment.Contains("из-за добровольной блокировки"));
-				var activatePay = userWriteoffs.FirstOrDefault(uwo => uwo.Comment.Contains("Платеж за активацию услуги"));
+			blockAccountService = Client.ClientServices.FirstOrDefault(cs => (cs.Service as BlockAccountService) != null);
 
-				Assert.IsNotNull(abonentPay, "\nАбонентская плата не начислена!");
-				Assert.AreNotEqual(0m, abonentPay.Sum, "\nАбонентская плата равна 0.");
+			Assert.IsNotNull(blockAccountService, "\nУ клиента подключена добровольная блокировка");
+			Assert.IsTrue(Client.Status.Type == StatusType.VoluntaryBlocking, "\nКлиент не был заблокирован");
+
+			if (activationFallInMinuse) {
+				Assert.IsNotNull(Client.Balance == - (oldBonnaWriteOff + 50));
+				RunBillingProcess();
+				UpdateDBSession();
+				Assert.IsTrue(Client.Status.Type == StatusType.NoWorked, "\nКлиент был заблокирован");
+				return;
+			}
+
+			if (isFree)
+				Assert.AreEqual(oldBonnaWriteOff, oldBalance - Client.Balance, "\nClient.Balance=" + Client.Balance);
+			else { 
+				var bonnaPay = Client.WriteOffs.OrderByDescending(uwo => uwo.WriteOffDate).FirstOrDefault();
+				var activatePay = Client.UserWriteOffs.OrderByDescending(uwo => uwo.Date).FirstOrDefault(uwo => uwo.Comment.Contains("Платеж за активацию услуги"));
+
+				Assert.IsNotNull(bonnaPay, "\nАбонентская плата не начислена!");
+				Assert.AreNotEqual(0m, bonnaPay.WriteOffSum, "\nАбонентская плата равна 0.");
 				Assert.IsNotNull(activatePay, "\nПлатеж за активацию услуги не начислен!");
-				var paySum = abonentPay.Sum + activatePay.Sum;
+				var paySum = bonnaPay.WriteOffSum + activatePay.Sum;
 				Assert.AreEqual(paySum, oldBalance - Client.Balance, "\nClient.Balance=" + Client.Balance);
 			}
 			if (fullCheck) {
@@ -103,6 +140,11 @@ namespace Inforoom2.Test.Functional.Personal
 				btnConnect = browser.FindElementById("DisconnectBtn");
 				btnConnect.Click();
 				AssertText("Работа возобновлена");
+
+				UpdateDBSession();
+				blockAccountService = Client.ClientServices.FirstOrDefault(cs => (cs.Service as BlockAccountService) != null);
+				Assert.IsNull(blockAccountService, "\nУ клиента все ещё нет услуги добровольной блокировки");
+				Assert.IsTrue(Client.Status.Type == StatusType.Worked, "\nКлиент не был заблокирован");
 			}
 		}
 
@@ -111,15 +153,31 @@ namespace Inforoom2.Test.Functional.Personal
 		{
 			SetBlockAccountToClient(isFree: false, fullCheck: false);
 		}
+		[Test(Description = "Проверка отсутствия скидки после выхода  в минус после выключения услуги")]
+		public void WriteoffBlockingPayWithClientDiscount()
+		{
+			var saleSettings = DbSession.Query<SaleSettings>().FirstOrDefault();
+			Client.Discount = saleSettings.MaxSale;
+			DbSession.Save(Client);
+			UpdateDBSession();
+			SetBlockAccountToClient(isFree: false, fullCheck: false, activationFallInMinuse: true);
+			DbSession.Refresh(Client);
+			Assert.IsTrue(Client.Discount == 0); 
+		}
 
 		[Test(Description ="Проверка списаний с клиента за пользование услугой 'Добровольная блокировка' по истечении бесплатных дней")]
 		public void CheckWriteoffsWithClientAfterFreeBlockDays()
 		{
+			// проверка абон платы, должна быть больше, чем списания с "Добровольной блокировкой"
+			var oldBonnaWriteOff = Client.GetSumForRegularWriteOff();
+			Assert.IsTrue(oldBonnaWriteOff > 3);
+			// добавление услуги "Добровольной блокировкой" клиенту с бесплатными блокировочными днями
 			SetBlockAccountToClient(isFree: true, fullCheck: false);
 
+			// зануление бесплатных блокировочных дней
+			// должны формироваться списания: 50 р.(разово за подключение услуги после "бесплатных блокировочных дней") + 3 р.(ежедневно)
 			UpdateDBSession();
 			Client.FreeBlockDays = 0;
-			// Чтобы формировались списания: 50 р.(разово) + 3 р.(ежедневно)
 			Client.PaidDay = false;
 			// Чтобы не уставливалось FreeBlockDays = 28
 			Client.YearCycleDate = SystemTime.Now();
@@ -127,11 +185,14 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession.Flush();
 
 			var oldBalance = Client.Balance;
+
 			_billing.ProcessWriteoffs();
 
 			UpdateDBSession();
 			DbSession.Refresh(Client.PhysicalClient);
-			Assert.AreEqual(50m + Client.UserWriteOffs.First(s => s.Type == UserWriteOffType.ClientVoluntaryBlock).Sum,
+
+			//баланс уменьшился на 50 (разово)
+			Assert.AreEqual(50,
 				oldBalance - Client.Balance, "\nClient.Balance=" + Client.Balance);
 
 			SystemTime.Now = () => DateTime.Now.AddDays(1);
@@ -196,6 +257,7 @@ namespace Inforoom2.Test.Functional.Personal
 
 			// Чтобы имелась возм-ть для добровольной блокировки на бесплатные дни
 			client.FreeBlockDays = 28;
+			client.PaidDay = false;
 			DbSession.Update(client);
 			DbSession.Flush();
 			LoginForClient(client);
@@ -210,13 +272,16 @@ namespace Inforoom2.Test.Functional.Personal
 			thisElement.Click();
 			WaitForVisibleCss(".notification", 20);
 			WaitForText("активирована на период", 10);
+
+			RunBillingProcess();
+
 			UpdateDBSession();
 			client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Id == client.Id);
 			//списание абон.платы при услуге 'Добровольная блокировка', если клиент продолжит пользоваться услугой, биллинг спишет сумму по нему
-			var writeoff = client.UserWriteOffs.FirstOrDefault(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
-				&& !w.IsProcessedByBilling && w.Ignore && w.Date.Date == dateToday.Date);
-			Assert.True(writeoff != null);
-			Assert.True(balance == client.Balance);
+			var writeoff = client.WriteOffs;
+			Assert.True(writeoff.Count == 1);
+			Assert.True(writeoff.FirstOrDefault().WriteOffSum == sumForRegularWriteOff);
+			Assert.True(balance == client.Balance + sumForRegularWriteOff);
 			Assert.True(client.Disabled);
 			Assert.True(client.ClientServices.Any(s => s.Service.Id == internetServiceId && s.IsActivated));
 			//отказываемся от услуги после списаний биллингом абон.платы, проверяем, что абон. плата по услуге списана, а обычная нет 
@@ -226,9 +291,8 @@ namespace Inforoom2.Test.Functional.Personal
 			UpdateDBSession();
 			client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Id == client.Id);
 
-			writeoff = client.UserWriteOffs.FirstOrDefault(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
-				&& w.IsProcessedByBilling && !w.Ignore && w.Date.Date == dateToday.Date);
-			Assert.True(writeoff != null);
+			writeoff = client.WriteOffs;
+			Assert.True(writeoff.Count == 1);
 			Assert.True(balance - sumForRegularWriteOff == client.Balance);
 			Assert.True(client.Disabled);
 			Assert.True(!client.ClientServices.Any(s => s.Service.Id == internetServiceId && s.IsActivated));
@@ -243,14 +307,11 @@ namespace Inforoom2.Test.Functional.Personal
 			UpdateDBSession();
 			client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Id == client.Id);
 
-			writeoff = client.UserWriteOffs.FirstOrDefault(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
-				&& w.IsProcessedByBilling && !w.Ignore && w.Date.Date == dateToday.Date);
-			Assert.True(writeoff != null);
+			writeoff = client.WriteOffs;
+			Assert.True(writeoff.Count == 1);
 			Assert.True(balance - sumForRegularWriteOff == client.Balance);
 			Assert.True(!client.Disabled);
 			Assert.True(client.ClientServices.Any(s => s.Service.Id == internetServiceId && s.IsActivated));
-			 
-
 		}
 
 		[Test(Description = "Проверка отказа в блокировке клиенту с недостаточным балансом; для задачи №33323")]
@@ -263,6 +324,7 @@ namespace Inforoom2.Test.Functional.Personal
 			Assert.AreEqual(StatusType.Worked, client.Status.Type, "Клиент должен быть подключен");
 
 			var balance = client.Balance;
+			client.PaidDay = false;
 			var sumForRegularWriteOff = client.GetSumForRegularWriteOff();
 
 			Assert.True(balance - sumForRegularWriteOff > 0);
@@ -289,12 +351,15 @@ namespace Inforoom2.Test.Functional.Personal
 			WaitForVisibleCss(".notification",20);
 			WaitForText("активирована на период", 10);
 			UpdateDBSession();
-			client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Id == client.Id);
+
+			RunBillingProcess();
+
+			UpdateDBSession();
+			client = DbSession.Query<Client>().FirstOrDefault(s => s.Id == client.Id);
 			//списание абон.платы при услуге 'Добровольная блокировка', если клиент продолжит пользоваться услугой, биллинг спишет сумму по нему
-			var writeoff = client.UserWriteOffs.FirstOrDefault(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
-				&& !w.IsProcessedByBilling && w.Ignore && w.Date.Date == dateToday.Date);
-			Assert.True(writeoff != null);
-			Assert.True(balance == client.Balance);
+			var writeoff = client.WriteOffs;
+			Assert.True(writeoff.Count == 1);
+			Assert.True(balance == client.Balance + sumForRegularWriteOff);
 			Assert.True(client.Disabled);
 			Assert.True(client.ClientServices.Any(s => s.Service.Id == internetServiceId && s.IsActivated));
 			//отказываемся от услуги до списаний биллингом абон.платы, проверяем, что абон. плата будет списана как обычно (на основании подключенного интернета), 
@@ -309,10 +374,9 @@ namespace Inforoom2.Test.Functional.Personal
 			UpdateDBSession();
 			client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Id == client.Id);
 
-			writeoff = client.UserWriteOffs.FirstOrDefault(w => w.Type == UserWriteOffType.ClientVoluntaryBlock
-				&& w.IsProcessedByBilling && w.Ignore && w.Date.Date == dateToday.Date);
-			Assert.True(writeoff != null);
-			Assert.True(balance == client.Balance);
+			writeoff = client.WriteOffs;
+			Assert.True(writeoff.Count == 1);
+			Assert.True(balance == client.Balance + sumForRegularWriteOff);
 			Assert.True(!client.Disabled);
 			Assert.True(client.ClientServices.Any(s => s.Service.Id == internetServiceId && s.IsActivated));
 
@@ -382,6 +446,7 @@ namespace Inforoom2.Test.Functional.Personal
 				+ 3 * countOfWriteOffs;
 			client.PaidDay = false;
 			DbSession.Update(client);
+			DbSession.Update(client.PhysicalClient);
 			DbSession.Flush();
 			Open("Personal/Service");
 
@@ -394,15 +459,6 @@ namespace Inforoom2.Test.Functional.Personal
 
 			AssertText("Услуга \"Добровольная блокировка\" активирована на период");
 
-			//ПЛАТЕЖИ проходят через каждые 15 мин.
-			RunBillingProcessPayments();
-			UpdateDBSession();
-			client = DbSession.Query<Client>().ToList().FirstOrDefault(c => c.Id == client.Id);
-			DbSession.Refresh(client);
-			//до СПИСАНИЙ счет не меняется (раз в день)
-			Assert.IsTrue(client.HasActiveService(DbSession.Query<Service>().First(s => s.Id == Service.GetIdByType(typeof (BlockAccountService)))));
-			Assert.IsTrue(client.Balance == 50 + client.UserWriteOffs.First(s=> s.Date.Date == SystemTime.Now().Date
-			&& s.Type == UserWriteOffType.ClientVoluntaryBlock).Sum +  3 * countOfWriteOffs);
 
 			//после СПИСАНИЙ счет должен быть уменьшен на одну полную абоненсткую плату
 			RunBillingProcess();

@@ -1005,7 +1005,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			ipPool = new IpPool();
 			ipPool.Begin = oldIpPool.Begin;
 			ipPool.End = oldIpPool.End;
-			ipPool.IsGray = oldIpPool.IsGray;
+			ipPool.IsGray = true;
 			ipPool.LeaseTime = oldIpPool.LeaseTime;
 			ipPool.Relay = oldIpPool.Relay;
 			DbSession.Save(ipPool);
@@ -1099,9 +1099,10 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			browser.FindElementByCssSelector(blockName + ".orderListBorder:last-child  .orderTitle.entypo-right-open-mini").Click();
 			AssertText("Фиксированный IP (авто-назначение) включено (ожидание)");
 			AssertText($"Арендованный IP {newIp}");
-			
-			var ipPoolRegions = new IpPoolRegion(ipPool, CurrentClient.GetRegion());
-			DbSession.Save(ipPoolRegions);
+
+			DbSession.Refresh(ipPool);
+			ipPool.IsGray = false;
+			DbSession.Save(ipPool);
 
 			//биллиинг
 			CurrentClient.PaidDay = false;
@@ -1132,8 +1133,10 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 
 			connectionWithFixedIpAndBadLease(out ipPool, out newIp, out newLease, true);
 
-			var ipPoolRegions = new IpPoolRegion(ipPool, CurrentClient.GetRegion());
-			DbSession.Save(ipPoolRegions);
+			DbSession.Refresh(ipPool);
+			ipPool.IsGray = false;
+			DbSession.Save(ipPool);
+
 			UpdateDBSession();
 
 			//лиза есть, а фиксированного ip нет

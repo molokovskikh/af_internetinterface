@@ -70,46 +70,10 @@ namespace Inforoom2.Models.Services
 
 		public override void Activate(ClientService assignedService, ISession session)
 		{
-			var client = assignedService.Client;
-			client.RatedPeriodDate = SystemTime.Now();
-
-			var now = SystemTime.Now();
-			//если сегодня у пользователя нет списаний с соответствующего типа
-			if (assignedService.BeginDate.Value.Date == now.Date) {
-				if (!client.UserWriteOffs.Any(s => s.Date.Date == now.Date && s.Type == UserWriteOffType.ClientVoluntaryBlock && !s.IsProcessedByBilling)) {
-					//производится списание абон платы
-					var comment = string.Format("Абонентская плата за {0} из-за добровольной блокировки клиента",
-						now.ToShortDateString());
-					var writeOff = new UserWriteOff {
-						Client = client,
-						Type = UserWriteOffType.ClientVoluntaryBlock,
-						Date = now,
-						Sum = client.GetSumForRegularWriteOff(),
-						Comment = comment,
-						Ignore = true
-					};
-					session.Save(writeOff);
-				}
-			}
-
-			client.SetStatus(Status.Get(StatusType.VoluntaryBlocking, session));
-			session.Update(client);
-
+			assignedService.PassiveActivation = true;
 			assignedService.IsActivated = true;
 			assignedService.EndDate = assignedService.EndDate.Value.Date;
 			session.Save(assignedService);
-
-			if (client.FreeBlockDays <= 0) {
-				var comment = string.Format("Платеж за активацию услуги добровольная блокировка с {0} по {1}",
-					assignedService.BeginDate.Value.ToShortDateString(), assignedService.EndDate.Value.ToShortDateString());
-				var writeOff = new UserWriteOff {
-					Client = client,
-					Sum = 50m,
-					Date = now,
-					Comment = comment
-				};
-				session.Save(writeOff);
-			}
 		}
 
 		public override void Deactivate(ClientService assignedService, ISession session)

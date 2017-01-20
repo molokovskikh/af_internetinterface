@@ -166,7 +166,8 @@
 				<td>
 					<div class="col-sm-4 date-picker-box" style="padding-left: 0px;">
 						@Html.Hidden("endpointId", endpoint != null ? endpoint.Port : 0, new { @Name = "connection.Port", @id = "endpoint_PortVal" })
-						@Html.TextBoxFor(o => endpoint.Port, new { @Name = "connection_Port", @class = "form-control", @type = "number", @min = "0", @max = (columns * itemsInRow).ToString(), @disabled = "disabled" })
+						@Html.TextBoxFor(o => endpoint.Port, new { @Name = "connection_Port", id = "endpoint_Port", @class = "form-control", @type = "number", @min = "0", @max = (columns * itemsInRow).ToString(), @disabled = "disabled",
+     @oldswitch = (endpoint != null && endpoint.Switch != null ? endpoint.Switch.Id.ToString() : ""), @oldvalue = (endpoint != null && endpoint.Port != null ? endpoint.Port.ToString() : "") })
 					</div>
 				</td>
 			</tr>

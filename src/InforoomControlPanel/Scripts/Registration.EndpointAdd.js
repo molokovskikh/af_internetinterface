@@ -10,7 +10,7 @@ $(function () {
 		var regionId = $("#RegionDropDown").val();
 		$("#SwitchDropDown").attr("disabled", "disabled");
 		$("#SwitchDropDown").html("");
-		if (regionId !== undefined && regionId !== 0 && regionId !== "") {
+		if (regionId !== undefined && regionId !== 0 && regionId !== "" && parseInt(regionId) !== 'NaN') {
 			$.ajax({
 				url: cli.getParam("baseurl") + "AdminOpen/GetSwitchListForRegion?regionId=" + regionId,
 				type: "POST",

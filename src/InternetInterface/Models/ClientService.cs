@@ -58,6 +58,9 @@ namespace InternetInterface.Models
 		[Property("Diactivated")]
 		public virtual bool IsDeactivated { get; set; }
 
+		[Property]
+		public virtual bool? PassiveActivation { get; set; }
+
 		[Property, Description("Подключить")]
 		public virtual bool ActivatedByUser { get; set; }
 

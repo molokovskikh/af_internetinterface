@@ -35,6 +35,7 @@ namespace InternetInterface.Models
 		public Client()
 		{
 			UserWriteOffs = new List<UserWriteOff>();
+			WriteOffs = new List<WriteOff>();
 			ClientServices = new List<ClientService>();
 			Payments = new List<Payment>();
 			Contacts = new List<Contact>();

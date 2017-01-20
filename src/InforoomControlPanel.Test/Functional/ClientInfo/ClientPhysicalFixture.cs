@@ -559,7 +559,8 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			}
 			DbSession.Save(CurrentClient);
 			DbSession.Flush();
-
+			RunBillingProcess();
+			UpdateDBSession();
 			//обновляем страницу клиента
 			Open("Client/InfoPhysical/" + CurrentClient.Id);
 			//получаем обновленную модель клиента

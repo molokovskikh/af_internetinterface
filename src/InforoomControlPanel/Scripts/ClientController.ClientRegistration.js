@@ -255,7 +255,11 @@ streetChangedCheck = function(data) {
 			return;
 		}
 	}
-	getStreetChangedFlag($("#RegionDropDown :selected").attr(addressHelper.getRegionIdAttribute()), $("#StreetDropDown option").length - 1);
+	var regionId = $("#RegionDropDown :selected").attr(addressHelper.getRegionIdAttribute());
+	if (parseInt(regionId) === 'NaN') {
+		regionId = parseInt($("#RegionDropDown option[value='" + regionId + "']").attr("modelid"));
+	}
+	getStreetChangedFlag(regionId, $("#StreetDropDown option").length - 1);
 }
 houseChangedCheck = function(data) {
 	if (data) {
