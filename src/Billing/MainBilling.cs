@@ -412,8 +412,16 @@ namespace Billing
 					if (normalFlag) {
 						// Reset
 						ArHelper.WithSession(
-							s => s.CreateSQLQuery(string.Format(@"update internet.Clients c
-												set c.PaidDay = false where c.Status <> {0};
+							s => s.CreateSQLQuery(string.Format(@"
+												update internet.Clients as c1
+												JOIN  
+												(SELECT  cl.Id FROM internet.clients AS cl
+												WHERE cl.PhysicalClient IS NOT NULL AND cl.Status <> {0}
+												 OR cl.LawyerPerson IS NOT NULL AND cl.Status <> {0}  
+												 OR (cl.LawyerPerson IS NOT NULL AND cl.Status = {0} AND cl.Id IN 
+												 (SELECT od.ClientId FROM internet.orders AS od 
+												 WHERE od.IsDeactivated = false))) as c2 ON c1.Id = c2.Id 
+												 set PaidDay = false;		
 												update internet.InternetSettings s
 												set s.LastStartFail = true;", BillingIgnoreStatusId))
 								.ExecuteUpdate());

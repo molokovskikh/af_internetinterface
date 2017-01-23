@@ -385,10 +385,10 @@ namespace Inforoom2.Models
 			return Math.Round(sum, 2);
 		}
 
-		public virtual decimal GetSumForRegularWriteOff()
+		public virtual decimal GetSumForRegularWriteOff(int? customInterval = null, decimal? customPrice = null)
 		{
-			var daysInInterval = GetInterval();
-			var price = GetPrice();
+			var daysInInterval = customInterval ?? GetInterval();
+			var price = customPrice ?? GetPrice();
 			return Math.Round(price / daysInInterval, 2);
 		}
 

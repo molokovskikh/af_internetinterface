@@ -783,5 +783,5 @@ $(function() {
 	    }
     });
     phantomFor();
-    GetBusyPorts();
+   // GetBusyPorts();
 });

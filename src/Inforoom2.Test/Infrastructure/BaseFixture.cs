@@ -1317,6 +1317,23 @@ namespace Inforoom2.Test.Infrastructure
 			}
 		}
 
+		/// <summary>
+		/// активация точек подключения, активация списаний у клиентов (при проставлении BeginWork)
+		/// </summary>
+		/// <param name="client"></param>
+		protected void BillingWriteOffRun()
+		{
+			var settings = DbSession.Query<InternetSettings>().FirstOrDefault();
+			settings.NextBillingDate = SystemTime.Now();
+			settings.LastStartFail = false;
+			DbSession.Save(settings);
+			DbSession.Flush();
+
+			var billing = GetBilling();
+			billing.Run();
+
+		}
+
 		protected void OpenWarningPage(Client client, bool login = true)
 		{
 			if(login)

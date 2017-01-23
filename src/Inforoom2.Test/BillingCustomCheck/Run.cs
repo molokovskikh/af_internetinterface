@@ -14,6 +14,7 @@ using NHibernate.Linq;
 using NUnit.Framework;
 using AppealType = Inforoom2.Models.AppealType;
 using Client = Inforoom2.Models.Client;
+using InternetSettings = Inforoom2.Models.InternetSettings;
 using Status = Inforoom2.Models.Status;
 using StatusType = Inforoom2.Models.StatusType;
 
@@ -25,11 +26,17 @@ namespace Inforoom2.Test.BillingCustomCheck
 		protected ISession DbSession;
 		protected int DaysToRun = 34;
 		protected List<int> ClientsToRun = new List<int>() {
-				17317,
-				17315,
-				18393,
-				21303,
-				627
+				22661,
+				23337,
+				23339,
+				23341,
+				22401,
+				23343,
+				22387,
+				22387,
+				4365,
+				14873,
+				5189
 			};
 
 		[SetUp]
@@ -54,9 +61,9 @@ namespace Inforoom2.Test.BillingCustomCheck
 			for (int i = 0; i < DaysToRun; i++) {
 				var date = SystemTime.Now().AddDays(1);
 				SystemTime.Now = () => date;
-				PrepareData(i);
-				DbSession.Transaction.Commit();
-				RunBillingProcess();
+				//PrepareData(i);
+				//DbSession.Transaction.Commit();
+				RunBillingProcess(true);
 				DbSession.Flush();
 				Console.WriteLine($"Current Day {SystemTime.Now().ToString()}");
 			}
@@ -127,12 +134,22 @@ namespace Inforoom2.Test.BillingCustomCheck
 		/// Биллиинг - полный цикл
 		/// </summary>
 		/// <param name="client"></param>
-		public void RunBillingProcess()
+		public void RunBillingProcess(bool runDefaultWriteoff = false)
 		{
 			RunBillingProcessClientEndpointSwitcher();
 			RunBillingProcessPayments();
 			RunBillingProcessPayments();
+			if (runDefaultWriteoff) {
+				var settings = DbSession.Query<InternetSettings>().FirstOrDefault();
+				settings.NextBillingDate = SystemTime.Now();
+				settings.LastStartFail = false;
+				DbSession.Save(settings);
+				DbSession.Flush();
+
+				GetBilling().Run();
+			} else {
 			RunBillingProcessWriteoffs();
+			}
 		}
 
 		/// <summary>

@@ -693,6 +693,12 @@ namespace Inforoom2.Models
 					dSession.Save(lease);
 				}
 
+				currentClient.Appeals.Add(
+					new Appeal(
+						$"Добавлена точка подключения №{endpoint.Id}. Коммутатор: {endpoint.Switch.Name}. Порт: {endpoint.Port}. " +
+							(!string.IsNullOrEmpty(endpoint.Mac) ? " MAC: " + endpoint.Mac + "." : ""),
+						currentClient, AppealType.System, currentEmployee));
+
 				var paymentForConnect = new PaymentForConnect(currentClient.PhysicalClient.ConnectSum, endpoint);
 				//Пытаемся найти сотрудника
 				paymentForConnect.Employee = currentEmployee;

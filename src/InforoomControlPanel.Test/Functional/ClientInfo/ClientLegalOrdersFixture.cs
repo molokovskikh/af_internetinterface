@@ -135,6 +135,167 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				"Баланс клиента не совпадает с должным.");
 		}
 
+
+		[Test, Description("Страница клиента. Юр. лицо. Добавление простого заказа")]
+		public void OrderClosingAfterStatusChangedToDisovled()
+		{
+			string blockName = "#emptyBlock_legalOrders ";
+			string blockModelName = "#ModelForOrderEdit ";
+			var orderNumber = "1";
+			var serviceDescription = "Услуга РАЗ";
+			var serviceDescriptionCircle = "Периодичная услуга";
+			var balanceBeforeOrder = CurrentClient.Balance;
+
+			//Проверяем открываем редактор заказа 
+			browser.FindElementByCssSelector(blockName + "[data-target='#ModelForOrderEdit']").Click();
+			//Порт
+			WaitAjax(10);
+			//Номер
+			WaitForVisibleCss(blockModelName + "input[name='order.Number']", 7);
+			var inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='order.Number']");
+			inputObj.Clear();
+			inputObj.SendKeys(orderNumber);
+			//Дата начала
+			WaitForVisibleCss(blockModelName + "input[name='order.BeginDate']", 7);
+			inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='order.BeginDate']");
+			inputObj.Clear();
+			browser.FindElementByCssSelector(".datepicker-days .day").Click();
+			browser.FindElementByCssSelector("#OrderServicesNumber").Click();
+
+			//Добавить разовую услугу
+			browser.FindElementByCssSelector(blockModelName + ".addNewElement.addOrderServiceElement").Click();
+			//Описание
+			WaitForVisibleCss(blockModelName + ".serviceDescription input[clone='0']", 7);
+			inputObj = browser.FindElementByCssSelector(blockModelName + ".serviceDescription input[clone='0']");
+			inputObj.Clear();
+			inputObj.SendKeys(serviceDescription);
+			//Стоимость
+			WaitForVisibleCss(blockModelName + "#OrderServicesList .serviceCost input[clone='0']", 7);
+			inputObj = browser.FindElementByCssSelector("#OrderServicesList .serviceCost input[clone='0']");
+			inputObj.Clear();
+			inputObj.SendKeys("100");
+			//Добавить периодическую услугу
+			browser.FindElementByCssSelector(blockModelName + ".addNewElement.addOrderServiceElement").Click();
+			//Описание
+			WaitForVisibleCss(blockModelName + ".serviceDescription input[clone='1']", 7);
+			inputObj = browser.FindElementByCssSelector(blockModelName + ".serviceDescription input[clone='1']");
+			inputObj.Clear();
+			inputObj.SendKeys(serviceDescriptionCircle);
+			//Стоимость
+			WaitForVisibleCss(blockModelName + "#OrderServicesList .serviceCost input[clone='1']", 7);
+			inputObj = browser.FindElementByCssSelector("#OrderServicesList .serviceCost input[clone='1']");
+			inputObj.Clear();
+			inputObj.SendKeys("100");
+
+			inputObj = browser.FindElementByCssSelector(blockModelName + "input[name='order.OrderServices[1].IsPeriodic']");
+			inputObj.Click();
+			Assert.That(inputObj.GetAttribute("checked"), Is.Not.Null, "Периодичность не указана.");
+
+			//Не использовать точку подключения
+			browser.FindElementByCssSelector(blockModelName + "input[name='noEndpoint']").Click();
+			//сохраняем изменения
+			browser.FindElementByCssSelector(blockModelName + ".btn.btn-success").Click();
+
+			var woSumm = 100;
+			woSumm += 100;
+			SystemTime.Now = () => DateTime.Now.LastDayOfMonth();
+			//запуск биллинга
+			RunBillingProcessPayments();
+			RunBillingProcessClientEndpointSwitcher();
+			BillingWriteOffRun();
+			UpdateDBSession();
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.LegalClient);
+			Assert.IsTrue(CurrentClient.Balance == balanceBeforeOrder - woSumm);
+
+			woSumm += 100;
+			SystemTime.Now = () => DateTime.Now.AddMonths(1).LastDayOfMonth();
+			RunBillingProcessPayments();
+			BillingWriteOffRun();
+			UpdateDBSession();
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.LegalClient);
+			Assert.IsTrue(CurrentClient.Balance == balanceBeforeOrder - woSumm);
+
+			woSumm += 100;
+			SystemTime.Now = () => DateTime.Now.AddMonths(2).LastDayOfMonth();
+			RunBillingProcessPayments();
+			RunBillingProcessPayments();
+			BillingWriteOffRun();
+			UpdateDBSession();
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.LegalClient);
+			Assert.IsTrue(CurrentClient.Balance == balanceBeforeOrder - woSumm);
+
+			blockName = "#emptyBlock_PrivateLegalInfo ";
+			//редактируем блок
+			browser.FindElementByCssSelector(blockName + ".btn.btn-blue.lockButton").Click();
+			//Статус - Расторгнут
+			Css(blockName + "[name='clientStatus']")
+				.SelectByText((StatusType.Dissolved).GetDescription());
+			//Указываем причину изменения статуса
+			inputObj = browser.FindElementByCssSelector(blockName + "textarea[name='clientStatusChangeComment']");
+			inputObj.Clear();
+			inputObj.SendKeys("причина изменения статуса");
+			//сохранение изменений
+			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
+
+			UpdateDBSession();
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.LegalClient);
+			//Проверяем изменения
+			Assert.That(CurrentClient.Status.Type, Is.EqualTo(StatusType.Dissolved), "Статус не совпадает.");
+			Assert.That(CurrentClient.Disabled, Is.EqualTo(true), "Состояние не совпадает.");
+			Assert.That(CurrentClient.AutoUnblocked, Is.EqualTo(false), "Состояние не совпадает.");
+			Assert.That(CurrentClient.Discount, Is.EqualTo(0), "Скидка не совпадает.");
+			Assert.That(CurrentClient.Endpoints.Count(s => !s.Disabled), Is.EqualTo(0), "Отмена блокировки не совпадает.");
+			
+			woSumm += 100;
+			SystemTime.Now = () => DateTime.Now.AddMonths(3).LastDayOfMonth();
+			BillingWriteOffRun();
+			UpdateDBSession();
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.LegalClient);
+			Assert.IsTrue(CurrentClient.Balance == balanceBeforeOrder - woSumm);
+
+			woSumm += 100;
+			SystemTime.Now = () => DateTime.Now.AddMonths(4).LastDayOfMonth();
+			BillingWriteOffRun();
+			UpdateDBSession();
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.LegalClient);
+			Assert.IsTrue(CurrentClient.Balance == balanceBeforeOrder - woSumm);
+
+			//Удаление заказа
+			browser.FindElementByCssSelector("#emptyBlock_legalOrders .orderListBorder .right .c-pointer.red").Click();
+			WaitForText("Закрытие заказа", 10);
+			//сохранение изменений
+			browser.FindElementByCssSelector("#ModelForOrderRemove .btn-success").Click();
+			UpdateDBSession();
+
+
+			woSumm += 100;
+			SystemTime.Now = () => DateTime.Now.AddMonths(5).LastDayOfMonth();
+			RunBillingProcessPayments();
+			BillingWriteOffRun();
+			UpdateDBSession();
+			DbSession.Refresh(CurrentClient);
+			DbSession.Refresh(CurrentClient.LegalClient);
+			Assert.IsTrue(CurrentClient.Balance == balanceBeforeOrder - woSumm);
+
+			for (int i = 6; i < 14; i++) {
+				SystemTime.Now = () => DateTime.Now.AddMonths(7).LastDayOfMonth();
+				RunBillingProcessPayments();
+				RunBillingProcessClientEndpointSwitcher();
+				BillingWriteOffRun();
+				UpdateDBSession();
+				DbSession.Refresh(CurrentClient);
+				DbSession.Refresh(CurrentClient.LegalClient);
+				Assert.IsTrue(CurrentClient.Balance == balanceBeforeOrder - woSumm);
+			}
+
+		}
+
 		public void OrderWithConnection(bool withStaticIp = true, string postfixOfBlock = ".orderListBorder ", ClientEndpoint endpoint = null, DateTime setFinishDate = new DateTime(), bool withFixedIpAutoSet = false)
 		{
 			string blockName = "#emptyBlock_legalOrders ";

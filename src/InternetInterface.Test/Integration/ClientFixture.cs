@@ -74,6 +74,7 @@ namespace InternetInterface.Test.Integration
 		{
 			MainBilling.InitActiveRecord();
 			session.BeginTransaction();
+			var status = session.Query<Status>().First(s=>s.Id == (int)StatusType.Worked);
 			var settings = session.Query<SaleSettings>().First();
 			var client = ClientHelper.Client(session);
 			client.RatedPeriodDate = DateTime.Now;
@@ -83,7 +84,9 @@ namespace InternetInterface.Test.Integration
 			client.PhysicalClient.Balance = 50;
 			client.PhysicalClient.MoneyBalance = 0;
 			client.FreeBlockDays = 0;
+			client.Status = status;
 			session.Save(client);
+			session.Flush();
 			session.Transaction.Commit();
 
 			var billing = new MainBilling();
