@@ -101,10 +101,13 @@
 			<tr class="@(client.Status.Type == StatusType.NoWorked || client.Status.Type == StatusType.Dissolved ? "appeal Block" : "") @(client.Status.Type == StatusType.Dissolved ? "statusDissolved" : "")">
 				<td>Статус клиента</td>
 				<td>
-					@if (client.HasActiveService<BlockAccountService>()) {
-						<a class="c-pointer blue" title="Принудительное отключение услуги" data-target="#ModelBlockAccountCancel" data-toggle="modal">
-							<strong class="red">@client.Status.Name</strong><span> ( отключить )</span></a>
-					}
+				    @if (client.HasActiveService<BlockAccountService>()) {
+				        <a class="c-pointer blue" title="Принудительное отключение услуги" data-target="#ModelBlockAccountCancel" data-toggle="modal">
+				            <strong class="red">@client.Status.Name</strong>
+				            <br/>
+				            <span> (отключить добровольную блокировку)</span>
+				        </a>
+				    }
 					else {
 						<span>@client.Status.Name</span>
                     }

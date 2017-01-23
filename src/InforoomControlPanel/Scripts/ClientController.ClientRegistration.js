@@ -68,8 +68,9 @@ var addressChangeFlagTimerSpeed = 1000;
 // AJAX-Ззапросы
 getStreetChangedFlag = function (regionId, countStreet) {
 	if ($(".addressAjaxRunner.stop").length != 0) return;
-	if (regionId == null || countStreet == null
-		|| (regionId == "" && regionId != "0") || (countStreet == "" && countStreet != "0")) {
+	if ( (regionId == undefined || countStreet == undefined 
+		|| regionId == null || countStreet == null
+		|| String(parseInt(regionId)) == "NaN" || String(parseInt(countStreet)) == "NaN")) {
 		setTimeout(function() { streetChangedCheck(false); }, addressChangeFlagTimerSpeed);
 		return;
 	}
@@ -255,7 +256,11 @@ streetChangedCheck = function(data) {
 			return;
 		}
 	}
-	getStreetChangedFlag($("#RegionDropDown :selected").attr(addressHelper.getRegionIdAttribute()), $("#StreetDropDown option").length - 1);
+	var regionId = $("#RegionDropDown :selected").attr(addressHelper.getRegionIdAttribute());
+	if (regionId == undefined || parseInt(regionId) === 'NaN') {
+		regionId = parseInt($("#RegionDropDown option[value='" + regionId + "']").attr("modelid"));
+	}
+	getStreetChangedFlag(regionId, $("#StreetDropDown option").length - 1);
 }
 houseChangedCheck = function(data) {
 	if (data) {

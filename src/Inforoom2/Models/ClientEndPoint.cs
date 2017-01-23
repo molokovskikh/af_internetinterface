@@ -78,7 +78,7 @@ namespace Inforoom2.Models
 				const string macRegExp = @"^([0-9a-fA-F][0-9a-fA-F]-){5}([0-9a-fA-F][0-9a-fA-F])$";
 				if (value != null && value.Length == 17 && Regex.IsMatch(value, macRegExp)) {
 					MacFull = value + "-00-00-00-00-00-00-00-00-00-00";
-				}
+				}else
 				MacFull = value;
 			}
 		}

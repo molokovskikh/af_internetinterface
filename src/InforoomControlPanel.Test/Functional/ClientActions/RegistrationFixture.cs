@@ -425,9 +425,18 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			AssertText("настройки точки подключения заданы неверно для подключения типа гибрид.");
 			//добавление лизы
 			var leaseNew = ClientWithEndpointLeaseCreate();
+
+			// сохранения текущих настроек другой точке подключения, для проверки валидации
+			var createdEndpoint = DbSession.Query<Inforoom2.Models.ClientEndpoint>().FirstOrDefault();
+			createdEndpoint.Switch = leaseNew.Switch;
+			createdEndpoint.Port = leaseNew.Port;
+			DbSession.Save(createdEndpoint);
+			DbSession.Flush();
+
 			//очищаем форму, заполняем ее повторно
 			Open("Client/RegistrationPhysical");
 			Setup();
+			WaitAjax();
 			//данные о точке подключения должны подхватится по лизе
 			AssertText(leaseNew.Ip.ToString());
 			AssertText(leaseNew.Mac);
@@ -444,7 +453,19 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 
 			//Попытка зарегистрировать клиента
 			SendRegistration();
+
+			//Ожидание пока проставится адрес
+			WaitForMap();
+			DbSession.Refresh(createdEndpoint);
+			AssertText(
+				$"Ошибка: указанные настройки точки подключения уже используются для точки №{createdEndpoint.Id} подключения клиента {createdEndpoint.Client.Id}");
+			createdEndpoint.Port = createdEndpoint.Port * 2;
+			DbSession.Save(createdEndpoint);
+			DbSession.Flush();
+
+			SendRegistration();
 			Open("Client/RegistrationPhysical");
+
 
 			//Проверка клиента с точкой подключения
 			ClientWitchEndpointCheck(leaseNew.Mac, leaseNew.Switch.Id, leaseNew.Port);

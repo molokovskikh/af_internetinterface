@@ -7,9 +7,16 @@ using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using Inforoom2.Test.Infrastructure;
 using Inforoom2.Test.Infrastructure.Helpers;
+using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using Client = Inforoom2.Models.Client;
+using ClientService = Inforoom2.Models.ClientService;
+using Lease = Inforoom2.Models.Lease;
+using Payment = Inforoom2.Models.Payment;
+using PlanChangerData = Inforoom2.Models.PlanChangerData;
+using StatusType = Inforoom2.Models.StatusType;
 
 namespace Inforoom2.Test.Functional.Personal
 {
@@ -478,9 +485,10 @@ namespace Inforoom2.Test.Functional.Personal
 			DbSession = DbSession.SessionFactory.OpenSession();
 
 			CurrentClient = DbSession.Query<Client>().FirstOrDefault(s => s.Id == CurrentClient.Id);
+			var currentMonthDaysCount = DateTimeExtentions.DaysInMonth(SystemTime.Now());
 			var regWriteOff = CurrentClient.GetSumForRegularWriteOff();
 			var currentBalance = CurrentClient.Balance;
-
+			var lastPriceWriteIff = CurrentClient.GetSumForRegularWriteOff();
 			for (int i = 1; i <= days; i++) {
 				SystemTime.Now = () => now.AddDays(i);
 				CurrentClient.PaidDay = false;
@@ -489,8 +497,16 @@ namespace Inforoom2.Test.Functional.Personal
 				RunBillingProcess();
 				DbSession.Refresh(CurrentClient);
 				DbSession.Refresh(CurrentClient.PhysicalClient);
-				Assert.IsTrue(regWriteOff == CurrentClient.GetSumForRegularWriteOff());
-				Assert.IsTrue(currentBalance == CurrentClient.Balance + i*CurrentClient.GetSumForRegularWriteOff());
+				if (currentMonthDaysCount == DateTimeExtentions.DaysInMonth(SystemTime.Now())) {
+					Assert.IsTrue(regWriteOff == CurrentClient.GetSumForRegularWriteOff());
+					Assert.IsTrue(currentBalance == CurrentClient.Balance + i*CurrentClient.GetSumForRegularWriteOff());
+					lastPriceWriteIff = i*CurrentClient.GetSumForRegularWriteOff();
+				} else {
+					//если количество дней в месяцах разное , отнимаем один день при расчете, т.к. списание берется за вчерашний день
+					Assert.IsTrue(currentBalance ==
+						CurrentClient.Balance + lastPriceWriteIff + CurrentClient.GetSumForRegularWriteOff(DateTimeExtentions.DaysInMonth(SystemTime.Now().AddDays(-1))));
+					lastPriceWriteIff += CurrentClient.GetSumForRegularWriteOff(currentMonthDaysCount);
+				}
 			}
 			SystemTime.Now = () => DateTime.Now;
 			UpdateDriverSideSystemTime();

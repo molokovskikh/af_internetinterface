@@ -30,9 +30,12 @@ namespace Inforoom2.Models
 
 		[Property(Column = "Activated")]
 		public virtual bool IsActivated { get; set; }
-
+		
 		[Property(Column = "Diactivated")]
 		public virtual bool IsDeactivated { get; set; }
+
+		[Property]
+		public virtual bool? PassiveActivation { get; set; }
 
 		[Property]
 		public virtual bool ActivatedByUser { get; set; }

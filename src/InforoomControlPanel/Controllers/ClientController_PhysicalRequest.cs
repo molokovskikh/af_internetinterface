@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -342,10 +343,23 @@ namespace InforoomControlPanel.Controllers
 			var currentStreet =
 				DbSession.Query<Street>().FirstOrDefault(s => s.Name.ToLower().Trim() == clientRequest.Street.ToLower().Trim());
 			var tempHouseNumber = (clientRequest.HouseNumber != null ? clientRequest.HouseNumber + clientRequest.Housing : "");
-			var houseToFind = DbSession.Query<House>().FirstOrDefault(s => s.Number == tempHouseNumber
-				&&
-				(s.Region == currentRegion ||
-					s.Street == currentStreet && s.Region == null));
+			var queryHouseStreet = new List<House>();
+			var queryHouseRegion = new List<House>();
+
+			if (currentStreet != null) {
+				queryHouseStreet = DbSession.Query<House>().Where(s => s.Street.Id == currentStreet.Id).ToList();
+			}
+			if (currentStreet != null) {
+				queryHouseRegion = DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
+					((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) ||
+						(s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
+					(s.Street.Region.Id == currentRegion.Id && s.Region == null ||
+						(s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id))
+					).ToList();
+			}
+
+			var houseToFind = queryHouseStreet.FirstOrDefault(s=>s.Number == tempHouseNumber)?? queryHouseRegion.FirstOrDefault(s => s.Number == tempHouseNumber);
+
 
 			if (houseToFind == null) {
 				houseToFind = new House();
@@ -501,6 +515,19 @@ namespace InforoomControlPanel.Controllers
 						"Ошибка: настройки точки подключения заданы неверно для подключения типа гибрид.";
 					ErrorMessage(errorMessageForEndpointPreRegistration);
 				}
+				if (string.IsNullOrEmpty(errorMessageForEndpointPreRegistration)) {
+					var createdEnpoint =
+						DbSession.Query<ClientEndpoint>()
+							.FirstOrDefault(s => s.Switch != null && s.Switch.Id == baseSwitch.Id && s.Port == basePort);
+					if (createdEnpoint != null) {
+						var adminPanelNewClientPage = ConfigurationManager.AppSettings["adminPanelNewPhysicalClientPage"];
+						var href = $"<a href='" + adminPanelNewClientPage + createdEnpoint.Client.Id + $"'>{createdEnpoint.Client.Id}</a>";
+						//текущие настройки для точки подключения не должны использоваться
+						errorMessageForEndpointPreRegistration =
+							$"Ошибка: указанные настройки точки подключения уже используются для точки №{createdEnpoint.Id} подключения клиента {href}.";
+						ErrorMessage(errorMessageForEndpointPreRegistration);
+					}
+				}
 			}
 			// если ошибок нет
 			if (errors.Length == 0 && errorMessageForEndpointPreRegistration == String.Empty) {
@@ -625,7 +652,7 @@ namespace InforoomControlPanel.Controllers
 			}
 
 			ViewBag.CurrentLease = lease;
-			ViewBag.CurrentIp = HttpContext.Request.UserHostAddress;
+			ViewBag.CurrentIp = addressIp;
 			ViewBag.RequestGybrid = clientRequest.Hybrid;
 
 			ViewBag.CurrentRegion = currentRegion;

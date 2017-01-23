@@ -4,6 +4,7 @@ using System.Text;
 using Castle.ActiveRecord;
 using Common.Tools;
 using InternetInterface.Models;
+using NHibernate;
 
 namespace InternetInterface.Services
 {
@@ -62,47 +63,10 @@ namespace InternetInterface.Services
 		public override void Activate(ClientService assignedService)
 		{
 			if (CanActivate(assignedService) && !assignedService.IsActivated) {
-				var client = assignedService.Client;
-
-				client.RatedPeriodDate = DateTime.Now;
-
-				var now = SystemTime.Now();
-				//если сегодня у пользователя нет списаний с соответствующего типа
-				if (assignedService.BeginWorkDate.Value.Date == now.Date) {
-					if (!client.UserWriteOffs.Any(s => s.Date.Date == now.Date && s.Type == UserWriteOffType.ClientVoluntaryBlock)) {
-						//производится списание абон платы
-						var comment = string.Format("Абонентская плата за {0} из-за добровольной блокировки клиента",
-							now.ToShortDateString());
-						var writeOff = new UserWriteOff {
-							Client = client,
-							Type = UserWriteOffType.ClientVoluntaryBlock,
-							Date = now,
-							Sum = client.GetSumForRegularWriteOff(),
-							Comment = comment,
-							Ignore = true
-						};
-						ActiveRecordMediator.Save(writeOff);
-					}
-				}
-
-				client.SetStatus(Status.Find((uint)StatusType.VoluntaryBlocking));
-				client.Update();
-
+				assignedService.PassiveActivation = true;
 				assignedService.IsActivated = true;
 				assignedService.EndWorkDate = assignedService.EndWorkDate.Value.Date;
 				ActiveRecordMediator.Save(assignedService);
-
-				if (client.FreeBlockDays <= 0) {
-					var comment = string.Format("Платеж за активацию услуги добровольная блокировка с {0} по {1}",
-						assignedService.BeginWorkDate.Value.ToShortDateString(), assignedService.EndWorkDate.Value.ToShortDateString());
-					var writeOff = new UserWriteOff {
-						Client = client,
-						Sum = 50m,
-						Date = DateTime.Now,
-						Comment = comment
-					};
-					ActiveRecordMediator.Save(writeOff);
-				}
 			}
 		}
 
@@ -144,6 +108,10 @@ namespace InternetInterface.Services
 			return assignedService.Client.GetInterval() * 3m;
 		}
 
+		/// <summary>
+		/// Вызывается в ProcessAll после Пассивной активации услуги
+		/// </summary>
+		/// <param name="assignedService"></param>
 		public override void WriteOff(ClientService assignedService)
 		{
 			var client = assignedService.Client;
@@ -155,10 +123,10 @@ namespace InternetInterface.Services
 				client.Update();
 			}
 			if (assignedService.IsActivated && client.FreeBlockDays == 0) {
-				var userWriteOffs = client.UserWriteOffs.Where(s=>!s.Ignore).ToList()
+				var userWriteOffs = client.UserWriteOffs.ToList()
 					.Where(uw => uw.Comment.Contains("Платеж за активацию услуги добровольная блокировка")).ToList();
 				var lastUserWriteOff = userWriteOffs.OrderByDescending(uw => uw.Date).ToList().FirstOrDefault();
-				if (lastUserWriteOff == null || lastUserWriteOff.Date < assignedService.BeginWorkDate) {
+				if (lastUserWriteOff == null || lastUserWriteOff.Date < assignedService.BeginWorkDate?.Date) {
 					var writeOffComment = "Разовое списание за пользование услугой добровольная блокировка";
 					var writeOffs = client.WriteOffs.ToList()
 						.Where(uw => uw.Comment != null && uw.Comment.Contains(writeOffComment)).ToList();
@@ -169,6 +137,35 @@ namespace InternetInterface.Services
 						newWriteOff.Save();
 					}
 				}
+			}
+		}
+
+		public static void RunServicePassiveActivation(ISession session, ClientService assignedService)
+		{
+			var now = SystemTime.Now();
+			var client = assignedService.Client;
+			client.RatedPeriodDate = SystemTime.Now();
+			//если сегодня у пользователя нет списаний с соответствующего типа
+			client.SetStatus(Status.Get(StatusType.VoluntaryBlocking, session));
+
+			assignedService.PassiveActivation = false;
+
+			if (client.FreeBlockDays <= 0) {
+				var comment = string.Format("Платеж за активацию услуги добровольная блокировка с {0} по {1}",
+					assignedService.BeginWorkDate?.ToShortDateString(), assignedService.BeginWorkDate?.ToShortDateString());
+				var writeOff = new UserWriteOff {
+					Client = client,
+					Sum = 50m,
+					Date = now,
+					Comment = comment,
+					BillingAccount = true
+				};
+				client.UserWriteOffs.Add(writeOff);
+				client.PhysicalClient.WriteOff(writeOff.Sum);
+
+				session.Save(client.PhysicalClient);
+				session.Save(writeOff);
+				session.Update(client);
 			}
 		}
 	}

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Billing;
 using Castle.Components.Validator;
 using Common.Tools;
 using Common.Web.Ui.MonoRailExtentions;
@@ -71,24 +72,45 @@ namespace InternetInterface.Test.Integration
 		[Test(Description = "После деактивации услуги добровольная блокировка у клиента отрицательный баланс мы должны сбросить скидку тк он ушел в минус")]
 		public void Reset_sale_on_disable_in_voluntary_block()
 		{
+			MainBilling.InitActiveRecord();
+			session.BeginTransaction();
+			var status = session.Query<Status>().First(s=>s.Id == (int)StatusType.Worked);
 			var settings = session.Query<SaleSettings>().First();
 			var client = ClientHelper.Client(session);
 			client.RatedPeriodDate = DateTime.Now;
 			client.BeginWork = DateTime.Now.AddYears(-2);
 			client.StartNoBlock = DateTime.Now.AddYears(-2);
 			client.Sale = settings.MaxSale;
-			client.PhysicalClient.Balance = client.GetSumForRegularWriteOff() + 50;
+			client.PhysicalClient.Balance = 50;
 			client.PhysicalClient.MoneyBalance = 0;
 			client.FreeBlockDays = 0;
+			client.Status = status;
 			session.Save(client);
+			session.Flush();
+			session.Transaction.Commit();
+
+			var billing = new MainBilling();
+			billing.ProcessPayments();
+
+			session.BeginTransaction();
+			client = session.Query<Client>().First(s => s.Id == client.Id);
+			var sumForRegularWriteOff = client.GetSumForRegularWriteOff();
+			client.PhysicalClient.Balance = sumForRegularWriteOff + 50;
 			var clientService = new ClientService(client, session.Query<VoluntaryBlockin>().First()) {
 				BeginWorkDate = DateTime.Today,
 				EndWorkDate = DateTime.Today.AddDays(1)
 			};
+			client = session.Query<Client>().First(s => s.Id == client.Id);
 			client.Activate(clientService);
+			session.Transaction.Commit();
+
+			billing = new MainBilling();
+			billing.ProcessPayments();
+			billing.ProcessWriteoffs();
+
+			session.BeginTransaction();
+			client = session.Query<Client>().First(s => s.Id == client.Id);
 			session.Refresh(client);
-			client.WriteOff(client.GetSumForRegularWriteOff(), false);
-			client.UserWriteOffs.Where(s=>s.Date.Date == DateTime.Today.Date).Each(s => { client.WriteOff(s.Sum, false);});
 			Assert.That(client.Balance, Is.EqualTo(0));
 			SystemTime.Now = () => DateTime.Now.AddDays(1);
 			client.ClientServices.ToArray().Each(c => c.TryDeactivate());
@@ -97,6 +119,7 @@ namespace InternetInterface.Test.Integration
 			Assert.AreEqual(0, client.Sale);
 			Assert.IsNull(client.StartNoBlock);
 			Assert.AreEqual(StatusType.NoWorked, client.Status.Type);
+			session.Transaction.Commit();
 		}
 
 		[Test]

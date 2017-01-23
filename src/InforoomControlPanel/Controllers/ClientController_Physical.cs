@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -455,6 +456,20 @@ namespace InforoomControlPanel.Controllers
 					"Ошибка: настройки точки подключения заданы неверно для подключения типа гибрид.";
 				ErrorMessage(errorMessageForEndpointPreRegistration);
 			}
+			if (addNewEndpoint && string.IsNullOrEmpty(errorMessageForEndpointPreRegistration)) {
+				var createdEnpoint =
+					DbSession.Query<ClientEndpoint>()
+						.FirstOrDefault(s => s.Switch != null && s.Switch.Id == baseSwitch.Id && s.Port == basePort);
+				if (createdEnpoint != null) {
+					var adminPanelNewClientPage = ConfigurationManager.AppSettings["adminPanelNewPhysicalClientPage"];
+					var href = $"<a href='" + adminPanelNewClientPage + createdEnpoint.Client.Id + $"'>{createdEnpoint.Client.Id}</a>";
+					//текущие настройки для точки подключения не должны использоваться
+					errorMessageForEndpointPreRegistration =
+						$"Ошибка: указанные настройки точки подключения уже используются для точки №{createdEnpoint.Id} подключения клиента {href}.";
+					ErrorMessage(errorMessageForEndpointPreRegistration);
+				}
+			}
+
 
 			// если нет ошибок и регистрирующее лицо указано
 			if (errors.Length == 0 && client.Agent != null && errorMessageForEndpointPreRegistration == String.Empty)
