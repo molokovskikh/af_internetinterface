@@ -69,7 +69,7 @@ namespace InternetInterface.Test.Integration
 			Assert.Throws<ServiceActivationException>(() => client.Activate(new ClientService(client, Service.Type<DebtWork>())));
 		}
 
-		[Test(Description = "После деактивации услуги добровольная блокировка у клиента отрицательный баланс мы должны сбросить скидку тк он ушел в минус")]
+		[Test(Description = "После деактивации услуги добровольная блокировка у клиента отрицательный баланс мы должны сбросить скидку тк он ушел в минус"), Ignore("Тест был перенесен. Inforoom2.Test - WriteoffBlockingPayWithClientDiscount() ")]
 		public void Reset_sale_on_disable_in_voluntary_block()
 		{
 			MainBilling.InitActiveRecord();
