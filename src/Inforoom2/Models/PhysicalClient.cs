@@ -702,18 +702,15 @@ namespace Inforoom2.Models
 				var paymentForConnect = new PaymentForConnect(currentClient.PhysicalClient.ConnectSum, endpoint);
 				//Пытаемся найти сотрудника
 				paymentForConnect.Employee = currentEmployee;
-
-
+				
 				var internet = currentClient.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Internet);
 				internet.ActivateFor(currentClient, dSession);
 				var iptv = currentClient.ClientServices.First(i => (ServiceType) i.Service.Id == ServiceType.Iptv);
 				iptv.ActivateFor(currentClient, dSession);
-
-				if (currentClient.IsNeedRecofiguration)
-					SceHelper.UpdatePackageId(dSession, currentClient);
-
+				
 				dSession.Save(baseSwitch);
 				dSession.Save(paymentForConnect);
+				SceHelper.UpdatePackageId(dSession, currentClient);
 			}
 		}
 	}
