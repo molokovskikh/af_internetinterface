@@ -1,0 +1,68 @@
+﻿@using Inforoom2.Models
+
+@{
+  ViewBag.Title = "Группы сотрудников";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+
+  IList<EmployeeGroup> groupList = ViewBag.EmployeeGroupList;
+  EmployeeGroup currentGroup = ViewBag.CurrentGroup;
+}
+
+
+<div class="panel panel-primary col-md-12">
+    <div class="panel-body">
+        @using (@Html.BeginForm("GroupAdd", "EmployeeGroup", null, FormMethod.Post, new {@class = "form-horizontal form-groups-bordered"})) {
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Наименование</label>
+                <div class="col-sm-2">
+                    @Html.TextBoxFor(I => currentGroup.Name, new { @class = "form-control", @Name = "name"})
+                    @ViewBag.Validation.GetError(currentGroup, "Name", "Поле не может быть пустым")
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-green" type="submit">Добавить</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div class="panel panel-primary col-md-12">
+    <div class="panel-body">
+        <div class="form-group">
+            <table class="table table-bordered table-striped datatable no-footer">
+                <thead>
+                <tr>
+                    <th>Номер</th>
+                    <th>Наименование</th>
+                    <th>Участники</th>
+                    <th>Действие</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var groupItem in groupList) {
+                    <tr>
+                        <td>
+                            <span>@groupItem.Id</span>
+                        </td>
+                        <td>
+                            <span>@groupItem.Name</span>
+                        </td>
+                        <td>
+                            @foreach (var employeeItem in groupItem.EmployeeList) {
+                                <span> - </span><a href="@Url.Action("EditEmployee", "Admin", new {id = employeeItem.Id})">@employeeItem.Name</a>
+                                <br/>
+                            }
+                        </td>
+                        <td>
+                            <a class="btn btn-red" title="удалить" onclick="submit('Вы действительно хотите удалить группу №@(groupItem.Id) @(groupItem.Name) ?')"
+                               href="@Url.Action("GroupDelete", new {@id = groupItem.Id})">
+                                удалить
+                            </a>
+                            <a class="btn btn-green" title="удалить" href="@Url.Action("GroupEdit", new {@id = groupItem.Id})">редактировать</a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

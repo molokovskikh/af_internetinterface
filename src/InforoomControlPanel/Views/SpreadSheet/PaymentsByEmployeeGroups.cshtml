@@ -1,0 +1,182 @@
+﻿@using System.Globalization
+@using Common.Tools
+@using Inforoom2.Components
+@using Inforoom2.Models
+@using InforoomControlPanel.Helpers
+@using InforoomControlPanel.Models
+@using NPOI.SS.Formula.Functions
+@model dynamic
+@{
+  ViewBag.Title = "Платежи по группам";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  InforoomModelFilter<Payment> pager = ViewBag.Pager;
+  Employee currentEmployee = ViewBag.CurrentEmployee;
+  IList<ViewModelEmployeeGroupPaymentsReport> result = ViewBag.ResultData;
+  decimal totalSum = ViewBag.TotalSum;
+
+  int firstYear = ViewBag.FirstYear??0;
+  int firstMonth = ViewBag.FirstMonth??0;
+  int lastYear = ViewBag.LastYear??0;
+  int lastMonth = ViewBag.LastMonth??0;
+  int currentYear = ViewBag.CurrentYear??0;
+  int currentMonth = ViewBag.CurrentMonth??0;
+
+  decimal gSum = 0;
+  decimal gSumVirtual = 0;
+  decimal tSum = 0;
+  decimal tSumVirtual = 0;
+}
+
+@section JavaScript{
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=1")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/PaymentsCalendarFilter.js?v=1")"></script>
+}
+<div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
+	<form id="PaymentForm">
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Дата формирования с </div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.PaidOn, HtmlType.Date, ComparsionType.GreaterOrEqueal, new {@class = "form-control",@Id="dateA"})</div>
+				<div class="col-sm-1">по</div>
+				<div class="col-sm-2">@pager.FormFilter(i => i.PaidOn, HtmlType.Date, ComparsionType.LowerOrEqual, new {@class = "form-control", @Id = "dateB"})</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<input type="hidden" id="firstYear" value="@firstYear"/>
+			<input type="hidden" id="lastYear" value="@lastYear"/>
+			<input type="hidden" id="firstMonth" value="@firstMonth"/>
+			<input type="hidden" id="lastMonth" value="@lastMonth"/>
+			<input type="hidden" id="currentMonth" value="@currentMonth"/>
+
+
+			<input type="hidden" id="selectedMonth" name="mfilter.selectedMonth" value=""/>
+			<div class="row">
+				<div class="col-sm-2">
+					<select class=" form-control form-control" style="min-width: 100px; max-width: 280px;" id="currentYear" name="mfilter.selectedYear">
+						@for (int i = firstYear; i <= lastYear; i++) {
+							<option value="@i" @(currentYear == i ? "selected=selected" : "")>@i</option>
+						}
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<table id="monthSelector" class="table table-bordered table-striped datatable dataTable no-footer">
+						<tr>
+							<td class="mnt a" month="01"><span>Январь</span></td>
+							<td class="mnt a" month="02"><span>Февраль</span></td>
+							<td class="mnt b" month="03"><span>Март</span></td>
+							<td class="mnt b" month="04"><span>Апрель</span></td>
+							<td class="mnt b" month="05"><span>Май</span></td>
+							<td class="mnt c" month="06"><span>Июнь</span></td>
+						</tr>
+						<tr>
+							<td class="mnt c" month="07"><span>Июль</span></td>
+							<td class="mnt c" month="08"><span>Август</span></td>
+							<td class="mnt d" month="09"><span>Сентябрь</span></td>
+							<td class="mnt d" month="10"><span>Октябрь</span></td>
+							<td class="mnt d" month="11"><span>Ноябрь</span></td>
+							<td class="mnt a" month="12"><span>Декабрь</span></td>
+						</tr>
+					</table>
+				</div>
+
+			</div>
+		</div>
+		
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-2">Группа</div>
+                <div class="col-sm-3">@pager.FormFilter(i => i.Employee.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+            </div>
+        </div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-2">Оператор</div>
+				<div class="col-sm-3">@pager.FormFilter(i => i.Employee.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+			</div>
+		</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-1">
+						@pager.SubmitButton(new {@class = "btn btn-success btn-sm"})
+					</div>
+					<div class="col-sm-1">
+						@pager.CleanButton(new {@class = "btn btn-success btn-sm"})
+					</div>
+					<div class="col-sm-1">
+						@pager.ExportButton(new {@class = "btn btn-sm btn-blue margin"})
+					</div>
+				</div>
+			</div>
+    </form>
+
+    <div class="panel panel-primary col-md-12">
+        <div class="panel-body">
+            <div class="form-group">
+                <table class="table table-bordered table-striped datatable no-footer">
+                    <tbody>
+                    @foreach (var groupItem in result.OrderBy(s => s.EmployeeGroup.Name).Select(s => s.EmployeeGroup).GroupBy(s => s.Id).Select(s => s.FirstOrDefault()).ToList()) {
+                        gSum = 0;
+                        gSumVirtual = 0;
+                        <tr>
+                            <td class="yellow">
+                                <span>@groupItem.Name</span>
+                            </td>
+                            <td class="yellow">
+                            </td>
+                            <td class="yellow">
+                            </td>
+                        </tr>
+                        foreach (var item in result.Where(s => s.EmployeeGroup.Id == groupItem.Id).OrderBy(s => s.Employee.Name).ToList()) {
+                            gSum += item.Sum;
+                            gSumVirtual += item.VirtualSum;
+                            tSum += item.Sum;
+                            tSumVirtual += item.VirtualSum;
+                            <tr>
+                                <td>
+                                    <span>@item.Employee.Name</span>
+                                </td>
+                                <td>
+                                    <span>@item.Sum.ToString("C")</span>
+                                </td>
+                                <td>
+                                    <span>@item.VirtualSum.ToString("C")</span>
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td class="lgray">
+                                <span>Итого:</span>
+                            </td>
+                            <td class="lgray">
+                                <span>@gSum.ToString("C")</span>
+                            </td>
+                            <td class="lgray">
+                                <span>@gSumVirtual.ToString("C")</span>
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td class="green">
+                            <span>Сумма:</span>
+                        </td>
+                        <td class="green">
+                            <span>@tSum.ToString("C")</span>
+                        </td>
+                        <td class="green">
+                            <span>@tSumVirtual.ToString("C")</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="gray greenbold">Всего:</span>
+                        </td>
+                        <td colspan="2" style="text-align: center;">
+                            <span class="gray">@((tSum + tSumVirtual).ToString("C"))</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

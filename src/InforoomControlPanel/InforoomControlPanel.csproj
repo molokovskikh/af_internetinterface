@@ -44,6 +44,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.MonoRail.Framework, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="ExcelLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Iesi.Collections">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
@@ -1566,8 +1567,10 @@
   <ItemGroup>
     <Compile Include="Controllers\ConnectedStreetsController.cs" />
     <Compile Include="Controllers\ConnectedHousesController.cs" />
+    <Compile Include="Controllers\EmployeeGroupController.cs" />
     <Compile Include="Controllers\PriceListController.cs" />
     <Compile Include="Models\ViewModelConnectedHouse.cs" />
+    <Compile Include="Models\ViewModelEmployeeGroupPaymentsReport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminOpenController.cs" />
@@ -2079,6 +2082,9 @@
     <Content Include="Views\ConnectedStreets\ConnectedStreetEdit.cshtml" />
     <Content Include="Views\ConnectedStreets\ConnectedStreetAdd.cshtml" />
     <Content Include="Scripts\Registration.EndpointAdd.js" />
+    <Content Include="Views\EmployeeGroup\Index.cshtml" />
+    <Content Include="Views\EmployeeGroup\GroupEdit.cshtml" />
+    <Content Include="Views\SpreadSheet\PaymentsByEmployeeGroups.cshtml" />
     <None Include="Views\Switch\CreateNetworkNode.cshtml" />
     <None Include="Views\Switch\EditNetworkNode.cshtml" />
     <Content Include="Views\Switch\SwitchCreate.cshtml" />

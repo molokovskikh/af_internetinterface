@@ -29,7 +29,7 @@
 	<form id="PaymentForm">
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-sm-2">Дата списания с </div>
+				<div class="col-sm-2">Дата формирования с </div>
 				<div class="col-sm-2">@pager.FormFilter(i => i.PaidOn, HtmlType.Date, ComparsionType.GreaterOrEqueal, new {@class = "form-control",@Id="dateA"})</div>
 				<div class="col-sm-1">по</div>
 				<div class="col-sm-2">@pager.FormFilter(i => i.PaidOn, HtmlType.Date, ComparsionType.LowerOrEqual, new {@class = "form-control", @Id = "dateB"})</div>

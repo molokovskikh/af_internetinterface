@@ -337,6 +337,7 @@
     <Compile Include="Models\IgnoredInn.cs" />
     <Compile Include="Models\PublicData.cs" />
     <Compile Include="Models\PublicDataItem.cs" />
+    <Compile Include="Models\EmployeeGroup.cs" />
     <Compile Include="Models\SiteVersionChange.cs" />
     <Compile Include="Models\ConnectionRequestMarker.cs" />
     <Compile Include="Models\EmployeeTariffs.cs" />
