@@ -21,7 +21,7 @@ namespace Inforoom2.Models
 			Permissions = new List<Permission>();
 			EmployeePayments = new List<PaymentsForEmployee>();
 			RegistrationDate = DateTime.Now;
-			 
+			EmployeeGroups = new List<EmployeeGroup>();
 		}
 
 		public static TimeSpan DefaultWorkBegin => new TimeSpan(9, 0, 0);
@@ -83,6 +83,12 @@ namespace Inforoom2.Models
 		[NHibernate.Mapping.Attributes.Key(1, Column = "Agent")]
 		[OneToMany(2, ClassType = typeof (PaymentsForEmployee))]
 		public virtual IList<PaymentsForEmployee> EmployeePayments { get; set; }
+
+		[Bag(0, Table = "employeeToGroup", Lazy = CollectionLazy.False)]
+		[NHibernate.Mapping.Attributes.Key(1, Column = "EmployeeId", NotNull = false)]
+		[ManyToMany(2, Column = "GroupId", ClassType = typeof(EmployeeGroup))]
+		public virtual IList<EmployeeGroup> EmployeeGroups { get; set; }
+
 
 		public virtual bool IsPaymentSystem()
 		{

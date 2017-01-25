@@ -685,7 +685,7 @@ namespace Inforoom2.Models
 				currentClient.ConnectedDate = SystemTime.Now();
 
 				endpoint.SetStablePackgeId(currentClient.PhysicalClient.Plan.PackageSpeed.PackageId);
-
+				currentClient.Endpoints.Add(endpoint);
 				dSession.Save(endpoint);
 
 				if (lease != null) {

@@ -175,7 +175,7 @@ namespace Inforoom2.Test.Infrastructure
 
 			//Приоритет удаления данных
 
-			var order = "publicdataContext,publicdata,connectedhouses,payments,bankpayments,StaticIps,orderservices,orders,planchangerdata,planhtmlcontent,permissiontouser,roletouser,perm_role,user_role,roles,permissions,lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
+			var order = "employeetogroup,employeegroup,publicdataContext,publicdata,connectedhouses,payments,bankpayments,StaticIps,orderservices,orders,planchangerdata,planhtmlcontent,permissiontouser,roletouser,perm_role,user_role,roles,permissions,lawyerperson,plantvchannelgroups,requests,tvchanneltvchannelgroups,tvchannels,"
 									+ "lawyerperson,physicalclients,clientendpoints,switchaddress,leases,NetworkSwitches,network_nodes,address,house,street,connectbrigads,banner,slide,regions";
 
 
