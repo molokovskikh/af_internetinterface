@@ -146,6 +146,7 @@ namespace InforoomControlPanel.ReportTemplates
 					if (sum == 0 && virtualSum == 0 && ignoreZero) {
 						continue;
 					}
+
 					var newItem = new ViewModelEmployeeGroupPaymentsReport();
 					newItem.EmployeeGroup = group;
 					newItem.Employee = employee;
@@ -155,9 +156,17 @@ namespace InforoomControlPanel.ReportTemplates
 				}
 			}
 
+			var virtualSumSystem = dbSession.Query<Payment>()
+					.Where(s => s.Employee == null && s.PaidOn >= dateFrom && s.PaidOn <= dateTo && s.Virtual.Value == true && s.IsDuplicate == false).ToList()
+					.Sum(s => s.Sum);
+			var newItemvirtualSumSystem = new ViewModelEmployeeGroupPaymentsReport();
+			newItemvirtualSumSystem.Sum = 0;
+			newItemvirtualSumSystem.VirtualSum = virtualSumSystem;
 
-			if (excelGet) {
-				var startIndex = 0;
+			if (!excelGet) {
+				result.Add(newItemvirtualSumSystem);
+			} else { 
+			var startIndex = 0;
 				//создаем новый xls файл 
 				var wb = new HSSFWorkbook();
 				var ws = wb.CreateSheet("Первый лист");
@@ -262,9 +271,19 @@ namespace InforoomControlPanel.ReportTemplates
 					FillNewCell(currentRow, currentColumn++, groupSum, groupSumSyle);
 					FillNewCell(currentRow, currentColumn++, groupSumVirtual, groupSumSyle);
 				}
+
+				totalSumVirtual += newItemvirtualSumSystem.VirtualSum;
+
 				startIndex++;
 				var currentColumnLast = 0;
 				var currentRowLast = ws.CreateRow(startIndex);
+				FillNewCell(currentRowLast, currentColumnLast++, "Бонусные платежи — Система:", defaultSyle);
+				FillNewCell(currentRowLast, currentColumnLast++, "", defaultSyle);
+				FillNewCell(currentRowLast, currentColumnLast++, newItemvirtualSumSystem.VirtualSum, defaultSyle);
+
+				startIndex++;
+				currentColumnLast = 0;
+				currentRowLast = ws.CreateRow(startIndex);
 				FillNewCell(currentRowLast, currentColumnLast++, "Сумма:", totalSyleBold);
 				FillNewCell(currentRowLast, currentColumnLast++, totalSum, totalSyleBold);
 				FillNewCell(currentRowLast, currentColumnLast++, totalSumVirtual, totalSyleBold);

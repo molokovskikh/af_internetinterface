@@ -25,6 +25,9 @@
   decimal gSumVirtual = 0;
   decimal tSum = 0;
   decimal tSumVirtual = 0;
+
+    var systemVirtualItem = result.FirstOrDefault(s => s.EmployeeGroup == null);
+    result = result.Where(s => s.EmployeeGroup != null).ToList();
 }
 
 @section JavaScript{
@@ -152,6 +155,21 @@
                             </td>
                             <td class="lgray">
                                 <span>@gSumVirtual.ToString("C")</span>
+                            </td>
+                        </tr>
+                    }
+                    @if (systemVirtualItem != null) {
+                        tSumVirtual += systemVirtualItem.VirtualSum;
+
+                        <tr>
+                            <td>
+                                <span>Бонусные платежи — Система:</span>
+                            </td>
+                            <td>
+                                <span></span>
+                            </td>
+                            <td>
+                                <span>@systemVirtualItem.VirtualSum.ToString("C")</span>
                             </td>
                         </tr>
                     }
