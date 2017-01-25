@@ -112,7 +112,15 @@ namespace InforoomControlPanel.Test.Functional.EmployeeGroups
 				BillingAccount = true,
 				Employee = createdGroups.First().EmployeeList.First()
 			};
-			DbSession.Save(newPayment);
+			var newPaymentVirtual = new Payment() {
+				Client = DbSession.Query<Client>().First(),
+				PaidOn = SystemTime.Now(),
+				RecievedOn = SystemTime.Now(),
+				Sum = 375.9m,
+				BillingAccount = true,
+				Virtual = true
+			};
+			DbSession.Save(newPaymentVirtual);
 			DbSession.Flush();
 			Open("SpreadSheet/PaymentsByEmployeeGroups");
 
@@ -122,9 +130,10 @@ namespace InforoomControlPanel.Test.Functional.EmployeeGroups
 					AssertText(employee.Name);
 				}
 			}
+			AssertText("Бонусные платежи — Система:");
 			AssertText("Итого: 0,00 ₽");
 			AssertText("Сумма: " + newPayment.Sum.ToString("####"));
-			AssertText("Всего: " + newPayment.Sum.ToString("####"));
+			AssertText("Всего: " + (newPayment.Sum + newPaymentVirtual.Sum).ToString("####"));
 		}
 	}
 }
