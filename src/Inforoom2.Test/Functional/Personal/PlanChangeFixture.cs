@@ -466,7 +466,9 @@ namespace Inforoom2.Test.Functional.Personal
 			var now = DateTime.Now;
 			var days = 10;
 			SystemTime.Now = () => now;
-
+			CurrentClient =
+				DbSession.Query<Client>().First(i => i.Comment == ClientCreateHelper.ClientMark.normalClient.GetDescription());
+			var ratedPeriodDateStart = CurrentClient.RatedPeriodDate;
 			PlanChangerMessageVoluntaryBlock(days, ref now, true);
 
 			Open("warning");
@@ -478,6 +480,7 @@ namespace Inforoom2.Test.Functional.Personal
 			WaitForText("НОВОСТИ");
 
 			now = SystemTime.Now();
+			var ratedPeriodDateAfterCheck = CurrentClient.RatedPeriodDate;
 			RunBillingProcess();
 
 			DbSession.Flush();
@@ -488,24 +491,29 @@ namespace Inforoom2.Test.Functional.Personal
 			var currentMonthDaysCount = DateTimeExtentions.DaysInMonth(SystemTime.Now());
 			var regWriteOff = CurrentClient.GetSumForRegularWriteOff();
 			var currentBalance = CurrentClient.Balance;
-			var lastPriceWriteIff = CurrentClient.GetSumForRegularWriteOff();
+			var ratedPeriodDate = CurrentClient.RatedPeriodDate;
+			var lastPriceWriteIff = 0m;
 			for (int i = 1; i <= days; i++) {
 				SystemTime.Now = () => now.AddDays(i);
 				CurrentClient.PaidDay = false;
 				DbSession.Save(CurrentClient);
 				DbSession.Flush();
 				RunBillingProcess();
-				DbSession.Refresh(CurrentClient);
-				DbSession.Refresh(CurrentClient.PhysicalClient);
-				if (currentMonthDaysCount == DateTimeExtentions.DaysInMonth(SystemTime.Now())) {
+				DbSession.Flush();
+				DbSession.Close();
+				DbSession = DbSession.SessionFactory.OpenSession();
+				CurrentClient = DbSession.Query<Client>().FirstOrDefault(s => s.Id == CurrentClient.Id);
+				if (currentMonthDaysCount == DateTimeExtentions.DaysInMonth(CurrentClient.RatedPeriodDate.Value)) {
+					lastPriceWriteIff += CurrentClient.GetSumForRegularWriteOff();
 					Assert.IsTrue(regWriteOff == CurrentClient.GetSumForRegularWriteOff());
-					Assert.IsTrue(currentBalance == CurrentClient.Balance + i*CurrentClient.GetSumForRegularWriteOff());
-					lastPriceWriteIff = i*CurrentClient.GetSumForRegularWriteOff();
+					Assert.IsTrue(currentBalance == CurrentClient.Balance + lastPriceWriteIff);
 				} else {
-					//если количество дней в месяцах разное , отнимаем один день при расчете, т.к. списание берется за вчерашний день
-					Assert.IsTrue(currentBalance ==
-						CurrentClient.Balance + lastPriceWriteIff + CurrentClient.GetSumForRegularWriteOff(DateTimeExtentions.DaysInMonth(SystemTime.Now().AddDays(-1))));
-					lastPriceWriteIff += CurrentClient.GetSumForRegularWriteOff(currentMonthDaysCount);
+					//если количество дней в месяцах разное , отнимаем один день при расчете, т.к. тест может попасть на смену месяцев+
+					currentMonthDaysCount = DateTimeExtentions.DaysInMonth(SystemTime.Now());
+					Assert.IsTrue(regWriteOff != CurrentClient.GetSumForRegularWriteOff());
+					regWriteOff = CurrentClient.GetSumForRegularWriteOff();
+					lastPriceWriteIff += regWriteOff;
+					Assert.IsTrue(currentBalance == CurrentClient.Balance + lastPriceWriteIff);
 				}
 			}
 			SystemTime.Now = () => DateTime.Now;

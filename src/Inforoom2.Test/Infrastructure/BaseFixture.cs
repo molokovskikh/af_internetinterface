@@ -66,6 +66,7 @@ namespace Inforoom2.Test.Infrastructure
 		[SetUp]
 		public override void IntegrationSetup()
 		{
+			SystemTime.Now = () => DateTime.Now;
 			//Ставим куки, чтобы не отображался popup
 			DbSession = MvcApplication.SessionFactory.OpenSession();
 			HashedDefaultClientPasword = Inforoom2.Helpers.CryptoPass.GetHashString(DefaultClientPassword);

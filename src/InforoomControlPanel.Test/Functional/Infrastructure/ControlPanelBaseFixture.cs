@@ -22,6 +22,7 @@ namespace InforoomControlPanel.Test.Functional.infrastructure
 		[SetUp]
 		public void ControlPanelSetUp()
 		{
+			SystemTime.Now = ()=> DateTime.Now;
 			var adminName = Environment.UserName;
 			var employee = DbSession.Query<Employee>().First(i => i.Login == adminName);
 			Employee = employee;
