@@ -1,16 +1,18 @@
 ﻿@section JavaScript{
-	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientRequest.js")"></script>
-	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js?v=001")"></script>
-	<script>
-		$(function () { 
-			addressHelper.setRegionIdAttribute("modelid");
-			addressHelper.setRegionValueType("Name");
-			addressHelper.setStreetIdAttribute("modelid");
-			addressHelper.setStreetValueType("Name");
-			addressHelper.setHouseIdAttribute("modelid");
-			addressHelper.setHouseValueType("Number");
-		});
-	</script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/ClientRequest.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/ClientController.ClientRegistration.js?v=001")"></script>
+    <script>
+        $(function() {
+            hasYandexStreet = true;
+            $("#RegionDropDown").change();
+            var oldHouseValue = $("#HouseDropDown").attr("value");
+            if (oldHouseValue != undefined && oldHouseValue != "") {
+                $("#HouseDropDown").change(function() {
+                    typeWatcher(0);
+                });
+            }
+        });
+    </script>
 } 
 @using Inforoom2.Components
 @using Inforoom2.Helpers
@@ -45,95 +47,104 @@
 <div class="panel panel-primary col-md-12">
 	<div class="panel-body">
 		@using (@Html.BeginForm(action, controller, FormMethod.Post)) {
-			<div>
+			<div class="minError">
 				<div class="personals">Ф.И.О:</div>
 				@Html.ValidationEditor(validationRunner, clientRequest, "ApplicantName", new { @class = "personal" }, HtmlTag.input, HtmlType.text)
 			</div>
-			<div>
+			<div class="minError">
 				<div class="personals">Номер телефона:</div>
 				@Html.ValidationEditor(validationRunner, clientRequest, "ApplicantPhoneNumber", new { @class = "personal", placeholder = "Введите номер в десятизначном формате" }, HtmlTag.input, HtmlType.text)
 			</div>
-			<div>
+			<div class="minError">
 				<div class="personals">Электронная почта:</div>
 				@Html.ValidationEditor(validationRunner, clientRequest, "Email", new { @class = "personal" }, htmlTag: HtmlTag.input, htmlType: HtmlType.text) 
 			</div>
-            <div>
+            <div class="minError">
                 <div class="personals"><label class = "c-pointer" for="HybridCheck">Гибрид:</label></div>
                 @Html.CheckBoxFor(o => clientRequest.Hybrid, new {@id = "HybridCheck", @class = "c-pointer" })
                 @ViewBag.Validation.GetError(clientRequest, "Hybrid")
             </div>
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<div class="row">
-						<div class="col-lg-4">
-							<div class="row error">
-								<label class="col-sm-3@(currentRegion == null ? " bold msg" : "")">Город:</label>
-								<div class="col-sm-6">
-									@if (currentRegion != null) {
-										@Html.DropDownListExtendedFor(i => clientRequest.City, regionList, obj => obj.Name, s => new { @value = s.Name, @modelId = s.Id },
-											new {
-												@class = "form-control", @Id = "RegionDropDown",
-												@Name = "ClientRequest.City",
-												onclick = "typeWatcher(1000)"
-											}, currentRegion.Id, true)
-									}
-									else {
-										@Html.DropDownListExtendedFor(i => clientRequest.City, regionList, obj => obj.Name, s => new { @value = s.Name, @modelId = s.Id },
-											new {
-												@class = "form-control", @Id = "RegionDropDown",
-												@Name = "ClientRequest.City",
-												onclick = "typeWatcher(1000)"
-											}, true)
-									}
-								</div>
-							</div>
-							<div class="row error">
-								<label class="col-sm-3@(currentStreet == null ? " bold msg" : "")">Улица:</label>
-								<div class="col-sm-6">
-									@if (currentStreet != null) {
-										@Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.Name, s => new { @value = s.PublicName(), @modelId = s.Id },
-											new {
-												@class = "form-control", @Id = "StreetDropDown",
-												@Name = "ClientRequest.Street",
-												onclick = "typeWatcher(1000)"
-											}, currentStreet.Id, true)
-									}
-									else {
-										@Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.Name, s => new { @value = s.PublicName(), @modelId = s.Id },
-											new {
-												@class = "form-control", @Id = "StreetDropDown",
-												@Name = "ClientRequest.Street",
-												onclick = "typeWatcher(1000)"
-											}, true)
-									}
-								</div>
-							</div>
-							<div class="row error">
-								<label class="col-sm-3@(currentHouse == null ? " bold msg" : "")">Дом:</label>
-								<div class="col-sm-6">
-									@if (currentHouse != null && currentHouseList != null) {
-										@Html.DropDownListExtendedFor(i => clientRequest.Housing, currentHouseList, obj => obj.Number, s => new { @value = s.Number, @modelId = s.Id }, new {
-											@class = "form-control",
-											@Id = "HouseDropDown",
-											@Name = "ClientRequest.Housing",
-											onclick = "typeWatcher(1000)"
-										}, currentHouse.Id, true)
-									}
-									else {
-										@Html.DropDownListExtendedFor(i => clientRequest.Housing, currentHouseList, obj => obj.Number, s => new { @value = s.Number, @modelId = s.Id }, new
-	 {
-											@class = "form-control",
-											@Id = "HouseDropDown",
-											@Name = "ClientRequest.Housing",
-											onclick = "typeWatcher(1000)"
-										}, true)
-									}
-								</div>
-							</div>
+		    <div class="panel panel-default">
+		        <div class="panel-body">
+		            <div class="row">
+		                <div class="col-lg-4">
+		                    <div class="panel-body">
+		                        <div class="row error">
+		                            <label class="col-sm-3@(currentRegion == null ? " bold msg" : "")">Город:</label>
+		                            <div class="col-sm-6">
+		                                @if (currentRegion != null) {
+		                                    @Html.DropDownListExtendedFor(i => clientRequest.City, regionList, obj => obj.Name, s => new {@value = s.Id, @yandexName = s.City.Name},
+		                                        new {
+		                                            @class = "form-control",
+		                                            @Id = "RegionDropDown",
+		                                            @Name = "ClientRequest.City",
+		                                            onclick = "typeWatcher(1000)",
+		                                            @value = currentRegion.Id
+		                                        }, currentRegion.Id, true)
+		                                } else {
+		                                    @Html.DropDownListExtendedFor(i => clientRequest.City, regionList, obj => obj.Name, s => new {@value = s.Id, @yandexName = s.City.Name},
+		                                        new {
+		                                            @class = "form-control",
+		                                            @Id = "RegionDropDown",
+		                                            @Name = "ClientRequest.City",
+		                                            onclick = "typeWatcher(1000)"
+		                                        }, true)
+		                                }
+		                            </div>
+		                        </div>
+		                    </div>
+		                    <div class="panel-body">
+		                        <div class="row error">
+		                            <label class="col-sm-3@(currentStreet == null ? " bold msg" : "")">Улица:</label>
+		                            <div class="col-sm-6">
+		                                @if (currentStreet != null) {
+		                                    @Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.Name, null,
+		                                        new {
+		                                            @class = "form-control",
+		                                            @Id = "StreetDropDown",
+		                                            @Name = "ClientRequest.Street",
+		                                            onclick = "typeWatcher(1000)",
+		                                            @value = currentStreet.Id
+		                                        }, currentStreet.Id, true)
+		                                } else {
+		                                    @Html.DropDownListExtendedFor(i => clientRequest.Street, currentStreetList, obj => obj.Name, null,
+		                                        new {
+		                                            @class = "form-control",
+		                                            @Id = "StreetDropDown",
+		                                            @Name = "ClientRequest.Street",
+		                                            onclick = "typeWatcher(1000)"
+		                                        }, true)
+		                                }
+		                            </div>
+		                        </div>
+		                    </div>
+		                    <div class="panel-body">
+		                        <div class="row error">
+		                            <label class="col-sm-3@(currentHouse == null ? " bold msg" : "")">Дом:</label>
+		                            <div class="col-sm-6">
+		                                @if (currentHouse != null && currentHouseList != null) {
+		                                    @Html.DropDownListExtendedFor(i => clientRequest.Housing, currentHouseList, obj => obj.Number, null, new {
+		                                        @class = "form-control",
+		                                        @Id = "HouseDropDown",
+		                                        @Name = "ClientRequest.Housing",
+		                                        onclick = "typeWatcher(1000)",
+		                                        @value = currentHouse.Id
+		                                    }, currentHouse.Id, true)
+		                                } else {
+		                                    @Html.DropDownListExtendedFor(i => clientRequest.Housing, currentHouseList, obj => obj.Number, null, new {
+		                                        @class = "form-control",
+		                                        @Id = "HouseDropDown",
+		                                        @Name = "ClientRequest.Housing",
+		                                        onclick = "typeWatcher(1000)"
+		                                    }, true)
+		                                }
+		                            </div>
+		                        </div>
 
-						</div>
-					</div>
-				</div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
 
 			</div>
 			<div class="block">
@@ -154,9 +165,10 @@
 		                <div class="col-lg-4">
 		                    <div class="row error">
 		                        <label class="col-sm-3 control-label @(clientRequest.Plan == null ? " bold msg" : "")">Тариф:</label>
-		                        <div class="col-sm-6">
+		                        <div class="col-sm-6 minError">
 		                            @if (clientRequest.Plan != null) {
-		                                @Html.DropDownListExtendedFor(i => clientRequest.Plan, plans, obj => obj.Name, null, new {@class = "form-control", @Id = "PlanDropDown"}, clientRequest.Plan.Id, true)
+		                                @Html.DropDownListExtendedFor(i => clientRequest.Plan, plans, obj => obj.Name, null, new {@class = "form-control", @Id = "PlanDropDown",
+								                @value = clientRequest.Plan.Id}, clientRequest.Plan.Id, true)
 		                                @ViewBag.Validation.GetError(clientRequest, "Plan")
 		                            } else {
 		                                @Html.DropDownListExtendedFor(i => clientRequest.Plan, plans, obj => obj.Name, null, new {@class = "form-control", @Id = "PlanDropDown"}, true)
@@ -180,5 +192,4 @@
 			<input class="btn btn-green" type="submit" value="Отправить">
 		}
 	</div>
-</
-	div >
+</div>

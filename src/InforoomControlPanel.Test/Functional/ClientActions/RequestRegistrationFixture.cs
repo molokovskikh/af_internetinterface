@@ -95,8 +95,8 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			Assert.That(clientStreet, Is.StringContaining(clientRequest.YandexStreet), "Поле Улица должно заполниться данными из заявки");
 
 			//проверяем,что поле Дом заполнилось данными из заявки 
-			var house = browser.FindElementsByCssSelector("select[id=HouseDropDown] option[selected]");
-			var clientHouse = house.Last().Text;
+			var house = browser.FindElementsByCssSelector("select[id=HouseDropDown] option");
+			var clientHouse = house.First(s=>s.Selected).Text;
 			Assert.That(clientHouse, Is.StringContaining(clientRequest.YandexHouse), "Поле Дом должно заполниться данными из заявки");
 
 			//проверяем,что поле Тариф заполнилось данными из заявки
@@ -105,7 +105,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			Assert.That(clientPlan, Is.StringContaining(clientRequest.Plan.Name), "Поле Тарифный план должно заполниться данными из заявки");
 
 			//проверяем,что в поле Привел клиента в компанию по умолчанию указан клиент
-			var employee = browser.FindElementByCssSelector("select[id=EmployeeDropDown] option[selected]").Text;
+			var employee = browser.FindElementsByCssSelector("select[id=EmployeeDropDown] option").First(s=>s.Selected).Text;
 			Assert.That(employee, Is.StringContaining("Клиент"), "Поле Привел клиента в компанию должно по умолчанию иметь значение Клиент");
 
 			//дозаполняем поля, которых нет в клиентской заявке
@@ -190,8 +190,8 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			Assert.That(clientCity, Is.StringContaining(request.Street), "Поле Улица в форме регетсрации должно быть заполнено улицей вводимой клиентом");
 
 			//проверяем,что поле Страница заполнилось улицей вводимой клиентом
-			var house = browser.FindElementsByCssSelector("select[id=HouseDropDown] option[selected]");
-			var clientHouse = house.Last().Text;
+			var house = browser.FindElementsByCssSelector("select[id=HouseDropDown] option");
+			var clientHouse = house.First(s=>s.Selected).Text;
 			Assert.That(clientHouse, Is.StringContaining(request.HouseNumber + request.Housing), "Поле Дом в форме регетсрации  должно быть заполнено улицей вводимой клиентом");
 		}
 

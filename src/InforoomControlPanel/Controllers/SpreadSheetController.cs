@@ -109,16 +109,19 @@ namespace InforoomControlPanel.Controllers
 		/// <summary>
 		/// Отчет по выручке
 		/// </summary>
-		public ActionResult PaymentsByEmployeeGroups()
+		public ActionResult PaymentsByEmployeeGroups(bool ignoreZero = true)
 		{
 			var pager = new InforoomModelFilter<Payment>(this);
 
-			var selectedGroupId = 0;
-			int.TryParse(pager.GetParam("selectedGroupId") ?? "", out selectedGroupId);
 			var selectedEmployeeId = 0;
 			int.TryParse(pager.GetParam("selectedEmployeeId") ?? "", out selectedEmployeeId);
-			bool ignoreZero = true;
-			bool.TryParse(pager.GetParam("selectedEmployeeId") ?? "", out ignoreZero);
+			if (selectedEmployeeId != 0 ) {
+				pager.ParamDelete("selectedGroupId");
+			}
+			var selectedGroupId = 0;
+			int.TryParse(pager.GetParam("selectedGroupId") ?? "", out selectedGroupId);
+			pager.ParamDelete("selectedEmployeeId");
+			pager.ParamDelete("selectedGroupId");
 
 			var selectedMonth = pager.GetParam("selectedMonth");
 			var selectedYear = pager.GetParam("selectedYear");
@@ -147,6 +150,13 @@ namespace InforoomControlPanel.Controllers
 				pager.ParamDelete("filter.LowerOrEqual.PaidOn");
 				pager.ParamSet("filter.GreaterOrEqueal.PaidOn", SystemTime.Now().Date.FirstDayOfMonth().ToString("dd.MM.yyyy"));
 				pager.ParamSet("filter.LowerOrEqual.PaidOn", SystemTime.Now().Date.ToString("dd.MM.yyyy"));
+			} else {
+				var dateFromText = pager.GetParam("filter.GreaterOrEqueal.PaidOn");
+				var dateToText = pager.GetParam("filter.LowerOrEqual.PaidOn");
+				DateTime.TryParse(dateFromText, out dateFrom);
+				DateTime.TryParse(dateToText, out dateTo);
+				dateFrom = dateFrom != DateTime.MinValue ? dateFrom : SystemTime.Now().Date.FirstDayOfMonth();
+				dateTo = dateTo != DateTime.MinValue ? dateTo : SystemTime.Now().Date;
 			}
 
 			var currentEmployee = GetCurrentEmployee();
@@ -166,6 +176,15 @@ namespace InforoomControlPanel.Controllers
 
 			var firstYear = DbSession.Query<Payment>().OrderBy(s => s.Id).FirstOrDefault();
 			var lastYear = DbSession.Query<Payment>().OrderByDescending(s => s.Id).FirstOrDefault();
+			var groupList = DbSession.Query<EmployeeGroup>().OrderBy(s => s.Name).ToList();
+
+			ViewBag.EmployeeGroupList = groupList;
+			ViewBag.EmployeeList = groupList.SelectMany(s => s.EmployeeList).OrderBy(s => s.Name).ToList();
+
+			ViewBag.SelectedEmployeeId  = selectedEmployeeId;
+			ViewBag.SelectedGroupId = selectedGroupId;
+
+			ViewBag.IgnoreZero = ignoreZero;
 
 			ViewBag.Pager = pager;
 			ViewBag.ResultData = result;

@@ -14,25 +14,46 @@
   IList<ViewModelEmployeeGroupPaymentsReport> result = ViewBag.ResultData;
   decimal totalSum = ViewBag.TotalSum;
 
-  int firstYear = ViewBag.FirstYear??0;
+  IList<EmployeeGroup> employeeGroupList = ViewBag.EmployeeGroupList;
+  IList<Employee> employeeList = ViewBag.EmployeeList;
+
+  int selectedEmployeeId = ViewBag.SelectedEmployeeId ?? 0;
+  int selectedGroupId = ViewBag.SelectedGroupId ?? 0;
+  
+
+
+
+    int firstYear = ViewBag.FirstYear??0;
   int firstMonth = ViewBag.FirstMonth??0;
   int lastYear = ViewBag.LastYear??0;
   int lastMonth = ViewBag.LastMonth??0;
   int currentYear = ViewBag.CurrentYear??0;
   int currentMonth = ViewBag.CurrentMonth??0;
-
+  bool ignoreZero = ViewBag.IgnoreZero ?? true;
   decimal gSum = 0;
   decimal gSumVirtual = 0;
   decimal tSum = 0;
   decimal tSumVirtual = 0;
 
-    var systemVirtualItem = result.FirstOrDefault(s => s.EmployeeGroup == null);
-    result = result.Where(s => s.EmployeeGroup != null).ToList();
+  var systemVirtualItem = result.FirstOrDefault(s => s.EmployeeGroup == null);
+  result = result.Where(s => s.EmployeeGroup != null).ToList();
 }
 
 @section JavaScript{
-	<script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=1")"></script>
-<script type="text/javascript" src="@Url.Content("~/Scripts/PaymentsCalendarFilter.js?v=1")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/ClientSearchPage.js?v=1")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/PaymentsCalendarFilter.js?v=1")"></script>
+    <script type="text/javascript">
+        $(function() {
+            $(".selectedListBlock select").change(function () {
+                var currentCheck = this;
+                $(".selectedListBlock select").each(function () {
+                    if (this != currentCheck) {
+                        $(this).val(0);
+                    }
+                });
+            });
+        });
+    </script>
 }
 <div id="table-2_wrapper" class="dataTables_wrapper form-inline no-footer">
 	<form id="PaymentForm">
@@ -55,7 +76,7 @@
 			<input type="hidden" id="selectedMonth" name="mfilter.selectedMonth" value=""/>
 			<div class="row">
 				<div class="col-sm-2">
-					<select class=" form-control form-control" style="min-width: 100px; max-width: 280px;" id="currentYear" name="mfilter.selectedYear">
+					<select class="form-control form-control" style="min-width: 100px; max-width: 280px;" id="currentYear" name="mfilter.selectedYear">
 						@for (int i = firstYear; i <= lastYear; i++) {
 							<option value="@i" @(currentYear == i ? "selected=selected" : "")>@i</option>
 						}
@@ -84,33 +105,55 @@
 
 			</div>
 		</div>
-		
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-sm-2">Группа</div>
-                <div class="col-sm-3">@pager.FormFilter(i => i.Employee.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
+
+        <div class="selectedListBlock">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-2">Группа</div>
+                    <select class="form-control form-control" style="min-width: 280px; max-width: 280px;" name="mfilter.selectedGroupId">
+                        <option value="0"></option>
+                        @foreach (var item in employeeGroupList)
+                        {
+                        <option value="@item.Id" @(selectedGroupId == item.Id ? "selected=selected" : "")>
+                            @item.Name
+                        </option>}
+                    </select>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-2">Оператор</div>
+                    <select class="form-control form-control" style="min-width:280px; max-width:280px;" name="mfilter.selectedEmployeeId">
+                        <option value="0"></option>
+                        @foreach (var item in employeeList)
+                        {
+                        <option value="@item.Id" @(selectedEmployeeId == item.Id ? "selected=selected" : "")>
+                            @item.Name
+                        </option>}
+                    </select>
+                </div>
             </div>
         </div>
-		<div class="panel-body">
-			<div class="row">
-				<div class="col-sm-2">Оператор</div>
-				<div class="col-sm-3">@pager.FormFilter(i => i.Employee.Name, HtmlType.Dropdown, ComparsionType.Equal, new { @class = "form-control", @style = "min-width:280px; max-width:280px;" })</div>
-			</div>
-		</div>
-			<div class="panel-body">
-				<div class="row">
-					<div class="col-sm-1">
-						@pager.SubmitButton(new {@class = "btn btn-success btn-sm"})
-					</div>
-					<div class="col-sm-1">
-						@pager.CleanButton(new {@class = "btn btn-success btn-sm"})
-					</div>
-					<div class="col-sm-1">
-						@pager.ExportButton(new {@class = "btn btn-sm btn-blue margin"})
-					</div>
-				</div>
-			</div>
-    </form>
+            <div class="panel-body">
+                <div class="row">
+                    <label class="col-sm-2 c-pointer bold" for="IgnoreZero">Только с платежами</label>
+                    @Html.CheckBoxFor(model => ignoreZero, new { @id = "IgnoreZero", @class = "c-pointer" })
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-1">
+                        @pager.SubmitButton(new { @class = "btn btn-success btn-sm" })
+                    </div>
+                    <div class="col-sm-1">
+                        @pager.CleanButton(new { @class = "btn btn-success btn-sm" })
+                    </div>
+                    <div class="col-sm-1">
+                        @pager.ExportButton(new { @class = "btn btn-sm btn-blue margin" })
+                    </div>
+                </div>
+            </div>
+</form>
 
     <div class="panel panel-primary col-md-12">
         <div class="panel-body">
