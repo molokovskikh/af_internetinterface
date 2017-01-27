@@ -373,12 +373,12 @@ namespace Inforoom2.Models
 		{
 			if (!IsPhysicalClient)
 				return null;
-			var lastWriteOff = WriteOffs.OrderByDescending(s => s.Id).FirstOrDefault()?.WriteOffDate ?? WorkingStartDate;
-			if (!RatedPeriodDate.HasValue || lastWriteOff == null)
+			
+			if (!RatedPeriodDate.HasValue)
 				return null;
 
 			var daysInIntervalA = (((DateTime) RatedPeriodDate).AddMonths(1) - (DateTime) RatedPeriodDate).Days + DebtDays;
-			var daysInIntervalB = (((DateTime) RatedPeriodDate).AddMonths(1) - lastWriteOff.Value).Days + DebtDays;
+			var daysInIntervalB = (((DateTime) RatedPeriodDate).AddMonths(1) - SystemTime.Now()).Days + DebtDays;
 			var price = GetPrice();
 			var CurrentPrice = price/daysInIntervalA;
 			var sum = daysInIntervalB*CurrentPrice;

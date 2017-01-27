@@ -210,8 +210,22 @@ namespace InforoomControlPanel.Controllers
 		/// <param name="regionId">Id региона</param>
 		/// <returns>Json* Список в форме: Id, Name, Geomark, Confirmed, Region (Id), Houses (кол-во)</returns>
 		[HttpPost]
-		public JsonResult GetStreetList(int regionId)
+		public JsonResult GetStreetList(int regionId, bool hasYandexName = false)
 		{
+			if (hasYandexName) {
+				var streetsWithYandexName = DbSession.Query<Street>().
+					Where(s => s.Region.Id == regionId || s.Houses.Any(a => a.Region.Id == regionId)).ToList()
+					.Select(s => new {
+						Id = s.Id,
+						Name = s.PublicName().Trim(),
+						YandexName = s.Name,
+						Geomark = s.Geomark,
+						Confirmed = s.Confirmed,
+						Region = s.Region.Id,
+						Houses = s.Houses.Count
+					}).ToList().OrderBy(s => s.Name).ToList();
+				return Json(streetsWithYandexName, JsonRequestBehavior.AllowGet);
+			}
 			var streets = DbSession.Query<Street>().
 				Where(s => s.Region.Id == regionId || s.Houses.Any(a => a.Region.Id == regionId)).ToList()
 				.Select(s => new {

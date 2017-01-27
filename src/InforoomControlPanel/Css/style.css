@@ -7,6 +7,7 @@
  table td.green{background: #c0e4b7 !important;}
  table td.lgray{background: #b7b7b7 !important;}
  table td.blue{background: #c6dfff !important;}
+ .minError .error{display: inline-block;}
  .gray{color: #6d6d6d !important;}
  .ListItemResIndex,.ListItem [name='IndexButtonUp'], .ListItem [name='IndexButtonDown']{ color: #00549e !important;}
  .endpointStateChanged td{background: #ffffbf !important;}

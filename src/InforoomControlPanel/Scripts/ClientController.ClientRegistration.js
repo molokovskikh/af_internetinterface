@@ -108,7 +108,7 @@ getHouseChangedFlag = function (streetId, regionId, countHouse) {
 	});
 }
 
-
+var hasYandexStreet = false;
 getStreetList = function (regionId, funcAfter, countStreet) {
 	if ($(".addressAjaxRunner.stop").length != 0) return;
 	if (regionId == null || countStreet == null) {
@@ -117,13 +117,13 @@ getStreetList = function (regionId, funcAfter, countStreet) {
 	}
 	$("#StreetDropDown").css('background', '#F3D0D0');
 	$.ajax({
-		url: cli.getParam("baseurl") + "AdminOpen/GetStreetList?regionId=" + regionId,
+		url: cli.getParam("baseurl") + "AdminOpen/GetStreetList?regionId=" + regionId + (hasYandexStreet ? "&hasYandexName=true" : ""),
 		type: 'POST',
 		dataType: "json",
 		success: function(data) {
 			//функция заполнения списка улиц
 			funcAfter(data);
-			setTimeout(function () { streetChangedCheck(false); }, addressChangeFlagTimerSpeed);
+			setTimeout(function() { streetChangedCheck(false); }, addressChangeFlagTimerSpeed);
 			$("#StreetDropDown").css('background', '');
 			var pastVal = $("#StreetDropDown").attr("value");
 			if (pastVal != undefined && pastVal != null) {
@@ -165,7 +165,7 @@ getHouseList = function (streetId, regionId, funcAfter, countHouse) {
 				if (pastValElement.length != 0) {
 					$("#HouseDropDown option").removeAttr("selected");
 					$(pastValElement).attr("selected", "selected");
-					$("#HouseDropDown").val(pastVal);
+					$("#HouseDropDown").val(pastVal).change();
 				}
 			}
 		},
@@ -196,6 +196,9 @@ getStreetFuncAfter = function(data) {
 	// заполнение списка улиц
 	$(data).each(function() {
 		var el = tmp.clone();
+		if (this.hasOwnProperty('YandexName')) {
+			el.attr("yandexName", this.YandexName);
+		}
 		el.attr(addressHelper.getStreetIdAttribute(), this.Id);
 		el.val(this[addressHelper.getStreetValueType()]);
 		el.html(this.Name);
@@ -222,9 +225,9 @@ getHouseFuncAfter = function(data) {
 	});
 	var planVal = $("#HouseDropDown").attr("value");
 	if (planVal == undefined || planVal == "" || planVal == 0) {
-		$("#HouseDropDown").val($("#HouseDropDown option:first"));
+		$("#HouseDropDown").val($("#HouseDropDown option:first")).change();
 	} else {
-		$("#HouseDropDown").val(planVal);
+		$("#HouseDropDown").val(planVal).change();
 	}
 }
 getPlansFuncAfter = function(data) {
@@ -233,8 +236,8 @@ getPlansFuncAfter = function(data) {
 	// заполнение списка тарифов
 	$(data).each(function() {
 		var el = tmp.clone();
-		el.attr(addressHelper.getPlanValueType(), this.Id);
-		el.val(this.Id);
+		el.attr(addressHelper.getPlanIdAttribute(), this.Id);
+		el.val(this[addressHelper.getPlanValueType()]);
 		el.html(this.Name);
 		$("#PlanDropDown").append(el);
 	});

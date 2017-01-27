@@ -71,13 +71,19 @@ var typeWatcher = function() {
 		var callback = function showAddressOnMap() {
 			var userCity,userStreet,userHouse ="";
 			var skillsSelect = document.getElementById("RegionDropDown"); 
-			if(skillsSelect.options[skillsSelect.selectedIndex]!=null){				
+			if (skillsSelect.options[skillsSelect.selectedIndex]
+				&& skillsSelect.options[skillsSelect.selectedIndex].attributes
+				&& skillsSelect.options[skillsSelect.selectedIndex].attributes.yandexName
+				&& skillsSelect.options[skillsSelect.selectedIndex].attributes.yandexName.value){				
 			var selectedText = skillsSelect.options[skillsSelect.selectedIndex].text;
 			userCity = selectedText.toLowerCase();	
 			}
 			skillsSelect = document.getElementById("StreetDropDown");
-			if(skillsSelect.options[skillsSelect.selectedIndex]){
-			selectedText = skillsSelect.options[skillsSelect.selectedIndex].text;
+			if (skillsSelect.options[skillsSelect.selectedIndex]
+				&& skillsSelect.options[skillsSelect.selectedIndex].attributes
+				&& skillsSelect.options[skillsSelect.selectedIndex].attributes.yandexName
+				&& skillsSelect.options[skillsSelect.selectedIndex].attributes.yandexName.value) {
+			selectedText = skillsSelect.options[skillsSelect.selectedIndex].attributes.yandexName.value;
 			userStreet = selectedText.toLowerCase();	
 			}
 			skillsSelect = document.getElementById("HouseDropDown");

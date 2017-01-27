@@ -162,6 +162,51 @@ namespace InforoomControlPanel.Controllers
 			// Заявка от оператора по умочанию  
 			clientRequest.RequestSource = RequestType.FromOperator;
 			clientRequest.RequestAuthor = GetCurrentEmployee();
+			var houseNumberAsIs = 0;
+			var regionAsIs = 0;
+			var streetAsIs = 0;
+			int.TryParse(clientRequest.Housing,out houseNumberAsIs);
+			int.TryParse(clientRequest.City, out regionAsIs);
+			int.TryParse(clientRequest.Street, out streetAsIs);
+			clientRequest.Housing = "";
+			clientRequest.City = "";
+			clientRequest.Street = "";
+			Street currentStreet = null;
+			House currentHouse = null;
+			Region currentRegion = null;
+			// получаем списки регионов 
+			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
+			if (clientRequest.Address != null && clientRequest.Address.House != null) {
+				currentHouse = clientRequest.Address.House;
+				currentStreet = clientRequest.Address.House.Street;
+				currentRegion = clientRequest.Address.House.Region;
+			}
+			if (currentRegion == null) {
+				currentRegion =
+					DbSession.Query<Region>()
+						.ToList()
+						.FirstOrDefault(s => s.Id == regionAsIs);
+				clientRequest.City = currentRegion?.Name;
+			}
+			if (currentStreet == null && currentRegion != null) {
+				currentStreet =
+					DbSession.Query<Street>().Where(s => s.Region.Id == currentRegion.Id)
+						.ToList()
+						.FirstOrDefault(s => s.Id == streetAsIs);
+				clientRequest.Street = currentStreet?.Name;
+			}
+			if (currentHouse == null && currentStreet != null && currentRegion != null) {
+				currentHouse =
+					DbSession.Query<House>().Where(s => (s.Region == null || currentRegion.Id == s.Region.Id) &&
+						((s.Street.Region.Id == currentRegion.Id && s.Street.Id == currentStreet.Id) ||
+							(s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)) &&
+						(s.Street.Region.Id == currentRegion.Id && s.Region == null ||
+							(s.Street.Id == currentStreet.Id && s.Region.Id == currentRegion.Id)))
+						.ToList()
+						.FirstOrDefault(s => s.Id == houseNumberAsIs);
+				clientRequest.Housing = currentHouse?.Number;
+			}
+
 			// Сохранение адреса  
 			if (clientRequest.Housing != null && clientRequest.Housing != "") {
 				string houseNumber = "";
@@ -196,18 +241,9 @@ namespace InforoomControlPanel.Controllers
 			//if (!clientRequest.IsContractAccepted) {
 			//	ErrorMessage("Пожалуйста, подтвердите, что Вы согласны с договором-офертой");
 			//}
-			Street currentStreet = null;
-			House currentHouse = null;
-			Region currentRegion = null;
-			// получаем списки регионов 
-			var regionList = DbSession.Query<Region>().OrderBy(s => s.Name).ToList();
-			if (clientRequest.Address != null && clientRequest.Address.House != null) {
-				currentHouse = clientRequest.Address.House;
-				currentStreet = clientRequest.Address.House.Street;
-				currentRegion = clientRequest.Address.House.Region;
-			}
+
 			// получаем списки тарифов по выбранному выбранному региону
-			var planList = new List<Plan>();
+				var planList = new List<Plan>();
 			if (currentRegion != null) {
 				planList = DbSession.Query<Plan>().Where(s => s.Disabled == false && s.AvailableForNewClients
 				                                              && s.RegionPlans.Any(d => d.Region == (currentRegion)))

@@ -903,7 +903,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
             UpdateDBSession();
             orderCurrent = CurrentClient.LegalClientOrders.First(s=>s.Id == orderCurrent.Id);
             currentEndpoint = CurrentClient.Endpoints.First(s => s.Id == currentEndpoint.Id);  
-
+			DbSession.Refresh(CurrentClient);
 			//-------------------------------------------------------------|ИЗМЕНИТЬ УСЛОВИЯ ПРОВЕРОК|----------------------------------------------------------------
 			orderCurrent = CurrentClient.LegalClientOrders.OrderByDescending(s => s.Id).First();
 			Assert.IsTrue(CurrentClient.LegalClientOrders.Count(s => !s.IsDeactivated) == 3);

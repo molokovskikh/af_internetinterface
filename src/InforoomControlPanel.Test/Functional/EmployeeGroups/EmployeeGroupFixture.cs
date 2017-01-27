@@ -104,6 +104,7 @@ namespace InforoomControlPanel.Test.Functional.EmployeeGroups
 		private void ReportPaymentEmployeeGorupFixture()
 		{
 			var createdGroups = DbSession.Query<EmployeeGroup>().ToList();
+			DbSession.Refresh(createdGroups.First().EmployeeList.First());
 			var newPayment = new Payment() {
 				Client = DbSession.Query<Client>().First(),
 				PaidOn = SystemTime.Now(),
@@ -112,6 +113,7 @@ namespace InforoomControlPanel.Test.Functional.EmployeeGroups
 				BillingAccount = true,
 				Employee = createdGroups.First().EmployeeList.First()
 			};
+			DbSession.Save(newPayment);
 			var newPaymentVirtual = new Payment() {
 				Client = DbSession.Query<Client>().First(),
 				PaidOn = SystemTime.Now(),
@@ -131,7 +133,7 @@ namespace InforoomControlPanel.Test.Functional.EmployeeGroups
 				}
 			}
 			AssertText("Бонусные платежи — Система:");
-			AssertText("Итого: 0,00 ₽");
+			AssertText("Итого: " + newPayment.Sum.ToString("####"));
 			AssertText("Сумма: " + newPayment.Sum.ToString("####"));
 			AssertText("Всего: " + (newPayment.Sum + newPaymentVirtual.Sum).ToString("####"));
 		}
