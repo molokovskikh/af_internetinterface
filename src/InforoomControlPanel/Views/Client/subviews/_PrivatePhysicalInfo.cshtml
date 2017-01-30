@@ -92,12 +92,6 @@
 					<span>@client.PhysicalClient.VirtualBalance.ToString("0.00")</span>
 				</td>
 			</tr>
-			<tr>
-			    <td>Остаток задолженности по расчетному периоду</td>
-			    <td>
-			        <span>@((client.GetSumWriteOffRemained()??0).ToString("0.00"))</span>
-			    </td>
-			</tr>
 			<tr class="@(client.Status.Type == StatusType.NoWorked || client.Status.Type == StatusType.Dissolved ? "appeal Block" : "") @(client.Status.Type == StatusType.Dissolved ? "statusDissolved" : "")">
 				<td>Статус клиента</td>
 				<td>
@@ -234,6 +228,23 @@
 						}
 					}
 				</td>
+			</tr>
+			<tr style="background: #fbfbfb;">
+			    <td  style="vertical-align: top;">
+                        <span class="gray bold c-pointer entypo-right-open-mini" phantomFor=".OtherClientInfo">Дополнительные сведения</span>
+			    </td>
+			    <td>
+			        <table class="OtherClientInfo table" style="background: #fbfbfb;">
+			            <tbody>
+			            <tr>
+			                <td>Остаток задолженности по расчетному периоду</td>
+			                <td>
+			                    <span>@((client.GetSumWriteOffRemained() ?? 0).ToString("0.00"))</span>
+			                </td>
+			            </tr>
+			            </tbody>
+			        </table>
+			    </td>
 			</tr>
 			</tbody>
 		</table>

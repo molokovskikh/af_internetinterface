@@ -164,7 +164,9 @@ namespace InforoomControlPanel.ReportTemplates
 			newItemvirtualSumSystem.VirtualSum = virtualSumSystem;
 
 			if (!excelGet) {
-				result.Add(newItemvirtualSumSystem);
+				if (groupId == 0 && employeeId == 0) {
+					result.Add(newItemvirtualSumSystem);
+				}
 			} else { 
 			var startIndex = 0;
 				//создаем новый xls файл 
@@ -272,14 +274,16 @@ namespace InforoomControlPanel.ReportTemplates
 					FillNewCell(currentRow, currentColumn++, groupSumVirtual, groupSumSyle);
 				}
 
-				totalSumVirtual += newItemvirtualSumSystem.VirtualSum;
-
-				startIndex++;
 				var currentColumnLast = 0;
-				var currentRowLast = ws.CreateRow(startIndex);
-				FillNewCell(currentRowLast, currentColumnLast++, "Бонусные платежи — Система:", defaultSyle);
-				FillNewCell(currentRowLast, currentColumnLast++, "", defaultSyle);
-				FillNewCell(currentRowLast, currentColumnLast++, newItemvirtualSumSystem.VirtualSum, defaultSyle);
+				IRow currentRowLast;
+				if (groupId == 0 && employeeId == 0) {
+					totalSumVirtual += newItemvirtualSumSystem.VirtualSum;
+					startIndex++;
+					currentRowLast = ws.CreateRow(startIndex);
+					FillNewCell(currentRowLast, currentColumnLast++, "Бонусные платежи — Система:", defaultSyle);
+					FillNewCell(currentRowLast, currentColumnLast++, "", defaultSyle);
+					FillNewCell(currentRowLast, currentColumnLast++, newItemvirtualSumSystem.VirtualSum, defaultSyle);
+				}
 
 				startIndex++;
 				currentColumnLast = 0;
