@@ -231,6 +231,8 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			DbSession.Refresh(CurrentClient);
 			WaitForText("Номер лицевого счета");
 
+			browser.FindElementByCssSelector("[phantomfor='.OtherClientInfo']").Click();
+
 			var writeOffDisolvedSum = CurrentClient.GetSumWriteOffRemained().Value;
 			AssertText(writeOffDisolvedSum.ToString("0.00"));
 
