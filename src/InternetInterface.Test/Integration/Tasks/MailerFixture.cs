@@ -21,28 +21,6 @@ namespace InternetInterface.Test.Integration.Tasks
 	public class MailerFixture : IntegrationFixture
 	{
 		[Test]
-		public void SmsTest()
-		{
-			SmsMessage.DeleteAll();
-
-			var messages = new List<SmsMessage> {
-				new SmsMessage { PhoneNumber = "123456789" },
-				new SmsMessage {
-					IsSended = true,
-					PhoneNumber = "123456789"
-				},
-				new SmsMessage { PhoneNumber = "123456789" },
-				new SmsMessage {
-					IsSended = true,
-					PhoneNumber = "123456789"
-				}
-			};
-			session.SaveMany(messages.ToArray());
-			var sent = new SendSmsNotification(session).SendMessages();
-			Assert.That(sent.Count, Is.EqualTo(2));
-		}
-
-		[Test]
 		public void LawyerTest()
 		{
 			new SendNullTariffLawyerPerson(session).Execute();

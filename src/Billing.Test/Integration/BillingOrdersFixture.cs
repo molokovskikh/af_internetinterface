@@ -159,7 +159,7 @@ namespace Billing.Test.Integration
 			var order2 = new Order {
 				Client = lawyerClient,
 				BeginDate = order.BeginDate.Value.AddDays(-30),
-				EndDate = order.BeginDate
+				EndDate = order.BeginDate.Value.AddDays(-1)
 			};
 			session.Save(order2);
 			var orderService = new OrderService {
@@ -173,7 +173,7 @@ namespace Billing.Test.Integration
 
 			Compute();
 			var writeOffs = session.Query<WriteOff>().Where(w => w.Client == lawyerClient).ToList();
-			Assert.AreEqual(writeOffs.Count, 2);
+			Assert.AreEqual(2, writeOffs.Count);
 		}
 
 		private void Compute()

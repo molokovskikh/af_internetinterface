@@ -334,7 +334,7 @@ namespace InternetInterface.Models
 				if (Disabled)
 					return OrderStatus.Disabled;
 				if (BeginDate.Value.Date <= SystemTime.Now().Date) {
-					if (EndDate == null || EndDate.Value.Date > SystemTime.Now().Date) {
+					if (EndDate == null || EndDate.Value.Date >= SystemTime.Now().Date) {
 						return OrderStatus.Enabled;
 					}
 					return OrderStatus.Disabled;
