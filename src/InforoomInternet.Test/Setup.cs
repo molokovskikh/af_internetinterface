@@ -4,6 +4,7 @@ using Common.MySql;
 using Common.Web.Ui.ActiveRecordExtentions;
 using InternetInterface.Helpers;
 using NUnit.Framework;
+using Test.Support;
 
 namespace InforoomInternet.Test
 {
@@ -19,6 +20,8 @@ namespace InforoomInternet.Test
 					Assembly.Load("InforoomInternet"),
 					Assembly.Load("InforoomInternet.Test"),
 					Assembly.Load("InternetInterface"));
+				IntegrationFixture2.Factory = ActiveRecordMediator
+					.GetSessionFactoryHolder().GetSessionFactory(typeof(ActiveRecordBase));
 			}
 		}
 	}
