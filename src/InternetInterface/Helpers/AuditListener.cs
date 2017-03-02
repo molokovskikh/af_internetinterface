@@ -7,14 +7,15 @@ using Castle.ActiveRecord.Framework.Internal.EventListener;
 using Common.Web.Ui.Models.Audit;
 using InternetInterface.Controllers.Filter;
 using InternetInterface.Models;
+using NHibernate;
 using NHibernate.Event;
 
 namespace InternetInterface.Helpers
 {
 	public class AuditablePropertyInternet : RewrittenAuditableProperty
 	{
-		public AuditablePropertyInternet(PropertyInfo property, string name, object newValue, object oldValue)
-			: base(property, name, newValue, oldValue)
+		public AuditablePropertyInternet(ISession session, PropertyInfo property, string name, object newValue, object oldValue)
+			: base(session, property, name, newValue, oldValue)
 		{
 		}
 
@@ -28,9 +29,9 @@ namespace InternetInterface.Helpers
 	[EventListener]
 	public class AuditListener : BaseAuditListener, IPreInsertEventListener
 	{
-		protected override AuditableProperty GetAuditableProperty(PropertyInfo property, string name, object newState, object oldState, object entity)
+		protected override AuditableProperty GetAuditableProperty(ISession session, PropertyInfo property, string name, object newState, object oldState, object entity)
 		{
-			var auditableProperty = new AuditablePropertyInternet(property, name, newState, oldState);
+			var auditableProperty = new AuditablePropertyInternet(session, property, name, newState, oldState);
 			if (entity.GetType() == typeof(OrderService)) {
 				if (!String.IsNullOrEmpty(((OrderService)entity).Description))
 					auditableProperty.Message = String.Format("Услуга '{0}' {1}", ((OrderService)entity).Description, auditableProperty.Message);

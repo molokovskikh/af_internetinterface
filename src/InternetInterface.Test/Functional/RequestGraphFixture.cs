@@ -18,12 +18,16 @@ namespace InternetInterface.Test.Functional
 			var brigad = Brigad.All(session).First();
 			var client = ClientHelper.Client(session);
 			var connect = new ConnectGraph(client, DateTime.Today.AddHours(10), brigad);
-			Save(brigad, client, connect);
+			session.Save(brigad);
+			session.Save(client);
+			session.Save(connect);
 			FlushAndCommit();
 			var brigad2 = Brigad.All(session).First();
 			var client2 = ClientHelper.Client(session);
 			var connect2 = new ConnectGraph(client2, DateTime.Today.AddHours(15), brigad2);
-			Save(brigad2, client2, connect2);
+			session.Save(brigad2);
+			session.Save(client2);
+			session.Save(connect2);
 			Open("UserInfo/RequestGraph");
 
 			Click("Сформировать и распечатать заявки");

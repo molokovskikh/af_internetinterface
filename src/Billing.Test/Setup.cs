@@ -7,14 +7,14 @@ namespace Billing.Test
 	[SetUpFixture]
 	public class Setup
 	{
-		[SetUp]
+		[OneTimeSetUp]
 		public void SetupFixture()
 		{
 			MainBilling.InitActiveRecord();
 			MainBillingFixture.SeedDb();
 		}
 
-		[TearDown]
+		[OneTimeTearDown]
 		public void Teardown()
 		{
 			SystemTime.Reset();

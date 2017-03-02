@@ -25,7 +25,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			browser.FindElementByCssSelector(".btn-green").Click();
 			AssertText("Канал успешно изменен");
 			DbSession.Refresh(tvChannel);
-			Assert.That(tvChannel.Name, Is.StringContaining("Изменен"), "Изменения канала должны сохраниться и в базе данных");
+			Assert.That(tvChannel.Name, Does.Contain("Изменен"), "Изменения канала должны сохраниться и в базе данных");
 		}
 		
 	}

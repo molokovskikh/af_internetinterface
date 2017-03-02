@@ -402,19 +402,19 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			DbSession.Refresh(CurrentClient.LegalClient);
 			DbSession.Refresh(CurrentClient);
 
-			Assert.That(CurrentClient.LegalClient.Name, Is.StringContaining(marker.ToString()), "Наименование не совпадает.");
-			Assert.That(CurrentClient.LegalClient.ShortName, Is.StringContaining(marker.ToString()),
+			Assert.That(CurrentClient.LegalClient.Name, Does.Contain(marker.ToString()), "Наименование не совпадает.");
+			Assert.That(CurrentClient.LegalClient.ShortName, Does.Contain(marker.ToString()),
 				"Краткое наименование не совпадает.");
-			Assert.That(CurrentClient.LegalClient.LegalAddress, Is.StringContaining(marker.ToString()),
+			Assert.That(CurrentClient.LegalClient.LegalAddress, Does.Contain(marker.ToString()),
 				"Юридический адрес не совпадает.");
-			Assert.That(CurrentClient.LegalClient.ActualAddress, Is.StringContaining(marker.ToString()),
+			Assert.That(CurrentClient.LegalClient.ActualAddress, Does.Contain(marker.ToString()),
 				"Фактический адрес не совпадает.");
-			Assert.That(CurrentClient.LegalClient.MailingAddress, Is.StringContaining(marker.ToString()),
+			Assert.That(CurrentClient.LegalClient.MailingAddress, Does.Contain(marker.ToString()),
 				"Почтовый адрес не совпадает.");
-			Assert.That(CurrentClient.LegalClient.ContactPerson, Is.StringContaining(marker.ToString()),
+			Assert.That(CurrentClient.LegalClient.ContactPerson, Does.Contain(marker.ToString()),
 				"Контактное лицо не совпадает.");
-			Assert.That(CurrentClient.LegalClient.Inn, Is.StringContaining(marker.ToString()), "ИНН не совпадает.");
-			Assert.That(CurrentClient.RedmineTask, Is.StringContaining(marker.ToString()),
+			Assert.That(CurrentClient.LegalClient.Inn, Does.Contain(marker.ToString()), "ИНН не совпадает.");
+			Assert.That(CurrentClient.RedmineTask, Does.Contain(marker.ToString()),
 				"Задача в Redmine для клиента не совпадает.");
 			Assert.That(CurrentClient.LegalClient.Region, Is.EqualTo(regionNew), "Регион не совпадает.");
 			Assert.That(CurrentClient.Status.Name, Is.EqualTo(((StatusType)(status.Type + 2)).GetDescription()),

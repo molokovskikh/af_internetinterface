@@ -34,8 +34,6 @@ namespace Billing
 		/// </summary>
 		private int BillingIgnoreStatusId;
 
-		public List<SmsMessage> Messages;
-
 		// Основные тарифные планы (для начисления бонуса при первом платеже)
 		public uint[] FirstPaymentBonusTariffIds = {
 			45, // "Популярный"
@@ -64,17 +62,19 @@ namespace Billing
 			}
 		}
 
-		public void SafeProcessClientEndpointSwitcher()
+		public void SafeProcessClientEndpointSwitcher(CancellationToken cancellation = default(CancellationToken))
 		{
 			//деактивация заказов юр.лиц. (НЕПОЛНАЯ, чистим только коммутаторы и порты)
 			try {
 				_mutex.WaitOne();
 				WithTransaction(session => {
 					var toDeactivate = session.Query<Order>().Where(o => !o.IsDeactivated).ToArray().Where(o => o.OrderStatus == OrderStatus.Disabled).ToArray();
-					toDeactivate.Each(o => {
-						o.Deactivate(session, true);
-						session.Save(o);
-					});
+					foreach (var order in toDeactivate) {
+						if (cancellation.IsCancellationRequested)
+							return;
+						order.Deactivate(session, true);
+						session.Save(order);
+					}
 				});
 			}
 			catch (Exception ex) {
@@ -88,10 +88,12 @@ namespace Billing
 				_mutex.WaitOne();
 				WithTransaction(session => {
 					var toActivate = session.Query<Order>().Where(o => !o.IsActivated).ToArray().Where(o => o.OrderStatus == OrderStatus.Enabled).ToArray();
-					toActivate.Each(o => {
-						o.Activate(session);
-						session.Save(o);
-					});
+					foreach (var order in toActivate) {
+						if (cancellation.IsCancellationRequested)
+							return;
+						order.Activate(session);
+						session.Save(order);
+					}
 				});
 			}
 			catch (Exception ex) {
@@ -111,8 +113,10 @@ namespace Billing
 							.Where(o =>o.IsActivated && !o.IsDeactivated && o.EndPoint != null && o.EndPoint.IpAutoSet != null &&
 										o.EndPoint.IpAutoSet == true)
 							.ToArray().Where(o => o.OrderStatus == OrderStatus.Enabled).ToArray();
-					toActivate.Each(o => {
-						var endpoint = o.EndPoint;
+					foreach (var order in toActivate) {
+						if (cancellation.IsCancellationRequested)
+							return;
+						var endpoint = order.EndPoint;
 						//если у выбранной точки подключения отсутствует фиксированный ip
 						if (endpoint.Ip == null) {
 							//необходимо выбрать лизу, которую можно использовать для фиксированного ip
@@ -122,23 +126,23 @@ namespace Billing
 							var leaseForIp = leasesForIp.FirstOrDefault(f => f.Pool != null && f.Pool.IsGray == false);
 							//если такая лиза есть, присвоение ее точке подключения и снятия флага "авто-установления фиксированного ip" (иначе ожидание появления нужной лизы)
 							if (leaseForIp != null) {
-								o.EndPoint.Ip = leaseForIp.Ip;
-								o.EndPoint.IpAutoSet = false;
+								order.EndPoint.Ip = leaseForIp.Ip;
+								order.EndPoint.IpAutoSet = false;
 								var appeal =
-									o.Client.CreareAppeal(
-										$"По заказу №{o.Number} точке подключения №{o.EndPoint.Id} назначен фиксированный IP адрес: {leaseForIp.Ip}",
+									order.Client.CreareAppeal(
+										$"По заказу №{order.Number} точке подключения №{order.EndPoint.Id} назначен фиксированный IP адрес: {leaseForIp.Ip}",
 										logBalance: false);
-								session.Save(o.EndPoint);
-								session.Save(o);
+								session.Save(order.EndPoint);
+								session.Save(order);
 								session.Save(appeal);
 							}
 						} else {
 							//если фиксированный ip задан, снятие флага "авто-установления фиксированного ip"
-							o.EndPoint.IpAutoSet = false;
-							session.Save(o.EndPoint);
-							session.Save(o);
+							order.EndPoint.IpAutoSet = false;
+							session.Save(order.EndPoint);
+							session.Save(order);
 						}
-					});
+					}
 				});
 			} catch (Exception ex) {
 				_log.Error("При присвоении фиксированных ip юр. лицам. ", ex);
@@ -152,6 +156,8 @@ namespace Billing
 				WithTransaction(session => {
 					var newEndPoints = session.Query<ClientEndpoint>().Where(c => c.IsEnabled == null && c.Client.Disabled == false && !c.Disabled).ToList();
 					foreach (var endpoint in newEndPoints) {
+						if (cancellation.IsCancellationRequested)
+							return;
 						var client = endpoint.Client;
 						var shoWarning = client.ShowBalanceWarningPage;
 
@@ -183,12 +189,12 @@ namespace Billing
 			}
 		}
 
-		public void SafeProcessPayments()
+		public void SafeProcessPayments(CancellationToken token = default(CancellationToken))
 		{
 			try {
 				_mutex.WaitOne();
 
-				ProcessPayments();
+				ProcessPayments(token);
 			}
 			catch (Exception ex) {
 				_log.Error("При обработке платежей", ex);
@@ -199,7 +205,7 @@ namespace Billing
 		}
 
 		// вспомогательная
-		private void WithTransaction(Action<ISession> action)
+		private static void WithTransaction(Action<ISession> action)
 		{
 			using (var transaction = new TransactionScope(OnDispose.Rollback)) {
 				ArHelper.WithSession(action);
@@ -207,13 +213,23 @@ namespace Billing
 			}
 		}
 
-		public void ProcessPayments()
+		public void ProcessPayments(CancellationToken token = default(CancellationToken))
 		{
-			WithTransaction(ActivateServices);
+			WithTransaction(session => {
+				var services = session.Query<ClientService>().Where(s => s.Client.Status.Id != BillingIgnoreStatusId && !s.IsActivated);
+				foreach (var service in services) {
+					if (token.IsCancellationRequested)
+						return;
+					service.TryActivate();
+					session.Save(service);
+				}
+			});
 
 			WithTransaction(session => {
 				var newEndPointForConnect = session.Query<ClientEndpoint>().Where(c => c.Client.PhysicalClient != null && !c.PayForCon.Paid && !c.Disabled).ToList();
 				foreach (var clientEndpoint in newEndPointForConnect) {
+					if (token.IsCancellationRequested)
+						return;
 					var writeOff = new UserWriteOff(clientEndpoint.Client, clientEndpoint.PayForCon.Sum, "Плата за подключение");
 					session.Save(writeOff);
 					clientEndpoint.PayForCon.Paid = true;
@@ -226,6 +242,8 @@ namespace Billing
 				var payments = session.Query<Payment>().Where(p => !p.BillingAccount && !p.IsDuplicate);
 				////Поиск дублируемых платежей
 				foreach (var payment in payments) {
+					if (token.IsCancellationRequested)
+						return;
 					if (session.Query<Payment>().Any(p => p.RecievedOn >= SystemTime.Now().Date.AddDays(-48)
 					                                      && p.IsDuplicate == false
 					                                      && p.TransactionId != null
@@ -285,6 +303,8 @@ namespace Billing
 			WithTransaction(session => {
 				var writeoffs = session.Query<UserWriteOff>().Where(w => !w.BillingAccount && w.Client != null && !w.Ignore);
 				foreach (var userWriteOff in writeoffs) {
+					if (token.IsCancellationRequested)
+						return;
 					var client = userWriteOff.Client;
 					if (client.PhysicalClient != null) {
 						var physicalClient = client.PhysicalClient;
@@ -304,6 +324,8 @@ namespace Billing
 					.Where(c => c.PhysicalClient.Balance > c.GetPriceIgnoreDisabled() * c.PercentBalance)
 					.ToList();
 				foreach (var client in clients) {
+					if (token.IsCancellationRequested)
+						return;
 					bool showBalanceWarningPage = PlanChanger.CheckPlanChangerWarningPage(session, client);
 					var oldVal = showBalanceWarningPage;
 					client.Enable(showBalanceWarningPage);
@@ -315,6 +337,8 @@ namespace Billing
 				}
 				var lawyerPersons = session.Query<Client>().Where(c => c.LawyerPerson != null && c.Status.Id != BillingIgnoreStatusId);
 				foreach (var client in lawyerPersons) {
+					if (token.IsCancellationRequested)
+						return;
 					if (client.NeedShowWarningForLawyer()) {
 						if (client.WhenShowWarning == null ||
 						    (SystemTime.Now() - client.WhenShowWarning.Value).TotalHours >= 3) {
@@ -340,6 +364,8 @@ namespace Billing
 				//Пытаемся удалить сервисы, которые отработали свое
 				var services = session.Query<ClientService>();
 				foreach (var assignedservice in services) {
+					if (token.IsCancellationRequested)
+						return;
 					if (assignedservice.IsActivated) {
 						// вызов события у сервиса по таймеру
 						assignedservice.Service.OnTimer(session, assignedservice);
@@ -347,15 +373,6 @@ namespace Billing
 					assignedservice.TryDeactivate();
 				}
 			});
-		}
-
-		private void ActivateServices(ISession session)
-		{
-			var services = session.Query<ClientService>().Where(s => s.Client.Status.Id != BillingIgnoreStatusId && !s.IsActivated);
-			foreach (var service in services) {
-				service.TryActivate();
-				session.Save(service);
-			}
 		}
 
 		/// <summary>
@@ -391,14 +408,10 @@ namespace Billing
 
 				var appeal = client.CreareAppeal("Был зачислен бонус за первый платеж в размере " + bonusPayment.Sum + " Рублей");
 				session.Save(appeal);
-				var message = "Вам начислен бонус в размере " + bonusPayment.Sum + " рублей.Благодарим за сотрудничество";
-				var sms = SmsMessage.TryCreate(client, message, DateTime.Now.AddMinutes(1));
-				if (sms != null)
-					session.Save(sms);
 			}
 		}
 
-		public void Run()
+		public void Run(CancellationToken token = default(CancellationToken))
 		{
 			try {
 				_mutex.WaitOne();
@@ -438,7 +451,7 @@ namespace Billing
 				}
 
 				if (normalFlag || errorFlag)
-					ProcessWriteoffs();
+					ProcessWriteoffs(token);
 			}
 			catch (Exception ex) {
 				_log.Error("Ошибка при начислении списаний", ex);
@@ -451,7 +464,7 @@ namespace Billing
 		/// <summary>
 		/// Списания абоненской платы
 		/// </summary>
-		public virtual void ProcessWriteoffs()
+		public virtual void ProcessWriteoffs(CancellationToken token = default(CancellationToken))
 		{
 			// обнуление кол-ва ошибок
 			var errorCount = 0;
@@ -460,36 +473,81 @@ namespace Billing
 			LastStartFailChangeForTrue();
 
 			// списание у физ. лиц
-			ProcessAll(WriteOffFromPhysicalPerson,
+			ProcessAll(token, WriteOffFromPhysicalPerson,
 				s => s.Query<Client>().Where(c => c.PhysicalClient != null && !c.PaidDay),
 				ref errorCount);
 
 			// списание у юр. лиц
-			ProcessAll(WriteOffFromLawyerPerson,
+			ProcessAll(token, WriteOffFromLawyerPerson,
 				s => s.Query<Client>().Where(c => c.LawyerPerson != null && !c.PaidDay),
 				ref errorCount);
 
 			WithTransaction(s => {
 				// учет оплаты работы агентов
-				ProcessPaymentsForAgent(s);
+				var agentSettings = AgentTariff.GetPriceForAction(AgentActions.AgentPayIndex);
+				var needToAgentSum = AgentTariff.GetPriceForAction(AgentActions.WorkedClient);
+				var bonusesClients = s.Query<Client>().Where(c =>
+						c.Request != null &&
+						!c.Request.PaidBonus &&
+						c.Request.Registrator != null &&
+						c.BeginWork != null)
+					.ToList();
+				foreach (var client in bonusesClients) {
+					if (token.IsCancellationRequested)
+						return;
+					if (client.Payments.Where(s1 => !s1.IsDuplicate).Sum(p => p.Sum) >= needToAgentSum * agentSettings) {
+						var request = client.Request;
+						request.PaidBonus = true;
+						s.Save(request);
+						s.Save(new PaymentsForAgent {
+							Action = AgentTariff.GetAction(AgentActions.WorkedClient),
+							Agent = request.Registrator,
+							RegistrationDate = SystemTime.Now(),
+							Sum = needToAgentSum,
+							Comment = string.Format("Клиент {0} начал работать (Заявка №{1})", client.Id, client.Request.Id)
+						});
+					}
+				}
 
 				// учет бонусов клиентов
-				ProcessFriendBonuses(s);
+				var friendBonusRequests = s.Query<Request>().Where(r =>
+						r.Client != null &&
+						r.FriendThisClient != null &&
+						!r.PaidFriendBonus &&
+						r.Client.BeginWork != null)
+					.ToList();
+				foreach (var friendBonusRequest in friendBonusRequests) {
+					if (token.IsCancellationRequested)
+						return;
+					if (friendBonusRequest.Client.HavePaymentToStart()) {
+						s.Save(new Payment(friendBonusRequest.FriendThisClient, 250) {
+							RecievedOn = SystemTime.Now(),
+							Virtual = true,
+							Comment = string.Format("Подключи друга {0}", friendBonusRequest.FriendThisClient.Id)
+						});
+						friendBonusRequest.PaidFriendBonus = true;
+						s.Save(friendBonusRequest);
+					}
+				}
 			});
 
+			if (token.IsCancellationRequested)
+				return;
 			// при наличии ошибок выставление флага проведения списаний
 			LastStartFailChangeForErrorsPresent(errorCount);
 		}
 
 
 		// вспомогательная 
-		private void ProcessAll(Action<ISession, Client> action, Func<ISession, IQueryable<Client>> query, ref int errorCount)
+		private void ProcessAll(CancellationToken token, Action<ISession, Client> action, Func<ISession, IQueryable<Client>> query, ref int errorCount)
 		{
 			var ids = new List<uint>();
 			WithTransaction(session => { ids = query(session).Select(c => c.Id).ToList(); });
 
 			foreach (var id in ids) {
 				try {
+					if (token.IsCancellationRequested)
+						return;
 					WithTransaction(session => {
 						var client = session.Load<Client>(id);
 						action(session, client);
@@ -516,7 +574,6 @@ namespace Billing
 					settings.LastStartFail = true;
 					s.Save(settings);
 
-					Messages = new List<SmsMessage>();
 					_saleSettings = s.Query<SaleSettings>().First();
 				});
 			}
@@ -578,9 +635,6 @@ namespace Billing
 				if (writeOff != null)
 					session.Save(writeOff);
 				session.Save(client.PhysicalClient);
-
-				//Отсылаем смс если клиенту осталось работать 2 дня или меньше
-				SendWarningSMS(session, client);
 
 				if (PlanChanger.CheckPlanChangerWarningPage(session, client) == false)
 					//Обработка отображения предупреждения о балансе
@@ -668,59 +722,6 @@ namespace Billing
 		}
 
 		/// <summary>
-		/// Оплата работы агентов
-		/// </summary>
-		private void ProcessPaymentsForAgent(ISession session)
-		{
-			var agentSettings = AgentTariff.GetPriceForAction(AgentActions.AgentPayIndex);
-			var needToAgentSum = AgentTariff.GetPriceForAction(AgentActions.WorkedClient);
-			var bonusesClients = session.Query<Client>().Where(c =>
-				c.Request != null &&
-				!c.Request.PaidBonus &&
-				c.Request.Registrator != null &&
-				c.BeginWork != null)
-				.ToList();
-			foreach (var client in bonusesClients) {
-				if (client.Payments.Where(s => !s.IsDuplicate).Sum(p => p.Sum) >= needToAgentSum * agentSettings) {
-					var request = client.Request;
-					request.PaidBonus = true;
-					session.Save(request);
-					session.Save(new PaymentsForAgent {
-						Action = AgentTariff.GetAction(AgentActions.WorkedClient),
-						Agent = request.Registrator,
-						RegistrationDate = SystemTime.Now(),
-						Sum = needToAgentSum,
-						Comment = string.Format("Клиент {0} начал работать (Заявка №{1})", client.Id, client.Request.Id)
-					});
-				}
-			}
-		}
-
-		/// <summary>
-		/// Назначение бонусов
-		/// </summary>
-		private void ProcessFriendBonuses(ISession session)
-		{
-			var friendBonusRequests = session.Query<Request>().Where(r =>
-				r.Client != null &&
-				r.FriendThisClient != null &&
-				!r.PaidFriendBonus &&
-				r.Client.BeginWork != null)
-				.ToList();
-			foreach (var friendBonusRequest in friendBonusRequests) {
-				if (friendBonusRequest.Client.HavePaymentToStart()) {
-					session.Save(new Payment(friendBonusRequest.FriendThisClient, 250) {
-						RecievedOn = SystemTime.Now(),
-						Virtual = true,
-						Comment = string.Format("Подключи друга {0}", friendBonusRequest.FriendThisClient.Id)
-					});
-					friendBonusRequest.PaidFriendBonus = true;
-					session.Save(friendBonusRequest);
-				}
-			}
-		}
-
-		/// <summary>
 		/// Выставление флага LastStartFail в зависимости от наличия ошибок, для выполнения списаний
 		/// </summary>
 		private void LastStartFailChangeForErrorsPresent(int errorCount)
@@ -731,30 +732,6 @@ namespace Billing
 				settings.Save();
 				s.Save(settings);
 			});
-		}
-
-		/// <summary>
-		/// Отправка предупредительного SMS  (для физика)
-		/// </summary>
-		private void SendWarningSMS(ISession session, Client client)
-		{
-			if (client.ShouldNotifyOnLowBalance()) {
-				var message = string.Format("Ваш баланс {0:C} {1:d} доступ в сеть будет заблокирован.",
-					client.PhysicalClient.Balance,
-					client.GetPossibleBlockDate());
-				var now = SystemTime.Now();
-				DateTime shouldBeSendDate;
-				if (now.Hour < 22)
-					shouldBeSendDate = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
-				else {
-					shouldBeSendDate = SystemTime.Now().Date.AddDays(1).AddHours(12);
-				}
-				var sms = SmsMessage.TryCreate(client, message, shouldBeSendDate);
-				if (sms != null) {
-					session.Save(sms);
-					Messages.Add(sms);
-				}
-			}
 		}
 
 		/// <summary>

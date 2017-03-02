@@ -32,13 +32,13 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			client.PhysicalClient.Patronymic = newPatronymicForApply;
 			DbSession.Update(client);
 			DbSession.Flush();
-			Assert.That(client.PhysicalClient.Name, Is.StringContaining(newNameForApply));
-			Assert.That(client.PhysicalClient.Name, Is.StringContaining(newNameForApply));
-			Assert.That(client.PhysicalClient.Name, Is.StringContaining(newNameForApply));
+			Assert.That(client.PhysicalClient.Name, Does.Contain(newNameForApply));
+			Assert.That(client.PhysicalClient.Name, Does.Contain(newNameForApply));
+			Assert.That(client.PhysicalClient.Name, Does.Contain(newNameForApply));
 			// проверка Appeal
 			var appeal = DbSession.Query<Appeal>().OrderByDescending(s => s.Id).FirstOrDefault();
 			Assert.IsNotNull(appeal, "Логи в БД отсуствуют!");
-			Assert.That(appeal.Message, Is.StringContaining(newNameForApply), "Логи не содержат текущее изменение ФИО в модели клиента " + client.Id);
+			Assert.That(appeal.Message, Does.Contain(newNameForApply), "Логи не содержат текущее изменение ФИО в модели клиента " + client.Id);
 		}
 
 		[Test, Description("Проверка отсуствия логов после изменения нелогируемых полей в модели клиента")]
@@ -70,7 +70,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			// проверка Appeal
 			var appeal = DbSession.Query<Appeal>().OrderByDescending(s => s.Id).FirstOrDefault();
 			Assert.IsNotNull(appeal, "Логи в БД отсуствуют!");
-			Assert.That(appeal.Message, Is.StringContaining(plan.Name), "Логи не содержат текущее изменение тарифного плана в модели физ.клиента " + client.Id);
+			Assert.That(appeal.Message, Does.Contain(plan.Name), "Логи не содержат текущее изменение тарифного плана в модели физ.клиента " + client.Id);
 		}
 
 		[Test, Description("Проверка наличия логов после изменения адреса в модели физ.клиента")]
@@ -86,7 +86,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			// проверка Appeal
 			var appeal = DbSession.Query<Appeal>().OrderByDescending(s => s.Id).FirstOrDefault();
 			Assert.IsNotNull(appeal, "Логи в БД отсуствуют!");
-			Assert.That(appeal.Message, Is.StringContaining(addressHouse.Number), "Логи не содержат текущее изменение тарифного плана в модели физ.клиента " + client.Id);
+			Assert.That(appeal.Message, Does.Contain(addressHouse.Number), "Логи не содержат текущее изменение тарифного плана в модели физ.клиента " + client.Id);
 		}
 
 		[Test, Description("Проверка наличия логов после изменения тарифного плана в модели физ.клиента")]
@@ -102,7 +102,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			// проверка Appeal
 			var log = DbSession.Query<Log>().OrderByDescending(s => s.Id).FirstOrDefault();
 			Assert.IsNotNull(log, "Логи в БД отсуствуют!");
-			Assert.That(log.Message, Is.StringContaining(newTitle), "Логи не содержат текущее изменение  наименовании плана в модели информационного блока " + newBlock.Id);
+			Assert.That(log.Message, Does.Contain(newTitle), "Логи не содержат текущее изменение  наименовании плана в модели информационного блока " + newBlock.Id);
 		}
 	}
 }

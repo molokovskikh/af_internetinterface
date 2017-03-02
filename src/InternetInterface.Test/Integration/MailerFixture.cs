@@ -37,9 +37,9 @@ namespace InternetInterface.Test.Integration
 			Flush();
 
 			Assert.IsTrue(sended);
-			Assert.That(message.Body, Is.StringContaining("testComment"));
-			Assert.That(message.Subject, Is.StringContaining("Списание для Юр.Лица."));
-			Assert.That(message.Body, Is.StringContaining("Зарегистрировано разовое списание для Юр.Лица."));
+			Assert.That(message.Body, Does.Contain("testComment"));
+			Assert.That(message.Subject, Does.Contain("Списание для Юр.Лица."));
+			Assert.That(message.Body, Does.Contain("Зарегистрировано разовое списание для Юр.Лица."));
 		}
 	}
 }

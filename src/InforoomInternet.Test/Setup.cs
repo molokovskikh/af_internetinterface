@@ -10,7 +10,7 @@ namespace InforoomInternet.Test
 	[SetUpFixture]
 	public class Setup
 	{
-		[SetUp]
+		[OneTimeSetUp]
 		public void SetupFixture()
 		{
 			if (!ActiveRecordStarter.IsInitialized) {

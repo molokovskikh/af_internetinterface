@@ -27,7 +27,7 @@ namespace Inforoom2.Test.Functional.Home
 					    && action.Name != "TryToDisableWarning" && action.Name != "Logout" && controller.Name != "BussinessController" && controller.Name != "TestSpeedController" && action.Name != "Playlist") {
 						var name = controller.Name.Replace("Controller", "");
 						Open("Account/Login");
-						Assert.That(browser.PageSource, Is.StringContaining("Вход в личный кабинет"));
+						Assert.That(browser.PageSource, Does.Contain("Вход в личный кабинет"));
 						var nameLogin = browser.FindElementByCssSelector(".Account.Login input[name=username]");
 						var password = browser.FindElementByCssSelector(".Account.Login input[name=password]");
 						nameLogin.SendKeys(Client.Id.ToString());

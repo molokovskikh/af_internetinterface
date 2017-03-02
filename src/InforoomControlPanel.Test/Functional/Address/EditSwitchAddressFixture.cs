@@ -26,7 +26,7 @@ namespace InforoomControlPanel.Test.Functional.Address
             AssertText("Адрес коммутатора успешно изменен");
             DbSession.Flush();
             DbSession.Refresh(addressSwitch);
-            Assert.That(addressSwitch.House.Street.Name, Is.StringContaining("улица ленина"), "Изменения адреса коммутатора должны сохраниться и в базе данных");
+            Assert.That(addressSwitch.House.Street.Name, Does.Contain("улица ленина"), "Изменения адреса коммутатора должны сохраниться и в базе данных");
         }
     }
 }

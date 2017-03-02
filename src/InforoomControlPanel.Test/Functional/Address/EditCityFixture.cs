@@ -26,7 +26,7 @@ namespace InforoomControlPanel.Test.Functional.Address
             browser.FindElementByCssSelector(".btn-green").Click();
             AssertText("Город успешно изменен");
             DbSession.Refresh(city);
-            Assert.That(city.Name, Is.StringContaining("Москва"), "Изменения  должны сохраниться и в базе данных");
+            Assert.That(city.Name, Does.Contain("Москва"), "Изменения  должны сохраниться и в базе данных");
         }
     }
 }

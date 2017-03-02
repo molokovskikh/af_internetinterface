@@ -38,8 +38,8 @@ namespace InternetInterface.Test.Integration
 			session.Refresh(destination);
 			Assert.AreEqual(1, destination.Payments.Count);
 			Assert.AreEqual(100, destination.Payments[0].Sum);
-			Assert.That(email.Body, Is.StringContaining(String.Format("От клиент: {0}", source)));
-			Assert.That(email.Body, Is.StringContaining(String.Format("К клиенту: {0}", destination)));
+			Assert.That(email.Body, Does.Contain(String.Format("От клиент: {0}", source)));
+			Assert.That(email.Body, Does.Contain(String.Format("К клиенту: {0}", destination)));
 		}
 	}
 }

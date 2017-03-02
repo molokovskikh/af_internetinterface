@@ -26,7 +26,7 @@ namespace InforoomControlPanel.Test.Functional.Address
             browser.FindElementByCssSelector(".btn-green").Click();
             AssertText("Дом успешно изменен");
             DbSession.Refresh(house);
-            Assert.That(house.Number, Is.StringContaining("77"), "Изменения  должны сохраниться и в базе данных");
+            Assert.That(house.Number, Does.Contain("77"), "Изменения  должны сохраниться и в базе данных");
         }
     }
 }

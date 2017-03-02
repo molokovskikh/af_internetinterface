@@ -146,7 +146,7 @@ namespace Inforoom2.Test
 		public void SeleniumTearDown()
 		{
 			var currentContext = TestContext.CurrentContext;
-			if (currentContext.Result.Status == TestStatus.Failed) {
+			if (TestStatusHelper.IsTestFail()) {
 				if (browser != null) {
 					Console.WriteLine(browser.Url);
 					if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("DEBUG_SELENIUM"))) {
@@ -266,7 +266,7 @@ namespace Inforoom2.Test
 		protected void AssertText(string text)
 		{
 			var body = browser.FindElementByCssSelector("body").Text;
-			Assert.That(body, Is.StringContaining(text));
+			Assert.That(body, Does.Contain(text));
 		}
 
 		protected void AssertNoText(string text)
@@ -279,10 +279,10 @@ namespace Inforoom2.Test
 		{
 			var body = browser.FindElementByCssSelector(cssSelector).Text;
 			if (string.IsNullOrEmpty(errorMessage)) {
-				Assert.That(body, Is.StringContaining(text));
+				Assert.That(body, Does.Contain(text));
 			}
 			else {
-				Assert.That(body, Is.StringContaining(text), errorMessage);
+				Assert.That(body, Does.Contain(text), errorMessage);
 			}
 		}
 

@@ -1187,7 +1187,7 @@ namespace Inforoom2.Test.Infrastructure
 	    {
 	        Open("Account/Login");
 	        WaitForText("Вход в личный кабинет", 60);
-	        Assert.That(browser.PageSource, Is.StringContaining("Вход в личный кабинет"));
+	        Assert.That(browser.PageSource, Does.Contain("Вход в личный кабинет"));
 	        var name = browser.FindElementByCssSelector(".Account.Login input[name=username]");
 	        var password = browser.FindElementByCssSelector(".Account.Login input[name=password]");
 	        name.SendKeys(Client.Id.ToString());
@@ -1211,7 +1211,7 @@ namespace Inforoom2.Test.Infrastructure
 			var lease = DbSession.Query<Lease>().First(i => i.Endpoint == endpoint);
 			var ipstring = lease.Ip.ToString();
 			Open("Home?ip=" + ipstring);
-			Assert.That(browser.PageSource, Is.StringContaining("Протестировать скорость"));
+			Assert.That(browser.PageSource, Does.Contain("Протестировать скорость"));
 			Open("Personal/Profile");
 			Assert.IsTrue(browser.PageSource.Contains("Бонусные программы"));
 		}

@@ -27,9 +27,9 @@ namespace InforoomControlPanel.Test.Functional.Question
             browser.FindElementByCssSelector(".btn.btn-green").Click();
             AssertText("Вопрос успешно отредактирован");
             DbSession.Refresh(questionEdit);
-            Assert.That(questionEdit.Text, Is.StringContaining("Как зайти в личный кабинет?"), "Изменения в вопросе должны сохраниться и в базе данных");
+            Assert.That(questionEdit.Text, Does.Contain("Как зайти в личный кабинет?"), "Изменения в вопросе должны сохраниться и в базе данных");
             Assert.That(questionEdit.IsPublished, Is.False, "Изменения маркера опубликованности вопроса должны сохраниться и в базе данных");
-            Assert.That(questionEdit.Answer, Is.StringContaining("Ответ отправлен на почту"), "Изменения в ответе на вопрос должны сохраниться и в базе данных");
+            Assert.That(questionEdit.Answer, Does.Contain("Ответ отправлен на почту"), "Изменения в ответе на вопрос должны сохраниться и в базе данных");
         }
     }
 }

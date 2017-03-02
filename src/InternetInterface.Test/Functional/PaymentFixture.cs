@@ -19,7 +19,10 @@ namespace InternetInterface.Test.Functional
 			newClient = ClientHelper.Client(session);
 			newClient.Recipient = bankPayment.Recipient;
 
-			Save(client, newClient, bankPayment, bankPayment.Payment);
+			session.Save(client);
+			session.Save(newClient);
+			session.Save(bankPayment);
+			session.Save(bankPayment.Payment);
 		}
 
 		[Test]
@@ -72,7 +75,8 @@ namespace InternetInterface.Test.Functional
 		{
 			var client = ClientHelper.Client(session);
 			var payment = new Payment(client, 1000);
-			Save(client, payment);
+			session.Save(client, payment);
+			session.Save(payment);
 
 			Open(client.Redirect());
 			Css("#show_payments").Click();
@@ -92,7 +96,7 @@ namespace InternetInterface.Test.Functional
 		{
 			var recipient = client.Recipient;
 			recipient.BankAccountNumber = string.Empty;
-			Save(recipient);
+			session.Save(recipient);
 			Close();
 
 			Open("Payments/Edit?id=" + bankPayment.Id);

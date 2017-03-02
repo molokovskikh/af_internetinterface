@@ -51,30 +51,30 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			Assert.That(clientRegistration.BirthDate.Date.Day, Is.EqualTo(9), "В базе данных у зарегестированного клиента должена сохраниться правильно дата рождения-день");
 			Assert.That(clientRegistration.BirthDate.Date.Month, Is.EqualTo(12), "В базе данных у зарегестированного клиента должена сохраниться правильно дата рождения-месяц");
 			Assert.That(clientRegistration.BirthDate.Date.Year, Is.EqualTo(1990), "В базе данных у зарегестированного клиента должена сохраниться правильно дата рождения-год");
-			Assert.That(clientRegistration.Plan.Name, Is.StringContaining("50 на 50"), "В базе данных у зарегестированного клиента должен сохраниться правильно тарифный план");
-			Assert.That(clientRegistration.Email, Is.StringContaining("test@mail.ru"), "В базе данных у зарегестированного клиента должен сохраниться правильно адрес электронной почты");
+			Assert.That(clientRegistration.Plan.Name, Does.Contain("50 на 50"), "В базе данных у зарегестированного клиента должен сохраниться правильно тарифный план");
+			Assert.That(clientRegistration.Email, Does.Contain("test@mail.ru"), "В базе данных у зарегестированного клиента должен сохраниться правильно адрес электронной почты");
 			Assert.That(clientRegistration.ExternalClientId, Is.EqualTo(23), "В базе данных у зарегестированного клиента должен сохраниться правильно адрес электронной почты");
 			Assert.That(clientRegistration.ConnectSum, Is.EqualTo(500), "В базе данных у зарегестированного клиента должена сохраниться правильно сумма за подключение");
-			Assert.That(clientRegistration.Address.House.Street.Region.Name, Is.StringContaining("Борисоглебск"), "В базе данных у зарегестированного клиента должен сохраниться правильно регион");
-			Assert.That(clientRegistration.Address.House.Street.Name, Is.StringContaining("улица третьяковская"), "В базе данных у зарегестированного клиента должена сохраниться правильно улица");
-			Assert.That(clientRegistration.Address.House.Number, Is.StringContaining("6Б"), "В базе данных у зарегестированного клиента должен сохраниться правильно дом");
-			Assert.That(clientRegistration.Address.Entrance, Is.StringContaining("5"), "В базе данных у зарегестированного клиента должен сохраниться правильно подъезд");
-			Assert.That(clientRegistration.CertificateName, Is.StringContaining("паспорт"), "В базе данных у зарегестированного клиента должено сохраниться правильно название документа удостоверяющего личность");
-			Assert.That(clientRegistration.PassportSeries, Is.StringContaining("1234"), "В базе данных у зарегестированного клиента должена сохраниться правильно серия паспорта ");
-			Assert.That(clientRegistration.PassportNumber, Is.StringContaining("12345"), "В базе данных у зарегестированного клиента должен сохраниться правильно номер паспорта");
+			Assert.That(clientRegistration.Address.House.Street.Region.Name, Does.Contain("Борисоглебск"), "В базе данных у зарегестированного клиента должен сохраниться правильно регион");
+			Assert.That(clientRegistration.Address.House.Street.Name, Does.Contain("улица третьяковская"), "В базе данных у зарегестированного клиента должена сохраниться правильно улица");
+			Assert.That(clientRegistration.Address.House.Number, Does.Contain("6Б"), "В базе данных у зарегестированного клиента должен сохраниться правильно дом");
+			Assert.That(clientRegistration.Address.Entrance, Does.Contain("5"), "В базе данных у зарегестированного клиента должен сохраниться правильно подъезд");
+			Assert.That(clientRegistration.CertificateName, Does.Contain("паспорт"), "В базе данных у зарегестированного клиента должено сохраниться правильно название документа удостоверяющего личность");
+			Assert.That(clientRegistration.PassportSeries, Does.Contain("1234"), "В базе данных у зарегестированного клиента должена сохраниться правильно серия паспорта ");
+			Assert.That(clientRegistration.PassportNumber, Does.Contain("12345"), "В базе данных у зарегестированного клиента должен сохраниться правильно номер паспорта");
 			Assert.That(clientRegistration.PassportDate.Day, Is.EqualTo(9), "В базе данных у зарегестированного клиента должена сохраниться правильно дата выдачи паспорта-день");
 			Assert.That(clientRegistration.PassportDate.Month, Is.EqualTo(1), "В базе данных у зарегестированного клиента должена сохраниться правильно дата выдачи паспорта-месяц");
 			Assert.That(clientRegistration.PassportDate.Year, Is.EqualTo(1991), "В базе данных у зарегестированного клиента должена сохраниться правильно дата выдачи паспорта-год");
-			Assert.That(clientRegistration.PassportResidention, Is.StringContaining("Москва"), "В базе данных у зарегестированного клиента должено сохраниться правильно поле кем выдан");
-			Assert.That(clientRegistration.RegistrationAddress, Is.StringContaining("Москва"), "В базе данных у зарегестированного клиента должен сохраниться правильно адрес регистрации");
+			Assert.That(clientRegistration.PassportResidention, Does.Contain("Москва"), "В базе данных у зарегестированного клиента должено сохраниться правильно поле кем выдан");
+			Assert.That(clientRegistration.RegistrationAddress, Does.Contain("Москва"), "В базе данных у зарегестированного клиента должен сохраниться правильно адрес регистрации");
 			//проверяем что контакты сохранены в базе данных коректно
-			Assert.That(clientRegistration.Client.Contacts[0].ContactString, Is.StringContaining("968-5473245"), "В базе данных у зарегестированного клиента должен сохраниться правильно мобильный телефон");
-			Assert.That(clientRegistration.Client.Contacts[1].ContactString, Is.StringContaining("968-5678745"), "В базе данных у зарегестированного клиента должен сохраниться правильно домашнего телефон");
-			Assert.That(clientRegistration.Client.Contacts[2].ContactString, Is.StringContaining("test@mail.ru"), "В базе данных у зарегестированного клиента должена сохраниться правильно электронная почта");
+			Assert.That(clientRegistration.Client.Contacts[0].ContactString, Does.Contain("968-5473245"), "В базе данных у зарегестированного клиента должен сохраниться правильно мобильный телефон");
+			Assert.That(clientRegistration.Client.Contacts[1].ContactString, Does.Contain("968-5678745"), "В базе данных у зарегестированного клиента должен сохраниться правильно домашнего телефон");
+			Assert.That(clientRegistration.Client.Contacts[2].ContactString, Does.Contain("test@mail.ru"), "В базе данных у зарегестированного клиента должена сохраниться правильно электронная почта");
 			//проверяем, что в базе данных у зарегестированного клиента правильно сохранилось имя сотрудника, который его регестрировал
 			var employeeName = Environment.UserName;
 			var employeeRegistration = DbSession.Query<Employee>().FirstOrDefault(p => p.Login == employeeName);
-			Assert.That(clientRegistration.Client.WhoRegisteredName, Is.StringContaining(employeeRegistration.Name), "В базе данных у зарегестированного клиента должен сохраниться правильно имя сотрудника,который регестрировал");
+			Assert.That(clientRegistration.Client.WhoRegisteredName, Does.Contain(employeeRegistration.Name), "В базе данных у зарегестированного клиента должен сохраниться правильно имя сотрудника,который регестрировал");
 		}
 
 		[Test, Description("Не заполнено поле Фамилия")]
@@ -231,7 +231,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			Open(attribute);
 			var region = browser.FindElementsByCssSelector("select[id=RegionDropDown] option[selected]");
 			var regionClient = region.First().Text;
-			Assert.That(regionClient, Is.StringContaining("Борисоглебск"), "Поле Регион при создании новой улицы должно заполниться данными из заявки");
+			Assert.That(regionClient, Does.Contain("Борисоглебск"), "Поле Регион при создании новой улицы должно заполниться данными из заявки");
 		}
 
 
@@ -250,8 +250,8 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			var region = browser.FindElementByCssSelector("input[id=cityName]").GetAttribute("value");
 			var street = browser.FindElementsByCssSelector("select[id=StreetDropDown] option[selected]");
 			var streetClient = street.First().Text;
-			Assert.That(region, Is.StringContaining("Борисоглебск"), "Поле Регион при создании нового дома должно заполниться данными из заявки");
-			Assert.That(streetClient, Is.StringContaining("улица третьяковская"), "Поле Улица при создании нового дома должно заполниться данными из заявки");
+			Assert.That(region, Does.Contain("Борисоглебск"), "Поле Регион при создании нового дома должно заполниться данными из заявки");
+			Assert.That(streetClient, Does.Contain("улица третьяковская"), "Поле Улица при создании нового дома должно заполниться данными из заявки");
 		}
 
 		[Test, Description("Проверка правильного отображение тарифных планов по регионам при регитсрации клиентов")]

@@ -24,9 +24,9 @@ namespace InforoomControlPanel.Test.Functional.Switch
 			browser.FindElementByCssSelector(".btn-green").Click();
 			AssertText("Узел связи успешно добавлен");
 			var networkNode = DbSession.Query<NetworkNode>().First(p => p.Name == "Узел связи для тестирования");
-			Assert.That(networkNode.Name, Is.StringContaining("Узел связи для тестирования"), "Узел связи должен добавиться и в базе данных");
+			Assert.That(networkNode.Name, Does.Contain("Узел связи для тестирования"), "Узел связи должен добавиться и в базе данных");
 			Assert.That(networkNode.Virtual, Is.True, "Маркер виртуальности у узла связи должно сохраниться корректно");
-			Assert.That(networkNode.Description, Is.StringContaining("Описание тестового узла связи"), "Описание узла связи при добавлении должно сохраниться корректно");	
+			Assert.That(networkNode.Description, Does.Contain("Описание тестового узла связи"), "Описание узла связи при добавлении должно сохраниться корректно");	
 		}
 	}
 }

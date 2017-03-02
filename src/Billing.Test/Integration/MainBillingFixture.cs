@@ -20,7 +20,7 @@ namespace Billing.Test.Integration
 {
 	public class MainBillingForTest : MainBilling
 	{
-		public override void ProcessWriteoffs()
+		public override void ProcessWriteoffs(CancellationToken token = default(CancellationToken))
 		{
 			base.ProcessWriteoffs();
 

@@ -9,7 +9,7 @@ namespace Inforoom2.Test.Functional
 	{
 		private Server _webServer;
 
-		[SetUp]
+		[OneTimeSetUp]
 		public void SetupFixture()
 		{
 			//Все опасные функции, должны быть вызванны до этого момента, так как исключения в сетапе
@@ -18,7 +18,7 @@ namespace Inforoom2.Test.Functional
 			_webServer = MySeleniumFixture.StartServer();
 		}
 
-		[TearDown]
+		[OneTimeTearDown]
 		public void TeardownFixture()
 		{
 			MySeleniumFixture.GlobalTearDown();

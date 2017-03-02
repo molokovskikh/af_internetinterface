@@ -26,7 +26,7 @@ namespace InternetInterface.Test.Functional
 	{
 		private Server _webServer;
 
-		[SetUp]
+		[OneTimeSetUp]
 		public void SetupFixture()
 		{
 			SeleniumFixture.GlobalSetup();
@@ -37,7 +37,7 @@ namespace InternetInterface.Test.Functional
 			_webServer = SeleniumFixture.StartServer();
 		}
 
-		[TearDown]
+		[OneTimeTearDown]
 		public void TeardownFixture()
 		{
 			SeleniumFixture.GlobalTearDown();

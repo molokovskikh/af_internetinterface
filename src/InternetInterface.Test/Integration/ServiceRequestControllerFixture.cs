@@ -44,7 +44,7 @@ namespace InternetInterface.Test.Integration
 			request.Status = ServiceRequestStatus.Cancel;
 			controller.EditServiceRequest(request);
 			Assert.AreEqual(1, sms.Count);
-			Assert.That(sms[0], Is.StringContaining(String.Format("сч. {0} заявка отменена", request.Client.Id)));
+			Assert.That(sms[0], Does.Contain(String.Format("сч. {0} заявка отменена", request.Client.Id)));
 		}
 	}
 }

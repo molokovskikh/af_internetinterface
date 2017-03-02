@@ -104,8 +104,8 @@ namespace Inforoom2.Test.Functional.ClientRequest
 			Assert.That(request.Housing, Is.EqualTo("3"));
 
 			//проверяем, что в базе данных поля наименования улицы и дома сохранились в формате Яндекс
-			Assert.That(request.YandexStreet, Is.StringContaining(streetYandex));
-			Assert.That(request.YandexHouse, Is.StringContaining(houseYandex));
+			Assert.That(request.YandexStreet, Does.Contain(streetYandex));
+			Assert.That(request.YandexHouse, Does.Contain(houseYandex));
 		}
 
 		[Test, Description("Не заполнено поле ФИО")]

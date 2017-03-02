@@ -32,11 +32,11 @@ namespace InforoomControlPanel.Test.Functional.Address
             browser.FindElementByCssSelector(".btn-green").Click();
             AssertText("Регион успешно изменен");
             DbSession.Refresh(region);
-            Assert.That(region.Name, Is.StringContaining("Белгород изменен"), "Изменения в имени  должны измениться и в базе данных");
-            Assert.That(region.City.Name, Is.StringContaining("Борисоглебск"), "Изменения в городе  должны измениться и в базе данных");
-            Assert.That(region.OfficeAddress, Is.StringContaining("изменен"), "Изменения в адресе офиса  должны измениться и в базе данных");
-            Assert.That(region.RegionOfficePhoneNumber, Is.StringContaining("1234"), "Изменения в номере телефона офиса  должны измениться и в базе данных");
-            Assert.That(region.OfficeGeomark, Is.StringContaining("1234"), "Изменения в геометке офиса  должны измениться и в базе данных");
+            Assert.That(region.Name, Does.Contain("Белгород изменен"), "Изменения в имени  должны измениться и в базе данных");
+            Assert.That(region.City.Name, Does.Contain("Борисоглебск"), "Изменения в городе  должны измениться и в базе данных");
+            Assert.That(region.OfficeAddress, Does.Contain("изменен"), "Изменения в адресе офиса  должны измениться и в базе данных");
+            Assert.That(region.RegionOfficePhoneNumber, Does.Contain("1234"), "Изменения в номере телефона офиса  должны измениться и в базе данных");
+            Assert.That(region.OfficeGeomark, Does.Contain("1234"), "Изменения в геометке офиса  должны измениться и в базе данных");
         }
     }
 }

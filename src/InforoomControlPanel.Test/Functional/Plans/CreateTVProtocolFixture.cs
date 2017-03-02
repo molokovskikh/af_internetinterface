@@ -20,7 +20,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			browser.FindElementByCssSelector(".btn-green").Click();
 			AssertText("Протокол успешно добавлен!");
 			var createTVProtocol = DbSession.Query<TvProtocol>().First(p => p.Name == "Тест");
-			Assert.That(createTVProtocol.Name, Is.StringContaining("Тест"), "Добавленный канал должен сохраниться и в базе данных");
+			Assert.That(createTVProtocol.Name, Does.Contain("Тест"), "Добавленный канал должен сохраниться и в базе данных");
 			var tVProtocolCountAfterTest = DbSession.Query<TvProtocol>().ToList().Count;
 			Assert.That(tVProtocolCountAfterTest, Is.EqualTo(tVProtocolCount + 1), "Количество TV-протоколов должно увеличиться на один после добавления");
 		}	

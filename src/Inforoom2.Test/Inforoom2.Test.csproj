@@ -209,7 +209,6 @@
     <Compile Include="BillingCustomCheck\Run.cs" />
     <Compile Include="Functional\Account\AccountFixture.cs" />
     <Compile Include="Functional\Account\LogoutFixture.cs" />
-    <Compile Include="Functional\About\AboutFixture.cs" />
     <Compile Include="Functional\Home\CallMeBackOnActionsFixture.cs" />
     <Compile Include="Functional\Home\CallMeBackFixtureUnregistered.cs" />
     <Compile Include="Functional\Home\HomeFixture.cs" />
@@ -231,7 +230,6 @@
     <Compile Include="Functional\Personal\PersonalNotificationsFixture.cs" />
     <Compile Include="Functional\Personal\PersonalPlansFixture.cs" />
     <Compile Include="Functional\Personal\PersonalFixture.cs" />
-    <Compile Include="Functional\Faq\FaqFixture.cs" />
     <Compile Include="Functional\Home\CallMeBackFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
     <Compile Include="Functional\Personal\DeferredPaymentFixture.cs" />

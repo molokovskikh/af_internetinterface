@@ -28,7 +28,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			browser.FindElementByCssSelector(".btn-green.save").Click();
 			AssertText("Объект успешно изменен!");
 			DbSession.Refresh(tvChannelGroup);
-			Assert.That(tvChannelGroup.Name, Is.StringContaining("Спорт Изменен"), "Изменения группы каналов должны сохраниться и в базе данных");
+			Assert.That(tvChannelGroup.Name, Does.Contain("Спорт Изменен"), "Изменения группы каналов должны сохраниться и в базе данных");
 		}
 
 
@@ -45,12 +45,12 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			browser.FindElementByCssSelector(".btn-green.add").Click();
 			AssertText("Объект успешно прикреплен!");
 			var TVChannelInGroup = browser.FindElementByCssSelector(".row.tvChannels").Text;
-			Assert.That(TVChannelInGroup, Is.StringContaining("Культура"), "Добавленный канал должен отобразиться на странице в списке включенных каналов");
+			Assert.That(TVChannelInGroup, Does.Contain("Культура"), "Добавленный канал должен отобразиться на странице в списке включенных каналов");
 			browser.FindElementByCssSelector(".btn-green.save").Click();
 			DbSession.Refresh(tvChannelGroup);
 			var tVChannel = tvChannelGroup.TvChannels.ToList();
 			var createTVChannel = tVChannel.FirstOrDefault(r => r.Name == "Культура");
-			Assert.That(createTVChannel.Name, Is.StringContaining("Культура"), "В базе данных к группе должен быть прикреплен канал, который в нее включили");		
+			Assert.That(createTVChannel.Name, Does.Contain("Культура"), "В базе данных к группе должен быть прикреплен канал, который в нее включили");		
 		}
 
 		[Test, Description("Удаление TV-канала из группы")]

@@ -33,14 +33,12 @@ namespace InternetInterface.Background
 					.Select(t => Activator.CreateInstance(t))
 					.OfType<Task>()
 					.ToArray();
-				var runner = new RepeatableCommand(30.Minute(), () => tasks.Each(t => {
+				var runner = new RepeatableCommand(30.Minute(), x => tasks.Each(t => {
 					try {
 						t.Execute();
 					}
 					catch(Exception e) {
-						var mailhelper = new Mailer();
-						mailhelper.SendText("service@analit.net", "service@analit.net", "Исключение в Internet.Background", e.Message + " " + e.StackTrace);
-						log.Error(String.Format("Выполнение задачи {0} завершилось ошибкой", t), e);
+						log.Error($"Выполнение задачи {t} завершилось ошибкой", e);
 					}
 				}));
 				tasks.Each(t => t.Cancellation = runner.Cancellation);

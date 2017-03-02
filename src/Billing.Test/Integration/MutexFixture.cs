@@ -29,7 +29,7 @@ namespace Billing.Test.Integration
 		[Test]
 		public void BaseMutexFixture()
 		{
-			var thread = new Thread(_billing.SafeProcessPayments);
+			var thread = new Thread(() => _billing.SafeProcessPayments());
 			thread.Start();
 			thread.Join();
 			_billing.Run();

@@ -10,7 +10,7 @@ namespace InforoomInternet.Test.Functional
 	{
 		private Server _webServer;
 
-		[SetUp]
+		[OneTimeSetUp]
 		public void SetupFixture()
 		{
 			SeleniumFixture.GlobalSetup();
@@ -18,7 +18,7 @@ namespace InforoomInternet.Test.Functional
 			InternetInterface.Test.Functional.Setup.SeedDb();
 		}
 
-		[TearDown]
+		[OneTimeTearDown]
 		public void TeardownFixture()
 		{
 			SeleniumFixture.GlobalTearDown();

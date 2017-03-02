@@ -51,7 +51,7 @@ namespace InternetInterface.Test.Unit
 
 			Assert.AreEqual(178.57, Sum(new DateTime(2014, 2, 10)));
 			Assert.AreEqual(0, Sum(new DateTime(2014, 2, 11)));
-			Assert.That(client.client.Appeals.Last().Appeal, Is.StringContaining("Деактивирован заказ"));
+			Assert.That(client.client.Appeals.Last().Appeal, Does.Contain("Деактивирован заказ"));
 		}
 
 		[Test, Ignore("Часть функционала была вынесена в биллинг, нужна сессия, подобная проверка есть в новой админке")]

@@ -35,7 +35,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			button.Click();
 			AssertText("Объект не удалось удалить! Возможно уже был связан с другими объектами");
 			var UnsuccessfulEditTvProtocol = DbSession.Query<TvProtocol>().FirstOrDefault(p => p.Name == "udp");
-			Assert.That(UnsuccessfulEditTvProtocol.Name, Is.StringContaining("udp"), "Протокол для TV должен все еще быть сохранен в базе данных");
+			Assert.That(UnsuccessfulEditTvProtocol.Name, Does.Contain("udp"), "Протокол для TV должен все еще быть сохранен в базе данных");
 		}
 	}
 }

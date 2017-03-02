@@ -60,7 +60,7 @@ namespace InternetInterface.Test.Integration
 			var writeOff = request.GetWriteOff(session);
 			Assert.That(writeOff, Is.Not.Null);
 			Assert.That(writeOff.Sum, Is.EqualTo(200));
-			Assert.That(writeOff.Comment, Is.StringContaining("Оказание доп"));
+			Assert.That(writeOff.Comment, Does.Contain("Оказание доп"));
 		}
 
 		[Test]

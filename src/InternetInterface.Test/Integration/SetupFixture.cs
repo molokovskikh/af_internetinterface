@@ -18,7 +18,7 @@ namespace InternetInterface.Test.Integration
 	[SetUpFixture]
 	internal class SetupFixture
 	{
-		[SetUp]
+		[OneTimeSetUp]
 		public void Setup()
 		{
 			Functional.Setup.ConfigTest();

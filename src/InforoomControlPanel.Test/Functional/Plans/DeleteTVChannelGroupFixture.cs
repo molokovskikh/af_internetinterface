@@ -35,7 +35,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			button.Click();
 			AssertText("Объект не удалось удалить! Возможно уже был связан с другими объектами");
 			var UnsuccessfulEditTVChannelGroup = DbSession.Query<TvChannelGroup>().FirstOrDefault(p => p.Name == "Все");
-			Assert.That(UnsuccessfulEditTVChannelGroup.Name, Is.StringContaining("Все"), "Группа TV-каналов должена все еще быть сохраненная в базе данных");
+			Assert.That(UnsuccessfulEditTVChannelGroup.Name, Does.Contain("Все"), "Группа TV-каналов должена все еще быть сохраненная в базе данных");
 		}
 	}
 }

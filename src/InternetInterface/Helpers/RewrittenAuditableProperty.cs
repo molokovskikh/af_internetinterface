@@ -5,12 +5,13 @@ using System.Reflection;
 using System.Web;
 using Common.Web.Ui.Helpers;
 using Common.Web.Ui.Models.Audit;
+using NHibernate;
 
 namespace InternetInterface.Helpers
 {
 	public class RewrittenAuditableProperty : AuditableProperty
 	{
-		public RewrittenAuditableProperty(PropertyInfo property, string name, object newValue, object oldValue) : base(property, name, newValue, oldValue)
+		public RewrittenAuditableProperty(ISession session, PropertyInfo property, string name, object newValue, object oldValue) : base(session, property, name, newValue, oldValue)
 		{
 			Property = property;
 			Name = name;

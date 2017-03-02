@@ -143,15 +143,15 @@ namespace InternetInterface.Test.Integration
 
 			Assert.IsTrue(sended);
 			Assert.That(email.Subject, Is.EqualTo("Уведомление об удалении списания"));
-			Assert.That(email.Body, Is.StringContaining("Отменено списание №"));
-			Assert.That(email.Body, Is.StringContaining("Клиент: №"));
-			Assert.That(email.Body, Is.StringContaining("Сумма:"));
-			Assert.That(email.Body, Is.StringContaining("Оператор:"));
+			Assert.That(email.Body, Does.Contain("Отменено списание №"));
+			Assert.That(email.Body, Does.Contain("Клиент: №"));
+			Assert.That(email.Body, Does.Contain("Сумма:"));
+			Assert.That(email.Body, Does.Contain("Оператор:"));
 			Assert.AreEqual(client.Balance, 300);
 			Assert.AreEqual(client.PhysicalClient.MoneyBalance, 150);
 			Assert.AreEqual(client.PhysicalClient.VirtualBalance, 150);
 			session.Refresh(client);
-			Assert.That(client.Appeals.First().Appeal, Is.StringContaining("Удалено списание на сумму"));
+			Assert.That(client.Appeals.First().Appeal, Does.Contain("Удалено списание на сумму"));
 		}
 
 		[Test]
@@ -168,7 +168,7 @@ namespace InternetInterface.Test.Integration
 			Assert.IsTrue(sended);
 			Assert.AreEqual(client.Balance, 300);
 			session.Refresh(client);
-			Assert.That(client.Appeals.First().Appeal, Is.StringContaining("Удалено списание на сумму"));
+			Assert.That(client.Appeals.First().Appeal, Does.Contain("Удалено списание на сумму"));
 		}
 
 		[Test]

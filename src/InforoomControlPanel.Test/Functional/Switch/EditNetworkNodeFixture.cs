@@ -27,9 +27,9 @@ namespace InforoomControlPanel.Test.Functional.Switch
 			browser.FindElementByCssSelector(".btn-green.save").Click();
 			AssertText("Узел связи успешно изменен");
 			DbSession.Refresh(networkNode);
-			Assert.That(networkNode.Name, Is.StringContaining("Узел связи по измененному адресу"), "Изменения имени узла связи должны сохраниться и в базе данных");
+			Assert.That(networkNode.Name, Does.Contain("Узел связи по измененному адресу"), "Изменения имени узла связи должны сохраниться и в базе данных");
 			Assert.That(networkNode.Virtual, Is.True, "Изменения маркера виртуальности должны сохраниться и в базе данных");
-			Assert.That(networkNode.Description, Is.StringContaining("Описание тестового узла связи"), "Изменения описания узла связи должны сохраниться и в базе данных");
+			Assert.That(networkNode.Description, Does.Contain("Описание тестового узла связи"), "Изменения описания узла связи должны сохраниться и в базе данных");
 		}
 
 		[Test, Description("Добавление многопарника узлу связи")]

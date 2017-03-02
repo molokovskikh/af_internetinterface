@@ -59,7 +59,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CassiniDev-lib" />
+    <Reference Include="CassiniDev4-lib" />
     <Reference Include="Castle.ActiveRecord">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Castle.ActiveRecord.dll</HintPath>
@@ -112,9 +112,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.5.10.11092, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="nunit.framework, Version=3.6.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ftp-gateway\packages\NUnit.3.2.1\lib\net45\nunit.framework.dll</HintPath>
+      <HintPath>..\..\packages\NUnit.3.6.1\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Rhino.Mocks">
       <SpecificVersion>False</SpecificVersion>
@@ -142,7 +143,6 @@
     <Compile Include="Functional\ClientFixture.cs" />
     <Compile Include="Functional\ClientFunctionalFixture.cs" />
     <Compile Include="Functional\ClientPaymentFixture.cs" />
-    <Compile Include="Functional\CommutatorFixture.cs" />
     <Compile Include="Functional\ConnectionRequestFixture.cs" />
     <Compile Include="Functional\RoleBasedFixture.cs" />
     <Compile Include="Functional\HouseMapFixture.cs" />
@@ -164,7 +164,6 @@
     <Compile Include="Functional\TariffFixture.cs" />
     <Compile Include="Functional\UserInfoFixture.cs" />
     <Compile Include="Functional\Setup.cs" />
-    <Compile Include="Functional\WriteoffFixture.cs" />
     <Compile Include="Helpers\AcceptanceFixture.cs" />
     <Compile Include="Helpers\ClientHelper.cs" />
     <Compile Include="Helpers\ControllerFixture.cs" />
@@ -197,7 +196,6 @@
     <Compile Include="Integration\SetupFixture.cs" />
     <Compile Include="Troubleshoot.cs" />
     <Compile Include="Unit\BrigadFixture.cs" />
-    <Compile Include="Unit\ByteFixture.cs" />
     <Compile Include="Unit\ClientFixture.cs" />
     <Compile Include="Unit\HouseFixture.cs" />
     <Compile Include="Unit\GetClientsLogicFixture.cs" />

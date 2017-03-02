@@ -36,9 +36,9 @@ namespace InforoomControlPanel.Test.Functional.Address
             Assert.That(streetCountAfterTest, Is.EqualTo(streetCount + 1), "Количество улиц должно увеличиться на один после добавления новой улицы");
             //Проверяем, что в базе данных новая улица сохранилась с наименованием редактированным Яндексом
             var createStreet = DbSession.Query<Street>().First(p => p.Name == streetYandexCreate);
-            Assert.That(createStreet.Name, Is.StringContaining(streetYandexCreate), "Добавленная улица должена сохраниться и в базе данных");
+            Assert.That(createStreet.Name, Does.Contain(streetYandexCreate), "Добавленная улица должена сохраниться и в базе данных");
             //Проверяем, что в базе данных сохранились координаты созданные Яндексом
-            Assert.That(createStreet.Geomark, Is.StringContaining(streetYandexGeomark), "У добавленной улицы должны быть сохранены координаты Яндекса");
+            Assert.That(createStreet.Geomark, Does.Contain(streetYandexGeomark), "У добавленной улицы должны быть сохранены координаты Яндекса");
             //Проверяем, что в базе данных стоит метка подтверждения улицы Яндексом
             Assert.That(createStreet.Confirmed, Is.True);
         }
@@ -66,9 +66,9 @@ namespace InforoomControlPanel.Test.Functional.Address
             AssertText("Улица успешно добавлена");
             //Проверяем, что в базе данных новая улица сохранилась с наименованием, которое было написано тестом
             var createStreet = DbSession.Query<Street>().First(p => p.Name == "улица победы");
-            Assert.That(createStreet.Name, Is.StringContaining("улица победы"), "Добавленная улица должена сохраниться и в базе данных");
+            Assert.That(createStreet.Name, Does.Contain("улица победы"), "Добавленная улица должена сохраниться и в базе данных");
             //Проверяем, что в базе данных сохранились координаты созданные тестом
-            Assert.That(createStreet.Geomark, Is.StringContaining(streetGeomarkCreate), "У добавленной улицы должны быть сохранены координаты не подтвержденные Яндексом");
+            Assert.That(createStreet.Geomark, Does.Contain(streetGeomarkCreate), "У добавленной улицы должны быть сохранены координаты не подтвержденные Яндексом");
             //Проверяем, что в базе данных не стоит метка подтверждения улицы Яндексом
             Assert.That(createStreet.Confirmed, Is.False);
         }

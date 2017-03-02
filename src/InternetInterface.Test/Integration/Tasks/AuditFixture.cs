@@ -179,7 +179,7 @@ namespace InternetInterface.Test.Integration.Tasks
 			session.Flush();
 			audit.CheckForDefferedPaymentFailure();
 			Assert.That(audit.Reports.Count, Is.EqualTo(1));
-			Assert.That(audit.Reports[audit.Reports.Keys[0]], Is.StringContaining(client.Id.ToString()));
+			Assert.That(audit.Reports[audit.Reports.Keys[0]], Does.Contain(client.Id.ToString()));
 		}
 	}
 }

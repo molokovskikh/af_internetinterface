@@ -35,7 +35,7 @@ namespace InternetInterface.Test.Integration
 			Assert.That(Response.OutputStream.Length, Is.GreaterThan(0));
 			Response.OutputStream.Seek(0, SeekOrigin.Begin);
 			var wb = Workbook.Load(Response.OutputStream);
-			Assert.That(wb.Worksheets[0].Name, Is.StringContaining("Статистика по клиентам"));
+			Assert.That(wb.Worksheets[0].Name, Does.Contain("Статистика по клиентам"));
 		}
 	}
 }

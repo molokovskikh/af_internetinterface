@@ -35,9 +35,9 @@ namespace InforoomControlPanel.Test.Functional.Address
             Assert.That(houseCountAfterTest, Is.EqualTo(houseCount + 1), "Количество домов должно увеличиться на один после добавления нового дома");
             //Проверяем, что в базе данных новый дом сохранился с наименованием редактированным Яндексом
             var createHouse = DbSession.Query<House>().First(p => p.Number == houseYandexCreate);
-            Assert.That(createHouse.Number, Is.StringContaining(houseYandexCreate), "Добавленный дом должен сохраниться и в базе данных");
+            Assert.That(createHouse.Number, Does.Contain(houseYandexCreate), "Добавленный дом должен сохраниться и в базе данных");
             //Проверяем, что в базе данных сохранились координаты созданные Яндексом
-            Assert.That(createHouse.Geomark, Is.StringContaining(houseYandexGeomark), "У добавленного дома должны быть сохранены координаты Яндекса");
+            Assert.That(createHouse.Geomark, Does.Contain(houseYandexGeomark), "У добавленного дома должны быть сохранены координаты Яндекса");
             //Проверяем, что в базе данных стоит метка подтверждения улицы Яндексом
             Assert.That(createHouse.Confirmed, Is.True);
         }
@@ -61,9 +61,9 @@ namespace InforoomControlPanel.Test.Functional.Address
             AssertText("Дом успешно добавлен");
             //Проверяем, что в базе данных новый дом сохранился с наименованием, которое было написано тестом
             var createHouse = DbSession.Query<House>().First(p => p.Number == "7");
-            Assert.That(createHouse.Number, Is.StringContaining("7"), "Добавленный дом должен сохраниться и в базе данных");
+            Assert.That(createHouse.Number, Does.Contain("7"), "Добавленный дом должен сохраниться и в базе данных");
             //Проверяем, что в базе данных сохранились координаты созданные тестом
-            Assert.That(createHouse.Geomark, Is.StringContaining(houseGeomarkCreate), "У добавленного дома должны быть сохранены координаты не подтвержденные Яндексом");
+            Assert.That(createHouse.Geomark, Does.Contain(houseGeomarkCreate), "У добавленного дома должны быть сохранены координаты не подтвержденные Яндексом");
             //Проверяем, что в базе данных не стоит метка подтверждения улицы Яндексом
             Assert.That(createHouse.Confirmed, Is.False);
         }

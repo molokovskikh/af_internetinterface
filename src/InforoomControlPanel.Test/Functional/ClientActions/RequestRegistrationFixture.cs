@@ -55,15 +55,15 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			var clientNameRequest = clientRequest.ApplicantName.Split(' ');
 			//проверяем,что поле Фамилия заполнилось данными из заявки
 			var clientSurName = browser.FindElementByCssSelector("input[id=client_PhysicalClient_Surname]").GetAttribute("value");
-			Assert.That(clientSurName, Is.StringContaining(clientNameRequest[0]), "Поле фамилии должно заполниться данными из заявки");
+			Assert.That(clientSurName, Does.Contain(clientNameRequest[0]), "Поле фамилии должно заполниться данными из заявки");
 
 			//проверяем,что поле Имя заполнилось данными из заявки
 			var clientName = browser.FindElementByCssSelector("input[id=client_PhysicalClient_Name]").GetAttribute("value");
-			Assert.That(clientName, Is.StringContaining(clientNameRequest[1]), "Поле имени должно заполниться данными из заявки");
+			Assert.That(clientName, Does.Contain(clientNameRequest[1]), "Поле имени должно заполниться данными из заявки");
 
 			//проверяем,что поле Отчество заполнилось данными из заявки
 			var clientPatronymic = browser.FindElementByCssSelector("input[id=client_PhysicalClient_Patronymic]").GetAttribute("value");
-			Assert.That(clientPatronymic, Is.StringContaining(clientNameRequest[2]), "Поле отчества должно заполниться данными из заявки");
+			Assert.That(clientPatronymic, Does.Contain(clientNameRequest[2]), "Поле отчества должно заполниться данными из заявки");
 			WaitForMap();
 		}
 
@@ -87,26 +87,26 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			//проверяем,что поле Город заполнилось данными из заявки
 			var city = browser.FindElementsByCssSelector("select[id=RegionDropDown] option[selected]");
 			var clientCity = city.Last().Text;
-			Assert.That(clientCity, Is.StringContaining(clientRequest.City), "Поле Город должно заполниться данными из заявки");
+			Assert.That(clientCity, Does.Contain(clientRequest.City), "Поле Город должно заполниться данными из заявки");
 
 			//проверяем,что поле Улица заполнилось данными из заявки 
 			var street = browser.FindElementsByCssSelector("select[id=StreetDropDown] option[selected]");
 			var clientStreet = street.Last().Text;
-			Assert.That(clientStreet, Is.StringContaining(clientRequest.YandexStreet), "Поле Улица должно заполниться данными из заявки");
+			Assert.That(clientStreet, Does.Contain(clientRequest.YandexStreet), "Поле Улица должно заполниться данными из заявки");
 
 			//проверяем,что поле Дом заполнилось данными из заявки 
 			var house = browser.FindElementsByCssSelector("select[id=HouseDropDown] option");
 			var clientHouse = house.First(s=>s.Selected).Text;
-			Assert.That(clientHouse, Is.StringContaining(clientRequest.YandexHouse), "Поле Дом должно заполниться данными из заявки");
+			Assert.That(clientHouse, Does.Contain(clientRequest.YandexHouse), "Поле Дом должно заполниться данными из заявки");
 
 			//проверяем,что поле Тариф заполнилось данными из заявки
 			var tariff = browser.FindElementsByCssSelector("select[id=PlanDropDown] option");
 			var clientPlan = tariff.First(s=>s.Selected).Text;
-			Assert.That(clientPlan, Is.StringContaining(clientRequest.Plan.Name), "Поле Тарифный план должно заполниться данными из заявки");
+			Assert.That(clientPlan, Does.Contain(clientRequest.Plan.Name), "Поле Тарифный план должно заполниться данными из заявки");
 
 			//проверяем,что в поле Привел клиента в компанию по умолчанию указан клиент
 			var employee = browser.FindElementsByCssSelector("select[id=EmployeeDropDown] option").First(s=>s.Selected).Text;
-			Assert.That(employee, Is.StringContaining("Клиент"), "Поле Привел клиента в компанию должно по умолчанию иметь значение Клиент");
+			Assert.That(employee, Does.Contain("Клиент"), "Поле Привел клиента в компанию должно по умолчанию иметь значение Клиент");
 
 			//дозаполняем поля, которых нет в клиентской заявке
 			browser.FindElementByCssSelector("input[id=client_PhysicalClient_CertificateName]").SendKeys("паспорт");
@@ -154,7 +154,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			//проверяем,что поле Дом не заполнилось
 			var house = browser.FindElementsByCssSelector("select[id=HouseDropDown] option");
 			var clientHouse = house.First(s => s.Selected).Text;
-			Assert.That(clientHouse, Is.StringContaining(""), "Поле Дом в форме регетсрации  должно быть не заполненным");
+			Assert.That(clientHouse, Does.Contain(""), "Поле Дом в форме регетсрации  должно быть не заполненным");
 		}
 
 		/// <summary>
@@ -187,12 +187,12 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			//проверяем,что поле Страница заполнилось улицей вводимой клиентом
 			var city = browser.FindElementsByCssSelector("select[id=StreetDropDown] option[selected]");
 			var clientCity = city.First(s => s.Selected).Text;
-			Assert.That(clientCity, Is.StringContaining(request.Street), "Поле Улица в форме регетсрации должно быть заполнено улицей вводимой клиентом");
+			Assert.That(clientCity, Does.Contain(request.Street), "Поле Улица в форме регетсрации должно быть заполнено улицей вводимой клиентом");
 
 			//проверяем,что поле Страница заполнилось улицей вводимой клиентом
 			var house = browser.FindElementsByCssSelector("select[id=HouseDropDown] option");
 			var clientHouse = house.First(s=>s.Selected).Text;
-			Assert.That(clientHouse, Is.StringContaining(request.HouseNumber + request.Housing), "Поле Дом в форме регетсрации  должно быть заполнено улицей вводимой клиентом");
+			Assert.That(clientHouse, Does.Contain(request.HouseNumber + request.Housing), "Поле Дом в форме регетсрации  должно быть заполнено улицей вводимой клиентом");
 		}
 
 

@@ -29,7 +29,7 @@ namespace InforoomControlPanel.Test.Functional.Address
             browser.FindElementByCssSelector(".btn-green").Click();
             AssertText("Улица успешно изменена");
             DbSession.Refresh(street);
-            Assert.That(street.Name, Is.StringContaining(nameNew),
+            Assert.That(street.Name, Does.Contain(nameNew),
                 "Изменения должны сохраниться и в базе данных");
             Assert.That(street.PublicName(), Is.EqualTo(street.Name),
                 "Изменения должны сохраниться и в базе данных");

@@ -44,7 +44,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			AssertText("Тарифный план успешно отредактирован");
 			DbSession.Refresh(plan);
 			var speed = DbSession.Query<PackageSpeed>().First(p => p.Speed == 40000000);
-			Assert.That(plan.Name, Is.StringContaining("Максимальный Измененный"), "Изменение наименования тарифа должно сохраниться и в базе данных");
+			Assert.That(plan.Name, Does.Contain("Максимальный Измененный"), "Изменение наименования тарифа должно сохраниться и в базе данных");
 			//У тарифа должен сохраниться правильный Id-скорости
 			Assert.That(plan.PackageSpeed.PackageId, Is.EqualTo(speed.PackageId), "Скорость у тарифа должна быть установлена корректно");
 			Assert.That(plan.Price, Is.EqualTo(300), "Изменение цены тарифа должно сохраниться и в базе данных");
@@ -52,8 +52,8 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			Assert.That(plan.Disabled, Is.EqualTo(!disabled), "Изменение отметки о скрытости тарифа должно сохраниться и в базе данных");
 			Assert.That(plan.AvailableForNewClients, Is.EqualTo(!availableForNewClients), "Изменение отметки об опубликованности для новых клиентов тарифа должно сохраниться и в базе данных");
 			Assert.That(plan.AvailableForOldClients, Is.EqualTo(!availableForOldClients), "Изменение отметки об опубликованности для старых клиентов тарифа должно сохраниться и в базе данных");
-			Assert.That(plan.Features, Is.StringContaining("Тест"), "Изменение в заголовке тарифа должно сохраниться и в базе данных");
-			Assert.That(plan.Description, Is.StringContaining("Для теста изменен"), "Изменение в описании тарифа должно сохраниться и в базе данных");			
+			Assert.That(plan.Features, Does.Contain("Тест"), "Изменение в заголовке тарифа должно сохраниться и в базе данных");
+			Assert.That(plan.Description, Does.Contain("Для теста изменен"), "Изменение в описании тарифа должно сохраниться и в базе данных");			
 		}
 
 		[Test, Description("Удаление стоимости перехода на другой тариф")]
@@ -102,7 +102,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			AssertText("Стоимость перехода успешно отредактирован");
 			DbSession.Refresh(plan);
 			var planTransfers = plan.PlanTransfers.ToList().FirstOrDefault(i => i.PlanTo.Name == "Оптимальный");
-			Assert.That(planTransfers.PlanTo.Name, Is.StringContaining("Оптимальный"), "Переход на другой ТП должн добавиться и в базе данных");
+			Assert.That(planTransfers.PlanTo.Name, Does.Contain("Оптимальный"), "Переход на другой ТП должн добавиться и в базе данных");
 			Assert.That(planTransfers.Price, Is.EqualTo(300), "Стоимость перехода на другой ТП должна добавиться и в базе данных");
 		}
 
@@ -121,7 +121,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			browser.FindElementByCssSelector(".btn-green.save").Click();
 			DbSession.Refresh(plan);
 			var addPlanRegion = plan.RegionPlans.ToList().FirstOrDefault(i => i.Region.Name == "Белгород");
-			Assert.That(addPlanRegion.Region.Name, Is.StringContaining("Белгород"), "У тарифа регион для которого он будет доступен должен сохраниться и в базе данных");
+			Assert.That(addPlanRegion.Region.Name, Does.Contain("Белгород"), "У тарифа регион для которого он будет доступен должен сохраниться и в базе данных");
 		}
 
 		[Test, Description("Удаление региона для которого будет доступен тариф")]
@@ -160,7 +160,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			browser.FindElementByCssSelector(".btn-green.save").Click();
 			DbSession.Refresh(plan);
 			var addPlanTvChannelGroup = plan.TvChannelGroups.ToList().FirstOrDefault(i => i.Name == "Спорт");
-			Assert.That(addPlanTvChannelGroup.Name, Is.StringContaining("Спорт"), "Группа каналов должна добавиться тарифному плану и в базе данных");
+			Assert.That(addPlanTvChannelGroup.Name, Does.Contain("Спорт"), "Группа каналов должна добавиться тарифному плану и в базе данных");
 		}
 
 		[Test, Description("Удаление группы каналов из тарифного плана")]

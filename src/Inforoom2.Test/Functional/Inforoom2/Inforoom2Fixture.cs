@@ -53,7 +53,7 @@ namespace Inforoom2.Test.Functional.Inforoom2
 
 			Assert.That(oldcity, Is.Not.StringContaining(clickedText), "Выбранный город не должен быть равен изначальному");
 			var name = browser.FindElementByCssSelector(".city .name").Text;
-			Assert.That(name, Is.StringContaining(clickedText), "Изначальный город должен поменяться");
+			Assert.That(name, Does.Contain(clickedText), "Изначальный город должен поменяться");
 		}
 
 		[Test(Description = "Выбор акционного тарифа")]

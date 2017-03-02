@@ -59,7 +59,7 @@
     <Reference Include="Boo.Lang.Extensions">
       <HintPath>..\..\lib\Boo.Lang.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="CassiniDev-lib" />
+    <Reference Include="CassiniDev4-lib" />
     <Reference Include="Castle.ActiveRecord">
       <HintPath>..\..\lib\Castle.ActiveRecord.dll</HintPath>
     </Reference>

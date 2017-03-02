@@ -23,7 +23,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			browser.FindElementByCssSelector(".btn-green").Click();
 			AssertText("Канал успешно добавлен");
 			var createTVChannel =  DbSession.Query<TvChannel>().First(p => p.Name == "Тест");
-			Assert.That(createTVChannel.Name, Is.StringContaining("Тест"), "Добавленный канал должен сохраниться и в базе данных");
+			Assert.That(createTVChannel.Name, Does.Contain("Тест"), "Добавленный канал должен сохраниться и в базе данных");
 
 		}
 		

@@ -141,11 +141,11 @@ namespace InternetInterface.Test.Functional
 			Open("Register/RegisterClient");
 			Css("#client_PassportSeries").SendKeys("a4512");
 			Click("Зарегистрировать");
-			Assert.That(GetValidationError("#client_PassportSeries"), Is.StringContaining("Неправильный формат серии паспорта (4 цифры)"));
+			Assert.That(GetValidationError("#client_PassportSeries"), Does.Contain("Неправильный формат серии паспорта (4 цифры)"));
 
 			Css("#client_IdDocType").SelectByText("Иной документ");
 			Click("Зарегистрировать");
-			Assert.That(GetValidationError("#client_IdDocName"), Is.StringContaining("Это поле необходимо заполнить."));
+			Assert.That(GetValidationError("#client_IdDocName"), Does.Contain("Это поле необходимо заполнить."));
 			Assert.AreEqual("", GetValidationError("#client_PassportSeries"));
 		}
 

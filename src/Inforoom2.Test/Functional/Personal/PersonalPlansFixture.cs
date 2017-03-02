@@ -52,15 +52,15 @@ namespace Inforoom2.Test.Functional.Personal
 			var appeal = client.Appeals.FirstOrDefault(i => i.Message.Contains("Изменение тарифа"));
 			var writeoff = client.UserWriteOffs.FirstOrDefault(i => i.Comment.Contains("Изменение тарифа, старый"));
 			Assert.That(writeoff, Is.Not.Null, "У клиента должно быть денежное списание за смену тарифа");
-			Assert.That(writeoff.Comment, Is.StringContaining(planTo.Name), "В тексте описания денежного списания должно присутсвовать наименование тарифа,на который перешли");
-			Assert.That(writeoff.Comment, Is.StringContaining(planFrom.Name), "В тексте описания денежного списания должно присутсвовать наименование тарифа,который сменили");
-			Assert.That(appeal.Message, Is.StringContaining(planFrom.Name), "В тексте информационного сообщения о клиенте должно присутсвовать наименование тарифа,который сменили");
-			Assert.That(appeal.Message, Is.StringContaining(planTo.Name), "В тексте информационного сообщения о клиенте должно присутсвовать наименование тарифа,на который перешли");
+			Assert.That(writeoff.Comment, Does.Contain(planTo.Name), "В тексте описания денежного списания должно присутсвовать наименование тарифа,на который перешли");
+			Assert.That(writeoff.Comment, Does.Contain(planFrom.Name), "В тексте описания денежного списания должно присутсвовать наименование тарифа,который сменили");
+			Assert.That(appeal.Message, Does.Contain(planFrom.Name), "В тексте информационного сообщения о клиенте должно присутсвовать наименование тарифа,который сменили");
+			Assert.That(appeal.Message, Does.Contain(planTo.Name), "В тексте информационного сообщения о клиенте должно присутсвовать наименование тарифа,на который перешли");
 			Assert.That(appeal, Is.Not.Null, "У клиента должно быть информационно сообщение о смене тарифа");
-			Assert.That(appeal.Message, Is.StringContaining("(" + planFrom.Price + ")"), "Информационное сообщение о клиенте должно содержать стоимость тарифа,который сменили");
-			Assert.That(appeal.Message, Is.StringContaining(planTo.Name), "Информационное сообщение о клиенте должно содержать наименование тарифа,на который перешли");
-			Assert.That(appeal.Message, Is.StringContaining("(" + planTo.Price + ")"), "Информационное сообщение о клиенте должно содержать стоимость тарифа,на который перешли");
-			Assert.That(appeal.Message, Is.StringContaining(writeoff.Sum.ToString()), "Информационное сообщение о клиенте должно содержать стоимость смены тарифа");
+			Assert.That(appeal.Message, Does.Contain("(" + planFrom.Price + ")"), "Информационное сообщение о клиенте должно содержать стоимость тарифа,который сменили");
+			Assert.That(appeal.Message, Does.Contain(planTo.Name), "Информационное сообщение о клиенте должно содержать наименование тарифа,на который перешли");
+			Assert.That(appeal.Message, Does.Contain("(" + planTo.Price + ")"), "Информационное сообщение о клиенте должно содержать стоимость тарифа,на который перешли");
+			Assert.That(appeal.Message, Does.Contain(writeoff.Sum.ToString()), "Информационное сообщение о клиенте должно содержать стоимость смены тарифа");
 		}
 
 

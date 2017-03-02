@@ -33,10 +33,10 @@ namespace InforoomControlPanel.Test.Functional.News
             browser.FindElementByCssSelector(".btn-green").Click();
             AssertText("Новость успешно отредактирована");
             DbSession.Refresh(newsBlock);
-            Assert.That(newsBlock.Title, Is.StringContaining("Главная новость"), "Изменения в заглавии новостного блока должны измениться и в базе данных");
-            Assert.That(newsBlock.Preview, Is.StringContaining("Новые события"), "Изменения в коротком описании новостного блока должны измениться и в базе данных");
-            Assert.That(newsBlock.Body, Is.StringContaining("Новостной блок"), "Изменения в описании новостного блока должны измениться и в базе данных");
-            Assert.That(newsBlock.Url, Is.StringContaining("Url-новости"), "Изменения в Url новостного блока должны измениться и в базе данных");
+            Assert.That(newsBlock.Title, Does.Contain("Главная новость"), "Изменения в заглавии новостного блока должны измениться и в базе данных");
+            Assert.That(newsBlock.Preview, Does.Contain("Новые события"), "Изменения в коротком описании новостного блока должны измениться и в базе данных");
+            Assert.That(newsBlock.Body, Does.Contain("Новостной блок"), "Изменения в описании новостного блока должны измениться и в базе данных");
+            Assert.That(newsBlock.Url, Does.Contain("Url-новости"), "Изменения в Url новостного блока должны измениться и в базе данных");
             Assert.That(newsBlock.IsPublished, Is.False, "Изменения в маркере опубликования новостного блока должны измениться и в базе данных");
         }
     }

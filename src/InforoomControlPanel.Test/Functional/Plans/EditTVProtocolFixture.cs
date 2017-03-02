@@ -28,7 +28,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			browser.FindElementByCssSelector(".btn-green").Click();
 			AssertText("Протокол успешно изменен!");
 			DbSession.Refresh(tVProtocol);
-			Assert.That(tVProtocol.Name, Is.StringContaining("Изменен"), "Изменения протокола для TV должны сохраниться и в базе данных");
+			Assert.That(tVProtocol.Name, Does.Contain("Изменен"), "Изменения протокола для TV должны сохраниться и в базе данных");
 		}
 	}
 }

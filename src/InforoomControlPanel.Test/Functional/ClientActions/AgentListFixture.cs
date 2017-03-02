@@ -20,7 +20,7 @@ namespace InforoomControlPanel.Test.Functional.ClientActions
 			AssertText("Агент успешно добавлен");
 			AssertText("Тестов Тест");
 			var agent = DbSession.Query<Agent>().FirstOrDefault(p => p.Name == "Тестов Тест");
-			Assert.That(agent.Name, Is.StringContaining("Тестов Тест"), "Агент должен сохраниться и в базе данных");
+			Assert.That(agent.Name, Does.Contain("Тестов Тест"), "Агент должен сохраниться и в базе данных");
 		}
 	}
 }

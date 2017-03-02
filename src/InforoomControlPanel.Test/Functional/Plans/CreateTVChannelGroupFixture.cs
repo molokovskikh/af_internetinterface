@@ -20,7 +20,7 @@ namespace InforoomControlPanel.Test.Functional.Plans
 			browser.FindElementByCssSelector(".btn-green").Click();
 			AssertText("Объект успешно добавлен!");
 			var createTVChannelGroup =  DbSession.Query<TvChannelGroup>().First(p => p.Name == "Тест");
-			Assert.That(createTVChannelGroup.Name, Is.StringContaining("Тест"), "Добавленный канал должен сохраниться и в базе данных");
+			Assert.That(createTVChannelGroup.Name, Does.Contain("Тест"), "Добавленный канал должен сохраниться и в базе данных");
 			var tVChannelGroupCountAfterTest = DbSession.Query<TvChannelGroup>().ToList().Count;
 			Assert.That(tVChannelGroupCountAfterTest, Is.EqualTo(tVChannelGroupCount + 1), "Количество групп телевизионных каналов должно увеличиться на один после добавления");
 		}	

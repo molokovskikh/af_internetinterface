@@ -9,7 +9,7 @@ namespace InternetInterface.Test.Unit
 	[SetUpFixture]
 	public class SetupFixture
 	{
-		[SetUp]
+		[OneTimeSetUp]
 		public void Setup()
 		{
 			NHibernateHelper.InitProxy();

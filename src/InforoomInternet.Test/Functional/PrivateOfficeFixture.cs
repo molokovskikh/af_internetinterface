@@ -102,7 +102,7 @@ namespace InforoomInternet.Test.Functional
 			Assert.That(client.Endpoints.First(s => !s.Disabled).Port, Is.EqualTo(1));
 			session.Refresh(lease.Switch);
 			session.Refresh(lease);
-			Assert.That(lease.Switch.Name, Is.StringContaining("testStreet"));
+			Assert.That(lease.Switch.Name, Does.Contain("testStreet"));
 			Assert.That(lease.Endpoint, Is.EqualTo(client.Endpoints.First(s => !s.Disabled)));
 		}
 
@@ -173,7 +173,7 @@ namespace InforoomInternet.Test.Functional
 
 			var appeals = Appeals.GetAllAppeal(session, client, AppealType.System);
 			Assert.AreEqual(appeals.Count, 1);
-			Assert.That(appeals[0].Text, Is.StringContaining("Отключена услуга Internet"));
+			Assert.That(appeals[0].Text, Does.Contain("Отключена услуга Internet"));
 		}
 
 		[Test, Ignore("возможность включения/отключения интернета убрана из личного кабинета пользователя")]
