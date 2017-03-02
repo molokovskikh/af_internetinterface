@@ -19,16 +19,12 @@ using OpenQA.Selenium.Internal;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using Test.Support;
+using Test.Support.Selenium;
 
 namespace Inforoom2.Test
 {
 	public class MySeleniumFixture : IntegrationFixture
 	{
-		public class ChromeOptionsWithPrefs : ChromeOptions
-		{
-			public Dictionary<string, object> prefs { get; set; }
-		}
-
 		public static void GlobalSetup()
 		{
 			WebPort = Int32.Parse(ConfigurationManager.AppSettings["webPort"]);
@@ -36,16 +32,8 @@ namespace Inforoom2.Test
 			if (GlobalDriver != null)
 				return;
 
-			var dd = AppDomain.CurrentDomain.BaseDirectory;
-			var version = Directory.GetDirectories("../../../../packages/", "*ChromeDriver*").FirstOrDefault();
-			var chromeOptions = new ChromeOptionsWithPrefs();
-			chromeOptions.prefs = new Dictionary<string, object>
-			{
-				{"download.prompt_for_download", "false"},
-				{"download.default_directory", Environment.CurrentDirectory}
-			};
-			chromeOptions.BinaryLocation = "../../../../lib/GoogleChromePortable/GoogleChromePortable.exe";
-			GlobalDriver = new ChromeDriver(String.Format("{0}/content/", version), chromeOptions);
+			SeleniumFixture.GlobalSetup();
+			GlobalDriver = SeleniumFixture.GlobalDriver;
 			GlobalDriver.Manage().Window.Size = new Size(1920, 1080);
 		}
 
@@ -57,10 +45,9 @@ namespace Inforoom2.Test
 					GlobalDriver.SwitchTo().Window(tab);
 					GlobalDriver.Close();
 				}
-				GlobalDriver.Quit();
-				GlobalDriver.Dispose();
-				GlobalDriver = null;
 			}
+			SeleniumFixture.GlobalTearDown();
+			GlobalDriver = null;
 		}
 
 		private RemoteWebDriver _browser;
