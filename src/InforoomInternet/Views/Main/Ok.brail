@@ -1,8 +1,0 @@
-﻿ <link href="${siteroot}/CSS/main.css" type="text/css" rel="stylesheet" />
-<div id="wrapper">
-    <div id="wrapper_inner">
-        <div id="okdiv">
-            <div style="padding-top:100px; "> Спасибо, Ваша заявка принята. Номер заявки ${application.Id}.</div>
-        </div>
-    </div>
-</div>

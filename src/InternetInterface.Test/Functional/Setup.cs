@@ -18,6 +18,7 @@ using NHibernate.Linq;
 using NUnit.Framework;
 using Test.Support.Selenium;
 using log4net.Config;
+using Test.Support;
 
 namespace InternetInterface.Test.Functional
 {
@@ -109,6 +110,7 @@ namespace InternetInterface.Test.Functional
 						Assembly.Load("InternetInterface.Test")
 					},
 					new[] { typeof(ValidEventListner) });
+				IntegrationFixture2.Factory = Activ
 			}
 		}
 	}

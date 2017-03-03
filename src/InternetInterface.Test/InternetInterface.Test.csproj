@@ -194,7 +194,6 @@
     <Compile Include="Integration\Tasks\MailerFixture.cs" />
     <Compile Include="Integration\UserInfoControllerFixture.cs" />
     <Compile Include="Integration\SetupFixture.cs" />
-    <Compile Include="Troubleshoot.cs" />
     <Compile Include="Unit\BrigadFixture.cs" />
     <Compile Include="Unit\ClientFixture.cs" />
     <Compile Include="Unit\HouseFixture.cs" />
