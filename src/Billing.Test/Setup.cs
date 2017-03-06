@@ -1,4 +1,5 @@
-﻿using Billing.Test.Integration;
+﻿using System;
+using Billing.Test.Integration;
 using Common.Tools;
 using NUnit.Framework;
 
@@ -10,6 +11,7 @@ namespace Billing.Test
 		[OneTimeSetUp]
 		public void SetupFixture()
 		{
+			Environment.CurrentDirectory = TestContext.CurrentContext.TestDirectory;
 			MainBilling.InitActiveRecord();
 			MainBillingFixture.SeedDb();
 		}

@@ -1,4 +1,5 @@
-﻿using CassiniDev;
+﻿using System;
+using CassiniDev;
 using Inforoom2.Test;
 using NUnit.Framework;
 using Test.Support.Selenium;
@@ -13,6 +14,7 @@ namespace InforoomControlPanel.Test.Functional
 		[OneTimeSetUp]
 		public void SetupFixture()
 		{
+			Environment.CurrentDirectory = TestContext.CurrentContext.TestDirectory;
 			//Все опасные функции, должны быть вызванны до этого момента, так как исключения в сетапе
 			//оставляют невысвобожденные ресурсы браузера и веб сервера
 			MySeleniumFixture.GlobalSetup();
