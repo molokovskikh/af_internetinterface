@@ -89,7 +89,6 @@
     <Compile Include="Integration\PlanChangerFixture.cs" />
     <Compile Include="Integration\ServiceFixture.cs" />
     <Compile Include="Integration\ServiceRequestsFixture.cs" />
-    <Compile Include="Integration\SmsFixture.cs" />
     <Compile Include="Integration\VirtualMoneyFixture.cs" />
     <Compile Include="Integration\WorkBillingFixture.cs" />
     <Compile Include="Setup.cs" />
