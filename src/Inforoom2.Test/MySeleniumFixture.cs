@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -181,9 +182,14 @@ namespace Inforoom2.Test
 
 		protected void WaitForVisibleCss(string css, int seconds = 10)
 		{
-
+			var w = new Stopwatch();
+			w.Start();
 			var wait = new WebDriverWait(browser, seconds.Second());
 			wait.Until(d => ((RemoteWebDriver)d).FindElementsByCssSelector(css).Count > 0 && ((RemoteWebDriver) d).FindElementByCssSelector(css).Displayed);
+			w.Stop();
+			if (w.Elapsed > TimeSpan.FromSeconds(1)) {
+				Console.WriteLine($"wait '{css}' for {w.Elapsed}");
+			}
 		}
 
 		protected void WaitForHiddenCss(string css, int seconds = 10)

@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Text;
 using Common.Tools;
 using Inforoom2.Models;
 using Inforoom2.Test.Infrastructure;
-using InternetInterface.Models;
 using NHibernate.Linq;
 using NUnit.Framework;
-using InforoomControlPanel;
-using InternetInterface.Helpers;
 
 namespace InforoomControlPanel.Test.Functional.infrastructure
 {
@@ -22,18 +18,12 @@ namespace InforoomControlPanel.Test.Functional.infrastructure
 		[SetUp]
 		public void ControlPanelSetUp()
 		{
-			SystemTime.Now = ()=> DateTime.Now;
-			var adminName = Environment.UserName;
-			var employee = DbSession.Query<Employee>().First(i => i.Login == adminName);
-			Employee = employee;
+			SystemTime.Now = () => DateTime.Now;
+			Employee = DbSession.Query<Employee>().First(i => i.Login == Environment.UserName);
 			//Добавление прав
-			Call(BuildTestUrl("AdminOpen/RenewActionPermissionsJs"));
-			var permissions = DbSession.Query<Permission>().ToList();
-			foreach (var item in permissions) {
-				employee.Permissions.Add(item);
-			}
-			DbSession.Save(employee);
-			DbSession.Flush();
+			foreach (var item in DbSession.Query<Permission>().ToList())
+				Employee.Permissions.Add(item);
+			DbSession.Save(Employee);
 			//Авторизация
 			DefaultEmployeePassword = ConfigurationManager.AppSettings["DefaultEmployeePassword"];
 			LoginForAdmin();
@@ -55,12 +45,13 @@ namespace InforoomControlPanel.Test.Functional.infrastructure
 			Css("#password").SendKeys("1234");
 			Css(".btn-login").Click();
 			AssertText(Employee.Name);
-        }
-        protected void UpdateDriverSideSystemTime()
-        {
-            var time = SystemTime.Now();
-            Open($"AdminOpen/SetDebugTime?time={time}");
-            WaitForText($"Время установлено {time}", 20);
-        }
-    }
+		}
+
+		protected void UpdateDriverSideSystemTime()
+		{
+			var time = SystemTime.Now();
+			Open($"AdminOpen/SetDebugTime?time={time}");
+			WaitForText($"Время установлено {time}", 20);
+		}
+	}
 }

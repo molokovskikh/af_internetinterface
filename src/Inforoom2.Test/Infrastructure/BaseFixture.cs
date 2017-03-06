@@ -13,6 +13,7 @@ using Inforoom2.Helpers;
 using Inforoom2.Models;
 using Inforoom2.Models.Services;
 using Inforoom2.Test.Infrastructure.Helpers;
+using InforoomControlPanel.Helpers;
 using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Mapping.Attributes;
@@ -461,13 +462,13 @@ namespace Inforoom2.Test.Infrastructure
 			DbSession.Save(region);
 		}
 
-		private void RenewActionPermissions()
+		private void GeneratePermissions()
 		{
 			var testOfInforoomControlPanel =
 				GetType().Assembly.GetTypes().FirstOrDefault(i => i.Name == "ControlPanelBaseFixture");
 			if (testOfInforoomControlPanel != null) {
-				//	new .AdminController().RenewActionPermissions(); 
 
+				var permissions = DbSession.Query<Permission>().ToList();
 				var controllers =
 					Assembly.Load("InforoomControlPanel")
 						.GetTypes()
@@ -478,21 +479,30 @@ namespace Inforoom2.Test.Infrastructure
 					var actions = methods.Where(i => i.ReturnType == typeof(ActionResult)).ToList();
 					foreach (var action in actions) {
 						var name = controller.Name + "_" + action.Name;
-						var right = DbSession.Query<Permission>().FirstOrDefault(i => i.Name == name);
-						if (right != null)
-							continue;
-						var newright = new Permission();
-						newright.Name = name;
-						newright.Description = name;
-						DbSession.Save(newright);
+					if (permissions.Any(x => x.Name == name))
+						continue;
+					DbSession.Save(new Permission {
+							Name = name,
+							Description = name
+						});
 					}
+				}
+
+				foreach (var item in EmployeePermissionViewHelper.GetAllFormPermissions())
+				{
+					if (permissions.Any(x => x.Name == item.Item1))
+						continue;
+					DbSession.Save(new Permission {
+						Name = item.Item1,
+						Description = item.Item2
+					});
 				}
 			}
 		}
 
 		private void GenerateAdmins()
 		{
-			RenewActionPermissions();
+			GeneratePermissions();
 			var permissions = DbSession.Query<Permission>().ToList();
 
 			Role role = new Role { Name = "Admin", Description = "tempRoleDescription", Permissions = permissions };

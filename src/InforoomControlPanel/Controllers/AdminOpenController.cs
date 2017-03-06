@@ -24,17 +24,6 @@ namespace InforoomControlPanel.Controllers
 	public class AdminOpenController : BaseController
 	{
 		/// <summary>
-		/// Права доступа
-		/// </summary>
-		public JsonResult RenewActionPermissionsJs()
-		{
-#if DEBUG
-			EmployeePermissionViewHelper.GeneratePermissions(DbSession, this);
-#endif
-			return null;
-		}
-
-		/// <summary>
 		/// Асинхронная функция (JSON).
 		/// Определяет не упал ли коммутатор, к которому подключен клиент.
 		/// </summary>
