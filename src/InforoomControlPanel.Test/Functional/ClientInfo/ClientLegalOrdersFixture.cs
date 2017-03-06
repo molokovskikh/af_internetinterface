@@ -60,7 +60,12 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 		}
 
 		[Test, Description("Страница клиента. Юр. лицо. Добавление простого заказа")]
-		public void SimpleOrderAdding(int serviceCost = 333, int serviceCostCircle = 1000)
+		public void SimpleOrderAdding()
+		{
+			InnerSimpleOrderAdding();
+		}
+
+		public void InnerSimpleOrderAdding(int serviceCost = 333, int serviceCostCircle = 1000)
 		{
 			string blockName = "#emptyBlock_legalOrders ";
 			string blockModelName = "#ModelForOrderEdit ";
@@ -441,7 +446,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			//добавление заказа на большую сумму (до минуса)
 			var serviceSum = totalSum - 1000; //периодическая услуга
 			totalSum -= CurrentClient.Balance;
-			SimpleOrderAdding(Convert.ToInt32(serviceSum));
+			InnerSimpleOrderAdding(Convert.ToInt32(serviceSum));
 			RunBillingProcess(CurrentClient);
 			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.LegalClient);
