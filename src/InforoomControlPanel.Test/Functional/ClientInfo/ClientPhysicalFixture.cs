@@ -169,6 +169,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 				Assert.That(CurrentClient.Discount, Is.EqualTo(0), "Скидка не совпадает.");
 				Assert.That(internetService.IsActivated, Is.EqualTo(false), "Сервис 'Интернет' не совпадает.");
 				Assert.That(CurrentClient.Endpoints.Count(s => !s.Disabled), Is.EqualTo(0), "Отмена блокировки не совпадает.");
+				Assert.That(CurrentClient.Endpoints.All(s => string.IsNullOrEmpty(s.Mac)));
 				Assert.That(CurrentClient.Endpoints.Count(s => s.Disabled),
 					Is.EqualTo(CurrentClient.Endpoints.Count - CurrentClient.Endpoints.Count(s => !s.Disabled)), "Отмена блокировки не совпадает.");
 				Assert.That(CurrentClient.Endpoints.Count(s => s.Disabled && s.Switch == null && s.Port == 0), Is.EqualTo(CurrentClient.Endpoints.Count), "Отмена блокировки не совпадает.");
@@ -225,6 +226,12 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			//Проверки последствий смены:
 			CheckStatusChangeEffect(StatusType.Worked);
 
+			UpdateDBSession();
+			var endpoint = CurrentClient.Endpoints.FirstOrDefault();
+			endpoint.Mac = "22-22-22-33-33-33-33-33-33-33-33";
+			DbSession.Save(endpoint);
+			UpdateDBSession();
+
 			//обновляем страницу клиента
 			Open("Client/InfoPhysical/" + CurrentClient.Id);
 			//получаем обновленную модель клиента
@@ -261,7 +268,7 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			browser.FindElementByCssSelector(blockName + ".btn.btn-green").Click();
 			
 			UpdateDBSession();
-			Assert.IsTrue(CurrentClient.WriteOffs.Count(s=>s.WriteOffSum == writeOffDisolvedSum)>0);
+			Assert.IsTrue(CurrentClient.WriteOffs.Count(s => s.WriteOffSum == writeOffDisolvedSum) > 0);
 
 			//редактируем блок
 			browser.FindElementByCssSelector(blockName + ".btn.btn-blue.lockButton").Click();
@@ -420,9 +427,9 @@ namespace InforoomControlPanel.Test.Functional.ClientInfo
 			browser.FindElementByCssSelector(blockModelName + ".message").Click();
 			//сохранение изменений
 			browser.FindElementByCssSelector(blockModelName + ".btn.btn-success").Click();
-
-			RunBillingProcessPayments(CurrentClient);
-			RunBillingProcessWriteoffs(CurrentClient, false);
+			UpdateDBSession();
+			RunBillingProcess();
+			UpdateDBSession();
 			DbSession.Refresh(CurrentClient);
 			DbSession.Refresh(CurrentClient.PhysicalClient);
 			DbSession.Refresh(enpoint);
