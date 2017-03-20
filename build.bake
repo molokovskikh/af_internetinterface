@@ -19,15 +19,15 @@ task @deploy, [@Production, "build", "version:bump", "deploy:pipeline","deploy:b
 task "deploy:background", ["build:background"]:
 	return if Globals.Environment != @Production
 	DeployService(Globals, "InternetInterface.Background", "fms")
-	
+
 task "clean:inforoom2":
 	CleanWeb(Globals, "inforoom2")
-	
+
 task "build:inforoom2", ["generate:assembly:info" , "clean:inforoom2"]:
 	BuildWeb(Globals, "inforoom2")
-	
+
 task "deploy:inforoom2", ["build:inforoom2", "version:bump"]:
-	XCopyDeploy(Globals, "inforoom2", GetDeploy(Globals,"IVrn"))
+	XCopyDeploy(Globals, "inforoom2", GetDeploy(Globals, "inforoom2", "IVrn"))
 
 task "deploy:billing", ["build:billing"]:
 	return if Globals.Environment != @Production
@@ -48,9 +48,9 @@ task "deploy:printer":
 
 task "clean:controlpanel":
 	CleanWeb(Globals, "InforoomControlPanel")
-	
+
 task "build:controlpanel",["generate:assembly:info" , "clean:controlpanel"]:
 	BuildWeb(Globals, "InforoomControlPanel")
-	
+
 task "deploy:controlpanel", ["build:controlpanel", "version:bump", "db:migrate"]:
 	XCopyDeploy(Globals, "InforoomControlPanel", GetDeploy(Globals, "InforoomControlPanel", "ControlPanel"))
