@@ -27,7 +27,7 @@ task "build:inforoom2", ["generate:assembly:info" , "clean:inforoom2"]:
 	BuildWeb(Globals, "inforoom2")
 	
 task "deploy:inforoom2", ["build:inforoom2", "version:bump"]:
-	XCopyDeploy(Globals, "inforoom2", GetDeploy(Globals, "InforoomInternet", "IVrn"))
+	XCopyDeploy(Globals, "inforoom2", GetDeploy(Globals,"IVrn"))
 
 task "deploy:billing", ["build:billing"]:
 	return if Globals.Environment != @Production
