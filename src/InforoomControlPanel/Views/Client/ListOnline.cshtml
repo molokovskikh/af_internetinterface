@@ -143,7 +143,7 @@
 				<td>@(lease.Switch != null ? lease.Switch.Id.ToString() : "")</td>
 				<td>
 					@if (lease.Switch != null) {
-						<a style="color: #1A5979;" class="idColumn" target="_blank" href="@Url.Action("EditSwitch","Switch",new {lease.Switch.Id}))">
+						<a style="color: #1A5979;" class="idColumn" target="_blank" href="@Url.Action("EditSwitch","Switch",new {lease.Switch.Id})">
 							@lease.Switch.Name
 						</a>
 					}
